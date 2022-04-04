@@ -82,5 +82,19 @@ export const newFarmCollections: TGFarm[] = [
     rewardTokenName: "ATA",
     farmAddress: "3yR4hroSjQqvCePRry2yJMPynLTfhK252yuCZBTk3Hvr",
     bankAddress: "ASdASL2X3jwGvLrgjyBZXVuwesSoNvtvts3S8s4Jmtcc",
+  },
+  {
+    id: "CBST",
+    imageUrl: "https://4njm3yz2f6j34gsagmsdoteegnfbqc5sxinqqot5rngvdw2e.arweave.net/41LN4z--ovk74aQDMkN0yEM0oYC7K6Gwg6fYtNUd-tE",
+    name: "Cubist",
+    totalStaked: "???",
+    allocation: "1",
+    totalStakedByUser: "-",
+    eventStartDate: "2022/3/4/14/50",
+    eventDuration: "30",
+    updateAuthority: "BUYoiPaM1BZ7DSEhoHyiyCyLfQD7yBzDKYnXizzE6uCt",
+    rewardTokenName: "CUBE",
+    farmAddress: "DT7GL8qwvSgLEy1jxXqDjjnzYMtLuivSVjjrUHnyUmKD",
+    bankAddress: "7f2MuLPgsrJhXoAgQXKCccyNpVEWksVcquyHVMPPCYHv",
   }
 ];
