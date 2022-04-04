@@ -96,5 +96,19 @@ export const newFarmCollections: TGFarm[] = [
     rewardTokenName: "CUBE",
     farmAddress: "DT7GL8qwvSgLEy1jxXqDjjnzYMtLuivSVjjrUHnyUmKD",
     bankAddress: "7f2MuLPgsrJhXoAgQXKCccyNpVEWksVcquyHVMPPCYHv",
+  },
+  {
+    id: "SKLT",
+    imageUrl: "https://4njm3yz2f6j34gsagmsdoteegnfbqc5sxinqqot5rngvdw2e.arweave.net/41LN4z--ovk74aQDMkN0yEM0oYC7K6Gwg6fYtNUd-tE",
+    name: "Skelly crew",
+    totalStaked: "???",
+    allocation: "1",
+    totalStakedByUser: "-",
+    eventStartDate: "2022/3/4/14/50",
+    eventDuration: "30",
+    updateAuthority: "skU11A6Br8HjAWgwFScGgsqzSyG7qQir4AinHa94pRf",
+    rewardTokenName: "CUBE",
+    farmAddress: "6Xq5nXkBLHwoVAiELfSSFsEc1SsHXhjBtCQBqZMaGUcq",
+    bankAddress: "TS8FfCgfGHeEPNzH7GLGUwRVpiGsXKmoPoAGsnnipSS",
   }
 ];
