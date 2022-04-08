@@ -12,9 +12,7 @@ import stakeIdl from '../idl/stake.json';
 import { Stake } from '../types/stake';
 import { VeHoneyClient } from './vehoney';
 
-export const STAKE_PROGRAM_ID = new PublicKey(
-  '4V68qajTiVHm3Pm9fQoV8D4tEYBmq3a34R9NV5TymLr7'
-);
+export const STAKE_PROGRAM_ID = new PublicKey(process.env.NEXT_PUBLIC_STAKE_PROGRAM_ID);
 export const POOL_USER_SEED = 'PoolUser';
 export const TOKEN_VAULT_SEED = 'TokenVault';
 export const VAULT_AUTHORITY_SEED = 'VaultAuthority';

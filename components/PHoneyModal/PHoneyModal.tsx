@@ -6,14 +6,11 @@ import { useAccounts } from 'hooks/useAccounts';
 import { PHONEY_DECIMALS, PHONEY_MINT } from 'helpers/sdk/constant';
 import { convert, convertToBN } from 'helpers/utils';
 
-// console.log("The stake pool address is : ", process.env.PUBLIC_NEXT_STAKE_POOL_ADDRESS)
 const PHoneyModal = () => {
   const [amount, setAmount] = useState<number>(0);
   const [isClaimable, setIsClaimable] = useState<boolean>(false);
 
   const handleOnChange = (event: any) => {
-    // ideally we want to implement a debaunce here and not fire the function every second the user interacts with it
-
     setAmount(Number(event.target.value));
   };
 
@@ -21,14 +18,8 @@ const PHoneyModal = () => {
 
   // ======================== Should replace with configuration ================
   const pHoneyToken = tokenAccounts.find(t => t.info.mint.equals(PHONEY_MINT));
-  const STAKE_POOL_ADDRESS = new PublicKey(
-    process.env.NEXT_STAKE_POOL_ADDR ||
-      '4v62DWSwrUVEHe2g88MeyJ7g32vVzQsCnADZF8yUy8iU'
-  );
-  const LOCKER_ADDRESS = new PublicKey(
-    process.env.NEXT_LOCKER_ADDR ||
-      '5FnK8H9kDbmPNpBYMuvSkDevkMfnVPRrPNNqmTQyBBae'
-  );
+  const STAKE_POOL_ADDRESS = new PublicKey(process.env.NEXT_PUBLIC_STAKE_POOL_ADDRESS);
+  const LOCKER_ADDRESS = new PublicKey(process.env.NEXT_PUBLIC_LOCKER_ADDRESS);
   // ============================================================================
 
   const { user, deposit, claim, claimableAmount } = useStake(

@@ -11,9 +11,7 @@ import { HONEY_MINT } from './constant';
 import veHoneyIdl from '../idl/ve_honey.json';
 import { VeHoney } from '../types/ve_honey';
 
-export const VE_HONEY_PROGRAM_ID = new PublicKey(
-  'CKQapf8pWoMddT15grV8UCPjiLCTHa12NRgkKV63Lc7q'
-);
+export const VE_HONEY_PROGRAM_ID = new PublicKey(process.env.NEXT_PUBLIC_VE_HONEY_PROGRAM_ID);
 export const ESCROW_SEED = 'Escrow';
 export const WHITELIST_ENTRY_SEED = 'LockerWhitelistEntry';
 

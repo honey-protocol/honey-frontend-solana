@@ -80,7 +80,7 @@ const Home: NextPage = (props: any) => {
   return (
     <div>
       <Head>
-        <title>Honey App</title>
+        <title>Honey Finance | Home</title>
         <meta name="description" content="Liquidity solutions for NFTs" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
