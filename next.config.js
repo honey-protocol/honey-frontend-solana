@@ -4,6 +4,7 @@ const {PHASE_DEVELOPMENT_SERVER} = require('next/constants')
 
 /** @type {import('next').NextConfig} */
 const mainNetEndpoint = process.env.NEXT_PUBLIC_RPC_NODE;
+const devNetEndpoint = process.env.NEXT_DEV_RPC_NODE;
 
 /** We should put all environment dependent variables into this file. However, Prod RPC NODE should still reside in
  * .env file for security reason. API Keys and secrets should also reside in .env file
@@ -15,9 +16,13 @@ module.exports = (phase, {defaultConfig}) => {
   if (phase === PHASE_DEVELOPMENT_SERVER) {
     const env = {
       NETWORK: 'devnet',
-      NETWORK_CONFIGURATION: undefined
+      NETWORK_CONFIGURATION: {
+        'devnet': {
+          name: 'devnet',
+          endpoint: devNetEndpoint,
+        }
+      }
     }
-
     const devNextConfig = {
       reactStrictMode: true,
       env: env,
