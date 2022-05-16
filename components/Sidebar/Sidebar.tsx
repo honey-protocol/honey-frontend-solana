@@ -32,7 +32,7 @@ const governanceUrl = "https://forum.honey.finance/"
 
 const mainLinks = [
   {
-    url: '/',
+    url: '/dashboard',
     title: 'Dashboard',
     IconComp: IconGrid,
     key: 1
