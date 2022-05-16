@@ -34,7 +34,6 @@ const mainLinks = [
   {
     url: '/',
     title: 'Dashboard',
-    comingSoon: true,
     IconComp: IconGrid,
     key: 1
   },
