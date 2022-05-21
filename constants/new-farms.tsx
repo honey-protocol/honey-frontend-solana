@@ -150,7 +150,6 @@ export const newFarmCollections: TGFarm[] = [
     farmAddress: "6Xq5nXkBLHwoVAiELfSSFsEc1SsHXhjBtCQBqZMaGUcq",
     bankAddress: "TS8FfCgfGHeEPNzH7GLGUwRVpiGsXKmoPoAGsnnipSS",
   },
-
   {
     id: "GUAV3", // manager BRkAbtjmzY9DBrmZJRgQ1thJsVVQd8vdW8CXmWzA6PK9
     imageUrl: "https://img-cdn.magiceden.dev/rs:fill:640:640:0:0/plain/https://www.arweave.net/oPjxhg-jCZK7WXPJbvt4LvCPr28efSAOA2oSoCC0Wys?ext=png",
