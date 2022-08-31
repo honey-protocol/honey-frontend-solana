@@ -207,13 +207,8 @@ const LiquidationPool = () => {
         handleRefetch();
         await fetchLiquidatorClient(type, userBid!);
         setRefetchState(true);
-        console.log('im running');
       }
     }
-    // console.log('still running?')
-    // handleRefetch();
-    // await fetchLiquidatorClient(type, userBid!);
-    // setRefetchState(true);
   }
 
   useEffect(() => {

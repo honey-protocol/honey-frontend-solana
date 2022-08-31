@@ -56,7 +56,6 @@ const LoanWithdraw = (props: LoanWithdrawProps) => {
    * @returns
   */
   function executeWithdraw() {
-    console.log('withdraw running, this is the user input', userInput)
     if (userInput) {
       handleWithdraw(userInput);
     } else {
