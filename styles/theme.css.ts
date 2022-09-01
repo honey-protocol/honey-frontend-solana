@@ -3,9 +3,25 @@ import { defineProperties, createSprinkles } from '@vanilla-extract/sprinkles';
 
 export const vars = createGlobalTheme(':root', {
   colors: {
-    // orange: 'orange',
-    // black: '#101115',
-    // gray: '#262730'
+    brownLight: '#E7B400',
+    brownMiddle: '#BE9200',
+    brownDark: '#AA8300',
+
+    grayLight: '#F5F5F5',
+    grayMiddle: '#E5E5E5',
+    grayDark: '#D9D9D9',
+
+    green: '#02AF00',
+    greenDark: '#007700',
+
+    red: '#CF4536',
+    redDark: '#A62B1E',
+
+    grayTransparent: 'rgba(17, 17, 17, 0.4)',
+    whiteTransparent: 'rgba(255, 255, 255, 0.7)',
+
+    white: '#FFFFFF',
+    black: '#111111',
   },
   space: {
     none: '0',
@@ -18,6 +34,58 @@ export const vars = createGlobalTheme(':root', {
     full: '100%'
   }
 });
+
+export const typography = {
+  title: {
+    fontFamily: 'Scandia',
+    weight:  'medium',
+    size: '22px',
+    lineHeight: '26px',
+  },
+  body: {
+    fontFamily: 'Scandia',
+    weight:  'medium',
+    size: '16px',
+    lineHeight: '20px',
+  },
+  description: {
+    fontFamily: 'Scandia',
+    weight:  'regular',
+    size: '14px',
+    lineHeight: '20px',
+  },
+  caption: {
+    fontFamily: 'Scandia',
+    weight:  'medium',
+    size: '12px',
+    lineHeight: '14px',
+  },
+  button: {
+    fontFamily: 'Red Hat Mono',
+    weight:  'medium',
+    size: '14px',
+    lineHeight: '20px',
+    textTransform: 'uppercase'
+  },
+  numbersLarge: {
+    fontFamily: 'Red Hat Mono',
+    weight:  'medium',
+    size: '20px',
+    lineHeight: '26px',
+  },
+  numbersRegular: {
+    fontFamily: 'Red Hat Mono',
+    weight:  'medium',
+    size: '16px',
+    lineHeight: '20px',
+  },
+  numbersMini: {
+    fontFamily: 'Red Hat Mono',
+    weight:  'medium',
+    size: '12px',
+    lineHeight: '14px',
+  },
+}
 
 const responsiveProperties = defineProperties({
   conditions: {
@@ -61,7 +129,8 @@ const colorProperties = defineProperties({
   defaultCondition: 'lightMode',
   properties: {
     color: vars.colors,
-    background: vars.colors
+    background: vars.colors,
+    anyanother: {}
     // etc.
   }
 });
