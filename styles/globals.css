@@ -1,5 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Red+Hat+Mono:wght@500&display=swap');
 @import '../fonts/stylesheet.css';
+@import '~antd/dist/antd.css';
 
 html,
 body {

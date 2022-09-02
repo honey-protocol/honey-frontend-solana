@@ -6,7 +6,9 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "prettier": "prettier --trailing-comma es5 \"pages/**/*.{js,jsx,ts,tsx,css,less,json}\" \"components/**/*.{js,jsx,ts,tsx,css,less,json}\"",
+    "prettier:fix": "prettier --trailing-comma es5 --write \"pages/**/*.{js,jsx,ts,tsx,css,less,json}\" \"components/**/*.{js,jsx,ts,tsx,css,less,json}\""
   },
   "dependencies": {
     "@emotion/react": "^11.8.1",
@@ -37,6 +39,7 @@
     "@vanilla-extract/css": "^1.6.8",
     "@vanilla-extract/next-plugin": "^2.0.1",
     "@vanilla-extract/sprinkles": "^1.4.0",
+    "antd": "^4.22.8",
     "big.js": "^6.2.1",
     "bn.js": "^5.2.0",
     "bn.js-types": "^1.0.1",
