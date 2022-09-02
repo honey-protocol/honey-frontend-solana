@@ -1,0 +1,37 @@
+.honey:front:build:dev:
+  image: ${BUILD_IMAGE}
+  stage: build:package
+  cache:
+    key: ${CI_COMMIT_REF_SLUG}
+    paths:
+      - node_modules/
+    policy: pull-push
+  only:
+    - dev
+  before_script:
+    - yarn install
+  script:
+    - yarn build
+  artifacts:
+    expire_in: 1hr
+    paths:
+      - build
+
+.honey:front:build:prod:
+  image: ${BUILD_IMAGE}
+  stage: build:package
+  cache:
+    key: ${CI_COMMIT_REF_SLUG}
+    paths:
+      - node_modules/
+    policy: pull-push
+  only:
+    - master
+  before_script:
+    - yarn install
+  script:
+    - yarn build
+  artifacts:
+    expire_in: 1hr
+    paths:
+      - build
