@@ -1,0 +1,24 @@
+@font-face {
+    font-family: 'Scandia';
+    src: url('Scandia-Medium.eot');
+    src: local('Scandia Medium'), local('Scandia-Medium'),
+        url('Scandia-Medium.eot?#iefix') format('embedded-opentype'),
+        url('Scandia-Medium.woff2') format('woff2'),
+        url('Scandia-Medium.woff') format('woff'),
+        url('Scandia-Medium.ttf') format('truetype');
+    font-weight: 500;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Scandia';
+    src: url('Scandia-Regular.eot');
+    src: local('Scandia Regular'), local('Scandia-Regular'),
+        url('Scandia-Regular.eot?#iefix') format('embedded-opentype'),
+        url('Scandia-Regular.woff2') format('woff2'),
+        url('Scandia-Regular.woff') format('woff'),
+        url('Scandia-Regular.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
