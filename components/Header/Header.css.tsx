@@ -11,7 +11,5 @@ export const headerContainer = style({
 export const logo = style({
   width: 120,
   height: 40,
-  backgroundColor: 'red',
-  color: vars.colors.white,
   background: 'url("/images/logo.svg") center center no-repeat'
 });
