@@ -21,7 +21,7 @@ export const vars = createGlobalTheme(':root', {
     whiteTransparent: 'rgba(255, 255, 255, 0.7)',
 
     white: '#FFFFFF',
-    black: '#111111',
+    black: '#111111'
   },
   space: {
     none: '0',
@@ -38,54 +38,54 @@ export const vars = createGlobalTheme(':root', {
 export const typography = {
   title: {
     fontFamily: 'Scandia',
-    weight:  'medium',
+    weight: 'medium',
     size: '22px',
-    lineHeight: '26px',
+    lineHeight: '26px'
   },
   body: {
     fontFamily: 'Scandia',
-    weight:  'medium',
+    weight: 'medium',
     size: '16px',
-    lineHeight: '20px',
+    lineHeight: '20px'
   },
   description: {
     fontFamily: 'Scandia',
-    weight:  'regular',
+    weight: 'regular',
     size: '14px',
-    lineHeight: '20px',
+    lineHeight: '20px'
   },
   caption: {
     fontFamily: 'Scandia',
-    weight:  'medium',
+    weight: 'medium',
     size: '12px',
-    lineHeight: '14px',
+    lineHeight: '14px'
   },
   button: {
     fontFamily: 'Red Hat Mono',
-    weight:  'medium',
+    weight: 'medium',
     size: '14px',
-    lineHeight: '20px',
-    textTransform: 'uppercase'
+    lineHeight: '20px'
+    // textTransform: 'uppercase'
   },
   numbersLarge: {
     fontFamily: 'Red Hat Mono',
-    weight:  'medium',
+    weight: 'medium',
     size: '20px',
-    lineHeight: '26px',
+    lineHeight: '26px'
   },
   numbersRegular: {
     fontFamily: 'Red Hat Mono',
-    weight:  'medium',
+    weight: 'medium',
     size: '16px',
-    lineHeight: '20px',
+    lineHeight: '20px'
   },
   numbersMini: {
     fontFamily: 'Red Hat Mono',
-    weight:  'medium',
+    weight: 'medium',
     size: '12px',
-    lineHeight: '14px',
-  },
-}
+    lineHeight: '14px'
+  }
+};
 
 const responsiveProperties = defineProperties({
   conditions: {

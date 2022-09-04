@@ -18,7 +18,7 @@ const LayoutRedesign: FC<Props> = ({ children, sidebar }) => {
         {/* <meta name="description" content="Liquidity solution for NFTs" /> */}
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <LayoutHeader>
+      <LayoutHeader className={styles.layoutHeader}>
         <Header />
       </LayoutHeader>
       <Layout>
