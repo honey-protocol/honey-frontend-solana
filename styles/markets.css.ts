@@ -51,3 +51,16 @@ export const expandSection = style({
 export const divider = style({
   position: 'absolute'
 });
+
+export const toggle = style({
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'flex-end'
+});
+
+export const toggleText = style([
+  typography.button,
+  {
+    marginLeft: 12
+  }
+]);

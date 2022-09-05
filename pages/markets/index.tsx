@@ -12,12 +12,15 @@ import { formatNumber } from '../../helpers/format';
 import Image from 'next/image';
 import mockNftImage from '/public/images/mock-collection-image@2x.png';
 import { Key } from 'antd/lib/table/interface';
+import HoneyToggle from '../../components/HoneyToggle/HoneyToggle';
 
 const { formatPercent: fp, formatUsd: fu } = formatNumber;
 
 const Markets: NextPage = () => {
   const [tableData, setTableData] = useState<MarketTableRow[]>([]);
   const [expandedRowKeys, setExpandedRowKeys] = useState<Key[]>([]);
+  const [isMyCollectionsFilterEnabled, setIsMyCollectionsFilterEnabled] =
+    useState(false);
 
   const isExpandedRow = (key: Key): boolean => {
     return expandedRowKeys.includes(key);
@@ -45,6 +48,20 @@ const Markets: NextPage = () => {
       return newState;
     });
   }, []);
+
+  const handleToggle = (checked: boolean) => {
+    setIsMyCollectionsFilterEnabled(checked);
+  };
+
+  const MyCollectionsToggle = () => (
+    <div className={style.toggle}>
+      <HoneyToggle
+        checked={isMyCollectionsFilterEnabled}
+        onChange={handleToggle}
+      />
+      <span className={style.toggleText}>my collections</span>
+    </div>
+  );
 
   const columns: ColumnType<MarketTableRow>[] = useMemo(
     () => [
@@ -84,9 +101,9 @@ const Markets: NextPage = () => {
         }
       },
       {
-        title: '',
+        title: MyCollectionsToggle,
         dataIndex: '',
-        render: (_, row: MarketTableRow) => {
+        render: (_: null, row: MarketTableRow) => {
           return (
             <div className={style.buttonsCell}>
               <button onClick={() => toggleRowExpand(row)}>View</button>
@@ -95,7 +112,7 @@ const Markets: NextPage = () => {
         }
       }
     ],
-    []
+    [isMyCollectionsFilterEnabled]
   );
 
   // PUT YOUR DATA SOURCE HERE
@@ -104,7 +121,7 @@ const Markets: NextPage = () => {
     const mockData: MarketTableRow[] = [
       {
         key: '0',
-        name: 'Test',
+        name: 'Test 2',
         rate: 0.1,
         available: 100,
         value: 100000
