@@ -9,6 +9,8 @@ import * as style from '../../styles/markets.css';
 import { MarketTableRow } from '../../types/markets';
 import { useEffect, useState } from 'react';
 import { formatNumber } from '../../helpers/format';
+import Image from 'next/image';
+import mockNftImage from '/public/images/mock-collection-image@2x.png';
 
 const { format: f, formatPercent: fp, formatUsd: fu } = formatNumber;
 const columns: ColumnType<MarketTableRow>[] = [
@@ -18,7 +20,9 @@ const columns: ColumnType<MarketTableRow>[] = [
     render: (name: string) => {
       return (
         <div className={style.nameCell}>
-          <div className={style.collectionLogo}>Logo</div>
+          <div className={style.collectionLogo}>
+            <Image src={mockNftImage} />
+          </div>
           <div className={style.collectionName}>{name}</div>
         </div>
       );
@@ -85,9 +89,13 @@ const Markets: NextPage = () => {
   return (
     <LayoutRedesign>
       <Content>
-        <HoneyTable columns={columns} dataSource={tableData} />
+        <HoneyTable
+          columns={columns}
+          dataSource={tableData}
+          pagination={false}
+        />
       </Content>
-      <Sider>
+      <Sider width={350}>
         <MarketsSidebar />
       </Sider>
     </LayoutRedesign>

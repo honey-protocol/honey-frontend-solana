@@ -21,9 +21,12 @@ globalStyle(`${bcs('.ant-table-container')}`, {
   background: 'unset!important'
 });
 
-globalStyle(`${bcs('.ant-table, .ant-table-thead')}`, {
-  background: 'none'
-});
+globalStyle(
+  `${bcs('.ant-table, .ant-table-thead, .ant-table-thead > tr > th')}`,
+  {
+    background: 'none'
+  }
+);
 
 globalStyle(`${bcs('.ant-table table')}`, {
   borderCollapse: 'separate',
