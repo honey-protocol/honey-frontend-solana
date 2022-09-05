@@ -1,4 +1,4 @@
-import { style } from '@vanilla-extract/css';
+import { globalStyle, style } from '@vanilla-extract/css';
 import { typography } from './theme.css';
 
 export const marketsPage = style({});
@@ -32,3 +32,14 @@ export const buttonsCell = style({
   display: 'flex',
   justifyContent: 'flex-end'
 });
+
+export const honeyTableExpandedRow = style({});
+
+export const honeyTableCollapsedRow = style({});
+
+globalStyle(
+  `${honeyTableCollapsedRow} ${availableCell}, ${honeyTableCollapsedRow} ${valueCell}, ${honeyTableCollapsedRow} ${rateCell}`,
+  {
+    opacity: 0.4
+  }
+);
