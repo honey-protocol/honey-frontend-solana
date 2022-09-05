@@ -5,12 +5,13 @@ export const headerStats = style({
   // lineHeight: 1.5
 });
 
-export const number = style({
+export const num = style({
   ...typography.numbersMini
 });
 
 export const caption = style({
-  ...typography.caption
+  ...typography.caption,
+  fontWeight: '500'
 });
 
 export const statsContainer = style({

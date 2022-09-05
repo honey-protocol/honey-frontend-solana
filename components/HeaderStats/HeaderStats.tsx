@@ -9,7 +9,7 @@ const HeaderStats = () => {
   return (
     <Space size="middle" className={styles.headerStats}>
       <Space align="end" size={2} direction="vertical">
-        <Text className={styles.number}>$ 1,250</Text>
+        <Text className={styles.num}>$ 1,250</Text>
         <Text className={styles.caption}>Debt</Text>
       </Space>
       <div className={styles.statsContainer}>
@@ -25,7 +25,7 @@ const HeaderStats = () => {
           </div>
         </div>
         <Space>
-          <Text className={styles.number}>
+          <Text className={styles.num}>
             20 %{' '}
             <Text type="secondary" className={styles.caption}>
               Risk
@@ -46,7 +46,7 @@ const HeaderStats = () => {
             <BarPinItemIcon color={'black'} />
           </div>
         </div>
-        <Text className={styles.number}>
+        <Text className={styles.num}>
           $ 2,250{' '}
           <Text type="secondary" className={styles.caption}>
             Available
@@ -76,7 +76,7 @@ const HeaderStats = () => {
         </Text>
       </div>
       <Space size={2} direction="vertical">
-        <Text className={styles.number}>$ 5,000</Text>
+        <Text className={styles.num}>$ 5,000</Text>
         <Text type="secondary" className={styles.caption}>
           Deposit
         </Text>
