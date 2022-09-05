@@ -1,5 +1,5 @@
 import { globalStyle, style } from '@vanilla-extract/css';
-import { typography } from './theme.css';
+import { typography, vars } from './theme.css';
 
 export const marketsPage = style({});
 
@@ -33,13 +33,21 @@ export const buttonsCell = style({
   justifyContent: 'flex-end'
 });
 
-export const honeyTableExpandedRow = style({});
+export const expandedRow = style({});
 
-export const honeyTableCollapsedRow = style({});
+export const inactiveRow = style({});
 
 globalStyle(
-  `${honeyTableCollapsedRow} ${availableCell}, ${honeyTableCollapsedRow} ${valueCell}, ${honeyTableCollapsedRow} ${rateCell}`,
+  `${inactiveRow} ${availableCell}, ${inactiveRow} ${valueCell}, ${inactiveRow} ${rateCell}`,
   {
     opacity: 0.4
   }
 );
+
+export const expandSection = style({
+  position: 'relative'
+});
+
+export const divider = style({
+  position: 'absolute'
+});
