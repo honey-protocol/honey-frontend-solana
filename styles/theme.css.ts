@@ -65,8 +65,8 @@ export const typography = {
     fontFamily: 'Red Hat Mono',
     fontWeight: '500',
     fontSize: '14px',
-    lineHeight: '20px',
-    textTransform: 'uppercase'
+    lineHeight: '20px'
+    // textTransform: 'uppercase'
   },
   numbersLarge: {
     fontFamily: 'Red Hat Mono',
