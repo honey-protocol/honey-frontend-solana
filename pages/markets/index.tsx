@@ -7,64 +7,103 @@ import HoneyTable from '../../components/HoneyTable/HoneyTable';
 import { ColumnType } from 'antd/lib/table';
 import * as style from '../../styles/markets.css';
 import { MarketTableRow } from '../../types/markets';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { formatNumber } from '../../helpers/format';
 import Image from 'next/image';
 import mockNftImage from '/public/images/mock-collection-image@2x.png';
+import { Key } from 'antd/lib/table/interface';
 
-const { format: f, formatPercent: fp, formatUsd: fu } = formatNumber;
-const columns: ColumnType<MarketTableRow>[] = [
-  {
-    title: 'Name',
-    dataIndex: 'name',
-    render: (name: string) => {
-      return (
-        <div className={style.nameCell}>
-          <div className={style.collectionLogo}>
-            <Image src={mockNftImage} />
-          </div>
-          <div className={style.collectionName}>{name}</div>
-        </div>
-      );
-    }
-  },
-  {
-    title: 'Rate',
-    dataIndex: 'rate',
-    render: (rate: number) => {
-      return <div className={style.rateCell}>{fp(rate * 100)}</div>;
-    }
-  },
-  {
-    title: 'Available',
-    dataIndex: 'available',
-    render: (available: number) => {
-      return <div className={style.availableCell}>{fu(available)}</div>;
-    }
-  },
-  {
-    title: 'Value',
-    dataIndex: 'value',
-    render: (value: number) => {
-      return <div className={style.valueCell}>{fu(value)}</div>;
-    }
-  },
-  {
-    title: '',
-    dataIndex: '',
-    render: () => {
-      return (
-        <div className={style.buttonsCell}>
-          <button>View</button>
-        </div>
-      );
-    }
-  }
-];
+const { formatPercent: fp, formatUsd: fu } = formatNumber;
 
 const Markets: NextPage = () => {
   const [tableData, setTableData] = useState<MarketTableRow[]>([]);
+  const [expandedRowKeys, setExpandedRowKeys] = useState<Key[]>([]);
 
+  // TODO: think about moving this logic for expanded rows into HoneyTable component
+  // if it is gonna be reused in a more than one place
+  const isExpandedRow = (key: Key): boolean => {
+    return expandedRowKeys.includes(key);
+  };
+
+  const getRowClassName = (row: MarketTableRow): string => {
+    if (!expandedRowKeys || !expandedRowKeys.length) {
+      return '';
+    }
+    return isExpandedRow(row.key)
+      ? style.honeyTableExpandedRow
+      : style.honeyTableCollapsedRow;
+  };
+
+  const toggleRowExpand = useCallback((row: MarketTableRow) => {
+    const { key } = row;
+    setExpandedRowKeys(prevState => {
+      let newState = [...prevState];
+      if (prevState.includes(key)) {
+        const index = prevState.findIndex(v => v === key);
+        newState.splice(index, 1);
+      } else {
+        // uncomment this if you want to support multiple expanded rows
+        // newState.push(key);
+        newState = [key];
+      }
+      return newState;
+    });
+  }, []);
+
+  const columns: ColumnType<MarketTableRow>[] = useMemo(
+    () => [
+      {
+        title: 'Name',
+        dataIndex: 'name',
+        render: (name: string) => {
+          return (
+            <div className={style.nameCell}>
+              <div className={style.collectionLogo}>
+                <Image src={mockNftImage} />
+              </div>
+              <div className={style.collectionName}>{name}</div>
+            </div>
+          );
+        }
+      },
+      {
+        title: 'Rate',
+        dataIndex: 'rate',
+        render: (rate: number) => {
+          return <div className={style.rateCell}>{fp(rate * 100)}</div>;
+        }
+      },
+      {
+        title: 'Available',
+        dataIndex: 'available',
+        render: (available: number) => {
+          return <div className={style.availableCell}>{fu(available)}</div>;
+        }
+      },
+      {
+        title: 'Value',
+        dataIndex: 'value',
+        render: (value: number) => {
+          return <div className={style.valueCell}>{fu(value)}</div>;
+        }
+      },
+      {
+        title: '',
+        dataIndex: '',
+        render: (_, row: MarketTableRow) => {
+          return (
+            <div className={style.buttonsCell}>
+              <button onClick={() => toggleRowExpand(row)}>View</button>
+            </div>
+          );
+        }
+      }
+    ],
+    []
+  );
+
+  // PUT YOUR DATA SOURCE HERE
+  // MOCK DATA FOR NOW
   useEffect(() => {
     const mockData: MarketTableRow[] = [
       {
@@ -93,6 +132,15 @@ const Markets: NextPage = () => {
           columns={columns}
           dataSource={tableData}
           pagination={false}
+          rowClassName={getRowClassName}
+          expandable={{
+            // we use our own custom expand column
+            showExpandColumn: false,
+            expandedRowKeys: expandedRowKeys,
+            expandedRowRender: record => {
+              return <div>WIP: add expand section</div>;
+            }
+          }}
         />
       </Content>
       <Sider width={350}>
