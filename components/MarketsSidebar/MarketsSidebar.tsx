@@ -15,8 +15,8 @@ type Tab = 'borrow' | 'repay';
 const MarketsSidebar = (props: MarketsSidebarProps) => {
   const [activeTab, setActiveTab] = useState<Tab>('borrow');
 
-  const handleTabChange = (tabKey: Tab) => {
-    setActiveTab(tabKey);
+  const handleTabChange = (tabKey: string) => {
+    setActiveTab(tabKey as Tab);
   };
   return (
     <div className={styles.marketsSidebarContainer}>
