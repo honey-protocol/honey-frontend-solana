@@ -1,5 +1,7 @@
 import { createGlobalTheme } from '@vanilla-extract/css';
 import { defineProperties, createSprinkles } from '@vanilla-extract/sprinkles';
+import { Property } from 'csstype';
+import TextTransform = Property.TextTransform;
 
 export const vars = createGlobalTheme(':root', {
   colors: {
@@ -65,8 +67,8 @@ export const typography = {
     fontFamily: 'Red Hat Mono',
     fontWeight: '500',
     fontSize: '14px',
-    lineHeight: '20px',
-    textTransform: 'uppercase'
+    textTransform: 'uppercase' as TextTransform,
+    lineHeight: '20px'
   },
   numbersLarge: {
     fontFamily: 'Red Hat Mono',

@@ -1,5 +1,5 @@
 import * as styles from './Range.css';
-import { FC, useCallback, useState } from 'react';
+import { FC } from 'react';
 import { Slider } from 'antd';
 import { vars } from '../../styles/theme.css';
 import c from 'classnames';
