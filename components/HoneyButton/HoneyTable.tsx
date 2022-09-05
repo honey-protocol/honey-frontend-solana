@@ -5,7 +5,11 @@ import c from 'classnames';
 
 const HoneyButton: FC<ButtonProps> = props => {
   const { className, ...rest } = props;
-  return <Button {...rest} className={c(styles.honeyButton, className)} />;
+  return (
+    <Button {...rest} className={c(styles.honeyButton, className)}>
+      {props.children}
+    </Button>
+  );
 };
 
 export default HoneyButton;
