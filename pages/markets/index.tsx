@@ -19,8 +19,6 @@ const Markets: NextPage = () => {
   const [tableData, setTableData] = useState<MarketTableRow[]>([]);
   const [expandedRowKeys, setExpandedRowKeys] = useState<Key[]>([]);
 
-  // TODO: think about moving this logic for expanded rows into HoneyTable component
-  // if it is gonna be reused in a more than one place
   const isExpandedRow = (key: Key): boolean => {
     return expandedRowKeys.includes(key);
   };
@@ -29,9 +27,7 @@ const Markets: NextPage = () => {
     if (!expandedRowKeys || !expandedRowKeys.length) {
       return '';
     }
-    return isExpandedRow(row.key)
-      ? style.honeyTableExpandedRow
-      : style.honeyTableCollapsedRow;
+    return isExpandedRow(row.key) ? style.expandedRow : style.inactiveRow;
   };
 
   const toggleRowExpand = useCallback((row: MarketTableRow) => {
@@ -138,7 +134,11 @@ const Markets: NextPage = () => {
             showExpandColumn: false,
             expandedRowKeys: expandedRowKeys,
             expandedRowRender: record => {
-              return <div>WIP: add expand section</div>;
+              return (
+                <div className={style.expandSection}>
+                  WIP: add expand section
+                </div>
+              );
             }
           }}
         />
