@@ -3,6 +3,10 @@ import { vars } from 'styles/theme.css';
 
 export const layout = style({});
 
-globalStyle('body .ant-layout-header', {
+globalStyle(`body ${layout} .ant-layout-header`, {
   backgroundColor: vars.colors.white
+});
+
+globalStyle(`body ${layout} .ant-layout-sider`, {
+  backgroundColor: 'transparent'
 });

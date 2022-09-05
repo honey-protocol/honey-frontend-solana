@@ -6,12 +6,18 @@ export const infoBlockContainer = style({
   flexDirection: 'column'
 });
 
-export const valueText = styleVariants({
-  default: typography.numbersRegular,
+export const disabled = style([
+  {
+    opacity: 0.4
+  }
+]);
+
+export const value = styleVariants({
+  normal: typography.numbersRegular,
   big: typography.numbersLarge
 });
 
-export const labelsText = style([
+export const label = style([
   typography.caption,
   {
     color: vars.colors.grayTransparent,
@@ -21,3 +27,5 @@ export const labelsText = style([
     }
   }
 ]);
+
+export const footer = style([label]);
