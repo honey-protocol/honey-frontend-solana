@@ -1,0 +1,118 @@
+stages:
+  - build:package
+  - build:docker
+  - deploy
+
+include:
+  - local: '/gitlab-templates/.gitlab-ci-docker.yml'
+  - local: '/gitlab-templates/.gitlab-ci-build.yml'
+  - local: '/gitlab-templates/.gitlab-ci-kitchen.yml'
+
+variables:
+  KANIKO_EXECUTOR_IMAGE: public.ecr.aws/k2t6v7g3/kaniko-alpine:latest
+  DOCKER_REGISTRY: 642386214735.dkr.ecr.eu-north-1.amazonaws.com
+  DOCKER_IMAGE_NAME: honey/honey-frontend
+  DOCKER_IMAGE: ${DOCKER_REGISTRY}/${DOCKER_IMAGE_NAME}:${CI_COMMIT_SHORT_SHA}-${CI_COMMIT_REF_SLUG}
+  DOCKERFILE_LOCATION: docker/Dockerfile
+  DOCKER_CONTEXT: .
+  BUILD_IMAGE: node:16.13.1-alpine3.14
+
+#################################
+#----------BUILD PROD-----------#
+#################################
+
+honey:front:prod:build:
+  extends: .honey:front:build:prod
+  variables:
+    IS_DEV: 'false'
+    REACT_APP_ENV: 'production'
+
+
+#################################
+#----------BUILD DEV------------#
+#################################
+
+honey:front:dev:build:
+  extends: .honey:front:build:dev
+  variables:
+    IS_DEV: 'true'
+    REACT_APP_ENV: 'development'
+
+
+########################################
+#----------DOCKER BUILD PROD-----------#
+########################################
+
+honey:front:docker:build:prod:
+  extends: .honey:front:build:docker:prod
+  dependencies:
+    - honey:front:prod:build
+  needs: ['honey:front:prod:build']
+  variables:
+    IS_DEV: 'false'
+    REACT_APP_ENV: 'production'
+
+########################################
+#----------DOCKER BUILD DEV------------#
+########################################
+
+honey:front:docker:build:dev:
+  extends: .honey:front:build:docker:dev
+  dependencies:
+    - honey:front:dev:build
+  needs: ['honey:front:dev:build']
+  variables:
+    IS_DEV: 'true'
+    REACT_APP_ENV: 'development'
+
+#################################
+#------------DEPLOY-------------#
+#################################
+
+deploy:
+  stage: deploy
+  only:
+    - master
+    - dev
+  variables:
+    HONEY_FRONTEND_DEPLOY_ENV: ${CI_COMMIT_REF_SLUG}
+    IMAGE_VERSION: ${CI_COMMIT_SHORT_SHA}-${CI_COMMIT_REF_SLUG}
+  trigger:
+    project: humandone/humandone-aws-infra
+    strategy: depend
+
+##################################
+#------------KITCHEN-------------#
+##################################
+## To launch creation of kitchen env, create MR
+
+humandone:kitchen:build:package:
+  extends: .humandone:kitchen:build:package
+  variables:
+    IS_DEV: 'true'
+
+humandone:kitchen:build:docker:
+  extends: .humandone:kitchen:build:docker
+  dependencies:
+    - humandone:kitchen:build:package
+  needs: ['humandone:kitchen:build:package']
+  variables:
+    IS_DEV: 'true'
+    REACT_APP_ENV: 'development'
+
+humandone:kitchen:deploy:
+  stage: deploy
+  rules:
+    - if: $CI_MERGE_REQUEST_TITLE =~ /^\[skip-kitchen\]/ # If you want to skip creation of kitchen env, please add [skip-kitchen] in the beginning of MR name
+      when: never
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+  variables:
+    DEPLOY_ENV: 'kitchen'
+    DEPLOY_ENV_TYPE: 'frontend'
+    DEPLOY_ENV_NAME: ${CI_MERGE_REQUEST_SOURCE_BRANCH_NAME}  # You can define any name. Kitchen url: <DEPLOY_ENV_NAME>.kitchen.humandonedev.com (Don't use specific symbols e.g. @#$%_/, only -)
+    IMAGE_VERSION: ${CI_COMMIT_SHORT_SHA}-${CI_COMMIT_REF_SLUG}
+    IMAGE_NAME: ${DOCKER_IMAGE_NAME}
+    PROJECT_ID: ${CI_MERGE_REQUEST_PROJECT_ID}
+  trigger:
+    project: humandone/humandone-aws-infra
+    strategy: depend
