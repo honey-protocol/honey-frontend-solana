@@ -11,7 +11,7 @@ import { ChangeEvent, useCallback, useEffect, useMemo, useState } from 'react';
 import { formatNumber } from '../../helpers/format';
 import Image from 'next/image';
 import mockNftImage from '/public/images/mock-collection-image@2x.png';
-import { Key } from 'antd/lib/table/interface';
+import { Key, SortOrder } from 'antd/lib/table/interface';
 import HoneyToggle from '../../components/HoneyToggle/HoneyToggle';
 import debounce from 'lodash/debounce';
 import SearchInput from '../../components/SearchInput/SearchInput';
@@ -69,6 +69,21 @@ const Markets: NextPage = () => {
     </div>
   );
 
+  const getColumnSortStatus = (
+    sortColumns:
+      | { column: ColumnType<MarketTableRow>; order: SortOrder }[]
+      | undefined,
+    columnName: string
+  ) => {
+    return (
+      (sortColumns &&
+        sortColumns[0] &&
+        sortColumns[0].column.dataIndex === columnName &&
+        sortColumns[0].order) ||
+      'disabled'
+    );
+  };
+
   const onSearch = (searchTerm: string): MarketTableRow[] => {
     if (!searchTerm) {
       return [...tableData];
@@ -114,6 +129,7 @@ const Markets: NextPage = () => {
       {
         title: SearchForm,
         dataIndex: 'name',
+        key: 'name',
         render: (name: string) => {
           return (
             <div className={style.nameCell}>
@@ -126,22 +142,65 @@ const Markets: NextPage = () => {
         }
       },
       {
-        title: 'Rate',
+        title: ({ sortColumns }) => {
+          const sortOrder = getColumnSortStatus(sortColumns, 'rate');
+          return (
+            <div
+              className={
+                style.headerCell[
+                  sortOrder === 'disabled' ? 'disabled' : 'active'
+                ]
+              }
+            >
+              <span>Rate</span> <div className={style.sortIcon[sortOrder]} />
+            </div>
+          );
+        },
         dataIndex: 'rate',
+        sorter: (a, b) => a.rate - b.rate,
         render: (rate: number) => {
           return <div className={style.rateCell}>{fp(rate * 100)}</div>;
         }
       },
       {
-        title: 'Available',
+        title: ({ sortColumns }) => {
+          const sortOrder = getColumnSortStatus(sortColumns, 'available');
+          return (
+            <div
+              className={
+                style.headerCell[
+                  sortOrder === 'disabled' ? 'disabled' : 'active'
+                ]
+              }
+            >
+              <span>Available</span>{' '}
+              <div className={style.sortIcon[sortOrder]} />
+            </div>
+          );
+        },
         dataIndex: 'available',
+        sorter: (a, b) => a.available - b.available,
         render: (available: number) => {
           return <div className={style.availableCell}>{fu(available)}</div>;
         }
       },
       {
-        title: 'Value',
+        title: ({ sortColumns }) => {
+          const sortOrder = getColumnSortStatus(sortColumns, 'value');
+          return (
+            <div
+              className={
+                style.headerCell[
+                  sortOrder === 'disabled' ? 'disabled' : 'active'
+                ]
+              }
+            >
+              <span>Value</span> <div className={style.sortIcon[sortOrder]} />
+            </div>
+          );
+        },
         dataIndex: 'value',
+        sorter: (a, b) => a.value - b.value,
         render: (value: number) => {
           return <div className={style.valueCell}>{fu(value)}</div>;
         }
@@ -175,9 +234,9 @@ const Markets: NextPage = () => {
       {
         key: '1',
         name: 'Very long collection name very long',
-        rate: 0.1,
-        available: 100,
-        value: 100000
+        rate: 0.2,
+        available: 150,
+        value: 160000
       }
     ];
 
@@ -193,6 +252,7 @@ const Markets: NextPage = () => {
           dataSource={tableDataFiltered}
           pagination={false}
           rowClassName={getRowClassName}
+          className={style.table}
           expandable={{
             // we use our own custom expand column
             showExpandColumn: false,
