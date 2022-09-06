@@ -1,5 +1,7 @@
 import { createGlobalTheme } from '@vanilla-extract/css';
 import { defineProperties, createSprinkles } from '@vanilla-extract/sprinkles';
+import { Property } from 'csstype';
+import TextTransform = Property.TextTransform;
 
 export const vars = createGlobalTheme(':root', {
   colors: {
@@ -13,6 +15,7 @@ export const vars = createGlobalTheme(':root', {
 
     green: '#02AF00',
     greenDark: '#007700',
+    greenDarkest: '#008800',
 
     red: '#CF4536',
     redDark: '#A62B1E',
@@ -21,7 +24,7 @@ export const vars = createGlobalTheme(':root', {
     whiteTransparent: 'rgba(255, 255, 255, 0.7)',
 
     white: '#FFFFFF',
-    black: '#111111',
+    black: '#111111'
   },
   space: {
     none: '0',
@@ -38,54 +41,54 @@ export const vars = createGlobalTheme(':root', {
 export const typography = {
   title: {
     fontFamily: 'Scandia',
-    weight:  'medium',
-    size: '22px',
-    lineHeight: '26px',
+    fontWeight: '500',
+    fontSize: '22px',
+    lineHeight: '26px'
   },
   body: {
     fontFamily: 'Scandia',
-    weight:  'medium',
-    size: '16px',
-    lineHeight: '20px',
+    fontWeight: '500',
+    fontSize: '16px',
+    lineHeight: '20px'
   },
   description: {
     fontFamily: 'Scandia',
-    weight:  'regular',
-    size: '14px',
-    lineHeight: '20px',
+    fontWeight: 'regular',
+    fontSize: '14px',
+    lineHeight: '20px'
   },
   caption: {
     fontFamily: 'Scandia',
-    weight:  'medium',
-    size: '12px',
-    lineHeight: '14px',
+    fontWeight: '500',
+    fontSize: '12px',
+    lineHeight: '14px'
   },
   button: {
     fontFamily: 'Red Hat Mono',
-    weight:  'medium',
-    size: '14px',
-    lineHeight: '20px',
-    textTransform: 'uppercase'
+    fontWeight: '500',
+    fontSize: '14px',
+    textTransform: 'uppercase' as TextTransform,
+    lineHeight: '20px'
   },
   numbersLarge: {
     fontFamily: 'Red Hat Mono',
-    weight:  'medium',
-    size: '20px',
-    lineHeight: '26px',
+    fontWeight: '500',
+    fontSize: '20px',
+    lineHeight: '26px'
   },
   numbersRegular: {
     fontFamily: 'Red Hat Mono',
-    weight:  'medium',
-    size: '16px',
-    lineHeight: '20px',
+    fontWeight: '500',
+    fontSize: '16px',
+    lineHeight: '20px'
   },
   numbersMini: {
     fontFamily: 'Red Hat Mono',
-    weight:  'medium',
-    size: '12px',
-    lineHeight: '14px',
-  },
-}
+    fontWeight: '500',
+    fontSize: '12px',
+    lineHeight: '14px'
+  }
+};
 
 const responsiveProperties = defineProperties({
   conditions: {

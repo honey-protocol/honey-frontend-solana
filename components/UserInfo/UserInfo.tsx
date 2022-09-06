@@ -1,15 +1,5 @@
-import React, {
-  FC,
-  useState,
-  useEffect,
-  useCallback,
-  useRef,
-  MutableRefObject
-} from 'react';
-import { Box, IconMenu } from 'degen';
-import { Stack } from 'degen';
-import { Button } from 'degen';
-import { Text } from 'degen';
+import React, { useEffect, useRef } from 'react';
+import { Box, Button, IconMenu, Text } from 'degen';
 import { useWalletKit } from '@gokiprotocol/walletkit';
 import { useConnectedWallet, useSolana } from '@saberhq/use-solana';
 import * as styles from './UserInfo.css';
