@@ -23,3 +23,8 @@ export const layoutHeader = style({
 });
 
 export const contentContainer = style([container, {}]);
+
+globalStyle(`body ${contentContainer} > .ant-layout-content`, {
+  backgroundColor: 'transparent',
+  paddingRight: 24
+});

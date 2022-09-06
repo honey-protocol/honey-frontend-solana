@@ -9,10 +9,9 @@ import * as styles from './LayoutRedesign.css';
 
 interface Props {
   children: ReactNode;
-  sidebar?: ReactNode;
 }
 
-const LayoutRedesign: FC<Props> = ({ children, sidebar }) => {
+const LayoutRedesign: FC<Props> = ({ children }) => {
   // const [showMobileSidebar, setShowMobileSidebar] = useState(false);
   return (
     <Layout className={styles.layout}>
