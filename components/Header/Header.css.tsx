@@ -20,17 +20,3 @@ export const leftContainer = style({
   display: 'flex',
   alignItems: 'center'
 });
-
-export const walletBtn = style({
-  background: vars.colors.brownLight,
-  borderRadius: '8px',
-  padding: '10px 15px',
-  height: 'unset',
-  display: 'flex',
-  border: 'none',
-  gap: '10px',
-  ...typography.button,
-  ':hover': {
-    background: vars.colors.brownDark
-  }
-});
