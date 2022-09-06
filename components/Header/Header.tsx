@@ -1,14 +1,15 @@
 import * as styles from './Header.css';
 import { FC } from 'react';
-import { Button, Space, Typography } from 'antd';
+import { Space, Typography } from 'antd';
 import HeaderStats from 'components/HeaderStats/HeaderStats';
 import HeaderDropdownMenu from 'components/HeaderDropdownMenu/HeaderDropdownMenu';
 import WalletMenu from 'components/WalletMenu/WalletMenu';
 import { WalletIcon } from 'icons/WalletIcon';
+import HoneyButton from 'components/HoneyButton/HoneyButton';
 import HoneyCardYellowShadow from '../HoneyCardYellowShadow/HoneyCardYellowShadow';
 
 const Header: FC = () => {
-  const wallet = true;
+  const wallet = false;
   return (
     <div className={styles.headerContainer}>
       <HoneyCardYellowShadow>
@@ -23,14 +24,11 @@ const Header: FC = () => {
           {wallet ? (
             <WalletMenu />
           ) : (
-            <Button
-              shape="round"
-              type="primary"
-              icon={<WalletIcon />}
-              className={styles.walletBtn}
-            >
+            <HoneyButton variant="primary"
+              icon={<WalletIcon />}>
+
               <Typography.Text>CONNECT WALLET</Typography.Text>
-            </Button>
+            </HoneyButton>
           )}
         </Space>
       </HoneyCardYellowShadow>

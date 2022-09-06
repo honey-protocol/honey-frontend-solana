@@ -225,7 +225,7 @@ const Markets: NextPage = () => {
         />
       </Content>
       <Sider width={350}>
-        <MarketsSidebar />
+        <MarketsSidebar collectionId="s" />
       </Sider>
     </LayoutRedesign>
   );
