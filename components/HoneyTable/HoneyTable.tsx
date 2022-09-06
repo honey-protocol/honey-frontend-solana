@@ -2,6 +2,7 @@ import { Table, TableProps } from 'antd';
 import { FC } from 'react';
 import * as styles from './HoneyTable.css';
 import { Key } from 'antd/lib/table/interface';
+import c from 'classnames'
 
 const HoneyTable: FC<TableProps<any>> = props => {
   const { className, rowClassName, expandedRowClassName, expandable, ...rest } =
@@ -81,7 +82,7 @@ const HoneyTable: FC<TableProps<any>> = props => {
   return (
     <Table
       {...rest}
-      className={styles.honeyTableContainer}
+      className={c(styles.honeyTableContainer, className)}
       rowClassName={_rowClassName}
       expandedRowClassName={_expandedRowClassName}
       expandable={expandable}
