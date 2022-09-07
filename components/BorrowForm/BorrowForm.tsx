@@ -6,7 +6,7 @@ import { Range } from '../Range/Range';
 import * as styles from './BorrowForm.css';
 import { formatNumber } from '../../helpers/format';
 import mockNftImage from '/public/images/mock-collection-image@2x.png';
-import HoneyButton from 'components/HoneyButton/HoneyTable';
+import HoneyButton from 'components/HoneyButton/HoneyButton';
 
 type BorrowFormProps = {};
 
@@ -102,8 +102,8 @@ const BorrowForm: FC<BorrowFormProps> = () => {
 
       <div className={styles.footer}>
         <div className={styles.buttons}>
-          <HoneyButton>Cancel</HoneyButton>
-          <HoneyButton type="primary" disabled={isBorrowButtonDisabled()}>
+          <HoneyButton variant="tertiary">Cancel</HoneyButton>
+          <HoneyButton variant="primary" disabled={isBorrowButtonDisabled()}>
             Borrow
           </HoneyButton>
         </div>

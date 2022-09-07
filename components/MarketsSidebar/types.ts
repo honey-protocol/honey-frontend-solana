@@ -1,1 +1,3 @@
-export type MarketsSidebarProps = {};
+export type MarketsSidebarProps = {
+  collectionId?: string;
+};
