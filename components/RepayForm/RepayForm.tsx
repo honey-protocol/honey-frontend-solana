@@ -7,6 +7,7 @@ import * as styles from './RepayForm.css';
 import { formatNumber } from '../../helpers/format';
 import mockNftImage from '/public/images/mock-collection-image@2x.png';
 import HoneyButton from 'components/HoneyButton/HoneyButton';
+import HexaBoxContainer from '../HexaBoxContainer/HexaBoxContainer';
 
 type RepayFormProps = {};
 
@@ -27,7 +28,9 @@ const RepayForm: FC<RepayFormProps> = () => {
       <div className={styles.content}>
         <div className={styles.nftInfo}>
           <div className={styles.nftImage}>
-            <Image src={mockNftImage} />
+            <HexaBoxContainer>
+              <Image src={mockNftImage} />
+            </HexaBoxContainer>
           </div>
           <div className={styles.nftName}>Doodles #1291</div>
         </div>
