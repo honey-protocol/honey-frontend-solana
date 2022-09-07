@@ -3,7 +3,7 @@ import { Progress, Space, Typography } from 'antd';
 import * as styles from './HeaderStats.css';
 import { vars } from 'styles/theme.css';
 import { BarPinItemIcon } from 'icons/BarPinItemIcon';
-const { Title, Paragraph, Text, Link } = Typography;
+const { Text } = Typography;
 
 const HeaderStats = () => {
   return (
