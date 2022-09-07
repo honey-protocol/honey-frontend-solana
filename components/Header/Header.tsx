@@ -6,26 +6,33 @@ import HeaderDropdownMenu from 'components/HeaderDropdownMenu/HeaderDropdownMenu
 import WalletMenu from 'components/WalletMenu/WalletMenu';
 import { WalletIcon } from 'icons/WalletIcon';
 import HoneyButton from 'components/HoneyButton/HoneyButton';
+import HoneyCardYellowShadow from '../HoneyCardYellowShadow/HoneyCardYellowShadow';
 
 const Header: FC = () => {
   const wallet = false;
   return (
-    <Space className={styles.headerContainer}>
-      <div className={styles.leftContainer}>
-        <div className={styles.logo} />
-        <HeaderDropdownMenu />
-      </div>
+    <div className={styles.headerContainer}>
+      <HoneyCardYellowShadow>
+        <Space className={styles.content}>
+          <div className={styles.leftContainer}>
+            <div className={styles.logo} />
+            <HeaderDropdownMenu />
+          </div>
 
-      <HeaderStats />
+          <HeaderStats />
 
-      {wallet ? (
-        <WalletMenu />
-      ) : (
-        <HoneyButton variant="primary" icon={<WalletIcon />}>
-          <Typography.Text>CONNECT WALLET</Typography.Text>
-        </HoneyButton>
-      )}
-    </Space>
+          {wallet ? (
+            <WalletMenu />
+          ) : (
+            <HoneyButton variant="primary"
+              icon={<WalletIcon />}>
+
+              <Typography.Text>CONNECT WALLET</Typography.Text>
+            </HoneyButton>
+          )}
+        </Space>
+      </HoneyCardYellowShadow>
+    </div>
   );
 };
 

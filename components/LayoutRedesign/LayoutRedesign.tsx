@@ -1,15 +1,17 @@
 import React, { FC, ReactNode } from 'react';
 import Head from 'next/head';
-import Layout, { Header as LayoutHeader } from 'antd/lib/layout/layout';
+import Layout, {
+  Content,
+  Header as LayoutHeader
+} from 'antd/lib/layout/layout';
 import Header from '../../components/Header/Header';
 import * as styles from './LayoutRedesign.css';
 
 interface Props {
   children: ReactNode;
-  sidebar?: ReactNode;
 }
 
-const LayoutRedesign: FC<Props> = ({ children, sidebar }) => {
+const LayoutRedesign: FC<Props> = ({ children }) => {
   // const [showMobileSidebar, setShowMobileSidebar] = useState(false);
   return (
     <Layout className={styles.layout}>
@@ -21,7 +23,7 @@ const LayoutRedesign: FC<Props> = ({ children, sidebar }) => {
       <LayoutHeader className={styles.layoutHeader}>
         <Header />
       </LayoutHeader>
-      <Layout>
+      <Layout className={styles.contentContainer}>
         {/* Provide a <Content> and <Sider> in child component */}
         {children}
       </Layout>
