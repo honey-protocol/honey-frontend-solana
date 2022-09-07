@@ -7,20 +7,26 @@ import HoneyTable from '../../components/HoneyTable/HoneyTable';
 import { ColumnType } from 'antd/lib/table';
 import * as style from '../../styles/markets.css';
 import { MarketTableRow } from '../../types/markets';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { ChangeEvent, useCallback, useEffect, useMemo, useState } from 'react';
 import { formatNumber } from '../../helpers/format';
 import Image from 'next/image';
 import mockNftImage from '/public/images/mock-collection-image@2x.png';
 import { Key, SortOrder } from 'antd/lib/table/interface';
 import HoneyToggle from '../../components/HoneyToggle/HoneyToggle';
+import debounce from 'lodash/debounce';
+import SearchInput from '../../components/SearchInput/SearchInput';
 
 const { formatPercent: fp, formatUsd: fu } = formatNumber;
 
 const Markets: NextPage = () => {
   const [tableData, setTableData] = useState<MarketTableRow[]>([]);
+  const [tableDataFiltered, setTableDataFiltered] = useState<MarketTableRow[]>(
+    []
+  );
   const [expandedRowKeys, setExpandedRowKeys] = useState<Key[]>([]);
   const [isMyCollectionsFilterEnabled, setIsMyCollectionsFilterEnabled] =
     useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
 
   const isExpandedRow = (key: Key): boolean => {
     return expandedRowKeys.includes(key);
@@ -78,14 +84,50 @@ const Markets: NextPage = () => {
     );
   };
 
+  const onSearch = (searchTerm: string): MarketTableRow[] => {
+    if (!searchTerm) {
+      return [...tableData];
+    }
+    const r = new RegExp(searchTerm, 'gmi');
+    return [...tableData].filter(row => {
+      return r.test(row.name);
+    });
+  };
+
+  const debouncedSearch = useCallback(
+    debounce(searchQuery => {
+      setTableDataFiltered(onSearch(searchQuery));
+    }, 500),
+    [tableData]
+  );
+  const handleSearchInputChange = useCallback(
+    (e: ChangeEvent<HTMLInputElement>) => {
+      const value = e.target.value;
+      setSearchQuery(value);
+      debouncedSearch(value);
+    },
+    [tableData]
+  );
+
+  // Apply search if initial markets list changed
+  useEffect(() => {
+    debouncedSearch(searchQuery);
+  }, [tableData]);
+
+  const SearchForm = () => {
+    return (
+      <SearchInput
+        onChange={handleSearchInputChange}
+        placeholder="Search by name"
+        value={searchQuery}
+      />
+    );
+  };
+
   const columns: ColumnType<MarketTableRow>[] = useMemo(
     () => [
       {
-        title: (
-          <div className={style.headerCell.disabled}>
-            <span>Name</span>
-          </div>
-        ),
+        title: SearchForm,
         dataIndex: 'name',
         key: 'name',
         render: (name: string) => {
@@ -175,7 +217,7 @@ const Markets: NextPage = () => {
         }
       }
     ],
-    [isMyCollectionsFilterEnabled]
+    [isMyCollectionsFilterEnabled, tableData, searchQuery]
   );
 
   // PUT YOUR DATA SOURCE HERE
@@ -199,6 +241,7 @@ const Markets: NextPage = () => {
     ];
 
     setTableData(mockData);
+    setTableDataFiltered(mockData);
   }, []);
 
   return (
@@ -206,7 +249,7 @@ const Markets: NextPage = () => {
       <Content>
         <HoneyTable
           columns={columns}
-          dataSource={tableData}
+          dataSource={tableDataFiltered}
           pagination={false}
           rowClassName={getRowClassName}
           className={style.table}
