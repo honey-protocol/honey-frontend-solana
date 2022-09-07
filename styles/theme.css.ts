@@ -9,6 +9,9 @@ export const vars = createGlobalTheme(':root', {
     brownMiddle: '#BE9200',
     brownDark: '#AA8300',
 
+    secondaryBrownLight: '#FBF3D6',
+    secondaryBrownMiddle: '#ECDFAF',
+
     grayLight: '#F5F5F5',
     grayMiddle: '#E5E5E5',
     grayDark: '#D9D9D9',

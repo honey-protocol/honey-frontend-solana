@@ -1,6 +1,6 @@
 import * as styles from './Header.css';
 import { FC } from 'react';
-import { Space, Typography } from 'antd';
+import { Space } from 'antd';
 import HeaderStats from 'components/HeaderStats/HeaderStats';
 import HeaderDropdownMenu from 'components/HeaderDropdownMenu/HeaderDropdownMenu';
 import WalletMenu from 'components/WalletMenu/WalletMenu';
@@ -15,14 +15,12 @@ const Header: FC = () => {
         <div className={styles.logo} />
         <HeaderDropdownMenu />
       </div>
-
       <HeaderStats />
-
       {wallet ? (
         <WalletMenu />
       ) : (
         <HoneyButton variant="primary" icon={<WalletIcon />}>
-          <Typography.Text>CONNECT WALLET</Typography.Text>
+          CONNECT WALLET
         </HoneyButton>
       )}
     </Space>
