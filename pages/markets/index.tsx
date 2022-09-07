@@ -15,6 +15,7 @@ import { Key, SortOrder } from 'antd/lib/table/interface';
 import HoneyToggle from '../../components/HoneyToggle/HoneyToggle';
 import debounce from 'lodash/debounce';
 import SearchInput from '../../components/SearchInput/SearchInput';
+import HexaBoxContainer from 'components/HexaBoxContainer/HexaBoxContainer';
 
 const { formatPercent: fp, formatUsd: fu } = formatNumber;
 
@@ -134,7 +135,9 @@ const Markets: NextPage = () => {
           return (
             <div className={style.nameCell}>
               <div className={style.collectionLogo}>
-                <Image src={mockNftImage} />
+                <HexaBoxContainer>
+                  <Image src={mockNftImage} />
+                </HexaBoxContainer>
               </div>
               <div className={style.collectionName}>{name}</div>
             </div>
