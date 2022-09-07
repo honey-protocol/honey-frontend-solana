@@ -1,13 +1,25 @@
 import { style } from '@vanilla-extract/css';
 import { sprinkles, vars, typography } from '../../styles/theme.css';
+import { container } from '../../styles/common.css';
 
-export const headerContainer = style({
+export const headerContainer = style([
+  container,
+  {
+    lineHeight: 'initial',
+    padding: '0',
+    height: 'unset',
+    zIndex: '1'
+  }
+]);
+
+export const content = style({
   width: '100%',
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'space-between',
   lineHeight: 'initial',
-  padding: '15px 0'
+  padding: '15px',
+  zIndex: '1'
 });
 
 export const logo = style({

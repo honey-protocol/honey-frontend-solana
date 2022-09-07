@@ -1,7 +1,8 @@
 import { globalStyle, style, styleVariants } from '@vanilla-extract/css';
 import { typography, vars } from './theme.css';
+import { container } from './common.css';
 
-export const marketsPage = style({});
+export const marketsPage = style([container, {}]);
 
 export const nameCell = style({
   display: 'flex',
