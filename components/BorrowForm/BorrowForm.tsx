@@ -105,10 +105,18 @@ const BorrowForm: FC<BorrowFormProps> = () => {
 
       <div className={styles.footer}>
         <div className={styles.buttons}>
-          <HoneyButton variant="tertiary">Cancel</HoneyButton>
-          <HoneyButton variant="primary" disabled={isBorrowButtonDisabled()}>
-            Borrow
-          </HoneyButton>
+          <div className={styles.smallCol}>
+            <HoneyButton variant="tertiary">Cancel</HoneyButton>
+          </div>
+          <div className={styles.bigCol}>
+            <HoneyButton
+              variant="primary"
+              disabled={isBorrowButtonDisabled()}
+              isFluid
+            >
+              Borrow
+            </HoneyButton>
+          </div>
         </div>
       </div>
     </div>

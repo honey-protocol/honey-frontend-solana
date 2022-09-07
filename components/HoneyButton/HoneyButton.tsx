@@ -5,9 +5,10 @@ import c from 'classnames';
 
 interface HoneyButtonProps extends ButtonProps {
   variant?: 'primary' | 'secondary' | 'tertiary';
+  isFluid?: boolean;
 }
 const HoneyButton: FC<HoneyButtonProps> = props => {
-  const { className, children, disabled, variant, ...rest } = props;
+  const { className, children, disabled, variant, isFluid, ...rest } = props;
   return (
     <Button
       {...rest}
@@ -15,8 +16,8 @@ const HoneyButton: FC<HoneyButtonProps> = props => {
       className={c(
         styles.honeyButton,
         variant ? styles[variant] : styles.primary,
-        disabled && styles.disabled,
-        className
+        className,
+        { [styles.disabled]: disabled, [styles.fluid]: isFluid }
       )}
     >
       {props.children}

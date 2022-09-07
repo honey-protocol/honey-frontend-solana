@@ -34,3 +34,7 @@ export const tertiary = style({
 export const disabled = style({
   background: `${vars.colors.grayMiddle} !important`
 });
+
+export const fluid = style({
+  width: '100%'
+});

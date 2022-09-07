@@ -66,4 +66,21 @@ export const inputs = style([
   }
 ]);
 
-export const buttons = style([{}]);
+export const buttons = style([
+  {
+    display: 'flex'
+  }
+]);
+
+export const smallCol = style([
+  {
+    flex: '0 0 auto',
+    marginRight: '12px'
+  }
+]);
+
+export const bigCol = style([
+  {
+    flex: '1 0 auto'
+  }
+]);
