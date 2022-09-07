@@ -16,6 +16,7 @@ import HoneyToggle from '../../components/HoneyToggle/HoneyToggle';
 import debounce from 'lodash/debounce';
 import SearchInput from '../../components/SearchInput/SearchInput';
 import HexaBoxContainer from 'components/HexaBoxContainer/HexaBoxContainer';
+import HoneyButton from 'components/HoneyButton/HoneyButton';
 
 const { formatPercent: fp, formatUsd: fu } = formatNumber;
 
@@ -214,7 +215,12 @@ const Markets: NextPage = () => {
         render: (_: null, row: MarketTableRow) => {
           return (
             <div className={style.buttonsCell}>
-              <button onClick={() => toggleRowExpand(row)}>View</button>
+              <HoneyButton
+                variant="tertiary"
+                onClick={() => toggleRowExpand(row)}
+              >
+                View
+              </HoneyButton>
             </div>
           );
         }
