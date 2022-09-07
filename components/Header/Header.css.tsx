@@ -1,10 +1,11 @@
 import { style } from '@vanilla-extract/css';
-import { sprinkles, vars, typography } from '../../styles/theme.css';
+import { vars } from '../../styles/theme.css';
 import { container } from '../../styles/common.css';
 
 export const headerContainer = style([
   container,
   {
+    background: vars.colors.white,
     lineHeight: 'initial',
     padding: '0',
     height: 'unset',
