@@ -31,6 +31,14 @@ export const primary = style({
   ':focus': {
     background: `${vars.colors.brownDark}`,
     color: vars.colors.black
+  },
+  ':focus': {
+    background: vars.colors.brownDark,
+    color: vars.colors.black
+  },
+  ':active': {
+    background: vars.colors.brownDark,
+    color: vars.colors.black
   }
 });
 
@@ -81,6 +89,7 @@ export const text = style({
   fontSize: '16px',
   lineHeight: '20px',
   alignItems: 'center',
+  boxShadow: 'none',
   ':hover': {
     background: 'transparent',
     color: vars.colors.brownDark,

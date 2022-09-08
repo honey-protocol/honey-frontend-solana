@@ -38,6 +38,12 @@ export const arrowPadding = style( {
   paddingRight: '8px'
 });
 
+export const arrowIcon = style( {
+  width: 20,
+  height: 20,
+  background: 'url(/images/arrow-down.svg) center no-repeat'
+});
+
 export const expandedRow = style({});
 
 export const inactiveRow = style({});

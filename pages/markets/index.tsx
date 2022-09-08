@@ -17,7 +17,6 @@ import HoneyButton from "../../components/HoneyButton/HoneyButton";
 import debounce from 'lodash/debounce';
 import SearchInput from '../../components/SearchInput/SearchInput';
 import HexaBoxContainer from 'components/HexaBoxContainer/HexaBoxContainer';
-import { ArrowIcon } from "../../icons/Arrow";
 
 const { formatPercent: fp, formatUsd: fu } = formatNumber;
 
@@ -217,7 +216,7 @@ const Markets: NextPage = () => {
           return (
             <div className={style.buttonsCell}>
               <HoneyButton className={style.arrowPadding} variant="text" onClick={() => toggleRowExpand(row)}>
-                View  <ArrowIcon />
+                View  <div className={style.arrowIcon} />
               </HoneyButton>
             </div>
           );
