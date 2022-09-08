@@ -24,6 +24,8 @@ import debounce from 'lodash/debounce';
 import SearchInput from '../../components/SearchInput/SearchInput';
 import HexaBoxContainer from 'components/HexaBoxContainer/HexaBoxContainer';
 import { InfoBlock } from 'components/InfoBlock/InfoBlock';
+import EmptyStateDetails from 'components/EmptyStateDetails/EmptyStateDetails';
+import classNames from 'classnames';
 
 const { formatPercent: fp, formatUsd: fu } = formatNumber;
 
@@ -381,7 +383,9 @@ const Markets: NextPage = () => {
           dataSource={tableDataFiltered}
           pagination={false}
           rowClassName={getRowClassName}
-          className={style.table}
+          className={classNames(style.table, {
+            [style.emptyTable]: !tableDataFiltered.length
+          })}
           expandable={{
             // we use our own custom expand column
             showExpandColumn: false,
@@ -404,6 +408,24 @@ const Markets: NextPage = () => {
             }
           }}
         />
+        {!tableDataFiltered.length &&
+          (isMyCollectionsFilterEnabled ? (
+            <div className={style.emptyStateContainer}>
+              <EmptyStateDetails
+                icon={<div className={style.docIcon} />}
+                title="You didn’t use any collections yet"
+                description="Turn off the filter my collection and choose any collection to borrow money"
+              />
+            </div>
+          ) : (
+            <div className={style.emptyStateContainer}>
+              <EmptyStateDetails
+                icon={<div className={style.docIcon} />}
+                title="No collections to display"
+                description="Turn off all filters and clear search inputs"
+              />
+            </div>
+          ))}
       </Content>
       <Sider width={350}>
         <MarketsSidebar collectionId="s" />

@@ -260,3 +260,26 @@ export const dashedDivider = style({
   backgroundRepeat: 'repeat-x, repeat-x, repeat-y, repeat-y',
   backgroundSize: '20px 2px, 20px 2px, 2px 20px, 2px 20px'
 });
+globalStyle(tcs(`.ant-table-column-sorter`), {
+  display: 'none'
+});
+
+export const emptyTable = style({});
+globalStyle(`${emptyTable} tbody`, {
+  display: 'none'
+});
+
+export const emptyStateContainer = style({
+  width: '100%',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  height: '300px',
+  flex: 1
+});
+
+export const docIcon = style({
+  width: 52,
+  height: 52,
+  background: 'url("/images/docIcon.svg") center center no-repeat'
+});
