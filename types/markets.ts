@@ -4,4 +4,13 @@ export type MarketTableRow = {
   rate: number;
   available: number;
   value: number;
+  tokens: Array<MarketTableToken>;
+};
+
+export type MarketTableToken = {
+  name: string;
+  riskLvl: number;
+  debt: number;
+  available: number;
+  value: number;
 };

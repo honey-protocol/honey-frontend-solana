@@ -46,6 +46,6 @@ export const formatNumber = {
    * @param val
    */
   formatUsd: (val?: number) => {
-    return `$${formatNumber.format(val)}`;
+    return `$ ${formatNumber.format(val)}`;
   }
 };
