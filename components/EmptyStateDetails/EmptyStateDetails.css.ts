@@ -15,14 +15,16 @@ export const emptyStateTitle = style([
   typography.body,
   {
     marginTop: 10,
-    marginBottom: 4
+    marginBottom: 4,
+    textAlign: 'center'
   }
 ]);
 
 export const emptyStateDescription = style([
   typography.description,
   {
-    fontWeight: '500'
+    fontWeight: '500',
+    textAlign: 'center'
   }
 ]);
 
