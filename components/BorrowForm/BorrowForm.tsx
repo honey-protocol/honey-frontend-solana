@@ -21,7 +21,7 @@ const BorrowForm: FC<BorrowFormProps> = () => {
   const [rangeValue, setRangeValue] = useState(0);
 
   // Only for test purposes
-  const isNftSelected = true;
+  const isNftSelected = false;
 
   // Put your validators here
   const isBorrowButtonDisabled = () => {
