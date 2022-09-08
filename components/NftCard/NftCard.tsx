@@ -24,7 +24,10 @@ const NftCard = (props: NftCardProps) => {
   }, [id]);
 
   return (
-    <div className={c(styles.nftCard, { [styles.hasBorder]: hasBorder })}>
+    <div
+      className={c(styles.nftCard, { [styles.hasBorder]: hasBorder })}
+      onClick={_onClick}
+    >
       <div className={styles.nftImage}>
         <HexaBoxContainer>{img}</HexaBoxContainer>
       </div>
@@ -36,7 +39,7 @@ const NftCard = (props: NftCardProps) => {
           </div>
         </div>
 
-        <HoneyButton onClick={_onClick} variant="text">
+        <HoneyButton variant="text">
           Up to {buttonText}
           <div className={styles.arrowRight} />
         </HoneyButton>

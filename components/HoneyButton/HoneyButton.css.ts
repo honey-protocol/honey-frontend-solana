@@ -7,7 +7,10 @@ export const honeyButton = style([
     borderRadius: '8px',
     padding: '10px 15px',
     height: 'unset',
-    display: 'inline-flex',
+    display: 'flex',
+    // display: 'inline-flex',
+    alignItems: 'center',
+    justifyContent: 'center',
     border: 'none',
     gap: '10px',
     transition: 'all .5s',
@@ -24,13 +27,6 @@ export const primary = style({
     background: vars.colors.brownLight,
     transform: 'translateY(-4px)',
     boxShadow: `0px 4px 2px 0px ${vars.colors.brownDark}`
-  },
-  ':active': {
-    background: `${vars.colors.brownDark} !important`
-  },
-  ':focus': {
-    background: `${vars.colors.brownDark}`,
-    color: vars.colors.black
   },
   ':focus': {
     background: vars.colors.brownDark,

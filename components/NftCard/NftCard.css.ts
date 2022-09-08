@@ -5,7 +5,8 @@ export const nftCard = style([
   {
     display: 'flex',
     alignItems: 'flex-start',
-    paddingBottom: 14
+    paddingBottom: 14,
+    cursor: 'pointer'
   }
 ]);
 

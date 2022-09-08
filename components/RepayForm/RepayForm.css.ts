@@ -46,14 +46,13 @@ export const nftInfo = style([
   }
 ]);
 export const nftImage = style([
-  formSection,
   {
     width: 46,
     height: 46,
     marginRight: 15
   }
 ]);
-export const nftName = style([formSection, typography.title, {}]);
+export const nftName = style([typography.title, {}]);
 
 export const balance = style({
   marginBottom: 16

@@ -21,7 +21,7 @@ const BorrowForm: FC<BorrowFormProps> = () => {
   const [rangeValue, setRangeValue] = useState(0);
 
   // Only for test purposes
-  const isNftSelected = false;
+  const isNftSelected = true;
 
   // Put your validators here
   const isBorrowButtonDisabled = () => {
@@ -158,26 +158,46 @@ const BorrowForm: FC<BorrowFormProps> = () => {
     );
   };
 
+  const renderFooter = () => {
+    if (!isNftSelected) {
+      return (
+        <div className={styles.buttons}>
+          <div className={styles.bigCol}>
+            <HoneyButton
+              variant="secondary"
+              disabled={isBorrowButtonDisabled()}
+              isFluid
+            >
+              Cancel
+            </HoneyButton>
+          </div>
+        </div>
+      );
+    }
+
+    return (
+      <div className={styles.buttons}>
+        <div className={styles.smallCol}>
+          <HoneyButton variant="secondary">Cancel</HoneyButton>
+        </div>
+        <div className={styles.bigCol}>
+          <HoneyButton
+            variant="primary"
+            disabled={isBorrowButtonDisabled()}
+            isFluid
+          >
+            Borrow
+          </HoneyButton>
+        </div>
+      </div>
+    );
+  };
+
   return (
     <div className={styles.borrowForm}>
       <div className={styles.content}>{renderContent()}</div>
 
-      <div className={styles.footer}>
-        <div className={styles.buttons}>
-          <div className={styles.smallCol}>
-            <HoneyButton variant="secondary">Cancel</HoneyButton>
-          </div>
-          <div className={styles.bigCol}>
-            <HoneyButton
-              variant="primary"
-              disabled={isBorrowButtonDisabled()}
-              isFluid
-            >
-              Borrow
-            </HoneyButton>
-          </div>
-        </div>
-      </div>
+      <div className={styles.footer}>{renderFooter()}</div>
     </div>
   );
 };
