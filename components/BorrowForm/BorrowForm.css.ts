@@ -84,3 +84,11 @@ export const bigCol = style([
     flex: '1 0 auto'
   }
 ]);
+
+// NEW BORROWING FORM
+export const newBorrowingTitle = style([
+  typography.title,
+  {
+    marginBottom: 18
+  }
+]);

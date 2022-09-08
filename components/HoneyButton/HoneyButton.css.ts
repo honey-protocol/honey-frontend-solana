@@ -78,42 +78,43 @@ export const tertiary = style({
   }
 });
 
-export const text = style({
-  position: 'relative',
-  border: 'none',
-  background: 'transparent',
-  color: vars.colors.brownMiddle,
-  textTransform: 'uppercase',
-  fontFamily: 'Red Hat Mono',
-  fontWeight: '500',
-  fontSize: '16px',
-  lineHeight: '20px',
-  alignItems: 'center',
-  boxShadow: 'none',
-  ':hover': {
+export const text = style([
+  typography.button,
+  {
+    position: 'relative',
+    border: 'none',
     background: 'transparent',
-    color: vars.colors.brownDark,
-  },
-  ':active': {
-    background: 'transparent',
-    color: vars.colors.brownDark,
-    borderColor: 'transparent'
-  },
-  ':focus': {
-    background: 'transparent',
-    color: vars.colors.brownDark,
-    borderColor: 'transparent'
-  },
-  ':before': {
-    content: '',
-    position: 'absolute',
-    top: '0',
-    right: '0',
-    width: '10px',
-    height: '10px',
-    background: 'red',
+    color: vars.colors.brownMiddle,
+    textTransform: 'uppercase',
+    padding: 0,
+    fontSize: '16px',
+    alignItems: 'center',
+    boxShadow: 'none',
+    ':hover': {
+      background: 'transparent',
+      color: vars.colors.brownDark
+    },
+    ':active': {
+      background: 'transparent',
+      color: vars.colors.brownDark,
+      borderColor: 'transparent'
+    },
+    ':focus': {
+      background: 'transparent',
+      color: vars.colors.brownDark,
+      borderColor: 'transparent'
+    },
+    ':before': {
+      content: '',
+      position: 'absolute',
+      top: '0',
+      right: '0',
+      width: '10px',
+      height: '10px',
+      background: 'red'
+    }
   }
-});
+]);
 
 export const disabled = style({
   background: `${vars.colors.grayMiddle} !important`,

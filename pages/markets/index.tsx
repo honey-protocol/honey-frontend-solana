@@ -7,13 +7,19 @@ import HoneyTable from '../../components/HoneyTable/HoneyTable';
 import { ColumnType } from 'antd/lib/table';
 import * as style from '../../styles/markets.css';
 import { MarketTableRow } from '../../types/markets';
-import { ChangeEvent, useCallback, useEffect, useMemo, useState } from 'react';
+import React, {
+  ChangeEvent,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState
+} from 'react';
 import { formatNumber } from '../../helpers/format';
 import Image from 'next/image';
 import mockNftImage from '/public/images/mock-collection-image@2x.png';
 import { Key, SortOrder } from 'antd/lib/table/interface';
 import HoneyToggle from '../../components/HoneyToggle/HoneyToggle';
-import HoneyButton from "../../components/HoneyButton/HoneyButton";
+import HoneyButton from '../../components/HoneyButton/HoneyButton';
 import debounce from 'lodash/debounce';
 import SearchInput from '../../components/SearchInput/SearchInput';
 import HexaBoxContainer from 'components/HexaBoxContainer/HexaBoxContainer';
@@ -215,8 +221,12 @@ const Markets: NextPage = () => {
         render: (_: null, row: MarketTableRow) => {
           return (
             <div className={style.buttonsCell}>
-              <HoneyButton className={style.arrowPadding} variant="text" onClick={() => toggleRowExpand(row)}>
-                View  <div className={style.arrowIcon} />
+              <HoneyButton
+                className={style.arrowPadding}
+                variant="text"
+                onClick={() => toggleRowExpand(row)}
+              >
+                View <div className={style.arrowIcon} />
               </HoneyButton>
             </div>
           );

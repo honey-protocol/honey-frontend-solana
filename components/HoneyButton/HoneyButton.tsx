@@ -9,14 +9,14 @@ interface HoneyButtonProps extends ButtonProps {
 }
 
 const HoneyButton: FC<HoneyButtonProps> = props => {
-  const { className, children, disabled, variant, isFluid, ...rest } = props;
+  const { className, children, disabled, variant = 'primary', isFluid, ...rest } = props;
   return (
     <Button
       {...rest}
       disabled={disabled}
       className={c(
         styles.honeyButton,
-        variant ? styles[variant] : styles.primary,
+        styles[variant],
         className,
         { [styles.disabled]: disabled, [styles.fluid]: isFluid }
       )}

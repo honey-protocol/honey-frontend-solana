@@ -1,4 +1,4 @@
-import { FC, useState } from 'react';
+import React, { FC, useState } from 'react';
 import Image from 'next/image';
 import { InfoBlock } from '../InfoBlock/InfoBlock';
 import { InputsBlock } from '../InputsBlock/InputsBlock';
@@ -8,6 +8,8 @@ import { formatNumber } from '../../helpers/format';
 import mockNftImage from '/public/images/mock-collection-image@2x.png';
 import HoneyButton from 'components/HoneyButton/HoneyButton';
 import HexaBoxContainer from 'components/HexaBoxContainer/HexaBoxContainer';
+import NftList from '../NftList/NftList';
+import { NftCardProps } from '../NftCard/types';
 
 type BorrowFormProps = {};
 
@@ -18,14 +20,65 @@ const BorrowForm: FC<BorrowFormProps> = () => {
   const [valueUSDC, setValueUSDC] = useState('');
   const [rangeValue, setRangeValue] = useState(0);
 
+  // Only for test purposes
+  const isNftSelected = false;
+
   // Put your validators here
   const isBorrowButtonDisabled = () => {
     return false;
   };
 
-  return (
-    <div className={styles.borrowForm}>
-      <div className={styles.content}>
+  const nftsMockData: NftCardProps[] = [
+    {
+      id: '1',
+      img: 'path/to/iamge',
+      name: 'Doodles #1291',
+      text: '$1,000',
+      hint: 'Value',
+      buttonText: '$600'
+    },
+    {
+      id: '2',
+      img: 'path/to/iamge',
+      name: 'Doodles #1291',
+      text: '$1,000',
+      hint: 'Value',
+      buttonText: '$600'
+    },
+    {
+      id: '3',
+      img: 'path/to/iamge',
+      name: 'Doodles #1291',
+      text: '$1,000',
+      hint: 'Value',
+      buttonText: '$600'
+    },
+    {
+      id: '4',
+      img: 'path/to/iamge',
+      name: 'Doodles #1291',
+      text: '$1,000',
+      hint: 'Value',
+      buttonText: '$600'
+    }
+  ];
+
+  const handleItemClick = (id: string) => {
+    alert(`${id} selected`);
+  };
+
+  const renderContent = () => {
+    if (!isNftSelected) {
+      return (
+        <>
+          <div className={styles.newBorrowingTitle}>Choose NFT</div>
+          <NftList data={nftsMockData} onItemClick={handleItemClick} />
+        </>
+      );
+    }
+
+    return (
+      <>
         <div className={styles.nftInfo}>
           <div className={styles.nftImage}>
             <HexaBoxContainer>
@@ -101,7 +154,13 @@ const BorrowForm: FC<BorrowFormProps> = () => {
           borrowedValue={0}
           onChange={setRangeValue}
         />
-      </div>
+      </>
+    );
+  };
+
+  return (
+    <div className={styles.borrowForm}>
+      <div className={styles.content}>{renderContent()}</div>
 
       <div className={styles.footer}>
         <div className={styles.buttons}>
