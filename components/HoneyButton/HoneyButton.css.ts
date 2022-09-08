@@ -10,7 +10,10 @@ export const honeyButton = style([
     display: 'inline-flex',
     border: 'none',
     gap: '10px',
-    transition: 'all .5s'
+    transition: 'all .5s',
+    ':after': {
+      display: 'none!important'
+    }
   }
 ]);
 
@@ -64,6 +67,42 @@ export const tertiary = style({
   ':focus': {
     background: `${vars.colors.secondaryBrownMiddle}`,
     color: vars.colors.brownMiddle
+  }
+});
+
+export const text = style({
+  position: 'relative',
+  border: 'none',
+  background: 'transparent',
+  color: vars.colors.brownMiddle,
+  textTransform: 'uppercase',
+  fontFamily: 'Red Hat Mono',
+  fontWeight: '500',
+  fontSize: '16px',
+  lineHeight: '20px',
+  alignItems: 'center',
+  ':hover': {
+    background: 'transparent',
+    color: vars.colors.brownDark,
+  },
+  ':active': {
+    background: 'transparent',
+    color: vars.colors.brownDark,
+    borderColor: 'transparent'
+  },
+  ':focus': {
+    background: 'transparent',
+    color: vars.colors.brownDark,
+    borderColor: 'transparent'
+  },
+  ':before': {
+    content: '',
+    position: 'absolute',
+    top: '0',
+    right: '0',
+    width: '10px',
+    height: '10px',
+    background: 'red',
   }
 });
 

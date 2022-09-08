@@ -13,10 +13,11 @@ import Image from 'next/image';
 import mockNftImage from '/public/images/mock-collection-image@2x.png';
 import { Key, SortOrder } from 'antd/lib/table/interface';
 import HoneyToggle from '../../components/HoneyToggle/HoneyToggle';
+import HoneyButton from "../../components/HoneyButton/HoneyButton";
 import debounce from 'lodash/debounce';
 import SearchInput from '../../components/SearchInput/SearchInput';
 import HexaBoxContainer from 'components/HexaBoxContainer/HexaBoxContainer';
-import HoneyButton from 'components/HoneyButton/HoneyButton';
+import { ArrowIcon } from "../../icons/Arrow";
 
 const { formatPercent: fp, formatUsd: fu } = formatNumber;
 
@@ -215,11 +216,8 @@ const Markets: NextPage = () => {
         render: (_: null, row: MarketTableRow) => {
           return (
             <div className={style.buttonsCell}>
-              <HoneyButton
-                variant="tertiary"
-                onClick={() => toggleRowExpand(row)}
-              >
-                View
+              <HoneyButton className={style.arrowPadding} variant="text" onClick={() => toggleRowExpand(row)}>
+                View  <ArrowIcon />
               </HoneyButton>
             </div>
           );

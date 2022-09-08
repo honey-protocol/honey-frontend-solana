@@ -29,9 +29,13 @@ export const availableCell = style([typography.numbersRegular, {}]);
 export const valueCell = style([typography.numbersRegular, {}]);
 export const rateCell = style([typography.numbersRegular, {}]);
 
-export const buttonsCell = style({
+export const buttonsCell = style( {
   display: 'flex',
   justifyContent: 'flex-end'
+});
+
+export const arrowPadding = style( {
+  paddingRight: '8px'
 });
 
 export const expandedRow = style({});
