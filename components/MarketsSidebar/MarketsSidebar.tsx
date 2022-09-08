@@ -6,6 +6,7 @@ import { Image, Tabs, Typography } from 'antd';
 import RepayForm from '../RepayForm/RepayForm';
 import HoneyButton from 'components/HoneyButton/HoneyButton';
 import classNames from 'classnames';
+import EmptyStateDetails from 'components/EmptyStateDetails/EmptyStateDetails';
 
 const items = [
   { label: 'Borrow', key: 'borrow', children: 'Borrow' },
@@ -40,26 +41,18 @@ const MarketsSidebar = (props: MarketsSidebarProps) => {
         )}
       >
         {!wallet ? (
-          <div className={styles.emptyStateContent}>
-            <div className={styles.lightIcon} />
-            <Text className={styles.emptyStateTitle}>
-              You didn’t connect any wallet yet
-            </Text>
-            <Text type="secondary" className={styles.emptyStateDescription}>
-              First, choose a NFT collection
-            </Text>
-            <HoneyButton type="primary" className={styles.emptyStateWalletBtn}>
-              CONNECT WALLET
-            </HoneyButton>
-          </div>
+          <EmptyStateDetails
+            icon={<div className={styles.lightIcon} />}
+            title="You didn’t connect any wallet yet"
+            description="First, choose a NFT collection"
+            btnTitle="CONNECT WALLET"
+          />
         ) : !collectionId ? (
-          <div className={styles.emptyStateContent}>
-            <div className={styles.boltIcon} />
-            <Text className={styles.emptyStateTitle}>Manage panel</Text>
-            <Text type="secondary" className={styles.emptyStateDescription}>
-              First, choose a NFT collection
-            </Text>
-          </div>
+          <EmptyStateDetails
+            icon={<div className={styles.boltIcon} />}
+            title="Manage panel"
+            description="First, choose a NFT collection"
+          />
         ) : (
           <>
             {activeTab === 'borrow' && <BorrowForm />}
