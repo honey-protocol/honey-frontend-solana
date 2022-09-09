@@ -1,7 +1,11 @@
 import { style } from '@vanilla-extract/css';
 import { typography } from '../../styles/theme.css';
 
+export const container = style({
+  display: 'flex',
+  gap: '24px'
+});
 export const title = style({
-  ...typography.title,
+  ...typography.body,
   margin: '0 !important'
 });
