@@ -4,13 +4,16 @@ import { container } from './common.css';
 
 export const marketsPage = style([container, {}]);
 
+// TABLE
 export const nameCell = style({
   display: 'flex',
   alignItems: 'center'
 });
 
+export const logoWrapper = style({
+  marginRight: 12
+});
 export const collectionLogo = style({
-  marginRight: '16px',
   width: '34px',
   height: '34px'
 });
@@ -18,7 +21,6 @@ export const collectionLogo = style({
 export const collectionName = style([
   typography.body,
   {
-    width: 124,
     overflow: 'hidden',
     textOverflow: 'ellipsis',
     whiteSpace: 'nowrap'
@@ -29,24 +31,30 @@ export const availableCell = style([typography.numbersRegular, {}]);
 export const valueCell = style([typography.numbersRegular, {}]);
 export const rateCell = style([typography.numbersRegular, {}]);
 
-export const buttonsCell = style( {
+export const buttonsCell = style({
   display: 'flex',
   justifyContent: 'flex-end'
 });
 
-export const arrowPadding = style( {
-  paddingRight: '8px'
-});
-
-export const arrowIcon = style( {
-  width: 20,
-  height: 20,
-  background: 'url(/images/arrow-down.svg) center no-repeat'
-});
+// export const arrowPadding = style({
+//   paddingRight: '8px'
+// });
 
 export const expandedRow = style({});
 
 export const inactiveRow = style({});
+
+export const arrowIcon = style({
+  width: 20,
+  height: 20,
+  background: 'url(/images/arrow.svg) center no-repeat',
+  transition: 'all .3s',
+  selectors: {
+    [`${expandedRow} &`]: {
+      transform: 'rotate(-180deg)'
+    }
+  }
+});
 
 globalStyle(
   `${inactiveRow} ${availableCell}, ${inactiveRow} ${valueCell}, ${inactiveRow} ${rateCell}`,
@@ -55,13 +63,32 @@ globalStyle(
   }
 );
 
-export const expandSection = style({
-  position: 'relative'
+globalStyle(`${expandedRow} > .ant-table-cell`, {});
+
+export const table = style({});
+const tableChildSelector = (selector: string) => {
+  return `${table} ${selector}`;
+};
+const tcs = tableChildSelector;
+globalStyle(tcs(`.ant-table-cell`), {
+  borderSpacing: '0 !important'
+});
+globalStyle(tcs(`.ant-table-expanded-row > .ant-table-cell`), {
+  paddingBottom: 0,
+  boxShadow: '4px 4px 0px 0px rgb(231 180 0)'
+});
+globalStyle(tcs(`.ant-table-row-level-0::before`), {
+  position: 'absolute',
+  top: 20,
+  width: 100,
+  height: 100,
+  background: 'black'
+});
+globalStyle(tcs(`tr.ant-table-expanded-row > .ant-table-cell`), {
+  paddingTop: '0 !important'
 });
 
-export const divider = style({
-  position: 'absolute'
-});
+// MY COLLECTIONS TOGGLE
 
 export const toggle = style({
   display: 'flex',
@@ -105,6 +132,7 @@ const sortIconBasic = style({
   height: 20,
   marginLeft: 4
 });
+
 export const sortIcon = styleVariants({
   disabled: [
     sortIconBasic,
@@ -126,15 +154,109 @@ export const sortIcon = styleVariants({
     }
   ]
 });
-export const table = style({});
-const tableChildSelector = (selector: string) => {
-  return `${table} ${selector}`;
-};
-const tcs = tableChildSelector;
 
-// globalStyle(tcs(`.ant-table-container > .ant-table-content > table > .ant-table-thead > tr > .ant-table-column-has-sorters > .ant-table-column-sorters > .ant-table-column-sorter`), {
-//   display: "none"
-// })
 globalStyle(tcs(`.ant-table-column-sorter`), {
   display: 'none'
+});
+
+export const expandSection = style({
+  position: 'relative',
+  overflow: 'hidden'
+});
+export const expandContentTable = style({});
+const expandContentTableChildSelector = (selector: string) => {
+  return tcs(`${expandContentTable} ${selector}`);
+};
+const ectcs = expandContentTableChildSelector;
+globalStyle(ectcs(`.ant-table-cell`), {
+  border: 'none !important',
+  padding: 15,
+  background: 'transparent !important'
+});
+globalStyle(ectcs(`.ant-table-row`), {
+  borderSpacing: 0
+});
+globalStyle(ectcs(`.ant-table table`), {
+  borderSpacing: '0 !important'
+});
+globalStyle(ectcs(`.ant-table-footer`), {
+  background: 'transparent',
+  padding: 15
+});
+
+export const expandedRowCell = style([]);
+export const expandedRowNameCell = style([
+  nameCell,
+  {
+    display: 'flex',
+    alignItems: 'center',
+    paddingLeft: 10
+  }
+]);
+export const risk = styleVariants({
+  safe: {
+    color: vars.colors.green
+  },
+  warning: {
+    color: vars.colors.brownLight
+  },
+  danger: {
+    color: vars.colors.red
+  }
+});
+export const riskText = style([typography.caption]);
+export const expandedRowIcon = style({
+  background: 'url(/images/direct-left.svg) center no-repeat',
+  width: 20,
+  height: 20,
+  marginRight: 24
+});
+export const lampIcon = style({
+  background: 'url(/images/lamp.svg) center no-repeat',
+  width: 32,
+  height: 32
+});
+export const swapWalletIcon = style({
+  background: 'url(/images/swap-wallet.svg) center no-repeat',
+  width: 20,
+  height: 20
+});
+export const arrowRightIcon = style({
+  background: 'url(/images/arrow-right.svg) center no-repeat',
+  width: 20,
+  height: 20
+});
+export const nameCellText = style({
+  display: 'flex',
+  flexDirection: 'column',
+  marginLeft: 12
+});
+
+export const expandedSectionFooter = style({
+  display: 'flex',
+  alignItems: 'center',
+  paddingLeft: 10
+});
+export const footerButton = style({
+  marginLeft: 'auto'
+});
+export const footerText = style({
+  display: 'flex',
+  flexDirection: 'column',
+  marginLeft: 15
+});
+export const footerTitle = style([typography.body]);
+export const footerDescription = style([
+  typography.description,
+  { color: vars.colors.grayTransparent }
+]);
+export const dashedDivider = style({
+  position: 'absolute',
+  top: 0,
+  left: 70,
+  width: '100%',
+  height: 2,
+  backgroundImage: `linear-gradient(to right, ${vars.colors.lightGrayTransparent} 50%, transparent 50%)`,
+  backgroundRepeat: 'repeat-x, repeat-x, repeat-y, repeat-y',
+  backgroundSize: '20px 2px, 20px 2px, 2px 20px, 2px 20px'
 });

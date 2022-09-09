@@ -24,6 +24,7 @@ export const vars = createGlobalTheme(':root', {
     redDark: '#A62B1E',
 
     grayTransparent: 'rgba(17, 17, 17, 0.4)',
+    lightGrayTransparent: 'rgba(0, 0, 0, 0.12)',
     whiteTransparent: 'rgba(255, 255, 255, 0.7)',
 
     white: '#FFFFFF',
@@ -38,6 +39,11 @@ export const vars = createGlobalTheme(':root', {
   width: {
     ['1/2']: '50%',
     full: '100%'
+  },
+  shadow: {
+    yellow: {
+      boxShadow: `4px 4px 0px 0px #FBF3D6`
+    }
   }
 });
 

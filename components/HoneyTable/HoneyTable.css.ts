@@ -3,6 +3,8 @@ import { vars } from 'styles/theme.css';
 
 export const honeyTableContainer = style({});
 
+export const honeyTableShadow = style({});
+
 const rootSelector = `.ant-table-wrapper.${honeyTableContainer}`;
 
 const buildChildSelector = (selector: string) => {
@@ -37,7 +39,14 @@ export const honeyTableRow = style({
   background: 'none'
 });
 
+export const honeyTableRowShadow = style({});
+
 const tableTdSelector = `.ant-table-tbody > .ant-table-row.${honeyTableRow} > td`;
+const tableShadowTdSelector = `.ant-table-tbody > .ant-table-row.${honeyTableRow}.${honeyTableRowShadow} > td`;
+
+globalStyle(tableShadowTdSelector, {
+  boxShadow: `4px 4px 0px 0px ${vars.colors.grayDark}`
+});
 
 globalStyle(`${bcs(tableTdSelector)}`, {
   background: vars.colors.white,
@@ -56,6 +65,7 @@ const lastCellBorderAndRadius = {
   borderTopRightRadius: 12,
   borderBottomRightRadius: 12
 };
+
 globalStyle(
   `${bcs(`${tableTdSelector}:first-child`)}`,
   firstCellBorderAndRadius
@@ -76,8 +86,11 @@ globalStyle(`${bcs(expandedSectionRowTdSelector)}`, {
   // additional 1px to make sure it looks good everywhere
   top: -(rowsGapSize + 1),
   // TODO: add regular cell padding here
-  paddingTop: rowsGapSize + 1
+  paddingTop: rowsGapSize + 1,
+  paddingLeft: 0,
+  paddingRight: 0
 });
+
 globalStyle(`${bcs(`${expandedSectionRowTdSelector}:first-child`)}`, {
   ...firstCellBorderAndRadius,
   borderTopLeftRadius: 0,
@@ -104,7 +117,8 @@ globalStyle(`${bcs(`${expandedRowTdSelector}:first-child`)}`, {
 });
 
 globalStyle(`${bcs(`${expandedRowTdSelector}:last-child`)}`, {
-  borderBottomRightRadius: 0
+  borderBottomRightRadius: 0,
+  boxShadow: `4px 4px 0px 0px ${vars.colors.brownLight}`
 });
 
 export const honeyTableInactiveRow = style({});

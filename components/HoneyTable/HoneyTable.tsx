@@ -2,11 +2,21 @@ import { Table, TableProps } from 'antd';
 import { FC } from 'react';
 import * as styles from './HoneyTable.css';
 import { Key } from 'antd/lib/table/interface';
-import c from 'classnames'
+import c from 'classnames';
 
-const HoneyTable: FC<TableProps<any>> = props => {
-  const { className, rowClassName, expandedRowClassName, expandable, ...rest } =
-    props;
+type HoneyTableProps = TableProps<any> & {
+  hasRowsShadow?: boolean;
+};
+
+const HoneyTable: FC<HoneyTableProps> = props => {
+  const {
+    className,
+    rowClassName,
+    expandedRowClassName,
+    expandable,
+    hasRowsShadow,
+    ...rest
+  } = props;
 
   const isExpandedRow = (key: Key): boolean => {
     if (
@@ -20,17 +30,23 @@ const HoneyTable: FC<TableProps<any>> = props => {
   };
 
   const getRowInternalClassName = (key: Key): string => {
-    const baseClass = styles.honeyTableRow;
+    const classes = [styles.honeyTableRow];
+    if (hasRowsShadow) {
+      classes.push(styles.honeyTableRowShadow);
+    }
     if (
       !expandable ||
       !expandable.expandedRowKeys ||
       !expandable.expandedRowKeys.length
     ) {
-      return baseClass;
+      return classes.join(' ');
     }
-    return isExpandedRow(key)
-      ? `${baseClass} ${styles.honeyTableExpandedRow}`
-      : `${baseClass} ${styles.honeyTableInactiveRow}`;
+
+    isExpandedRow(key)
+      ? classes.push(styles.honeyTableExpandedRow)
+      : classes.push(styles.honeyTableInactiveRow);
+
+    return classes.join(' ');
   };
 
   const getRowExternalClassName = (

@@ -6,7 +6,7 @@ import { Content } from 'antd/lib/layout/layout';
 import HoneyTable from '../../components/HoneyTable/HoneyTable';
 import { ColumnType } from 'antd/lib/table';
 import * as style from '../../styles/markets.css';
-import { MarketTableRow } from '../../types/markets';
+import { MarketTableRow, MarketTablePosition } from '../../types/markets';
 import React, {
   ChangeEvent,
   useCallback,
@@ -23,6 +23,7 @@ import HoneyButton from '../../components/HoneyButton/HoneyButton';
 import debounce from 'lodash/debounce';
 import SearchInput from '../../components/SearchInput/SearchInput';
 import HexaBoxContainer from 'components/HexaBoxContainer/HexaBoxContainer';
+import { InfoBlock } from 'components/InfoBlock/InfoBlock';
 
 const { formatPercent: fp, formatUsd: fu } = formatNumber;
 
@@ -35,6 +36,55 @@ const Markets: NextPage = () => {
   const [isMyCollectionsFilterEnabled, setIsMyCollectionsFilterEnabled] =
     useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+
+  // PUT YOUR DATA SOURCE HERE
+  // MOCK DATA FOR NOW
+  useEffect(() => {
+    const mockData: MarketTableRow[] = [
+      {
+        key: '0',
+        name: 'Test 2',
+        rate: 0.1,
+        available: 100,
+        value: 100000,
+        positions: [
+          {
+            name: 'Doodles #1291',
+            riskLvl: 33,
+            debt: 0,
+            available: 600,
+            value: 1000
+          },
+          {
+            name: 'Doodles #1321',
+            riskLvl: 0,
+            debt: 0,
+            available: 600,
+            value: 1000
+          }
+        ]
+      },
+      {
+        key: '1',
+        name: 'Very long collection name very long',
+        rate: 0.2,
+        available: 150,
+        value: 160000,
+        positions: [
+          {
+            name: 'Doodles #1292',
+            riskLvl: 0.1,
+            debt: 0,
+            available: 600,
+            value: 1000
+          }
+        ]
+      }
+    ];
+
+    setTableData(mockData);
+    setTableDataFiltered(mockData);
+  }, []);
 
   const isExpandedRow = (key: Key): boolean => {
     return expandedRowKeys.includes(key);
@@ -131,20 +181,24 @@ const Markets: NextPage = () => {
       />
     );
   };
+  const columnsWidth: Array<number | string> = [250, 90, 150, 150, 200];
 
   const columns: ColumnType<MarketTableRow>[] = useMemo(
     () => [
       {
+        width: columnsWidth[0],
         title: SearchForm,
         dataIndex: 'name',
         key: 'name',
         render: (name: string) => {
           return (
             <div className={style.nameCell}>
-              <div className={style.collectionLogo}>
-                <HexaBoxContainer>
-                  <Image src={mockNftImage} />
-                </HexaBoxContainer>
+              <div className={style.logoWrapper}>
+                <div className={style.collectionLogo}>
+                  <HexaBoxContainer>
+                    <Image src={mockNftImage} />
+                  </HexaBoxContainer>
+                </div>
               </div>
               <div className={style.collectionName}>{name}</div>
             </div>
@@ -152,6 +206,7 @@ const Markets: NextPage = () => {
         }
       },
       {
+        width: columnsWidth[1],
         title: ({ sortColumns }) => {
           const sortOrder = getColumnSortStatus(sortColumns, 'rate');
           return (
@@ -173,6 +228,7 @@ const Markets: NextPage = () => {
         }
       },
       {
+        width: columnsWidth[2],
         title: ({ sortColumns }) => {
           const sortOrder = getColumnSortStatus(sortColumns, 'available');
           return (
@@ -195,6 +251,7 @@ const Markets: NextPage = () => {
         }
       },
       {
+        width: columnsWidth[3],
         title: ({ sortColumns }) => {
           const sortOrder = getColumnSortStatus(sortColumns, 'value');
           return (
@@ -216,16 +273,12 @@ const Markets: NextPage = () => {
         }
       },
       {
+        width: columnsWidth[4],
         title: MyCollectionsToggle,
-        dataIndex: '',
         render: (_: null, row: MarketTableRow) => {
           return (
             <div className={style.buttonsCell}>
-              <HoneyButton
-                className={style.arrowPadding}
-                variant="text"
-                onClick={() => toggleRowExpand(row)}
-              >
+              <HoneyButton variant="text" onClick={() => toggleRowExpand(row)}>
                 View <div className={style.arrowIcon} />
               </HoneyButton>
             </div>
@@ -236,34 +289,94 @@ const Markets: NextPage = () => {
     [isMyCollectionsFilterEnabled, tableData, searchQuery]
   );
 
-  // PUT YOUR DATA SOURCE HERE
-  // MOCK DATA FOR NOW
-  useEffect(() => {
-    const mockData: MarketTableRow[] = [
-      {
-        key: '0',
-        name: 'Test 2',
-        rate: 0.1,
-        available: 100,
-        value: 100000
-      },
-      {
-        key: '1',
-        name: 'Very long collection name very long',
-        rate: 0.2,
-        available: 150,
-        value: 160000
-      }
-    ];
+  const expandColumns: ColumnType<MarketTablePosition>[] = [
+    {
+      dataIndex: 'name',
+      width: columnsWidth[0],
+      render: (name, record) => (
+        <div className={style.expandedRowNameCell}>
+          <div className={style.expandedRowIcon} />
+          <div className={style.collectionLogo}>
+            <HexaBoxContainer>
+              <Image src={mockNftImage} />
+            </HexaBoxContainer>
+          </div>
+          <div className={style.nameCellText}>
+            <div className={style.collectionName}>{name}</div>
+            <div className={style.risk.safe}>
+              <span className={style.valueCell}>{fp(record.riskLvl)}</span>{' '}
+              <span className={style.riskText}>Risk lvl</span>
+            </div>
+          </div>
+        </div>
+      )
+    },
+    {
+      dataIndex: 'debt',
+      width: columnsWidth[1],
+      render: debt => (
+        <div className={style.expandedRowCell}>
+          <InfoBlock title={'Debt:'} value={fu(debt)} />
+        </div>
+      )
+    },
+    {
+      dataIndex: 'available',
+      width: columnsWidth[2],
+      render: available => (
+        <div className={style.expandedRowCell}>
+          <InfoBlock title={'Available:'} value={fu(available)} />
+        </div>
+      )
+    },
+    {
+      dataIndex: 'value',
+      width: columnsWidth[3],
+      render: value => (
+        <div className={style.expandedRowCell}>
+          <InfoBlock title={'Value:'} value={fu(value)} />
+        </div>
+      )
+    },
+    {
+      width: columnsWidth[4],
+      title: '',
+      render: () => (
+        <div className={style.buttonsCell}>
+          <HoneyButton variant="text">
+            Manage <div className={style.arrowRightIcon} />
+          </HoneyButton>
+        </div>
+      )
+    }
+  ];
 
-    setTableData(mockData);
-    setTableDataFiltered(mockData);
-  }, []);
+  const ExpandedTableFooter = () => (
+    <div className={style.expandedSectionFooter}>
+      <div className={style.expandedRowIcon} />
+      <div className={style.lampIcon} />
+      <div className={style.footerText}>
+        <span className={style.footerTitle}>
+          You can’t add one more NFT to this market
+        </span>
+        <span className={style.footerDescription}>
+          Choose another market or connect another wallet
+        </span>
+      </div>
+      <div className={style.footerButton}>
+        <HoneyButton variant="secondary">
+          <div className={style.swapWalletIcon} /> Connect another wallet
+        </HoneyButton>
+      </div>
+    </div>
+  );
 
   return (
     <LayoutRedesign>
       <Content>
         <HoneyTable
+          hasRowsShadow={true}
+          tableLayout="fixed"
           columns={columns}
           dataSource={tableDataFiltered}
           pagination={false}
@@ -276,7 +389,16 @@ const Markets: NextPage = () => {
             expandedRowRender: record => {
               return (
                 <div className={style.expandSection}>
-                  WIP: add expand section
+                  <div className={style.dashedDivider} />
+                  <HoneyTable
+                    tableLayout="fixed"
+                    className={style.expandContentTable}
+                    columns={expandColumns}
+                    dataSource={record.positions}
+                    pagination={false}
+                    showHeader={false}
+                    footer={ExpandedTableFooter}
+                  />
                 </div>
               );
             }

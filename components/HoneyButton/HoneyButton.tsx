@@ -17,8 +17,8 @@ const HoneyButton: FC<HoneyButtonProps> = props => {
       className={c(
         styles.honeyButton,
         variant ? styles[variant] : styles['primary'],
-        className,
-        { [styles.disabled]: disabled, [styles.fluid]: isFluid }
+        { [styles.disabled]: disabled, [styles.fluid]: isFluid },
+        className
       )}
     >
       {props.children}
