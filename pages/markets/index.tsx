@@ -24,8 +24,6 @@ import debounce from 'lodash/debounce';
 import SearchInput from '../../components/SearchInput/SearchInput';
 import HexaBoxContainer from 'components/HexaBoxContainer/HexaBoxContainer';
 import { InfoBlock } from 'components/InfoBlock/InfoBlock';
-import HoneyButton from '../../components/HoneyButton/HoneyButton';
-import { ArrowIcon } from '../../icons/Arrow';
 
 const { formatPercent: fp, formatUsd: fu } = formatNumber;
 
