@@ -46,14 +46,13 @@ export const nftInfo = style([
   }
 ]);
 export const nftImage = style([
-  formSection,
   {
     width: 46,
     height: 46,
     marginRight: 15
   }
 ]);
-export const nftName = style([formSection, typography.title, {}]);
+export const nftName = style([typography.title, {}]);
 
 export const inputs = style([
   {
@@ -82,5 +81,13 @@ export const smallCol = style([
 export const bigCol = style([
   {
     flex: '1 0 auto'
+  }
+]);
+
+// NEW BORROWING FORM
+export const newBorrowingTitle = style([
+  typography.title,
+  {
+    marginBottom: 18
   }
 ]);
