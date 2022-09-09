@@ -74,18 +74,22 @@ export const tertiary = style({
   }
 });
 
+const allTexts = style({
+  position: 'relative',
+  border: 'none',
+  background: 'transparent',
+  padding: 0,
+  textTransform: 'uppercase',
+  fontSize: '16px',
+  boxShadow: 'none',
+  alignItems: 'center'
+});
+
 export const text = style([
   typography.button,
+  allTexts,
   {
-    position: 'relative',
-    border: 'none',
-    background: 'transparent',
     color: vars.colors.brownMiddle,
-    textTransform: 'uppercase',
-    padding: 0,
-    fontSize: '16px',
-    alignItems: 'center',
-    boxShadow: 'none',
     ':hover': {
       background: 'transparent',
       color: vars.colors.brownDark
@@ -108,6 +112,18 @@ export const text = style([
       width: '10px',
       height: '10px',
       background: 'red'
+    }
+  }
+]);
+
+export const textSecondary = style([
+  typography.button,
+  allTexts,
+  {
+    opacity: '0.4',
+    ':hover': {
+      opacity: '1',
+      color: vars.colors.black
     }
   }
 ]);
