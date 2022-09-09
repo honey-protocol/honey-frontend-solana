@@ -4,6 +4,7 @@ import * as styles from './HeaderDropdownMenu.css';
 import { DownOutlined } from '@ant-design/icons';
 import Link from 'next/link';
 import { DownIcon } from 'icons/DownIcon';
+import Lend from "../../pages/lend";
 
 const { Title } = Typography;
 
@@ -17,6 +18,14 @@ const HeaderDropdownMenu = () => {
           label: (
             <Link href="/dashboard" passHref>
               <a>Dashboard</a>
+            </Link>
+          )
+        },
+        {
+          key: '2',
+          label: (
+            <Link href="/lend" passHref>
+               <a>Lend</a>
             </Link>
           )
         }
