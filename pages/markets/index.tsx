@@ -6,7 +6,7 @@ import { Content } from 'antd/lib/layout/layout';
 import HoneyTable from '../../components/HoneyTable/HoneyTable';
 import { ColumnType } from 'antd/lib/table';
 import * as style from '../../styles/markets.css';
-import { MarketTableRow, MarketTableToken } from '../../types/markets';
+import { MarketTableRow, MarketTablePosition } from '../../types/markets';
 import React, {
   ChangeEvent,
   useCallback,
@@ -47,7 +47,7 @@ const Markets: NextPage = () => {
         rate: 0.1,
         available: 100,
         value: 100000,
-        tokens: [
+        positions: [
           {
             name: 'Doodles #1291',
             riskLvl: 33,
@@ -70,7 +70,7 @@ const Markets: NextPage = () => {
         rate: 0.2,
         available: 150,
         value: 160000,
-        tokens: [
+        positions: [
           {
             name: 'Doodles #1292',
             riskLvl: 0.1,
@@ -289,7 +289,7 @@ const Markets: NextPage = () => {
     [isMyCollectionsFilterEnabled, tableData, searchQuery]
   );
 
-  const expandColumns: ColumnType<MarketTableToken>[] = [
+  const expandColumns: ColumnType<MarketTablePosition>[] = [
     {
       dataIndex: 'name',
       width: columnsWidth[0],
@@ -394,7 +394,7 @@ const Markets: NextPage = () => {
                     tableLayout="fixed"
                     className={style.expandContentTable}
                     columns={expandColumns}
-                    dataSource={record.tokens}
+                    dataSource={record.positions}
                     pagination={false}
                     showHeader={false}
                     footer={ExpandedTableFooter}
