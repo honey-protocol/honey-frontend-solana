@@ -1,5 +1,5 @@
 import { Dropdown, Menu, Space, Typography } from 'antd';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import * as styles from './HeaderLinks.css';
 import { DownOutlined } from '@ant-design/icons';
 import Link from 'next/link';
@@ -44,31 +44,49 @@ const links = [
 ];
 
 const HeaderDropdownMenu = () => {
-  const menu = (
+  const [linksDisplayed, setLinkDisplayed] = useState(7);
+  const MoreMenu = (
     <Menu
       selectable
-      items={[
-        {
-          key: '1',
+      items={links
+        .filter((_, i) => i >= linksDisplayed)
+        .map(link => ({
+          key: link.title,
           label: (
-            <Link href="/dashboard" passHref>
-              <a>Dashboard</a>
+            <Link href={link.href} passHref>
+              <a>{link.title}</a>
             </Link>
           )
-        }
-      ]}
+        }))}
     />
   );
+
+  useEffect(() => {
+    const setLinksToDisplay = () => {
+      const width = window.innerWidth;
+      if (width > 1100) {
+        setLinkDisplayed(7);
+      }
+      if (width < 1100 && width > 768) {
+        setLinkDisplayed(4);
+      }
+    };
+    setLinksToDisplay();
+    window.onresize = setLinksToDisplay;
+    return () => {
+      window.onresize = null;
+    };
+  }, []);
   return (
     <div className={styles.container}>
       {links
-        .filter((_, i) => i < 7)
+        .filter((_, i) => i < linksDisplayed)
         .map((link, i) => (
           <Link href={link.href} passHref key={i}>
             <HoneyButton variant="textSecondary">{link.title}</HoneyButton>
           </Link>
         ))}
-      <Dropdown overlay={menu}>
+      <Dropdown overlay={MoreMenu}>
         <HoneyButton variant="textSecondary">
           <Space>
             more
