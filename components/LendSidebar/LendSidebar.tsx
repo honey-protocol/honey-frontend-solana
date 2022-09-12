@@ -4,6 +4,7 @@ import { LendSidebarProps } from './types';
 import { Tabs, Typography } from 'antd';
 import HoneyButton from 'components/HoneyButton/HoneyButton';
 import classNames from 'classnames';
+import DepositForm from "../DepositForm/DepositForm";
 import WithdrawForm from "../WithdrawForm/WithdrawForm";
 
 const items = [
@@ -61,7 +62,7 @@ const LendSidebar = (props: LendSidebarProps) => {
                     </div>
                 ) : (
                     <>
-                        {activeTab === 'deposit' && <>Deposit</>}
+                        {activeTab === 'deposit' && <DepositForm />}
                         {activeTab === 'withdraw' && <WithdrawForm />}
                     </>
                 )}
