@@ -33,3 +33,15 @@ export const leftContainer = style({
   display: 'flex',
   alignItems: 'center'
 });
+
+export const menuToggle = style({
+  display: 'none',
+  width: 20,
+  height: 20,
+  background: 'url("/images/menuIcon.svg") center center no-repeat',
+  '@media': {
+    'screen and (max-width: 768px)': {
+      display: 'block'
+    }
+  }
+});

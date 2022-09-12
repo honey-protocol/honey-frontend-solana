@@ -3,7 +3,12 @@ import { typography } from '../../styles/theme.css';
 
 export const container = style({
   display: 'flex',
-  gap: '24px'
+  gap: '24px',
+  '@media': {
+    'screen and (max-width: 768px)': {
+      display: 'none'
+    }
+  }
 });
 export const title = style({
   ...typography.body,
