@@ -6,10 +6,21 @@ import c from 'classnames';
 interface HoneyButtonProps extends ButtonProps {
   variant?: 'primary' | 'secondary' | 'tertiary' | 'text';
   isFluid?: boolean;
+  usdcAmount?: number;
+  usdcValue?: number;
 }
 
 const HoneyButton: FC<HoneyButtonProps> = props => {
-  const { className, children, disabled, variant, isFluid, ...rest } = props;
+  const {
+    usdcAmount,
+    usdcValue,
+    className,
+    children,
+    disabled,
+    variant,
+    isFluid,
+    ...rest
+  } = props;
   return (
     <Button
       {...rest}
@@ -22,6 +33,13 @@ const HoneyButton: FC<HoneyButtonProps> = props => {
       )}
     >
       {props.children}
+
+      {usdcAmount && (
+        <div className={styles.rightBlock}>
+          <span className={styles.usdcAmount}>USDC {usdcAmount}</span>
+          <span className={styles.usdcValue}>${usdcValue}</span>
+        </div>
+      )}
     </Button>
   );
 };

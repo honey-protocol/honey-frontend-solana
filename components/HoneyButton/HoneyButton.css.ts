@@ -9,11 +9,11 @@ export const honeyButton = style([
     height: 'unset',
     display: 'flex',
     // display: 'inline-flex',
-    alignItems: 'center',
-    justifyContent: 'center',
     border: 'none',
     gap: '10px',
     transition: 'all .5s',
+    justifyContent: 'space-between',
+    alignItems: 'center',
     ':after': {
       display: 'none!important'
     }
@@ -114,6 +114,7 @@ export const text = style([
 
 export const disabled = style({
   background: `${vars.colors.grayMiddle} !important`,
+  color: `${vars.colors.grayTransparent} !important`,
   ':hover': {
     transform: 'none',
     boxShadow: 'none'
@@ -130,3 +131,22 @@ globalStyle(`${tertiary}.${disabled}`, {
 export const fluid = style({
   width: '100%'
 });
+
+export const rightBlock = style({
+  textAlign: 'right'
+});
+
+export const usdcAmount = style([
+  typography.caption,
+  {
+    display: 'block'
+  }
+]);
+
+export const usdcValue = style([
+  typography.caption,
+  {
+    color: vars.colors.grayTransparent,
+    display: 'block'
+  }
+]);
