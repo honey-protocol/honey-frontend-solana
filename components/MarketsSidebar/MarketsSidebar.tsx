@@ -6,10 +6,11 @@ import { Image, Tabs, Typography } from 'antd';
 import RepayForm from '../RepayForm/RepayForm';
 import HoneyButton from 'components/HoneyButton/HoneyButton';
 import classNames from 'classnames';
+import HoneyTabs, { HoneyTabItem } from 'components/HoneyTabs/HoneyTabs';
 
-const items = [
-  { label: 'Borrow', key: 'borrow', children: 'Borrow' },
-  { label: 'Repay', key: 'repay', children: 'Repay' }
+const items: [HoneyTabItem, HoneyTabItem] = [
+  { label: 'Borrow', key: 'borrow' },
+  { label: 'Repay', key: 'repay' }
 ];
 
 const { Text } = Typography;
@@ -26,18 +27,11 @@ const MarketsSidebar = (props: MarketsSidebarProps) => {
   };
   return (
     <div className={styles.marketsSidebarContainer}>
-      <div className={styles.tabs}>
-        <Tabs onChange={handleTabChange}>
-          {items.map(tabInfo => {
-            return <Tabs.TabPane tab={tabInfo.label} key={tabInfo.key} />;
-          })}
-        </Tabs>
-      </div>
-      <div
-        className={classNames(
-          styles.content,
-          collectionId ? styles.active : styles.inactive
-        )}
+      <HoneyTabs
+        activeKey={activeTab}
+        onTabChange={handleTabChange}
+        items={items}
+        active={Boolean(collectionId)}
       >
         {!wallet ? (
           <div className={styles.emptyStateContent}>
@@ -66,7 +60,7 @@ const MarketsSidebar = (props: MarketsSidebarProps) => {
             {activeTab === 'repay' && <RepayForm />}
           </>
         )}
-      </div>
+      </HoneyTabs>
     </div>
   );
 };

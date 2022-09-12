@@ -7,8 +7,6 @@ export const marketsSidebarContainer = style({
   alignItems: 'stretch'
 });
 
-export const tabs = style({});
-
 export const content = style({
   borderRadius: vars.space.medium,
   overflow: 'hidden',
