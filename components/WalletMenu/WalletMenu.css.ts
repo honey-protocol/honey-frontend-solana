@@ -6,3 +6,9 @@ export const title = style({
   margin: '0px !important',
   fontSize: '16px !important'
 });
+
+export const phantomIcon = style({
+  width: 20,
+  height: 20,
+  background: 'url("/images/phantomIcon.svg") center center no-repeat'
+});

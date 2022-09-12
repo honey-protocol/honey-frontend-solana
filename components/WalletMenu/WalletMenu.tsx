@@ -1,6 +1,4 @@
 import { Dropdown, Menu, Space, Typography } from 'antd';
-import { MetamaskIcon } from 'icons/MetamaskIcon';
-import { DownOutlined } from '@ant-design/icons';
 import React from 'react';
 import * as styles from './WalletMenu.css';
 import { DownIcon } from 'icons/DownIcon';
@@ -43,7 +41,7 @@ const WalletMenu = () => {
     <Dropdown overlay={menu}>
       <a onClick={e => e.preventDefault()}>
         <Space size="small" align="center">
-          <MetamaskIcon />
+          <div className={styles.phantomIcon} />
           <Space size={0} direction="vertical">
             <Title level={4} className={styles.title}>
               {formatAddress(walletAddress)}
