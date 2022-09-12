@@ -9,8 +9,6 @@ export const honeyButton = style([
     height: 'unset',
     display: 'flex',
     // display: 'inline-flex',
-    alignItems: 'center',
-    justifyContent: 'center',
     border: 'none',
     gap: '10px',
     transition: 'all .5s',
