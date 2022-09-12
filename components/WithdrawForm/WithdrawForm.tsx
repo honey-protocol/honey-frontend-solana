@@ -51,9 +51,9 @@ const WithdrawForm: FC<RepayFormProps> = () => {
           </div>
           <div className={styles.col}>
             <InfoBlock
-                value={fp(80)}
-                valueSize="big"
-                footer={<span>Utilization rate</span>}
+              value={fp(80)}
+              valueSize="big"
+              footer={<span>Utilization rate</span>}
             />
           </div>
         </div>
