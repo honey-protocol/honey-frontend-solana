@@ -24,6 +24,7 @@ import SearchInput from '../../components/SearchInput/SearchInput';
 import HexaBoxContainer from 'components/HexaBoxContainer/HexaBoxContainer';
 import { InfoBlock } from 'components/InfoBlock/InfoBlock';
 import HoneyButton from '../../components/HoneyButton/HoneyButton';
+import { getColumnSortStatus } from '../../helpers/tableUtils';
 
 const { formatPercent: fp, formatUsd: fu } = formatNumber;
 
@@ -126,21 +127,6 @@ const Markets: NextPage = () => {
       <span className={style.toggleText}>my collections</span>
     </div>
   );
-
-  const getColumnSortStatus = (
-    sortColumns:
-      | { column: ColumnType<MarketTableRow>; order: SortOrder }[]
-      | undefined,
-    columnName: string
-  ) => {
-    return (
-      (sortColumns &&
-        sortColumns[0] &&
-        sortColumns[0].column.dataIndex === columnName &&
-        sortColumns[0].order) ||
-      'disabled'
-    );
-  };
 
   const onSearch = (searchTerm: string): MarketTableRow[] => {
     if (!searchTerm) {
