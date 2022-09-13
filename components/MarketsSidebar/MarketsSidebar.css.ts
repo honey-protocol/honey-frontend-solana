@@ -26,14 +26,6 @@ export const active = style({
   border: `2px solid ${vars.colors.black}`
 });
 
-export const emptyStateContent = style({
-  width: '100%',
-  height: '100%',
-  display: 'flex',
-  flexDirection: 'column',
-  alignItems: 'center'
-});
-
 export const boltIcon = style({
   width: 52,
   height: 52,
@@ -44,23 +36,4 @@ export const lightIcon = style({
   width: 52,
   height: 52,
   background: 'url("/images/lightIcon.svg") center center no-repeat'
-});
-
-export const emptyStateTitle = style([
-  typography.body,
-  {
-    marginTop: 10,
-    marginBottom: 4
-  }
-]);
-
-export const emptyStateDescription = style([
-  typography.description,
-  {
-    fontWeight: '500'
-  }
-]);
-
-export const emptyStateWalletBtn = style({
-  marginTop: 12
 });

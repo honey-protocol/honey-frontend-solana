@@ -4,7 +4,7 @@ import * as styles from './HoneyButton.css';
 import c from 'classnames';
 
 interface HoneyButtonProps extends ButtonProps {
-  variant?: 'primary' | 'secondary' | 'tertiary' | 'text';
+  variant?: 'primary' | 'secondary' | 'tertiary' | 'text' | 'textSecondary';
   isFluid?: boolean;
   usdcAmount?: number;
   usdcValue?: number;
