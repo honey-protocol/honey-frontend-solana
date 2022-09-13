@@ -283,3 +283,4 @@ export const docIcon = style({
   height: 52,
   background: 'url("/images/docIcon.svg") center center no-repeat'
 });
+
