@@ -102,6 +102,7 @@ const HoneyTable: FC<HoneyTableProps> = props => {
       rowClassName={_rowClassName}
       expandedRowClassName={_expandedRowClassName}
       expandable={expandable}
+      expandRowByClick
     />
   );
 };

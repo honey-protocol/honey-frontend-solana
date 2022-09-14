@@ -28,8 +28,8 @@ const Liquidate: NextPage = () => {
   const [tableDataFiltered, setTableDataFiltered] = useState<LiquidateTableRow[]>(
     []
   );
-  const [expandedRowKeys, setExpandedRowKeys] = useState<Key[]>([]);
-  const [isMyCollectionsFilterEnabled, setIsMyCollectionsFilterEnabled] =
+  const [expandedRowKeys, setExpandedRowKeys] = useState<readonly Key[]>([]);
+  const [isMyBidsFilterEnabled, setIsMyBidsFilterEnabled] =
     useState(false);
   const [searchQuery, setSearchQuery] = useState('');
 
@@ -98,35 +98,8 @@ const Liquidate: NextPage = () => {
     setTableDataFiltered(mockData);
   }, []);
 
-  const isExpandedRow = (key: Key): boolean => {
-    return expandedRowKeys.includes(key);
-  };
-
-  const getRowClassName = (row: LiquidateTableRow): string => {
-    if (!expandedRowKeys || !expandedRowKeys.length) {
-      return '';
-    }
-    return isExpandedRow(row.key) ? style.expandedRow : style.inactiveRow;
-  };
-
-  const toggleRowExpand = useCallback((row: LiquidateTableRow) => {
-    const { key } = row;
-    setExpandedRowKeys(prevState => {
-      let newState = [...prevState];
-      if (prevState.includes(key)) {
-        const index = prevState.findIndex(v => v === key);
-        newState.splice(index, 1);
-      } else {
-        // uncomment this if you want to support multiple expanded rows
-        // newState.push(key);
-        newState = [key];
-      }
-      return newState;
-    });
-  }, []);
-
   const handleToggle = (checked: boolean) => {
-    setIsMyCollectionsFilterEnabled(checked);
+    setIsMyBidsFilterEnabled(checked);
   };
 
   const onSearch = (searchTerm: string): LiquidateTableRow[] => {
@@ -279,7 +252,7 @@ const Liquidate: NextPage = () => {
         title: (
           <div className={style.toggle}>
             <HoneyToggle
-              checked={isMyCollectionsFilterEnabled}
+              checked={isMyBidsFilterEnabled}
               onChange={handleToggle}
             />
             <span className={style.toggleText}>my bids</span>
@@ -288,7 +261,7 @@ const Liquidate: NextPage = () => {
         render: (_: null, row: LiquidateTableRow) => {
           return (
             <div className={style.buttonsCell}>
-              <HoneyButton variant="text" onClick={() => toggleRowExpand(row)}>
+              <HoneyButton variant="text">
                 View <div className={style.arrowIcon} />
               </HoneyButton>
             </div>
@@ -296,7 +269,7 @@ const Liquidate: NextPage = () => {
         }
       }
     ],
-    [isMyCollectionsFilterEnabled, tableData, searchQuery]
+    [isMyBidsFilterEnabled, tableData, searchQuery]
   );
 
     return (
@@ -308,14 +281,14 @@ const Liquidate: NextPage = () => {
                 columns={columns}
                 dataSource={tableDataFiltered}
                 pagination={false}
-                rowClassName={getRowClassName}
                 className={classNames(style.table, {
                   [style.emptyTable]: !tableDataFiltered.length
                 })}
                 expandable={{
                   // we use our own custom expand column
                   showExpandColumn: false,
-                  expandedRowKeys: expandedRowKeys,
+                  onExpand: (expanded, row) => setExpandedRowKeys(expanded ? [row.key] : []),
+                  expandedRowKeys,
                   expandedRowRender: record => {
                     return (
                       <div className={style.expandSection}>
@@ -327,7 +300,7 @@ const Liquidate: NextPage = () => {
                 }}
               />
               {!tableDataFiltered.length &&
-                (isMyCollectionsFilterEnabled ? (
+                (isMyBidsFilterEnabled ? (
                   <div className={style.emptyStateContainer}>
                     <EmptyStateDetails
                       icon={<div className={style.docIcon} />}

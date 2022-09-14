@@ -28,7 +28,7 @@ const Lend: NextPage = () => {
   const [tableDataFiltered, setTableDataFiltered] = useState<LendTableRow[]>(
     []
   );
-  const [expandedRowKeys, setExpandedRowKeys] = useState<Key[]>([]);
+  const [expandedRowKeys, setExpandedRowKeys] = useState<readonly Key[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
 
   const getPositionData = () => {
@@ -93,33 +93,6 @@ const Lend: NextPage = () => {
     ];
     setTableData(mockData);
     setTableDataFiltered(mockData);
-  }, []);
-
-  const isExpandedRow = (key: Key): boolean => {
-    return expandedRowKeys.includes(key);
-  };
-
-  const getRowClassName = (row: LendTableRow): string => {
-    if (!expandedRowKeys || !expandedRowKeys.length) {
-      return '';
-    }
-    return isExpandedRow(row.key) ? style.expandedRow : style.inactiveRow;
-  };
-
-  const toggleRowExpand = useCallback((row: LendTableRow) => {
-    const { key } = row;
-    setExpandedRowKeys(prevState => {
-      let newState = [...prevState];
-      if (prevState.includes(key)) {
-        const index = prevState.findIndex(v => v === key);
-        newState.splice(index, 1);
-      } else {
-        // uncomment this if you want to support multiple expanded rows
-        // newState.push(key);
-        newState = [key];
-      }
-      return newState;
-    });
   }, []);
 
   const columns: ColumnType<LendTableRow>[] = useMemo(
@@ -218,7 +191,7 @@ const Lend: NextPage = () => {
         render: (_: null, row: LendTableRow) => {
           return (
             <div className={style.buttonsCell}>
-              <HoneyButton variant="text" onClick={() => toggleRowExpand(row)}>
+              <HoneyButton variant="text">
                 View <div className={style.arrowIcon} />
               </HoneyButton>
             </div>
@@ -238,12 +211,12 @@ const Lend: NextPage = () => {
           columns={columns}
           dataSource={tableDataFiltered}
           pagination={false}
-          rowClassName={getRowClassName}
           className={style.table}
           expandable={{
             // we use our own custom expand column
             showExpandColumn: false,
-            expandedRowKeys: expandedRowKeys,
+            onExpand: (expanded, row) => setExpandedRowKeys(expanded ? [row.key] : []),
+            expandedRowKeys,
             expandedRowRender: record => {
               return (
                 <div className={style.expandSection}>
