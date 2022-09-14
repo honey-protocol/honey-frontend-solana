@@ -346,7 +346,7 @@ const Liquidate: NextPage = () => {
                 ))}
             </Content>
             <Sider width={350}>
-                <LiquidateSidebar />
+                <LiquidateSidebar collectionId="0" />
             </Sider>
         </LayoutRedesign>
     );

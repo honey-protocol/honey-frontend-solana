@@ -1,17 +1,15 @@
 import React, { useState } from 'react';
 import * as styles from './LiquidateSidebar.css';
 import { LendSidebarProps } from './types';
-import { Tabs, Typography } from 'antd';
-import HoneyButton from 'components/HoneyButton/HoneyButton';
-import classNames from 'classnames';
+import HoneyTabs, {HoneyTabItem} from "../HoneyTabs/HoneyTabs";
+import EmptyStateDetails from "../EmptyStateDetails/EmptyStateDetails";
 
-const items = [
-    { label: 'Place a bid', key: 'bid', children: 'Place a bid' }
+const items: [HoneyTabItem, HoneyTabItem] = [
+    { label: 'Place a bid', key: 'bid' },
+    { label: 'Current bids', key: 'current' }
 ];
 
-const { Text } = Typography;
-
-type Tab = 'bid';
+type Tab = 'bid' | 'current'
 
 const LiquidateSidebar = (props: LendSidebarProps) => {
     const wallet = true;
@@ -23,46 +21,31 @@ const LiquidateSidebar = (props: LendSidebarProps) => {
     };
     return (
         <div className={styles.liquidateSidebarContainer}>
-            <div className={styles.tabs}>
-                <Tabs onChange={handleTabChange}>
-                    {items.map(tabInfo => {
-                        return <Tabs.TabPane tab={tabInfo.label} key={tabInfo.key} />;
-                    })}
-                </Tabs>
-            </div>
-            <div
-                className={classNames(
-                    styles.content,
-                    collectionId ? styles.active : styles.inactive
-                )}
-            >
-                {!wallet ? (
-                    <div className={styles.emptyStateContent}>
-                        <div className={styles.lightIcon} />
-                        <Text className={styles.emptyStateTitle}>
-                            You didn’t connect any wallet yet
-                        </Text>
-                        <Text type="secondary" className={styles.emptyStateDescription}>
-                            First, choose a NFT collection
-                        </Text>
-                        <HoneyButton type="primary" className={styles.emptyStateWalletBtn}>
-                            CONNECT WALLET
-                        </HoneyButton>
-                    </div>
-                ) : !collectionId ? (
-                    <div className={styles.emptyStateContent}>
-                        <div className={styles.boltIcon} />
-                        <Text className={styles.emptyStateTitle}>Manage panel</Text>
-                        <Text type="secondary" className={styles.emptyStateDescription}>
-                            First, choose a NFT collection
-                        </Text>
-                    </div>
-                ) : (
-                    <>
-                        {activeTab === 'bid' && <>Place a bid</>}
-                    </>
-                )}
-            </div>
+          <HoneyTabs
+            activeKey={activeTab}
+            onTabChange={handleTabChange}
+            items={items}
+            active={Boolean(collectionId)}
+          >
+            {!wallet ? (
+              <EmptyStateDetails
+                icon={<div className={styles.lightIcon} />}
+                title="You didn’t connect any wallet yet"
+                description="First, choose a NFT collection"
+                btnTitle="CONNECT WALLET"
+              />
+            ) : !collectionId ? (
+              <EmptyStateDetails
+                icon={<div className={styles.boltIcon} />}
+                title="Manage panel"
+                description="First, choose a NFT collection"
+              />
+            ) : (
+              <>
+                {activeTab === 'bid' && <>Place a bid</>}
+              </>
+            )}
+          </HoneyTabs>
         </div>
     );
 };
