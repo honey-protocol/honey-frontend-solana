@@ -2,35 +2,41 @@ import type { NextPage } from 'next';
 import LayoutRedesign from '../../components/LayoutRedesign/LayoutRedesign';
 import Sider from 'antd/lib/layout/Sider';
 import { Content } from 'antd/lib/layout/layout';
-import LiquidateSidebar from "../../components/LiquidateSidebar/LiquidateSidebar";
-import HoneyTable from "../../components/HoneyTable/HoneyTable";
-import classNames from "classnames";
-import * as style from "../../styles/markets.css";
-import EmptyStateDetails from "../../components/EmptyStateDetails/EmptyStateDetails";
-import React, {ChangeEvent, useCallback, useEffect, useMemo, useState} from "react";
-import {Key} from "antd/lib/table/interface";
-import HoneyToggle from "../../components/HoneyToggle/HoneyToggle";
-import debounce from "lodash/debounce";
-import SearchInput from "../../components/SearchInput/SearchInput";
-import {ColumnType} from "antd/lib/table";
-import HexaBoxContainer from "../../components/HexaBoxContainer/HexaBoxContainer";
-import Image from "next/image";
+import LiquidateSidebar from '../../components/LiquidateSidebar/LiquidateSidebar';
+import HoneyTable from '../../components/HoneyTable/HoneyTable';
+import classNames from 'classnames';
+import * as style from '../../styles/markets.css';
+import EmptyStateDetails from '../../components/EmptyStateDetails/EmptyStateDetails';
+import React, {
+  ChangeEvent,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState
+} from 'react';
+import { Key } from 'antd/lib/table/interface';
+import HoneyToggle from '../../components/HoneyToggle/HoneyToggle';
+import debounce from 'lodash/debounce';
+import SearchInput from '../../components/SearchInput/SearchInput';
+import { ColumnType } from 'antd/lib/table';
+import HexaBoxContainer from '../../components/HexaBoxContainer/HexaBoxContainer';
+import Image from 'next/image';
 import mockNftImage from '/public/images/mock-collection-image@2x.png';
-import {getColumnSortStatus} from "../../helpers/tableUtils";
-import HoneyButton from "../../components/HoneyButton/HoneyButton";
-import {formatNumber} from "../../helpers/format";
-import {LiquidateTableRow} from "../../types/liquidate";
-import {LiquidateExpandTable} from "../../components/LiquidateExpandTable/LiquidateExpandTable";
+import { getColumnSortStatus } from '../../helpers/tableUtils';
+import HoneyButton from '../../components/HoneyButton/HoneyButton';
+import { formatNumber } from '../../helpers/format';
+import { LiquidateTableRow } from '../../types/liquidate';
+import { LiquidateExpandTable } from '../../components/LiquidateExpandTable/LiquidateExpandTable';
+
 const { formatPercent: fp, formatUsd: fu } = formatNumber;
 
 const Liquidate: NextPage = () => {
   const [tableData, setTableData] = useState<LiquidateTableRow[]>([]);
-  const [tableDataFiltered, setTableDataFiltered] = useState<LiquidateTableRow[]>(
-    []
-  );
+  const [tableDataFiltered, setTableDataFiltered] = useState<
+    LiquidateTableRow[]
+  >([]);
   const [expandedRowKeys, setExpandedRowKeys] = useState<readonly Key[]>([]);
-  const [isMyBidsFilterEnabled, setIsMyBidsFilterEnabled] =
-    useState(false);
+  const [isMyBidsFilterEnabled, setIsMyBidsFilterEnabled] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
 
   // PUT YOUR DATA SOURCE HERE
@@ -72,14 +78,14 @@ const Liquidate: NextPage = () => {
             untilLiquidation: 200,
             debt: 50,
             estimatedValue: 90
-          },
+          }
         ]
       },
       {
         key: '1',
         name: 'Test 3',
         risk: 0.3,
-        liqThreshold: 0.70,
+        liqThreshold: 0.7,
         totalDebt: 1500,
         tvl: 150000,
         positions: [
@@ -89,9 +95,9 @@ const Liquidate: NextPage = () => {
             untilLiquidation: 1234,
             debt: 0,
             estimatedValue: 1000
-          },
+          }
         ]
-      },
+      }
     ];
 
     setTableData(mockData);
@@ -162,6 +168,7 @@ const Liquidate: NextPage = () => {
         }
       },
       {
+        width: columnsWidth[1],
         title: ({ sortColumns }) => {
           const sortOrder = getColumnSortStatus(sortColumns, 'risk');
           return (
@@ -169,10 +176,11 @@ const Liquidate: NextPage = () => {
               className={
                 style.headerCell[
                   sortOrder === 'disabled' ? 'disabled' : 'active'
-                  ]
+                ]
               }
             >
-              <span>Risk</span> <div className={style.sortIcon[sortOrder]} />
+              <span>Risk</span>
+              <div className={style.sortIcon[sortOrder]} />
             </div>
           );
         },
@@ -191,10 +199,11 @@ const Liquidate: NextPage = () => {
               className={
                 style.headerCell[
                   sortOrder === 'disabled' ? 'disabled' : 'active'
-                  ]
+                ]
               }
             >
-              <span>Liq Threshold</span> <div className={style.sortIcon[sortOrder]} />
+              <span>Liq Threshold</span>
+              <div className={style.sortIcon[sortOrder]} />
             </div>
           );
         },
@@ -212,7 +221,7 @@ const Liquidate: NextPage = () => {
               className={
                 style.headerCell[
                   sortOrder === 'disabled' ? 'disabled' : 'active'
-                  ]
+                ]
               }
             >
               <span>Total Debt</span>{' '}
@@ -235,10 +244,11 @@ const Liquidate: NextPage = () => {
               className={
                 style.headerCell[
                   sortOrder === 'disabled' ? 'disabled' : 'active'
-                  ]
+                ]
               }
             >
-              <span>TVL</span> <div className={style.sortIcon[sortOrder]} />
+              <span>TVL</span>
+              <div className={style.sortIcon[sortOrder]} />
             </div>
           );
         },
@@ -272,57 +282,58 @@ const Liquidate: NextPage = () => {
     [isMyBidsFilterEnabled, tableData, searchQuery]
   );
 
-    return (
-        <LayoutRedesign>
-            <Content>
-              <HoneyTable
-                hasRowsShadow={true}
-                tableLayout="fixed"
-                columns={columns}
-                dataSource={tableDataFiltered}
-                pagination={false}
-                className={classNames(style.table, {
-                  [style.emptyTable]: !tableDataFiltered.length
-                })}
-                expandable={{
-                  // we use our own custom expand column
-                  showExpandColumn: false,
-                  onExpand: (expanded, row) => setExpandedRowKeys(expanded ? [row.key] : []),
-                  expandedRowKeys,
-                  expandedRowRender: record => {
-                    return (
-                      <div className={style.expandSection}>
-                        <div className={style.dashedDivider} />
-                        <LiquidateExpandTable data={record.positions} />
-                      </div>
-                    );
-                  }
-                }}
+  return (
+    <LayoutRedesign>
+      <Content>
+        <HoneyTable
+          hasRowsShadow={true}
+          tableLayout="fixed"
+          columns={columns}
+          dataSource={tableDataFiltered}
+          pagination={false}
+          className={classNames(style.table, {
+            [style.emptyTable]: !tableDataFiltered.length
+          })}
+          expandable={{
+            // we use our own custom expand column
+            showExpandColumn: false,
+            onExpand: (expanded, row) =>
+              setExpandedRowKeys(expanded ? [row.key] : []),
+            expandedRowKeys,
+            expandedRowRender: record => {
+              return (
+                <div className={style.expandSection}>
+                  <div className={style.dashedDivider} />
+                  <LiquidateExpandTable data={record.positions} />
+                </div>
+              );
+            }
+          }}
+        />
+        {!tableDataFiltered.length &&
+          (isMyBidsFilterEnabled ? (
+            <div className={style.emptyStateContainer}>
+              <EmptyStateDetails
+                icon={<div className={style.docIcon} />}
+                title="You didn’t use any collections yet"
+                description="Turn off the filter my collection and choose any collection to borrow money"
               />
-              {!tableDataFiltered.length &&
-                (isMyBidsFilterEnabled ? (
-                  <div className={style.emptyStateContainer}>
-                    <EmptyStateDetails
-                      icon={<div className={style.docIcon} />}
-                      title="You didn’t use any collections yet"
-                      description="Turn off the filter my collection and choose any collection to borrow money"
-                    />
-                  </div>
-                ) : (
-                  <div className={style.emptyStateContainer}>
-                    <EmptyStateDetails
-                      icon={<div className={style.docIcon} />}
-                      title="No collections to display"
-                      description="Turn off all filters and clear search inputs"
-                    />
-                  </div>
-                ))}
-            </Content>
-            <Sider width={350}>
-                <LiquidateSidebar collectionId="0" />
-            </Sider>
-        </LayoutRedesign>
-    );
+            </div>
+          ) : (
+            <div className={style.emptyStateContainer}>
+              <EmptyStateDetails
+                icon={<div className={style.docIcon} />}
+                title="No collections to display"
+                description="Turn off all filters and clear search inputs"
+              />
+            </div>
+          ))}
+      </Content>
+      <Sider width={350}>
+        <LiquidateSidebar collectionId="0" />
+      </Sider>
+    </LayoutRedesign>
+  );
 };
 
 export default Liquidate;

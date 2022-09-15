@@ -19,6 +19,8 @@ globalStyle(`${bcs('.ant-table-container')}`, {
 globalStyle(
   `${bcs('.ant-table, .ant-table-thead, .ant-table-thead > tr > th')}`,
   {
+    paddingTop: 0,
+    paddingBottom: 0,
     background: 'none'
   }
 );

@@ -10,18 +10,20 @@ import HoneyButton from 'components/HoneyButton/HoneyButton';
 import HexaBoxContainer from 'components/HexaBoxContainer/HexaBoxContainer';
 import NftList from '../NftList/NftList';
 import { NftCardProps } from '../NftCard/types';
+import { MAX_LTV } from '../../constants/loan';
+import { usdcAmount } from '../HoneyButton/HoneyButton.css';
 
 type BorrowFormProps = {};
 
 const { format: f, formatPercent: fp, formatUsd: fu } = formatNumber;
 
 const BorrowForm: FC<BorrowFormProps> = () => {
-  const [valueUSD, setValueUSD] = useState('');
-  const [valueUSDC, setValueUSDC] = useState('');
+  const [valueUSD, setValueUSD] = useState<number>();
+  const [valueUSDC, setValueUSDC] = useState<number>();
   const [rangeValue, setRangeValue] = useState(0);
 
   // Only for test purposes
-  const isNftSelected = false;
+  const isNftSelected = true;
 
   // Put your validators here
   const isBorrowButtonDisabled = () => {
@@ -150,8 +152,10 @@ const BorrowForm: FC<BorrowFormProps> = () => {
 
         <Range
           currentValue={rangeValue}
-          estimatedValue={1000}
+          maxValue={1000}
           borrowedValue={0}
+          maxSafePosition={0.4}
+          maxAvailablePosition={MAX_LTV}
           onChange={setRangeValue}
         />
       </>
@@ -182,6 +186,8 @@ const BorrowForm: FC<BorrowFormProps> = () => {
         </div>
         <div className={styles.bigCol}>
           <HoneyButton
+            usdcAmount={valueUSDC || 0}
+            usdcValue={valueUSD || 0}
             variant="primary"
             disabled={isBorrowButtonDisabled()}
             isFluid

@@ -22,6 +22,10 @@ const links = [
     href: '/lend'
   },
   {
+    title: 'LIQUIDATION',
+    href: '/liquidate'
+  },
+  {
     title: 'FARM',
     href: '/farm'
   },

@@ -152,6 +152,15 @@ export const rightBlock = style({
   textAlign: 'right'
 });
 
+export const valueContainer = style([
+  rightBlock,
+  {
+    position: 'absolute',
+    right: 16,
+    top: 6
+  }
+]);
+
 export const usdcAmount = style([
   typography.caption,
   {

@@ -5,10 +5,10 @@ import EqualIcon from './assets/equalIcon.svg';
 import USDCIcon from './assets/USDC.svg';
 
 interface InputsBlockProps {
-  valueUSD: string;
-  valueUSDC: string;
-  onChangeUSD: (value: string) => void;
-  onChangeUSDC: (value: string) => void;
+  valueUSD: number | undefined;
+  valueUSDC: number | undefined;
+  onChangeUSD: (value: number) => void;
+  onChangeUSDC: (value: number) => void;
 }
 
 export const InputsBlock: FC<InputsBlockProps> = ({
@@ -24,14 +24,14 @@ export const InputsBlock: FC<InputsBlockProps> = ({
   const handleUsdChange = (event: ChangeEvent<HTMLInputElement>) => {
     const value = event.target.value;
     if (isValidNumericInput(value)) {
-      onChangeUSD(value);
+      onChangeUSD(parseFloat(value));
     }
   };
 
   const handleTokenChange = (event: ChangeEvent<HTMLInputElement>) => {
     const value = event.target.value;
     if (isValidNumericInput(value)) {
-      onChangeUSDC(value);
+      onChangeUSDC(parseFloat(value));
     }
   };
 

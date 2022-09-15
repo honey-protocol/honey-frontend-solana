@@ -2,6 +2,8 @@ import { Button, ButtonProps } from 'antd';
 import { FC } from 'react';
 import * as styles from './HoneyButton.css';
 import c from 'classnames';
+import { isNil } from '../../helpers/utils';
+import { valueContainer } from './HoneyButton.css';
 
 interface HoneyButtonProps extends ButtonProps {
   variant?: 'primary' | 'secondary' | 'tertiary' | 'text' | 'textSecondary';
@@ -21,6 +23,8 @@ const HoneyButton: FC<HoneyButtonProps> = props => {
     isFluid,
     ...rest
   } = props;
+
+  const isButtonWithValues = !isNil(usdcAmount) || !isNil(usdcValue);
   return (
     <Button
       {...rest}
@@ -34,8 +38,8 @@ const HoneyButton: FC<HoneyButtonProps> = props => {
     >
       {props.children}
 
-      {usdcAmount && (
-        <div className={styles.rightBlock}>
+      {isButtonWithValues && (
+        <div className={styles.valueContainer}>
           <span className={styles.usdcAmount}>USDC {usdcAmount}</span>
           <span className={styles.usdcValue}>${usdcValue}</span>
         </div>
