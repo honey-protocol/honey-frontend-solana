@@ -5,6 +5,8 @@ import { DownOutlined } from '@ant-design/icons';
 import Link from 'next/link';
 import { DownIcon } from 'icons/DownIcon';
 import HoneyButton from 'components/HoneyButton/HoneyButton';
+import { useRouter } from 'next/router';
+import cs from 'classnames';
 
 const { Title } = Typography;
 
@@ -20,6 +22,10 @@ const links = [
   {
     title: 'LEND',
     href: '/lend'
+  },
+  {
+    title: 'LIQUIDATION',
+    href: '/liquidation'
   },
   {
     title: 'FARM',
@@ -45,6 +51,7 @@ const links = [
 
 const HeaderDropdownMenu = () => {
   const [linksDisplayed, setLinkDisplayed] = useState(7);
+  const router = useRouter();
   const MoreMenu = (
     <Menu
       selectable
@@ -77,24 +84,34 @@ const HeaderDropdownMenu = () => {
       window.onresize = null;
     };
   }, []);
+
   return (
-    <div className={styles.container}>
+    <ul className={styles.container}>
       {links
         .filter((_, i) => i < linksDisplayed)
         .map((link, i) => (
-          <Link href={link.href} passHref key={i}>
-            <HoneyButton variant="textSecondary">{link.title}</HoneyButton>
-          </Link>
+          <li
+            className={cs({
+              [styles.activeLink]: router.pathname.includes(link.href)
+            })}
+            key={i}
+          >
+            <Link href={link.href} passHref>
+              <HoneyButton variant="textSecondary">{link.title}</HoneyButton>
+            </Link>
+          </li>
         ))}
-      <Dropdown overlay={MoreMenu}>
-        <HoneyButton variant="textSecondary">
-          <Space>
-            more
-            <DownIcon />
-          </Space>
-        </HoneyButton>
-      </Dropdown>
-    </div>
+      <li>
+        <Dropdown overlay={MoreMenu}>
+          <HoneyButton variant="textSecondary">
+            <Space>
+              more
+              <DownIcon />
+            </Space>
+          </HoneyButton>
+        </Dropdown>
+      </li>
+    </ul>
   );
 };
 

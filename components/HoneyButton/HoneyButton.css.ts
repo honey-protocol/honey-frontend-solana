@@ -124,6 +124,14 @@ export const textSecondary = style([
     ':hover': {
       opacity: '1',
       color: vars.colors.black
+    },
+    ':active': {
+      opacity: '1',
+      color: vars.colors.black
+    },
+    ':focus': {
+      opacity: 1,
+      color: vars.colors.black
     }
   }
 ]);
