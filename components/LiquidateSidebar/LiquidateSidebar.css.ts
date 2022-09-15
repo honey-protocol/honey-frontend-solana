@@ -1,7 +1,7 @@
 import { style } from '@vanilla-extract/css';
 import { vars } from 'styles/theme.css';
 
-export const lendSidebarContainer = style({
+export const liquidateSidebarContainer = style({
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'stretch'

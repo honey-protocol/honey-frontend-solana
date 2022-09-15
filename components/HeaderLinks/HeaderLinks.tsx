@@ -25,7 +25,7 @@ const links = [
   },
   {
     title: 'LIQUIDATION',
-    href: '/liquidation'
+    href: '/liquidate'
   },
   {
     title: 'FARM',

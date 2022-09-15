@@ -18,8 +18,8 @@ type RepayFormProps = {};
 const { format: f, formatPercent: fp, formatUsd: fu } = formatNumber;
 
 const RepayForm: FC<RepayFormProps> = () => {
-  const [valueUSD, setValueUSD] = useState('');
-  const [valueUSDC, setValueUSDC] = useState('');
+  const [valueUSD, setValueUSD] = useState<number>();
+  const [valueUSDC, setValueUSDC] = useState<number>();
   const [rangeValue, setRangeValue] = useState(0);
   const [toast, setToast] = useState<HoneyToastProps | null>(null);
 
@@ -139,7 +139,7 @@ const RepayForm: FC<RepayFormProps> = () => {
 
         <Range
           currentValue={rangeValue}
-          estimatedValue={1000}
+          maxValue={1000}
           borrowedValue={0}
           onChange={setRangeValue}
         />
@@ -155,11 +155,13 @@ const RepayForm: FC<RepayFormProps> = () => {
         ) : (
           <div className={styles.buttons}>
             <div className={styles.smallCol}>
-              <HoneyButton variant="tertiary">Cancel</HoneyButton>
+              <HoneyButton variant="secondary">Cancel</HoneyButton>
             </div>
             <div className={styles.bigCol}>
               <HoneyButton
                 variant="primary"
+              usdcAmount={valueUSDC || 0}
+              usdcValue={valueUSD || 0}
                 disabled={isRepayButtonDisabled()}
                 isFluid={true}
                 onClick={onRepay}

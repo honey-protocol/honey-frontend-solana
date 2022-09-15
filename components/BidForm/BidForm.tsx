@@ -3,23 +3,24 @@ import Image from 'next/image';
 import { InfoBlock } from '../InfoBlock/InfoBlock';
 import { InputsBlock } from '../InputsBlock/InputsBlock';
 import { Range } from '../Range/Range';
-import * as styles from './DepositForm.css';
+import * as styles from './BidForm.css';
 import { formatNumber } from '../../helpers/format';
 import mockNftImage from '/public/images/mock-collection-image@2x.png';
 import HoneyButton from 'components/HoneyButton/HoneyButton';
 import HexaBoxContainer from '../HexaBoxContainer/HexaBoxContainer';
+import HoneyWarning from '../HoneyWarning/HoneyWarning';
 
-type RepayFormProps = {};
+type BidsFormsProps = {};
 
 const { format: f, formatPercent: fp, formatUsd: fu } = formatNumber;
 
-const DepositForm: FC<RepayFormProps> = () => {
+const BidForm: FC<BidsFormsProps> = () => {
   const [valueUSD, setValueUSD] = useState<number>();
   const [valueUSDC, setValueUSDC] = useState<number>();
   const [rangeValue, setRangeValue] = useState(0);
 
   // Put your validators here
-  const isRepayButtonDisabled = () => {
+  const isSubmitButtonDisabled = () => {
     return false;
   };
 
@@ -34,33 +35,33 @@ const DepositForm: FC<RepayFormProps> = () => {
           </div>
           <div className={styles.nftName}>Doodles</div>
         </div>
+
         <div className={styles.row}>
           <div className={styles.col}>
-            <InfoBlock
-              value={fu(10)}
-              valueSize="big"
-              footer={<span>Total supplied</span>}
-            />
-          </div>
-          <div className={styles.col}>
-            <InfoBlock
-              value={fp(20)}
-              valueSize="big"
-              footer={<span>Estimated APR</span>}
-            />
-          </div>
-          <div className={styles.col}>
-            <InfoBlock
-              value={fp(80)}
-              valueSize="big"
-              footer={<span>Utilization rate</span>}
-            />
+            <HoneyWarning
+              message="We’re now live on Ethereum!"
+              link="https://google.com"
+            ></HoneyWarning>
           </div>
         </div>
 
         <div className={styles.row}>
           <div className={styles.col}>
-            <InfoBlock title={'Your deposits'} value={fu(2102)} />
+            <InfoBlock value={fu(10)} valueSize="big" title="Highest bid" />
+          </div>
+        </div>
+        <div className={styles.row}>
+          <div className={styles.col}>
+            <InfoBlock title="Minimal bid" value={fp(20)} valueSize="big" />
+          </div>
+        </div>
+        <div className={styles.row}>
+          <div className={styles.col}>
+            <InfoBlock
+              value={fp(80)}
+              valueSize="big"
+              title="Your USDC balance"
+            />
           </div>
         </div>
 
@@ -75,7 +76,7 @@ const DepositForm: FC<RepayFormProps> = () => {
 
         <Range
           currentValue={rangeValue}
-          maxValue={1000}
+          maxValue={2000}
           borrowedValue={0}
           onChange={setRangeValue}
         />
@@ -84,15 +85,17 @@ const DepositForm: FC<RepayFormProps> = () => {
       <div className={styles.footer}>
         <div className={styles.buttons}>
           <div className={styles.smallCol}>
-            <HoneyButton variant="tertiary">Cancel</HoneyButton>
+            <HoneyButton variant="secondary">Cancel</HoneyButton>
           </div>
           <div className={styles.bigCol}>
             <HoneyButton
               variant="primary"
-              disabled={isRepayButtonDisabled()}
+              disabled={isSubmitButtonDisabled()}
               isFluid={true}
+              usdcValue={valueUSD || 0}
+              usdcAmount={valueUSDC || 0}
             >
-              Withdraw
+              Place Bid
             </HoneyButton>
           </div>
         </div>
@@ -101,4 +104,4 @@ const DepositForm: FC<RepayFormProps> = () => {
   );
 };
 
-export default DepositForm;
+export default BidForm;

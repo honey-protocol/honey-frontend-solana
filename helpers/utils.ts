@@ -93,9 +93,14 @@ export const convertToBN = (
   return new anchor.BN(amount).mul(wads).add(new anchor.BN(mod));
 };
 
-export const RoundHalfDown = (
-  val: number,
-  decimals: number = 2
-) : number => {
-  return Math.floor(val * (10 ** decimals) ) / (10 ** decimals)
-} 
+export const RoundHalfDown = (val: number, decimals: number = 2): number => {
+  return Math.floor(val * 10 ** decimals) / 10 ** decimals;
+};
+
+/**
+ * Check if null or undefined
+ * @param value
+ */
+export function isNil(value: any): boolean {
+  return value === null || value === undefined;
+}

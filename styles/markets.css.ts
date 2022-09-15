@@ -23,7 +23,8 @@ export const collectionName = style([
   {
     overflow: 'hidden',
     textOverflow: 'ellipsis',
-    whiteSpace: 'nowrap'
+    whiteSpace: 'nowrap',
+    color: vars.colors.black
   }
 ]);
 
@@ -36,13 +37,10 @@ export const buttonsCell = style({
   justifyContent: 'flex-end'
 });
 
-// export const arrowPadding = style({
-//   paddingRight: '8px'
-// });
-
-export const expandedRow = style({});
-
-export const inactiveRow = style({});
+const rowBase = style({
+  cursor: "pointer"
+})
+export const expandedRow = style([rowBase, {}]);
 
 export const arrowIcon = style({
   width: 20,
@@ -55,15 +53,6 @@ export const arrowIcon = style({
     }
   }
 });
-
-globalStyle(
-  `${inactiveRow} ${availableCell}, ${inactiveRow} ${valueCell}, ${inactiveRow} ${rateCell}`,
-  {
-    opacity: 0.4
-  }
-);
-
-globalStyle(`${expandedRow} > .ant-table-cell`, {});
 
 export const table = style({});
 const tableChildSelector = (selector: string) => {

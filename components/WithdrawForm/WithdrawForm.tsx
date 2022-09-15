@@ -8,14 +8,15 @@ import { formatNumber } from '../../helpers/format';
 import mockNftImage from '/public/images/mock-collection-image@2x.png';
 import HoneyButton from 'components/HoneyButton/HoneyButton';
 import HexaBoxContainer from '../HexaBoxContainer/HexaBoxContainer';
+import { MAX_LTV } from '../../constants/loan';
 
 type RepayFormProps = {};
 
 const { format: f, formatPercent: fp, formatUsd: fu } = formatNumber;
 
 const WithdrawForm: FC<RepayFormProps> = () => {
-  const [valueUSD, setValueUSD] = useState('');
-  const [valueUSDC, setValueUSDC] = useState('');
+  const [valueUSD, setValueUSD] = useState<number>();
+  const [valueUSDC, setValueUSDC] = useState<number>();
   const [rangeValue, setRangeValue] = useState(0);
 
   // Put your validators here
@@ -75,8 +76,10 @@ const WithdrawForm: FC<RepayFormProps> = () => {
 
         <Range
           currentValue={rangeValue}
-          estimatedValue={1000}
+          maxValue={1000}
           borrowedValue={0}
+          maxSafePosition={0.4}
+          maxAvailablePosition={MAX_LTV}
           onChange={setRangeValue}
         />
       </div>

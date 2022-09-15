@@ -1,28 +1,28 @@
 import React, { useState } from 'react';
-import * as styles from './LendSidebar.css';
+import * as styles from './LiquidateSidebar.css';
 import { LendSidebarProps } from './types';
-import DepositForm from '../DepositForm/DepositForm';
-import WithdrawForm from '../WithdrawForm/WithdrawForm';
-import HoneyTabs, {HoneyTabItem} from "../HoneyTabs/HoneyTabs";
-import EmptyStateDetails from "../EmptyStateDetails/EmptyStateDetails";
+import HoneyTabs, { HoneyTabItem } from '../HoneyTabs/HoneyTabs';
+import EmptyStateDetails from '../EmptyStateDetails/EmptyStateDetails';
+import BidForm from '../BidForm/BidForm';
+import BidsList from '../BidsList/BidsList';
 
 const items: [HoneyTabItem, HoneyTabItem] = [
-  { label: 'Deposit', key: 'deposit' },
-  { label: 'Withdraw', key: 'withdraw'}
+  { label: 'Place a bid', key: 'bid' },
+  { label: 'Current bids', key: 'current' }
 ];
 
-type Tab = 'deposit' | 'withdraw';
+type Tab = 'bid' | 'current';
 
-const LendSidebar = (props: LendSidebarProps) => {
+const LiquidateSidebar = (props: LendSidebarProps) => {
   const wallet = true;
   const { collectionId } = props;
-  const [activeTab, setActiveTab] = useState<Tab>('deposit');
+  const [activeTab, setActiveTab] = useState<Tab>('bid');
 
   const handleTabChange = (tabKey: string) => {
     setActiveTab(tabKey as Tab);
   };
   return (
-    <div className={styles.lendSidebarContainer}>
+    <div className={styles.liquidateSidebarContainer}>
       <HoneyTabs
         activeKey={activeTab}
         onTabChange={handleTabChange}
@@ -44,8 +44,8 @@ const LendSidebar = (props: LendSidebarProps) => {
           />
         ) : (
           <>
-            {activeTab === 'deposit' && <DepositForm />}
-            {activeTab === 'withdraw' && <WithdrawForm />}
+            {activeTab === 'bid' && <BidForm />}
+            {activeTab === 'current' && <BidsList />}
           </>
         )}
       </HoneyTabs>
@@ -53,4 +53,4 @@ const LendSidebar = (props: LendSidebarProps) => {
   );
 };
 
-export default LendSidebar;
+export default LiquidateSidebar;
