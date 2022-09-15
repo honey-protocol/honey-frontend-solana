@@ -6,10 +6,11 @@ import HoneyButton from 'components/HoneyButton/HoneyButton';
 import classNames from 'classnames';
 import DepositForm from '../DepositForm/DepositForm';
 import WithdrawForm from '../WithdrawForm/WithdrawForm';
+import HoneyTabs, { HoneyTabItem } from 'components/HoneyTabs/HoneyTabs';
 
-const items = [
-  { label: 'Deposit', key: 'deposit', children: 'Deposit' },
-  { label: 'Withdraw', key: 'withdraw', children: 'Withdraw' }
+const items: [HoneyTabItem, HoneyTabItem] = [
+  { label: 'Deposit', key: 'deposit' },
+  { label: 'Withdraw', key: 'withdraw' }
 ];
 
 const { Text } = Typography;
@@ -26,18 +27,11 @@ const LendSidebar = (props: LendSidebarProps) => {
   };
   return (
     <div className={styles.lendSidebarContainer}>
-      <div className={styles.tabs}>
-        <Tabs onChange={handleTabChange}>
-          {items.map(tabInfo => {
-            return <Tabs.TabPane tab={tabInfo.label} key={tabInfo.key} />;
-          })}
-        </Tabs>
-      </div>
-      <div
-        className={classNames(
-          styles.content,
-          collectionId ? styles.active : styles.inactive
-        )}
+      <HoneyTabs
+        activeKey={activeTab}
+        onTabChange={handleTabChange}
+        items={items}
+        active={Boolean(collectionId)}
       >
         {!wallet ? (
           <div className={styles.emptyStateContent}>
@@ -66,7 +60,7 @@ const LendSidebar = (props: LendSidebarProps) => {
             {activeTab === 'withdraw' && <WithdrawForm />}
           </>
         )}
-      </div>
+      </HoneyTabs>
     </div>
   );
 };
