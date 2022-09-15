@@ -8,6 +8,10 @@ import { formatNumber } from '../../helpers/format';
 import mockNftImage from '/public/images/mock-collection-image@2x.png';
 import HoneyButton from 'components/HoneyButton/HoneyButton';
 import HexaBoxContainer from '../HexaBoxContainer/HexaBoxContainer';
+import HoneyToast, {
+  HoneyToastProps,
+  toastRemoveDelay
+} from 'components/HoneyToast/HoneyToast';
 
 type RepayFormProps = {};
 
@@ -17,10 +21,41 @@ const RepayForm: FC<RepayFormProps> = () => {
   const [valueUSD, setValueUSD] = useState('');
   const [valueUSDC, setValueUSDC] = useState('');
   const [rangeValue, setRangeValue] = useState(0);
+  const [toast, setToast] = useState<HoneyToastProps | null>(null);
 
   // Put your validators here
   const isRepayButtonDisabled = () => {
     return false;
+  };
+
+  const onRepay = async () => {
+    try {
+      setToast({
+        state: 'loading',
+        primaryText: 'Repay transaction in progress',
+        secondaryLink: ''
+      });
+
+      // repay function here
+
+      setToast({
+        state: 'success',
+        primaryText: 'Repay of 300USDC completed',
+        secondaryLink:
+          'https://solscan.io/token/GHtgbwy19UPRFDrAbWXrXf7WnqGxeNyAodX6rjKfsnrU?cluster=devnet'
+      });
+    } catch (error) {
+      setToast({
+        state: 'error',
+        primaryText: 'Error Repaying 300USDC: Insufficient funds',
+        secondaryLink:
+          'https://solscan.io/token/GHtgbwy19UPRFDrAbWXrXf7WnqGxeNyAodX6rjKfsnrU?cluster=devnet'
+      });
+    } finally {
+      setTimeout(() => {
+        setToast(null);
+      }, toastRemoveDelay);
+    }
   };
 
   return (
@@ -111,20 +146,29 @@ const RepayForm: FC<RepayFormProps> = () => {
       </div>
 
       <div className={styles.footer}>
-        <div className={styles.buttons}>
-          <div className={styles.smallCol}>
-            <HoneyButton variant="tertiary">Cancel</HoneyButton>
+        {toast?.state ? (
+          <HoneyToast
+            state={toast.state}
+            primaryText={toast.primaryText}
+            secondaryLink={toast.secondaryLink}
+          />
+        ) : (
+          <div className={styles.buttons}>
+            <div className={styles.smallCol}>
+              <HoneyButton variant="tertiary">Cancel</HoneyButton>
+            </div>
+            <div className={styles.bigCol}>
+              <HoneyButton
+                variant="primary"
+                disabled={isRepayButtonDisabled()}
+                isFluid={true}
+                onClick={onRepay}
+              >
+                Repay
+              </HoneyButton>
+            </div>
           </div>
-          <div className={styles.bigCol}>
-            <HoneyButton
-              variant="primary"
-              disabled={isRepayButtonDisabled()}
-              isFluid={true}
-            >
-              Repay
-            </HoneyButton>
-          </div>
-        </div>
+        )}
       </div>
     </div>
   );
