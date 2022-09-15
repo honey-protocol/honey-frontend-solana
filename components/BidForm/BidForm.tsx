@@ -8,6 +8,7 @@ import { formatNumber } from '../../helpers/format';
 import mockNftImage from '/public/images/mock-collection-image@2x.png';
 import HoneyButton from 'components/HoneyButton/HoneyButton';
 import HexaBoxContainer from '../HexaBoxContainer/HexaBoxContainer';
+import HoneyWarning from '../HoneyWarning/HoneyWarning';
 
 type BidsFormsProps = {};
 
@@ -34,6 +35,16 @@ const BidForm: FC<BidsFormsProps> = () => {
           </div>
           <div className={styles.nftName}>Doodles</div>
         </div>
+
+        <div className={styles.row}>
+          <div className={styles.col}>
+            <HoneyWarning
+              message="We’re now live on Ethereum!"
+              link="https://google.com"
+            ></HoneyWarning>
+          </div>
+        </div>
+
         <div className={styles.row}>
           <div className={styles.col}>
             <InfoBlock value={fu(10)} valueSize="big" title="Highest bid" />
