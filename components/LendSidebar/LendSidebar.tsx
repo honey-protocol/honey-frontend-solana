@@ -7,7 +7,7 @@ import HoneyTabs, {HoneyTabItem} from "../HoneyTabs/HoneyTabs";
 import EmptyStateDetails from "../EmptyStateDetails/EmptyStateDetails";
 
 const items: [HoneyTabItem, HoneyTabItem] = [
-  { label: 'Deposit', key: 'deposit'},
+  { label: 'Deposit', key: 'deposit' },
   { label: 'Withdraw', key: 'withdraw'}
 ];
 
