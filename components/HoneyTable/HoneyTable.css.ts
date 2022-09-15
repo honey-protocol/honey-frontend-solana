@@ -30,6 +30,10 @@ globalStyle(
   }
 );
 
+globalStyle(`${bcs('.ant-table-thead > tr > th')}`, {
+  padding: '0 16px'
+});
+
 globalStyle(`${bcs('.ant-table table')}`, {
   borderCollapse: 'separate',
   borderSpacing: '0 8px'
