@@ -1,6 +1,7 @@
 import { globalStyle, style } from '@vanilla-extract/css';
 import { vars } from 'styles/theme.css';
 
+const rowsGapSize = 12;
 export const honeyTableContainer = style({});
 
 export const honeyTableShadow = style({});
@@ -27,7 +28,7 @@ globalStyle(
 
 globalStyle(`${bcs('.ant-table table')}`, {
   borderCollapse: 'separate',
-  borderSpacing: '0 8px'
+  borderSpacing: `0 ${rowsGapSize}px`
 });
 
 export const honeyTableRow = style({
@@ -91,7 +92,6 @@ globalStyle(rowShadowTdHoverSelector, {
 // Styles for Expanded section
 export const expandedSectionRow = style({});
 const expandedSectionRowTdSelector = `.ant-table-tbody > .ant-table-expanded-row.${expandedSectionRow} > td`;
-const rowsGapSize = 8;
 
 globalStyle(`${bcs(expandedSectionRowTdSelector)}`, {
   background: vars.colors.white,
