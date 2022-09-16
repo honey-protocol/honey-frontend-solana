@@ -6,7 +6,7 @@ import { Content } from 'antd/lib/layout/layout';
 import HoneyTable from '../../components/HoneyTable/HoneyTable';
 import { ColumnType } from 'antd/lib/table';
 import * as style from '../../styles/markets.css';
-import { MarketTableRow, MarketTablePosition } from '../../types/markets';
+import { MarketTableRow, MarketTablePosition, UserNFTs, OpenPositions } from '../../types/markets';
 import React, {
   ChangeEvent,
   useCallback,
@@ -27,18 +27,68 @@ import HoneyButton from '../../components/HoneyButton/HoneyButton';
 import EmptyStateDetails from 'components/EmptyStateDetails/EmptyStateDetails';
 import classNames from 'classnames';
 import { getColumnSortStatus } from '../../helpers/tableUtils';
+import { useConnectedWallet, useSolana } from '@saberhq/use-solana';
+import useFetchNFTByUser from '../../hooks/useNFTV2';
+import { LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js';
+import { ConfigureSDK } from '../../helpers/loanHelpers/index';
+import {
+  borrow,
+  depositNFT,
+  repay,
+  useBorrowPositions,
+  useHoney,
+  useMarket,
+  withdrawNFT
+} from '@honey-finance/sdk';
+
 
 const { formatPercent: fp, formatUsd: fu } = formatNumber;
 
 const Markets: NextPage = () => {
+  const wallet = useConnectedWallet();
+  const sdkConfig = ConfigureSDK();
+  
   const [tableData, setTableData] = useState<MarketTableRow[]>([]);
   const [tableDataFiltered, setTableDataFiltered] = useState<MarketTableRow[]>(
     []
   );
   const [expandedRowKeys, setExpandedRowKeys] = useState<readonly Key[]>([]);
-  const [isMyCollectionsFilterEnabled, setIsMyCollectionsFilterEnabled] =
-    useState(false);
+  const [isMyCollectionsFilterEnabled, setIsMyCollectionsFilterEnabled] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const [totalDeposits, setTotalDeposits] = useState(0);
+  const [totalBorrowed, setTotalBorrowed] = useState(0);
+  const [userBorrowCapacity, setUserBorrowCapacity] = useState(0);
+  const [userAvailableNFTs, setUserAvailableNFTs] = useState<Array<UserNFTs>>([]);
+  const [userOpenPositions, setUserOpenPositions] = useState<Array<OpenPositions>>([]);
+  
+  const availableNFTs: any = useFetchNFTByUser(wallet);
+  
+  useEffect(() => {
+    setUserAvailableNFTs(availableNFTs[0]);
+    console.log('usernfts', userAvailableNFTs);
+  }, [availableNFTs]);
+
+
+  const {
+    loading,
+    collateralNFTPositions,
+    loanPositions,
+    fungibleCollateralPosition,
+    refreshPositions,
+    error
+  } = useBorrowPositions(
+    sdkConfig.saberHqConnection,
+    sdkConfig.sdkWallet!,
+    sdkConfig.honeyId,
+    sdkConfig.marketId
+  );
+
+  useEffect(() => {
+    if (collateralNFTPositions && collateralNFTPositions.length > 0) {
+      setUserOpenPositions(collateralNFTPositions);
+    }
+  }, [collateralNFTPositions]);
+  
 
   // PUT YOUR DATA SOURCE HERE
   // MOCK DATA FOR NOW
@@ -48,7 +98,7 @@ const Markets: NextPage = () => {
         key: '0',
         name: 'Honey Eyes',
         rate: 0.1,
-        available: 100,
+        available: 0,
         value: 100000,
         positions: [
           {
