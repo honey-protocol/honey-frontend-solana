@@ -1,27 +1,33 @@
-import { style } from '@vanilla-extract/css';
+import { globalStyle, style } from '@vanilla-extract/css';
 import { typography, vars } from '../../styles/theme.css';
 
 export const container = style({
-  cursor: 'pointer',
-  position: 'relative',
-  zIndex: 100
+  cursor: 'pointer'
+});
+export const tooltip = style({});
+
+globalStyle(`${tooltip} .ant-tooltip-arrow`, {
+  display: 'none'
 });
 
-export const tooltip = style({
-  position: 'absolute',
-  left: '0',
-  display: 'inline-flex',
+globalStyle(`${tooltip} .ant-tooltip-inner`, {
+  ...typography.description,
   background: 'white',
   transition: 'all .5s',
-  borderRadius: vars.space.medium
+  borderRadius: vars.space.medium,
+  border: `2px solid ${vars.colors.black}`,
+  boxShadow: `4px 4px 0px 0px ${vars.colors.brownLight}`,
+  color: `${vars.colors.black} !important`,
+  fontWeight: '500',
+  width: 'max-content',
+  maxWidth: '300px',
+  padding: '12px 16px'
 });
 
 export const label = style([
   typography.description,
   {
     fontWeight: '500',
-    padding: '12px 16px',
-    width: 'max-content',
-    maxWidth: '300px'
+    color: vars.colors.black
   }
 ]);
