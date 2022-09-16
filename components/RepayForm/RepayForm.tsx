@@ -141,6 +141,7 @@ const RepayForm: FC<RepayFormProps> = () => {
               value={fu(1000)}
               valueSize="big"
               footer={<span>Estimated value</span>}
+              toolTipLabel="Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has "
             />
           </div>
           <div className={styles.col}>
@@ -148,19 +149,25 @@ const RepayForm: FC<RepayFormProps> = () => {
               value={fp(75)}
               valueSize="big"
               footer={<span>Liquidation at</span>}
+              toolTipLabel="Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has "
             />
           </div>
         </div>
 
         <div className={styles.row}>
           <div className={styles.col}>
-            <InfoBlock title={'Risk level'} value={fu(0)} />
+            <InfoBlock
+              title={'Risk level'}
+              value={fu(0)}
+              toolTipLabel="Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has "
+            />
           </div>
           <div className={styles.col}>
             <InfoBlock
               title={'New risk level'}
               value={fu(0)}
               isDisabled={true}
+              toolTipLabel="Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has "
             />
           </div>
         </div>
