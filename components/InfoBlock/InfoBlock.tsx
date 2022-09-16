@@ -1,6 +1,7 @@
-import { ReactElement, FC } from 'react';
+import { ReactElement, FC, Fragment } from 'react';
 import * as styles from './InfoBlock.css';
 import c from 'classnames';
+import HoneyTooltip from 'components/HoneyTooltip/HoneyTooltip';
 
 interface InfoBlockProps {
   title?: string;
@@ -8,6 +9,7 @@ interface InfoBlockProps {
   footer?: ReactElement;
   valueSize?: 'normal' | 'big';
   isDisabled?: boolean;
+  toolTipLabel?: string;
 }
 
 export const InfoBlock: FC<InfoBlockProps> = ({
@@ -15,17 +17,21 @@ export const InfoBlock: FC<InfoBlockProps> = ({
   value,
   footer,
   valueSize = 'normal',
-  isDisabled
+  isDisabled,
+  toolTipLabel
 }) => {
+  const Container = toolTipLabel ? HoneyTooltip : Fragment;
   return (
-    <div
-      className={c(styles.infoBlockContainer, {
-        [styles.disabled]: isDisabled
-      })}
-    >
-      {title && <div className={styles.label}>{title}</div>}
-      <div className={styles.value[valueSize]}>{value}</div>
-      {footer && <div className={styles.footer}>{footer}</div>}
-    </div>
+    <Container label={toolTipLabel}>
+      <div
+        className={c(styles.infoBlockContainer, {
+          [styles.disabled]: isDisabled
+        })}
+      >
+        {title && <div className={styles.label}>{title}</div>}
+        <div className={styles.value[valueSize]}>{value}</div>
+        {footer && <div className={styles.footer}>{footer}</div>}
+      </div>
+    </Container>
   );
 };
