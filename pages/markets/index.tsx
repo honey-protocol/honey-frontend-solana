@@ -46,7 +46,7 @@ const Markets: NextPage = () => {
     const mockData: MarketTableRow[] = [
       {
         key: '0',
-        name: 'Test 2',
+        name: 'Honey Eyes',
         rate: 0.1,
         available: 100,
         value: 100000,
