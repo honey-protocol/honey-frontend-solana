@@ -170,6 +170,7 @@ const RepayForm = (props: RepayProps) => {
               value={fu(nftPrice)}
               valueSize="big"
               footer={<span>Estimated value</span>}
+              toolTipLabel="Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has "
             />
           </div>
           <div className={styles.col}>
@@ -177,19 +178,25 @@ const RepayForm = (props: RepayProps) => {
               value={fp(75)}
               valueSize="big"
               footer={<span>Liquidation at</span>}
+              toolTipLabel="Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has "
             />
           </div>
         </div>
 
         <div className={styles.row}>
           <div className={styles.col}>
-            <InfoBlock title={'Risk level'} value={fu(loanToValue)} />
+            <InfoBlock
+              title={'Risk level'}
+              value={fu(loanToValue)}
+              toolTipLabel="Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has "
+            />
           </div>
           <div className={styles.col}>
             <InfoBlock
               title={'New risk level'}
               value={fu(0)}
               isDisabled={true}
+              toolTipLabel="Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has "
             />
           </div>
         </div>
