@@ -13,7 +13,7 @@ const { Title, Text } = Typography;
 const WalletMenu = () => {
 
   const { disconnect } = useSolana();
-  const wallet = useConnectedWallet();
+  const wallet = useConnectedWallet()
   const { connect } = useWalletKit();  
   const walletAddress = wallet?.publicKey.toString();
 
