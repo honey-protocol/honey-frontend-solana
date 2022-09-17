@@ -29,7 +29,9 @@ import classNames from 'classnames';
 import { getColumnSortStatus } from '../../helpers/tableUtils';
 import { useConnectedWallet, useSolana } from '@saberhq/use-solana';
 import useFetchNFTByUser from '../../hooks/useNFTV2';
-import { ConfigureSDK } from '../../helpers/loanHelpers/index';
+import { ConfigureSDK, BnToDecimal } from '../../helpers/loanHelpers/index';
+import { LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js';
+import BN from 'bn.js';
 import {
   borrow,
   depositNFT,
@@ -39,6 +41,10 @@ import {
   useMarket,
   withdrawNFT
 } from '@honey-finance/sdk';
+import {
+  calcNFT,
+  calculateCollectionwideAllowance
+} from 'helpers/loanHelpers/userCollection';
 
 
 const { formatPercent: fp, formatUsd: fu } = formatNumber;
@@ -46,6 +52,9 @@ const { formatPercent: fp, formatUsd: fu } = formatNumber;
 const Markets: NextPage = () => {
   const wallet = useConnectedWallet();
   const sdkConfig = ConfigureSDK();
+  
+  const { parsedReserves, marketReserveInfo }  = useHoney();
+  const { honeyReserves, honeyMarket } = useMarket(sdkConfig.saberHqConnection, sdkConfig.sdkWallet!, sdkConfig.honeyId, sdkConfig.marketId);
   
   const [tableData, setTableData] = useState<MarketTableRow[]>([]);
   const [tableDataFiltered, setTableDataFiltered] = useState<MarketTableRow[]>(
@@ -56,18 +65,88 @@ const Markets: NextPage = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [totalDeposits, setTotalDeposits] = useState(0);
   const [totalBorrowed, setTotalBorrowed] = useState(0);
+  const [totalMarketDebt, setTotalMarketDebt] = useState(0);
+  const [nftPrice, setNftPrice] = useState(0);
+  const [calculatedNftPrice, setCalculatedNftPrice] = useState(false);
+  const [marketPositions, setMarketPositions] = useState(0);
   const [userBorrowCapacity, setUserBorrowCapacity] = useState(0);
   const [userAvailableNFTs, setUserAvailableNFTs] = useState<Array<UserNFTs>>([]);
   const [userOpenPositions, setUserOpenPositions] = useState<Array<OpenPositions>>([]);
   
   const availableNFTs: any = useFetchNFTByUser(wallet);
 
+  // sets the market debt
+  useEffect(() => {
+    const depositTokenMint = new PublicKey('So11111111111111111111111111111111111111112');
+
+    if (honeyReserves) {
+      const depositReserve = honeyReserves.filter((reserve) =>
+        reserve?.data?.tokenMint?.equals(depositTokenMint),
+      )[0];
+
+      const reserveState = depositReserve.data?.reserveState;
+
+      if (reserveState?.outstandingDebt) {
+        let marketDebt = reserveState?.outstandingDebt.div(new BN(10 ** 15)).toNumber();
+        if (marketDebt) {
+          let sum = Number((marketDebt / LAMPORTS_PER_SOL));
+          setTotalMarketDebt(sum);
+          console.log('this is total market debt', totalMarketDebt)
+        }
+      }
+    }
+
+  }, [honeyReserves]);
+
+  // sets total market deposits
+  useEffect(() => {
+    if (parsedReserves && parsedReserves[0].reserveState.totalDeposits) {
+      let totMarketDeposits = BnToDecimal(parsedReserves[0].reserveState.totalDeposits, 9, 2);
+      setTotalDeposits(totMarketDeposits);
+    }
+  }, [parsedReserves]);
+  
+  // fetches total market positions
+  async function fetchObligations() {
+    let obligations = await honeyMarket.fetchObligations();
+    console.log('obligations:', obligations)
+    setMarketPositions(obligations.length);
+  }
+
+  useEffect(() => {
+    if(honeyMarket) {
+      fetchObligations();
+    }
+  }, [honeyMarket]);
+
+
+  async function calculateNFTPrice() {
+    if (marketReserveInfo && parsedReserves && honeyMarket) {
+      let nftPrice = await calcNFT(
+        marketReserveInfo,
+        parsedReserves,
+        honeyMarket,
+        sdkConfig.saberHqConnection
+      );
+      setNftPrice(Number(nftPrice));
+      setCalculatedNftPrice(true);
+    }
+  }
+
+  useEffect(() => {
+    calculateNFTPrice();
+  }, [marketReserveInfo, parsedReserves]);
+
 
   
   useEffect(() => {
-    console.log('use effect running')
     setUserAvailableNFTs(availableNFTs[0]);
   }, [availableNFTs]);
+
+  useEffect(() => {
+    console.log('total deposits', totalDeposits)
+    console.log('total marketDebt', totalMarketDebt);
+  }, [totalDeposits, totalBorrowed]);
 
 
   const {
@@ -85,6 +164,7 @@ const Markets: NextPage = () => {
   );
 
   useMemo(() => {
+    console.log('@@', collateralNFTPositions);
     if (collateralNFTPositions && collateralNFTPositions.length > 0) {
       setUserOpenPositions(collateralNFTPositions);
     }
@@ -99,8 +179,8 @@ const Markets: NextPage = () => {
         key: '0',
         name: 'Honey Eyes',
         rate: 0.1,
-        available: 0,
-        value: 100000,
+        available: (totalDeposits - totalMarketDebt),
+        value: (marketPositions * nftPrice),
         positions: [
           {
             name: 'Doodles #1291',
@@ -122,7 +202,7 @@ const Markets: NextPage = () => {
 
     setTableData(mockData);
     setTableDataFiltered(mockData);
-  }, []);
+  }, [totalDeposits, totalMarketDebt, nftPrice]);
 
   const handleToggle = (checked: boolean) => {
     setIsMyCollectionsFilterEnabled(checked);
@@ -426,6 +506,7 @@ const Markets: NextPage = () => {
         <MarketsSidebar 
           collectionId="s" 
           availableNFTs={userAvailableNFTs}
+          openPositions={userOpenPositions}
         />
       </Sider>
     </LayoutRedesign>
