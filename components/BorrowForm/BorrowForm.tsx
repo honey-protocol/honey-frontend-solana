@@ -5,68 +5,73 @@ import { InputsBlock } from '../InputsBlock/InputsBlock';
 import { Range } from '../Range/Range';
 import * as styles from './BorrowForm.css';
 import { formatNumber } from '../../helpers/format';
-import mockNftImage from '/public/images/mock-collection-image@2x.png';
+import honeyEyes from '/public/nfts/honeyEyes.png';
 import HoneyButton from 'components/HoneyButton/HoneyButton';
 import HexaBoxContainer from 'components/HexaBoxContainer/HexaBoxContainer';
 import NftList from '../NftList/NftList';
 import { NftCardProps } from '../NftCard/types';
 import { MAX_LTV } from '../../constants/loan';
 import { usdcAmount } from '../HoneyButton/HoneyButton.css';
-
-type BorrowFormProps = {};
+import {BorrowProps} from './types'
 
 const { format: f, formatPercent: fp, formatUsd: fu } = formatNumber;
 
-const BorrowForm: FC<BorrowFormProps> = () => {
+const BorrowForm: FC<BorrowProps> = (props: BorrowProps) => {
+  const {availableNFTs} = props;
+  
   const [valueUSD, setValueUSD] = useState<number>();
   const [valueUSDC, setValueUSDC] = useState<number>();
   const [rangeValue, setRangeValue] = useState(0);
+  const [isNftSelected, setIsNftSelected] = useState(false)
+  const [selectedNft, setSelectedNft] = useState({name: '', id: '', img: ''});
 
   // Only for test purposes
-  const isNftSelected = true;
+  // const isNftSelected = true;
 
   // Put your validators here
   const isBorrowButtonDisabled = () => {
-    return false;
+    return true;
   };
 
-  const nftsMockData: NftCardProps[] = [
-    {
-      id: '1',
-      img: 'path/to/iamge',
-      name: 'Doodles #1291',
-      text: '$1,000',
-      hint: 'Value',
-      buttonText: '$600'
-    },
-    {
-      id: '2',
-      img: 'path/to/iamge',
-      name: 'Doodles #1291',
-      text: '$1,000',
-      hint: 'Value',
-      buttonText: '$600'
-    },
-    {
-      id: '3',
-      img: 'path/to/iamge',
-      name: 'Doodles #1291',
-      text: '$1,000',
-      hint: 'Value',
-      buttonText: '$600'
-    },
-    {
-      id: '4',
-      img: 'path/to/iamge',
-      name: 'Doodles #1291',
-      text: '$1,000',
-      hint: 'Value',
-      buttonText: '$600'
-    }
-  ];
+  // const nftsMockData: NftCardProps[] = [
+  //   {
+  //     id: '1',
+  //     img: 'path/to/iamge',
+  //     name: 'Doodles #1291',
+  //     text: '$1,000',
+  //     hint: 'Value',
+  //     buttonText: '$600'
+  //   },
+  //   {
+  //     id: '2',
+  //     img: 'path/to/iamge',
+  //     name: 'Doodles #1291',
+  //     text: '$1,000',
+  //     hint: 'Value',
+  //     buttonText: '$600'
+  //   },
+  //   {
+  //     id: '3',
+  //     img: 'path/to/iamge',
+  //     name: 'Doodles #1291',
+  //     text: '$1,000',
+  //     hint: 'Value',
+  //     buttonText: '$600'
+  //   },
+  //   {
+  //     id: '4',
+  //     img: 'path/to/iamge',
+  //     name: 'Doodles #1291',
+  //     text: '$1,000',
+  //     hint: 'Value',
+  //     buttonText: '$600'
+  //   }
+  // ];
 
-  const handleItemClick = (id: string) => {
-    alert(`${id} selected`);
+  const selectNFT = (name: string, id: string, img: string) => {
+    setIsNftSelected(true);
+    console.log(`${name} - ${id} - ${img} selected`);
+    setSelectedNft({ name, id, img })
   };
 
   const renderContent = () => {
@@ -74,7 +79,10 @@ const BorrowForm: FC<BorrowFormProps> = () => {
       return (
         <>
           <div className={styles.newBorrowingTitle}>Choose NFT</div>
-          <NftList data={nftsMockData} onItemClick={handleItemClick} />
+          <NftList 
+            data={availableNFTs} 
+            selectNFT={selectNFT}
+          />
         </>
       );
     }
@@ -84,10 +92,14 @@ const BorrowForm: FC<BorrowFormProps> = () => {
         <div className={styles.nftInfo}>
           <div className={styles.nftImage}>
             <HexaBoxContainer>
-              <Image src={mockNftImage} />
+              <Image 
+                src={selectedNft.img} 
+                alt={`${selectedNft.name}`} 
+                layout='fill'
+              />
             </HexaBoxContainer>
           </div>
-          <div className={styles.nftName}>Doodles #1291</div>
+          <div className={styles.nftName}>{selectedNft.name}</div>
         </div>
         <div className={styles.row}>
           <div className={styles.col}>
@@ -182,7 +194,7 @@ const BorrowForm: FC<BorrowFormProps> = () => {
     return (
       <div className={styles.buttons}>
         <div className={styles.smallCol}>
-          <HoneyButton variant="secondary">Cancel</HoneyButton>
+          <HoneyButton variant="secondary" onClick={() => setIsNftSelected(false)}>Cancel</HoneyButton>
         </div>
         <div className={styles.bigCol}>
           <HoneyButton
