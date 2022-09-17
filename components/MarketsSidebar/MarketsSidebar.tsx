@@ -18,7 +18,7 @@ type Tab = 'borrow' | 'repay';
 
 const MarketsSidebar = (props: MarketsSidebarProps) => {
   const wallet = true;
-  const { collectionId, availableNFTs } = props;
+  const { collectionId, availableNFTs, openPositions } = props;
   const [activeTab, setActiveTab] = useState<Tab>('borrow');
 
   const handleTabChange = (tabKey: string) => {
@@ -48,7 +48,7 @@ const MarketsSidebar = (props: MarketsSidebarProps) => {
           />
         ) : (
           <>
-            {activeTab === 'borrow' && <BorrowForm availableNFTs={availableNFTs} />}
+            {activeTab === 'borrow' && <BorrowForm availableNFTs={availableNFTs} openPositions={openPositions} />}
             {activeTab === 'repay' && <RepayForm />}
           </>
         )}
