@@ -5,23 +5,31 @@ import * as style from './NftList.css';
 
 type NftListProps = {
   data: NftCardProps[];
-  onItemClick: (id: string) => void;
+  selectNFT: (name: string, id: string, img: string) => void;
 };
 
 const NftList = (props: NftListProps) => {
-  const { data, onItemClick } = props;
+  const { data, selectNFT } = props;
+  
+  function handleClick(item: any) {
+    selectNFT(item.name, item.tokenId, item.image);
+  }
+
+  console.log('this is data', data);
 
   return (
     <div className={style.nftsListContainer}>
       {data &&
         data.map((item, index) => (
-          <div className={style.listItem} key={item.name}>
-            <NftCard
-              onClick={onItemClick}
-              {...item}
-              hasBorder={index !== data.length - 1}
-            />
-          </div>
+          item.name.includes('When') && (
+            <div className={style.listItem} key={item.name}>
+              <NftCard
+                onClick={() => handleClick(item)}
+                {...item}
+                hasBorder={index !== data.length - 1}
+              />
+            </div>
+          )
         ))}
     </div>
   );
