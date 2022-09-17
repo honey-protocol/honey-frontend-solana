@@ -15,8 +15,6 @@ const NftList = (props: NftListProps) => {
     selectNFT(item.name, item.tokenId, item.image);
   }
 
-  console.log('this is data', data);
-
   return (
     <div className={style.nftsListContainer}>
       {data &&

@@ -228,7 +228,6 @@ const Loan: NextPage = () => {
   function handleBorrowModal(value: any) {
     value == TYPE_ONE ? setBorrowModal(TYPE_ONE) : setBorrowModal(TYPE_ZERO);
   }
-
   /**
    * @description updates collateralNFTPositions | loanPositions | fungibleCollateralPosition
    * @params none
@@ -242,7 +241,6 @@ const Loan: NextPage = () => {
       setBorrowModal(TYPE_ONE);
 
     if (collateralNFTPositions) {
-      console.log('@@@@@@@@@', collateralNFTPositions)
       setUserCollateralPositions(collateralNFTPositions);
     }
     

@@ -20,9 +20,6 @@ const NftCard = (props: NftCardProps) => {
     hasBorder = true
   } = props;
 
-  console.log('@@@-', img);
-  console.log('@@@-', typeof(image));
-
   const _onClick = useCallback(() => {
     if (typeof onClick === 'function') {
       onClick(name, id, image);
