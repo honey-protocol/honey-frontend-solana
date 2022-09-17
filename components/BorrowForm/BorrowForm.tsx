@@ -17,7 +17,7 @@ import {BorrowProps} from './types'
 const { format: f, formatPercent: fp, formatUsd: fu } = formatNumber;
 
 const BorrowForm: FC<BorrowProps> = (props: BorrowProps) => {
-  const {availableNFTs} = props;
+  const {availableNFTs, openPositions} = props;
   
   const [valueUSD, setValueUSD] = useState<number>();
   const [valueUSDC, setValueUSDC] = useState<number>();
@@ -32,41 +32,6 @@ const BorrowForm: FC<BorrowProps> = (props: BorrowProps) => {
   const isBorrowButtonDisabled = () => {
     return true;
   };
-
-  // const nftsMockData: NftCardProps[] = [
-  //   {
-  //     id: '1',
-  //     img: 'path/to/iamge',
-  //     name: 'Doodles #1291',
-  //     text: '$1,000',
-  //     hint: 'Value',
-  //     buttonText: '$600'
-  //   },
-  //   {
-  //     id: '2',
-  //     img: 'path/to/iamge',
-  //     name: 'Doodles #1291',
-  //     text: '$1,000',
-  //     hint: 'Value',
-  //     buttonText: '$600'
-  //   },
-  //   {
-  //     id: '3',
-  //     img: 'path/to/iamge',
-  //     name: 'Doodles #1291',
-  //     text: '$1,000',
-  //     hint: 'Value',
-  //     buttonText: '$600'
-  //   },
-  //   {
-  //     id: '4',
-  //     img: 'path/to/iamge',
-  //     name: 'Doodles #1291',
-  //     text: '$1,000',
-  //     hint: 'Value',
-  //     buttonText: '$600'
-  //   }
-  // ];
 
   const selectNFT = (name: string, id: string, img: string) => {
     setIsNftSelected(true);
