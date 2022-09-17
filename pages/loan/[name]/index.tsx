@@ -241,7 +241,11 @@ const Loan: NextPage = () => {
     if (collateralNFTPositions && collateralNFTPositions.length > TYPE_ZERO)
       setBorrowModal(TYPE_ONE);
 
-    setUserCollateralPositions(collateralNFTPositions);
+    if (collateralNFTPositions) {
+      console.log('@@@@@@@@@', collateralNFTPositions)
+      setUserCollateralPositions(collateralNFTPositions);
+    }
+    
   }, [
     collateralNFTPositions,
     loanPositions,
