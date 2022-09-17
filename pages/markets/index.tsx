@@ -29,7 +29,6 @@ import classNames from 'classnames';
 import { getColumnSortStatus } from '../../helpers/tableUtils';
 import { useConnectedWallet, useSolana } from '@saberhq/use-solana';
 import useFetchNFTByUser from '../../hooks/useNFTV2';
-import { LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js';
 import { ConfigureSDK } from '../../helpers/loanHelpers/index';
 import {
   borrow,
@@ -62,10 +61,12 @@ const Markets: NextPage = () => {
   const [userOpenPositions, setUserOpenPositions] = useState<Array<OpenPositions>>([]);
   
   const availableNFTs: any = useFetchNFTByUser(wallet);
+
+
   
   useEffect(() => {
+    console.log('use effect running')
     setUserAvailableNFTs(availableNFTs[0]);
-    console.log('usernfts', userAvailableNFTs);
   }, [availableNFTs]);
 
 
@@ -83,7 +84,7 @@ const Markets: NextPage = () => {
     sdkConfig.marketId
   );
 
-  useEffect(() => {
+  useMemo(() => {
     if (collateralNFTPositions && collateralNFTPositions.length > 0) {
       setUserOpenPositions(collateralNFTPositions);
     }
@@ -111,22 +112,6 @@ const Markets: NextPage = () => {
           {
             name: 'Doodles #1321',
             riskLvl: 0,
-            debt: 0,
-            available: 600,
-            value: 1000
-          }
-        ]
-      },
-      {
-        key: '1',
-        name: 'Very long collection name very long',
-        rate: 0.2,
-        available: 150,
-        value: 160000,
-        positions: [
-          {
-            name: 'Doodles #1292',
-            riskLvl: 0.1,
             debt: 0,
             available: 600,
             value: 1000
@@ -437,7 +422,11 @@ const Markets: NextPage = () => {
           ))}
       </Content>
       <Sider width={350}>
-        <MarketsSidebar collectionId="s" />
+        {/* borrow repay module */}
+        <MarketsSidebar 
+          collectionId="s" 
+          availableNFTs={userAvailableNFTs}
+        />
       </Sider>
     </LayoutRedesign>
   );
