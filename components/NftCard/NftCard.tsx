@@ -17,12 +17,13 @@ const NftCard = (props: NftCardProps) => {
     buttonText,
     img,
     image,
+    mint,
     hasBorder = true
   } = props;
 
   const _onClick = useCallback(() => {
     if (typeof onClick === 'function') {
-      onClick(name, id, image);
+      onClick(name, id, image, mint);
     }
   }, [id]);
 
@@ -47,7 +48,6 @@ const NftCard = (props: NftCardProps) => {
             {text} {hint && <span className={styles.hint}>{hint}</span>}
           </div>
         </div>
-
         <HoneyButton variant="text">
           Up to {buttonText}
           <div className={styles.arrowRight} />
