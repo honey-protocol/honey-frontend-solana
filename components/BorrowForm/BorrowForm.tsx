@@ -14,6 +14,7 @@ import { MAX_LTV } from '../../constants/loan';
 import { usdcAmount } from '../HoneyButton/HoneyButton.css';
 import {BorrowProps} from './types';
 import { LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js';
+import { toastResponse } from 'helpers/loanHelpers';
 
 const { format: f, formatPercent: fp, formatUsd: fu } = formatNumber;
 
@@ -24,7 +25,7 @@ const BorrowForm: FC<BorrowProps> = (props: BorrowProps) => {
   const [valueUSDC, setValueUSDC] = useState<number>();
   const [rangeValue, setRangeValue] = useState(0);
   const [isNftSelected, setIsNftSelected] = useState(false)
-  const [selectedNft, setSelectedNft] = useState({name: '', id: '', img: ''});
+  const [selectedNft, setSelectedNft] = useState({name: '', id: '', img: '', mint: ''});
   const [hasOpenPosition, setHasOpenPosition] = useState(false);
 
   // Only for test purposes
@@ -37,25 +38,22 @@ const BorrowForm: FC<BorrowProps> = (props: BorrowProps) => {
   // set selection state and render (or not) detail nft 
   const selectNFT = (name: string, id: string, img: string, mint?: any) => {
     if (hasOpenPosition == false) {
-      setSelectedNft({ name, id, img })
+      setSelectedNft({ name, id, img, mint });
     } else {
       setIsNftSelected(true);
-      console.log(`${name} - ${id} - ${img} selected`);
-      setSelectedNft({ name, id, img })
+      setSelectedNft({ name, id, img, mint });
     }
   };
 
-  if (openPositions) {
-    openPositions.map((nft: any) => {
-      if (nft.name.includes('When')) {
-        nft.mint = new PublicKey(nft.mint).toString()
-      }
-    })
-  }
   // if user has an open position, we need to be able to click on the position and borrow against it
   useEffect(() => {
     if (openPositions?.length) setHasOpenPosition(true);
-  }, openPositions)
+  }, openPositions);
+
+  function handleDepositNFT() {
+    if (selectedNft.mint.length < 1) return toastResponse('ERROR', 'Please select an NFT', 'ERROR');
+    executeDepositNFT(selectedNft.mint)
+  }
 
   const renderContent = () => {
     if (isNftSelected == false) {
@@ -175,6 +173,7 @@ const BorrowForm: FC<BorrowProps> = (props: BorrowProps) => {
           <HoneyButton
             variant="primary"
             isFluid
+            onClick={handleDepositNFT}
           >
             Deposit NFT
           </HoneyButton>
