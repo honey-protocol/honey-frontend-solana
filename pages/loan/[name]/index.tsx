@@ -282,6 +282,7 @@ const Loan: NextPage = () => {
    */
   async function executeDepositNFT(mintID: any) {
     try {
+      console.log('@@@@@@-----mint id', mintID);
       if (!mintID) return;
 
       const metadata = await Metadata.findByMint(
