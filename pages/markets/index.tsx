@@ -490,8 +490,6 @@ const Markets: NextPage = () => {
   */
   async function executeDepositNFT(mintID: any) {
     try {
-      console.log('running', mintID);
-      return;
       if (!mintID) return;
 
       const metadata = await Metadata.findByMint(sdkConfig.saberHqConnection, mintID);
