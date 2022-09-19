@@ -1,4 +1,4 @@
-import React, { FC, useState } from 'react';
+import React, { FC, useEffect, useState } from 'react';
 import Image from 'next/image';
 import { InfoBlock } from '../InfoBlock/InfoBlock';
 import { InputsBlock } from '../InputsBlock/InputsBlock';
@@ -12,18 +12,20 @@ import NftList from '../NftList/NftList';
 import { NftCardProps } from '../NftCard/types';
 import { MAX_LTV } from '../../constants/loan';
 import { usdcAmount } from '../HoneyButton/HoneyButton.css';
-import {BorrowProps} from './types'
+import {BorrowProps} from './types';
+import { LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js';
 
 const { format: f, formatPercent: fp, formatUsd: fu } = formatNumber;
 
 const BorrowForm: FC<BorrowProps> = (props: BorrowProps) => {
-  const {availableNFTs, openPositions} = props;
+  const {availableNFTs, openPositions, nftPrice, executeDepositNFT} = props;
   
   const [valueUSD, setValueUSD] = useState<number>();
   const [valueUSDC, setValueUSDC] = useState<number>();
   const [rangeValue, setRangeValue] = useState(0);
   const [isNftSelected, setIsNftSelected] = useState(false)
   const [selectedNft, setSelectedNft] = useState({name: '', id: '', img: ''});
+  const [hasOpenPosition, setHasOpenPosition] = useState(false);
 
   // Only for test purposes
   // const isNftSelected = true;
@@ -32,21 +34,38 @@ const BorrowForm: FC<BorrowProps> = (props: BorrowProps) => {
   const isBorrowButtonDisabled = () => {
     return true;
   };
-
-  const selectNFT = (name: string, id: string, img: string) => {
-    setIsNftSelected(true);
-    console.log(`${name} - ${id} - ${img} selected`);
-    setSelectedNft({ name, id, img })
+  // set selection state and render (or not) detail nft 
+  const selectNFT = (name: string, id: string, img: string, mint?: any) => {
+    if (hasOpenPosition == false) {
+      setSelectedNft({ name, id, img })
+    } else {
+      setIsNftSelected(true);
+      console.log(`${name} - ${id} - ${img} selected`);
+      setSelectedNft({ name, id, img })
+    }
   };
 
+  if (openPositions) {
+    openPositions.map((nft: any) => {
+      if (nft.name.includes('When')) {
+        nft.mint = new PublicKey(nft.mint).toString()
+      }
+    })
+  }
+  // if user has an open position, we need to be able to click on the position and borrow against it
+  useEffect(() => {
+    if (openPositions?.length) setHasOpenPosition(true);
+  }, openPositions)
+
   const renderContent = () => {
-    if (!isNftSelected) {
+    if (isNftSelected == false) {
       return (
         <>
           <div className={styles.newBorrowingTitle}>Choose NFT</div>
           <NftList 
             data={availableNFTs} 
             selectNFT={selectNFT}
+            nftPrice={nftPrice}
           />
         </>
       );
@@ -143,7 +162,7 @@ const BorrowForm: FC<BorrowProps> = (props: BorrowProps) => {
     if (!isNftSelected) {
       return (
         <div className={styles.buttons}>
-          <div className={styles.bigCol}>
+          <div className={styles.smallCol}>
             <HoneyButton
               variant="secondary"
               disabled={isBorrowButtonDisabled()}
@@ -152,6 +171,14 @@ const BorrowForm: FC<BorrowProps> = (props: BorrowProps) => {
               Cancel
             </HoneyButton>
           </div>
+          <div className={styles.bigCol}>
+          <HoneyButton
+            variant="primary"
+            isFluid
+          >
+            Deposit NFT
+          </HoneyButton>
+        </div>
         </div>
       );
     }
