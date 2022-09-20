@@ -9,6 +9,7 @@ import mockNftImage from '/public/images/mock-collection-image@2x.png';
 import HoneyButton from 'components/HoneyButton/HoneyButton';
 import HexaBoxContainer from '../HexaBoxContainer/HexaBoxContainer';
 import HoneyWarning from '../HoneyWarning/HoneyWarning';
+import CurrentBid from '../CurrentBid/CurrentBid';
 import SidebarScroll from '../SidebarScroll/SidebarScroll';
 
 type BidsFormsProps = {};
@@ -62,6 +63,12 @@ const BidForm: FC<BidsFormsProps> = () => {
               message="We’re now live on Ethereum!"
               link="https://google.com"
             ></HoneyWarning>
+          </div>
+        </div>
+
+        <div className={styles.row}>
+          <div className={styles.col}>
+            <CurrentBid value={10000} title="Your bid is #1" />
           </div>
         </div>
 

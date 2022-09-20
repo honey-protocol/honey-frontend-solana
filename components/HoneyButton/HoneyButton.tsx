@@ -3,7 +3,6 @@ import { FC } from 'react';
 import * as styles from './HoneyButton.css';
 import c from 'classnames';
 import { isNil } from '../../helpers/utils';
-import { valueContainer } from './HoneyButton.css';
 
 interface HoneyButtonProps extends ButtonProps {
   variant?: 'primary' | 'secondary' | 'tertiary' | 'text' | 'textSecondary';
