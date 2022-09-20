@@ -160,8 +160,8 @@ const RepayForm: FC<RepayFormProps> = () => {
             <div className={styles.bigCol}>
               <HoneyButton
                 variant="primary"
-              usdcAmount={valueUSDC || 0}
-              usdcValue={valueUSD || 0}
+                usdcAmount={valueUSDC || 0}
+                usdcValue={valueUSD || 0}
                 disabled={isRepayButtonDisabled()}
                 isFluid={true}
                 onClick={onRepay}
