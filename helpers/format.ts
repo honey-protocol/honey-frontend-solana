@@ -49,3 +49,15 @@ export const formatNumber = {
     return `$ ${formatNumber.format(val)}`;
   }
 };
+
+export const dateFromTimestamp = (timestamp: number | string) => {
+  const time = new Date(timestamp);
+
+  const date = time.toLocaleDateString('en-GB', {
+    day:   'numeric',
+    month: 'short',
+    year:  'numeric',
+  });
+
+  return `${date}`;
+};
