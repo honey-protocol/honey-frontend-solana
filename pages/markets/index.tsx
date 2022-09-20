@@ -46,6 +46,7 @@ import {
   calculateCollectionwideAllowance
 } from 'helpers/loanHelpers/userCollection';
 import { Metadata } from '@metaplex-foundation/mpl-token-metadata';
+import { MAX_LTV } from 'constants/loan';
 
 
 const { formatPercent: fp, formatUsd: fu } = formatNumber;
@@ -214,28 +215,13 @@ const Markets: NextPage = () => {
         rate: 0.1,
         available: (totalDeposits - totalMarketDebt),
         value: (marketPositions * nftPrice),
-        positions: [
-          {
-            name: 'Doodles #1291',
-            riskLvl: 33,
-            debt: 0,
-            available: 600,
-            value: 1000
-          },
-          {
-            name: 'Doodles #1321',
-            riskLvl: 0,
-            debt: 0,
-            available: 600,
-            value: 1000
-          }
-        ]
+        positions: userOpenPositions
       }
     ];
 
     setTableData(mockData);
     setTableDataFiltered(mockData);
-  }, [totalDeposits, totalMarketDebt, nftPrice]);
+  }, [totalDeposits, totalMarketDebt, nftPrice, userOpenPositions]);
 
   const handleToggle = (checked: boolean) => {
     setIsMyCollectionsFilterEnabled(checked);
@@ -414,7 +400,7 @@ const Markets: NextPage = () => {
           <div className={style.nameCellText}>
             <div className={style.collectionName}>{name}</div>
             <div className={style.risk.safe}>
-              <span className={style.valueCell}>{fp(record.riskLvl)}</span>{' '}
+              <span className={style.valueCell}>{fp(loanToValue)}</span>{' '}
               <span className={style.riskText}>Risk lvl</span>
             </div>
           </div>
@@ -426,7 +412,7 @@ const Markets: NextPage = () => {
       width: columnsWidth[1],
       render: debt => (
         <div className={style.expandedRowCell}>
-          <InfoBlock title={'Debt:'} value={fu(debt)} />
+          <InfoBlock title={'Debt:'} value={fu(userDebt)} />
         </div>
       )
     },
@@ -435,7 +421,7 @@ const Markets: NextPage = () => {
       width: columnsWidth[2],
       render: available => (
         <div className={style.expandedRowCell}>
-          <InfoBlock title={'Available:'} value={fu(available)} />
+          <InfoBlock title={'Available:'} value={fu(nftPrice * MAX_LTV)} />
         </div>
       )
     },
@@ -444,7 +430,7 @@ const Markets: NextPage = () => {
       width: columnsWidth[3],
       render: value => (
         <div className={style.expandedRowCell}>
-          <InfoBlock title={'Value:'} value={fu(value)} />
+          <InfoBlock title={'Value:'} value={fu(nftPrice)} />
         </div>
       )
     },
