@@ -62,7 +62,7 @@ export const typography = {
   },
   description: {
     fontFamily: 'Scandia',
-    fontWeight: 'regular',
+    fontWeight: '500',
     fontSize: '14px',
     lineHeight: '20px'
   },
