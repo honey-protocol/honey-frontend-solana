@@ -22,7 +22,9 @@ export const layoutHeader = style({
   zIndex: '1'
 });
 
-export const contentContainer = style([container, {}]);
+export const contentContainer = style([container, {
+  paddingTop: 12
+}]);
 
 globalStyle(`body ${contentContainer} > .ant-layout-content`, {
   backgroundColor: 'transparent',

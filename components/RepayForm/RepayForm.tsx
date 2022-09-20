@@ -12,6 +12,7 @@ import HoneyToast, {
   HoneyToastProps,
   toastRemoveDelay
 } from 'components/HoneyToast/HoneyToast';
+import SidebarScroll from '../SidebarScroll/SidebarScroll';
 
 type RepayFormProps = {};
 
@@ -59,8 +60,38 @@ const RepayForm: FC<RepayFormProps> = () => {
   };
 
   return (
-    <div className={styles.repayForm}>
-      <div className={styles.content}>
+    <SidebarScroll
+      footer={
+        <>
+          {toast?.state ? (
+            <HoneyToast
+              state={toast.state}
+              primaryText={toast.primaryText}
+              secondaryLink={toast.secondaryLink}
+            />
+          ) : (
+            <div className={styles.buttons}>
+              <div className={styles.smallCol}>
+                <HoneyButton variant="secondary">Cancel</HoneyButton>
+              </div>
+              <div className={styles.bigCol}>
+                <HoneyButton
+                  variant="primary"
+                  usdcAmount={valueUSDC || 0}
+                  usdcValue={valueUSD || 0}
+                  disabled={isRepayButtonDisabled()}
+                  isFluid={true}
+                  onClick={onRepay}
+                >
+                  Repay
+                </HoneyButton>
+              </div>
+            </div>
+          )}
+        </>
+      }
+    >
+      <div className={styles.repayForm}>
         <div className={styles.nftInfo}>
           <div className={styles.nftImage}>
             <HexaBoxContainer>
@@ -144,35 +175,7 @@ const RepayForm: FC<RepayFormProps> = () => {
           onChange={setRangeValue}
         />
       </div>
-
-      <div className={styles.footer}>
-        {toast?.state ? (
-          <HoneyToast
-            state={toast.state}
-            primaryText={toast.primaryText}
-            secondaryLink={toast.secondaryLink}
-          />
-        ) : (
-          <div className={styles.buttons}>
-            <div className={styles.smallCol}>
-              <HoneyButton variant="secondary">Cancel</HoneyButton>
-            </div>
-            <div className={styles.bigCol}>
-              <HoneyButton
-                variant="primary"
-              usdcAmount={valueUSDC || 0}
-              usdcValue={valueUSD || 0}
-                disabled={isRepayButtonDisabled()}
-                isFluid={true}
-                onClick={onRepay}
-              >
-                Repay
-              </HoneyButton>
-            </div>
-          </div>
-        )}
-      </div>
-    </div>
+    </SidebarScroll>
   );
 };
 

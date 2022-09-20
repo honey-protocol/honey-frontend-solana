@@ -11,7 +11,7 @@ import HexaBoxContainer from 'components/HexaBoxContainer/HexaBoxContainer';
 import NftList from '../NftList/NftList';
 import { NftCardProps } from '../NftCard/types';
 import { MAX_LTV } from '../../constants/loan';
-import { usdcAmount } from '../HoneyButton/HoneyButton.css';
+import SidebarScroll from '../SidebarScroll/SidebarScroll';
 
 type BorrowFormProps = {};
 
@@ -200,11 +200,9 @@ const BorrowForm: FC<BorrowFormProps> = () => {
   };
 
   return (
-    <div className={styles.borrowForm}>
-      <div className={styles.content}>{renderContent()}</div>
-
-      <div className={styles.footer}>{renderFooter()}</div>
-    </div>
+    <SidebarScroll footer={renderFooter()}>
+      <div className={styles.borrowForm}>{renderContent()}</div>
+    </SidebarScroll>
   );
 };
 

@@ -9,6 +9,7 @@ import mockNftImage from '/public/images/mock-collection-image@2x.png';
 import HoneyButton from 'components/HoneyButton/HoneyButton';
 import HexaBoxContainer from '../HexaBoxContainer/HexaBoxContainer';
 import { MAX_LTV } from '../../constants/loan';
+import SidebarScroll from '../SidebarScroll/SidebarScroll';
 
 type RepayFormProps = {};
 
@@ -25,8 +26,25 @@ const WithdrawForm: FC<RepayFormProps> = () => {
   };
 
   return (
-    <div className={styles.withdrawForm}>
-      <div className={styles.content}>
+    <SidebarScroll
+      footer={
+        <div className={styles.buttons}>
+          <div className={styles.smallCol}>
+            <HoneyButton variant="tertiary">Cancel</HoneyButton>
+          </div>
+          <div className={styles.bigCol}>
+            <HoneyButton
+              variant="primary"
+              disabled={isRepayButtonDisabled()}
+              isFluid={true}
+            >
+              Withdraw
+            </HoneyButton>
+          </div>
+        </div>
+      }
+    >
+      <div className={styles.withdrawForm}>
         <div className={styles.nftInfo}>
           <div className={styles.nftImage}>
             <HexaBoxContainer>
@@ -83,24 +101,7 @@ const WithdrawForm: FC<RepayFormProps> = () => {
           onChange={setRangeValue}
         />
       </div>
-
-      <div className={styles.footer}>
-        <div className={styles.buttons}>
-          <div className={styles.smallCol}>
-            <HoneyButton variant="tertiary">Cancel</HoneyButton>
-          </div>
-          <div className={styles.bigCol}>
-            <HoneyButton
-              variant="primary"
-              disabled={isRepayButtonDisabled()}
-              isFluid={true}
-            >
-              Withdraw
-            </HoneyButton>
-          </div>
-        </div>
-      </div>
-    </div>
+    </SidebarScroll>
   );
 };
 
