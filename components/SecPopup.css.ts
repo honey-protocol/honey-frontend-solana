@@ -10,7 +10,6 @@ export const secPopup = style({
   height: '100vh',
   width: '100%',
   flexDirection: 'column',
-  backgroundColor: 'background',
   padding: 10
 });
 
