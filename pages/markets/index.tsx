@@ -186,10 +186,9 @@ const Markets: NextPage = () => {
 
     setLiquidationThreshold(1 / cRatio * 100);
   }, [marketReserveInfo, honeyUser, collateralNFTPositions, market, error, parsedReserves, honeyReserves, cRatio, reserveHoneyState, calculatedNftPrice]);
-
-
   
   useEffect(() => {
+    console.log('availableNFTs', availableNFTs);
     setUserAvailableNFTs(availableNFTs[0]);
   }, [availableNFTs]);
 
@@ -199,7 +198,7 @@ const Markets: NextPage = () => {
   }, [totalDeposits, totalBorrowed]);
 
   useMemo(() => {
-    console.log('@@', collateralNFTPositions);
+    console.log('--collateral nft positions--', collateralNFTPositions);
     if (collateralNFTPositions && collateralNFTPositions.length > 0) {
       setUserOpenPositions(collateralNFTPositions);
     }
@@ -506,6 +505,125 @@ const Markets: NextPage = () => {
     }
   }
 
+    /**
+   * @description executes the withdraw NFT func. from SDK
+   * @params mint of the NFT
+   * @returns succes | failure
+  */
+  async function executeWithdrawNFT(mintID: any) {
+    try {
+      if (!mintID) return toastResponse('ERROR', 'Please select NFT', 'ERROR');
+      const metadata = await Metadata.findByMint(sdkConfig.saberHqConnection, mintID);
+      const tx = await withdrawNFT(sdkConfig.saberHqConnection, honeyUser, metadata.pubkey);
+
+      if (tx[0] == 'SUCCESS') {
+        await toastResponse('SUCCESS', 'Withdraw success', 'SUCCESS');
+        reFetchNFTs({});
+        await refreshPositions();
+
+      }
+    } catch (error) {
+      toastResponse('ERROR', 'Error withdraw NFT', 'ERROR');
+      return;
+    }
+  }
+
+  /**
+   * @description
+   * executes the borrow function which allows user to borrow against NFT
+   * base value of NFT is 2 SOL - liquidation trashold is 50%, so max 1 SOL available
+   * @params borrow amount
+   * @returns borrowTx
+   */
+   async function executeBorrow(val: any) {
+    try {
+      if (!val)
+        return toastResponse('ERROR', 'Please provide a value', 'ERROR');
+      if (val == 1.6) val = val - 0.01;
+      const borrowTokenMint = new PublicKey(
+        'So11111111111111111111111111111111111111112'
+      );
+      const tx = await borrow(
+        honeyUser,
+        val * LAMPORTS_PER_SOL,
+        borrowTokenMint,
+        honeyReserves
+      );
+
+      if (tx[0] == 'SUCCESS') {
+        toastResponse('SUCCESS', 'Borrow success', 'SUCCESS', 'BORROW');
+
+        let refreshedHoneyReserves = await honeyReserves[0].sendRefreshTx();
+        const latestBlockHash =
+          await sdkConfig.saberHqConnection.getLatestBlockhash();
+
+        await sdkConfig.saberHqConnection.confirmTransaction({
+          blockhash: latestBlockHash.blockhash,
+          lastValidBlockHeight: latestBlockHash.lastValidBlockHeight,
+          signature: refreshedHoneyReserves
+        });
+
+        await fetchMarket();
+        await honeyUser.refresh().then((val: any) => {
+          reserveHoneyState == 0
+            ? setReserveHoneyState(1)
+            : setReserveHoneyState(0);
+        });
+      } else {
+        return toastResponse('ERROR', 'Borrow failed', 'BORROW');
+      }
+    } catch (error) {
+      return toastResponse('ERROR', 'An error occurred', 'BORROW');
+    }
+  }
+
+  /**
+   * @description
+   * executes the repay function which allows user to repay their borrowed amount
+   * against the NFT
+   * @params amount of repay
+   * @returns repayTx
+   */
+  async function executeRepay(val: any) {
+    try {
+      if (!val)
+        return toastResponse('ERROR', 'Please provide a value', 'ERROR');
+      const repayTokenMint = new PublicKey(
+        'So11111111111111111111111111111111111111112'
+      );
+      const tx = await repay(
+        honeyUser,
+        val * LAMPORTS_PER_SOL,
+        repayTokenMint,
+        honeyReserves
+      );
+
+      if (tx[0] == 'SUCCESS') {
+        toastResponse('SUCCESS', 'Repay success', 'SUCCESS', 'REPAY');
+        let refreshedHoneyReserves = await honeyReserves[0].sendRefreshTx();
+        const latestBlockHash =
+          await sdkConfig.saberHqConnection.getLatestBlockhash();
+
+        await sdkConfig.saberHqConnection.confirmTransaction({
+          blockhash: latestBlockHash.blockhash,
+          lastValidBlockHeight: latestBlockHash.lastValidBlockHeight,
+          signature: refreshedHoneyReserves
+        });
+
+        await fetchMarket();
+        await honeyUser.refresh().then((val: any) => {
+          reserveHoneyState == 0
+            ? setReserveHoneyState(1)
+            : setReserveHoneyState(0);
+        });
+      } else {
+        return toastResponse('ERROR', 'Repay failed', 'REPAY');
+      }
+    } catch (error) {
+      return toastResponse('ERROR', 'An error occurred', 'REPAY');
+    }
+  }
+
   return (
     <LayoutRedesign>
       <Content>
@@ -568,6 +686,9 @@ const Markets: NextPage = () => {
           openPositions={userOpenPositions}
           nftPrice={nftPrice}
           executeDepositNFT={executeDepositNFT}
+          executeWithdrawNFT={executeWithdrawNFT}
+          executeBorrow={executeBorrow}
+          executeRepay={executeRepay}
         />
       </Sider>
     </LayoutRedesign>
