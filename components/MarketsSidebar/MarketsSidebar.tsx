@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import * as styles from './MarketsSidebar.css';
 import { MarketsSidebarProps } from './types';
 import BorrowForm from '../BorrowForm/BorrowForm';
@@ -18,12 +18,14 @@ type Tab = 'borrow' | 'repay';
 
 const MarketsSidebar = (props: MarketsSidebarProps) => {
   const wallet = true;
-  const { collectionId, availableNFTs, openPositions, nftPrice, executeDepositNFT } = props;
+  const { collectionId, availableNFTs, openPositions, nftPrice, executeDepositNFT, executeWithdrawNFT, executeBorrow, executeRepay } = props;
   const [activeTab, setActiveTab] = useState<Tab>('borrow');
 
   const handleTabChange = (tabKey: string) => {
     setActiveTab(tabKey as Tab);
   };
+
+  useEffect(() => {}, [openPositions]);
 
   return (
     <div className={styles.marketsSidebarContainer}>
@@ -48,8 +50,8 @@ const MarketsSidebar = (props: MarketsSidebarProps) => {
           />
         ) : (
           <>
-            {activeTab === 'borrow' && <BorrowForm availableNFTs={availableNFTs} openPositions={openPositions} nftPrice={nftPrice} executeDepositNFT={executeDepositNFT} />}
-            {activeTab === 'repay' && <RepayForm />}
+            {activeTab === 'borrow' && <BorrowForm executeBorrow={executeBorrow} availableNFTs={availableNFTs} openPositions={openPositions} nftPrice={nftPrice} executeDepositNFT={executeDepositNFT} />}
+            {activeTab === 'repay' && <RepayForm executeRepay={executeRepay} openPositions={openPositions} nftPrice={nftPrice} executeWithdrawNFT={executeWithdrawNFT} />}
           </>
         )}
       </HoneyTabs>
