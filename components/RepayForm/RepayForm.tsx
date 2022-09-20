@@ -8,16 +8,18 @@ import { formatNumber } from '../../helpers/format';
 import mockNftImage from '/public/images/mock-collection-image@2x.png';
 import HoneyButton from 'components/HoneyButton/HoneyButton';
 import HexaBoxContainer from '../HexaBoxContainer/HexaBoxContainer';
+import { RepayProps } from './types';
 import HoneyToast, {
   HoneyToastProps,
   toastRemoveDelay
 } from 'components/HoneyToast/HoneyToast';
 
-type RepayFormProps = {};
 
 const { format: f, formatPercent: fp, formatUsd: fu } = formatNumber;
 
-const RepayForm: FC<RepayFormProps> = () => {
+const RepayForm = (props: RepayProps) => {
+  const {executeRepay, openPositions, nftPrice, executeWithdrawNFT} = props;
+
   const [valueUSD, setValueUSD] = useState<number>();
   const [valueUSDC, setValueUSDC] = useState<number>();
   const [rangeValue, setRangeValue] = useState(0);
