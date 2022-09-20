@@ -18,8 +18,8 @@ import { toastResponse } from 'helpers/loanHelpers';
 
 const { format: f, formatPercent: fp, formatUsd: fu } = formatNumber;
 
-const BorrowForm: FC<BorrowProps> = (props: BorrowProps) => {
-  const {availableNFTs, openPositions, nftPrice, executeDepositNFT} = props;
+const BorrowForm = (props: BorrowProps) => {
+  const {availableNFTs, openPositions, nftPrice, executeDepositNFT, executeBorrow} = props;
   
   const [valueUSD, setValueUSD] = useState<number>();
   const [valueUSDC, setValueUSDC] = useState<number>();
@@ -57,16 +57,29 @@ const BorrowForm: FC<BorrowProps> = (props: BorrowProps) => {
 
   const renderContent = () => {
     if (isNftSelected == false) {
-      return (
-        <>
-          <div className={styles.newBorrowingTitle}>Choose NFT</div>
-          <NftList 
-            data={availableNFTs} 
-            selectNFT={selectNFT}
-            nftPrice={nftPrice}
-          />
-        </>
-      );
+      if (hasOpenPosition) {
+        return (
+          <>
+            <div className={styles.newBorrowingTitle}>Collateralised position</div>
+            <NftList 
+              data={openPositions} 
+              selectNFT={selectNFT}
+              nftPrice={nftPrice}
+            />
+          </>
+        );
+      } else {
+        return (
+          <>
+            <div className={styles.newBorrowingTitle}>Choose NFT</div>
+            <NftList 
+              data={availableNFTs} 
+              selectNFT={selectNFT}
+              nftPrice={nftPrice}
+            />
+          </>
+        );
+      }
     }
 
     return (
@@ -157,49 +170,49 @@ const BorrowForm: FC<BorrowProps> = (props: BorrowProps) => {
   };
 
   const renderFooter = () => {
-    if (!isNftSelected) {
-      return (
-        <div className={styles.buttons}>
-          <div className={styles.smallCol}>
+      if (hasOpenPosition) {
+        return (
+          <div className={styles.buttons}>
+            <div className={styles.smallCol}>
+              <HoneyButton variant="secondary" onClick={() => setIsNftSelected(false)}>Cancel</HoneyButton>
+            </div>
+            <div className={styles.bigCol}>
+              <HoneyButton
+                usdcAmount={valueUSDC || 0}
+                usdcValue={valueUSD || 0}
+                variant="primary"
+                disabled={isBorrowButtonDisabled()}
+                isFluid
+              >
+                Borrow
+              </HoneyButton>
+            </div>
+          </div>
+        );
+      } else {
+        return (
+          <div className={styles.buttons}>
+            <div className={styles.smallCol}>
+              <HoneyButton
+                variant="secondary"
+                disabled={isBorrowButtonDisabled()}
+                isFluid
+              >
+                Cancel
+              </HoneyButton>
+            </div>
+            <div className={styles.bigCol}>
             <HoneyButton
-              variant="secondary"
-              disabled={isBorrowButtonDisabled()}
+              variant="primary"
               isFluid
+              onClick={handleDepositNFT}
             >
-              Cancel
+              Deposit NFT
             </HoneyButton>
           </div>
-          <div className={styles.bigCol}>
-          <HoneyButton
-            variant="primary"
-            isFluid
-            onClick={handleDepositNFT}
-          >
-            Deposit NFT
-          </HoneyButton>
-        </div>
-        </div>
-      );
+          </div>
+        );
     }
-
-    return (
-      <div className={styles.buttons}>
-        <div className={styles.smallCol}>
-          <HoneyButton variant="secondary" onClick={() => setIsNftSelected(false)}>Cancel</HoneyButton>
-        </div>
-        <div className={styles.bigCol}>
-          <HoneyButton
-            usdcAmount={valueUSDC || 0}
-            usdcValue={valueUSD || 0}
-            variant="primary"
-            disabled={isBorrowButtonDisabled()}
-            isFluid
-          >
-            Borrow
-          </HoneyButton>
-        </div>
-      </div>
-    );
   };
 
   return (
