@@ -35,7 +35,8 @@ export const row = style([
 ]);
 
 export const col = style({
-  flex: '100% 0 0'
+  flex: '100% 0 0',
+  paddingRight: 8
 });
 
 export const nftInfo = style([

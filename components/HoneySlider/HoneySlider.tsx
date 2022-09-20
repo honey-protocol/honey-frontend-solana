@@ -1,54 +1,69 @@
-import * as styles from './Range.css';
+import * as styles from './HoneySlider.css';
 import { FC } from 'react';
 import { Slider } from 'antd';
 import { vars } from '../../styles/theme.css';
 import c from 'classnames';
 import { formatNumber } from '../../helpers/format';
+import { getPositionedLabels } from './utlls';
 
-interface RangeProps {
+interface HoneySliderProps {
   maxValue: number;
-  borrowedValue: number;
+  minAvailable?: number;
   currentValue: number;
   onChange: (value: number) => void;
   maxSafePosition?: number;
   maxAvailablePosition?: number;
+  labels?: number[];
+  isReadonly?: boolean;
 }
 
-const { format: f, formatPercent: fp, formatUsd: fu } = formatNumber;
+const { formatPercent: fp, formatUsd: fu } = formatNumber;
 
-export const Range: FC<RangeProps> = ({
+export const HoneySlider: FC<HoneySliderProps> = ({
   maxValue,
-  borrowedValue,
+  minAvailable = 0,
   currentValue,
   onChange,
-  maxSafePosition,
-  maxAvailablePosition = 1
+  maxSafePosition = 1,
+  maxAvailablePosition = 1,
+  labels = [],
+  isReadonly
 }) => {
-  const borrowedRatio = borrowedValue / maxValue;
-  const unavailableRatio = 1 - maxAvailablePosition;
-  const availableRatio = 1 - borrowedRatio - unavailableRatio;
+  const minAvailablePosition = minAvailable / maxValue;
+  const unavailablePosition = 1 - maxAvailablePosition;
+  const availablePosition = 1 - minAvailablePosition - unavailablePosition;
 
-  const isRisky = maxSafePosition && currentValue / maxValue > maxSafePosition;
+  const maxAvailable = maxValue * maxAvailablePosition;
   const currentSliderValue =
-    ((currentValue - borrowedValue) / (maxValue * maxAvailablePosition)) * 100;
+    (currentValue / (maxValue * maxAvailablePosition - minAvailable)) * 100;
+
+  const isRisky = (currentValue + minAvailable) / maxValue > maxSafePosition;
 
   const handleChange = (value: number) => {
-    const newBorrowValue =
-      (maxValue * maxAvailablePosition - borrowedValue) * (value / 100) +
-      borrowedValue;
+    if (isReadonly) return
+    const newBorrowValue = ((maxAvailable - minAvailable) * value) / 100;
     onChange(newBorrowValue);
   };
+
+  const preparedLabels = isReadonly ? undefined : getPositionedLabels({
+    lastLabelValue: maxAvailablePosition,
+    maxLeftSliderValue: minAvailable,
+    maxValue,
+    labels
+  });
 
   return (
     <div className={styles.rangeContainer}>
       <div
         className={styles.sliderWrapper}
         style={{
-          width: `${fp(borrowedRatio < 0.1 ? 10 : borrowedRatio * 100)}`,
-          display: borrowedValue ? 'inherit' : 'none'
+          width: `${fp(
+            minAvailablePosition < 0.1 ? 10 : minAvailablePosition * 100
+          )}`,
+          display: minAvailable ? 'inherit' : 'none'
         }}
       >
-        <div className={styles.sliderHeader.primary}>$ {borrowedValue}</div>
+        {!isReadonly && <div className={styles.sliderHeader.primary}>$ {minAvailable}</div>}
         <Slider
           className={c(
             styles.slider,
@@ -63,41 +78,38 @@ export const Range: FC<RangeProps> = ({
               : vars.colors.green
           }}
           value={100}
-          marks={{ 0: '0%', 50: `${(borrowedRatio * 100) / 2}%` }}
+          marks={preparedLabels?.left}
         />
       </div>
       <div
         className={styles.sliderWrapper}
-        style={{ width: `${availableRatio * 100}%` }}
+        style={{ width: `${availablePosition * 100}%` }}
       >
-        <div className={styles.sliderHeader.secondary}>
+        {!isReadonly && <div className={styles.sliderHeader.secondary}>
           {fu(maxValue * maxAvailablePosition)}
-        </div>
+        </div>}
         <Slider
           tooltipVisible={false}
           className={styles.slider}
           trackStyle={{
             background: isRisky ? vars.colors.brownLight : vars.colors.green
           }}
-          handleStyle={{
+          handleStyle={isReadonly ? { display: 'none' } : {
             background: vars.colors.white,
             borderColor: isRisky ? vars.colors.brownLight : vars.colors.green,
             zIndex: 9
           }}
           value={currentSliderValue}
           onChange={handleChange}
-          marks={{
-            0: `${borrowedRatio * 100}%`,
-            100: `${maxAvailablePosition * 100}%`
-          }}
+          marks={preparedLabels?.center}
         />
       </div>
-      {unavailableRatio > 0 && (
+      {unavailablePosition > 0 && (
         <div
           className={styles.sliderWrapper}
-          style={{ width: `${unavailableRatio * 100}%` }}
+          style={{ width: `${unavailablePosition * 100}%` }}
         >
-          <div className={styles.sliderHeader.secondary}>{fu(maxValue)}</div>
+          {!isReadonly && <div className={styles.sliderHeader.secondary}>{fu(maxValue)}</div>}
           <Slider
             className={c(styles.slider, styles.disabledBackgroundSlider)}
             handleStyle={{ display: 'none' }}

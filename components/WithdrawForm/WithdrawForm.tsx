@@ -2,7 +2,7 @@ import { FC, useState } from 'react';
 import Image from 'next/image';
 import { InfoBlock } from '../InfoBlock/InfoBlock';
 import { InputsBlock } from '../InputsBlock/InputsBlock';
-import { Range } from '../Range/Range';
+import { HoneySlider } from '../HoneySlider/HoneySlider';
 import * as styles from './WithdrawForm.css';
 import { formatNumber } from '../../helpers/format';
 import mockNftImage from '/public/images/mock-collection-image@2x.png';
@@ -74,10 +74,10 @@ const WithdrawForm: FC<RepayFormProps> = () => {
           />
         </div>
 
-        <Range
+        <HoneySlider
           currentValue={rangeValue}
           maxValue={1000}
-          borrowedValue={0}
+          minAvailable={0}
           maxSafePosition={0.4}
           maxAvailablePosition={MAX_LTV}
           onChange={setRangeValue}
