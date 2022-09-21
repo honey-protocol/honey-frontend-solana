@@ -219,7 +219,7 @@ const RepayForm = (props: RepayProps) => {
 
         <HoneySlider
           currentValue={sliderValue}
-          maxValue={maxValueMock}
+          maxValue={maxValue}
           minAvailableValue={0}
           onChange={handleSliderChange}
         />
