@@ -16,17 +16,24 @@ import {BorrowProps} from './types';
 import { LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js';
 import { toastResponse } from 'helpers/loanHelpers';
 import SidebarScroll from '../SidebarScroll/SidebarScroll';
+import imagePlaceholder from 'public/images/imagePlaceholder.png';
 
 const { format: f, formatPercent: fp, formatUsd: fu } = formatNumber;
+
+interface NFT {
+  name: string;
+  id: string;
+  img: string;
+  mint: string;
+}
 
 const BorrowForm = (props: BorrowProps) => {
   const {availableNFTs, openPositions, nftPrice, executeDepositNFT, executeBorrow} = props;
   
   const [valueUSD, setValueUSD] = useState<number>();
   const [valueUSDC, setValueUSDC] = useState<number>();
-  const [rangeValue, setRangeValue] = useState(0);
   const [isNftSelected, setIsNftSelected] = useState(false)
-  const [selectedNft, setSelectedNft] = useState({name: '', id: '', img: '', mint: ''});
+  const [selectedNft, setSelectedNft] = useState<NFT | null>(null);
   const [hasOpenPosition, setHasOpenPosition] = useState(false);
   const [sliderValue, setSliderValue] = useState(0);
 
@@ -56,8 +63,8 @@ const BorrowForm = (props: BorrowProps) => {
   }, [openPositions, availableNFTs]);
 
   function handleDepositNFT() {
-    if (selectedNft.mint.length < 1) return toastResponse('ERROR', 'Please select an NFT', 'ERROR');
-    executeDepositNFT(selectedNft.mint)
+    if (selectedNft && selectedNft.mint.length < 1) return toastResponse('ERROR', 'Please select an NFT', 'ERROR');
+    if (selectedNft && selectedNft.mint.length > 1) executeDepositNFT(selectedNft.mint);
   }
 
   const renderContent = () => {
@@ -93,13 +100,13 @@ const BorrowForm = (props: BorrowProps) => {
           <div className={styles.nftImage}>
             <HexaBoxContainer>
               <Image 
-                src={selectedNft.img} 
-                alt={`${selectedNft.name}`} 
+                src={selectedNft?.img || imagePlaceholder} 
+                alt={`${selectedNft?.name}`} 
                 layout='fill'
               />
             </HexaBoxContainer>
           </div>
-          <div className={styles.nftName}>{selectedNft.name}</div>
+          <div className={styles.nftName}>{selectedNft?.name}</div>
         </div>
         <div className={styles.row}>
           <div className={styles.col}>
