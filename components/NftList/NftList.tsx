@@ -7,7 +7,7 @@ import * as style from './NftList.css';
 
 type NftListProps = {
   data: NftCardProps[];
-  selectNFT: (name: string, id: string, img: string, mint: any) => void;
+  selectNFT: (name: string, img: string, mint: any) => void;
   nftPrice: any;
 };
 
@@ -16,7 +16,7 @@ const NftList = (props: NftListProps) => {
   
   function handleClick(item: any) {
     console.log('item', item)
-    selectNFT(item.name, item.tokenId, item.image, item.mint);
+    selectNFT(item.name, item.image, item.mint);
   }
 
   return (
