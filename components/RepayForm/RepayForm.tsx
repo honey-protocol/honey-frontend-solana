@@ -12,6 +12,7 @@ import HoneyToast, {
   HoneyToastProps,
   toastRemoveDelay
 } from 'components/HoneyToast/HoneyToast';
+import { isNil } from '../../helpers/utils';
 
 type RepayFormProps = {};
 
@@ -20,20 +21,46 @@ const { format: f, formatPercent: fp, formatUsd: fu } = formatNumber;
 const RepayForm: FC<RepayFormProps> = () => {
   const [valueUSD, setValueUSD] = useState<number>();
   const [valueUSDC, setValueUSDC] = useState<number>();
-  const [rangeValue, setRangeValue] = useState(0);
+  const [sliderValue, setSliderValue] = useState(0);
   const [toast, setToast] = useState<HoneyToastProps | null>(null);
 
   const maxValueMock = 1000;
-  const usdcPrice = 0.99;
-
-  useEffect(() => {
-    setValueUSD(rangeValue);
-    setValueUSDC(rangeValue / usdcPrice);
-  }, [rangeValue]);
+  const usdcPrice = 0.95;
 
   // Put your validators here
   const isRepayButtonDisabled = () => {
     return false;
+  };
+
+  const handleSliderChange = (value: number) => {
+    setSliderValue(value);
+    setValueUSD(value);
+    setValueUSDC(value / usdcPrice);
+  };
+
+  const handleUsdInputChange = (usdValue: number | undefined) => {
+    if (!usdValue) {
+      setValueUSD(0);
+      setValueUSDC(0);
+      setSliderValue(0);
+      return;
+    }
+    setValueUSD(usdValue);
+    setValueUSDC(usdValue / usdcPrice);
+    setSliderValue(usdValue);
+  };
+
+  const handleUsdcInputChange = (usdcValue: number | undefined) => {
+    if (!usdcValue) {
+      setValueUSD(0);
+      setValueUSDC(0);
+      setSliderValue(0);
+      return;
+    }
+
+    setValueUSD(usdcValue * usdcPrice);
+    setValueUSDC(usdcValue);
+    setSliderValue(usdcValue * usdcPrice);
   };
 
   const onRepay = async () => {
@@ -140,16 +167,16 @@ const RepayForm: FC<RepayFormProps> = () => {
           <InputsBlock
             valueUSD={valueUSD}
             valueUSDC={valueUSDC}
-            onChangeUSD={setValueUSD}
-            onChangeUSDC={setValueUSDC}
+            onChangeUSD={handleUsdInputChange}
+            onChangeUSDC={handleUsdcInputChange}
           />
         </div>
 
         <HoneySlider
-          currentValue={rangeValue}
+          currentValue={sliderValue}
           maxValue={maxValueMock}
           minAvailableValue={0}
-          onChange={setRangeValue}
+          onChange={handleSliderChange}
         />
       </div>
 

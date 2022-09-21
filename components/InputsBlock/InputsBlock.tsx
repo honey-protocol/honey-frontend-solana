@@ -8,8 +8,8 @@ import { formatNumber } from '../../helpers/format';
 interface InputsBlockProps {
   valueUSD: number | undefined;
   valueUSDC: number | undefined;
-  onChangeUSD: (value: number) => void;
-  onChangeUSDC: (value: number) => void;
+  onChangeUSD: (value: number | undefined) => void;
+  onChangeUSDC: (value: number | undefined) => void;
 }
 
 const { format: f, formatPercent: fp, formatUsd: fu } = formatNumber;
@@ -26,15 +26,19 @@ export const InputsBlock: FC<InputsBlockProps> = ({
 
   const handleUsdChange = (event: ChangeEvent<HTMLInputElement>) => {
     const value = event.target.value;
-    if (isValidNumericInput(value)) {
+    if (isValidNumericInput(value) && value !== '') {
       onChangeUSD(parseFloat(value));
+    } else {
+      onChangeUSD(undefined);
     }
   };
 
   const handleTokenChange = (event: ChangeEvent<HTMLInputElement>) => {
     const value = event.target.value;
-    if (isValidNumericInput(value)) {
+    if (isValidNumericInput(value) && value !== '') {
       onChangeUSDC(parseFloat(value));
+    } else {
+      onChangeUSDC(undefined);
     }
   };
 
@@ -45,7 +49,7 @@ export const InputsBlock: FC<InputsBlockProps> = ({
           className={styles.input}
           type="text"
           placeholder="0.00"
-          value={fu(valueUSD)}
+          value={valueUSD}
           onChange={handleUsdChange}
         />
         <div className={styles.inputAddon}>$</div>
@@ -58,7 +62,7 @@ export const InputsBlock: FC<InputsBlockProps> = ({
           className={styles.input}
           type="text"
           placeholder="0.00"
-          value={f(valueUSDC)}
+          value={valueUSDC}
           onChange={handleTokenChange}
         />
         <div className={styles.inputAddon}>

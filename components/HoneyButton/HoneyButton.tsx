@@ -43,7 +43,7 @@ const HoneyButton: FC<HoneyButtonProps> = props => {
       {isButtonWithValues && (
         <div className={styles.valueContainer}>
           <span className={styles.usdcAmount}>USDC {f(usdcAmount)}</span>
-          <span className={styles.usdcValue}>${fu(usdcValue)}</span>
+          <span className={styles.usdcValue}>{fu(usdcValue)}</span>
         </div>
       )}
     </Button>
