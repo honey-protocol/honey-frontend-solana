@@ -25,8 +25,8 @@ const BorrowForm: FC<BorrowFormProps> = () => {
   // Only for test purposes
   const isNftSelected = true;
 
-  const borrowedValue = 200
-  const maxValue = 1000
+  const borrowedValue = 200;
+  const maxValue = 1000;
 
   // Put your validators here
   const isBorrowButtonDisabled = () => {
@@ -115,7 +115,7 @@ const BorrowForm: FC<BorrowFormProps> = () => {
             <HoneySlider
               currentValue={0}
               maxValue={maxValue}
-              minAvailable={borrowedValue}
+              minAvailableValue={borrowedValue}
               maxSafePosition={0.4 - borrowedValue / 1000}
               maxAvailablePosition={MAX_LTV}
               onChange={setSliderValue}
@@ -131,7 +131,7 @@ const BorrowForm: FC<BorrowFormProps> = () => {
             <HoneySlider
               currentValue={sliderValue}
               maxValue={maxValue}
-              minAvailable={borrowedValue}
+              minAvailableValue={borrowedValue}
               maxSafePosition={0.4 - borrowedValue / 1000}
               maxAvailablePosition={MAX_LTV}
               onChange={setSliderValue}
@@ -174,7 +174,7 @@ const BorrowForm: FC<BorrowFormProps> = () => {
         <HoneySlider
           currentValue={sliderValue}
           maxValue={maxValue}
-          minAvailable={borrowedValue}
+          minAvailableValue={borrowedValue}
           maxSafePosition={0.4 - borrowedValue / 1000}
           maxAvailablePosition={MAX_LTV}
           onChange={setSliderValue}

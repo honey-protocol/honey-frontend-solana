@@ -6,22 +6,34 @@ import c from 'classnames';
 import { formatNumber } from '../../helpers/format';
 import { getPositionedLabels } from './utlls';
 
+// terms:
+// value: absolute slider value [minValue, maxValue]
+// position: slider position [0, 1]
 interface HoneySliderProps {
-  maxValue: number;
-  minAvailable?: number;
+  // current slider value
   currentValue: number;
-  onChange: (value: number) => void;
+  // start value of 'active' zone;
+  // user cannot move lower that this
+  minAvailableValue?: number;
+  // max slider value
+  maxValue: number;
+  // if slider position goes bigger then this mark active zone as 'risky'
   maxSafePosition?: number;
+  // max slder position user can set
   maxAvailablePosition?: number;
+  // array of labels under the slider
   labels?: number[];
+  // disable all user interactions and hide handels
   isReadonly?: boolean;
+  // triggered if slider value changed
+  onChange: (value: number) => void;
 }
 
 const { formatPercent: fp, formatUsd: fu } = formatNumber;
 
 export const HoneySlider: FC<HoneySliderProps> = ({
   maxValue,
-  minAvailable = 0,
+  minAvailableValue = 0,
   currentValue,
   onChange,
   maxSafePosition = 1,
@@ -29,28 +41,32 @@ export const HoneySlider: FC<HoneySliderProps> = ({
   labels = [],
   isReadonly
 }) => {
-  const minAvailablePosition = minAvailable / maxValue;
+  const minAvailablePosition = minAvailableValue / maxValue;
   const unavailablePosition = 1 - maxAvailablePosition;
   const availablePosition = 1 - minAvailablePosition - unavailablePosition;
 
   const maxAvailable = maxValue * maxAvailablePosition;
   const currentSliderValue =
-    (currentValue / (maxValue * maxAvailablePosition - minAvailable)) * 100;
+    (currentValue / (maxValue * maxAvailablePosition - minAvailableValue)) *
+    100;
 
-  const isRisky = (currentValue + minAvailable) / maxValue > maxSafePosition;
+  const isRisky =
+    (currentValue + minAvailableValue) / maxValue > maxSafePosition;
 
   const handleChange = (value: number) => {
-    if (isReadonly) return
-    const newBorrowValue = ((maxAvailable - minAvailable) * value) / 100;
+    if (isReadonly) return;
+    const newBorrowValue = ((maxAvailable - minAvailableValue) * value) / 100;
     onChange(newBorrowValue);
   };
 
-  const preparedLabels = isReadonly ? undefined : getPositionedLabels({
-    lastLabelValue: maxAvailablePosition,
-    maxLeftSliderValue: minAvailable,
-    maxValue,
-    labels
-  });
+  const preparedLabels = isReadonly
+    ? undefined
+    : getPositionedLabels({
+        lastLabelValue: maxAvailablePosition,
+        maxLeftSliderValue: minAvailableValue,
+        maxValue,
+        labels
+      });
 
   return (
     <div className={styles.rangeContainer}>
@@ -60,10 +76,14 @@ export const HoneySlider: FC<HoneySliderProps> = ({
           width: `${fp(
             minAvailablePosition < 0.1 ? 10 : minAvailablePosition * 100
           )}`,
-          display: minAvailable ? 'inherit' : 'none'
+          display: minAvailableValue ? 'inherit' : 'none'
         }}
       >
-        {!isReadonly && <div className={styles.sliderHeader.primary}>$ {minAvailable}</div>}
+        {!isReadonly && (
+          <div className={styles.sliderHeader.primary}>
+            $ {minAvailableValue}
+          </div>
+        )}
         <Slider
           className={c(
             styles.slider,
@@ -85,20 +105,28 @@ export const HoneySlider: FC<HoneySliderProps> = ({
         className={styles.sliderWrapper}
         style={{ width: `${availablePosition * 100}%` }}
       >
-        {!isReadonly && <div className={styles.sliderHeader.secondary}>
-          {fu(maxValue * maxAvailablePosition)}
-        </div>}
+        {!isReadonly && (
+          <div className={styles.sliderHeader.secondary}>
+            {fu(maxValue * maxAvailablePosition)}
+          </div>
+        )}
         <Slider
           tooltipVisible={false}
           className={styles.slider}
           trackStyle={{
             background: isRisky ? vars.colors.brownLight : vars.colors.green
           }}
-          handleStyle={isReadonly ? { display: 'none' } : {
-            background: vars.colors.white,
-            borderColor: isRisky ? vars.colors.brownLight : vars.colors.green,
-            zIndex: 9
-          }}
+          handleStyle={
+            isReadonly
+              ? { display: 'none' }
+              : {
+                  background: vars.colors.white,
+                  borderColor: isRisky
+                    ? vars.colors.brownLight
+                    : vars.colors.green,
+                  zIndex: 9
+                }
+          }
           value={currentSliderValue}
           onChange={handleChange}
           marks={preparedLabels?.center}
@@ -109,7 +137,9 @@ export const HoneySlider: FC<HoneySliderProps> = ({
           className={styles.sliderWrapper}
           style={{ width: `${unavailablePosition * 100}%` }}
         >
-          {!isReadonly && <div className={styles.sliderHeader.secondary}>{fu(maxValue)}</div>}
+          {!isReadonly && (
+            <div className={styles.sliderHeader.secondary}>{fu(maxValue)}</div>
+          )}
           <Slider
             className={c(styles.slider, styles.disabledBackgroundSlider)}
             handleStyle={{ display: 'none' }}

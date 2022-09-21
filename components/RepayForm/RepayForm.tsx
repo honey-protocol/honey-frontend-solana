@@ -1,4 +1,4 @@
-import { FC, useState } from 'react';
+import { FC, useEffect, useState } from 'react';
 import Image from 'next/image';
 import { InfoBlock } from '../InfoBlock/InfoBlock';
 import { InputsBlock } from '../InputsBlock/InputsBlock';
@@ -22,6 +22,14 @@ const RepayForm: FC<RepayFormProps> = () => {
   const [valueUSDC, setValueUSDC] = useState<number>();
   const [rangeValue, setRangeValue] = useState(0);
   const [toast, setToast] = useState<HoneyToastProps | null>(null);
+
+  const maxValueMock = 1000;
+  const usdcPrice = 0.99;
+
+  useEffect(() => {
+    setValueUSD(rangeValue);
+    setValueUSDC(rangeValue / usdcPrice);
+  }, [rangeValue]);
 
   // Put your validators here
   const isRepayButtonDisabled = () => {
@@ -139,8 +147,8 @@ const RepayForm: FC<RepayFormProps> = () => {
 
         <HoneySlider
           currentValue={rangeValue}
-          maxValue={1000}
-          minAvailable={0}
+          maxValue={maxValueMock}
+          minAvailableValue={0}
           onChange={setRangeValue}
         />
       </div>
@@ -160,8 +168,8 @@ const RepayForm: FC<RepayFormProps> = () => {
             <div className={styles.bigCol}>
               <HoneyButton
                 variant="primary"
-              usdcAmount={valueUSDC || 0}
-              usdcValue={valueUSD || 0}
+                usdcAmount={valueUSDC || 0}
+                usdcValue={valueUSD || 0}
                 disabled={isRepayButtonDisabled()}
                 isFluid={true}
                 onClick={onRepay}

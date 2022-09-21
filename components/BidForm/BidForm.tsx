@@ -77,7 +77,7 @@ const BidForm: FC<BidsFormsProps> = () => {
         <HoneySlider
           currentValue={rangeValue}
           maxValue={2000}
-          minAvailable={0}
+          minAvailableValue={0}
           onChange={setRangeValue}
         />
       </div>

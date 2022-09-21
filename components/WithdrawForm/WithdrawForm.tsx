@@ -77,7 +77,7 @@ const WithdrawForm: FC<RepayFormProps> = () => {
         <HoneySlider
           currentValue={rangeValue}
           maxValue={1000}
-          minAvailable={0}
+          minAvailableValue={0}
           maxSafePosition={0.4}
           maxAvailablePosition={MAX_LTV}
           onChange={setRangeValue}

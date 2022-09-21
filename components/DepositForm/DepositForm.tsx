@@ -76,7 +76,7 @@ const DepositForm: FC<RepayFormProps> = () => {
         <HoneySlider
           currentValue={rangeValue}
           maxValue={1000}
-          minAvailable={0}
+          minAvailableValue={0}
           onChange={setRangeValue}
         />
       </div>

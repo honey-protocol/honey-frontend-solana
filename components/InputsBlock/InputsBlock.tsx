@@ -3,6 +3,7 @@ import * as styles from './InputsBlock.css';
 import Image from 'next/image';
 import EqualIcon from './assets/equalIcon.svg';
 import USDCIcon from './assets/USDC.svg';
+import { formatNumber } from '../../helpers/format';
 
 interface InputsBlockProps {
   valueUSD: number | undefined;
@@ -10,6 +11,8 @@ interface InputsBlockProps {
   onChangeUSD: (value: number) => void;
   onChangeUSDC: (value: number) => void;
 }
+
+const { format: f, formatPercent: fp, formatUsd: fu } = formatNumber;
 
 export const InputsBlock: FC<InputsBlockProps> = ({
   valueUSD,
@@ -42,7 +45,7 @@ export const InputsBlock: FC<InputsBlockProps> = ({
           className={styles.input}
           type="text"
           placeholder="0.00"
-          value={valueUSD}
+          value={fu(valueUSD)}
           onChange={handleUsdChange}
         />
         <div className={styles.inputAddon}>$</div>
@@ -55,7 +58,7 @@ export const InputsBlock: FC<InputsBlockProps> = ({
           className={styles.input}
           type="text"
           placeholder="0.00"
-          value={valueUSDC}
+          value={f(valueUSDC)}
           onChange={handleTokenChange}
         />
         <div className={styles.inputAddon}>
