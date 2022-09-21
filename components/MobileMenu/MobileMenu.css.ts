@@ -15,7 +15,7 @@ export const hidden = style({});
 export const animateIn = keyframes({
   '0%': {
     opacity: 0,
-    transform: 'scale(0.8) translateX(-28px)'
+    transform: 'scale(0.9) translateX(-20px)'
   },
   '100%': {
     opacity: 1
@@ -28,26 +28,27 @@ export const animateOut = keyframes({
   },
   '100%': {
     opacity: 0,
-    transform: 'scale(0.8) translateX(-28px)'
+    transform: 'scale(0.9) translateX(-20px)'
   }
 });
 
 export const linkOrder = createVar();
 
 export const link = style({
-  animationDuration: '350ms',
   animationFillMode: 'both',
   animationTimingFunction: 'ease-in-out',
-  animationDelay: `calc(${linkOrder} * 100ms)`,
+  animationDelay: `calc(${linkOrder} * 70ms)`,
   opacity: '0'
 });
 
 globalStyle(`${visible} ${link}`, {
-  animationName: animateIn
+  animationName: animateIn,
+  animationDuration: '200ms'
 });
 
 globalStyle(`${hidden} ${link}`, {
-  animationName: animateOut
+  animationName: animateOut,
+  animationDuration: '100ms'
 });
 
 export const activeLink = style({});

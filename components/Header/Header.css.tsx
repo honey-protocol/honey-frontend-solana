@@ -20,7 +20,7 @@ export const content = style({
   display: 'flex',
   flexDirection: 'column',
   alignItems: 'flex-start',
-  transition: 'all 1.5s',
+  transition: 'all 0.8s',
   height: '70px'
 });
 
