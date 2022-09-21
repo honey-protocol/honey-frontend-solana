@@ -61,9 +61,19 @@ const MarketsSidebar = (props: MarketsSidebarProps) => {
           />
         ) : (
           <>
-            {activeTab === 'borrow' && <BorrowForm executeBorrow={executeBorrow} availableNFTs={availableNFTs} openPositions={openPositions} nftPrice={nftPrice} executeDepositNFT={executeDepositNFT} />}
             {
-              activeTab === 'repay' && 
+              activeTab === 'borrow' && 
+                <BorrowForm 
+                  executeBorrow={executeBorrow} 
+                  availableNFTs={availableNFTs} 
+                  openPositions={openPositions} 
+                  nftPrice={nftPrice} 
+                  executeDepositNFT={executeDepositNFT} 
+                  userAllowance={userAllowance}
+                />
+            }
+            {
+              (activeTab === 'repay' && openPositions.length) && 
                 <RepayForm 
                   executeRepay={executeRepay} 
                   openPositions={openPositions} 
