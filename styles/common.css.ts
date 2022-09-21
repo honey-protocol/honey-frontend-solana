@@ -6,3 +6,9 @@ export const container = style({
   maxWidth: 1240,
   margin: 'auto'
 });
+
+export const hAlign = style({
+  display: 'flex',
+  alignItems: 'center',
+  gap: '4px'
+});

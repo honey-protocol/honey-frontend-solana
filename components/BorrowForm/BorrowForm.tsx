@@ -17,6 +17,8 @@ import { LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js';
 import { toastResponse } from 'helpers/loanHelpers';
 import SidebarScroll from '../SidebarScroll/SidebarScroll';
 import imagePlaceholder from 'public/images/imagePlaceholder.png';
+import { hAlign } from 'styles/common.css';
+import { questionIcon } from 'styles/icons.css';
 
 const { format: f, formatPercent: fp, formatUsd: fu, parse: p } = formatNumber;
 
@@ -177,7 +179,12 @@ const BorrowForm = (props: BorrowProps) => {
             <InfoBlock
               value={fp(75)}
               valueSize="big"
-              footer={<span>Liquidation at</span>}
+              toolTipLabel="Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has "
+              footer={
+                <span className={hAlign}>
+                  Liquidation at <div className={questionIcon} />
+                </span>
+              }
             />
           </div>
         </div>
@@ -225,7 +232,12 @@ const BorrowForm = (props: BorrowProps) => {
             <InfoBlock
               title={'Allowance'}
               value={fu(userAllowance)}
-              footer={<>No more than {fp(60)}</>}
+              footer={
+                <span className={hAlign}>
+                  No more than {fp(60)} <div className={questionIcon} />
+                </span>
+              }
+              toolTipLabel="Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has "
             />
           </div>
           <div className={styles.col}>
