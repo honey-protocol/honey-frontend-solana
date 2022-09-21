@@ -14,6 +14,7 @@ import HoneyToast, {
 } from 'components/HoneyToast/HoneyToast';
 import { RepayProps } from './types';
 import SidebarScroll from '../SidebarScroll/SidebarScroll';
+import { LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js';
 import { isNil } from '../../helpers/utils';
 
 const { format: f, formatPercent: fp, formatUsd: fu } = formatNumber;
@@ -74,7 +75,11 @@ const RepayForm = (props: RepayProps) => {
     setSliderValue(usdcValue * usdcPrice);
   };
 
-  const onRepay = async () => {
+  const onRepay = async (event: any) => {
+    const btnText = event.target.innerHTML;
+    const mintId = new PublicKey(openPositions[0].mint).toString();
+    console.log('this is mintId', mintId);
+
     try {
       setToast({
         state: 'loading',
@@ -83,6 +88,11 @@ const RepayForm = (props: RepayProps) => {
       });
 
       // repay function here
+      if (btnText == 'Claim NFT') {
+        executeWithdrawNFT(mintId);
+      } else {
+        executeRepay(valueUSD || 0)
+      }
 
       setToast({
         state: 'success',
@@ -147,7 +157,7 @@ const RepayForm = (props: RepayProps) => {
               <Image src={honeyEyes} layout="fill" />
             </HexaBoxContainer>
           </div>
-          <div className={styles.nftName}>Doodles #1291</div>
+          <div className={styles.nftName}>{openPositions[0].name}</div>
         </div>
         <div className={styles.row}>
           <div className={styles.col}>
