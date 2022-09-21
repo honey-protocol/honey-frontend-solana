@@ -23,9 +23,9 @@ const NftCard = (props: NftCardProps) => {
 
   const _onClick = useCallback(() => {
     if (typeof onClick === 'function') {
-      onClick(name, id, image, mint);
+      onClick(name, image, mint);
     }
-  }, [id]);
+  }, [mint]);
 
   return (
     <div
