@@ -42,10 +42,33 @@ export const formatNumber = {
   },
 
   /**
+   * Works as formatNumber.formatPercent but prints integer value if it is possible
+   * @param val
+   * @param precision (default = 3)
+   */
+  formatPercentRounded: (val: number, precision = 3) => {
+    const power = Math.pow(10, precision);
+    const precisedValue = Math.round(val * power) / power;
+    return Number.isInteger(precisedValue) ? `${precisedValue}%` : `${formatNumber.format(precisedValue)}%`;
+  },
+
+  /**
    * Works as formatNumber.format but adds $ at the start of the string
    * @param val
    */
   formatUsd: (val?: number) => {
     return `$ ${formatNumber.format(val)}`;
   }
+};
+
+export const dateFromTimestamp = (timestamp: number | string) => {
+  const time = new Date(timestamp);
+
+  const date = time.toLocaleDateString('en-GB', {
+    day:   'numeric',
+    month: 'short',
+    year:  'numeric',
+  });
+
+  return `${date}`;
 };

@@ -1,5 +1,6 @@
-import { Box, Button, Stack, Text } from 'degen';
 import React from 'react';
+import HoneyButton from './HoneyButton/HoneyButton';
+import * as styles from './SecPopup.css';
 
 const SecPopup = (props: { setShowPopup: Function }) => {
   const onAgree = () => {
@@ -7,39 +8,32 @@ const SecPopup = (props: { setShowPopup: Function }) => {
     props.setShowPopup(false);
   };
   return (
-    <Box
-      display="flex"
-      alignItems="center"
-      justifyContent="center"
-      height="viewHeight"
-      width="viewWidth"
-      flexDirection="column"
-      backgroundColor="background"
-      padding="10"
-    >
-      <Stack align="center" justify="center">
-        <Text align="center" color="textPrimary" as="h2" size="headingTwo">
+    <div className={styles.secPopup}>
+      <div className={styles.secPopupContainer}>
+        <div className={styles.secPopupLogo}>
+          <div className={styles.secPopupLogoIcon} />
           Honey Finance
-        </Text>
-        <Text align="center" lineHeight="1.375">
-          Please take caution when using honey.finance and other defi products
-        </Text>
-        <Text align="center" lineHeight="1.375">
+        </div>
+
+        <h1 className={styles.secPopupTitle}>
+          Honey Finance is unavailable to residents and citizens of the United
+          States of America.
+        </h1>
+
+        <p className={styles.secPopupText}>
+          Please take caution when using honey.finance and other defi products.
           Persons accessing the website need to be aware that they are
           responsible for themselves for the compliance with all local rules and
           regulations
-        </Text>
-        <Text variant="large" weight="bold" align="center" lineHeight="1.375">
-          Honey Finance is unavailable to residents and citizens of the United
-          States of America.
-        </Text>
-      </Stack>
-      <Box marginTop="7">
-        <Button variant="secondary" size="small" onClick={onAgree}>
-          I understand, proceed to the app
-        </Button>
-      </Box>
-    </Box>
+        </p>
+
+        <div className={styles.secPopupButton}>
+          <HoneyButton onClick={onAgree}>
+            I understand, proceed to the app
+          </HoneyButton>
+        </div>
+      </div>
+    </div>
   );
 };
 

@@ -37,6 +37,7 @@
     "@switchboard-xyz/switchboard-v2": "^0.0.127",
     "@vanilla-extract/babel-plugin": "^1.1.4",
     "@vanilla-extract/css": "^1.6.8",
+    "@vanilla-extract/dynamic": "^2.0.2",
     "@vanilla-extract/next-plugin": "^2.0.1",
     "@vanilla-extract/sprinkles": "^1.4.0",
     "antd": "^4.22.8",

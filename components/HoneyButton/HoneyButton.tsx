@@ -3,7 +3,7 @@ import { FC } from 'react';
 import * as styles from './HoneyButton.css';
 import c from 'classnames';
 import { isNil } from '../../helpers/utils';
-import { valueContainer } from './HoneyButton.css';
+import { formatNumber } from '../../helpers/format';
 
 interface HoneyButtonProps extends ButtonProps {
   variant?: 'primary' | 'secondary' | 'tertiary' | 'text' | 'textSecondary';
@@ -11,6 +11,7 @@ interface HoneyButtonProps extends ButtonProps {
   usdcAmount?: number;
   usdcValue?: number;
 }
+const { format: f, formatPercent: fp, formatUsd: fu } = formatNumber;
 
 const HoneyButton: FC<HoneyButtonProps> = props => {
   const {
@@ -40,8 +41,8 @@ const HoneyButton: FC<HoneyButtonProps> = props => {
 
       {isButtonWithValues && (
         <div className={styles.valueContainer}>
-          <span className={styles.usdcAmount}>USDC {usdcAmount}</span>
-          <span className={styles.usdcValue}>${usdcValue}</span>
+          <span className={styles.usdcAmount}>USDC {f(usdcAmount)}</span>
+          <span className={styles.usdcValue}>{fu(usdcValue)}</span>
         </div>
       )}
     </Button>

@@ -2,13 +2,15 @@ import { FC, useState } from 'react';
 import Image from 'next/image';
 import { InfoBlock } from '../InfoBlock/InfoBlock';
 import { InputsBlock } from '../InputsBlock/InputsBlock';
-import { Range } from '../Range/Range';
+import { HoneySlider } from '../HoneySlider/HoneySlider';
 import * as styles from './BidForm.css';
 import { formatNumber } from '../../helpers/format';
 import mockNftImage from '/public/images/mock-collection-image@2x.png';
 import HoneyButton from 'components/HoneyButton/HoneyButton';
 import HexaBoxContainer from '../HexaBoxContainer/HexaBoxContainer';
 import HoneyWarning from '../HoneyWarning/HoneyWarning';
+import CurrentBid from '../CurrentBid/CurrentBid';
+import SidebarScroll from '../SidebarScroll/SidebarScroll';
 
 type BidsFormsProps = {};
 
@@ -25,8 +27,27 @@ const BidForm: FC<BidsFormsProps> = () => {
   };
 
   return (
-    <div className={styles.depositForm}>
-      <div className={styles.content}>
+    <SidebarScroll
+      footer={
+        <div className={styles.buttons}>
+          <div className={styles.smallCol}>
+            <HoneyButton variant="secondary">Cancel</HoneyButton>
+          </div>
+          <div className={styles.bigCol}>
+            <HoneyButton
+              variant="primary"
+              disabled={isSubmitButtonDisabled()}
+              isFluid={true}
+              usdcValue={valueUSD || 0}
+              usdcAmount={valueUSDC || 0}
+            >
+              Place Bid
+            </HoneyButton>
+          </div>
+        </div>
+      }
+    >
+      <div className={styles.depositForm}>
         <div className={styles.nftInfo}>
           <div className={styles.nftImage}>
             <HexaBoxContainer>
@@ -42,6 +63,12 @@ const BidForm: FC<BidsFormsProps> = () => {
               message="We’re now live on Ethereum!"
               link="https://google.com"
             ></HoneyWarning>
+          </div>
+        </div>
+
+        <div className={styles.row}>
+          <div className={styles.col}>
+            <CurrentBid value={10000} title="Your bid is #1" />
           </div>
         </div>
 
@@ -74,33 +101,14 @@ const BidForm: FC<BidsFormsProps> = () => {
           />
         </div>
 
-        <Range
+        <HoneySlider
           currentValue={rangeValue}
           maxValue={2000}
-          borrowedValue={0}
+          minAvailableValue={0}
           onChange={setRangeValue}
         />
       </div>
-
-      <div className={styles.footer}>
-        <div className={styles.buttons}>
-          <div className={styles.smallCol}>
-            <HoneyButton variant="secondary">Cancel</HoneyButton>
-          </div>
-          <div className={styles.bigCol}>
-            <HoneyButton
-              variant="primary"
-              disabled={isSubmitButtonDisabled()}
-              isFluid={true}
-              usdcValue={valueUSD || 0}
-              usdcAmount={valueUSDC || 0}
-            >
-              Place Bid
-            </HoneyButton>
-          </div>
-        </div>
-      </div>
-    </div>
+    </SidebarScroll>
   );
 };
 

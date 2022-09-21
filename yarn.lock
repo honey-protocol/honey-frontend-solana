@@ -1688,7 +1688,7 @@
     media-query-parser "^2.0.2"
     outdent "^0.8.0"
 
-"@vanilla-extract/dynamic@^2.0.0":
+"@vanilla-extract/dynamic@^2.0.0", "@vanilla-extract/dynamic@^2.0.2":
   version "2.0.2"
   resolved "https://registry.yarnpkg.com/@vanilla-extract/dynamic/-/dynamic-2.0.2.tgz#13a3e461964c8029a52e6b6b631009ca6a8b27f5"
   integrity sha512-U4nKaEQ8Kuz+exXEr51DUpyaOuzo24/S/k1YbDPQR06cYcNjQqvwFRnwWtZ+9ImocqM1wTKtzrdUgSTtLGIwAg==

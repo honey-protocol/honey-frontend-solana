@@ -5,7 +5,7 @@ import { InputsBlock } from '../InputsBlock/InputsBlock';
 import { HoneySlider } from '../HoneySlider/HoneySlider';
 import * as styles from './RepayForm.css';
 import { formatNumber } from '../../helpers/format';
-import mockNftImage from '/public/images/mock-collection-image@2x.png';
+import honeyEyes from '/public/nfts/honeyEyes.png';
 import HoneyButton from 'components/HoneyButton/HoneyButton';
 import HexaBoxContainer from '../HexaBoxContainer/HexaBoxContainer';
 import HoneyToast, {
@@ -13,6 +13,8 @@ import HoneyToast, {
   toastRemoveDelay
 } from 'components/HoneyToast/HoneyToast';
 import { RepayProps } from './types';
+import SidebarScroll from '../SidebarScroll/SidebarScroll';
+import { isNil } from '../../helpers/utils';
 
 const { format: f, formatPercent: fp, formatUsd: fu } = formatNumber;
 
@@ -33,7 +35,7 @@ const RepayForm = (props: RepayProps) => {
   const [sliderValue, setSliderValue] = useState(0);
   const [toast, setToast] = useState<HoneyToastProps | null>(null);
 
-  const maxValueMock = 1000;
+  const maxValueMock = userDebt == 0 ? userDebt : userAllowance;
   const usdcPrice = 0.95;
 
   // Put your validators here
@@ -104,7 +106,7 @@ const RepayForm = (props: RepayProps) => {
 
 
   useEffect(() => {
-  }, [openPositions]);
+  }, [openPositions, userDebt, userAllowance, nftPrice, loanToValue, userUSDCBalance]);
 
   return (
     <SidebarScroll
@@ -130,7 +132,7 @@ const RepayForm = (props: RepayProps) => {
                   isFluid={true}
                   onClick={onRepay}
                 >
-                  Repay
+                  { userDebt > 0 ? 'Repay' : 'Claim NFT'}
                 </HoneyButton>
               </div>
             </div>
@@ -142,7 +144,7 @@ const RepayForm = (props: RepayProps) => {
         <div className={styles.nftInfo}>
           <div className={styles.nftImage}>
             <HexaBoxContainer>
-              <Image src={mockNftImage} />
+              <Image src={honeyEyes} layout="fill" />
             </HexaBoxContainer>
           </div>
           <div className={styles.nftName}>Doodles #1291</div>
@@ -150,7 +152,7 @@ const RepayForm = (props: RepayProps) => {
         <div className={styles.row}>
           <div className={styles.col}>
             <InfoBlock
-              value={fu(1000)}
+              value={fu(nftPrice)}
               valueSize="big"
               footer={<span>Estimated value</span>}
             />
@@ -166,7 +168,7 @@ const RepayForm = (props: RepayProps) => {
 
         <div className={styles.row}>
           <div className={styles.col}>
-            <InfoBlock title={'Risk level'} value={fu(0)} />
+            <InfoBlock title={'Risk level'} value={fu(loanToValue)} />
           </div>
           <div className={styles.col}>
             <InfoBlock
@@ -190,7 +192,7 @@ const RepayForm = (props: RepayProps) => {
           <div className={styles.col}>
             <InfoBlock
               title={'Allowance'}
-              value={fu(600)}
+              value={fu(userAllowance)}
               footer={<>No more than {fp(60)}</>}
             />
           </div>
@@ -208,8 +210,8 @@ const RepayForm = (props: RepayProps) => {
           </div>
 
           <InputsBlock
-            valueUSD={valueUSD}
-            valueUSDC={valueUSDC}
+            valueUSD={Number(f(valueUSD))}
+            valueUSDC={Number(f(valueUSDC))}
             onChangeUSD={handleUsdInputChange}
             onChangeUSDC={handleUsdcInputChange}
           />

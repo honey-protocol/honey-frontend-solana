@@ -2,7 +2,7 @@ import React, { FC, useEffect, useState } from 'react';
 import Image from 'next/image';
 import { InfoBlock } from '../InfoBlock/InfoBlock';
 import { InputsBlock } from '../InputsBlock/InputsBlock';
-import { Range } from '../Range/Range';
+import { HoneySlider } from '../HoneySlider/HoneySlider';
 import * as styles from './BorrowForm.css';
 import { formatNumber } from '../../helpers/format';
 import honeyEyes from '/public/nfts/honeyEyes.png';
@@ -15,6 +15,7 @@ import { usdcAmount } from '../HoneyButton/HoneyButton.css';
 import {BorrowProps} from './types';
 import { LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js';
 import { toastResponse } from 'helpers/loanHelpers';
+import SidebarScroll from '../SidebarScroll/SidebarScroll';
 
 const { format: f, formatPercent: fp, formatUsd: fu } = formatNumber;
 
@@ -27,9 +28,13 @@ const BorrowForm = (props: BorrowProps) => {
   const [isNftSelected, setIsNftSelected] = useState(false)
   const [selectedNft, setSelectedNft] = useState({name: '', id: '', img: '', mint: ''});
   const [hasOpenPosition, setHasOpenPosition] = useState(false);
+  const [sliderValue, setSliderValue] = useState(0);
 
   // Only for test purposes
   // const isNftSelected = true;
+
+  const borrowedValue = 200;
+  const maxValue = 1000;
 
   // Put your validators here
   const isBorrowButtonDisabled = () => {
@@ -48,7 +53,7 @@ const BorrowForm = (props: BorrowProps) => {
   // if user has an open position, we need to be able to click on the position and borrow against it
   useEffect(() => {
     if (openPositions?.length) setHasOpenPosition(true);
-  }, openPositions);
+  }, [openPositions, availableNFTs]);
 
   function handleDepositNFT() {
     if (selectedNft.mint.length < 1) return toastResponse('ERROR', 'Please select an NFT', 'ERROR');
@@ -116,12 +121,30 @@ const BorrowForm = (props: BorrowProps) => {
         <div className={styles.row}>
           <div className={styles.col}>
             <InfoBlock title={'Risk level'} value={fu(0)} />
+            <HoneySlider
+              currentValue={0}
+              maxValue={maxValue}
+              minAvailableValue={borrowedValue}
+              maxSafePosition={0.4 - borrowedValue / 1000}
+              maxAvailablePosition={MAX_LTV}
+              onChange={setSliderValue}
+              isReadonly
+            />
           </div>
           <div className={styles.col}>
             <InfoBlock
               title={'New risk level'}
               value={fu(0)}
               isDisabled={true}
+            />
+            <HoneySlider
+              currentValue={sliderValue}
+              maxValue={maxValue}
+              minAvailableValue={borrowedValue}
+              maxSafePosition={0.4 - borrowedValue / 1000}
+              maxAvailablePosition={MAX_LTV}
+              onChange={setSliderValue}
+              isReadonly
             />
           </div>
         </div>
@@ -157,13 +180,13 @@ const BorrowForm = (props: BorrowProps) => {
           />
         </div>
 
-        <Range
-          currentValue={rangeValue}
-          maxValue={1000}
-          borrowedValue={0}
-          maxSafePosition={0.4}
+        <HoneySlider
+          currentValue={sliderValue}
+          maxValue={maxValue}
+          minAvailableValue={borrowedValue}
+          maxSafePosition={0.4 - borrowedValue / 1000}
           maxAvailablePosition={MAX_LTV}
-          onChange={setRangeValue}
+          onChange={setSliderValue}
         />
       </>
     );
@@ -216,11 +239,9 @@ const BorrowForm = (props: BorrowProps) => {
   };
 
   return (
-    <div className={styles.borrowForm}>
-      <div className={styles.content}>{renderContent()}</div>
-
-      <div className={styles.footer}>{renderFooter()}</div>
-    </div>
+    <SidebarScroll footer={renderFooter()}>
+      <div className={styles.borrowForm}>{renderContent()}</div>
+    </SidebarScroll>
   );
 };
 

@@ -35,10 +35,11 @@ globalStyle(scs(`> .ant-slider-step > .ant-slider-dot`), {
   display: 'none'
 });
 globalStyle(scs(`> .ant-slider-mark`), {
-  fontSize: 14
+  fontSize: 14,
+  color: vars.colors.black
 });
-globalStyle(scs(`> .ant-slider-mark > .ant-slider-mark-text:first-child`), {
-  transform: 'none !important'
+globalStyle(scs(`> .ant-slider-mark > .ant-slider-mark-text`), {
+  color: vars.colors.black
 });
 globalStyle(scs(`> .ant-slider-rail`), {
   backgroundColor: `${vars.colors.grayMiddle} !important`
@@ -66,12 +67,15 @@ globalStyle(`${enabledBackgroundSlider} > .ant-slider-track`, {
 });
 
 export const sliderHeader = styleVariants({
-    primary: [typography.numbersRegular, {}],
+  primary: [typography.numbersRegular, {
+    whiteSpace: 'nowrap'
+  }],
   secondary: [
   typography.numbersRegular,
   {
     color: vars.colors.grayTransparent,
-    textAlign: 'right'
+    textAlign: 'right',
+    whiteSpace: 'nowrap'
   }
 ]
 });

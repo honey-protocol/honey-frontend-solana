@@ -5,12 +5,8 @@ export const tabs = style({});
 
 export const content = style({
   borderRadius: vars.space.medium,
-  overflow: 'hidden',
   background: vars.colors.white,
-  minHeight: 756,
-  display: 'flex',
-  justifyContent: 'center',
-  alignItems: 'center',
+  height: 'calc(100vh - 155px)',
   borderTop: 'none !important'
 });
 

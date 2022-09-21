@@ -6,19 +6,8 @@ export const withdrawForm = style({
   height: '100%',
   display: 'flex',
   flexDirection: 'column',
-  minHeight: 756,
   background: vars.colors.white,
   padding: 16
-});
-
-// margin-bottom: auto and margin-top: auto uses all available space
-// and stick footer to the bottom of the parent container
-export const content = style({
-  marginBottom: 'auto'
-});
-
-export const footer = style({
-  marginTop: 'auto'
 });
 
 const formSection = style([

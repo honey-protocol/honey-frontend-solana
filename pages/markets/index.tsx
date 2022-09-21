@@ -203,6 +203,7 @@ const Markets: NextPage = () => {
     console.log('--collateral nft positions--', collateralNFTPositions);
     if (collateralNFTPositions && collateralNFTPositions.length > 0) {
       setUserOpenPositions(collateralNFTPositions);
+      console.log('user open positions', userOpenPositions);
     }
   }, [collateralNFTPositions]);
 
@@ -451,7 +452,11 @@ const Markets: NextPage = () => {
   const ExpandedTableFooter = () => (
     <div className={style.expandedSectionFooter}>
       <div className={style.expandedRowIcon} />
-      <div className={style.lampIcon} />
+      <div className={style.collectionLogo}>
+        <HexaBoxContainer variant='gray'>
+          <div className={style.lampIconStyle} />
+        </HexaBoxContainer>
+      </div>
       <div className={style.footerText}>
         <span className={style.footerTitle}>
           You can’t add one more NFT to this market

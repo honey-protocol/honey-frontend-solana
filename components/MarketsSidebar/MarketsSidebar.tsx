@@ -27,14 +27,16 @@ const MarketsSidebar = (props: MarketsSidebarProps) => {
     userDebt,
     userUSDCBalance,
     loanToValue,
-    executeDepositNFT, executeWithdrawNFT, executeBorrow, executeRepay } = props;
+    executeDepositNFT, executeWithdrawNFT, executeBorrow, executeRepay 
+  } = props;
+    
   const [activeTab, setActiveTab] = useState<Tab>('borrow');
 
   const handleTabChange = (tabKey: string) => {
     setActiveTab(tabKey as Tab);
   };
 
-  useEffect(() => {}, [openPositions]);
+  useEffect(() => {}, [openPositions, availableNFTs]);
 
   return (
     <div className={styles.marketsSidebarContainer}>
