@@ -12,6 +12,8 @@ import NftList from '../NftList/NftList';
 import { NftCardProps } from '../NftCard/types';
 import { MAX_LTV } from '../../constants/loan';
 import SidebarScroll from '../SidebarScroll/SidebarScroll';
+import { hAlign } from 'styles/common.css';
+import { questionIcon } from 'styles/icons.css';
 
 type BorrowFormProps = {};
 
@@ -104,7 +106,12 @@ const BorrowForm: FC<BorrowFormProps> = () => {
             <InfoBlock
               value={fp(75)}
               valueSize="big"
-              footer={<span>Liquidation at</span>}
+              toolTipLabel="Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has "
+              footer={
+                <span className={hAlign}>
+                  Liquidation at <div className={questionIcon} />
+                </span>
+              }
             />
           </div>
         </div>
@@ -154,7 +161,12 @@ const BorrowForm: FC<BorrowFormProps> = () => {
             <InfoBlock
               title={'Allowance'}
               value={fu(600)}
-              footer={<>No more than {fp(60)}</>}
+              footer={
+                <span className={hAlign}>
+                  No more than {fp(60)} <div className={questionIcon} />
+                </span>
+              }
+              toolTipLabel="Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has "
             />
           </div>
           <div className={styles.col}>
