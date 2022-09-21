@@ -1,5 +1,6 @@
 import { globalStyle, style, styleVariants } from '@vanilla-extract/css';
 import { typography, vars } from './theme.css';
+import { lampIcon } from './icons.css';
 import { container } from './common.css';
 
 export const marketsPage = style([container, {}]);
@@ -200,11 +201,14 @@ export const expandedRowIcon = style({
   height: 20,
   marginRight: 24
 });
-export const lampIcon = style({
-  background: 'url(/images/lamp.svg) center no-repeat',
-  width: 32,
-  height: 32
-});
+export const lampIconStyle = style([
+  lampIcon,
+  {
+    width: 32,
+    height: 32,
+    backgroundColor: vars.colors.white
+  }
+]);
 export const swapWalletIcon = style({
   background: 'url(/images/swap-wallet.svg) center no-repeat',
   width: 20,

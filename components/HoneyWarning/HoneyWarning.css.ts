@@ -1,5 +1,5 @@
 import { style } from '@vanilla-extract/css';
-import { typography, vars } from '../../styles/theme.css';
+import {typography, vars} from "../../styles/theme.css";
 
 export const warning = style({
   backgroundColor: vars.colors.secondaryBrownLight,

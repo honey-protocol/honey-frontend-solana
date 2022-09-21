@@ -42,6 +42,17 @@ export const formatNumber = {
   },
 
   /**
+   * Works as formatNumber.formatPercent but prints integer value if it is possible
+   * @param val
+   * @param precision (default = 3)
+   */
+  formatPercentRounded: (val: number, precision = 3) => {
+    const power = Math.pow(10, precision);
+    const precisedValue = Math.round(val * power) / power;
+    return Number.isInteger(precisedValue) ? `${precisedValue}%` : `${formatNumber.format(precisedValue)}%`;
+  },
+
+  /**
    * Works as formatNumber.format but adds $ at the start of the string
    * @param val
    */

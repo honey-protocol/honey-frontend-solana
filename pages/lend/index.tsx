@@ -221,7 +221,7 @@ const Lend: NextPage = () => {
               return (
                 <div className={style.expandSection}>
                   <div className={style.dashedDivider} />
-                  <HoneyChart data={record.stats}/>
+                  <HoneyChart title="Interest rate" data={record.stats}/>
                 </div>
               );
             }
