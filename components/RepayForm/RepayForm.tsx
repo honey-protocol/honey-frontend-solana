@@ -16,6 +16,9 @@ import { RepayProps } from './types';
 import SidebarScroll from '../SidebarScroll/SidebarScroll';
 import { LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js';
 import { isNil } from '../../helpers/utils';
+import { hAlign } from 'styles/common.css';
+import { questionIcon } from 'styles/icons.css';
+import cs from 'classnames';
 
 const { format: f, formatPercent: fp, formatUsd: fu, parse: p } = formatNumber;
 
@@ -170,33 +173,32 @@ const RepayForm = (props: RepayProps) => {
               value={fu(nftPrice)}
               valueSize="big"
               footer={<span>Estimated value</span>}
-              toolTipLabel="Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has "
             />
           </div>
           <div className={styles.col}>
             <InfoBlock
               value={fp(75)}
               valueSize="big"
-              footer={<span>Liquidation at</span>}
-              toolTipLabel="Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has "
+              footer={
+                <span className={cs(hAlign)}>
+                  Liquidation at
+                  <div className={questionIcon} />
+                </span>
+              }
+              toolTipLabel="Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has"
             />
           </div>
         </div>
 
         <div className={styles.row}>
           <div className={styles.col}>
-            <InfoBlock
-              title={'Risk level'}
-              value={fu(loanToValue)}
-              toolTipLabel="Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has "
-            />
+            <InfoBlock title={'Risk level'} value={fu(loanToValue)} />
           </div>
           <div className={styles.col}>
             <InfoBlock
               title={'New risk level'}
               value={fu(0)}
               isDisabled={true}
-              toolTipLabel="Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has "
             />
           </div>
         </div>
@@ -215,7 +217,12 @@ const RepayForm = (props: RepayProps) => {
             <InfoBlock
               title={'Allowance'}
               value={fu(userAllowance)}
-              footer={<>No more than {fp(60)}</>}
+              toolTipLabel="Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has"
+              footer={
+                <span className={hAlign}>
+                  No more than {fp(60)} <div className={questionIcon} />
+                </span>
+              }
             />
           </div>
           <div className={styles.col}>
