@@ -1,16 +1,13 @@
 import { Dropdown, Menu, Space, Typography } from 'antd';
 import React, { useEffect, useState } from 'react';
 import * as styles from './HeaderLinks.css';
-import { DownOutlined } from '@ant-design/icons';
 import Link from 'next/link';
 import { DownIcon } from 'icons/DownIcon';
 import HoneyButton from 'components/HoneyButton/HoneyButton';
 import { useRouter } from 'next/router';
 import cs from 'classnames';
 
-const { Title } = Typography;
-
-const links = [
+export const links = [
   {
     title: 'DASHBOARD',
     href: '/dashboard'
@@ -45,7 +42,7 @@ const links = [
   },
   {
     title: 'LEGACY WEBSITE',
-    href: ''
+    href: '/legacyWebsite'
   }
 ];
 
