@@ -7,7 +7,7 @@ import {TYPE_OPEN, TYPE_CLOSED} from '../constants/loan';
 interface LoanNFTCardProps {
   NFT: {
     name: string,
-    image: any,
+    image: string,
     key: number
   };
   selected: any;
