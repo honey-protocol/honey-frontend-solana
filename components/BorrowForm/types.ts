@@ -3,6 +3,7 @@ export type BorrowProps = {
     availableNFTs?: any;
     openPositions?: any;
     nftPrice?: number;
+    userAllowance: number;
     executeDepositNFT: (mint: string) => void;
     executeBorrow: (val: number) => void;
   };
