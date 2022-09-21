@@ -1,5 +1,5 @@
 import { links } from 'components/HeaderLinks/HeaderLinks';
-import React from 'react';
+import React, { useEffect } from 'react';
 import * as styles from './MobileMenu.css';
 import cs from 'classnames';
 import { useRouter } from 'next/router';
@@ -18,6 +18,14 @@ interface MobileMenuProps {
 
 const MobileMenu = (props: MobileMenuProps) => {
   const router = useRouter();
+
+  useEffect(() => {
+    if (props.isVisible) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'auto';
+    }
+  }, [props.isVisible]);
   return (
     <ul
       className={cs(
