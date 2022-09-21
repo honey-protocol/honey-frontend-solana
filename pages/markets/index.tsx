@@ -16,7 +16,7 @@ import React, {
 } from 'react';
 import { formatNumber } from '../../helpers/format';
 import Image from 'next/image';
-import mockNftImage from '/public/images/mock-collection-image@2x.png';
+import honeyEyes from '/public/nfts/honeyEyes.png';
 import { Key, SortOrder } from 'antd/lib/table/interface';
 import HoneyToggle from '../../components/HoneyToggle/HoneyToggle';
 import debounce from 'lodash/debounce';
@@ -98,6 +98,7 @@ const Markets: NextPage = () => {
   const [cRatio, setCRatio] = useState(0);
   const [liqidationThreshold, setLiquidationThreshold] = useState(0);
   const [reserveHoneyState, setReserveHoneyState] = useState(0);
+  const [userUSDCBalance, setUserUSDCBalance] = useState(0);
   
   const availableNFTs: any = useFetchNFTByUser(wallet);
   let reFetchNFTs = availableNFTs[2];
@@ -292,7 +293,7 @@ const Markets: NextPage = () => {
               <div className={style.logoWrapper}>
                 <div className={style.collectionLogo}>
                   <HexaBoxContainer>
-                    <Image src={mockNftImage} />
+                    <Image src={honeyEyes} />
                   </HexaBoxContainer>
                 </div>
               </div>
@@ -394,7 +395,7 @@ const Markets: NextPage = () => {
           <div className={style.expandedRowIcon} />
           <div className={style.collectionLogo}>
             <HexaBoxContainer>
-              <Image src={mockNftImage} />
+              <Image src={honeyEyes} />
             </HexaBoxContainer>
           </div>
           <div className={style.nameCellText}>
@@ -675,6 +676,10 @@ const Markets: NextPage = () => {
           executeWithdrawNFT={executeWithdrawNFT}
           executeBorrow={executeBorrow}
           executeRepay={executeRepay}
+          userDebt={userDebt}
+          userAllowance={userAllowance}
+          userUSDCBalance={userUSDCBalance}
+          loanToValue={loanToValue}
         />
       </Sider>
     </LayoutRedesign>
