@@ -1,33 +1,75 @@
-import { FC, useState } from 'react';
+import { FC, useEffect, useState } from 'react';
 import Image from 'next/image';
 import { InfoBlock } from '../InfoBlock/InfoBlock';
 import { InputsBlock } from '../InputsBlock/InputsBlock';
-import { Range } from '../Range/Range';
+import { HoneySlider } from '../HoneySlider/HoneySlider';
 import * as styles from './RepayForm.css';
 import { formatNumber } from '../../helpers/format';
 import mockNftImage from '/public/images/mock-collection-image@2x.png';
 import HoneyButton from 'components/HoneyButton/HoneyButton';
 import HexaBoxContainer from '../HexaBoxContainer/HexaBoxContainer';
-import { RepayProps } from './types';
 import HoneyToast, {
   HoneyToastProps,
   toastRemoveDelay
 } from 'components/HoneyToast/HoneyToast';
-
+import { RepayProps } from './types';
 
 const { format: f, formatPercent: fp, formatUsd: fu } = formatNumber;
 
 const RepayForm = (props: RepayProps) => {
-  const {executeRepay, openPositions, nftPrice, executeWithdrawNFT} = props;
+  const {
+    executeRepay, 
+    openPositions, 
+    nftPrice, 
+    executeWithdrawNFT,
+    userAllowance,
+    userDebt,
+    userUSDCBalance,
+    loanToValue
+  } = props;
 
   const [valueUSD, setValueUSD] = useState<number>();
   const [valueUSDC, setValueUSDC] = useState<number>();
-  const [rangeValue, setRangeValue] = useState(0);
+  const [sliderValue, setSliderValue] = useState(0);
   const [toast, setToast] = useState<HoneyToastProps | null>(null);
+
+  const maxValueMock = 1000;
+  const usdcPrice = 0.95;
 
   // Put your validators here
   const isRepayButtonDisabled = () => {
     return false;
+  };
+
+  const handleSliderChange = (value: number) => {
+    setSliderValue(value);
+    setValueUSD(value);
+    setValueUSDC(value / usdcPrice);
+  };
+
+  const handleUsdInputChange = (usdValue: number | undefined) => {
+    if (!usdValue) {
+      setValueUSD(0);
+      setValueUSDC(0);
+      setSliderValue(0);
+      return;
+    }
+    setValueUSD(usdValue);
+    setValueUSDC(usdValue / usdcPrice);
+    setSliderValue(usdValue);
+  };
+
+  const handleUsdcInputChange = (usdcValue: number | undefined) => {
+    if (!usdcValue) {
+      setValueUSD(0);
+      setValueUSDC(0);
+      setSliderValue(0);
+      return;
+    }
+
+    setValueUSD(usdcValue * usdcPrice);
+    setValueUSDC(usdcValue);
+    setSliderValue(usdcValue * usdcPrice);
   };
 
   const onRepay = async () => {
@@ -60,9 +102,43 @@ const RepayForm = (props: RepayProps) => {
     }
   };
 
+
+  useEffect(() => {
+  }, [openPositions]);
+
   return (
-    <div className={styles.repayForm}>
-      <div className={styles.content}>
+    <SidebarScroll
+      footer={
+        <>
+          {toast?.state ? (
+            <HoneyToast
+              state={toast.state}
+              primaryText={toast.primaryText}
+              secondaryLink={toast.secondaryLink}
+            />
+          ) : (
+            <div className={styles.buttons}>
+              <div className={styles.smallCol}>
+                <HoneyButton variant="secondary">Cancel</HoneyButton>
+              </div>
+              <div className={styles.bigCol}>
+                <HoneyButton
+                  variant="primary"
+                  usdcAmount={valueUSDC || 0}
+                  usdcValue={valueUSD || 0}
+                  disabled={isRepayButtonDisabled()}
+                  isFluid={true}
+                  onClick={onRepay}
+                >
+                  Repay
+                </HoneyButton>
+              </div>
+            </div>
+          )}
+        </>
+      }
+    >
+      <div className={styles.repayForm}>
         <div className={styles.nftInfo}>
           <div className={styles.nftImage}>
             <HexaBoxContainer>
@@ -134,47 +210,19 @@ const RepayForm = (props: RepayProps) => {
           <InputsBlock
             valueUSD={valueUSD}
             valueUSDC={valueUSDC}
-            onChangeUSD={setValueUSD}
-            onChangeUSDC={setValueUSDC}
+            onChangeUSD={handleUsdInputChange}
+            onChangeUSDC={handleUsdcInputChange}
           />
         </div>
 
-        <Range
-          currentValue={rangeValue}
-          maxValue={1000}
-          borrowedValue={0}
-          onChange={setRangeValue}
+        <HoneySlider
+          currentValue={sliderValue}
+          maxValue={maxValueMock}
+          minAvailableValue={0}
+          onChange={handleSliderChange}
         />
       </div>
-
-      <div className={styles.footer}>
-        {toast?.state ? (
-          <HoneyToast
-            state={toast.state}
-            primaryText={toast.primaryText}
-            secondaryLink={toast.secondaryLink}
-          />
-        ) : (
-          <div className={styles.buttons}>
-            <div className={styles.smallCol}>
-              <HoneyButton variant="secondary">Cancel</HoneyButton>
-            </div>
-            <div className={styles.bigCol}>
-              <HoneyButton
-                variant="primary"
-              usdcAmount={valueUSDC || 0}
-              usdcValue={valueUSD || 0}
-                disabled={isRepayButtonDisabled()}
-                isFluid={true}
-                onClick={onRepay}
-              >
-                Repay
-              </HoneyButton>
-            </div>
-          </div>
-        )}
-      </div>
-    </div>
+    </SidebarScroll>
   );
 };
 
