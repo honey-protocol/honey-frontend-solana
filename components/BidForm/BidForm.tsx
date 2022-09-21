@@ -2,7 +2,7 @@ import { FC, useState } from 'react';
 import Image from 'next/image';
 import { InfoBlock } from '../InfoBlock/InfoBlock';
 import { InputsBlock } from '../InputsBlock/InputsBlock';
-import { Range } from '../Range/Range';
+import { HoneySlider } from '../HoneySlider/HoneySlider';
 import * as styles from './BidForm.css';
 import { formatNumber } from '../../helpers/format';
 import mockNftImage from '/public/images/mock-collection-image@2x.png';
@@ -74,10 +74,10 @@ const BidForm: FC<BidsFormsProps> = () => {
           />
         </div>
 
-        <Range
+        <HoneySlider
           currentValue={rangeValue}
           maxValue={2000}
-          borrowedValue={0}
+          minAvailableValue={0}
           onChange={setRangeValue}
         />
       </div>

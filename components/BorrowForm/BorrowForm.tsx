@@ -2,7 +2,7 @@ import React, { FC, useState } from 'react';
 import Image from 'next/image';
 import { InfoBlock } from '../InfoBlock/InfoBlock';
 import { InputsBlock } from '../InputsBlock/InputsBlock';
-import { Range } from '../Range/Range';
+import { HoneySlider } from '../HoneySlider/HoneySlider';
 import * as styles from './BorrowForm.css';
 import { formatNumber } from '../../helpers/format';
 import mockNftImage from '/public/images/mock-collection-image@2x.png';
@@ -20,10 +20,13 @@ const { format: f, formatPercent: fp, formatUsd: fu } = formatNumber;
 const BorrowForm: FC<BorrowFormProps> = () => {
   const [valueUSD, setValueUSD] = useState<number>();
   const [valueUSDC, setValueUSDC] = useState<number>();
-  const [rangeValue, setRangeValue] = useState(0);
+  const [sliderValue, setSliderValue] = useState(0);
 
   // Only for test purposes
   const isNftSelected = true;
+
+  const borrowedValue = 200;
+  const maxValue = 1000;
 
   // Put your validators here
   const isBorrowButtonDisabled = () => {
@@ -109,12 +112,30 @@ const BorrowForm: FC<BorrowFormProps> = () => {
         <div className={styles.row}>
           <div className={styles.col}>
             <InfoBlock title={'Risk level'} value={fu(0)} />
+            <HoneySlider
+              currentValue={0}
+              maxValue={maxValue}
+              minAvailableValue={borrowedValue}
+              maxSafePosition={0.4 - borrowedValue / 1000}
+              maxAvailablePosition={MAX_LTV}
+              onChange={setSliderValue}
+              isReadonly
+            />
           </div>
           <div className={styles.col}>
             <InfoBlock
               title={'New risk level'}
               value={fu(0)}
               isDisabled={true}
+            />
+            <HoneySlider
+              currentValue={sliderValue}
+              maxValue={maxValue}
+              minAvailableValue={borrowedValue}
+              maxSafePosition={0.4 - borrowedValue / 1000}
+              maxAvailablePosition={MAX_LTV}
+              onChange={setSliderValue}
+              isReadonly
             />
           </div>
         </div>
@@ -150,13 +171,13 @@ const BorrowForm: FC<BorrowFormProps> = () => {
           />
         </div>
 
-        <Range
-          currentValue={rangeValue}
-          maxValue={1000}
-          borrowedValue={0}
-          maxSafePosition={0.4}
+        <HoneySlider
+          currentValue={sliderValue}
+          maxValue={maxValue}
+          minAvailableValue={borrowedValue}
+          maxSafePosition={0.4 - borrowedValue / 1000}
           maxAvailablePosition={MAX_LTV}
-          onChange={setRangeValue}
+          onChange={setSliderValue}
         />
       </>
     );
