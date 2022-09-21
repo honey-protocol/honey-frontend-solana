@@ -1,14 +1,15 @@
-import React, { FC, ReactElement, useMemo, useState } from 'react';
+import React, {FC, useEffect, useMemo, useState} from 'react';
 import {
   VictoryAxis,
   VictoryBar,
   VictoryChart,
   VictoryContainer,
   VictoryStyleObject,
-  VictoryTooltip
+  VictoryTooltip,
+  VictoryPortal, FlyoutProps
 } from 'victory';
 import { SizeMeProps, withSize } from 'react-sizeme';
-import { ChartBarLabel, TimestampPoint } from './types';
+import { TimestampPoint } from './types';
 import { typography, vars } from '../../styles/theme.css';
 import * as style from './HoneyChart.css';
 import { PERIOD, PeriodName } from '../../constants/periods';
@@ -29,10 +30,20 @@ const PERIOD_NAMES = Object.values(PERIOD);
 interface BarsProps {
   data: TimestampPoint[];
   size: SizeMeProps['size'];
+  title?: string;
 }
 
-const Bar: FC<BarsProps> = ({ data = [], size }) => {
+const Bar: FC<BarsProps> = ({ data = [], size, title }) => {
   const [period, setPeriod] = useState<PeriodName>(PERIOD.one_month);
+  const [isBarHovered, setIsBarHovered] = useState(false);
+
+  const dataInitialStyles: VictoryStyleObject = {
+    fill: vars.colors.white,
+    stroke: isBarHovered ? vars.colors.grayDark : vars.colors.black,
+    strokeWidth: 2,
+    filter: isBarHovered ? `drop-shadow(2px 2px 0px ${vars.colors.grayDark})` : `drop-shadow(2px 2px 0px ${vars.colors.black})`,
+    cursor: 'pointer',
+  }
 
   const dataByPeriod = useMemo(() => {
     const startDate = getStartDate(period);
@@ -72,42 +83,88 @@ const Bar: FC<BarsProps> = ({ data = [], size }) => {
     return Math.max(...dataByPeriod.map(o => o.y));
   }, [dataByPeriod]);
 
-  const getFormattedLabel = (labelData: ChartBarLabel) => {
-    const { dateFrom, dateTo, y } = labelData.datum;
-    const percentValue = (y / maxYValue) * 100;
-    return `${getFormattedDate(dateFrom, period)} — ${getFormattedDate(
-      dateTo,
-      period
-    )} \n ${fp(percentValue)}`;
+  const maxXValue = useMemo(() => {
+    return Math.max(...dataByPeriod.map(o => o.x));
+  }, [dataByPeriod]);
+  const minXValue = useMemo(() => {
+    return Math.min(...dataByPeriod.map(o => o.x));
+  }, [dataByPeriod]);
+
+  const getYTicks = () => {
+    const ticks = [0, maxYValue];
+    const step = maxYValue / 5;
+    let currentTick = 0;
+    while (currentTick < maxYValue) {
+      const newTick = currentTick + step;
+      ticks.push(newTick);
+      currentTick = newTick;
+    }
+    return ticks;
+  };
+  const getXTicks = () => {
+    const ticks = [minXValue, maxXValue];
+    if (period !== PERIOD.all) {
+      const step = (maxXValue - minXValue) / 5;
+      let currentTick = minXValue;
+      while (currentTick < maxXValue) {
+        const newTick = currentTick + step;
+        ticks.push(newTick);
+        currentTick = newTick;
+      }
+    }
+    return ticks;
   };
 
-  const dataInitialStyles: VictoryStyleObject = {
-    fill: vars.colors.white,
-    stroke: vars.colors.grayDark,
-    strokeWidth: 2,
-    filter: `drop-shadow(2px 2px 0px ${vars.colors.grayDark})`,
-    cursor: 'pointer'
+  const CustomBarTooltip: FC<any> = ({center, datum}) => {
+    const { dateFrom, dateTo, y: dataY } = datum;
+    const percentValue = dataY * 100;
+    return (
+      <VictoryPortal>
+        <g>
+          <foreignObject
+            overflow="visible"
+            width="120"
+            height="100%"
+            x={center.x - 60}
+            y={center.y - 55}
+          >
+            <div className={style.tooltip}>
+              <div className={style.tooltipTitle}>{`${getFormattedDate(
+                dateFrom,
+                period
+              )} — ${getFormattedDate(dateTo, period)}`}</div>
+              <div className={style.tooltipValue}>{fp(percentValue)}</div>
+            </div>
+          </foreignObject>
+        </g>
+      </VictoryPortal>
+    );
   };
 
   return (
     <div className={style.honeyChart}>
-      <HoneyButtonTabs
-        items={PERIOD_NAMES.map(slug => ({
-          name: PERIODS_NAME_MAPPING[slug],
-          slug
-        }))}
-        activeItemSlug={period}
-        onClick={itemSlug => setPeriod(itemSlug as PeriodName)}
-      />
+      <div className={style.honeyChartHeader}>
+        {title && <div className={style.chartTitleText}>{title}</div>}
+        <HoneyButtonTabs
+          items={PERIOD_NAMES.map(slug => ({
+            name: PERIODS_NAME_MAPPING[slug],
+            slug
+          }))}
+          activeItemSlug={period}
+          onClick={itemSlug => setPeriod(itemSlug as PeriodName)}
+        />
+      </div>
       <VictoryChart
-        padding={{ top: 50, right: 60, bottom: 0, left: 90 }}
+        padding={{ top: 50, right: 60, bottom: 0, left: 80 }}
         width={size.width || undefined}
         height={300}
-        containerComponent={<VictoryContainer height={350} />}
+        containerComponent={
+          <VictoryContainer height={350} style={{ position: 'relative' }} />
+        }
       >
         <VictoryAxis
-          tickCount={period === PERIOD.all ? 2 : 6}
           tickFormat={t => getFormattedDate(t, period)}
+          tickValues={getXTicks()}
           style={{
             axis: {
               stroke: 'transparent'
@@ -120,9 +177,8 @@ const Bar: FC<BarsProps> = ({ data = [], size }) => {
           }}
         />
         <VictoryAxis
-          tickCount={6}
-          tickFormat={t => fp((t / maxYValue) * 100)}
-          maxDomain={maxYValue}
+          tickFormat={t => fp(t * 100)}
+          tickValues={getYTicks()}
           dependentAxis
           style={{
             axis: {
@@ -137,31 +193,12 @@ const Bar: FC<BarsProps> = ({ data = [], size }) => {
         />
 
         <VictoryBar
-          labels={getFormattedLabel}
+          labels={() => ''}
           labelComponent={
             <VictoryTooltip
-              constrainToVisibleArea
-              orientation="top"
-              renderInPortal={false}
-              pointerLength={5}
-              pointerWidth={14}
-              // flyoutWidth={300}
-              flyoutStyle={{
-                fill: vars.colors.brownLight,
-                stroke: vars.colors.black,
-                filter: 'drop-shadow(2px 2px 0px #111111)',
-                strokeWidth: 2
-              }}
-              style={{
-                fontFamily: 'Sora, sans-serif',
-                fontFeatureSettings: 'none',
-                fontVariant: 'none',
-                fontSize: 14
-              }}
-              dy={-4}
+              flyoutComponent={<CustomBarTooltip />}
             />
           }
-          samples={10}
           events={[
             {
               target: 'data',
@@ -171,6 +208,7 @@ const Bar: FC<BarsProps> = ({ data = [], size }) => {
                     {
                       target: 'data',
                       mutation: props => {
+                        setIsBarHovered(true);
                         return {
                           style: {
                             ...props.style,
@@ -187,9 +225,7 @@ const Bar: FC<BarsProps> = ({ data = [], size }) => {
                   return [
                     {
                       target: 'data',
-                      mutation: () => {
-                        return { style: dataInitialStyles };
-                      }
+                      mutation: () => setIsBarHovered(false)
                     }
                   ];
                 }

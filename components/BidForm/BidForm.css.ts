@@ -3,22 +3,10 @@ import { typography, vars } from '../../styles/theme.css';
 
 export const depositForm = style({
   width: '100%',
-  height: '100%',
-  display: 'flex',
-  flexDirection: 'column',
-  minHeight: 756,
+  height: 'auto',
   background: vars.colors.white,
-  padding: 16
-});
-
-// margin-bottom: auto and margin-top: auto uses all available space
-// and stick footer to the bottom of the parent container
-export const content = style({
-  marginBottom: 'auto'
-});
-
-export const footer = style({
-  marginTop: 'auto'
+  padding: '16px 16px 36px',
+  borderRadius: '0 0 15px 15px',
 });
 
 const formSection = style([

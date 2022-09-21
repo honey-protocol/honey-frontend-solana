@@ -2,12 +2,13 @@ import { FC, useState } from 'react';
 import Image from 'next/image';
 import { InfoBlock } from '../InfoBlock/InfoBlock';
 import { InputsBlock } from '../InputsBlock/InputsBlock';
-import { Range } from '../Range/Range';
+import { HoneySlider } from '../HoneySlider/HoneySlider';
 import * as styles from './DepositForm.css';
 import { formatNumber } from '../../helpers/format';
 import mockNftImage from '/public/images/mock-collection-image@2x.png';
 import HoneyButton from 'components/HoneyButton/HoneyButton';
 import HexaBoxContainer from '../HexaBoxContainer/HexaBoxContainer';
+import SidebarScroll from '../SidebarScroll/SidebarScroll';
 
 type RepayFormProps = {};
 
@@ -24,8 +25,25 @@ const DepositForm: FC<RepayFormProps> = () => {
   };
 
   return (
-    <div className={styles.depositForm}>
-      <div className={styles.content}>
+    <SidebarScroll
+      footer={
+        <div className={styles.buttons}>
+          <div className={styles.smallCol}>
+            <HoneyButton variant="tertiary">Cancel</HoneyButton>
+          </div>
+          <div className={styles.bigCol}>
+            <HoneyButton
+              variant="primary"
+              disabled={isRepayButtonDisabled()}
+              isFluid={true}
+            >
+              Withdraw
+            </HoneyButton>
+          </div>
+        </div>
+      }
+    >
+      <div className={styles.depositForm}>
         <div className={styles.nftInfo}>
           <div className={styles.nftImage}>
             <HexaBoxContainer>
@@ -73,31 +91,14 @@ const DepositForm: FC<RepayFormProps> = () => {
           />
         </div>
 
-        <Range
+        <HoneySlider
           currentValue={rangeValue}
           maxValue={1000}
-          borrowedValue={0}
+          minAvailableValue={0}
           onChange={setRangeValue}
         />
       </div>
-
-      <div className={styles.footer}>
-        <div className={styles.buttons}>
-          <div className={styles.smallCol}>
-            <HoneyButton variant="tertiary">Cancel</HoneyButton>
-          </div>
-          <div className={styles.bigCol}>
-            <HoneyButton
-              variant="primary"
-              disabled={isRepayButtonDisabled()}
-              isFluid={true}
-            >
-              Withdraw
-            </HoneyButton>
-          </div>
-        </div>
-      </div>
-    </div>
+    </SidebarScroll>
   );
 };
 
