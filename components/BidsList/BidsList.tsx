@@ -2,6 +2,7 @@ import { FC, useState } from 'react';
 import * as styles from './BidsList.css';
 import { formatNumber } from '../../helpers/format';
 import HoneyButton from 'components/HoneyButton/HoneyButton';
+import SidebarScroll from '../SidebarScroll/SidebarScroll';
 
 type BidsListProps = {};
 
@@ -17,10 +18,8 @@ const BidsList: FC<BidsListProps> = () => {
   };
 
   return (
-    <div className={styles.bidsList}>
-      <div className={styles.content}>Bids List</div>
-
-      <div className={styles.footer}>
+    <SidebarScroll
+      footer={
         <div className={styles.buttons}>
           <div className={styles.smallCol}>
             <HoneyButton variant="secondary">Cancel</HoneyButton>
@@ -37,8 +36,10 @@ const BidsList: FC<BidsListProps> = () => {
             </HoneyButton>
           </div>
         </div>
-      </div>
-    </div>
+      }
+    >
+      <div className={styles.bidsList}>Bids List</div>
+    </SidebarScroll>
   );
 };
 
