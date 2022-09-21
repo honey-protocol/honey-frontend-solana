@@ -22,13 +22,12 @@ const { format: f, formatPercent: fp, formatUsd: fu } = formatNumber;
 
 interface NFT {
   name: string;
-  id: string;
   img: string;
   mint: string;
 }
 
 const BorrowForm = (props: BorrowProps) => {
-  const {availableNFTs, openPositions, nftPrice, executeDepositNFT, executeBorrow} = props;
+  const {availableNFTs, openPositions, nftPrice, executeDepositNFT, executeBorrow, userAllowance} = props;
   
   const [valueUSD, setValueUSD] = useState<number>();
   const [valueUSDC, setValueUSDC] = useState<number>();
@@ -41,21 +40,24 @@ const BorrowForm = (props: BorrowProps) => {
   // const isNftSelected = true;
 
   const borrowedValue = 200;
-  const maxValue = 1000;
+  const maxValue = userAllowance;
 
   // Put your validators here
   const isBorrowButtonDisabled = () => {
-    return true;
+    return userAllowance == 0 ? true : false;
   };
   // set selection state and render (or not) detail nft 
-  const selectNFT = (name: string, id: string, img: string, mint?: any) => {
+  const selectNFT = (name: string, img: string, mint?: any) => {
     if (hasOpenPosition == false) {
-      setSelectedNft({ name, id, img, mint });
+      setSelectedNft({ name, img, mint });
     } else {
       setIsNftSelected(true);
-      setSelectedNft({ name, id, img, mint });
+      setSelectedNft({ name, img, mint });
     }
   };
+
+  useEffect(() => {
+  }, [userAllowance])
 
   // if user has an open position, we need to be able to click on the position and borrow against it
   useEffect(() => {
@@ -66,6 +68,17 @@ const BorrowForm = (props: BorrowProps) => {
     if (selectedNft && selectedNft.mint.length < 1) return toastResponse('ERROR', 'Please select an NFT', 'ERROR');
     if (selectedNft && selectedNft.mint.length > 1) executeDepositNFT(selectedNft.mint);
   }
+
+  function handleBorrow() {
+    if (hasOpenPosition && openPositions[0]) {
+      const {name, mint} = openPositions[0];
+      const img = openPositions[0].image;
+      setSelectedNft({name, img, mint});
+      setIsNftSelected(true);
+    }
+  }
+
+  useEffect(() => {}, [selectedNft])
 
   const renderContent = () => {
     if (isNftSelected == false) {
@@ -111,7 +124,7 @@ const BorrowForm = (props: BorrowProps) => {
         <div className={styles.row}>
           <div className={styles.col}>
             <InfoBlock
-              value={fu(1000)}
+              value={fu(nftPrice)}
               valueSize="big"
               footer={<span>Estimated value</span>}
             />
@@ -169,7 +182,7 @@ const BorrowForm = (props: BorrowProps) => {
           <div className={styles.col}>
             <InfoBlock
               title={'Allowance'}
-              value={fu(600)}
+              value={fu(userAllowance)}
               footer={<>No more than {fp(60)}</>}
             />
           </div>
@@ -213,6 +226,7 @@ const BorrowForm = (props: BorrowProps) => {
                 variant="primary"
                 disabled={isBorrowButtonDisabled()}
                 isFluid
+                onClick={handleBorrow}
               >
                 Borrow
               </HoneyButton>
