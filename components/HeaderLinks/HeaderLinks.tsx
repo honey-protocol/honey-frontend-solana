@@ -13,8 +13,8 @@ export const links = [
     href: '/dashboard'
   },
   {
-    title: 'MARKETS',
-    href: '/markets'
+    title: 'BORROW',
+    href: '/borrow'
   },
   {
     title: 'LEND',
