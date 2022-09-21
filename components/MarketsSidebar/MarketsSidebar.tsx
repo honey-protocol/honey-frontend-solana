@@ -18,7 +18,16 @@ type Tab = 'borrow' | 'repay';
 
 const MarketsSidebar = (props: MarketsSidebarProps) => {
   const wallet = true;
-  const { collectionId, availableNFTs, openPositions, nftPrice, executeDepositNFT, executeWithdrawNFT, executeBorrow, executeRepay } = props;
+  const { 
+    collectionId, 
+    availableNFTs, 
+    openPositions, 
+    nftPrice, 
+    userAllowance,
+    userDebt,
+    userUSDCBalance,
+    loanToValue,
+    executeDepositNFT, executeWithdrawNFT, executeBorrow, executeRepay } = props;
   const [activeTab, setActiveTab] = useState<Tab>('borrow');
 
   const handleTabChange = (tabKey: string) => {
@@ -51,7 +60,19 @@ const MarketsSidebar = (props: MarketsSidebarProps) => {
         ) : (
           <>
             {activeTab === 'borrow' && <BorrowForm executeBorrow={executeBorrow} availableNFTs={availableNFTs} openPositions={openPositions} nftPrice={nftPrice} executeDepositNFT={executeDepositNFT} />}
-            {activeTab === 'repay' && <RepayForm executeRepay={executeRepay} openPositions={openPositions} nftPrice={nftPrice} executeWithdrawNFT={executeWithdrawNFT} />}
+            {
+              activeTab === 'repay' && 
+                <RepayForm 
+                  executeRepay={executeRepay} 
+                  openPositions={openPositions} 
+                  nftPrice={nftPrice} 
+                  executeWithdrawNFT={executeWithdrawNFT} 
+                  userDebt={userDebt}
+                  userAllowance={userAllowance}
+                  userUSDCBalance={userUSDCBalance}
+                  loanToValue={loanToValue}
+                />
+              }
           </>
         )}
       </HoneyTabs>
