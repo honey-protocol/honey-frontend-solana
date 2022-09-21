@@ -35,7 +35,7 @@ const RepayForm = (props: RepayProps) => {
   const [sliderValue, setSliderValue] = useState(0);
   const [toast, setToast] = useState<HoneyToastProps | null>(null);
 
-  const maxValueMock = userDebt == 0 ? userDebt : userAllowance;
+  const maxValue = userDebt == 0 ? userDebt : userAllowance;
   const usdcPrice = 0.95;
 
   // Put your validators here
