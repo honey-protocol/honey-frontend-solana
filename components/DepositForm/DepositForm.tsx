@@ -9,6 +9,8 @@ import mockNftImage from '/public/images/mock-collection-image@2x.png';
 import HoneyButton from 'components/HoneyButton/HoneyButton';
 import HexaBoxContainer from '../HexaBoxContainer/HexaBoxContainer';
 import SidebarScroll from '../SidebarScroll/SidebarScroll';
+import { questionIcon } from 'styles/icons.css';
+import { hAlign } from 'styles/common.css';
 
 type RepayFormProps = {};
 
@@ -71,7 +73,12 @@ const DepositForm: FC<RepayFormProps> = () => {
             <InfoBlock
               value={fp(80)}
               valueSize="big"
-              footer={<span>Utilization rate</span>}
+              toolTipLabel=" Amount of supplied liquidity currently being borrowed"
+              footer={
+                <span className={hAlign}>
+                  Utilization rate <div className={questionIcon} />
+                </span>
+              }
             />
           </div>
         </div>

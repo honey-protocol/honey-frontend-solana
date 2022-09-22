@@ -4,7 +4,7 @@ import c from 'classnames';
 import HoneyTooltip from 'components/HoneyTooltip/HoneyTooltip';
 
 interface InfoBlockProps {
-  title?: string;
+  title?: string | ReactElement;
   value: string;
   footer?: ReactElement;
   valueSize?: 'normal' | 'big';

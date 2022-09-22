@@ -150,20 +150,22 @@ const RepayForm: FC<RepayFormProps> = () => {
             <InfoBlock
               value={fp(75)}
               valueSize="big"
-              footer={
-                <span className={cs(hAlign)}>
-                  Liquidation at
-                  <div className={questionIcon} />
-                </span>
-              }
-              toolTipLabel="Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has"
+              footer={<span>Liquidation at</span>}
             />
           </div>
         </div>
 
         <div className={styles.row}>
           <div className={styles.col}>
-            <InfoBlock title={'Risk level'} value={fu(0)} />
+            <InfoBlock
+              value={fu(0)}
+              toolTipLabel="How close a position is to being liquidated."
+              title={
+                <span className={hAlign}>
+                  Risk level <div className={questionIcon} />
+                </span>
+              }
+            />
           </div>
           <div className={styles.col}>
             <InfoBlock
@@ -186,14 +188,14 @@ const RepayForm: FC<RepayFormProps> = () => {
         <div className={styles.row}>
           <div className={styles.col}>
             <InfoBlock
-              title={'Allowance'}
-              value={fu(600)}
-              toolTipLabel="Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has"
-              footer={
+              title={
                 <span className={hAlign}>
-                  No more than {fp(60)} <div className={questionIcon} />
+                  Allowance <div className={questionIcon} />
                 </span>
               }
+              value={fu(600)}
+              footer={<span>No more than {fp(60)}</span>}
+              toolTipLabel="How much debt is available to a borrower"
             />
           </div>
           <div className={styles.col}>
