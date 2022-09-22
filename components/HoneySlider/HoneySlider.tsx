@@ -26,7 +26,7 @@ interface HoneySliderProps {
   // disable all user interactions and hide handels
   isReadonly?: boolean;
   // triggered if slider value changed
-  onChange: (value: number) => void;
+  onChange?: (value: number) => void;
 }
 
 const { formatPercent: fp, formatUsd: fu } = formatNumber;
@@ -56,7 +56,9 @@ export const HoneySlider: FC<HoneySliderProps> = ({
   const handleChange = (value: number) => {
     if (isReadonly) return;
     const newBorrowValue = ((maxAvailable - minAvailableValue) * value) / 100;
-    onChange(newBorrowValue);
+    if (typeof onChange === 'function') {
+      onChange(newBorrowValue);
+    }
   };
 
   const preparedLabels = isReadonly
