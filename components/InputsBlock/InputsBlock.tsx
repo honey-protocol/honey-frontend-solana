@@ -10,6 +10,7 @@ interface InputsBlockProps {
   valueUSDC: number | undefined;
   onChangeUSD: (value: number | undefined) => void;
   onChangeUSDC: (value: number | undefined) => void;
+  maxValue?: number;
 }
 
 const { format: f, formatPercent: fp, formatUsd: fu } = formatNumber;
@@ -18,7 +19,8 @@ export const InputsBlock: FC<InputsBlockProps> = ({
   valueUSD,
   valueUSDC,
   onChangeUSD,
-  onChangeUSDC
+  onChangeUSDC,
+  maxValue = Infinity
 }) => {
   const isValidNumericInput = (value: string) => {
     return Number.isFinite(Number(value));
@@ -27,7 +29,7 @@ export const InputsBlock: FC<InputsBlockProps> = ({
   const handleUsdChange = (event: ChangeEvent<HTMLInputElement>) => {
     const value = event.target.value;
     if (isValidNumericInput(value) && value !== '') {
-      onChangeUSD(parseFloat(value));
+      onChangeUSD(Math.min(parseFloat(value), maxValue));
     } else {
       onChangeUSD(undefined);
     }

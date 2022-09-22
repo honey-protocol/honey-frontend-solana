@@ -18,7 +18,7 @@ import { toastResponse } from 'helpers/loanHelpers';
 import SidebarScroll from '../SidebarScroll/SidebarScroll';
 import imagePlaceholder from 'public/images/imagePlaceholder.png';
 
-const { format: f, formatPercent: fp, formatUsd: fu } = formatNumber;
+const { format: f, formatPercent: fp, formatUsd: fu, parse: p } = formatNumber;
 
 interface NFT {
   name: string;
@@ -235,10 +235,11 @@ const BorrowForm = (props: BorrowProps) => {
 
         <div className={styles.inputs}>
           <InputsBlock
-            valueUSD={Number(f(valueUSD))}
-            valueUSDC={Number(f(valueUSDC))}
+            valueUSD={p(f(valueUSD))}
+            valueUSDC={p(f(valueUSDC))}
             onChangeUSD={handleUsdInputChange}
             onChangeUSDC={handleUsdcInputChange}
+            maxValue={maxValue}
           />
         </div>
 

@@ -17,13 +17,13 @@ import SidebarScroll from '../SidebarScroll/SidebarScroll';
 import { LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js';
 import { isNil } from '../../helpers/utils';
 
-const { format: f, formatPercent: fp, formatUsd: fu } = formatNumber;
+const { format: f, formatPercent: fp, formatUsd: fu, parse: p } = formatNumber;
 
 const RepayForm = (props: RepayProps) => {
   const {
-    executeRepay, 
-    openPositions, 
-    nftPrice, 
+    executeRepay,
+    openPositions,
+    nftPrice,
     executeWithdrawNFT,
     userAllowance,
     userDebt,
@@ -91,7 +91,7 @@ const RepayForm = (props: RepayProps) => {
       if (btnText == 'Claim NFT') {
         executeWithdrawNFT(mintId);
       } else {
-        executeRepay(valueUSD || 0)
+        executeRepay(valueUSD || 0);
       }
 
       setToast({
@@ -114,9 +114,14 @@ const RepayForm = (props: RepayProps) => {
     }
   };
 
-
-  useEffect(() => {
-  }, [openPositions, userDebt, userAllowance, nftPrice, loanToValue, userUSDCBalance]);
+  useEffect(() => {}, [
+    openPositions,
+    userDebt,
+    userAllowance,
+    nftPrice,
+    loanToValue,
+    userUSDCBalance
+  ]);
 
   return (
     <SidebarScroll
@@ -142,7 +147,7 @@ const RepayForm = (props: RepayProps) => {
                   isFluid={true}
                   onClick={onRepay}
                 >
-                  { userDebt > 0 ? 'Repay' : 'Claim NFT'}
+                  {userDebt > 0 ? 'Repay' : 'Claim NFT'}
                 </HoneyButton>
               </div>
             </div>
@@ -220,8 +225,8 @@ const RepayForm = (props: RepayProps) => {
           </div>
 
           <InputsBlock
-            valueUSD={Number(f(valueUSD))}
-            valueUSDC={Number(f(valueUSDC))}
+            valueUSD={p(f(valueUSD))}
+            valueUSDC={p(f(valueUSDC))}
             onChangeUSD={handleUsdInputChange}
             onChangeUSDC={handleUsdcInputChange}
           />
