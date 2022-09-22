@@ -27,7 +27,7 @@ interface NFT {
 }
 
 const BorrowForm = (props: BorrowProps) => {
-  const {availableNFTs, openPositions, nftPrice, executeDepositNFT, executeBorrow, userAllowance} = props;
+  const {availableNFTs, openPositions, nftPrice, executeDepositNFT, executeBorrow, userAllowance, userDebt} = props;
   
   const [valueUSD, setValueUSD] = useState<number>();
   const [valueUSDC, setValueUSDC] = useState<number>();
@@ -39,7 +39,7 @@ const BorrowForm = (props: BorrowProps) => {
   // Only for test purposes
   // const isNftSelected = true;
 
-  const borrowedValue = 200;
+  const borrowedValue = userDebt;
   const maxValue = userAllowance;
 
   // Put your validators here
