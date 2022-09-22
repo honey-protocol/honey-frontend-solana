@@ -15,7 +15,7 @@ const NftList = (props: NftListProps) => {
   const { data, selectNFT, nftPrice } = props;
   
   function handleClick(item: any) {
-    console.log('item', item)
+    console.log('item--', item)
     selectNFT(item.name, item.image, item.mint);
   }
 
