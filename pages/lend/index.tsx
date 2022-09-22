@@ -19,6 +19,7 @@ import debounce from 'lodash/debounce';
 import { getColumnSortStatus } from '../../helpers/tableUtils';
 import { generateMockHistoryData } from '../../helpers/chartUtils';
 import { HoneyChart } from '../../components/HoneyChart/HoneyChart';
+import HoneyToggle from 'components/HoneyToggle/HoneyToggle';
 
 const { formatPercent: fp, formatUsd: fu } = formatNumber;
 
@@ -30,6 +31,8 @@ const Lend: NextPage = () => {
   );
   const [expandedRowKeys, setExpandedRowKeys] = useState<readonly Key[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
+  const [isMyCollectionsFilterEnabled, setIsMyCollectionsFilterEnabled] =
+    useState(false);
 
   const getPositionData = () => {
     if (isMock) {
@@ -95,9 +98,26 @@ const Lend: NextPage = () => {
     setTableDataFiltered(mockData);
   }, []);
 
+  const handleToggle = (checked: boolean) => {
+    setIsMyCollectionsFilterEnabled(checked);
+  };
+
+  const MyCollectionsToggle = () => (
+    <div className={style.toggle}>
+      <HoneyToggle
+        checked={isMyCollectionsFilterEnabled}
+        onChange={handleToggle}
+      />
+      <span className={style.toggleText}>my collections</span>
+    </div>
+  );
+
+  const columnsWidth: Array<number | string> = [240, 100, 150, 150, 200];
+
   const columns: ColumnType<LendTableRow>[] = useMemo(
     () => [
       {
+        width: columnsWidth[0],
         title: (
           <SearchInput
             onChange={handleSearchInputChange}
@@ -123,6 +143,7 @@ const Lend: NextPage = () => {
         }
       },
       {
+        width: columnsWidth[1],
         title: ({ sortColumns }) => {
           const sortOrder = getColumnSortStatus(sortColumns, 'rate');
           return (
@@ -145,6 +166,7 @@ const Lend: NextPage = () => {
         }
       },
       {
+        width: columnsWidth[2],
         title: ({ sortColumns }) => {
           const sortOrder = getColumnSortStatus(sortColumns, 'available');
           return (
@@ -167,6 +189,7 @@ const Lend: NextPage = () => {
         }
       },
       {
+        width: columnsWidth[3],
         title: ({ sortColumns }) => {
           const sortOrder = getColumnSortStatus(sortColumns, 'value');
           return (
@@ -188,6 +211,8 @@ const Lend: NextPage = () => {
         }
       },
       {
+        width: columnsWidth[4],
+        title: MyCollectionsToggle,
         render: (_: null, row: LendTableRow) => {
           return (
             <div className={style.buttonsCell}>
@@ -199,7 +224,7 @@ const Lend: NextPage = () => {
         }
       }
     ],
-    [tableData, searchQuery]
+    [tableData, isMyCollectionsFilterEnabled, searchQuery]
   );
 
   return (
@@ -215,13 +240,14 @@ const Lend: NextPage = () => {
           expandable={{
             // we use our own custom expand column
             showExpandColumn: false,
-            onExpand: (expanded, row) => setExpandedRowKeys(expanded ? [row.key] : []),
+            onExpand: (expanded, row) =>
+              setExpandedRowKeys(expanded ? [row.key] : []),
             expandedRowKeys,
             expandedRowRender: record => {
               return (
                 <div className={style.expandSection}>
                   <div className={style.dashedDivider} />
-                  <HoneyChart title="Interest rate" data={record.stats}/>
+                  <HoneyChart title="Interest rate" data={record.stats} />
                 </div>
               );
             }
