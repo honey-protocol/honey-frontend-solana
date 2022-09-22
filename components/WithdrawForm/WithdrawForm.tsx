@@ -11,6 +11,8 @@ import HexaBoxContainer from '../HexaBoxContainer/HexaBoxContainer';
 import { MAX_LTV } from '../../constants/loan';
 import SidebarScroll from '../SidebarScroll/SidebarScroll';
 import { WithdrawFormProps } from './types';
+import { questionIcon } from 'styles/icons.css';
+import { hAlign } from 'styles/common.css';
 
 const { format: f, formatPercent: fp, formatUsd: fu, parse: p } = formatNumber;
 
@@ -109,7 +111,12 @@ const WithdrawForm = (props: WithdrawFormProps) => {
             <InfoBlock
               value={fp(80)}
               valueSize="big"
-              footer={<span>Utilization rate</span>}
+              toolTipLabel=" Amount of supplied liquidity currently being borrowed"
+              footer={
+                <span className={hAlign}>
+                  Utilization rate <div className={questionIcon} />
+                </span>
+              }
             />
           </div>
         </div>

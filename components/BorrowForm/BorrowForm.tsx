@@ -179,19 +179,22 @@ const BorrowForm = (props: BorrowProps) => {
             <InfoBlock
               value={fp(75)}
               valueSize="big"
-              toolTipLabel="Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has "
-              footer={
-                <span className={hAlign}>
-                  Liquidation at <div className={questionIcon} />
-                </span>
-              }
+              footer={<span>Liquidation at</span>}
             />
           </div>
         </div>
 
         <div className={styles.row}>
           <div className={styles.col}>
-            <InfoBlock title={'Risk level'} value={fu(0)} />
+            <InfoBlock
+              value={fu(0)}
+              toolTipLabel="How close a position is to being liquidated."
+              title={
+                <span className={hAlign}>
+                  Risk level <div className={questionIcon} />
+                </span>
+              }
+            />
             <HoneySlider
               currentValue={0}
               maxValue={maxValue}
@@ -230,14 +233,14 @@ const BorrowForm = (props: BorrowProps) => {
         <div className={styles.row}>
           <div className={styles.col}>
             <InfoBlock
-              title={'Allowance'}
               value={fu(userAllowance)}
-              footer={
+              title={
                 <span className={hAlign}>
-                  No more than {fp(60)} <div className={questionIcon} />
+                  Allowance <div className={questionIcon} />
                 </span>
               }
-              toolTipLabel="Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has "
+              footer={<span>No more than {fp(60)}</span>}
+              toolTipLabel="How much debt is available to a borrower"
             />
           </div>
           <div className={styles.col}>
