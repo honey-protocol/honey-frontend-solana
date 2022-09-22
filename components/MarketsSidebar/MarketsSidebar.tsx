@@ -64,6 +64,7 @@ const MarketsSidebar = (props: MarketsSidebarProps) => {
             {
               activeTab === 'borrow' && 
                 <BorrowForm 
+                  userDebt={userDebt}
                   executeBorrow={executeBorrow} 
                   availableNFTs={availableNFTs} 
                   openPositions={openPositions} 
