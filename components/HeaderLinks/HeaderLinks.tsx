@@ -13,8 +13,8 @@ export const links = [
     href: '/dashboard'
   },
   {
-    title: 'MARKETS',
-    href: '/markets'
+    title: 'BORROW',
+    href: '/borrow'
   },
   {
     title: 'LEND',
@@ -38,11 +38,11 @@ export const links = [
   },
   {
     title: 'FEEDBACK',
-    href: '/feedback'
+    href: 'https://feedback.honey.finance'
   },
   {
     title: 'LEGACY WEBSITE',
-    href: '/legacyWebsite'
+    href: 'https://honeylend.netlify.app/farm'
   }
 ];
 

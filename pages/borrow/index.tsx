@@ -279,7 +279,7 @@ const Markets: NextPage = () => {
       />
     );
   };
-  const columnsWidth: Array<number | string> = [250, 90, 150, 150, 200];
+  const columnsWidth: Array<number | string> = [240, 100, 150, 150, 200];
 
   const columns: ColumnType<MarketTableRow>[] = useMemo(
     () => [

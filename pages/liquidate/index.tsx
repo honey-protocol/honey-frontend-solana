@@ -202,7 +202,7 @@ const Liquidate: NextPage = () => {
                 ]
               }
             >
-              <span>Liq Threshold</span>
+              <span>Liq %</span>
               <div className={style.sortIcon[sortOrder]} />
             </div>
           );
