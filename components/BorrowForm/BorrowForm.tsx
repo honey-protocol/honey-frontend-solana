@@ -202,7 +202,7 @@ const BorrowForm = (props: BorrowProps) => {
 
         <HoneySlider
           currentValue={sliderValue}
-          maxValue={maxValue}
+          maxValue={nftPrice}
           minAvailableValue={borrowedValue}
           maxSafePosition={0.4 - borrowedValue / 1000}
           maxAvailablePosition={MAX_LTV}
