@@ -67,7 +67,12 @@ const WithdrawForm: FC<RepayFormProps> = () => {
             <InfoBlock
               value={fp(20)}
               valueSize="big"
-              footer={<span>Estimated APR</span>}
+              toolTipLabel="APY is measured by compounding the weekly interest rate"
+              footer={
+                <span className={hAlign}>
+                  Estimated APR <div className={questionIcon} />
+                </span>
+              }
             />
           </div>
           <div className={styles.col}>
