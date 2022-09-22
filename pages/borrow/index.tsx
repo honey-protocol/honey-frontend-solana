@@ -6,7 +6,7 @@ import { Content } from 'antd/lib/layout/layout';
 import HoneyTable from '../../components/HoneyTable/HoneyTable';
 import { ColumnType } from 'antd/lib/table';
 import * as style from '../../styles/markets.css';
-import { MarketTableRow, MarketTablePosition } from '../../types/markets';
+import { MarketTableRow, MarketTablePosition, UserNFTs, OpenPositions } from '../../types/markets';
 import React, {
   ChangeEvent,
   useCallback,
@@ -16,7 +16,7 @@ import React, {
 } from 'react';
 import { formatNumber } from '../../helpers/format';
 import Image from 'next/image';
-import mockNftImage from '/public/images/mock-collection-image@2x.png';
+import honeyEyes from '/public/nfts/honeyEyes.png';
 import { Key, SortOrder } from 'antd/lib/table/interface';
 import HoneyToggle from '../../components/HoneyToggle/HoneyToggle';
 import debounce from 'lodash/debounce';
@@ -27,18 +27,185 @@ import HoneyButton from '../../components/HoneyButton/HoneyButton';
 import EmptyStateDetails from 'components/EmptyStateDetails/EmptyStateDetails';
 import classNames from 'classnames';
 import { getColumnSortStatus } from '../../helpers/tableUtils';
+import { useConnectedWallet, useSolana } from '@saberhq/use-solana';
+import useFetchNFTByUser from '../../hooks/useNFTV2';
+import { ConfigureSDK, BnToDecimal, toastResponse } from '../../helpers/loanHelpers/index';
+import { LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js';
+import BN from 'bn.js';
+import {
+  borrow,
+  depositNFT,
+  repay,
+  useBorrowPositions,
+  useHoney,
+  useMarket,
+  withdrawNFT
+} from '@honey-finance/sdk';
+import {
+  calcNFT,
+  calculateCollectionwideAllowance
+} from 'helpers/loanHelpers/userCollection';
+import { Metadata } from '@metaplex-foundation/mpl-token-metadata';
+import { MAX_LTV } from 'constants/loan';
+
 
 const { formatPercent: fp, formatUsd: fu } = formatNumber;
 
 const Markets: NextPage = () => {
+  const wallet = useConnectedWallet();
+  const sdkConfig = ConfigureSDK();
+  
+  /**
+   * @description calls upon markets which
+   * @params none
+   * @returns market | market reserve information | parsed reserves |
+  */
+  const { market, marketReserveInfo, parsedReserves, fetchMarket }  = useHoney();
+  /**
+   * @description calls upon the honey sdk
+   * @params  useConnection func. | useConnectedWallet func. | honeyID | marketID
+   * @returns honeyUser | honeyReserves - used for interaction regarding the SDK
+  */
+  const { honeyClient, honeyUser, honeyReserves, honeyMarket } = useMarket(sdkConfig.saberHqConnection, sdkConfig.sdkWallet!, sdkConfig.honeyId, sdkConfig.marketId);
+  
+ /**
+   * @description fetches open positions and the amount regarding loan positions / token account
+   * @params none
+   * @returns collateralNFTPositions | loanPositions | loading | error
+   */
+  let { loading, collateralNFTPositions, loanPositions, fungibleCollateralPosition, refreshPositions, error } = useBorrowPositions(sdkConfig.saberHqConnection, sdkConfig.sdkWallet!, sdkConfig.honeyId, sdkConfig.marketId);
+
   const [tableData, setTableData] = useState<MarketTableRow[]>([]);
   const [tableDataFiltered, setTableDataFiltered] = useState<MarketTableRow[]>(
     []
   );
   const [expandedRowKeys, setExpandedRowKeys] = useState<readonly Key[]>([]);
-  const [isMyCollectionsFilterEnabled, setIsMyCollectionsFilterEnabled] =
-    useState(false);
+  const [isMyCollectionsFilterEnabled, setIsMyCollectionsFilterEnabled] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const [totalDeposits, setTotalDeposits] = useState(0);
+  const [totalBorrowed, setTotalBorrowed] = useState(0);
+  const [totalMarketDebt, setTotalMarketDebt] = useState(0);
+  const [nftPrice, setNftPrice] = useState(0);
+  const [calculatedNftPrice, setCalculatedNftPrice] = useState(false);
+  const [marketPositions, setMarketPositions] = useState(0);
+  const [userBorrowCapacity, setUserBorrowCapacity] = useState(0);
+  const [userAvailableNFTs, setUserAvailableNFTs] = useState<Array<UserNFTs>>([]);
+  const [userOpenPositions, setUserOpenPositions] = useState<Array<OpenPositions>>([]);
+  const [userAllowance, setUserAllowance] = useState(0);
+  const [loanToValue, setLoanToValue] = useState(0);
+  const [userDebt, setUserDebt] = useState(0);
+  const [depositNoteExchangeRate, setDepositNoteExchangeRate] = useState(0);
+  const [cRatio, setCRatio] = useState(0);
+  const [liqidationThreshold, setLiquidationThreshold] = useState(0);
+  const [reserveHoneyState, setReserveHoneyState] = useState(0);
+  const [userUSDCBalance, setUserUSDCBalance] = useState(0);
+  
+  const availableNFTs: any = useFetchNFTByUser(wallet);
+  let reFetchNFTs = availableNFTs[2];
+
+  // sets the market debt
+  useEffect(() => {
+    const depositTokenMint = new PublicKey('So11111111111111111111111111111111111111112');
+
+    if (honeyReserves) {
+      const depositReserve = honeyReserves.filter((reserve) =>
+        reserve?.data?.tokenMint?.equals(depositTokenMint),
+      )[0];
+
+      const reserveState = depositReserve.data?.reserveState;
+
+      if (reserveState?.outstandingDebt) {
+        let marketDebt = reserveState?.outstandingDebt.div(new BN(10 ** 15)).toNumber();
+        if (marketDebt) {
+          let sum = Number((marketDebt / LAMPORTS_PER_SOL));
+          setTotalMarketDebt(sum);
+        }
+      }
+    }
+
+  }, [honeyReserves]);
+
+  // sets total market deposits
+  useEffect(() => {
+    if (parsedReserves && parsedReserves[0].reserveState.totalDeposits) {
+      let totMarketDeposits = BnToDecimal(parsedReserves[0].reserveState.totalDeposits, 9, 2);
+      setTotalDeposits(totMarketDeposits);
+    }
+  }, [parsedReserves]);
+  
+  // fetches total market positions
+  async function fetchObligations() {
+    let obligations = await honeyMarket.fetchObligations();
+    console.log('obligations:', obligations)
+    setMarketPositions(obligations.length);
+  }
+
+  useEffect(() => {
+    if(honeyMarket) {
+      fetchObligations();
+    }
+  }, [honeyMarket]);
+
+  // calculates nft price
+  async function calculateNFTPrice() {
+    if (marketReserveInfo && parsedReserves && honeyMarket) {
+      let nftPrice = await calcNFT(
+        marketReserveInfo,
+        parsedReserves,
+        honeyMarket,
+        sdkConfig.saberHqConnection
+      );
+      setNftPrice(Number(nftPrice));
+      setCalculatedNftPrice(true);
+    }
+  }
+
+  useEffect(() => {
+    calculateNFTPrice();
+  }, [marketReserveInfo, parsedReserves]);
+
+  async function fetchHelperValues(nftPrice: any, collateralNFTPositions: any, honeyUser: any, marketReserveInfo: any) {
+    let outcome = await calculateCollectionwideAllowance(nftPrice, collateralNFTPositions, honeyUser, marketReserveInfo)
+    outcome.sumOfAllowance < 0 ? setUserAllowance(0) : setUserAllowance(outcome.sumOfAllowance);
+    setUserDebt(outcome.sumOfTotalDebt);
+    setLoanToValue(outcome.sumOfLtv);
+    console.log('this is ltv', loanToValue);
+    console.log('this is user allowance', userAllowance);
+  }
+
+  /**
+   * @description updates honeyUser | marketReserveInfo | - timeout required
+   * @params none
+   * @returns honeyUser | marketReserveInfo |
+  */
+   useEffect(() => {
+    if (marketReserveInfo && parsedReserves) {
+        setDepositNoteExchangeRate(BnToDecimal(marketReserveInfo[0].depositNoteExchangeRate, 15, 5))
+        setCRatio(BnToDecimal(marketReserveInfo[0].minCollateralRatio, 15, 5))
+    }
+
+    if (nftPrice && collateralNFTPositions && honeyUser && marketReserveInfo) fetchHelperValues(nftPrice, collateralNFTPositions, honeyUser, marketReserveInfo);
+
+    setLiquidationThreshold(1 / cRatio * 100);
+  }, [marketReserveInfo, honeyUser, collateralNFTPositions, market, error, parsedReserves, honeyReserves, cRatio, reserveHoneyState, calculatedNftPrice]);
+  
+  useEffect(() => {
+    console.log('availableNFTs', availableNFTs);
+    setUserAvailableNFTs(availableNFTs[0]);
+  }, [availableNFTs]);
+
+  useEffect(() => {
+    console.log('total deposits', totalDeposits)
+    console.log('total marketDebt', totalMarketDebt);
+  }, [totalDeposits, totalBorrowed]);
+
+  useMemo(() => {
+    console.log('--collateral nft positions--', collateralNFTPositions);
+    if (collateralNFTPositions && collateralNFTPositions.length > 0) {
+      setUserOpenPositions(collateralNFTPositions);
+      console.log('user open positions', userOpenPositions);
+    }
+  }, [collateralNFTPositions]);
 
   // PUT YOUR DATA SOURCE HERE
   // MOCK DATA FOR NOW
@@ -46,48 +213,17 @@ const Markets: NextPage = () => {
     const mockData: MarketTableRow[] = [
       {
         key: '0',
-        name: 'Test 2',
+        name: 'Honey Eyes',
         rate: 0.1,
-        available: 100,
-        value: 100000,
-        positions: [
-          {
-            name: 'Doodles #1291',
-            riskLvl: 33,
-            debt: 0,
-            available: 600,
-            value: 1000
-          },
-          {
-            name: 'Doodles #1321',
-            riskLvl: 0,
-            debt: 0,
-            available: 600,
-            value: 1000
-          }
-        ]
-      },
-      {
-        key: '1',
-        name: 'Very long collection name very long',
-        rate: 0.2,
-        available: 150,
-        value: 160000,
-        positions: [
-          {
-            name: 'Doodles #1292',
-            riskLvl: 0.1,
-            debt: 0,
-            available: 600,
-            value: 1000
-          }
-        ]
+        available: (totalDeposits - totalMarketDebt),
+        value: (marketPositions * nftPrice),
+        positions: userOpenPositions
       }
     ];
 
     setTableData(mockData);
     setTableDataFiltered(mockData);
-  }, []);
+  }, [totalDeposits, totalMarketDebt, nftPrice, userOpenPositions]);
 
   const handleToggle = (checked: boolean) => {
     setIsMyCollectionsFilterEnabled(checked);
@@ -119,6 +255,7 @@ const Markets: NextPage = () => {
     }, 500),
     [tableData]
   );
+
   const handleSearchInputChange = useCallback(
     (e: ChangeEvent<HTMLInputElement>) => {
       const value = e.target.value;
@@ -157,7 +294,7 @@ const Markets: NextPage = () => {
               <div className={style.logoWrapper}>
                 <div className={style.collectionLogo}>
                   <HexaBoxContainer>
-                    <Image src={mockNftImage} />
+                    <Image src={honeyEyes} />
                   </HexaBoxContainer>
                 </div>
               </div>
@@ -259,13 +396,13 @@ const Markets: NextPage = () => {
           <div className={style.expandedRowIcon} />
           <div className={style.collectionLogo}>
             <HexaBoxContainer>
-              <Image src={mockNftImage} />
+              <Image src={honeyEyes} />
             </HexaBoxContainer>
           </div>
           <div className={style.nameCellText}>
             <div className={style.collectionName}>{name}</div>
             <div className={style.risk.safe}>
-              <span className={style.valueCell}>{fp(record.riskLvl)}</span>{' '}
+              <span className={style.valueCell}>{fp(loanToValue)}</span>{' '}
               <span className={style.riskText}>Risk lvl</span>
             </div>
           </div>
@@ -277,7 +414,7 @@ const Markets: NextPage = () => {
       width: columnsWidth[1],
       render: debt => (
         <div className={style.expandedRowCell}>
-          <InfoBlock title={'Debt:'} value={fu(debt)} />
+          <InfoBlock title={'Debt:'} value={fu(userDebt)} />
         </div>
       )
     },
@@ -286,7 +423,7 @@ const Markets: NextPage = () => {
       width: columnsWidth[2],
       render: available => (
         <div className={style.expandedRowCell}>
-          <InfoBlock title={'Available:'} value={fu(available)} />
+          <InfoBlock title={'Available:'} value={fu(nftPrice * MAX_LTV)} />
         </div>
       )
     },
@@ -295,7 +432,7 @@ const Markets: NextPage = () => {
       width: columnsWidth[3],
       render: value => (
         <div className={style.expandedRowCell}>
-          <InfoBlock title={'Value:'} value={fu(value)} />
+          <InfoBlock title={'Value:'} value={fu(nftPrice)} />
         </div>
       )
     },
@@ -335,6 +472,149 @@ const Markets: NextPage = () => {
       </div>
     </div>
   );
+
+
+  /**
+   * @description executes the deposit NFT func. from SDK
+   * @params mint of the NFT
+   * @returns succes | failure
+  */
+  async function executeDepositNFT(mintID: any) {
+    try {
+      if (!mintID) return;
+
+      const metadata = await Metadata.findByMint(sdkConfig.saberHqConnection, mintID);
+      const tx = await depositNFT(sdkConfig.saberHqConnection, honeyUser, metadata.pubkey);
+      if (tx[0] == 'SUCCESS') {
+        toastResponse('SUCCESS', 'Deposit success', 'SUCCESS');
+
+        await refreshPositions();
+
+        reFetchNFTs({});
+      }
+    } catch (error) {
+      return toastResponse('ERROR', 'Error deposit NFT', 'ERROR');
+    }
+  }
+
+    /**
+   * @description executes the withdraw NFT func. from SDK
+   * @params mint of the NFT
+   * @returns succes | failure
+  */
+  async function executeWithdrawNFT(mintID: any) {
+    try {
+      if (!mintID) return toastResponse('ERROR', 'Please select NFT', 'ERROR');
+      const metadata = await Metadata.findByMint(sdkConfig.saberHqConnection, mintID);
+      const tx = await withdrawNFT(sdkConfig.saberHqConnection, honeyUser, metadata.pubkey);
+
+      if (tx[0] == 'SUCCESS') {
+        await toastResponse('SUCCESS', 'Withdraw success', 'SUCCESS');
+        reFetchNFTs({});
+        await refreshPositions();
+
+      }
+    } catch (error) {
+      toastResponse('ERROR', 'Error withdraw NFT', 'ERROR');
+      return;
+    }
+  }
+
+  /**
+   * @description
+   * executes the borrow function which allows user to borrow against NFT
+   * base value of NFT is 2 SOL - liquidation trashold is 50%, so max 1 SOL available
+   * @params borrow amount
+   * @returns borrowTx
+   */
+   async function executeBorrow(val: any) {
+    try {
+      if (!val)
+        return toastResponse('ERROR', 'Please provide a value', 'ERROR');
+      if (val == 1.6) val = val - 0.01;
+      const borrowTokenMint = new PublicKey(
+        'So11111111111111111111111111111111111111112'
+      );
+      const tx = await borrow(
+        honeyUser,
+        val * LAMPORTS_PER_SOL,
+        borrowTokenMint,
+        honeyReserves
+      );
+
+      if (tx[0] == 'SUCCESS') {
+        toastResponse('SUCCESS', 'Borrow success', 'SUCCESS', 'BORROW');
+
+        let refreshedHoneyReserves = await honeyReserves[0].sendRefreshTx();
+        const latestBlockHash =
+          await sdkConfig.saberHqConnection.getLatestBlockhash();
+
+        await sdkConfig.saberHqConnection.confirmTransaction({
+          blockhash: latestBlockHash.blockhash,
+          lastValidBlockHeight: latestBlockHash.lastValidBlockHeight,
+          signature: refreshedHoneyReserves
+        });
+
+        await fetchMarket();
+        await honeyUser.refresh().then((val: any) => {
+          reserveHoneyState == 0
+            ? setReserveHoneyState(1)
+            : setReserveHoneyState(0);
+        });
+      } else {
+        return toastResponse('ERROR', 'Borrow failed', 'BORROW');
+      }
+    } catch (error) {
+      return toastResponse('ERROR', 'An error occurred', 'BORROW');
+    }
+  }
+
+  /**
+   * @description
+   * executes the repay function which allows user to repay their borrowed amount
+   * against the NFT
+   * @params amount of repay
+   * @returns repayTx
+   */
+  async function executeRepay(val: any) {
+    try {
+      if (!val)
+        return toastResponse('ERROR', 'Please provide a value', 'ERROR');
+      const repayTokenMint = new PublicKey(
+        'So11111111111111111111111111111111111111112'
+      );
+      const tx = await repay(
+        honeyUser,
+        val * LAMPORTS_PER_SOL,
+        repayTokenMint,
+        honeyReserves
+      );
+
+      if (tx[0] == 'SUCCESS') {
+        toastResponse('SUCCESS', 'Repay success', 'SUCCESS', 'REPAY');
+        let refreshedHoneyReserves = await honeyReserves[0].sendRefreshTx();
+        const latestBlockHash =
+          await sdkConfig.saberHqConnection.getLatestBlockhash();
+
+        await sdkConfig.saberHqConnection.confirmTransaction({
+          blockhash: latestBlockHash.blockhash,
+          lastValidBlockHeight: latestBlockHash.lastValidBlockHeight,
+          signature: refreshedHoneyReserves
+        });
+
+        await fetchMarket();
+        await honeyUser.refresh().then((val: any) => {
+          reserveHoneyState == 0
+            ? setReserveHoneyState(1)
+            : setReserveHoneyState(0);
+        });
+      } else {
+        return toastResponse('ERROR', 'Repay failed', 'REPAY');
+      }
+    } catch (error) {
+      return toastResponse('ERROR', 'An error occurred', 'REPAY');
+    }
+  }
 
   return (
     <LayoutRedesign>
@@ -391,7 +671,21 @@ const Markets: NextPage = () => {
           ))}
       </Content>
       <Sider width={350}>
-        <MarketsSidebar collectionId="s" />
+        {/* borrow repay module */}
+        <MarketsSidebar 
+          collectionId="s" 
+          availableNFTs={userAvailableNFTs}
+          openPositions={userOpenPositions}
+          nftPrice={nftPrice}
+          executeDepositNFT={executeDepositNFT}
+          executeWithdrawNFT={executeWithdrawNFT}
+          executeBorrow={executeBorrow}
+          executeRepay={executeRepay}
+          userDebt={userDebt}
+          userAllowance={userAllowance}
+          userUSDCBalance={userUSDCBalance}
+          loanToValue={loanToValue}
+        />
       </Sider>
     </LayoutRedesign>
   );

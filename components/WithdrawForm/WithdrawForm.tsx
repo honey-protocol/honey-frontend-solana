@@ -10,12 +10,12 @@ import HoneyButton from 'components/HoneyButton/HoneyButton';
 import HexaBoxContainer from '../HexaBoxContainer/HexaBoxContainer';
 import { MAX_LTV } from '../../constants/loan';
 import SidebarScroll from '../SidebarScroll/SidebarScroll';
-
-type RepayFormProps = {};
+import { WithdrawFormProps } from './types';
 
 const { format: f, formatPercent: fp, formatUsd: fu } = formatNumber;
 
-const WithdrawForm: FC<RepayFormProps> = () => {
+const WithdrawForm = (props: WithdrawFormProps) => {
+  const { executeWithdraw } = props;
   const [valueUSD, setValueUSD] = useState<number>();
   const [valueUSDC, setValueUSDC] = useState<number>();
   const [rangeValue, setRangeValue] = useState(0);

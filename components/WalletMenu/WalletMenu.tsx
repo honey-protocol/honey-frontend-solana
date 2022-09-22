@@ -1,17 +1,29 @@
 import { Dropdown, Menu, Space, Typography } from 'antd';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import * as styles from './WalletMenu.css';
 import { DownIcon } from 'icons/DownIcon';
 import { formatAddress } from 'helpers/addressUtils';
 import HoneyButton from 'components/HoneyButton/HoneyButton';
 import { WalletIcon } from 'icons/WalletIcon';
+import { useWalletKit } from '@gokiprotocol/walletkit';
+import { useConnectedWallet, useSolana } from '@saberhq/use-solana';
 
 const { Title, Text } = Typography;
 
 const WalletMenu = () => {
-  const walletAddress = 'FZXg6PdjCjoz542TT5Tvq97Y9hnpWCLsCqPmfCHSSWYx';
+
+  const { disconnect } = useSolana();
+  const wallet = useConnectedWallet()
+  const { connect } = useWalletKit();  
+  const walletAddress = wallet?.publicKey.toString();
+
+  function handleClick(e: any) {
+    if (e.key == '4') disconnect();
+  }
+
   const menu = (
     <Menu
+      onClick={handleClick}
       selectable
       items={[
         {
@@ -34,7 +46,7 @@ const WalletMenu = () => {
     />
   );
   return !walletAddress ? (
-    <HoneyButton variant="primary" icon={<WalletIcon />}>
+    <HoneyButton variant="primary" icon={<WalletIcon />} onClick={connect}>
       CONNECT WALLET
     </HoneyButton>
   ) : (

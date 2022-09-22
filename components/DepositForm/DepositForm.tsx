@@ -9,12 +9,13 @@ import mockNftImage from '/public/images/mock-collection-image@2x.png';
 import HoneyButton from 'components/HoneyButton/HoneyButton';
 import HexaBoxContainer from '../HexaBoxContainer/HexaBoxContainer';
 import SidebarScroll from '../SidebarScroll/SidebarScroll';
-
-type RepayFormProps = {};
+import { DepositFormProps } from './types';
 
 const { format: f, formatPercent: fp, formatUsd: fu } = formatNumber;
 
-const DepositForm: FC<RepayFormProps> = () => {
+const DepositForm = (props: DepositFormProps) => {
+  const { executeDeposit } = props;
+
   const [valueUSD, setValueUSD] = useState<number>();
   const [valueUSDC, setValueUSDC] = useState<number>();
   const [rangeValue, setRangeValue] = useState(0);
@@ -37,7 +38,7 @@ const DepositForm: FC<RepayFormProps> = () => {
               disabled={isRepayButtonDisabled()}
               isFluid={true}
             >
-              Withdraw
+              Deposit
             </HoneyButton>
           </div>
         </div>

@@ -51,6 +51,9 @@ module.exports = (phase, {defaultConfig}) => {
     const devNextConfig = {
       reactStrictMode: true,
       env: env,
+      images: {
+        domains: ['www.arweave.net']
+      }
     };
     return withVanillaExtract(devNextConfig)
   } else {
@@ -76,6 +79,9 @@ module.exports = (phase, {defaultConfig}) => {
     const ProdNextConfig = {
       reactStrictMode: true,
       env: env,
+      images: {
+        domains: ['www.arweave.net']
+      }
     };
     return withVanillaExtract(ProdNextConfig)
   }

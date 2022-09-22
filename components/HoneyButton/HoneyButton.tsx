@@ -22,7 +22,7 @@ const HoneyButton: FC<HoneyButtonProps> = props => {
     disabled,
     variant,
     isFluid,
-    ...rest
+    ...rest 
   } = props;
 
   const isButtonWithValues = !isNil(usdcAmount) || !isNil(usdcValue);

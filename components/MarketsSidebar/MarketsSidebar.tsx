@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import * as styles from './MarketsSidebar.css';
 import { MarketsSidebarProps } from './types';
 import BorrowForm from '../BorrowForm/BorrowForm';
@@ -18,12 +18,26 @@ type Tab = 'borrow' | 'repay';
 
 const MarketsSidebar = (props: MarketsSidebarProps) => {
   const wallet = true;
-  const { collectionId } = props;
+  const { 
+    collectionId, 
+    availableNFTs, 
+    openPositions, 
+    nftPrice, 
+    userAllowance,
+    userDebt,
+    userUSDCBalance,
+    loanToValue,
+    executeDepositNFT, executeWithdrawNFT, executeBorrow, executeRepay 
+  } = props;
+    
   const [activeTab, setActiveTab] = useState<Tab>('borrow');
 
   const handleTabChange = (tabKey: string) => {
     setActiveTab(tabKey as Tab);
   };
+
+  useEffect(() => {}, [openPositions, availableNFTs]);
+
   return (
     <div className={styles.marketsSidebarContainer}>
       <HoneyTabs
@@ -47,8 +61,31 @@ const MarketsSidebar = (props: MarketsSidebarProps) => {
           />
         ) : (
           <>
-            {activeTab === 'borrow' && <BorrowForm />}
-            {activeTab === 'repay' && <RepayForm />}
+            {
+              activeTab === 'borrow' && 
+                <BorrowForm 
+                  userDebt={userDebt}
+                  executeBorrow={executeBorrow} 
+                  availableNFTs={availableNFTs} 
+                  openPositions={openPositions} 
+                  nftPrice={nftPrice} 
+                  executeDepositNFT={executeDepositNFT} 
+                  userAllowance={userAllowance}
+                />
+            }
+            {
+              (activeTab === 'repay' && openPositions.length) && 
+                <RepayForm 
+                  executeRepay={executeRepay} 
+                  openPositions={openPositions} 
+                  nftPrice={nftPrice} 
+                  executeWithdrawNFT={executeWithdrawNFT} 
+                  userDebt={userDebt}
+                  userAllowance={userAllowance}
+                  userUSDCBalance={userUSDCBalance}
+                  loanToValue={loanToValue}
+                />
+              }
           </>
         )}
       </HoneyTabs>

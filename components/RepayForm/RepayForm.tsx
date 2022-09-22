@@ -5,27 +5,38 @@ import { InputsBlock } from '../InputsBlock/InputsBlock';
 import { HoneySlider } from '../HoneySlider/HoneySlider';
 import * as styles from './RepayForm.css';
 import { formatNumber } from '../../helpers/format';
-import mockNftImage from '/public/images/mock-collection-image@2x.png';
+import honeyEyes from '/public/nfts/honeyEyes.png';
 import HoneyButton from 'components/HoneyButton/HoneyButton';
 import HexaBoxContainer from '../HexaBoxContainer/HexaBoxContainer';
 import HoneyToast, {
   HoneyToastProps,
   toastRemoveDelay
 } from 'components/HoneyToast/HoneyToast';
+import { RepayProps } from './types';
 import SidebarScroll from '../SidebarScroll/SidebarScroll';
+import { LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js';
 import { isNil } from '../../helpers/utils';
-
-type RepayFormProps = {};
 
 const { format: f, formatPercent: fp, formatUsd: fu } = formatNumber;
 
-const RepayForm: FC<RepayFormProps> = () => {
+const RepayForm = (props: RepayProps) => {
+  const {
+    executeRepay, 
+    openPositions, 
+    nftPrice, 
+    executeWithdrawNFT,
+    userAllowance,
+    userDebt,
+    userUSDCBalance,
+    loanToValue
+  } = props;
+
   const [valueUSD, setValueUSD] = useState<number>();
   const [valueUSDC, setValueUSDC] = useState<number>();
   const [sliderValue, setSliderValue] = useState(0);
   const [toast, setToast] = useState<HoneyToastProps | null>(null);
 
-  const maxValueMock = 1000;
+  const maxValue = userDebt == 0 ? userDebt : userAllowance;
   const usdcPrice = 0.95;
 
   // Put your validators here
@@ -64,7 +75,11 @@ const RepayForm: FC<RepayFormProps> = () => {
     setSliderValue(usdcValue * usdcPrice);
   };
 
-  const onRepay = async () => {
+  const onRepay = async (event: any) => {
+    const btnText = event.target.innerHTML;
+    const mintId = new PublicKey(openPositions[0].mint).toString();
+    console.log('this is mintId', mintId);
+
     try {
       setToast({
         state: 'loading',
@@ -73,6 +88,11 @@ const RepayForm: FC<RepayFormProps> = () => {
       });
 
       // repay function here
+      if (btnText == 'Claim NFT') {
+        executeWithdrawNFT(mintId);
+      } else {
+        executeRepay(valueUSD || 0)
+      }
 
       setToast({
         state: 'success',
@@ -93,6 +113,10 @@ const RepayForm: FC<RepayFormProps> = () => {
       }, toastRemoveDelay);
     }
   };
+
+
+  useEffect(() => {
+  }, [openPositions, userDebt, userAllowance, nftPrice, loanToValue, userUSDCBalance]);
 
   return (
     <SidebarScroll
@@ -118,7 +142,7 @@ const RepayForm: FC<RepayFormProps> = () => {
                   isFluid={true}
                   onClick={onRepay}
                 >
-                  Repay
+                  { userDebt > 0 ? 'Repay' : 'Claim NFT'}
                 </HoneyButton>
               </div>
             </div>
@@ -130,15 +154,15 @@ const RepayForm: FC<RepayFormProps> = () => {
         <div className={styles.nftInfo}>
           <div className={styles.nftImage}>
             <HexaBoxContainer>
-              <Image src={mockNftImage} />
+              <Image src={honeyEyes} layout="fill" />
             </HexaBoxContainer>
           </div>
-          <div className={styles.nftName}>Doodles #1291</div>
+          <div className={styles.nftName}>{openPositions[0].name}</div>
         </div>
         <div className={styles.row}>
           <div className={styles.col}>
             <InfoBlock
-              value={fu(1000)}
+              value={fu(nftPrice)}
               valueSize="big"
               footer={<span>Estimated value</span>}
             />
@@ -154,7 +178,7 @@ const RepayForm: FC<RepayFormProps> = () => {
 
         <div className={styles.row}>
           <div className={styles.col}>
-            <InfoBlock title={'Risk level'} value={fu(0)} />
+            <InfoBlock title={'Risk level'} value={fu(loanToValue)} />
           </div>
           <div className={styles.col}>
             <InfoBlock
@@ -178,7 +202,7 @@ const RepayForm: FC<RepayFormProps> = () => {
           <div className={styles.col}>
             <InfoBlock
               title={'Allowance'}
-              value={fu(600)}
+              value={fu(userAllowance)}
               footer={<>No more than {fp(60)}</>}
             />
           </div>
@@ -196,8 +220,8 @@ const RepayForm: FC<RepayFormProps> = () => {
           </div>
 
           <InputsBlock
-            valueUSD={valueUSD}
-            valueUSDC={valueUSDC}
+            valueUSD={Number(f(valueUSD))}
+            valueUSDC={Number(f(valueUSDC))}
             onChangeUSD={handleUsdInputChange}
             onChangeUSDC={handleUsdcInputChange}
           />
@@ -205,7 +229,7 @@ const RepayForm: FC<RepayFormProps> = () => {
 
         <HoneySlider
           currentValue={sliderValue}
-          maxValue={maxValueMock}
+          maxValue={maxValue}
           minAvailableValue={0}
           onChange={handleSliderChange}
         />

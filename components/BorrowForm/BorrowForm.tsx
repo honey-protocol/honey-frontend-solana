@@ -1,85 +1,154 @@
-import React, { FC, useState } from 'react';
+import React, { FC, useEffect, useState } from 'react';
 import Image from 'next/image';
 import { InfoBlock } from '../InfoBlock/InfoBlock';
 import { InputsBlock } from '../InputsBlock/InputsBlock';
 import { HoneySlider } from '../HoneySlider/HoneySlider';
 import * as styles from './BorrowForm.css';
 import { formatNumber } from '../../helpers/format';
-import mockNftImage from '/public/images/mock-collection-image@2x.png';
+import honeyEyes from '/public/nfts/honeyEyes.png';
 import HoneyButton from 'components/HoneyButton/HoneyButton';
 import HexaBoxContainer from 'components/HexaBoxContainer/HexaBoxContainer';
 import NftList from '../NftList/NftList';
 import { NftCardProps } from '../NftCard/types';
 import { MAX_LTV } from '../../constants/loan';
+import { usdcAmount } from '../HoneyButton/HoneyButton.css';
+import { BorrowProps } from './types';
+import { LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js';
+import { toastResponse } from 'helpers/loanHelpers';
 import SidebarScroll from '../SidebarScroll/SidebarScroll';
-
-type BorrowFormProps = {};
+import imagePlaceholder from 'public/images/imagePlaceholder.png';
 
 const { format: f, formatPercent: fp, formatUsd: fu } = formatNumber;
 
-const BorrowForm: FC<BorrowFormProps> = () => {
+interface NFT {
+  name: string;
+  img: string;
+  mint: string;
+}
+
+const BorrowForm = (props: BorrowProps) => {
+  const {
+    availableNFTs,
+    openPositions,
+    nftPrice,
+    executeDepositNFT,
+    executeBorrow,
+    userAllowance,
+    userDebt
+  } = props;
+
   const [valueUSD, setValueUSD] = useState<number>();
   const [valueUSDC, setValueUSDC] = useState<number>();
+  const [isNftSelected, setIsNftSelected] = useState(false);
+  const [selectedNft, setSelectedNft] = useState<NFT | null>(null);
+  const [hasOpenPosition, setHasOpenPosition] = useState(false);
   const [sliderValue, setSliderValue] = useState(0);
 
   // Only for test purposes
-  const isNftSelected = true;
+  // const isNftSelected = true;
 
-  const borrowedValue = 200;
-  const maxValue = 1000;
+  const borrowedValue = userDebt;
+  const maxValue = userAllowance;
+  const usdcPrice = 0.95;
 
   // Put your validators here
   const isBorrowButtonDisabled = () => {
-    return false;
+    return userAllowance == 0 ? true : false;
   };
 
-  const nftsMockData: NftCardProps[] = [
-    {
-      id: '1',
-      img: 'path/to/iamge',
-      name: 'Doodles #1291',
-      text: '$1,000',
-      hint: 'Value',
-      buttonText: '$600'
-    },
-    {
-      id: '2',
-      img: 'path/to/iamge',
-      name: 'Doodles #1291',
-      text: '$1,000',
-      hint: 'Value',
-      buttonText: '$600'
-    },
-    {
-      id: '3',
-      img: 'path/to/iamge',
-      name: 'Doodles #1291',
-      text: '$1,000',
-      hint: 'Value',
-      buttonText: '$600'
-    },
-    {
-      id: '4',
-      img: 'path/to/iamge',
-      name: 'Doodles #1291',
-      text: '$1,000',
-      hint: 'Value',
-      buttonText: '$600'
+  const handleSliderChange = (value: number) => {
+    setSliderValue(value);
+    setValueUSD(value);
+    setValueUSDC(value / usdcPrice);
+  };
+
+  const handleUsdInputChange = (usdValue: number | undefined) => {
+    if (!usdValue) {
+      setValueUSD(0);
+      setValueUSDC(0);
+      setSliderValue(0);
+      return;
     }
-  ];
-
-  const handleItemClick = (id: string) => {
-    alert(`${id} selected`);
+    setValueUSD(usdValue);
+    setValueUSDC(usdValue / usdcPrice);
+    setSliderValue(usdValue);
   };
+
+  const handleUsdcInputChange = (usdcValue: number | undefined) => {
+    if (!usdcValue) {
+      setValueUSD(0);
+      setValueUSDC(0);
+      setSliderValue(0);
+      return;
+    }
+
+    setValueUSD(usdcValue * usdcPrice);
+    setValueUSDC(usdcValue);
+    setSliderValue(usdcValue * usdcPrice);
+  };
+
+  // set selection state and render (or not) detail nft
+  const selectNFT = (name: string, img: string, mint?: any) => {
+    if (hasOpenPosition == false) {
+      setSelectedNft({ name, img, mint });
+    } else {
+      setIsNftSelected(true);
+      setSelectedNft({ name, img, mint });
+    }
+  };
+
+  useEffect(() => {}, [userAllowance]);
+
+  // if user has an open position, we need to be able to click on the position and borrow against it
+  useEffect(() => {
+    if (openPositions?.length) setHasOpenPosition(true);
+  }, [openPositions, availableNFTs]);
+
+  function handleDepositNFT() {
+    if (selectedNft && selectedNft.mint.length < 1)
+      return toastResponse('ERROR', 'Please select an NFT', 'ERROR');
+    if (selectedNft && selectedNft.mint.length > 1)
+      executeDepositNFT(selectedNft.mint);
+  }
+
+  function handleBorrow() {
+    if (hasOpenPosition && openPositions[0]) {
+      const { name, mint } = openPositions[0];
+      const img = openPositions[0].image;
+      setSelectedNft({ name, img, mint });
+      setIsNftSelected(true);
+    }
+  }
+
+  useEffect(() => {}, [selectedNft]);
 
   const renderContent = () => {
-    if (!isNftSelected) {
-      return (
-        <>
-          <div className={styles.newBorrowingTitle}>Choose NFT</div>
-          <NftList data={nftsMockData} onItemClick={handleItemClick} />
-        </>
-      );
+    if (isNftSelected == false) {
+      if (hasOpenPosition) {
+        return (
+          <>
+            <div className={styles.newBorrowingTitle}>
+              Collateralised position
+            </div>
+            <NftList
+              data={openPositions}
+              selectNFT={selectNFT}
+              nftPrice={nftPrice}
+            />
+          </>
+        );
+      } else {
+        return (
+          <>
+            <div className={styles.newBorrowingTitle}>Choose NFT</div>
+            <NftList
+              data={availableNFTs}
+              selectNFT={selectNFT}
+              nftPrice={nftPrice}
+            />
+          </>
+        );
+      }
     }
 
     return (
@@ -87,15 +156,19 @@ const BorrowForm: FC<BorrowFormProps> = () => {
         <div className={styles.nftInfo}>
           <div className={styles.nftImage}>
             <HexaBoxContainer>
-              <Image src={mockNftImage} />
+              <Image
+                src={selectedNft?.img || imagePlaceholder}
+                alt={`${selectedNft?.name}`}
+                layout="fill"
+              />
             </HexaBoxContainer>
           </div>
-          <div className={styles.nftName}>Doodles #1291</div>
+          <div className={styles.nftName}>{selectedNft?.name}</div>
         </div>
         <div className={styles.row}>
           <div className={styles.col}>
             <InfoBlock
-              value={fu(1000)}
+              value={fu(nftPrice)}
               valueSize="big"
               footer={<span>Estimated value</span>}
             />
@@ -118,7 +191,6 @@ const BorrowForm: FC<BorrowFormProps> = () => {
               minAvailableValue={borrowedValue}
               maxSafePosition={0.4 - borrowedValue / 1000}
               maxAvailablePosition={MAX_LTV}
-              onChange={setSliderValue}
               isReadonly
             />
           </div>
@@ -134,7 +206,6 @@ const BorrowForm: FC<BorrowFormProps> = () => {
               minAvailableValue={borrowedValue}
               maxSafePosition={0.4 - borrowedValue / 1000}
               maxAvailablePosition={MAX_LTV}
-              onChange={setSliderValue}
               isReadonly
             />
           </div>
@@ -153,7 +224,7 @@ const BorrowForm: FC<BorrowFormProps> = () => {
           <div className={styles.col}>
             <InfoBlock
               title={'Allowance'}
-              value={fu(600)}
+              value={fu(userAllowance)}
               footer={<>No more than {fp(60)}</>}
             />
           </div>
@@ -164,30 +235,55 @@ const BorrowForm: FC<BorrowFormProps> = () => {
 
         <div className={styles.inputs}>
           <InputsBlock
-            valueUSD={valueUSD}
-            valueUSDC={valueUSDC}
-            onChangeUSD={setValueUSD}
-            onChangeUSDC={setValueUSDC}
+            valueUSD={Number(f(valueUSD))}
+            valueUSDC={Number(f(valueUSDC))}
+            onChangeUSD={handleUsdInputChange}
+            onChangeUSDC={handleUsdcInputChange}
           />
         </div>
 
         <HoneySlider
           currentValue={sliderValue}
-          maxValue={maxValue}
+          maxValue={nftPrice}
           minAvailableValue={borrowedValue}
           maxSafePosition={0.4 - borrowedValue / 1000}
           maxAvailablePosition={MAX_LTV}
-          onChange={setSliderValue}
+          onChange={handleSliderChange}
         />
       </>
     );
   };
 
   const renderFooter = () => {
-    if (!isNftSelected) {
+    if (hasOpenPosition) {
       return (
         <div className={styles.buttons}>
+          <div className={styles.smallCol}>
+            <HoneyButton
+              variant="secondary"
+              onClick={() => setIsNftSelected(false)}
+            >
+              Cancel
+            </HoneyButton>
+          </div>
           <div className={styles.bigCol}>
+            <HoneyButton
+              usdcAmount={valueUSDC || 0}
+              usdcValue={valueUSD || 0}
+              variant="primary"
+              disabled={isBorrowButtonDisabled()}
+              isFluid
+              onClick={handleBorrow}
+            >
+              Borrow
+            </HoneyButton>
+          </div>
+        </div>
+      );
+    } else {
+      return (
+        <div className={styles.buttons}>
+          <div className={styles.smallCol}>
             <HoneyButton
               variant="secondary"
               disabled={isBorrowButtonDisabled()}
@@ -196,28 +292,14 @@ const BorrowForm: FC<BorrowFormProps> = () => {
               Cancel
             </HoneyButton>
           </div>
+          <div className={styles.bigCol}>
+            <HoneyButton variant="primary" isFluid onClick={handleDepositNFT}>
+              Deposit NFT
+            </HoneyButton>
+          </div>
         </div>
       );
     }
-
-    return (
-      <div className={styles.buttons}>
-        <div className={styles.smallCol}>
-          <HoneyButton variant="secondary">Cancel</HoneyButton>
-        </div>
-        <div className={styles.bigCol}>
-          <HoneyButton
-            usdcAmount={valueUSDC || 0}
-            usdcValue={valueUSD || 0}
-            variant="primary"
-            disabled={isBorrowButtonDisabled()}
-            isFluid
-          >
-            Borrow
-          </HoneyButton>
-        </div>
-      </div>
-    );
   };
 
   return (
