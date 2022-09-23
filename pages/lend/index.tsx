@@ -29,6 +29,7 @@ import {toastResponse, BnToDecimal, BnDivided, ConfigureSDK} from '../../helpers
 import { LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js';
 import BN from 'bn.js';
 import HoneyToggle from 'components/HoneyToggle/HoneyToggle';
+import { calcNFT } from 'helpers/loanHelpers/userCollection';
 
 const { formatPercent: fp, formatUsd: fu } = formatNumber;
 
@@ -48,17 +49,22 @@ const Lend: NextPage = () => {
    * @params solanas useConnection func. && useConnectedWallet func. && JET ID
    * @returns honeyUser which is the main object - honeyMarket, honeyReserves are for testing purposes
   */
-  const { honeyUser, honeyReserves } = useMarket(sdkConfig.saberHqConnection, sdkConfig.sdkWallet!, sdkConfig.honeyId, sdkConfig.marketId);
+  const { honeyUser, honeyReserves, honeyMarket } = useMarket(sdkConfig.saberHqConnection, sdkConfig.sdkWallet!, sdkConfig.honeyId, sdkConfig.marketId);
   const [totalMarkDeposits, setTotalMarketDeposits] = useState(0);
   const [userTotalDeposits, setUserTotalDeposits] = useState(0);
   const [reserveHoneyState, setReserveHoneyState] = useState(0);
+  
+  const [marketPositions, setMarketPositions] = useState(0);
+  const [totalDeposits, setTotalDeposits] = useState(0);
+  const [totalMarketDebt, setTotalMarketDebt] = useState(0);
+  const [nftPrice, setNftPrice] = useState(0);
 
   /**
    * @description updates honeyUser | marketReserveInfo | - timeout required
    * @params none
    * @returns honeyUser | marketReserveInfo |
   */
-   useEffect(() => {
+  useEffect(() => {
     setTimeout(() => {
       let depositNoteExchangeRate = 0, loanNoteExchangeRate = 0, nftPrice = 0, cRatio = 1;
       
@@ -75,6 +81,16 @@ const Lend: NextPage = () => {
     }, 3000);
   }, [marketReserveInfo, honeyUser]);
 
+    // sets total market deposits
+    useEffect(() => {
+      if (parsedReserves && parsedReserves[0].reserveState.totalDeposits) {
+        let totMarketDeposits = BnToDecimal(parsedReserves[0].reserveState.totalDeposits, 9, 2);
+        setTotalDeposits(totMarketDeposits);
+      }
+    }, [parsedReserves]);
+
+
+
   /**
    * @description sets state of marketValue by parsing lamports outstanding debt amount to SOL
    * @params none, requires parsedReserves
@@ -90,6 +106,59 @@ const Lend: NextPage = () => {
 
   useEffect(() => {
   }, [reserveHoneyState]);
+
+    // fetches total market positions
+    async function fetchObligations() {
+      let obligations = await honeyMarket.fetchObligations();
+      console.log('obligations:', obligations)
+      setMarketPositions(obligations.length);
+    }
+  
+    useEffect(() => {
+      if(honeyMarket) {
+        fetchObligations();
+      }
+    }, [honeyMarket]);
+
+  // sets the market debt
+  useEffect(() => {
+    const depositTokenMint = new PublicKey('So11111111111111111111111111111111111111112');
+
+    if (honeyReserves) {
+      const depositReserve = honeyReserves.filter((reserve) =>
+        reserve?.data?.tokenMint?.equals(depositTokenMint),
+      )[0];
+
+      const reserveState = depositReserve.data?.reserveState;
+
+      if (reserveState?.outstandingDebt) {
+        let marketDebt = reserveState?.outstandingDebt.div(new BN(10 ** 15)).toNumber();
+        if (marketDebt) {
+          let sum = Number((marketDebt / LAMPORTS_PER_SOL));
+          setTotalMarketDebt(sum);
+        }
+      }
+    }
+
+  }, [honeyReserves]);
+
+  // calculates nft price
+  async function calculateNFTPrice() {
+    if (marketReserveInfo && parsedReserves && honeyMarket) {
+      let nftPrice = await calcNFT(
+        marketReserveInfo,
+        parsedReserves,
+        honeyMarket,
+        sdkConfig.saberHqConnection
+      );
+      setNftPrice(Number(nftPrice));
+    }
+  }
+
+  useEffect(() => {
+    calculateNFTPrice();
+  }, [marketReserveInfo, parsedReserves]);
+
 
   /**
    * @description deposits 1 sol
@@ -228,14 +297,14 @@ const Lend: NextPage = () => {
         key: '0',
         name: 'Honey Eyes',
         interest: 10,
-        available: 100,
-        value: totalMarkDeposits,
+        available: (totalDeposits - totalMarketDebt),
+        value: (marketPositions * nftPrice),
         stats: getPositionData()
       }
     ];
     setTableData(mockData);
     setTableDataFiltered(mockData);
-  }, []);
+  }, [totalDeposits, totalMarketDebt, marketPositions, nftPrice]);
 
   const handleToggle = (checked: boolean) => {
     setIsMyCollectionsFilterEnabled(checked);

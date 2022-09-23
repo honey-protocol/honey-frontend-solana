@@ -17,6 +17,7 @@ import { LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js';
 import { toastResponse } from 'helpers/loanHelpers';
 import SidebarScroll from '../SidebarScroll/SidebarScroll';
 import imagePlaceholder from 'public/images/imagePlaceholder.png';
+import * as stylesRepay from '../RepayForm/RepayForm.css';
 
 const { format: f, formatPercent: fp, formatUsd: fu, parse: p } = formatNumber;
 
@@ -58,12 +59,14 @@ const BorrowForm = (props: BorrowProps) => {
   };
 
   const handleSliderChange = (value: number) => {
+    if (userAllowance == 0) return;
     setSliderValue(value);
-    setValueUSD(value);
-    setValueUSDC(value / usdcPrice);
+    setValueUSD(value / usdcPrice);
+    setValueUSDC(value);
   };
 
   const handleUsdInputChange = (usdValue: number | undefined) => {
+    if (userAllowance == 0) return;
     if (!usdValue) {
       setValueUSD(0);
       setValueUSDC(0);
@@ -76,6 +79,7 @@ const BorrowForm = (props: BorrowProps) => {
   };
 
   const handleUsdcInputChange = (usdcValue: number | undefined) => {
+    if (userAllowance == 0) return;
     if (!usdcValue) {
       setValueUSD(0);
       setValueUSDC(0);
@@ -102,7 +106,12 @@ const BorrowForm = (props: BorrowProps) => {
 
   // if user has an open position, we need to be able to click on the position and borrow against it
   useEffect(() => {
-    if (openPositions?.length) setHasOpenPosition(true);
+    if (openPositions?.length) {
+      const {name, image, mint} = openPositions[0];
+      setSelectedNft({name, img: image, mint});
+      setIsNftSelected(true);
+      setHasOpenPosition(true);
+    }
   }, [openPositions, availableNFTs]);
 
   function handleDepositNFT() {
@@ -113,44 +122,25 @@ const BorrowForm = (props: BorrowProps) => {
   }
 
   function handleBorrow() {
-    // if (hasOpenPosition && openPositions[0]) {
-    //   const { name, mint } = openPositions[0];
-    //   const img = openPositions[0].image;
-    //   setSelectedNft({ name, img, mint });
-    //   setIsNftSelected(true);
-    // }
-    executeBorrow(valueUSD)
+    executeBorrow(valueUSDC)
   }
 
-  useEffect(() => {}, [selectedNft]);
+  useEffect(() => {
+    console.log('selected nft', selectedNft)
+  }, [selectedNft]);
 
   const renderContent = () => {
     if (isNftSelected == false) {
-      if (hasOpenPosition) {
-        return (
-          <>
-            <div className={styles.newBorrowingTitle}>
-              Collateralised position
-            </div>
-            <NftList
-              data={openPositions}
-              selectNFT={selectNFT}
-              nftPrice={nftPrice}
-            />
-          </>
-        );
-      } else {
-        return (
-          <>
-            <div className={styles.newBorrowingTitle}>Choose NFT</div>
-            <NftList
-              data={availableNFTs}
-              selectNFT={selectNFT}
-              nftPrice={nftPrice}
-            />
-          </>
-        );
-      }
+      return (
+        <>
+          <div className={styles.newBorrowingTitle}>Choose NFT</div>
+          <NftList
+            data={availableNFTs}
+            selectNFT={selectNFT}
+            nftPrice={nftPrice}
+          />
+        </>
+      );
     }
 
     return (
@@ -236,6 +226,12 @@ const BorrowForm = (props: BorrowProps) => {
         </div>
 
         <div className={styles.inputs}>
+        <div className={stylesRepay.balance}>
+            <InfoBlock
+              title={'Your USDC balance'}
+              value={f(8120.19)}
+            ></InfoBlock>
+          </div>
           <InputsBlock
             valueUSD={p(f(valueUSD))}
             valueUSDC={p(f(valueUSDC))}
@@ -258,13 +254,12 @@ const BorrowForm = (props: BorrowProps) => {
   };
 
   const renderFooter = () => {
-    if (hasOpenPosition) {
+    if (hasOpenPosition == true) {
       return (
         <div className={styles.buttons}>
           <div className={styles.smallCol}>
             <HoneyButton
               variant="secondary"
-              onClick={() => setIsNftSelected(false)}
             >
               Cancel
             </HoneyButton>

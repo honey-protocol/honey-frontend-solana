@@ -31,8 +31,8 @@ const BidForm: FC<BidsFormsProps> = () => {
 
   const handleSliderChange = (value: number) => {
     setSliderValue(value);
-    setValueUSD(value);
-    setValueUSDC(value / usdcPrice);
+    setValueUSD(value / usdcPrice);
+    setValueUSDC(value);
   };
 
   const handleUsdInputChange = (usdValue: number | undefined) => {

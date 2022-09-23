@@ -54,8 +54,8 @@ const DepositForm = (props: DepositFormProps) => {
 
   const handleSliderChange = (value: number) => {
     setSliderValue(value);
-    setValueUSD(value);
-    setValueUSDC(value / usdcPrice);
+    setValueUSD(value / usdcPrice);
+    setValueUSDC(value);
   };
 
   const handleUsdInputChange = (usdValue: number | undefined) => {
@@ -84,7 +84,7 @@ const DepositForm = (props: DepositFormProps) => {
   };
 
   function handleDeposit() {
-    executeDeposit(valueUSD)
+    executeDeposit(valueUSDC)
   }
 
   return (

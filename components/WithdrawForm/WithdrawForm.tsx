@@ -1,4 +1,4 @@
-import { FC, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import Image from 'next/image';
 import { InfoBlock } from '../InfoBlock/InfoBlock';
 import { InputsBlock } from '../InputsBlock/InputsBlock';
@@ -30,8 +30,8 @@ const WithdrawForm = (props: WithdrawFormProps) => {
 
   const handleSliderChange = (value: number) => {
     setSliderValue(value);
-    setValueUSD(value);
-    setValueUSDC(value / usdcPrice);
+    setValueUSD(value / usdcPrice);
+    setValueUSDC(value);
   };
 
   const handleUsdInputChange = (usdValue: number | undefined) => {
@@ -63,7 +63,7 @@ const WithdrawForm = (props: WithdrawFormProps) => {
   };
 
   function handleWithdraw() {
-    executeWithdraw(valueUSD)
+    executeWithdraw(valueUSDC)
   }
 
   return (
