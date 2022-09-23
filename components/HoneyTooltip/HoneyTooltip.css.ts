@@ -4,7 +4,9 @@ import { typography, vars } from '../../styles/theme.css';
 export const container = style({
   cursor: 'pointer'
 });
-export const tooltip = style({});
+export const tooltip = style({
+  maxWidth: 'unset'
+});
 
 globalStyle(`${tooltip} .ant-tooltip-arrow`, {
   display: 'none'
