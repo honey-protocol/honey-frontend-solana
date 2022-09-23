@@ -21,7 +21,7 @@ import SearchInput from '../../components/SearchInput/SearchInput';
 import { ColumnType } from 'antd/lib/table';
 import HexaBoxContainer from '../../components/HexaBoxContainer/HexaBoxContainer';
 import Image from 'next/image';
-import mockNftImage from '/public/images/mock-collection-image@2x.png';
+import honeyEyes from '/public/nfts/honeyEyes.png';
 import { getColumnSortStatus } from '../../helpers/tableUtils';
 import HoneyButton from '../../components/HoneyButton/HoneyButton';
 import { formatNumber } from '../../helpers/format';
@@ -45,7 +45,7 @@ const Liquidate: NextPage = () => {
     const mockData: LiquidateTableRow[] = [
       {
         key: '0',
-        name: 'Test 2',
+        name: 'Honey Eyes',
         risk: 0.1,
         liqThreshold: 0.75,
         totalDebt: 1000,
@@ -81,23 +81,6 @@ const Liquidate: NextPage = () => {
           }
         ]
       },
-      {
-        key: '1',
-        name: 'Test 3',
-        risk: 0.3,
-        liqThreshold: 0.7,
-        totalDebt: 1500,
-        tvl: 150000,
-        positions: [
-          {
-            name: 'Doodles #1291',
-            riskLvl: 33,
-            untilLiquidation: 1234,
-            debt: 0,
-            estimatedValue: 1000
-          }
-        ]
-      }
     ];
 
     setTableData(mockData);
@@ -158,7 +141,7 @@ const Liquidate: NextPage = () => {
               <div className={style.logoWrapper}>
                 <div className={style.collectionLogo}>
                   <HexaBoxContainer>
-                    <Image src={mockNftImage} />
+                    <Image src={honeyEyes} />
                   </HexaBoxContainer>
                 </div>
               </div>
