@@ -36,7 +36,7 @@ const RepayForm = (props: RepayProps) => {
   const [sliderValue, setSliderValue] = useState(0);
   const [toast, setToast] = useState<HoneyToastProps | null>(null);
 
-  const maxValue = userDebt == 0 ? userDebt : userAllowance;
+  const maxValue = userDebt != 0 ? userDebt : userAllowance;
   const usdcPrice = 0.95;
 
   // Put your validators here
@@ -89,21 +89,22 @@ const RepayForm = (props: RepayProps) => {
 
       // repay function here
       if (btnText == 'Claim NFT') {
+        console.log('mint id', mintId)
         executeWithdrawNFT(mintId);
       } else {
-        executeRepay(valueUSD || 0)
+        executeRepay(valueUSD || 0);
       }
 
       setToast({
         state: 'success',
-        primaryText: 'Repay of 300USDC completed',
+        primaryText: `Repay of ${valueUSD}USD completed`,
         secondaryLink:
           'https://solscan.io/token/GHtgbwy19UPRFDrAbWXrXf7WnqGxeNyAodX6rjKfsnrU?cluster=devnet'
       });
     } catch (error) {
       setToast({
         state: 'error',
-        primaryText: 'Error Repaying 300USDC: Insufficient funds',
+        primaryText: `Error Repaying ${valueUSD}USD: Insufficient funds`,
         secondaryLink:
           'https://solscan.io/token/GHtgbwy19UPRFDrAbWXrXf7WnqGxeNyAodX6rjKfsnrU?cluster=devnet'
       });
@@ -113,7 +114,6 @@ const RepayForm = (props: RepayProps) => {
       }, toastRemoveDelay);
     }
   };
-
 
   useEffect(() => {
   }, [openPositions, userDebt, userAllowance, nftPrice, loanToValue, userUSDCBalance]);
@@ -178,7 +178,7 @@ const RepayForm = (props: RepayProps) => {
 
         <div className={styles.row}>
           <div className={styles.col}>
-            <InfoBlock title={'Risk level'} value={fu(loanToValue)} />
+            <InfoBlock title={'Risk level'} value={fp(loanToValue * 100)} />
           </div>
           <div className={styles.col}>
             <InfoBlock
@@ -191,7 +191,7 @@ const RepayForm = (props: RepayProps) => {
 
         <div className={styles.row}>
           <div className={styles.col}>
-            <InfoBlock title={'Debt'} value={fu(0)} />
+            <InfoBlock title={'Debt'} value={fu(userDebt)} />
           </div>
           <div className={styles.col}>
             <InfoBlock title={'New debt'} value={fu(0)} isDisabled={true} />
