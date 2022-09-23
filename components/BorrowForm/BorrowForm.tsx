@@ -115,7 +115,19 @@ const BorrowForm: FC<BorrowFormProps> = () => {
           <div className={styles.col}>
             <InfoBlock
               value={fu(0)}
-              toolTipLabel="How close a position is to being liquidated."
+              toolTipLabel={
+                <span>
+                  Risk level is measured using the{' '}
+                  <a
+                    className={styles.extLink}
+                    target="blank"
+                    href="https://docs.honey.finance/learn/defi-lending#loan-to-value-ratio"
+                  >
+                    loan-to-value ratio
+                  </a>
+                  , and determines how close a position is to being liquidated.
+                </span>
+              }
               title={
                 <span className={hAlign}>
                   Risk level <div className={questionIcon} />
@@ -169,7 +181,7 @@ const BorrowForm: FC<BorrowFormProps> = () => {
               }
               value={fu(600)}
               footer={<span>No more than {fp(60)}</span>}
-              toolTipLabel="How much debt is available to a borrower"
+              toolTipLabel="Allowance determines how much debt is available to a borrower."
             />
           </div>
           <div className={styles.col}>
