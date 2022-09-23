@@ -41,7 +41,7 @@ export const honeyTableRow = style({
 });
 
 const rowTdSelector = `.ant-table-tbody > .ant-table-row.${honeyTableRow} > td`;
-const rowHoverTdSelector = `.ant-table-tbody > .ant-table-row.${honeyTableRow}:hover > td`;
+// const rowHoverTdSelector = `.ant-table-tbody > .ant-table-row.${honeyTableRow}:hover > td`;
 
 const tdStylesBase = {
   background: vars.colors.white,
@@ -54,10 +54,10 @@ globalStyle(`${bcs(rowTdSelector)}`, {
   ...tdStylesBase
 });
 
-globalStyle(`${bcs(rowHoverTdSelector)}`, {
-  ...tdStylesBase,
-  borderColor: vars.colors.brownLight
-});
+// globalStyle(`${bcs(rowHoverTdSelector)}`, {
+//   ...tdStylesBase,
+//   borderColor: vars.colors.brownLight
+// });
 
 const firstCellBorderAndRadius = {
   borderLeft: `2px solid ${vars.colors.black}`,
@@ -73,25 +73,25 @@ const lastCellBorderAndRadius = {
 globalStyle(`${bcs(`${rowTdSelector}:first-child`)}`, firstCellBorderAndRadius);
 globalStyle(`${bcs(`${rowTdSelector}:last-child`)}`, lastCellBorderAndRadius);
 
-globalStyle(`${bcs(`${rowHoverTdSelector}:first-child`)}`, {
-  ...firstCellBorderAndRadius,
-  borderColor: vars.colors.brownLight
-});
-globalStyle(`${bcs(`${rowHoverTdSelector}:last-child`)}`, {
-  ...lastCellBorderAndRadius,
-  borderColor: vars.colors.brownLight
-});
+// globalStyle(`${bcs(`${rowHoverTdSelector}:first-child`)}`, {
+//   ...firstCellBorderAndRadius,
+//   borderColor: vars.colors.brownLight
+// });
+// globalStyle(`${bcs(`${rowHoverTdSelector}:last-child`)}`, {
+//   ...lastCellBorderAndRadius,
+//   borderColor: vars.colors.brownLight
+// });
 
 export const honeyTableRowShadow = style({});
 const rowShadowTdSelector = `.ant-table-tbody > .ant-table-row.${honeyTableRow}.${honeyTableRowShadow} > td`;
-const rowShadowTdHoverSelector = `.ant-table-tbody > .ant-table-row.${honeyTableRow}.${honeyTableRowShadow}:hover > td`;
+// const rowShadowTdHoverSelector = `.ant-table-tbody > .ant-table-row.${honeyTableRow}.${honeyTableRowShadow}:hover > td`;
 
 globalStyle(rowShadowTdSelector, {
   boxShadow: `4px 4px 0px 0px ${vars.colors.black}`
 });
-globalStyle(rowShadowTdHoverSelector, {
-  boxShadow: `4px 4px 0px 0px ${vars.colors.brownLight}`
-});
+// globalStyle(rowShadowTdHoverSelector, {
+//   boxShadow: `4px 4px 0px 0px ${vars.colors.brownLight}`
+// });
 
 // Styles for Expanded section
 export const expandedSectionRow = style({});
