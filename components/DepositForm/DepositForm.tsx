@@ -1,4 +1,4 @@
-import { FC, useState } from 'react';
+import React, { FC, useState } from 'react';
 import Image from 'next/image';
 import { InfoBlock } from '../InfoBlock/InfoBlock';
 import { InputsBlock } from '../InputsBlock/InputsBlock';
@@ -11,18 +11,52 @@ import HexaBoxContainer from '../HexaBoxContainer/HexaBoxContainer';
 import SidebarScroll from '../SidebarScroll/SidebarScroll';
 import { DepositFormProps } from './types';
 
-const { format: f, formatPercent: fp, formatUsd: fu } = formatNumber;
+const { format: f, formatPercent: fp, formatUsd: fu, parse: p } = formatNumber;
 
 const DepositForm = (props: DepositFormProps) => {
   const { executeDeposit } = props;
 
   const [valueUSD, setValueUSD] = useState<number>();
   const [valueUSDC, setValueUSDC] = useState<number>();
-  const [rangeValue, setRangeValue] = useState(0);
+  const [sliderValue, setSliderValue] = useState(0);
+
+  const maxValue = 1000;
+  const usdcPrice = 0.95;
 
   // Put your validators here
   const isRepayButtonDisabled = () => {
     return false;
+  };
+
+  const handleSliderChange = (value: number) => {
+    setSliderValue(value);
+    setValueUSD(value);
+    setValueUSDC(value / usdcPrice);
+  };
+
+  const handleUsdInputChange = (usdValue: number | undefined) => {
+    if (!usdValue) {
+      setValueUSD(0);
+      setValueUSDC(0);
+      setSliderValue(0);
+      return;
+    }
+    setValueUSD(usdValue);
+    setValueUSDC(usdValue / usdcPrice);
+    setSliderValue(usdValue);
+  };
+
+  const handleUsdcInputChange = (usdcValue: number | undefined) => {
+    if (!usdcValue) {
+      setValueUSD(0);
+      setValueUSDC(0);
+      setSliderValue(0);
+      return;
+    }
+
+    setValueUSD(usdcValue * usdcPrice);
+    setValueUSDC(usdcValue);
+    setSliderValue(usdcValue * usdcPrice);
   };
 
   return (
@@ -85,18 +119,19 @@ const DepositForm = (props: DepositFormProps) => {
 
         <div className={styles.inputs}>
           <InputsBlock
-            valueUSD={valueUSD}
-            valueUSDC={valueUSDC}
-            onChangeUSD={setValueUSD}
-            onChangeUSDC={setValueUSDC}
+            valueUSD={p(f(valueUSD))}
+            valueUSDC={p(f(valueUSDC))}
+            onChangeUSD={handleUsdInputChange}
+            onChangeUSDC={handleUsdcInputChange}
+            maxValue={maxValue}
           />
         </div>
 
         <HoneySlider
-          currentValue={rangeValue}
-          maxValue={1000}
+          currentValue={sliderValue}
+          maxValue={maxValue}
           minAvailableValue={0}
-          onChange={setRangeValue}
+          onChange={handleSliderChange}
         />
       </div>
     </SidebarScroll>

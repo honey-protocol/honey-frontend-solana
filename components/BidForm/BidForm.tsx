@@ -14,16 +14,50 @@ import SidebarScroll from '../SidebarScroll/SidebarScroll';
 
 type BidsFormsProps = {};
 
-const { format: f, formatPercent: fp, formatUsd: fu } = formatNumber;
+const { format: f, formatPercent: fp, formatUsd: fu, parse: p } = formatNumber;
 
 const BidForm: FC<BidsFormsProps> = () => {
   const [valueUSD, setValueUSD] = useState<number>();
   const [valueUSDC, setValueUSDC] = useState<number>();
-  const [rangeValue, setRangeValue] = useState(0);
+  const [sliderValue, setSliderValue] = useState(0);
+
+  const maxValue = 2000;
+  const usdcPrice = 0.95;
 
   // Put your validators here
   const isSubmitButtonDisabled = () => {
     return false;
+  };
+
+  const handleSliderChange = (value: number) => {
+    setSliderValue(value);
+    setValueUSD(value);
+    setValueUSDC(value / usdcPrice);
+  };
+
+  const handleUsdInputChange = (usdValue: number | undefined) => {
+    if (!usdValue) {
+      setValueUSD(0);
+      setValueUSDC(0);
+      setSliderValue(0);
+      return;
+    }
+    setValueUSD(usdValue);
+    setValueUSDC(usdValue / usdcPrice);
+    setSliderValue(usdValue);
+  };
+
+  const handleUsdcInputChange = (usdcValue: number | undefined) => {
+    if (!usdcValue) {
+      setValueUSD(0);
+      setValueUSDC(0);
+      setSliderValue(0);
+      return;
+    }
+
+    setValueUSD(usdcValue * usdcPrice);
+    setValueUSDC(usdcValue);
+    setSliderValue(usdcValue * usdcPrice);
   };
 
   return (
@@ -94,18 +128,19 @@ const BidForm: FC<BidsFormsProps> = () => {
 
         <div className={styles.inputs}>
           <InputsBlock
-            valueUSD={valueUSD}
-            valueUSDC={valueUSDC}
-            onChangeUSD={setValueUSD}
-            onChangeUSDC={setValueUSDC}
+            valueUSD={p(f(valueUSD))}
+            valueUSDC={p(f(valueUSDC))}
+            onChangeUSD={handleUsdInputChange}
+            onChangeUSDC={handleUsdcInputChange}
+            maxValue={maxValue}
           />
         </div>
 
         <HoneySlider
-          currentValue={rangeValue}
+          currentValue={sliderValue}
           maxValue={2000}
           minAvailableValue={0}
-          onChange={setRangeValue}
+          onChange={handleSliderChange}
         />
       </div>
     </SidebarScroll>
