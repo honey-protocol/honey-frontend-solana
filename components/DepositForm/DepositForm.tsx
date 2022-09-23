@@ -1,29 +1,91 @@
-import { FC, useState } from 'react';
+import React, { FC, useState, useEffect } from 'react';
 import Image from 'next/image';
 import { InfoBlock } from '../InfoBlock/InfoBlock';
 import { InputsBlock } from '../InputsBlock/InputsBlock';
 import { HoneySlider } from '../HoneySlider/HoneySlider';
 import * as styles from './DepositForm.css';
 import { formatNumber } from '../../helpers/format';
-import mockNftImage from '/public/images/mock-collection-image@2x.png';
+import honeyEyes from '/public/nfts/honeyEyes.png';
 import HoneyButton from 'components/HoneyButton/HoneyButton';
 import HexaBoxContainer from '../HexaBoxContainer/HexaBoxContainer';
 import SidebarScroll from '../SidebarScroll/SidebarScroll';
 import { DepositFormProps } from './types';
+import { PublicKey, LAMPORTS_PER_SOL } from '@solana/web3.js';
+import { ConfigureSDK } from 'helpers/loanHelpers';
 
-const { format: f, formatPercent: fp, formatUsd: fu } = formatNumber;
+const { format: f, formatPercent: fp, formatUsd: fu, parse: p } = formatNumber;
 
 const DepositForm = (props: DepositFormProps) => {
-  const { executeDeposit } = props;
+  const { executeDeposit, userTotalDeposits } = props;
 
-  const [valueUSD, setValueUSD] = useState<number>();
-  const [valueUSDC, setValueUSDC] = useState<number>();
-  const [rangeValue, setRangeValue] = useState(0);
+  const [valueUSD, setValueUSD] = useState<number>(0);
+  const [valueUSDC, setValueUSDC] = useState<number>(0);
+  const [sliderValue, setSliderValue] = useState(0);
+  const [userWalletBalance, setUserWalletBalance] = useState<number>(0);
+
+  const sdkConfig = ConfigureSDK();
+  let walletPK = sdkConfig.sdkWallet?.publicKey;
+
+  async function fetchWalletBalance(key: PublicKey) {
+    try {
+      const userBalance = await sdkConfig.saberHqConnection.getBalance(key) / LAMPORTS_PER_SOL;
+      setUserWalletBalance(userBalance)
+      console.log('this is user balance', userBalance); 
+    } catch (error) {
+      console.log('Error', error);
+    }
+  }
+  
+  useEffect(() => {
+    if (walletPK) {
+      fetchWalletBalance(walletPK)
+    }
+  }, [walletPK]);
+
+  useEffect(() => {}, [userWalletBalance])
+
+  const maxValue = userWalletBalance;
+  const usdcPrice = 0.95;
 
   // Put your validators here
   const isRepayButtonDisabled = () => {
     return false;
   };
+
+  const handleSliderChange = (value: number) => {
+    setSliderValue(value);
+    setValueUSD(value);
+    setValueUSDC(value / usdcPrice);
+  };
+
+  const handleUsdInputChange = (usdValue: number | undefined) => {
+    if (!usdValue) {
+      setValueUSD(0);
+      setValueUSDC(0);
+      setSliderValue(0);
+      return;
+    }
+    setValueUSD(usdValue);
+    setValueUSDC(usdValue / usdcPrice);
+    setSliderValue(usdValue);
+  };
+
+  const handleUsdcInputChange = (usdcValue: number | undefined) => {
+    if (!usdcValue) {
+      setValueUSD(0);
+      setValueUSDC(0);
+      setSliderValue(0);
+      return;
+    }
+
+    setValueUSD(usdcValue * usdcPrice);
+    setValueUSDC(usdcValue);
+    setSliderValue(usdcValue * usdcPrice);
+  };
+
+  function handleDeposit() {
+    executeDeposit(valueUSD)
+  }
 
   return (
     <SidebarScroll
@@ -37,6 +99,7 @@ const DepositForm = (props: DepositFormProps) => {
               variant="primary"
               disabled={isRepayButtonDisabled()}
               isFluid={true}
+              onClick={handleDeposit}
             >
               Deposit
             </HoneyButton>
@@ -48,10 +111,10 @@ const DepositForm = (props: DepositFormProps) => {
         <div className={styles.nftInfo}>
           <div className={styles.nftImage}>
             <HexaBoxContainer>
-              <Image src={mockNftImage} />
+              <Image src={honeyEyes} />
             </HexaBoxContainer>
           </div>
-          <div className={styles.nftName}>Doodles</div>
+          <div className={styles.nftName}>Honey Eyes</div>
         </div>
         <div className={styles.row}>
           <div className={styles.col}>
@@ -79,24 +142,25 @@ const DepositForm = (props: DepositFormProps) => {
 
         <div className={styles.row}>
           <div className={styles.col}>
-            <InfoBlock title={'Your deposits'} value={fu(2102)} />
+            <InfoBlock title={'Your deposits'} value={fu(userTotalDeposits)} />
           </div>
         </div>
 
         <div className={styles.inputs}>
           <InputsBlock
-            valueUSD={valueUSD}
-            valueUSDC={valueUSDC}
-            onChangeUSD={setValueUSD}
-            onChangeUSDC={setValueUSDC}
+            valueUSD={p(f(valueUSD))}
+            valueUSDC={p(f(valueUSDC))}
+            onChangeUSD={handleUsdInputChange}
+            onChangeUSDC={handleUsdcInputChange}
+            maxValue={maxValue}
           />
         </div>
 
         <HoneySlider
-          currentValue={rangeValue}
-          maxValue={1000}
+          currentValue={sliderValue}
+          maxValue={maxValue}
           minAvailableValue={0}
-          onChange={setRangeValue}
+          onChange={handleSliderChange}
         />
       </div>
     </SidebarScroll>

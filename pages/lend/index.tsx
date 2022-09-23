@@ -398,6 +398,7 @@ const Lend: NextPage = () => {
           collectionId="s"
           executeDeposit={executeDeposit}
           executeWithdraw={executeWithdraw}
+          userTotalDeposits={userTotalDeposits}
         />
       </Sider>
     </LayoutRedesign>

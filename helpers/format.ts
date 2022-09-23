@@ -49,7 +49,9 @@ export const formatNumber = {
   formatPercentRounded: (val: number, precision = 3) => {
     const power = Math.pow(10, precision);
     const precisedValue = Math.round(val * power) / power;
-    return Number.isInteger(precisedValue) ? `${precisedValue}%` : `${formatNumber.format(precisedValue)}%`;
+    return Number.isInteger(precisedValue)
+      ? `${precisedValue}%`
+      : `${formatNumber.format(precisedValue)}%`;
   },
 
   /**
@@ -58,6 +60,27 @@ export const formatNumber = {
    */
   formatUsd: (val?: number) => {
     return `$ ${formatNumber.format(val)}`;
+  },
+
+  /**
+   * Parse a formatted number to a float.
+   * @param {string} stringNumber - the localized number
+   */
+  parse: (stringNumber: string) => {
+    const decimalSeparator = formatNumber
+      .format(1.1)
+      .replace(/\p{Number}/gu, '');
+
+    const thousandSeparator = formatNumber
+      .format(11111)
+      .replace(/\p{Number}/gu, '')
+      .replace(new RegExp('\\' + decimalSeparator, 'g'), '');
+
+    return parseFloat(
+      stringNumber
+        .replace(new RegExp('\\' + thousandSeparator, 'g'), '')
+        .replace(new RegExp('\\' + decimalSeparator), '.')
+    );
   }
 };
 
@@ -65,9 +88,9 @@ export const dateFromTimestamp = (timestamp: number | string) => {
   const time = new Date(timestamp);
 
   const date = time.toLocaleDateString('en-GB', {
-    day:   'numeric',
+    day: 'numeric',
     month: 'short',
-    year:  'numeric',
+    year: 'numeric'
   });
 
   return `${date}`;
