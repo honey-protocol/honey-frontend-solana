@@ -107,7 +107,7 @@ const WithdrawForm = (props: WithdrawFormProps) => {
               toolTipLabel="APY is measured by compounding the weekly interest rate"
               footer={
                 <span className={hAlign}>
-                  Estimated APR <div className={questionIcon} />
+                  Estimated APY <div className={questionIcon} />
                 </span>
               }
             />

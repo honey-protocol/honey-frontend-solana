@@ -9,7 +9,7 @@ interface InfoBlockProps {
   footer?: ReactElement;
   valueSize?: 'normal' | 'big';
   isDisabled?: boolean;
-  toolTipLabel?: string;
+  toolTipLabel?: string | ReactElement;
 }
 
 export const InfoBlock: FC<InfoBlockProps> = ({

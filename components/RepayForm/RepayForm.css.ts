@@ -76,3 +76,21 @@ export const bigCol = style([
     flex: '1 0 auto'
   }
 ]);
+
+export const extLink = style({
+  color: vars.colors.brownMiddle,
+  ':hover': {
+    background: 'transparent',
+    color: vars.colors.brownDark
+  },
+  ':active': {
+    background: 'transparent',
+    color: vars.colors.brownDark,
+    borderColor: 'transparent'
+  },
+  ':focus': {
+    background: 'transparent',
+    color: vars.colors.brownDark,
+    borderColor: 'transparent'
+  }
+});

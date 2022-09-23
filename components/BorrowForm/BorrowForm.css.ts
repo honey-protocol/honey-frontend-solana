@@ -81,3 +81,21 @@ export const newBorrowingTitle = style([
     marginBottom: 18
   }
 ]);
+
+export const extLink = style({
+  color: vars.colors.brownMiddle,
+  ':hover': {
+    background: 'transparent',
+    color: vars.colors.brownDark
+  },
+  ':active': {
+    background: 'transparent',
+    color: vars.colors.brownDark,
+    borderColor: 'transparent'
+  },
+  ':focus': {
+    background: 'transparent',
+    color: vars.colors.brownDark,
+    borderColor: 'transparent'
+  }
+});
