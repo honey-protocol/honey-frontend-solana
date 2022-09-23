@@ -34,11 +34,12 @@ const BorrowForm = (props: BorrowProps) => {
     executeDepositNFT,
     executeBorrow,
     userAllowance,
-    userDebt
+    userDebt,
+    loanToValue
   } = props;
 
-  const [valueUSD, setValueUSD] = useState<number>();
-  const [valueUSDC, setValueUSDC] = useState<number>();
+  const [valueUSD, setValueUSD] = useState<number>(0);
+  const [valueUSDC, setValueUSDC] = useState<number>(0);
   const [isNftSelected, setIsNftSelected] = useState(false);
   const [selectedNft, setSelectedNft] = useState<NFT | null>(null);
   const [hasOpenPosition, setHasOpenPosition] = useState(false);
@@ -112,12 +113,13 @@ const BorrowForm = (props: BorrowProps) => {
   }
 
   function handleBorrow() {
-    if (hasOpenPosition && openPositions[0]) {
-      const { name, mint } = openPositions[0];
-      const img = openPositions[0].image;
-      setSelectedNft({ name, img, mint });
-      setIsNftSelected(true);
-    }
+    // if (hasOpenPosition && openPositions[0]) {
+    //   const { name, mint } = openPositions[0];
+    //   const img = openPositions[0].image;
+    //   setSelectedNft({ name, img, mint });
+    //   setIsNftSelected(true);
+    // }
+    executeBorrow(valueUSD)
   }
 
   useEffect(() => {}, [selectedNft]);
@@ -184,7 +186,7 @@ const BorrowForm = (props: BorrowProps) => {
 
         <div className={styles.row}>
           <div className={styles.col}>
-            <InfoBlock title={'Risk level'} value={fu(0)} />
+            <InfoBlock title={'Risk level'} value={fp(loanToValue * 100)} />
             <HoneySlider
               currentValue={0}
               maxValue={maxValue}
@@ -213,7 +215,7 @@ const BorrowForm = (props: BorrowProps) => {
 
         <div className={styles.row}>
           <div className={styles.col}>
-            <InfoBlock title={'Debt'} value={fu(0)} />
+            <InfoBlock title={'Debt'} value={fu(userDebt)} />
           </div>
           <div className={styles.col}>
             <InfoBlock title={'New debt'} value={fu(0)} isDisabled={true} />
