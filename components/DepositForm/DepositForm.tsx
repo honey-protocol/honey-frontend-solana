@@ -12,6 +12,8 @@ import SidebarScroll from '../SidebarScroll/SidebarScroll';
 import { DepositFormProps } from './types';
 import { PublicKey, LAMPORTS_PER_SOL } from '@solana/web3.js';
 import { ConfigureSDK } from 'helpers/loanHelpers';
+import { questionIcon } from 'styles/icons.css';
+import { hAlign } from 'styles/common.css';
 
 const { format: f, formatPercent: fp, formatUsd: fu, parse: p } = formatNumber;
 
@@ -128,14 +130,24 @@ const DepositForm = (props: DepositFormProps) => {
             <InfoBlock
               value={fp(20)}
               valueSize="big"
-              footer={<span>Estimated APR</span>}
+              toolTipLabel="APY is measured by compounding the weekly interest rate"
+              footer={
+                <span className={hAlign}>
+                  Estimated APY <div className={questionIcon} />
+                </span>
+              }
             />
           </div>
           <div className={styles.col}>
             <InfoBlock
               value={fp(80)}
               valueSize="big"
-              footer={<span>Utilization rate</span>}
+              toolTipLabel=" Amount of supplied liquidity currently being borrowed"
+              footer={
+                <span className={hAlign}>
+                  Utilization rate <div className={questionIcon} />
+                </span>
+              }
             />
           </div>
         </div>

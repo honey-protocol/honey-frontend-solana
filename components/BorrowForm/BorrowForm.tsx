@@ -18,6 +18,8 @@ import { toastResponse } from 'helpers/loanHelpers';
 import SidebarScroll from '../SidebarScroll/SidebarScroll';
 import imagePlaceholder from 'public/images/imagePlaceholder.png';
 import * as stylesRepay from '../RepayForm/RepayForm.css';
+import { hAlign } from 'styles/common.css';
+import { questionIcon } from 'styles/icons.css';
 
 const { format: f, formatPercent: fp, formatUsd: fu, parse: p } = formatNumber;
 
@@ -177,6 +179,27 @@ const BorrowForm = (props: BorrowProps) => {
         <div className={styles.row}>
           <div className={styles.col}>
             <InfoBlock title={'Risk level'} value={fp(loanToValue * 100)} />
+            <InfoBlock
+              value={fu(0)}
+              toolTipLabel={
+                <span>
+                  Risk level is measured using the{' '}
+                  <a
+                    className={styles.extLink}
+                    target="blank"
+                    href="https://docs.honey.finance/learn/defi-lending#loan-to-value-ratio"
+                  >
+                    loan-to-value ratio
+                  </a>
+                  , and determines how close a position is to being liquidated.
+                </span>
+              }
+              title={
+                <span className={hAlign}>
+                  Risk level <div className={questionIcon} />
+                </span>
+              }
+            />
             <HoneySlider
               currentValue={0}
               maxValue={maxValue}
@@ -215,9 +238,14 @@ const BorrowForm = (props: BorrowProps) => {
         <div className={styles.row}>
           <div className={styles.col}>
             <InfoBlock
-              title={'Allowance'}
               value={fu(userAllowance)}
-              footer={<>No more than {fp(60)}</>}
+              title={
+                <span className={hAlign}>
+                  Allowance <div className={questionIcon} />
+                </span>
+              }
+              footer={<span>No more than {fp(60)}</span>}
+              toolTipLabel="Allowance determines how much debt is available to a borrower."
             />
           </div>
           <div className={styles.col}>

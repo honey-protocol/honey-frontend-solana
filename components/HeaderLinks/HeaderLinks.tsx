@@ -47,7 +47,7 @@ export const links = [
 ];
 
 const HeaderDropdownMenu = () => {
-  const [linksDisplayed, setLinkDisplayed] = useState(7);
+  const [linksDisplayed, setLinkDisplayed] = useState(6);
   const router = useRouter();
   const MoreMenu = (
     <Menu
@@ -69,7 +69,7 @@ const HeaderDropdownMenu = () => {
     const setLinksToDisplay = () => {
       const width = window.innerWidth;
       if (width > 1100) {
-        setLinkDisplayed(7);
+        setLinkDisplayed(6);
       }
       if (width < 1100 && width > 768) {
         setLinkDisplayed(4);

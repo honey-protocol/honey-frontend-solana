@@ -16,6 +16,9 @@ import { RepayProps } from './types';
 import SidebarScroll from '../SidebarScroll/SidebarScroll';
 import { LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js';
 import { isNil } from '../../helpers/utils';
+import { hAlign } from 'styles/common.css';
+import { questionIcon } from 'styles/icons.css';
+import cs from 'classnames';
 
 const { format: f, formatPercent: fp, formatUsd: fu, parse: p } = formatNumber;
 
@@ -180,6 +183,27 @@ const RepayForm = (props: RepayProps) => {
         <div className={styles.row}>
           <div className={styles.col}>
             <InfoBlock title={'Risk level'} value={fp(loanToValue * 100)} />
+            <InfoBlock
+              value={fu(loanToValue)}
+              toolTipLabel={
+                <span>
+                  Risk level is measured using the{' '}
+                  <a
+                    className={styles.extLink}
+                    target="blank"
+                    href="https://docs.honey.finance/learn/defi-lending#loan-to-value-ratio"
+                  >
+                    loan-to-value ratio
+                  </a>
+                  , and determines how close a position is to being liquidated.
+                </span>
+              }
+              title={
+                <span className={hAlign}>
+                  Risk level <div className={questionIcon} />
+                </span>
+              }
+            />
           </div>
           <div className={styles.col}>
             <InfoBlock
@@ -202,9 +226,14 @@ const RepayForm = (props: RepayProps) => {
         <div className={styles.row}>
           <div className={styles.col}>
             <InfoBlock
-              title={'Allowance'}
               value={fu(userAllowance)}
-              footer={<>No more than {fp(60)}</>}
+              title={
+                <span className={hAlign}>
+                  Allowance <div className={questionIcon} />
+                </span>
+              }
+              footer={<span>No more than {fp(60)}</span>}
+              toolTipLabel="Allowance determines how much debt is available to a borrower."
             />
           </div>
           <div className={styles.col}>
