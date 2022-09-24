@@ -39,11 +39,11 @@ const Bar: FC<BarsProps> = ({ data = [], size, title }) => {
 
   const dataInitialStyles: VictoryStyleObject = {
     fill: vars.colors.white,
-    stroke: isBarHovered ? vars.colors.grayDark : vars.colors.black,
+    stroke: vars.colors.black,
     strokeWidth: 2,
-    filter: isBarHovered ? `drop-shadow(2px 2px 0px ${vars.colors.grayDark})` : `drop-shadow(2px 2px 0px ${vars.colors.black})`,
-    cursor: 'pointer',
-  }
+    filter: `drop-shadow(2px 2px 0px ${vars.colors.black})`,
+    cursor: 'pointer'
+  };
 
   const dataByPeriod = useMemo(() => {
     const startDate = getStartDate(period);
