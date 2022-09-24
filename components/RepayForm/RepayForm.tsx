@@ -8,14 +8,11 @@ import { formatNumber } from '../../helpers/format';
 import honeyEyes from '/public/nfts/honeyEyes.png';
 import HoneyButton from 'components/HoneyButton/HoneyButton';
 import HexaBoxContainer from '../HexaBoxContainer/HexaBoxContainer';
-import HoneyToast, {
-  HoneyToastProps,
-  toastRemoveDelay
-} from 'components/HoneyToast/HoneyToast';
 import { RepayProps } from './types';
 import SidebarScroll from '../SidebarScroll/SidebarScroll';
 import { LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js';
 import { isNil } from '../../helpers/utils';
+import useToast from 'hooks/useToast';
 
 const { format: f, formatPercent: fp, formatUsd: fu, parse: p } = formatNumber;
 
@@ -34,7 +31,7 @@ const RepayForm = (props: RepayProps) => {
   const [valueUSD, setValueUSD] = useState<number>();
   const [valueUSDC, setValueUSDC] = useState<number>();
   const [sliderValue, setSliderValue] = useState(0);
-  const [toast, setToast] = useState<HoneyToastProps | null>(null);
+  const { toast, ToastComponent } = useToast();
 
   const maxValue = userDebt != 0 ? userDebt : userAllowance;
   const usdcPrice = 0.95;
@@ -81,54 +78,45 @@ const RepayForm = (props: RepayProps) => {
     console.log('this is mintId', mintId);
 
     try {
-      setToast({
-        state: 'loading',
-        primaryText: 'Repay transaction in progress',
-        secondaryLink: ''
-      });
+      toast.processing('Repay transaction in progress');
 
       // repay function here
       if (btnText == 'Claim NFT') {
-        console.log('mint id', mintId)
+        console.log('mint id', mintId);
         executeWithdrawNFT(mintId);
       } else {
         executeRepay(valueUSDC || 0);
       }
 
-      setToast({
-        state: 'success',
-        primaryText: `Repay of ${valueUSD}USD completed`,
-        secondaryLink:
-          'https://solscan.io/token/GHtgbwy19UPRFDrAbWXrXf7WnqGxeNyAodX6rjKfsnrU?cluster=devnet'
-      });
+      toast.success(
+        `Repay of ${valueUSD}USD completed`,
+        'https://solscan.io/token/GHtgbwy19UPRFDrAbWXrXf7WnqGxeNyAodX6rjKfsnrU?cluster=devnet'
+      );
     } catch (error) {
-      setToast({
-        state: 'error',
-        primaryText: `Error Repaying ${valueUSD}USD: Insufficient funds`,
-        secondaryLink:
-          'https://solscan.io/token/GHtgbwy19UPRFDrAbWXrXf7WnqGxeNyAodX6rjKfsnrU?cluster=devnet'
-      });
+      toast.error(
+        `Error Repaying ${valueUSD}USD: Insufficient funds`,
+        'https://solscan.io/token/GHtgbwy19UPRFDrAbWXrXf7WnqGxeNyAodX6rjKfsnrU?cluster=devnet'
+      );
     } finally {
-      setTimeout(() => {
-        setToast(null);
-      }, toastRemoveDelay);
+      toast.clear();
     }
   };
 
-  useEffect(() => {
-  }, [openPositions, userDebt, userAllowance, nftPrice, loanToValue, userUSDCBalance]);
-
+  useEffect(() => {}, [
+    openPositions,
+    userDebt,
+    userAllowance,
+    nftPrice,
+    loanToValue,
+    userUSDCBalance
+  ]);
 
   return (
     <SidebarScroll
       footer={
         <>
           {toast?.state ? (
-            <HoneyToast
-              state={toast.state}
-              primaryText={toast.primaryText}
-              secondaryLink={toast.secondaryLink}
-            />
+            ToastComponent
           ) : (
             <div className={styles.buttons}>
               <div className={styles.smallCol}>
