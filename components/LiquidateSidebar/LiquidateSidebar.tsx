@@ -5,6 +5,8 @@ import HoneyTabs, { HoneyTabItem } from '../HoneyTabs/HoneyTabs';
 import EmptyStateDetails from '../EmptyStateDetails/EmptyStateDetails';
 import BidForm from '../BidForm/BidForm';
 import BidsList from '../BidsList/BidsList';
+import { useConnectedWallet } from '@saberhq/use-solana';
+import { useWalletKit } from '@gokiprotocol/walletkit';
 
 const items: [HoneyTabItem, HoneyTabItem] = [
   { label: 'Place a bid', key: 'bid' },
@@ -14,7 +16,8 @@ const items: [HoneyTabItem, HoneyTabItem] = [
 type Tab = 'bid' | 'current';
 
 const LiquidateSidebar = (props: LendSidebarProps) => {
-  const wallet = true;
+  const wallet = useConnectedWallet();
+  const { connect } = useWalletKit();
   const { collectionId } = props;
   const [activeTab, setActiveTab] = useState<Tab>('bid');
 
@@ -35,6 +38,7 @@ const LiquidateSidebar = (props: LendSidebarProps) => {
             title="You didn’t connect any wallet yet"
             description="First, choose a NFT collection"
             btnTitle="CONNECT WALLET"
+            onBtnClick={connect}
           />
         ) : !collectionId ? (
           <EmptyStateDetails
