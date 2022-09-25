@@ -102,7 +102,7 @@ const RepayForm = (props: RepayProps) => {
       footer={
         <>
           {toast?.state ? (
-            ToastComponent
+            <ToastComponent />
           ) : (
             <div className={styles.buttons}>
               <div className={styles.smallCol}>
