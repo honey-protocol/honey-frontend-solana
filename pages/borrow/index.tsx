@@ -527,9 +527,9 @@ const Markets: NextPage = () => {
       );
 
       if (tx[0] == 'SUCCESS') {
-        toast.success('Withdraw success', tx[1][0]);
         reFetchNFTs({});
         await refreshPositions();
+        toast.success('Withdraw success', tx[1][0]);
       }
     } catch (error) {
       toast.error('Error withdraw NFT', 'tansaction link if available');
@@ -560,8 +560,6 @@ const Markets: NextPage = () => {
       );
 
       if (tx[0] == 'SUCCESS') {
-        toast.success('Borrow success', tx[1][0]);
-
         let refreshedHoneyReserves = await honeyReserves[0].sendRefreshTx();
         const latestBlockHash =
           await sdkConfig.saberHqConnection.getLatestBlockhash();
@@ -578,6 +576,7 @@ const Markets: NextPage = () => {
             ? setReserveHoneyState(1)
             : setReserveHoneyState(0);
         });
+        toast.success('Borrow success', tx[1][0]);
       } else {
         return toast.error('Borrow failed');
       }
@@ -599,6 +598,7 @@ const Markets: NextPage = () => {
       const repayTokenMint = new PublicKey(
         'So11111111111111111111111111111111111111112'
       );
+      toast.processing();
       const tx = await repay(
         honeyUser,
         val * LAMPORTS_PER_SOL,

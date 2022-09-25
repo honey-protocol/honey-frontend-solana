@@ -14,6 +14,7 @@ import { PublicKey, LAMPORTS_PER_SOL } from '@solana/web3.js';
 import { ConfigureSDK } from 'helpers/loanHelpers';
 import { questionIcon } from 'styles/icons.css';
 import { hAlign } from 'styles/common.css';
+import useToast from 'hooks/useToast';
 
 const { format: f, formatPercent: fp, formatUsd: fu, parse: p } = formatNumber;
 
@@ -24,27 +25,29 @@ const DepositForm = (props: DepositFormProps) => {
   const [valueUSDC, setValueUSDC] = useState<number>(0);
   const [sliderValue, setSliderValue] = useState(0);
   const [userWalletBalance, setUserWalletBalance] = useState<number>(0);
+  const { toast, ToastComponent } = useToast();
 
   const sdkConfig = ConfigureSDK();
   let walletPK = sdkConfig.sdkWallet?.publicKey;
 
   async function fetchWalletBalance(key: PublicKey) {
     try {
-      const userBalance = await sdkConfig.saberHqConnection.getBalance(key) / LAMPORTS_PER_SOL;
-      setUserWalletBalance(userBalance)
-      console.log('this is user balance', userBalance); 
+      const userBalance =
+        (await sdkConfig.saberHqConnection.getBalance(key)) / LAMPORTS_PER_SOL;
+      setUserWalletBalance(userBalance);
+      console.log('this is user balance', userBalance);
     } catch (error) {
       console.log('Error', error);
     }
   }
-  
+
   useEffect(() => {
     if (walletPK) {
-      fetchWalletBalance(walletPK)
+      fetchWalletBalance(walletPK);
     }
   }, [walletPK]);
 
-  useEffect(() => {}, [userWalletBalance])
+  useEffect(() => {}, [userWalletBalance]);
 
   const maxValue = userWalletBalance;
   const usdcPrice = 0.95;
@@ -86,27 +89,31 @@ const DepositForm = (props: DepositFormProps) => {
   };
 
   function handleDeposit() {
-    executeDeposit(valueUSDC)
+    executeDeposit(valueUSDC, toast);
   }
 
   return (
     <SidebarScroll
       footer={
-        <div className={styles.buttons}>
-          <div className={styles.smallCol}>
-            <HoneyButton variant="tertiary">Cancel</HoneyButton>
+        toast.state ? (
+          ToastComponent
+        ) : (
+          <div className={styles.buttons}>
+            <div className={styles.smallCol}>
+              <HoneyButton variant="tertiary">Cancel</HoneyButton>
+            </div>
+            <div className={styles.bigCol}>
+              <HoneyButton
+                variant="primary"
+                disabled={isRepayButtonDisabled()}
+                isFluid={true}
+                onClick={handleDeposit}
+              >
+                Deposit
+              </HoneyButton>
+            </div>
           </div>
-          <div className={styles.bigCol}>
-            <HoneyButton
-              variant="primary"
-              disabled={isRepayButtonDisabled()}
-              isFluid={true}
-              onClick={handleDeposit}
-            >
-              Deposit
-            </HoneyButton>
-          </div>
-        </div>
+        )
       }
     >
       <div className={styles.depositForm}>
