@@ -17,10 +17,7 @@ export interface ToastProps {
 }
 
 const useToast = () => {
-  const [toast, setToast] = useState<HoneyToastProps | null>({
-    state: 'loading',
-    primaryText: ''
-  });
+  const [toast, setToast] = useState<HoneyToastProps | null>(null);
 
   const ToastComponent = () => {
     if (!toast?.state) return;
