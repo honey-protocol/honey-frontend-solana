@@ -607,7 +607,6 @@ const Markets: NextPage = () => {
       );
 
       if (tx[0] == 'SUCCESS') {
-        toast.success('Repay success', tx[0][1]);
         let refreshedHoneyReserves = await honeyReserves[0].sendRefreshTx();
         const latestBlockHash =
           await sdkConfig.saberHqConnection.getLatestBlockhash();
@@ -624,6 +623,7 @@ const Markets: NextPage = () => {
             ? setReserveHoneyState(1)
             : setReserveHoneyState(0);
         });
+        toast.success('Repay success', tx[0][1]);
       } else {
         return toast.error('Repay failed', 'link if available');
       }
