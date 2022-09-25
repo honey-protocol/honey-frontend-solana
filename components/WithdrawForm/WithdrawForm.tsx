@@ -13,6 +13,7 @@ import SidebarScroll from '../SidebarScroll/SidebarScroll';
 import { WithdrawFormProps } from './types';
 import { questionIcon } from 'styles/icons.css';
 import { hAlign } from 'styles/common.css';
+import useToast from 'hooks/useToast';
 
 const { format: f, formatPercent: fp, formatUsd: fu, parse: p } = formatNumber;
 
@@ -21,7 +22,8 @@ const WithdrawForm = (props: WithdrawFormProps) => {
   const [valueUSD, setValueUSD] = useState<number>(0);
   const [valueUSDC, setValueUSDC] = useState<number>(0);
   const [sliderValue, setSliderValue] = useState(0);
-  
+  const { toast, ToastComponent } = useToast();
+
   const maxValue = userTotalDeposits;
   const usdcPrice = 0.95;
 
@@ -65,27 +67,31 @@ const WithdrawForm = (props: WithdrawFormProps) => {
   };
 
   function handleWithdraw() {
-    executeWithdraw(valueUSDC)
+    executeWithdraw(valueUSDC, toast);
   }
 
   return (
     <SidebarScroll
       footer={
-        <div className={styles.buttons}>
-          <div className={styles.smallCol}>
-            <HoneyButton variant="tertiary">Cancel</HoneyButton>
+        toast?.state ? (
+          <ToastComponent />
+        ) : (
+          <div className={styles.buttons}>
+            <div className={styles.smallCol}>
+              <HoneyButton variant="tertiary">Cancel</HoneyButton>
+            </div>
+            <div className={styles.bigCol}>
+              <HoneyButton
+                variant="primary"
+                disabled={isRepayButtonDisabled()}
+                isFluid={true}
+                onClick={handleWithdraw}
+              >
+                Withdraw
+              </HoneyButton>
+            </div>
           </div>
-          <div className={styles.bigCol}>
-            <HoneyButton
-              variant="primary"
-              disabled={isRepayButtonDisabled()}
-              isFluid={true}
-              onClick={handleWithdraw}
-            >
-              Withdraw
-            </HoneyButton>
-          </div>
-        </div>
+        )
       }
     >
       <div className={styles.withdrawForm}>

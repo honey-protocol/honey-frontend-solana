@@ -1,5 +1,4 @@
 export type DepositFormProps = {
-    userTotalDeposits: number;
-    executeDeposit: (val: number) => void;
-  };
-  
+  userTotalDeposits: number;
+  executeDeposit: (val: number, toast: any) => void;
+};

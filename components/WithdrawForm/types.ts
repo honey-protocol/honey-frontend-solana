@@ -1,5 +1,4 @@
 export type WithdrawFormProps = {
-    userTotalDeposits: number;
-    executeWithdraw: (val: number) => void;
-  };
-  
+  userTotalDeposits: number;
+  executeWithdraw: (val: number, toast: any) => void;
+};

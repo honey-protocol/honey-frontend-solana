@@ -20,6 +20,7 @@ import imagePlaceholder from 'public/images/imagePlaceholder.png';
 import * as stylesRepay from '../RepayForm/RepayForm.css';
 import { hAlign } from 'styles/common.css';
 import { questionIcon } from 'styles/icons.css';
+import useToast from 'hooks/useToast';
 
 const { format: f, formatPercent: fp, formatUsd: fu, parse: p } = formatNumber;
 
@@ -47,6 +48,7 @@ const BorrowForm = (props: BorrowProps) => {
   const [selectedNft, setSelectedNft] = useState<NFT | null>(null);
   const [hasOpenPosition, setHasOpenPosition] = useState(false);
   const [sliderValue, setSliderValue] = useState(0);
+  const { toast, ToastComponent } = useToast();
 
   // Only for test purposes
   // const isNftSelected = true;
@@ -109,8 +111,8 @@ const BorrowForm = (props: BorrowProps) => {
   // if user has an open position, we need to be able to click on the position and borrow against it
   useEffect(() => {
     if (openPositions?.length) {
-      const {name, image, mint} = openPositions[0];
-      setSelectedNft({name, img: image, mint});
+      const { name, image, mint } = openPositions[0];
+      setSelectedNft({ name, img: image, mint });
       setIsNftSelected(true);
       setHasOpenPosition(true);
     }
@@ -120,15 +122,15 @@ const BorrowForm = (props: BorrowProps) => {
     if (selectedNft && selectedNft.mint.length < 1)
       return toastResponse('ERROR', 'Please select an NFT', 'ERROR');
     if (selectedNft && selectedNft.mint.length > 1)
-      executeDepositNFT(selectedNft.mint);
+      executeDepositNFT(selectedNft.mint, toast);
   }
 
   function handleBorrow() {
-    executeBorrow(valueUSDC)
+    executeBorrow(valueUSDC, toast);
   }
 
   useEffect(() => {
-    console.log('selected nft', selectedNft)
+    console.log('selected nft', selectedNft);
   }, [selectedNft]);
 
   const renderContent = () => {
@@ -178,9 +180,8 @@ const BorrowForm = (props: BorrowProps) => {
 
         <div className={styles.row}>
           <div className={styles.col}>
-            <InfoBlock title={'Risk level'} value={fp(loanToValue * 100)} />
             <InfoBlock
-              value={fu(0)}
+              value={fp(loanToValue * 100)}
               toolTipLabel={
                 <span>
                   Risk level is measured using the{' '}
@@ -254,7 +255,7 @@ const BorrowForm = (props: BorrowProps) => {
         </div>
 
         <div className={styles.inputs}>
-        <div className={stylesRepay.balance}>
+          <div className={stylesRepay.balance}>
             <InfoBlock
               title={'Your USDC balance'}
               value={f(8120.19)}
@@ -282,50 +283,44 @@ const BorrowForm = (props: BorrowProps) => {
   };
 
   const renderFooter = () => {
-    if (hasOpenPosition == true) {
-      return (
-        <div className={styles.buttons}>
-          <div className={styles.smallCol}>
-            <HoneyButton
-              variant="secondary"
-            >
-              Cancel
-            </HoneyButton>
-          </div>
-          <div className={styles.bigCol}>
-            <HoneyButton
-              usdcAmount={valueUSDC || 0}
-              usdcValue={valueUSD || 0}
-              variant="primary"
-              disabled={isBorrowButtonDisabled()}
-              isFluid
-              onClick={handleBorrow}
-            >
-              Borrow
-            </HoneyButton>
-          </div>
+    return toast?.state ? (
+      <ToastComponent />
+    ) : hasOpenPosition ? (
+      <div className={styles.buttons}>
+        <div className={styles.smallCol}>
+          <HoneyButton variant="secondary">Cancel</HoneyButton>
         </div>
-      );
-    } else {
-      return (
-        <div className={styles.buttons}>
-          <div className={styles.smallCol}>
-            <HoneyButton
-              variant="secondary"
-              disabled={isBorrowButtonDisabled()}
-              isFluid
-            >
-              Cancel
-            </HoneyButton>
-          </div>
-          <div className={styles.bigCol}>
-            <HoneyButton variant="primary" isFluid onClick={handleDepositNFT}>
-              Deposit NFT
-            </HoneyButton>
-          </div>
+        <div className={styles.bigCol}>
+          <HoneyButton
+            usdcAmount={valueUSDC || 0}
+            usdcValue={valueUSD || 0}
+            variant="primary"
+            disabled={isBorrowButtonDisabled()}
+            isFluid
+            onClick={handleBorrow}
+          >
+            Borrow
+          </HoneyButton>
         </div>
-      );
-    }
+      </div>
+    ) : (
+      <div className={styles.buttons}>
+        <div className={styles.smallCol}>
+          <HoneyButton
+            variant="secondary"
+            disabled={isBorrowButtonDisabled()}
+            isFluid
+          >
+            Cancel
+          </HoneyButton>
+        </div>
+        <div className={styles.bigCol}>
+          <HoneyButton variant="primary" isFluid onClick={handleDepositNFT}>
+            Deposit NFT
+          </HoneyButton>
+        </div>
+      </div>
+    );
   };
 
   return (

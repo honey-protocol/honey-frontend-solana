@@ -1,14 +1,26 @@
 import HoneyToast, {
   HoneyToastProps,
-  toastRemoveDelay
+  toastRemoveDelay,
+  ToastState
 } from 'components/HoneyToast/HoneyToast';
-import React, { useState } from 'react';
+import React, { createContext, useState } from 'react';
+
+export interface ToastProps {
+  toast: {
+    processing: Function;
+    success: Function;
+    error: Function;
+    clear: Function;
+    state: ToastState | null;
+  };
+  ToastComponent: JSX.Element | null;
+}
 
 const useToast = () => {
   const [toast, setToast] = useState<HoneyToastProps | null>(null);
 
   const ToastComponent = () => {
-    if (!toast?.state) return;
+    if (!toast?.state) return null;
     return (
       <HoneyToast
         state={toast.state}
@@ -16,6 +28,12 @@ const useToast = () => {
         secondaryLink={toast.secondaryLink}
       />
     );
+  };
+
+  const clearToast = () => {
+    setTimeout(() => {
+      setToast(null);
+    }, toastRemoveDelay);
   };
 
   return {
@@ -29,23 +47,25 @@ const useToast = () => {
           primaryText,
           secondaryLink
         }),
-      success: (primaryText: string, secondaryLink?: string) =>
+      success: (primaryText: string, secondaryLink?: string) => {
         setToast({
           state: 'success',
           primaryText,
           secondaryLink
-        }),
-      error: (primaryText: string, secondaryLink?: string) =>
+        });
+        clearToast();
+      },
+      error: (primaryText: string, secondaryLink?: string) => {
         setToast({
           state: 'error',
           primaryText,
           secondaryLink
-        }),
-      clear: () =>
-        setTimeout(() => {
-          setToast(null);
-        }, toastRemoveDelay),
-      state: toast?.state
+        });
+        clearToast();
+      },
+
+      clear: clearToast,
+      state: toast?.state || null
     },
     ToastComponent
   };

@@ -30,6 +30,7 @@ import { LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js';
 import BN from 'bn.js';
 import HoneyToggle from 'components/HoneyToggle/HoneyToggle';
 import { calcNFT } from 'helpers/loanHelpers/userCollection';
+import { ToastProps } from 'hooks/useToast';
 
 const { formatPercent: fp, formatUsd: fu } = formatNumber;
 
@@ -165,21 +166,22 @@ const Lend: NextPage = () => {
    * @params optional value from user input; amount of SOL
    * @returns succes | failure
   */
-  async function executeDeposit(value?: number) {
+  async function executeDeposit(value?: number, toast?: ToastProps['toast']) {
+    if (!toast) return;
     try {
-      if (!value) return toastResponse('ERROR', 'Deposit failed', 'ERROR');
+      if (!value)
+        return toast.error('Deposit failed', 'error link (if available)');
 
       console.log('this is value', value);
 
       const tokenAmount =  value * LAMPORTS_PER_SOL;
       console.log('this is total amount', tokenAmount);
+      toast.processing();
       
       const depositTokenMint = new PublicKey('So11111111111111111111111111111111111111112');
       const tx = await deposit(honeyUser, tokenAmount, depositTokenMint, honeyReserves);
       
       if (tx[0] == 'SUCCESS') {
-        toastResponse('SUCCESS', 'Deposit success', 'SUCCESS', 'DEPOSIT');
-        
         let refreshedHoneyReserves = await honeyReserves[0].sendRefreshTx();
         const latestBlockHash = await sdkConfig.saberHqConnection.getLatestBlockhash()
 
@@ -193,11 +195,12 @@ const Lend: NextPage = () => {
         await honeyUser.refresh().then((val: any) => {
           reserveHoneyState ==  0 ? setReserveHoneyState(1) : setReserveHoneyState(0);
         });
+        toast.success('Deposit success', 'SUCCESS');
       } else {
-        return toastResponse('ERROR', 'Deposit failed', 'ERROR');
+        return toast.error('Deposit failed', 'More info');
       }
     } catch (error) {
-      return toastResponse('ERROR', 'Deposit failed', 'ERROR');
+      return toast.error('Deposit failed', 'ERROR');
     }
   }
 
@@ -206,10 +209,11 @@ const Lend: NextPage = () => {
    * @params optional value from user input; amount of SOL
    * @returns succes | failure
   */
-  async function executeWithdraw(value?: number) {
+  async function executeWithdraw(value: number, toast?: ToastProps['toast']) {
+    if (!toast) return;
     try {
-      console.log('this is the value', value)
-      if (!value) return toastResponse('ERROR', 'Withdraw failed', 'ERROR');
+      console.log('this is the value', value);
+      if (!value) return toast.error('Withdraw failed', 'ERROR');
 
       const tokenAmount =  value * LAMPORTS_PER_SOL;
       console.log('this is tokenAmount', tokenAmount);
@@ -217,7 +221,6 @@ const Lend: NextPage = () => {
       const tx = await withdraw(honeyUser, tokenAmount, depositTokenMint, honeyReserves);
       
       if (tx[0] == 'SUCCESS') {
-        toastResponse('SUCCESS', 'Withdraw success', 'SUCCESS', 'WITHDRAW');
         let refreshedHoneyReserves = await honeyReserves[0].sendRefreshTx();
         const latestBlockHash = await sdkConfig.saberHqConnection.getLatestBlockhash()
 
@@ -231,11 +234,12 @@ const Lend: NextPage = () => {
         await honeyUser.refresh().then((val: any) => {
           reserveHoneyState ==  0 ? setReserveHoneyState(1) : setReserveHoneyState(0);
         });
+        toast.success('Withdraw success', 'SUCCESS');
       } else {
-        return toastResponse('ERROR', 'Withdraw failed ', 'ERROR');
+        return toast.error('Withdraw failed ', 'ERROR');
       }
     } catch (error) {
-      return toastResponse('ERROR', 'Withdraw failed ', 'ERROR');
+      return toast.error('Withdraw failed ');
     }
   }
   // End: SDK integration
