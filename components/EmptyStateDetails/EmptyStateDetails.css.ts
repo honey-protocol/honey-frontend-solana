@@ -8,7 +8,8 @@ export const emptyStateContent = style({
   display: 'flex',
   justifyContent: 'center',
   flexDirection: 'column',
-  alignItems: 'center'
+  alignItems: 'center',
+  margin: '0 auto'
 });
 
 export const emptyStateTitle = style([
