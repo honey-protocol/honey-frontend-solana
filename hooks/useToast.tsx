@@ -13,14 +13,14 @@ export interface ToastProps {
     clear: Function;
     state: ToastState | null;
   };
-  ToastComponent: JSX.Element | undefined;
+  ToastComponent: JSX.Element | null;
 }
 
 const useToast = () => {
   const [toast, setToast] = useState<HoneyToastProps | null>(null);
 
   const ToastComponent = () => {
-    if (!toast?.state) return;
+    if (!toast?.state) return null;
     return (
       <HoneyToast
         state={toast.state}
