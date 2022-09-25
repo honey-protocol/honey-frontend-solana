@@ -1,3 +1,5 @@
+import { ReactNode } from 'react';
+
 export type MarketsSidebarProps = {
   collectionId?: string;
   availableNFTs?: any;
@@ -7,8 +9,8 @@ export type MarketsSidebarProps = {
   userDebt: number;
   userUSDCBalance: number;
   loanToValue: number;
-  executeDepositNFT: (mint: any) => void;
-  executeWithdrawNFT: (mint: any) => void;
-  executeBorrow: (val: any) => void;
-  executeRepay: (val: any) => void;
+  executeDepositNFT: (mint: any, toast: any) => void;
+  executeWithdrawNFT: (mint: any, toast: any) => void;
+  executeBorrow: (val: any, toast: any) => void;
+  executeRepay: (val: any, toast: any) => void;
 };

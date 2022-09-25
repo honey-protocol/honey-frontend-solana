@@ -79,29 +79,12 @@ const RepayForm = (props: RepayProps) => {
     const btnText = event.target.innerHTML;
     const mintId = new PublicKey(openPositions[0].mint).toString();
     console.log('this is mintId', mintId);
-
-    try {
-      toast.processing('Repay transaction in progress');
-
-      // repay function here
-      if (btnText == 'Claim NFT') {
-        console.log('mint id', mintId);
-        executeWithdrawNFT(mintId);
-      } else {
-        executeRepay(valueUSDC || 0);
-      }
-
-      toast.success(
-        `Repay of ${valueUSD}USD completed`,
-        'https://solscan.io/token/GHtgbwy19UPRFDrAbWXrXf7WnqGxeNyAodX6rjKfsnrU?cluster=devnet'
-      );
-    } catch (error) {
-      toast.error(
-        `Error Repaying ${valueUSD}USD: Insufficient funds`,
-        'https://solscan.io/token/GHtgbwy19UPRFDrAbWXrXf7WnqGxeNyAodX6rjKfsnrU?cluster=devnet'
-      );
-    } finally {
-      toast.clear();
+    // repay function here
+    if (btnText == 'Claim NFT') {
+      console.log('mint id', mintId);
+      executeWithdrawNFT(mintId, toast);
+    } else {
+      executeRepay(valueUSDC || 0, toast);
     }
   };
 

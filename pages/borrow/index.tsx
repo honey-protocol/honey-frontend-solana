@@ -47,7 +47,7 @@ import {
 } from 'helpers/loanHelpers/userCollection';
 import { Metadata } from '@metaplex-foundation/mpl-token-metadata';
 import { MAX_LTV } from 'constants/loan';
-
+import { ToastProps } from 'hooks/useToast';
 
 const { formatPercent: fp, formatUsd: fu } = formatNumber;
 
@@ -473,27 +473,37 @@ const Markets: NextPage = () => {
     </div>
   );
 
-
   /**
    * @description executes the deposit NFT func. from SDK
    * @params mint of the NFT
    * @returns succes | failure
   */
-  async function executeDepositNFT(mintID: any) {
+  async function executeDepositNFT(mintID: any, toast: ToastProps['toast']) {
     try {
       if (!mintID) return;
+      toast.processing();
 
-      const metadata = await Metadata.findByMint(sdkConfig.saberHqConnection, mintID);
-      const tx = await depositNFT(sdkConfig.saberHqConnection, honeyUser, metadata.pubkey);
+      const metadata = await Metadata.findByMint(
+        sdkConfig.saberHqConnection,
+        mintID
+      );
+      const tx = await depositNFT(
+        sdkConfig.saberHqConnection,
+        honeyUser,
+        metadata.pubkey
+      );
       if (tx[0] == 'SUCCESS') {
-        toastResponse('SUCCESS', 'Deposit success', 'SUCCESS');
+        toast.success('Deposit success', tx[1][0]);
 
         await refreshPositions();
 
         reFetchNFTs({});
       }
     } catch (error) {
-      return toastResponse('ERROR', 'Error deposit NFT', 'ERROR');
+      return toast.error(
+        'Error depositing NFT',
+        'Transaction link(if available)'
+      );
     }
   }
 
@@ -502,20 +512,27 @@ const Markets: NextPage = () => {
    * @params mint of the NFT
    * @returns succes | failure
   */
-  async function executeWithdrawNFT(mintID: any) {
+  async function executeWithdrawNFT(mintID: any, toast: ToastProps['toast']) {
     try {
-      if (!mintID) return toastResponse('ERROR', 'Please select NFT', 'ERROR');
-      const metadata = await Metadata.findByMint(sdkConfig.saberHqConnection, mintID);
-      const tx = await withdrawNFT(sdkConfig.saberHqConnection, honeyUser, metadata.pubkey);
+      if (!mintID) return toast.error('Please select NFT');
+      toast.processing();
+      const metadata = await Metadata.findByMint(
+        sdkConfig.saberHqConnection,
+        mintID
+      );
+      const tx = await withdrawNFT(
+        sdkConfig.saberHqConnection,
+        honeyUser,
+        metadata.pubkey
+      );
 
       if (tx[0] == 'SUCCESS') {
-        await toastResponse('SUCCESS', 'Withdraw success', 'SUCCESS');
+        toast.success('Withdraw success', tx[1][0]);
         reFetchNFTs({});
         await refreshPositions();
-
       }
     } catch (error) {
-      toastResponse('ERROR', 'Error withdraw NFT', 'ERROR');
+      toast.error('Error withdraw NFT', 'tansaction link if available');
       return;
     }
   }
@@ -527,14 +544,14 @@ const Markets: NextPage = () => {
    * @params borrow amount
    * @returns borrowTx
    */
-   async function executeBorrow(val: any) {
+  async function executeBorrow(val: any, toast: ToastProps['toast']) {
     try {
-      if (!val)
-        return toastResponse('ERROR', 'Please provide a value', 'ERROR');
+      if (!val) return toast.error('Please provide a value');
       if (val == 1.6) val = val - 0.01;
       const borrowTokenMint = new PublicKey(
         'So11111111111111111111111111111111111111112'
       );
+      toast.processing();
       const tx = await borrow(
         honeyUser,
         val * LAMPORTS_PER_SOL,
@@ -543,7 +560,7 @@ const Markets: NextPage = () => {
       );
 
       if (tx[0] == 'SUCCESS') {
-        toastResponse('SUCCESS', 'Borrow success', 'SUCCESS', 'BORROW');
+        toast.success('Borrow success', tx[1][0]);
 
         let refreshedHoneyReserves = await honeyReserves[0].sendRefreshTx();
         const latestBlockHash =
@@ -562,10 +579,10 @@ const Markets: NextPage = () => {
             : setReserveHoneyState(0);
         });
       } else {
-        return toastResponse('ERROR', 'Borrow failed', 'BORROW');
+        return toast.error('Borrow failed');
       }
     } catch (error) {
-      return toastResponse('ERROR', 'An error occurred', 'BORROW');
+      return toast.error('An error occurred');
     }
   }
 
@@ -576,10 +593,9 @@ const Markets: NextPage = () => {
    * @params amount of repay
    * @returns repayTx
    */
-  async function executeRepay(val: any) {
+  async function executeRepay(val: any, toast: ToastProps['toast']) {
     try {
-      if (!val)
-        return toastResponse('ERROR', 'Please provide a value', 'ERROR');
+      if (!val) return toast.error('Please provide a value');
       const repayTokenMint = new PublicKey(
         'So11111111111111111111111111111111111111112'
       );
@@ -591,7 +607,7 @@ const Markets: NextPage = () => {
       );
 
       if (tx[0] == 'SUCCESS') {
-        toastResponse('SUCCESS', 'Repay success', 'SUCCESS', 'REPAY');
+        toast.success('Repay success', tx[0][1]);
         let refreshedHoneyReserves = await honeyReserves[0].sendRefreshTx();
         const latestBlockHash =
           await sdkConfig.saberHqConnection.getLatestBlockhash();
@@ -609,10 +625,10 @@ const Markets: NextPage = () => {
             : setReserveHoneyState(0);
         });
       } else {
-        return toastResponse('ERROR', 'Repay failed', 'REPAY');
+        return toast.error('Repay failed', 'link if available');
       }
     } catch (error) {
-      return toastResponse('ERROR', 'An error occurred', 'REPAY');
+      return toast.error('An error occurred');
     }
   }
 
