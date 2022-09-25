@@ -214,7 +214,7 @@ const BorrowForm = (props: BorrowProps) => {
           <div className={styles.col}>
             <InfoBlock
               title={'New risk level'}
-              value={fu(0)}
+              value={fp(sliderValue * 100)}
               isDisabled={true}
             />
             <HoneySlider
@@ -304,7 +304,7 @@ const BorrowForm = (props: BorrowProps) => {
           </HoneyButton>
         </div>
       </div>
-    ) : (
+    ) : !isNftSelected ? null : (
       <div className={styles.buttons}>
         <div className={styles.smallCol}>
           <HoneyButton
