@@ -266,14 +266,21 @@ const BorrowForm = (props: BorrowProps) => {
             />
           </div>
         </div>
-
         <div className={styles.inputs}>
-          <div className={stylesRepay.balance}>
+        <div className={styles.row}>
+          <div className={cs(stylesRepay.balance, styles.col)}>
             <InfoBlock
               title={'Your SOL balance'}
               value={f(SOLBalance)}
             ></InfoBlock>
           </div>
+          <div className={cs(stylesRepay.balance, styles.col)}>
+            <InfoBlock
+              title={'New SOL balance'}
+              value={f(SOLBalance + valueUSDC)}
+            ></InfoBlock>
+          </div>
+        </div>
           <InputsBlock
             valueUSD={p(f(valueUSD))}
             valueUSDC={p(f(valueUSDC))}
