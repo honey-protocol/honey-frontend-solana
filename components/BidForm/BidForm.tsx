@@ -73,7 +73,7 @@ const BidForm: FC<BidsFormsProps> = () => {
               disabled={isSubmitButtonDisabled()}
               isFluid={true}
               usdcValue={valueUSD || 0}
-              usdcAmount={valueUSDC || 0}
+              solAmount={valueUSDC || 0}
             >
               Place Bid
             </HoneyButton>
