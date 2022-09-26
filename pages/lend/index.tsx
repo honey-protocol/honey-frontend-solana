@@ -472,6 +472,9 @@ const Lend: NextPage = () => {
           executeDeposit={executeDeposit}
           executeWithdraw={executeWithdraw}
           userTotalDeposits={userTotalDeposits}
+          available={(totalDeposits - totalMarketDebt)}
+          value={totalDeposits}
+
         />
       </Sider>
     </LayoutRedesign>

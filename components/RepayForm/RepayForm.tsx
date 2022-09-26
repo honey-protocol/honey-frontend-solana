@@ -149,7 +149,7 @@ const RepayForm = (props: RepayProps) => {
             <InfoBlock
               value={fp(75)}
               valueSize="big"
-              footer={<span>Liquidation at</span>}
+              footer={<span>Liquidation price</span>}
             />
           </div>
         </div>

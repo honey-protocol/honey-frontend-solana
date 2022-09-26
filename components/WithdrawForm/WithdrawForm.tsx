@@ -18,7 +18,7 @@ import useToast from 'hooks/useToast';
 const { format: f, formatPercent: fp, formatUsd: fu, parse: p } = formatNumber;
 
 const WithdrawForm = (props: WithdrawFormProps) => {
-  const { executeWithdraw, userTotalDeposits } = props;
+  const { executeWithdraw, userTotalDeposits, value, available } = props;
   const [valueUSD, setValueUSD] = useState<number>(0);
   const [valueUSDC, setValueUSDC] = useState<number>(0);
   const [sliderValue, setSliderValue] = useState(0);
@@ -125,7 +125,7 @@ const WithdrawForm = (props: WithdrawFormProps) => {
           </div>
           <div className={styles.col}>
             <InfoBlock
-              value={fp(80)}
+              value={fp((value - available) / value * 100)}
               valueSize="big"
               toolTipLabel=" Amount of supplied liquidity currently being borrowed"
               footer={

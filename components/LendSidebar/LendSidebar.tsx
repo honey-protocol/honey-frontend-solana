@@ -15,7 +15,7 @@ type Tab = 'deposit' | 'withdraw';
 
 const LendSidebar = (props: LendSidebarProps) => {
   const wallet = true;
-  const { collectionId, executeDeposit, executeWithdraw, userTotalDeposits } = props;
+  const { collectionId, executeDeposit, executeWithdraw, userTotalDeposits, available, value } = props;
   const [activeTab, setActiveTab] = useState<Tab>('deposit');
 
   const handleTabChange = (tabKey: string) => {
@@ -46,11 +46,11 @@ const LendSidebar = (props: LendSidebarProps) => {
           <>
             {
               activeTab === 'deposit' && 
-              <DepositForm executeDeposit={executeDeposit} userTotalDeposits={userTotalDeposits} />
+              <DepositForm executeDeposit={executeDeposit} userTotalDeposits={userTotalDeposits} available={available} value={value} />
             }
             {
               activeTab === 'withdraw' && 
-              <WithdrawForm  executeWithdraw={executeWithdraw} userTotalDeposits={userTotalDeposits} />
+              <WithdrawForm  executeWithdraw={executeWithdraw} userTotalDeposits={userTotalDeposits} available={available} value={value} />
             }
           </>
         )}
