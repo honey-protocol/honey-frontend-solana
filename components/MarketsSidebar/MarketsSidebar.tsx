@@ -33,7 +33,6 @@ const MarketsSidebar = (props: MarketsSidebarProps) => {
   const [activeTab, setActiveTab] = useState<Tab>('borrow');
 
   const handleTabChange = (tabKey: string) => {
-    console.log(tabKey)
     setActiveTab(tabKey as Tab);
   };
 

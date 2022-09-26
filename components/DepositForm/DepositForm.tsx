@@ -31,7 +31,6 @@ const DepositForm = (props: DepositFormProps) => {
   let walletPK = sdkConfig.sdkWallet?.publicKey;
 
   useEffect(() => {
-    console.log('@@@_------user wallet balance', userWalletBalance)
   }, [userWalletBalance]);
 
   useEffect(() => {}, [userWalletBalance]);
@@ -117,9 +116,9 @@ const DepositForm = (props: DepositFormProps) => {
         <div className={styles.row}>
           <div className={styles.col}>
             <InfoBlock
-              value={fu(10)}
+              value={fu(userTotalDeposits)}
               valueSize="big"
-              footer={<span>Total supplied</span>}
+              footer={<span>Your Deposits</span>}
             />
           </div>
           <div className={styles.col}>
@@ -148,11 +147,6 @@ const DepositForm = (props: DepositFormProps) => {
           </div>
         </div>
 
-        <div className={styles.row}>
-          <div className={styles.col}>
-            <InfoBlock title={'Your deposits'} value={fu(userTotalDeposits)} />
-          </div>
-        </div>
 
         <div className={styles.inputs}>
           <InputsBlock

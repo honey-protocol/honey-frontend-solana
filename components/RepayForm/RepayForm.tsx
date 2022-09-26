@@ -39,6 +39,7 @@ const RepayForm = (props: RepayProps) => {
 
   const maxValue = userDebt != 0 ? userDebt : userAllowance;
   const usdcPrice = 0.95;
+  const liquidationThreshold = 0.75;
 
   // Put your validators here
   const isRepayButtonDisabled = () => {
@@ -79,13 +80,10 @@ const RepayForm = (props: RepayProps) => {
   const onRepay = async (event: any) => {
     const btnText = event.target.innerHTML;
     const mintId = new PublicKey(openPositions[0].mint).toString();
-    console.log('this is mintId', mintId);
     // repay function here
     if (userDebt == 0 && openPositions[0]) {
-      console.log('open pos', openPositions[0].mint);
       executeWithdrawNFT(openPositions[0].mint, toast);
     } else {
-      console.log('inside repay')
       executeRepay(valueUSDC || 0, toast);
     }
   };
@@ -147,9 +145,10 @@ const RepayForm = (props: RepayProps) => {
           </div>
           <div className={styles.col}>
             <InfoBlock
-              value={fp(75)}
+              value={f(userDebt / liquidationThreshold)}
               valueSize="big"
               footer={<span>Liquidation price</span>}
+              isDisabled={userDebt == 0 ? true : false}
             />
           </div>
         </div>

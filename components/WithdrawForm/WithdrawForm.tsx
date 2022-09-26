@@ -106,9 +106,9 @@ const WithdrawForm = (props: WithdrawFormProps) => {
         <div className={styles.row}>
           <div className={styles.col}>
             <InfoBlock
-              value={fu(10)}
+              value={fu(userTotalDeposits)}
               valueSize="big"
-              footer={<span>Total supplied</span>}
+              footer={<span>Your Deposits</span>}
             />
           </div>
           <div className={styles.col}>
@@ -137,12 +137,6 @@ const WithdrawForm = (props: WithdrawFormProps) => {
           </div>
         </div>
 
-        <div className={styles.row}>
-          <div className={styles.col}>
-            <InfoBlock title={'Your deposits'} value={fu(userTotalDeposits)} />
-          </div>
-        </div>
-
         <div className={styles.inputs}>
           <InputsBlock
             valueUSD={p(f(valueUSD))}
@@ -158,7 +152,7 @@ const WithdrawForm = (props: WithdrawFormProps) => {
           maxValue={maxValue}
           minAvailableValue={0}
           maxSafePosition={0.4}
-          maxAvailablePosition={MAX_LTV}
+          // maxAvailablePosition={maxValue} // TODO: should be capped by available liquidity
           onChange={handleSliderChange}
         />
       </div>

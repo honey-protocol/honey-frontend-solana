@@ -56,6 +56,7 @@ const BorrowForm = (props: BorrowProps) => {
   const borrowedValue = userDebt;
   const maxValue = userAllowance;
   const usdcPrice = 0.95;
+  const liquidationThreshold = 0.75;
 
   // Put your validators here
   const isBorrowButtonDisabled = () => {
@@ -130,7 +131,6 @@ const BorrowForm = (props: BorrowProps) => {
   }
 
   useEffect(() => {
-    console.log('selected nft', selectedNft);
   }, [selectedNft]);
 
   const renderContent = () => {
@@ -171,9 +171,10 @@ const BorrowForm = (props: BorrowProps) => {
           </div>
           <div className={styles.col}>
             <InfoBlock
-              value={fp(75)}
+              value={f(userDebt / liquidationThreshold)}
               valueSize="big"
               footer={<span>Liquidation price</span>}
+              isDisabled={userDebt == 0 ? true : false}
             />
           </div>
         </div>
