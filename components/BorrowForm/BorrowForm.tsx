@@ -305,7 +305,7 @@ const BorrowForm = (props: BorrowProps) => {
         </div>
         <div className={styles.bigCol}>
           <HoneyButton
-            usdcAmount={valueUSDC || 0}
+            solAmount={valueUSDC || 0}
             usdcValue={valueUSD || 0}
             variant="primary"
             disabled={isBorrowButtonDisabled()}
