@@ -219,7 +219,7 @@ const RepayForm = (props: RepayProps) => {
           <div className={styles.col}>
             <InfoBlock
               title={'New allowance'}
-              value={fu(nftPrice ? nftPrice - newDebt : 0)}
+              value={fu(userAllowance - newDebt)}
             />
           </div>
         </div>
