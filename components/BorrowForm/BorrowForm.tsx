@@ -58,6 +58,8 @@ const BorrowForm = (props: BorrowProps) => {
   const usdcPrice = 0.95;
   const liquidationThreshold = 0.75;
 
+  const newDebt = userDebt + 1.1 * (valueUSD ? valueUSD : 0);
+
   // Put your validators here
   const isBorrowButtonDisabled = () => {
     return userAllowance == 0 ? true : false;
@@ -233,7 +235,11 @@ const BorrowForm = (props: BorrowProps) => {
             <InfoBlock title={'Debt'} value={fu(userDebt)} />
           </div>
           <div className={styles.col}>
-            <InfoBlock title={'New debt'} value={fu(0)} isDisabled={true} />
+            <InfoBlock
+              title={'New debt with 10% rate'}
+              value={fu(newDebt)}
+              isDisabled={true}
+            />
           </div>
         </div>
 
@@ -251,7 +257,7 @@ const BorrowForm = (props: BorrowProps) => {
             />
           </div>
           <div className={styles.col}>
-            <InfoBlock title={'New allowance'} value={fu(0)} />
+            <InfoBlock title={'New allowance'} value={fu(nftPrice - newDebt)} />
           </div>
         </div>
 
