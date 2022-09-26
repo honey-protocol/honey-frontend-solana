@@ -101,7 +101,7 @@ const WithdrawForm = (props: WithdrawFormProps) => {
               <Image src={honeyEyes} />
             </HexaBoxContainer>
           </div>
-          <div className={styles.nftName}>Doodles</div>
+          <div className={styles.nftName}>Honey Eyes</div>
         </div>
         <div className={styles.row}>
           <div className={styles.col}>
