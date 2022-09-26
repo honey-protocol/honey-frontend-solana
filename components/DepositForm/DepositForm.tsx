@@ -25,6 +25,7 @@ const DepositForm = (props: DepositFormProps) => {
   const [valueUSDC, setValueUSDC] = useState<number>(0);
   const [sliderValue, setSliderValue] = useState(0);
   const [userWalletBalance, setUserWalletBalance] = useState<number>(0);
+  const [userInteraction, setUserInteraction] = useState<boolean>(false);
   const { toast, ToastComponent } = useToast();
 
   const sdkConfig = ConfigureSDK();
@@ -45,7 +46,7 @@ const DepositForm = (props: DepositFormProps) => {
     if (walletPK) {
       fetchWalletBalance(walletPK);
     }
-  }, [walletPK]);
+  }, [walletPK, userInteraction]);
 
   useEffect(() => {}, [userWalletBalance]);
 
@@ -90,6 +91,9 @@ const DepositForm = (props: DepositFormProps) => {
 
   function handleDeposit() {
     executeDeposit(valueUSDC, toast);
+    setTimeout(() => {
+      userInteraction == false ? setUserInteraction(true) : setUserInteraction(false);
+    }, 12000)
   }
 
   return (
