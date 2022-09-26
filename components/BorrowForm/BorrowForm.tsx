@@ -13,7 +13,6 @@ import { NftCardProps } from '../NftCard/types';
 import { MAX_LTV } from '../../constants/loan';
 import { usdcAmount } from '../HoneyButton/HoneyButton.css';
 import { BorrowProps } from './types';
-import { LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js';
 import { toastResponse } from 'helpers/loanHelpers';
 import SidebarScroll from '../SidebarScroll/SidebarScroll';
 import imagePlaceholder from 'public/images/imagePlaceholder.png';
@@ -21,6 +20,7 @@ import * as stylesRepay from '../RepayForm/RepayForm.css';
 import { hAlign } from 'styles/common.css';
 import { questionIcon } from 'styles/icons.css';
 import useToast from 'hooks/useToast';
+import { useSolBalance } from 'hooks/useSolBalance';
 
 const { format: f, formatPercent: fp, formatUsd: fu, parse: p } = formatNumber;
 
@@ -49,6 +49,7 @@ const BorrowForm = (props: BorrowProps) => {
   const [hasOpenPosition, setHasOpenPosition] = useState(false);
   const [sliderValue, setSliderValue] = useState(0);
   const { toast, ToastComponent } = useToast();
+  const SOLBalance = useSolBalance();
 
   // Only for test purposes
   // const isNftSelected = true;
@@ -264,8 +265,8 @@ const BorrowForm = (props: BorrowProps) => {
         <div className={styles.inputs}>
           <div className={stylesRepay.balance}>
             <InfoBlock
-              title={'Your USDC balance'}
-              value={f(8120.19)}
+              title={'Your SOL balance'}
+              value={f(SOLBalance)}
             ></InfoBlock>
           </div>
           <InputsBlock
