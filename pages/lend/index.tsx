@@ -31,7 +31,9 @@ import BN from 'bn.js';
 import HoneyToggle from 'components/HoneyToggle/HoneyToggle';
 import { calcNFT } from 'helpers/loanHelpers/userCollection';
 import { ToastProps } from 'hooks/useToast';
-import { network } from 'pages/_app';
+// import { network } from 'pages/_app';
+
+const network = 'devnet';
 
 const { formatPercent: fp, formatUsd: fu } = formatNumber;
 
@@ -253,9 +255,7 @@ const Lend: NextPage = () => {
         if (walletPK) await fetchWalletBalance(walletPK);
         toast.success(
           'Deposit success',
-          `https://solscan.io/tx/
-      ${tx[1][0]}
-      ?cluster=${network}`
+          `https://solscan.io/tx/${tx[1][0]}?cluster=${network}`
         );
       } else {
         return toast.error('Deposit failed');
@@ -307,9 +307,7 @@ const Lend: NextPage = () => {
         });
         toast.success(
           'Withdraw success',
-          `https://solscan.io/tx/
-      ${tx[1][0]}
-      ?cluster=${network}`
+          `https://solscan.io/tx/${tx[1][0]}?cluster=${network}`
         );
       } else {
         return toast.error('Withdraw failed ');
