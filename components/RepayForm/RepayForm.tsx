@@ -225,13 +225,20 @@ const RepayForm = (props: RepayProps) => {
         </div>
 
         <div className={styles.inputs}>
-          <div className={styles.balance}>
+        <div className={styles.row}>
+          <div className={cs(styles.balance, styles.col)}>
             <InfoBlock
               title={'Your SOL balance'}
               value={f(SOLBalance)}
             ></InfoBlock>
           </div>
-
+          <div className={cs(styles.balance, styles.col)}>
+            <InfoBlock
+              title={'NEW SOL balance'}
+              value={f(SOLBalance - (valueUSDC || 0))}
+            ></InfoBlock>
+          </div>
+        </div>
           <InputsBlock
             valueUSD={p(f(valueUSD))}
             valueUSDC={p(f(valueUSDC))}
