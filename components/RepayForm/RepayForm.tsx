@@ -41,6 +41,8 @@ const RepayForm = (props: RepayProps) => {
   const usdcPrice = 0.95;
   const liquidationThreshold = 0.75;
 
+  const newDebt = userDebt - (valueUSD ? valueUSD : 0);
+
   // Put your validators here
   const isRepayButtonDisabled = () => {
     return false;
@@ -191,7 +193,11 @@ const RepayForm = (props: RepayProps) => {
             <InfoBlock title={'Debt'} value={fu(userDebt)} />
           </div>
           <div className={styles.col}>
-            <InfoBlock title={'New debt'} value={fu(0)} isDisabled={true} />
+            <InfoBlock
+              title={'New debt'}
+              value={fu(newDebt)}
+              isDisabled={true}
+            />
           </div>
         </div>
 
@@ -209,7 +215,10 @@ const RepayForm = (props: RepayProps) => {
             />
           </div>
           <div className={styles.col}>
-            <InfoBlock title={'New allowance'} value={fu(0)} />
+            <InfoBlock
+              title={'New allowance'}
+              value={fu(nftPrice ? nftPrice - newDebt : 0)}
+            />
           </div>
         </div>
 
