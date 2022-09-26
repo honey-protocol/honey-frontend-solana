@@ -258,7 +258,10 @@ const BorrowForm = (props: BorrowProps) => {
             />
           </div>
           <div className={styles.col}>
-            <InfoBlock title={'New allowance'} value={fu(nftPrice - newDebt)} />
+            <InfoBlock
+              title={'New allowance'}
+              value={fu(userAllowance - newDebt)}
+            />
           </div>
         </div>
 
