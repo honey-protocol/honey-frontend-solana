@@ -39,7 +39,7 @@ const BorrowForm = (props: BorrowProps) => {
     executeBorrow,
     userAllowance,
     userDebt,
-    loanToValue
+    loanToValue,
   } = props;
 
   const [valueUSD, setValueUSD] = useState<number>(0);

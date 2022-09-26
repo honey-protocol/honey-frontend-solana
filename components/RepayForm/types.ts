@@ -6,6 +6,7 @@ export type RepayProps = {
   userDebt: number;
   userUSDCBalance: number;
   loanToValue: number;
+  availableNFTs: any;
   executeWithdrawNFT: (mint: string, toast: any) => void;
   executeRepay: (val: number, toast: any) => void;
 };

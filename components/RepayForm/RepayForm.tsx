@@ -28,7 +28,8 @@ const RepayForm = (props: RepayProps) => {
     userAllowance,
     userDebt,
     userUSDCBalance,
-    loanToValue
+    loanToValue,
+    availableNFTs,
   } = props;
 
   const [valueUSD, setValueUSD] = useState<number>();
@@ -80,10 +81,11 @@ const RepayForm = (props: RepayProps) => {
     const mintId = new PublicKey(openPositions[0].mint).toString();
     console.log('this is mintId', mintId);
     // repay function here
-    if (btnText == 'Claim NFT') {
-      console.log('mint id', mintId);
-      executeWithdrawNFT(mintId, toast);
+    if (userDebt == 0 && openPositions[0]) {
+      console.log('open pos', openPositions[0].mint);
+      executeWithdrawNFT(openPositions[0].mint, toast);
     } else {
+      console.log('inside repay')
       executeRepay(valueUSDC || 0, toast);
     }
   };
@@ -94,7 +96,8 @@ const RepayForm = (props: RepayProps) => {
     userAllowance,
     nftPrice,
     loanToValue,
-    userUSDCBalance
+    userUSDCBalance,
+    availableNFTs
   ]);
 
   return (
@@ -129,7 +132,7 @@ const RepayForm = (props: RepayProps) => {
         <div className={styles.nftInfo}>
           <div className={styles.nftImage}>
             <HexaBoxContainer>
-              <Image src={honeyEyes} layout="fill" />
+              <Image src={openPositions[0].image} layout="fill" />
             </HexaBoxContainer>
           </div>
           <div className={styles.nftName}>{openPositions[0].name}</div>

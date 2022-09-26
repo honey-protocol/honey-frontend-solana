@@ -190,7 +190,7 @@ const Markets: NextPage = () => {
   }, [marketReserveInfo, honeyUser, collateralNFTPositions, market, error, parsedReserves, honeyReserves, cRatio, reserveHoneyState, calculatedNftPrice]);
   
   useEffect(() => {
-    console.log('availableNFTs', availableNFTs);
+    console.log('---availableNFTs---', availableNFTs);
     setUserAvailableNFTs(availableNFTs[0]);
   }, [availableNFTs]);
 
@@ -199,9 +199,9 @@ const Markets: NextPage = () => {
     console.log('total marketDebt', totalMarketDebt);
   }, [totalDeposits, totalBorrowed]);
 
-  useMemo(() => {
+  useEffect(() => {
     console.log('--collateral nft positions--', collateralNFTPositions);
-    if (collateralNFTPositions && collateralNFTPositions.length > 0) {
+    if (collateralNFTPositions) {
       setUserOpenPositions(collateralNFTPositions);
       console.log('user open positions', userOpenPositions);
     }
@@ -216,7 +216,7 @@ const Markets: NextPage = () => {
         name: 'Honey Eyes',
         rate: 0.1,
         available: (totalDeposits - totalMarketDebt),
-        value: (marketPositions * nftPrice),
+        value: totalDeposits,
         positions: userOpenPositions
       }
     ];
@@ -494,10 +494,10 @@ const Markets: NextPage = () => {
       );
       if (tx[0] == 'SUCCESS') {
         toast.success('Deposit success', tx[1][0]);
+        console.log('is there a success?');
 
         await refreshPositions();
-
-        reFetchNFTs({});
+        await reFetchNFTs({});
       }
     } catch (error) {
       return toast.error(
@@ -527,10 +527,13 @@ const Markets: NextPage = () => {
       );
 
       if (tx[0] == 'SUCCESS') {
-        reFetchNFTs({});
+        console.log('is there a success');
+        await reFetchNFTs({});
         await refreshPositions();
         toast.success('Withdraw success', tx[1][0]);
       }
+
+      return true;
     } catch (error) {
       toast.error('Error withdraw NFT', 'tansaction link if available');
       return;

@@ -302,7 +302,7 @@ const Lend: NextPage = () => {
         name: 'Honey Eyes',
         interest: 10,
         available: (totalDeposits - totalMarketDebt),
-        value: (marketPositions * nftPrice),
+        value: totalDeposits,
         stats: getPositionData()
       }
     ];
