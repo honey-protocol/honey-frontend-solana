@@ -37,6 +37,8 @@ const { formatPercent: fp, formatUsd: fu } = formatNumber;
 const Lend: NextPage = () => {
   // Start: SDK integration
   const sdkConfig = ConfigureSDK();
+  let walletPK = sdkConfig.sdkWallet?.publicKey;
+
 
   /**
    * @description calls upon markets which
@@ -59,6 +61,24 @@ const Lend: NextPage = () => {
   const [totalDeposits, setTotalDeposits] = useState(0);
   const [totalMarketDebt, setTotalMarketDebt] = useState(0);
   const [nftPrice, setNftPrice] = useState(0);
+  const [userWalletBalance, setUserWalletBalance] = useState<number>(0);
+
+  async function fetchWalletBalance(key: PublicKey) {
+    try {
+      const userBalance =
+        (await sdkConfig.saberHqConnection.getBalance(key)) / LAMPORTS_PER_SOL;
+      setUserWalletBalance(userBalance);
+      console.log('this is user balance', userBalance);
+    } catch (error) {
+      console.log('Error', error);
+    }
+  }
+
+  useEffect(() => {
+    if (walletPK) {
+      fetchWalletBalance(walletPK);
+    }
+  }, [walletPK]);
 
   /**
    * @description updates honeyUser | marketReserveInfo | - timeout required
@@ -195,6 +215,8 @@ const Lend: NextPage = () => {
         await honeyUser.refresh().then((val: any) => {
           reserveHoneyState ==  0 ? setReserveHoneyState(1) : setReserveHoneyState(0);
         });
+
+        if (walletPK) await fetchWalletBalance(walletPK);
         toast.success('Deposit success', 'SUCCESS');
       } else {
         return toast.error('Deposit failed', 'More info');
@@ -474,7 +496,7 @@ const Lend: NextPage = () => {
           userTotalDeposits={userTotalDeposits}
           available={(totalDeposits - totalMarketDebt)}
           value={totalDeposits}
-
+          userWalletBalance={userWalletBalance}
         />
       </Sider>
     </LayoutRedesign>

@@ -19,34 +19,20 @@ import useToast from 'hooks/useToast';
 const { format: f, formatPercent: fp, formatUsd: fu, parse: p } = formatNumber;
 
 const DepositForm = (props: DepositFormProps) => {
-  const { executeDeposit, userTotalDeposits, value, available } = props;
+  const { executeDeposit, userTotalDeposits, value, available, userWalletBalance } = props;
 
   const [valueUSD, setValueUSD] = useState<number>(0);
   const [valueUSDC, setValueUSDC] = useState<number>(0);
   const [sliderValue, setSliderValue] = useState(0);
-  const [userWalletBalance, setUserWalletBalance] = useState<number>(0);
   const [userInteraction, setUserInteraction] = useState<boolean>(false);
   const { toast, ToastComponent } = useToast();
 
   const sdkConfig = ConfigureSDK();
   let walletPK = sdkConfig.sdkWallet?.publicKey;
 
-  async function fetchWalletBalance(key: PublicKey) {
-    try {
-      const userBalance =
-        (await sdkConfig.saberHqConnection.getBalance(key)) / LAMPORTS_PER_SOL;
-      setUserWalletBalance(userBalance);
-      console.log('this is user balance', userBalance);
-    } catch (error) {
-      console.log('Error', error);
-    }
-  }
-
   useEffect(() => {
-    if (walletPK) {
-      fetchWalletBalance(walletPK);
-    }
-  }, [walletPK, userInteraction]);
+    console.log('@@@_------user wallet balance', userWalletBalance)
+  }, [userWalletBalance]);
 
   useEffect(() => {}, [userWalletBalance]);
 
@@ -91,9 +77,8 @@ const DepositForm = (props: DepositFormProps) => {
 
   function handleDeposit() {
     executeDeposit(valueUSDC, toast);
-    setTimeout(() => {
-      userInteraction == false ? setUserInteraction(true) : setUserInteraction(false);
-    }, 12000)
+    setTimeout(() => {}, 10000)
+    userInteraction == false ? setUserInteraction(true) : setUserInteraction(false);
   }
 
   return (
