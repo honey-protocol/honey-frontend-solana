@@ -21,6 +21,7 @@ import { hAlign } from 'styles/common.css';
 import { questionIcon } from 'styles/icons.css';
 import useToast from 'hooks/useToast';
 import { useSolBalance } from 'hooks/useSolBalance';
+import cs from 'classnames';
 
 const { format: f, formatPercent: fp, formatUsd: fu, parse: p } = formatNumber;
 
@@ -39,7 +40,7 @@ const BorrowForm = (props: BorrowProps) => {
     executeBorrow,
     userAllowance,
     userDebt,
-    loanToValue,
+    loanToValue
   } = props;
 
   const [valueUSD, setValueUSD] = useState<number>(0);
@@ -133,8 +134,7 @@ const BorrowForm = (props: BorrowProps) => {
     executeBorrow(valueUSDC, toast);
   }
 
-  useEffect(() => {
-  }, [selectedNft]);
+  useEffect(() => {}, [selectedNft]);
 
   const renderContent = () => {
     if (isNftSelected == false) {
@@ -169,15 +169,25 @@ const BorrowForm = (props: BorrowProps) => {
             <InfoBlock
               value={fu(nftPrice)}
               valueSize="big"
-              footer={<span>Estimated value</span>}
+              footer={
+                <span className={hAlign}>
+                  Estimated value <div className={questionIcon} />
+                </span>
+              }
+              toolTipLabel="Placeholder text for tooltip" // TODO: CHANGE TO REAL INFO TEXT FOR EST VAL
             />
           </div>
           <div className={styles.col}>
             <InfoBlock
               value={f(userDebt / liquidationThreshold)}
               valueSize="big"
-              footer={<span>Liquidation price</span>}
               isDisabled={userDebt == 0 ? true : false}
+              footer={
+                <span className={hAlign}>
+                  Liquidation price <div className={questionIcon} />
+                </span>
+              }
+              toolTipLabel="Placeholder text for tooltip" // TODO: CHANGE TO REAL INFO TEXT FOR LIQ PRICE
             />
           </div>
         </div>
@@ -216,8 +226,13 @@ const BorrowForm = (props: BorrowProps) => {
           </div>
           <div className={styles.col}>
             <InfoBlock
-              title={'New risk level'}
-              value={fp(sliderValue * 100)}
+              title={
+                <span className={hAlign}>
+                  New risk level <div className={questionIcon} />
+                </span>
+              }
+              toolTipLabel="Placeholder text for tooltip" // TODO: CHANGE TO REAL INFO TEXT FOR EST VAL
+              value={fp((loanToValue + newDebt / nftPrice) * 100)}
               isDisabled={true}
             />
             <HoneySlider
@@ -233,11 +248,24 @@ const BorrowForm = (props: BorrowProps) => {
 
         <div className={styles.row}>
           <div className={styles.col}>
-            <InfoBlock title={'Debt'} value={fu(userDebt)} />
+            <InfoBlock
+              title={
+                <span className={hAlign}>
+                  Debt <div className={questionIcon} />
+                </span>
+              }
+              toolTipLabel="Placeholder text for tooltip" // TODO: CHANGE TO REAL INFO TEXT FOR debt
+              value={fu(userDebt)}
+            />
           </div>
           <div className={styles.col}>
             <InfoBlock
-              title={'New debt with 10% rate'}
+              title={
+                <span className={hAlign}>
+                  New debt with 10% rate <div className={questionIcon} />
+                </span>
+              }
+              toolTipLabel="Placeholder text for tooltip" // TODO: CHANGE TO REAL INFO TEXT FOR new debt
               value={fu(newDebt < 0 ? 0 : newDebt)}
               isDisabled={true}
             />
@@ -259,7 +287,12 @@ const BorrowForm = (props: BorrowProps) => {
           </div>
           <div className={styles.col}>
             <InfoBlock
-              title={'New allowance'}
+              title={
+                <span className={hAlign}>
+                  New allowance <div className={questionIcon} />
+                </span>
+              }
+              toolTipLabel="Placeholder text for tooltip" // TODO: CHANGE TO REAL INFO TEXT FOR NEW ALLOWANCE
               value={fu(
                 userAllowance - newDebt < 0 ? 0 : userAllowance - newDebt
               )}
@@ -267,20 +300,20 @@ const BorrowForm = (props: BorrowProps) => {
           </div>
         </div>
         <div className={styles.inputs}>
-        <div className={styles.row}>
-          <div className={cs(stylesRepay.balance, styles.col)}>
-            <InfoBlock
-              title={'Your SOL balance'}
-              value={f(SOLBalance)}
-            ></InfoBlock>
+          <div className={styles.row}>
+            <div className={cs(stylesRepay.balance, styles.col)}>
+              <InfoBlock
+                title={'Your SOL balance'}
+                value={f(SOLBalance)}
+              ></InfoBlock>
+            </div>
+            <div className={cs(stylesRepay.balance, styles.col)}>
+              <InfoBlock
+                title={'New SOL balance'}
+                value={f(SOLBalance + valueUSDC)}
+              ></InfoBlock>
+            </div>
           </div>
-          <div className={cs(stylesRepay.balance, styles.col)}>
-            <InfoBlock
-              title={'New SOL balance'}
-              value={f(SOLBalance + valueUSDC)}
-            ></InfoBlock>
-          </div>
-        </div>
           <InputsBlock
             valueUSD={p(f(valueUSD))}
             valueUSDC={p(f(valueUSDC))}
