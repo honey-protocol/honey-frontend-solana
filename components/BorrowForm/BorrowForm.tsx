@@ -238,7 +238,7 @@ const BorrowForm = (props: BorrowProps) => {
           <div className={styles.col}>
             <InfoBlock
               title={'New debt with 10% rate'}
-              value={fu(newDebt)}
+              value={fu(newDebt < 0 ? 0 : newDebt)}
               isDisabled={true}
             />
           </div>
@@ -260,7 +260,9 @@ const BorrowForm = (props: BorrowProps) => {
           <div className={styles.col}>
             <InfoBlock
               title={'New allowance'}
-              value={fu(userAllowance - newDebt)}
+              value={fu(
+                userAllowance - newDebt < 0 ? 0 : userAllowance - newDebt
+              )}
             />
           </div>
         </div>

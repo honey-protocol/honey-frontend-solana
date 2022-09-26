@@ -197,7 +197,7 @@ const RepayForm = (props: RepayProps) => {
           <div className={styles.col}>
             <InfoBlock
               title={'New debt'}
-              value={fu(newDebt)}
+              value={fu(newDebt < 0 ? 0 : newDebt)}
               isDisabled={true}
             />
           </div>
@@ -219,7 +219,7 @@ const RepayForm = (props: RepayProps) => {
           <div className={styles.col}>
             <InfoBlock
               title={'New allowance'}
-              value={fu(userAllowance - newDebt)}
+              value={fu(userAllowance + 0.9 * (valueUSDC ?? 0))}
             />
           </div>
         </div>
