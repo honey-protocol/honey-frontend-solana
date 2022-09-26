@@ -144,15 +144,26 @@ const RepayForm = (props: RepayProps) => {
             <InfoBlock
               value={fu(nftPrice)}
               valueSize="big"
-              footer={<span>Estimated value</span>}
+              footer={
+                <span className={hAlign}>
+                  Estimated value <div className={questionIcon} />
+                </span>
+              }
+              toolTipLabel="Placeholder text for tooltip" // TODO: CHANGE TO REAL INFO TEXT FOR EST VAL
             />
           </div>
           <div className={styles.col}>
             <InfoBlock
               value={f(userDebt / liquidationThreshold)}
               valueSize="big"
-              footer={<span>Liquidation price</span>}
               isDisabled={userDebt == 0 ? true : false}
+              footer={
+                <span className={hAlign}>
+                  Liquidation price
+                  <div className={questionIcon} />
+                </span>
+              }
+              toolTipLabel="Placeholder text for tooltip" // TODO: CHANGE TO REAL INFO TEXT FOR liq price
             />
           </div>
         </div>
@@ -183,22 +194,43 @@ const RepayForm = (props: RepayProps) => {
           </div>
           <div className={styles.col}>
             <InfoBlock
-              title={'New risk level'}
-              value={fu(0)}
+              title={
+                <span className={hAlign}>
+                  New risk level
+                  <div className={questionIcon} />
+                </span>
+              }
+              value={fp((loanToValue + newDebt / (nftPrice || 0)) * 100)}
               isDisabled={true}
+              toolTipLabel="Placeholder text for tooltip" // TODO: CHANGE TO REAL INFO TEXT FOR liq price
             />
           </div>
         </div>
 
         <div className={styles.row}>
           <div className={styles.col}>
-            <InfoBlock title={'Debt'} value={fu(userDebt)} />
+            <InfoBlock
+              title={
+                <span className={hAlign}>
+                  Debt
+                  <div className={questionIcon} />
+                </span>
+              }
+              value={fu(userDebt)}
+              toolTipLabel="Placeholder text for tooltip" // TODO: CHANGE TO REAL INFO TEXT FOR liq price
+            />
           </div>
           <div className={styles.col}>
             <InfoBlock
-              title={'New debt'}
+              title={
+                <span className={hAlign}>
+                  New debt
+                  <div className={questionIcon} />
+                </span>
+              }
               value={fu(newDebt < 0 ? 0 : newDebt)}
               isDisabled={true}
+              toolTipLabel="Placeholder text for tooltip" // TODO: CHANGE TO REAL INFO TEXT FOR liq price
             />
           </div>
         </div>
@@ -218,27 +250,33 @@ const RepayForm = (props: RepayProps) => {
           </div>
           <div className={styles.col}>
             <InfoBlock
-              title={'New allowance'}
+              title={
+                <span className={hAlign}>
+                  New allowance
+                  <div className={questionIcon} />
+                </span>
+              }
               value={fu(userAllowance + 0.9 * (valueUSDC ?? 0))}
+              toolTipLabel="Placeholder text for tooltip" // TODO: CHANGE TO REAL INFO TEXT FOR liq price
             />
           </div>
         </div>
 
         <div className={styles.inputs}>
-        <div className={styles.row}>
-          <div className={cs(styles.balance, styles.col)}>
-            <InfoBlock
-              title={'Your SOL balance'}
-              value={f(SOLBalance)}
-            ></InfoBlock>
+          <div className={styles.row}>
+            <div className={cs(styles.balance, styles.col)}>
+              <InfoBlock
+                title={'Your SOL balance'}
+                value={f(SOLBalance)}
+              ></InfoBlock>
+            </div>
+            <div className={cs(styles.balance, styles.col)}>
+              <InfoBlock
+                title={'NEW SOL balance'}
+                value={f(SOLBalance - (valueUSDC || 0))}
+              ></InfoBlock>
+            </div>
           </div>
-          <div className={cs(styles.balance, styles.col)}>
-            <InfoBlock
-              title={'NEW SOL balance'}
-              value={f(SOLBalance - (valueUSDC || 0))}
-            ></InfoBlock>
-          </div>
-        </div>
           <InputsBlock
             valueUSD={p(f(valueUSD))}
             valueUSDC={p(f(valueUSDC))}
