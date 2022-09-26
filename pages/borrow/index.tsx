@@ -58,7 +58,9 @@ import { Metadata } from '@metaplex-foundation/mpl-token-metadata';
 import { MAX_LTV } from 'constants/loan';
 import { ToastProps } from 'hooks/useToast';
 import { RoundHalfDown } from 'helpers/utils';
-import { network } from 'pages/_app';
+// import { network } from 'pages/_app';
+
+const network = 'devnet'; // change to dynamic value
 
 const { formatPercent: fp, formatUsd: fu } = formatNumber;
 
@@ -575,9 +577,7 @@ const Markets: NextPage = () => {
       if (tx[0] == 'SUCCESS') {
         toast.success(
           'Deposit success',
-          `https://solscan.io/tx/
-        ${tx[1][0]}
-        ?cluster=${network}`
+          `https://solscan.io/tx/${tx[1][0]}?cluster=${network}`
         );
         console.log('is there a success?');
 
@@ -617,9 +617,7 @@ const Markets: NextPage = () => {
         await refreshPositions();
         toast.success(
           'Withdraw success',
-          `https://solscan.io/tx/
-      ${tx[1][0]}
-      ?cluster=${network}`
+          `https://solscan.io/tx/${tx[1][0]}?cluster=${network}`
         );
       }
 
@@ -671,9 +669,7 @@ const Markets: NextPage = () => {
         });
         toast.success(
           'Borrow success',
-          `https://solscan.io/tx/
-      ${tx[1][0]}
-      ?cluster=${network}`
+          `https://solscan.io/tx/${tx[1][0]}?cluster=${network}`
         );
       } else {
         return toast.error('Borrow failed');
@@ -723,9 +719,7 @@ const Markets: NextPage = () => {
         });
         toast.success(
           'Repay success',
-          `https://solscan.io/tx/
-      ${tx[1][0]}
-      ?cluster=${network}`
+          `https://solscan.io/tx/${tx[1][0]}?cluster=${network}`
         );
       } else {
         return toast.error('Repay failed');
