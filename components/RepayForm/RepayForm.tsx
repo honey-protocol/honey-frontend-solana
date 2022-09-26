@@ -155,9 +155,8 @@ const RepayForm = (props: RepayProps) => {
 
         <div className={styles.row}>
           <div className={styles.col}>
-            <InfoBlock title={'Risk level'} value={fp(loanToValue * 100)} />
             <InfoBlock
-              value={fu(loanToValue)}
+              value={fp(loanToValue * 100)}
               toolTipLabel={
                 <span>
                   Risk level is measured using the{' '}
