@@ -10,12 +10,13 @@ import HoneyButton from 'components/HoneyButton/HoneyButton';
 import HexaBoxContainer from '../HexaBoxContainer/HexaBoxContainer';
 import { RepayProps } from './types';
 import SidebarScroll from '../SidebarScroll/SidebarScroll';
-import { LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js';
+import { PublicKey } from '@solana/web3.js';
 import { isNil } from '../../helpers/utils';
 import { hAlign } from 'styles/common.css';
 import { questionIcon } from 'styles/icons.css';
 import cs from 'classnames';
 import useToast from 'hooks/useToast';
+import { useSolBalance } from 'hooks/useSolBalance';
 
 const { format: f, formatPercent: fp, formatUsd: fu, parse: p } = formatNumber;
 
@@ -29,7 +30,7 @@ const RepayForm = (props: RepayProps) => {
     userDebt,
     userUSDCBalance,
     loanToValue,
-    availableNFTs,
+    availableNFTs
   } = props;
 
   const [valueUSD, setValueUSD] = useState<number>();
@@ -40,6 +41,7 @@ const RepayForm = (props: RepayProps) => {
   const maxValue = userDebt != 0 ? userDebt : userAllowance;
   const usdcPrice = 0.95;
   const liquidationThreshold = 0.75;
+  const SOLBalance = useSolBalance();
 
   const newDebt = userDebt - (valueUSD ? valueUSD : 0);
 
@@ -225,8 +227,8 @@ const RepayForm = (props: RepayProps) => {
         <div className={styles.inputs}>
           <div className={styles.balance}>
             <InfoBlock
-              title={'Your USDC balance'}
-              value={f(8120.19)}
+              title={'Your SOL balance'}
+              value={f(SOLBalance)}
             ></InfoBlock>
           </div>
 
