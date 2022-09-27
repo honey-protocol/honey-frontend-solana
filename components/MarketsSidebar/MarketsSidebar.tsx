@@ -20,18 +20,19 @@ type Tab = 'borrow' | 'repay';
 
 const MarketsSidebar = (props: MarketsSidebarProps) => {
   const wallet = useConnectedWallet();
-  const { 
-    collectionId, 
-    availableNFTs, 
-    openPositions, 
-    nftPrice, 
+  const {
+    collectionId,
+    availableNFTs,
+    openPositions,
+    nftPrice,
     userAllowance,
     userDebt,
     userUSDCBalance,
     loanToValue,
-    executeDepositNFT, executeWithdrawNFT, executeBorrow, executeRepay 
+    hideMobileSidebar,
+    executeDepositNFT, executeWithdrawNFT, executeBorrow, executeRepay,
   } = props;
-    
+
   const [activeTab, setActiveTab] = useState<Tab>('borrow');
   const { connect } = useWalletKit();
 
@@ -67,30 +68,32 @@ const MarketsSidebar = (props: MarketsSidebarProps) => {
         ) : (
           <>
             {
-              activeTab === 'borrow' && 
-                <BorrowForm 
+              activeTab === 'borrow' &&
+                <BorrowForm
                   userDebt={userDebt}
-                  executeBorrow={executeBorrow} 
-                  availableNFTs={availableNFTs} 
-                  openPositions={openPositions} 
-                  nftPrice={nftPrice} 
-                  executeDepositNFT={executeDepositNFT} 
+                  executeBorrow={executeBorrow}
+                  availableNFTs={availableNFTs}
+                  openPositions={openPositions}
+                  nftPrice={nftPrice}
+                  executeDepositNFT={executeDepositNFT}
                   userAllowance={userAllowance}
                   loanToValue={loanToValue}
+                  hideMobileSidebar={hideMobileSidebar}
                 />
             }
             {
-              (activeTab === 'repay' && openPositions.length) && 
-                <RepayForm 
-                  executeRepay={executeRepay} 
-                  openPositions={openPositions} 
+              (activeTab === 'repay' && openPositions.length) &&
+                <RepayForm
+                  executeRepay={executeRepay}
+                  openPositions={openPositions}
                   availableNFTs={availableNFTs}
-                  nftPrice={nftPrice} 
-                  executeWithdrawNFT={executeWithdrawNFT} 
+                  nftPrice={nftPrice}
+                  executeWithdrawNFT={executeWithdrawNFT}
                   userDebt={userDebt}
                   userAllowance={userAllowance}
                   userUSDCBalance={userUSDCBalance}
                   loanToValue={loanToValue}
+                  hideMobileSidebar={hideMobileSidebar}
                 />
               }
           </>

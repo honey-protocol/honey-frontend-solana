@@ -1,16 +1,15 @@
 import type { NextPage } from 'next';
 import LayoutRedesign from '../../components/LayoutRedesign/LayoutRedesign';
 import MarketsSidebar from '../../components/MarketsSidebar/MarketsSidebar';
-import Sider from 'antd/lib/layout/Sider';
-import { Content } from 'antd/lib/layout/layout';
 import HoneyTable from '../../components/HoneyTable/HoneyTable';
 import { ColumnType } from 'antd/lib/table';
 import * as style from '../../styles/markets.css';
 import {
-  MarketTableRow,
+  HoneyTableColumnType,
   MarketTablePosition,
-  UserNFTs,
-  OpenPositions
+  MarketTableRow,
+  OpenPositions,
+  UserNFTs
 } from '../../types/markets';
 import React, {
   ChangeEvent,
@@ -22,7 +21,7 @@ import React, {
 import { formatNumber } from '../../helpers/format';
 import Image from 'next/image';
 import honeyEyes from '/public/nfts/honeyEyes.png';
-import { Key, SortOrder } from 'antd/lib/table/interface';
+import { ColumnTitleProps, Key } from 'antd/lib/table/interface';
 import HoneyToggle from '../../components/HoneyToggle/HoneyToggle';
 import debounce from 'lodash/debounce';
 import SearchInput from '../../components/SearchInput/SearchInput';
@@ -32,13 +31,9 @@ import HoneyButton from '../../components/HoneyButton/HoneyButton';
 import EmptyStateDetails from 'components/EmptyStateDetails/EmptyStateDetails';
 import classNames from 'classnames';
 import { getColumnSortStatus } from '../../helpers/tableUtils';
-import { useConnectedWallet, useSolana } from '@saberhq/use-solana';
+import { useConnectedWallet } from '@saberhq/use-solana';
 import useFetchNFTByUser from '../../hooks/useNFTV2';
-import {
-  ConfigureSDK,
-  BnToDecimal,
-  toastResponse
-} from '../../helpers/loanHelpers/index';
+import { BnToDecimal, ConfigureSDK } from '../../helpers/loanHelpers/index';
 import { LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js';
 import BN from 'bn.js';
 import {
@@ -57,6 +52,10 @@ import {
 import { Metadata } from '@metaplex-foundation/mpl-token-metadata';
 import { MAX_LTV } from 'constants/loan';
 import { ToastProps } from 'hooks/useToast';
+import HoneyContent from '../../components/HoneyContent/HoneyContent';
+import HoneySider from '../../components/HoneySider/HoneySider';
+import { TABLET_BP } from '../../constants/breakpoints';
+import useWindowSize from '../../hooks/useWindowSize';
 // import { network } from 'pages/_app';
 
 const network = 'devnet'; // change to dynamic value
@@ -103,6 +102,7 @@ const Markets: NextPage = () => {
     sdkConfig.honeyId,
     sdkConfig.marketId
   );
+  const { width: windowWidth } = useWindowSize();
 
   const [tableData, setTableData] = useState<MarketTableRow[]>([]);
   const [tableDataFiltered, setTableDataFiltered] = useState<MarketTableRow[]>(
@@ -133,6 +133,8 @@ const Markets: NextPage = () => {
   const [liqidationThreshold, setLiquidationThreshold] = useState(0);
   const [reserveHoneyState, setReserveHoneyState] = useState(0);
   const [userUSDCBalance, setUserUSDCBalance] = useState(0);
+
+  const [isMobileSidebarVisible, setShowMobileSidebar] = useState(false);
 
   const availableNFTs: any = useFetchNFTByUser(wallet);
   let reFetchNFTs = availableNFTs[2];
@@ -297,6 +299,16 @@ const Markets: NextPage = () => {
     setTableDataFiltered(mockData);
   }, [totalDeposits, totalMarketDebt, nftPrice, userOpenPositions]);
 
+  const showMobileSidebar = () => {
+    setShowMobileSidebar(true);
+    document.body.classList.add('disable-scroll');
+  };
+
+  const hideMobileSidebar = () => {
+    setShowMobileSidebar(false);
+    document.body.classList.remove('disable-scroll');
+  };
+
   const handleToggle = (checked: boolean) => {
     setIsMyCollectionsFilterEnabled(checked);
   };
@@ -353,110 +365,220 @@ const Markets: NextPage = () => {
   };
   const columnsWidth: Array<number | string> = [240, 100, 150, 150, 200];
 
-  const columns: ColumnType<MarketTableRow>[] = useMemo(
-    () => [
-      {
-        width: columnsWidth[0],
-        title: SearchForm,
-        dataIndex: 'name',
-        key: 'name',
-        render: (name: string) => {
-          return (
-            <div className={style.nameCell}>
-              <div className={style.logoWrapper}>
-                <div className={style.collectionLogo}>
-                  <HexaBoxContainer>
-                    <Image src={honeyEyes} />
-                  </HexaBoxContainer>
+  const columns: HoneyTableColumnType<MarketTableRow>[] = useMemo(
+    () =>
+      [
+        {
+          width: columnsWidth[0],
+          title: SearchForm,
+          dataIndex: 'name',
+          key: 'name',
+          hidden: windowWidth < TABLET_BP,
+          render: (name: string) => {
+            return (
+              <div className={style.nameCell}>
+                <div className={style.logoWrapper}>
+                  <div className={style.collectionLogo}>
+                    <HexaBoxContainer>
+                      <Image src={honeyEyes} />
+                    </HexaBoxContainer>
+                  </div>
+                </div>
+                <div className={style.collectionName}>{name}</div>
+              </div>
+            );
+          }
+        },
+        {
+          title: ({ sortColumns }: ColumnTitleProps<MarketTableRow>) => {
+            const sortOrder = getColumnSortStatus(sortColumns, 'rate');
+            return (
+              <div
+                className={
+                  style.headerCell[
+                    sortOrder === 'disabled' ? 'disabled' : 'active'
+                  ]
+                }
+              >
+                <span>Rate</span>
+                <div className={style.sortIcon[sortOrder]} />
+              </div>
+            );
+          },
+          dataIndex: 'name',
+          key: 'name',
+          hidden: windowWidth > TABLET_BP,
+          sorter: (a: MarketTableRow, b: MarketTableRow) => a.rate - b.rate,
+          render: (name: string, row: MarketTableRow) => {
+            return (
+              <div className={style.nameCell}>
+                <div className={style.logoWrapper}>
+                  <div className={style.collectionLogo}>
+                    <HexaBoxContainer>
+                      <Image src={honeyEyes} />
+                    </HexaBoxContainer>
+                  </div>
+                </div>
+                <div className={style.nameCellMobile}>
+                  <div className={style.collectionName}>{name}</div>
+                  <div className={style.rateCellMobile}>
+                    {fp(row.rate * 100)}
+                  </div>
                 </div>
               </div>
-              <div className={style.collectionName}>{name}</div>
-            </div>
-          );
-        }
-      },
-      {
-        width: columnsWidth[1],
-        title: ({ sortColumns }) => {
-          const sortOrder = getColumnSortStatus(sortColumns, 'rate');
-          return (
-            <div
-              className={
-                style.headerCell[
-                  sortOrder === 'disabled' ? 'disabled' : 'active'
-                ]
-              }
-            >
-              <span>Rate</span> <div className={style.sortIcon[sortOrder]} />
-            </div>
-          );
+            );
+          }
         },
-        dataIndex: 'rate',
-        sorter: (a, b) => a.rate - b.rate,
-        render: (rate: number) => {
-          return <div className={style.rateCell}>{fp(rate * 100)}</div>;
-        }
-      },
-      {
-        width: columnsWidth[2],
-        title: ({ sortColumns }) => {
-          const sortOrder = getColumnSortStatus(sortColumns, 'available');
-          return (
-            <div
-              className={
-                style.headerCell[
-                  sortOrder === 'disabled' ? 'disabled' : 'active'
-                ]
-              }
-            >
-              <span>Available</span>{' '}
-              <div className={style.sortIcon[sortOrder]} />
-            </div>
-          );
+        {
+          width: columnsWidth[1],
+          title: ({ sortColumns }: ColumnTitleProps<MarketTableRow>) => {
+            const sortOrder = getColumnSortStatus(sortColumns, 'rate');
+            return (
+              <div
+                className={
+                  style.headerCell[
+                    sortOrder === 'disabled' ? 'disabled' : 'active'
+                  ]
+                }
+              >
+                <span>Rate</span>
+                <div className={style.sortIcon[sortOrder]} />
+              </div>
+            );
+          },
+          dataIndex: 'rate',
+          hidden: windowWidth < TABLET_BP,
+          sorter: (a: MarketTableRow, b: MarketTableRow) => a.rate - b.rate,
+          render: (rate: number) => {
+            return <div className={style.rateCell}>{fp(rate * 100)}</div>;
+          }
         },
-        dataIndex: 'available',
-        sorter: (a, b) => a.available - b.available,
-        render: (available: number) => {
-          return <div className={style.availableCell}>{fu(available)}</div>;
-        }
-      },
-      {
-        width: columnsWidth[3],
-        title: ({ sortColumns }) => {
-          const sortOrder = getColumnSortStatus(sortColumns, 'value');
-          return (
-            <div
-              className={
-                style.headerCell[
-                  sortOrder === 'disabled' ? 'disabled' : 'active'
-                ]
-              }
-            >
-              <span>Value</span> <div className={style.sortIcon[sortOrder]} />
-            </div>
-          );
+        {
+          width: columnsWidth[2],
+          title: ({ sortColumns }: ColumnTitleProps<MarketTableRow>) => {
+            const sortOrder = getColumnSortStatus(sortColumns, 'available');
+            return (
+              <div
+                className={
+                  style.headerCell[
+                    sortOrder === 'disabled' ? 'disabled' : 'active'
+                  ]
+                }
+              >
+                <span>Available</span>{' '}
+                <div className={style.sortIcon[sortOrder]} />
+              </div>
+            );
+          },
+          dataIndex: 'available',
+          hidden: windowWidth < TABLET_BP,
+          sorter: (a: MarketTableRow, b: MarketTableRow) =>
+            a.available - b.available,
+          render: (available: number) => {
+            return <div className={style.availableCell}>{fu(available)}</div>;
+          }
         },
-        dataIndex: 'value',
-        sorter: (a, b) => a.value - b.value,
-        render: (value: number) => {
-          return <div className={style.valueCell}>{fu(value)}</div>;
+        {
+          title: ({ sortColumns }: ColumnTitleProps<MarketTableRow>) => {
+            const sortOrder = getColumnSortStatus(sortColumns, 'available');
+            return (
+              <div
+                className={
+                  style.headerCell[
+                    sortOrder === 'disabled' ? 'disabled' : 'active'
+                  ]
+                }
+              >
+                <span>Available</span>{' '}
+                <div className={style.sortIcon[sortOrder]} />
+              </div>
+            );
+          },
+          dataIndex: 'available',
+          hidden: windowWidth > TABLET_BP,
+          sorter: (a: MarketTableRow, b: MarketTableRow) =>
+            a.available - b.available,
+          render: (available: number) => {
+            return <div className={style.availableCell}>{fu(available)}</div>;
+          }
+        },
+        {
+          width: columnsWidth[3],
+          title: ({ sortColumns }: ColumnTitleProps<MarketTableRow>) => {
+            const sortOrder = getColumnSortStatus(sortColumns, 'value');
+            return (
+              <div
+                className={
+                  style.headerCell[
+                    sortOrder === 'disabled' ? 'disabled' : 'active'
+                  ]
+                }
+              >
+                <span>Value</span>
+                <div className={style.sortIcon[sortOrder]} />
+              </div>
+            );
+          },
+          dataIndex: 'value',
+          hidden: windowWidth < TABLET_BP,
+          sorter: (a: MarketTableRow, b: MarketTableRow) => a.value - b.value,
+          render: (value: number) => {
+            return <div className={style.valueCell}>{fu(value)}</div>;
+          }
+        },
+        {
+          title: ({ sortColumns }: ColumnTitleProps<MarketTableRow>) => {
+            const sortOrder = getColumnSortStatus(sortColumns, 'value');
+            return (
+              <div
+                className={
+                  style.headerCell[
+                    sortOrder === 'disabled' ? 'disabled' : 'active'
+                  ]
+                }
+              >
+                <span>Value</span>
+                <div className={style.sortIcon[sortOrder]} />
+              </div>
+            );
+          },
+          dataIndex: 'value',
+          hidden: windowWidth > TABLET_BP,
+          sorter: (a: MarketTableRow, b: MarketTableRow) => a.value - b.value,
+          render: (value: number) => {
+            return <div className={style.valueCell}>{fu(value)}</div>;
+          }
+        },
+        {
+          width: columnsWidth[4],
+          title: MyCollectionsToggle,
+          hidden: windowWidth < TABLET_BP,
+          render: (_: null, row: MarketTableRow) => {
+            return (
+              <div className={style.buttonsCell}>
+                <HoneyButton variant="text">
+                  View <div className={style.arrowIcon} />
+                </HoneyButton>
+              </div>
+            );
+          }
+        },
+        {
+          width: '60px',
+          title: '',
+          hidden: windowWidth > TABLET_BP,
+          render: (_: null, row: MarketTableRow) => {
+            return (
+              <div className={style.buttonsCell}>
+                <HoneyButton variant="text">
+                  <div className={style.arrowIcon} />
+                </HoneyButton>
+              </div>
+            );
+          }
         }
-      },
-      {
-        width: columnsWidth[4],
-        title: MyCollectionsToggle,
-        render: (_: null, row: MarketTableRow) => {
-          return (
-            <div className={style.buttonsCell}>
-              <HoneyButton variant="text">
-                View <div className={style.arrowIcon} />
-              </HoneyButton>
-            </div>
-          );
-        }
-      }
-    ],
-    [isMyCollectionsFilterEnabled, tableData, searchQuery]
+      ].filter(column => !column.hidden),
+    [isMyCollectionsFilterEnabled, tableData, searchQuery, windowWidth]
   );
 
   const expandColumns: ColumnType<MarketTablePosition>[] = [
@@ -539,7 +661,8 @@ const Markets: NextPage = () => {
       </div>
       <div className={style.footerButton}>
         <HoneyButton variant="secondary">
-          <div className={style.swapWalletIcon} /> Connect another wallet
+          <div className={style.swapWalletIcon} />
+          Connect another wallet
         </HoneyButton>
       </div>
     </div>
@@ -721,7 +844,15 @@ const Markets: NextPage = () => {
 
   return (
     <LayoutRedesign>
-      <Content>
+      <HoneyContent>
+        <div className={style.mobileTableHeader}>
+          <div className={style.mobileRow}>
+            <SearchForm />
+          </div>
+          <div className={style.mobileRow}>
+            <MyCollectionsToggle />
+          </div>
+        </div>
         <HoneyTable
           hasRowsShadow={true}
           tableLayout="fixed"
@@ -739,7 +870,10 @@ const Markets: NextPage = () => {
             expandedRowKeys,
             expandedRowRender: record => {
               return (
-                <div className={style.expandSection}>
+                <div
+                  className={style.expandSection}
+                  onClick={showMobileSidebar}
+                >
                   <div className={style.dashedDivider} />
                   <HoneyTable
                     tableLayout="fixed"
@@ -773,8 +907,8 @@ const Markets: NextPage = () => {
               />
             </div>
           ))}
-      </Content>
-      <Sider width={350}>
+      </HoneyContent>
+      <HoneySider isMobileSidebarVisible={isMobileSidebarVisible}>
         {/* borrow repay module */}
         <MarketsSidebar
           collectionId="s"
@@ -789,8 +923,9 @@ const Markets: NextPage = () => {
           userAllowance={userAllowance}
           userUSDCBalance={userUSDCBalance}
           loanToValue={loanToValue}
+          hideMobileSidebar={hideMobileSidebar}
         />
-      </Sider>
+      </HoneySider>
     </LayoutRedesign>
   );
 };

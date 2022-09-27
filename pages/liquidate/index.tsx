@@ -1,7 +1,5 @@
 import type { NextPage } from 'next';
 import LayoutRedesign from '../../components/LayoutRedesign/LayoutRedesign';
-import Sider from 'antd/lib/layout/Sider';
-import { Content } from 'antd/lib/layout/layout';
 import LiquidateSidebar from '../../components/LiquidateSidebar/LiquidateSidebar';
 import HoneyTable from '../../components/HoneyTable/HoneyTable';
 import classNames from 'classnames';
@@ -27,6 +25,8 @@ import HoneyButton from '../../components/HoneyButton/HoneyButton';
 import { formatNumber } from '../../helpers/format';
 import { LiquidateTableRow } from '../../types/liquidate';
 import { LiquidateExpandTable } from '../../components/LiquidateExpandTable/LiquidateExpandTable';
+import HoneySider from '../../components/HoneySider/HoneySider';
+import HoneyContent from 'components/HoneyContent/HoneyContent';
 
 const { formatPercent: fp, formatUsd: fu } = formatNumber;
 
@@ -267,7 +267,7 @@ const Liquidate: NextPage = () => {
 
   return (
     <LayoutRedesign>
-      <Content>
+      <HoneyContent>
         <HoneyTable
           hasRowsShadow={true}
           tableLayout="fixed"
@@ -311,10 +311,11 @@ const Liquidate: NextPage = () => {
               />
             </div>
           ))}
-      </Content>
-      <Sider width={350}>
+      </HoneyContent>
+
+      <HoneySider>
         <LiquidateSidebar collectionId="0" />
-      </Sider>
+      </HoneySider>
     </LayoutRedesign>
   );
 };

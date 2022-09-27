@@ -1,7 +1,5 @@
 import type { NextPage } from 'next';
 import LayoutRedesign from '../../components/LayoutRedesign/LayoutRedesign';
-import Sider from 'antd/lib/layout/Sider';
-import { Content } from 'antd/lib/layout/layout';
 import LendSidebar from '../../components/LendSidebar/LendSidebar';
 import { LendTableRow } from '../../types/lend';
 import { ChangeEvent, useCallback, useEffect, useMemo, useState } from 'react';
@@ -19,6 +17,8 @@ import debounce from 'lodash/debounce';
 import { getColumnSortStatus } from '../../helpers/tableUtils';
 import { generateMockHistoryData } from '../../helpers/chartUtils';
 import { HoneyChart } from '../../components/HoneyChart/HoneyChart';
+import HoneySider from '../../components/HoneySider/HoneySider';
+import HoneyContent from '../../components/HoneyContent/HoneyContent';
 import { deposit, withdraw, useMarket, useHoney } from '@honey-finance/sdk';
 import {
   toastResponse,
@@ -515,7 +515,7 @@ const Lend: NextPage = () => {
 
   return (
     <LayoutRedesign>
-      <Content>
+      <HoneyContent>
         <HoneyTable
           hasRowsShadow={true}
           tableLayout="fixed"
@@ -539,8 +539,8 @@ const Lend: NextPage = () => {
             }
           }}
         />
-      </Content>
-      <Sider width={350}>
+      </HoneyContent>
+      <HoneySider>
         <LendSidebar
           collectionId="s"
           executeDeposit={executeDeposit}
@@ -550,7 +550,7 @@ const Lend: NextPage = () => {
           value={totalDeposits}
           userWalletBalance={userWalletBalance}
         />
-      </Sider>
+      </HoneySider>
     </LayoutRedesign>
   );
 };
