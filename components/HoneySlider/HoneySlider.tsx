@@ -29,7 +29,7 @@ interface HoneySliderProps {
   onChange?: (value: number) => void;
 }
 
-const { formatPercent: fp, formatUsd: fu } = formatNumber;
+const { formatPercent: fp, formatSol: fs } = formatNumber;
 
 export const HoneySlider: FC<HoneySliderProps> = ({
   maxValue,
@@ -109,7 +109,7 @@ export const HoneySlider: FC<HoneySliderProps> = ({
       >
         {!isReadonly && (
           <div className={styles.sliderHeader.secondary}>
-            {fu(maxValue * maxAvailablePosition)}
+            {fs(maxValue * maxAvailablePosition)}
           </div>
         )}
         <Slider
@@ -140,7 +140,7 @@ export const HoneySlider: FC<HoneySliderProps> = ({
           style={{ width: `${unavailablePosition * 100}%` }}
         >
           {!isReadonly && (
-            <div className={styles.sliderHeader.secondary}>{fu(maxValue)}</div>
+            <div className={styles.sliderHeader.secondary}>{fs(maxValue)}</div>
           )}
           <Slider
             className={c(styles.slider, styles.disabledBackgroundSlider)}

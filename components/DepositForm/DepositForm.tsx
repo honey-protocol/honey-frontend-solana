@@ -16,10 +16,16 @@ import { questionIcon } from 'styles/icons.css';
 import { hAlign } from 'styles/common.css';
 import useToast from 'hooks/useToast';
 
-const { format: f, formatPercent: fp, formatUsd: fu, parse: p } = formatNumber;
+const { format: f, formatPercent: fp, formatSol: fs, parse: p } = formatNumber;
 
 const DepositForm = (props: DepositFormProps) => {
-  const { executeDeposit, userTotalDeposits, value, available, userWalletBalance } = props;
+  const {
+    executeDeposit,
+    userTotalDeposits,
+    value,
+    available,
+    userWalletBalance
+  } = props;
 
   const [valueUSD, setValueUSD] = useState<number>(0);
   const [valueUSDC, setValueUSDC] = useState<number>(0);
@@ -30,8 +36,7 @@ const DepositForm = (props: DepositFormProps) => {
   const sdkConfig = ConfigureSDK();
   let walletPK = sdkConfig.sdkWallet?.publicKey;
 
-  useEffect(() => {
-  }, [userWalletBalance]);
+  useEffect(() => {}, [userWalletBalance]);
 
   const maxValue = userWalletBalance;
   const usdcPrice = 0.95;
@@ -74,8 +79,10 @@ const DepositForm = (props: DepositFormProps) => {
 
   function handleDeposit() {
     executeDeposit(valueUSDC, toast);
-    setTimeout(() => {}, 10000)
-    userInteraction == false ? setUserInteraction(true) : setUserInteraction(false);
+    setTimeout(() => {}, 10000);
+    userInteraction == false
+      ? setUserInteraction(true)
+      : setUserInteraction(false);
   }
 
   return (
@@ -114,7 +121,7 @@ const DepositForm = (props: DepositFormProps) => {
         <div className={styles.row}>
           <div className={styles.col}>
             <InfoBlock
-              value={fu(userTotalDeposits)}
+              value={fs(userTotalDeposits)}
               valueSize="big"
               footer={<span>Your Deposits</span>}
             />
@@ -133,7 +140,7 @@ const DepositForm = (props: DepositFormProps) => {
           </div>
           <div className={styles.col}>
             <InfoBlock
-              value={fp((value - available) / value * 100)}
+              value={fp(((value - available) / value) * 100)}
               valueSize="big"
               toolTipLabel=" Amount of supplied liquidity currently being borrowed"
               footer={
@@ -144,7 +151,6 @@ const DepositForm = (props: DepositFormProps) => {
             />
           </div>
         </div>
-
 
         <div className={styles.inputs}>
           <InputsBlock

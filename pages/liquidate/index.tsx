@@ -28,7 +28,7 @@ import { LiquidateExpandTable } from '../../components/LiquidateExpandTable/Liqu
 import HoneySider from '../../components/HoneySider/HoneySider';
 import HoneyContent from 'components/HoneyContent/HoneyContent';
 
-const { formatPercent: fp, formatUsd: fu } = formatNumber;
+const { formatPercent: fp, formatSol: fs } = formatNumber;
 
 const Liquidate: NextPage = () => {
   const [tableData, setTableData] = useState<LiquidateTableRow[]>([]);
@@ -80,7 +80,7 @@ const Liquidate: NextPage = () => {
             estimatedValue: 90
           }
         ]
-      },
+      }
     ];
 
     setTableData(mockData);
@@ -215,7 +215,7 @@ const Liquidate: NextPage = () => {
         dataIndex: 'totalDebt',
         sorter: (a, b) => a.totalDebt - b.totalDebt,
         render: (available: number) => {
-          return <div className={style.availableCell}>{fu(available)}</div>;
+          return <div className={style.availableCell}>{fs(available)}</div>;
         }
       },
       {
@@ -238,7 +238,7 @@ const Liquidate: NextPage = () => {
         dataIndex: 'tvl',
         sorter: (a, b) => a.tvl - b.tvl,
         render: (value: number) => {
-          return <div className={style.valueCell}>{fu(value)}</div>;
+          return <div className={style.valueCell}>{fs(value)}</div>;
         }
       },
       {

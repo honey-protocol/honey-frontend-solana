@@ -1,3 +1,5 @@
+import React from 'react';
+
 export const numberFormatter = new Intl.NumberFormat('en-US', {
   style: 'decimal',
   minimumFractionDigits: 2,
@@ -79,6 +81,14 @@ export const formatNumber = {
   formatUsdMobile: (val?: number) => {
     return `$ ${formatNumber.formatMobile(val)}`;
     return `$ ${formatNumber.format(val)}`;
+  },
+
+  /**
+   * Works as formatNumber.format but adds ◎ at the start of the string
+   * @param val
+   */
+  formatSol: (val?: number) => {
+    return `◎ ${formatNumber.format(val)}`;
   },
 
   /**
