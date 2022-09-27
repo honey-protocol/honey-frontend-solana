@@ -13,7 +13,6 @@ import { NftCardProps } from '../NftCard/types';
 import { MAX_LTV } from '../../constants/loan';
 import { usdcAmount } from '../HoneyButton/HoneyButton.css';
 import { BorrowProps } from './types';
-import { LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js';
 import { toastResponse } from 'helpers/loanHelpers';
 import SidebarScroll from '../SidebarScroll/SidebarScroll';
 import imagePlaceholder from 'public/images/imagePlaceholder.png';
@@ -21,6 +20,9 @@ import * as stylesRepay from '../RepayForm/RepayForm.css';
 import { hAlign } from 'styles/common.css';
 import { questionIcon } from 'styles/icons.css';
 import useToast from 'hooks/useToast';
+import { useSolBalance } from 'hooks/useSolBalance';
+import cs from 'classnames';
+import Nft from 'pages/farm/[name]';
 
 const { format: f, formatPercent: fp, formatUsd: fu, parse: p } = formatNumber;
 
@@ -39,7 +41,7 @@ const BorrowForm = (props: BorrowProps) => {
     executeBorrow,
     userAllowance,
     userDebt,
-    loanToValue,
+    loanToValue
   } = props;
 
   const [valueUSD, setValueUSD] = useState<number>(0);
@@ -49,6 +51,7 @@ const BorrowForm = (props: BorrowProps) => {
   const [hasOpenPosition, setHasOpenPosition] = useState(false);
   const [sliderValue, setSliderValue] = useState(0);
   const { toast, ToastComponent } = useToast();
+  const SOLBalance = useSolBalance();
 
   // Only for test purposes
   // const isNftSelected = true;
@@ -57,6 +60,8 @@ const BorrowForm = (props: BorrowProps) => {
   const maxValue = userAllowance;
   const usdcPrice = 0.95;
   const liquidationThreshold = 0.75;
+
+  const newDebt = userDebt + 1.1 * (valueUSD ? valueUSD : 0);
 
   // Put your validators here
   const isBorrowButtonDisabled = () => {
@@ -130,8 +135,7 @@ const BorrowForm = (props: BorrowProps) => {
     executeBorrow(valueUSDC, toast);
   }
 
-  useEffect(() => {
-  }, [selectedNft]);
+  useEffect(() => {}, [selectedNft]);
 
   const renderContent = () => {
     if (isNftSelected == false) {
@@ -142,6 +146,7 @@ const BorrowForm = (props: BorrowProps) => {
             data={availableNFTs}
             selectNFT={selectNFT}
             nftPrice={nftPrice}
+            selectedNFTMint={selectedNft?.mint}
           />
         </>
       );
@@ -166,15 +171,25 @@ const BorrowForm = (props: BorrowProps) => {
             <InfoBlock
               value={fu(nftPrice)}
               valueSize="big"
-              footer={<span>Estimated value</span>}
+              footer={
+                <span className={hAlign}>
+                  Estimated value <div className={questionIcon} />
+                </span>
+              }
+              toolTipLabel="Placeholder text for tooltip" // TODO: CHANGE TO REAL INFO TEXT FOR EST VAL
             />
           </div>
           <div className={styles.col}>
             <InfoBlock
               value={f(userDebt / liquidationThreshold)}
               valueSize="big"
-              footer={<span>Liquidation price</span>}
               isDisabled={userDebt == 0 ? true : false}
+              footer={
+                <span className={hAlign}>
+                  Liquidation price <div className={questionIcon} />
+                </span>
+              }
+              toolTipLabel="Placeholder text for tooltip" // TODO: CHANGE TO REAL INFO TEXT FOR LIQ PRICE
             />
           </div>
         </div>
@@ -213,8 +228,13 @@ const BorrowForm = (props: BorrowProps) => {
           </div>
           <div className={styles.col}>
             <InfoBlock
-              title={'New risk level'}
-              value={fu(0)}
+              title={
+                <span className={hAlign}>
+                  New risk level <div className={questionIcon} />
+                </span>
+              }
+              toolTipLabel="Placeholder text for tooltip" // TODO: CHANGE TO REAL INFO TEXT FOR EST VAL
+              value={fp((loanToValue + newDebt / nftPrice) * 100)}
               isDisabled={true}
             />
             <HoneySlider
@@ -230,10 +250,27 @@ const BorrowForm = (props: BorrowProps) => {
 
         <div className={styles.row}>
           <div className={styles.col}>
-            <InfoBlock title={'Debt'} value={fu(userDebt)} />
+            <InfoBlock
+              title={
+                <span className={hAlign}>
+                  Debt <div className={questionIcon} />
+                </span>
+              }
+              toolTipLabel="Placeholder text for tooltip" // TODO: CHANGE TO REAL INFO TEXT FOR debt
+              value={fu(userDebt)}
+            />
           </div>
           <div className={styles.col}>
-            <InfoBlock title={'New debt'} value={fu(0)} isDisabled={true} />
+            <InfoBlock
+              title={
+                <span className={hAlign}>
+                  New debt + fees <div className={questionIcon} />
+                </span>
+              }
+              toolTipLabel="Placeholder text for tooltip" // TODO: CHANGE TO REAL INFO TEXT FOR new debt
+              value={fu(newDebt < 0 ? 0 : newDebt)}
+              isDisabled={true}
+            />
           </div>
         </div>
 
@@ -246,27 +283,46 @@ const BorrowForm = (props: BorrowProps) => {
                   Allowance <div className={questionIcon} />
                 </span>
               }
-              footer={<span>No more than {fp(60)}</span>}
-              toolTipLabel="Allowance determines how much debt is available to a borrower."
+              footer={<span></span>}
+              toolTipLabel={`Allowance determines how much debt is available to a borrower. No more than ${fp(
+                60
+              )}`}
             />
           </div>
           <div className={styles.col}>
-            <InfoBlock title={'New allowance'} value={fu(0)} />
+            <InfoBlock
+              title={
+                <span className={hAlign}>
+                  New allowance <div className={questionIcon} />
+                </span>
+              }
+              toolTipLabel="Placeholder text for tooltip" // TODO: CHANGE TO REAL INFO TEXT FOR NEW ALLOWANCE
+              value={fu(
+                userAllowance - newDebt < 0 ? 0 : userAllowance - newDebt
+              )}
+            />
           </div>
         </div>
-
         <div className={styles.inputs}>
-          <div className={stylesRepay.balance}>
-            <InfoBlock
-              title={'Your USDC balance'}
-              value={f(8120.19)}
-            ></InfoBlock>
+          <div className={styles.row}>
+            <div className={cs(stylesRepay.balance, styles.col)}>
+              <InfoBlock
+                title={'Your SOL balance'}
+                value={f(SOLBalance)}
+              ></InfoBlock>
+            </div>
+            <div className={cs(stylesRepay.balance, styles.col)}>
+              <InfoBlock
+                title={'New SOL balance'}
+                value={f(SOLBalance + valueUSDC)}
+              ></InfoBlock>
+            </div>
           </div>
           <InputsBlock
             valueUSD={p(f(valueUSD))}
-            valueUSDC={p(f(valueUSDC))}
+            valueSOL={p(f(valueUSDC))}
             onChangeUSD={handleUsdInputChange}
-            onChangeUSDC={handleUsdcInputChange}
+            onChangeSOL={handleUsdcInputChange}
             maxValue={maxValue}
           />
         </div>
@@ -293,7 +349,7 @@ const BorrowForm = (props: BorrowProps) => {
         </div>
         <div className={styles.bigCol}>
           <HoneyButton
-            usdcAmount={valueUSDC || 0}
+            solAmount={valueUSDC || 0}
             usdcValue={valueUSD || 0}
             variant="primary"
             disabled={isBorrowButtonDisabled()}
@@ -304,7 +360,7 @@ const BorrowForm = (props: BorrowProps) => {
           </HoneyButton>
         </div>
       </div>
-    ) : (
+    ) : !isNftSelected ? null : (
       <div className={styles.buttons}>
         <div className={styles.smallCol}>
           <HoneyButton

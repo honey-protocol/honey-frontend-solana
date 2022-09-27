@@ -16,7 +16,8 @@ export const logoWrapper = style({
 });
 export const collectionLogo = style({
   width: '34px',
-  height: '34px'
+  height: '34px',
+  minWidth: '34px'
 });
 
 export const collectionName = style([
@@ -39,8 +40,8 @@ export const buttonsCell = style({
 });
 
 const rowBase = style({
-  cursor: "pointer"
-})
+  cursor: 'pointer'
+});
 export const expandedRow = style([rowBase, {}]);
 
 export const arrowIcon = style({
@@ -276,4 +277,3 @@ export const docIcon = style({
   height: 52,
   background: 'url("/images/docIcon.svg") center center no-repeat'
 });
-
