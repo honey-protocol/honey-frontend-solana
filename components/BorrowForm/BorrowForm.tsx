@@ -264,7 +264,7 @@ const BorrowForm = (props: BorrowProps) => {
             <InfoBlock
               title={
                 <span className={hAlign}>
-                  New debt with 10% rate <div className={questionIcon} />
+                  New debt + fees <div className={questionIcon} />
                 </span>
               }
               toolTipLabel="Placeholder text for tooltip" // TODO: CHANGE TO REAL INFO TEXT FOR new debt
@@ -283,8 +283,10 @@ const BorrowForm = (props: BorrowProps) => {
                   Allowance <div className={questionIcon} />
                 </span>
               }
-              footer={<span>No more than {fp(60)}</span>}
-              toolTipLabel="Allowance determines how much debt is available to a borrower."
+              footer={<span></span>}
+              toolTipLabel={`Allowance determines how much debt is available to a borrower. No more than ${fp(
+                60
+              )}`}
             />
           </div>
           <div className={styles.col}>
