@@ -9,6 +9,7 @@ export interface HoneyButtonTabsProps {
 
 type HoneyButtonTabsItem = {
   name: string;
+  nameMobile?: string;
   slug: string;
 };
 
@@ -29,7 +30,22 @@ export const HoneyButtonTabs: FC<HoneyButtonTabsProps> = ({
             className={style.periodSelectorItem[itemStatus]}
             onClick={() => onClick(item.slug)}
           >
-            {item.name}
+
+            {item.nameMobile ?
+              <>
+                <div className={style.hideNameMobile}>
+                  {item.name}
+                </div>
+                <div className={style.showNameMobile}>
+                  {item.nameMobile}
+                </div>
+              </>
+             :
+              <>
+                {item.name}
+              </>
+            }
+
             {isVisibleDivider && <div className={style.verticalDivider} />}
           </div>
         );

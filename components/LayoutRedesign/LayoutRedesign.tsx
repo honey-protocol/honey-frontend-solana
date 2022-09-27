@@ -12,7 +12,7 @@ interface Props {
 }
 
 const LayoutRedesign: FC<Props> = ({ children }) => {
-  // const [showMobileSidebar, setShowMobileSidebar] = useState(false);
+  // const [isMobileSidebarVisible, setShowMobileSidebar] = useState(false);
   return (
     <Layout className={styles.layout}>
       <Head>
@@ -24,8 +24,10 @@ const LayoutRedesign: FC<Props> = ({ children }) => {
         <Header />
       </LayoutHeader>
       <Layout className={styles.contentContainer}>
-        {/* Provide a <Content> and <Sider> in child component */}
-        {children}
+        <div className={styles.contentCenter}>
+          {/* Provide a <Content> and <Sider> in child component */}
+          {children}
+        </div>
       </Layout>
       {/*<Footer> We do not need footer right but just in case</Footer>*/}
     </Layout>

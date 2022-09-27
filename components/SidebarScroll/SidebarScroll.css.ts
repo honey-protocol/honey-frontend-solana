@@ -24,5 +24,5 @@ export const footer = style({
 });
 
 export const hasFooter = style({
-  height: 'calc(100% - 68px)'
+  height: 'calc(100% - 90px)'
 });

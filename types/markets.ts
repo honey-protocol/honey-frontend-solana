@@ -1,4 +1,5 @@
 import { PublicKey } from '@solana/web3.js';
+import { ColumnType } from 'antd/lib/table';
 
 export type MarketTableRow = {
   key: string;
@@ -39,4 +40,9 @@ export type OpenPositions = {
   symbol: string;
   updateAuthority: PublicKey;
   uri: string;
+}
+
+export interface HoneyTableColumnType<RecordType>
+  extends ColumnType<RecordType> {
+  hidden?: boolean;
 }

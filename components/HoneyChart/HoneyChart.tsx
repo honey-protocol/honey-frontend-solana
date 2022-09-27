@@ -16,6 +16,7 @@ import { PERIOD, PeriodName } from '../../constants/periods';
 import { getFormattedDate, getStartDate } from './utlis';
 import { formatNumber } from '../../helpers/format';
 import { HoneyButtonTabs } from '../HoneyButtonTabs/HoneyButtonTabs';
+import useWindowSize from 'hooks/useWindowSize';
 const { formatPercent: fp } = formatNumber;
 
 const PERIODS_NAME_MAPPING = {
@@ -23,6 +24,13 @@ const PERIODS_NAME_MAPPING = {
   [PERIOD.three_month]: '3 month',
   [PERIOD.six_month]: '6 month',
   [PERIOD.all]: 'all time'
+};
+
+const PERIODS_NAME_MAPPING_MOBILE = {
+  [PERIOD.one_month]: 'month',
+  [PERIOD.three_month]: '3 m',
+  [PERIOD.six_month]: '6 m',
+  [PERIOD.all]: 'all'
 };
 
 const PERIOD_NAMES = Object.values(PERIOD);
@@ -36,6 +44,7 @@ interface BarsProps {
 const Bar: FC<BarsProps> = ({ data = [], size, title }) => {
   const [period, setPeriod] = useState<PeriodName>(PERIOD.one_month);
   const [isBarHovered, setIsBarHovered] = useState(false);
+  const { width } = useWindowSize();
 
   const dataInitialStyles: VictoryStyleObject = {
     fill: vars.colors.white,
@@ -148,6 +157,7 @@ const Bar: FC<BarsProps> = ({ data = [], size, title }) => {
         <HoneyButtonTabs
           items={PERIOD_NAMES.map(slug => ({
             name: PERIODS_NAME_MAPPING[slug],
+            nameMobile: PERIODS_NAME_MAPPING_MOBILE[slug],
             slug
           }))}
           activeItemSlug={period}

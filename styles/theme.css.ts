@@ -99,6 +99,12 @@ export const typography = {
   }
 };
 
+export const breakpoints = {
+  mobile: 845,
+  tablet: 846,
+  desktop: 1240
+};
+
 const responsiveProperties = defineProperties({
   conditions: {
     mobile: {},

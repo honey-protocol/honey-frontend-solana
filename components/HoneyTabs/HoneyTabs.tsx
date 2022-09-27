@@ -21,21 +21,17 @@ const HoneyTabs = (props: {
     <div className={styles.tabs}>
       <div className={styles.tabsNav}>
         {props.activeKey === props.items[0].key ? (
-          <TabBgLeft active={props.active} />
+          <TabBgLeft />
         ) : (
-          <TabBgRight active={props.active} />
+          <TabBgRight />
         )}
-
-        <div
-          className={classNames(styles.tabBottomCover, {
-            [styles.tabBottomCoverInactive]: !props.active
-          })}
-        />
 
         {props.items.map((tabInfo, i) => (
           <div
             key={tabInfo.key}
-            className={styles.tab}
+            className={classNames(styles.tab,
+              props.activeKey === tabInfo.key ? styles.activeText : styles.inactiveText
+            )}
             onClick={() => props.onTabChange(tabInfo.key)}
           >
             <Typography.Text className={styles.tabText}>
@@ -48,7 +44,8 @@ const HoneyTabs = (props: {
       <div
         className={classNames(
           styles.content,
-          props.active ? styles.active : styles.inactive
+          props.active ? styles.active : styles.inactive,
+          props.activeKey === props.items[0].key ? styles.activeBorderLeft : styles.activeBorderRight
         )}
       >
         {props.children}

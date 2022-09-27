@@ -41,7 +41,8 @@ const BorrowForm = (props: BorrowProps) => {
     executeBorrow,
     userAllowance,
     userDebt,
-    loanToValue
+    loanToValue,
+    hideMobileSidebar
   } = props;
 
   const [valueUSD, setValueUSD] = useState<number>(0);
@@ -366,6 +367,7 @@ const BorrowForm = (props: BorrowProps) => {
           <HoneyButton
             variant="secondary"
             disabled={isBorrowButtonDisabled()}
+            onClick={hideMobileSidebar}
             isFluid
           >
             Cancel

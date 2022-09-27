@@ -1,12 +1,11 @@
 import { globalStyle, style } from '@vanilla-extract/css';
-import { vars } from '../../styles/theme.css';
 import { container } from '../../styles/common.css';
+import { vars } from '../../styles/theme.css';
 
 export const headerContainer = style([
   container,
   {
     lineHeight: 'initial',
-    padding: '0',
     height: 'unset',
     zIndex: '1'
   }
@@ -33,7 +32,8 @@ export const main = style({
 });
 
 globalStyle(`${content}.open`, {
-  height: '100vh'
+  height: '100vh',
+  backgroundColor: vars.colors.white
 });
 
 export const logo = style({

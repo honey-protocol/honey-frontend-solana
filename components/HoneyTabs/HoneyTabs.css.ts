@@ -4,10 +4,10 @@ import { typography, vars } from 'styles/theme.css';
 export const tabs = style({});
 
 export const content = style({
-  borderRadius: vars.space.medium,
+  borderRadius: '0 0 15px 15px',
   background: vars.colors.white,
   height: 'calc(100vh - 155px)',
-  borderTop: 'none !important'
+  overflow: 'hidden'
 });
 
 export const inactive = style({
@@ -20,6 +20,14 @@ export const active = style({
   zIndex: '10'
 });
 
+export const activeBorderLeft = style({
+  borderRadius: '0 15px 15px 15px'
+});
+
+export const activeBorderRight = style({
+  borderRadius: '15px 0 15px 15px'
+});
+
 export const tabSvg = style({
   width: '100%',
   position: 'absolute',
@@ -28,13 +36,47 @@ export const tabSvg = style({
   zIndex: '10'
 });
 
-globalStyle(`${tabSvg} svg`, {
-  width: '100%'
-});
+globalStyle(`${tabSvg} svg`, {});
 
 export const svgRight = style({
-  width: 'calc(100% + 4px)',
-  bottom: '-16px'
+  width: '50%',
+  height: 40,
+  bottom: '0',
+  right: 0,
+  ':after': {
+    content: '',
+    position: 'absolute',
+    right: -4,
+    bottom: -5,
+    width: 4,
+    height: 4,
+    background: vars.colors.brownLight,
+    borderRadius: '0 5px 5px 0'
+  }
+});
+
+export const svgLeft = style({
+  width: '50%',
+  bottom: '-2px',
+  left: 0
+});
+
+export const svgBorderRight = style({
+  position: 'absolute',
+  top: 0,
+  right: -4
+});
+
+export const svgBorder = style({
+  position: 'absolute',
+  top: 0,
+  right: -10
+});
+
+export const svgBorderLeft = style({
+  position: 'absolute',
+  top: 0,
+  left: -12
 });
 
 export const tabsNav = style({
@@ -49,28 +91,40 @@ export const tab = style({
   alignItems: 'center',
   width: '50%',
   cursor: 'pointer',
-  zIndex: 20
+  zIndex: 20,
+  position: 'relative',
+  ':after': {
+    content: '',
+    position: 'absolute',
+    left: '50%',
+    top: 0,
+    transform: 'translateX(-50%)',
+    width: 'calc(100% - 36px)',
+    height: 'calc(100% + 2px)',
+    background: vars.colors.white,
+    zIndex: -1,
+    opacity: 0,
+    borderTop: `2px solid ${vars.colors.black}`
+  }
+});
+
+export const activeText = style({
+  opacity: 1,
+  ':after': {
+    opacity: 1
+  }
+});
+
+export const inactiveText = style({
+  opacity: 0.4,
+  ':after': {
+    opacity: 0
+  }
 });
 
 export const tabText = style([
-  typography.button,
-  {
-    marginTop: '7px'
-  }
+  typography.button
 ]);
-
-export const tabBottomCover = style({
-  position: 'absolute',
-  width: '100%',
-  height: '7px',
-  borderRight: '2px solid',
-  borderLeft: '2px solid',
-  borderColor: vars.colors.black,
-  zIndex: 10,
-  bottom: '-16px',
-  left: '0',
-  background: vars.colors.white
-});
 
 export const tabBottomCoverInactive = style({
   borderColor: vars.colors.grayDark

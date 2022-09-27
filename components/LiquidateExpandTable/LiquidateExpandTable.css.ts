@@ -1,18 +1,28 @@
 import { style } from '@vanilla-extract/css';
-import { typography, vars } from '../../styles/theme.css';
+import { breakpoints, typography, vars } from '../../styles/theme.css';
 
 export const expandTableHeader = style({
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'space-between',
   paddingLeft: 16,
   paddingRight: 24,
-  marginTop: 12
+  marginTop: 12,
+  "@media": {
+    [`screen and (min-width: ${breakpoints.tablet}px)`]: {
+      display: "flex",
+      justifyContent: "space-between",
+      alignItems: "center",
+    },
+  },
 });
 
 export const positionsCounterContainer = style({
   display: 'flex',
-  alignItems: 'center'
+  alignItems: 'center',
+  marginBottom: 4,
+  "@media": {
+    [`screen and (min-width: ${breakpoints.tablet}px)`]: {
+      marginBottom: 0,
+    },
+  },
 });
 
 export const positionsCounterTitle = style([typography.title]);
