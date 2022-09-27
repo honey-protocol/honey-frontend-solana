@@ -1,4 +1,4 @@
-import { RoundHalfDown } from 'helpers/utils';
+import { RoundHalfDown, RoundHalfUp } from 'helpers/utils';
 import { MAX_LTV } from '../../constants/loan';
 import BN from 'bn.js';
 import { LAMPORTS_PER_SOL } from '@solana/web3.js';
@@ -42,8 +42,11 @@ export async function calculateCollectionwideAllowance(
     nftCollateralValue * MAX_LTV - userLoans,
     4
   );
+
   let sumOfLtv = RoundHalfDown(ltv);
-  let sumOfTotalDebt = RoundHalfDown(totalDebt);
+  let sumOfTotalDebt = RoundHalfUp(totalDebt);
+
+
 
   return {
     sumOfAllowance,
