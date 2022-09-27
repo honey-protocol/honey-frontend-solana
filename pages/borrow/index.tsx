@@ -135,6 +135,8 @@ const Markets: NextPage = () => {
   const [liqidationThreshold, setLiquidationThreshold] = useState(0);
   const [reserveHoneyState, setReserveHoneyState] = useState(0);
   const [userUSDCBalance, setUserUSDCBalance] = useState(0);
+  const [userTotalDeposits, setUserTotalDeposits] = useState(0);
+  const [sumOfTotalValue, setSumOfTotalValue] = useState(0)
 
   const [isMobileSidebarVisible, setShowMobileSidebar] = useState(false);
 
@@ -166,6 +168,41 @@ const Markets: NextPage = () => {
       }
     }
   }, [honeyReserves]);
+
+/**
+   * @description updates honeyUser | marketReserveInfo | - timeout required
+   * @params none
+   * @returns honeyUser | marketReserveInfo |
+   */
+  useEffect(() => {
+    setTimeout(() => {
+      let depositNoteExchangeRate = 0,
+        loanNoteExchangeRate = 0,
+        nftPrice = 0,
+        cRatio = 1;
+
+      if (marketReserveInfo) {
+        nftPrice = 2;
+        depositNoteExchangeRate = BnToDecimal(
+          marketReserveInfo[0].depositNoteExchangeRate,
+          15,
+          5
+        );
+      }
+
+      if (honeyUser?.deposits().length > 0) {
+        // let totalDeposit = BnDivided(honeyUser.deposits()[0].amount, 10, 5) * depositNoteExchangeRate / (10 ** 4)
+        let totalDeposit =
+          (honeyUser
+            .deposits()[0]
+            .amount.div(new BN(10 ** 5))
+            .toNumber() *
+            depositNoteExchangeRate) /
+          10 ** 4;
+        setUserTotalDeposits(totalDeposit);
+      }
+    }, 3000);
+  }, [marketReserveInfo, honeyUser]);
 
   /**
    * @description sets state of marketValue by parsing lamports outstanding debt amount to SOL
@@ -272,20 +309,16 @@ const Markets: NextPage = () => {
   ]);
 
   useEffect(() => {
-    console.log('---availableNFTs---', availableNFTs);
     setUserAvailableNFTs(availableNFTs[0]);
   }, [availableNFTs]);
 
-  // useEffect(() => {
-  //   console.log('total deposits', totalDeposits)
-  //   console.log('total marketDebt', totalMarketDebt);
-  // }, [totalDeposits, totalBorrowed]);
+  useEffect(() => {
+    setSumOfTotalValue(totalMarketDeposits + totalMarketDebt);
+  }, [totalMarketDebt, totalMarketDeposits])
 
   useEffect(() => {
-    console.log('--collateral nft positions--', collateralNFTPositions);
     if (collateralNFTPositions) {
       setUserOpenPositions(collateralNFTPositions);
-      console.log('user open positions', userOpenPositions);
     }
   }, [collateralNFTPositions]);
 
@@ -300,7 +333,7 @@ const Markets: NextPage = () => {
         // validated available to be totalMarketDeposits
         available: totalMarketDeposits,
         // validated value to be totalMarkDeposits + totalMarketDebt
-        value: totalMarketDeposits + totalMarketDebt,
+        value: sumOfTotalValue,
         positions: userOpenPositions
       }
     ];
@@ -524,7 +557,7 @@ const Markets: NextPage = () => {
                   ]
                 }
               >
-                <span>Value</span>
+                <span>TVL</span>
                 <div className={style.sortIcon[sortOrder]} />
               </div>
             );
@@ -798,6 +831,7 @@ const Markets: NextPage = () => {
             ? setReserveHoneyState(1)
             : setReserveHoneyState(0);
         });
+
         toast.success(
           'Borrow success',
           `https://solscan.io/tx/${tx[1][0]}?cluster=${network}`
@@ -848,6 +882,7 @@ const Markets: NextPage = () => {
             ? setReserveHoneyState(1)
             : setReserveHoneyState(0);
         });
+
         toast.success(
           'Repay success',
           `https://solscan.io/tx/${tx[1][0]}?cluster=${network}`
