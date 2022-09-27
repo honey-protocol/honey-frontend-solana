@@ -20,6 +20,11 @@ a {
 * {
   box-sizing: border-box;
 }
+p {
+  margin: 0;
+}
+
+
 
 [data-reach-dialog-overlay] {
   z-index: 100000;
