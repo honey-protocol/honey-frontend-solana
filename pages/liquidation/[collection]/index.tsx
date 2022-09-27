@@ -137,7 +137,6 @@ const LiquidationPool = () => {
           if (!currentUserBid) return;
 
           let transactionOutcome: any = await liquidatorClient.revokeBid({
-            amount: currentUserBid,
             market: new PublicKey(HONEY_MARKET_ID),
             bidder: wallet.publicKey,
             bid_mint: NATIVE_MINT,

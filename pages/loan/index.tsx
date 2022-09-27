@@ -80,6 +80,7 @@ const Loan: NextPage = () => {
   }, [parsedReserves]);
 
   useEffect(() => {
+    console.log('----honey reserves updating');
     const depositTokenMint = new PublicKey('So11111111111111111111111111111111111111112');
 
     if (honeyReserves) {

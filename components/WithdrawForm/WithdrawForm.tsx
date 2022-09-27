@@ -70,6 +70,10 @@ const WithdrawForm = (props: WithdrawFormProps) => {
     executeWithdraw(valueUSDC, toast);
   }
 
+  useEffect(() => {
+    console.log('running user total deposits')
+  }, [userTotalDeposits])
+
   return (
     <SidebarScroll
       footer={

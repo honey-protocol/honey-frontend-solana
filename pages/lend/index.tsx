@@ -31,6 +31,7 @@ import BN from 'bn.js';
 import HoneyToggle from 'components/HoneyToggle/HoneyToggle';
 import { calcNFT } from 'helpers/loanHelpers/userCollection';
 import { ToastProps } from 'hooks/useToast';
+import { RoundHalfDown } from 'helpers/utils';
 
 const { formatPercent: fp, formatUsd: fu } = formatNumber;
 
@@ -53,12 +54,10 @@ const Lend: NextPage = () => {
    * @returns honeyUser which is the main object - honeyMarket, honeyReserves are for testing purposes
   */
   const { honeyUser, honeyReserves, honeyMarket } = useMarket(sdkConfig.saberHqConnection, sdkConfig.sdkWallet!, sdkConfig.honeyId, sdkConfig.marketId);
-  const [totalMarkDeposits, setTotalMarketDeposits] = useState(0);
+  const [totalMarketDeposits, setTotalMarketDeposits] = useState(0);
   const [userTotalDeposits, setUserTotalDeposits] = useState(0);
   const [reserveHoneyState, setReserveHoneyState] = useState(0);
-  
   const [marketPositions, setMarketPositions] = useState(0);
-  const [totalDeposits, setTotalDeposits] = useState(0);
   const [totalMarketDebt, setTotalMarketDebt] = useState(0);
   const [nftPrice, setNftPrice] = useState(0);
   const [userWalletBalance, setUserWalletBalance] = useState<number>(0);
@@ -102,15 +101,6 @@ const Lend: NextPage = () => {
     }, 3000);
   }, [marketReserveInfo, honeyUser]);
 
-    // sets total market deposits
-    useEffect(() => {
-      if (parsedReserves && parsedReserves[0].reserveState.totalDeposits) {
-        let totMarketDeposits = BnToDecimal(parsedReserves[0].reserveState.totalDeposits, 9, 2);
-        setTotalDeposits(totMarketDeposits);
-      }
-    }, [parsedReserves]);
-
-
 
   /**
    * @description sets state of marketValue by parsing lamports outstanding debt amount to SOL
@@ -153,10 +143,11 @@ const Lend: NextPage = () => {
       const reserveState = depositReserve.data?.reserveState;
 
       if (reserveState?.outstandingDebt) {
+        // let marketDebt = BnDivided(reserveState?.outstandingDebt, 10, 15);
         let marketDebt = reserveState?.outstandingDebt.div(new BN(10 ** 15)).toNumber();
         if (marketDebt) {
           let sum = Number((marketDebt / LAMPORTS_PER_SOL));
-          setTotalMarketDebt(sum);
+          setTotalMarketDebt(RoundHalfDown(sum));
         }
       }
     }
@@ -323,14 +314,16 @@ const Lend: NextPage = () => {
         key: '0',
         name: 'Honey Eyes',
         interest: 10,
-        available: (totalDeposits - totalMarketDebt),
-        value: totalDeposits,
+        // validated available to be totalMarketDeposits
+        available: totalMarketDeposits,
+        // validated value to be totalMarkDeposits + totalMarketDebt
+        value: (totalMarketDeposits + totalMarketDebt),
         stats: getPositionData()
       }
     ];
     setTableData(mockData);
     setTableDataFiltered(mockData);
-  }, [totalDeposits, totalMarketDebt, marketPositions, nftPrice]);
+  }, [totalMarketDeposits, totalMarketDebt, marketPositions, nftPrice]);
 
   const handleToggle = (checked: boolean) => {
     setIsMyCollectionsFilterEnabled(checked);
@@ -434,7 +427,7 @@ const Lend: NextPage = () => {
                 ]
               }
             >
-              <span>Value</span> <div className={style.sortIcon[sortOrder]} />
+              <span>TVL</span> <div className={style.sortIcon[sortOrder]} />
             </div>
           );
         },
@@ -494,8 +487,8 @@ const Lend: NextPage = () => {
           executeDeposit={executeDeposit}
           executeWithdraw={executeWithdraw}
           userTotalDeposits={userTotalDeposits}
-          available={(totalDeposits - totalMarketDebt)}
-          value={totalDeposits}
+          available={totalMarketDeposits}
+          value={(totalMarketDeposits + totalMarketDebt)}
           userWalletBalance={userWalletBalance}
         />
       </Sider>

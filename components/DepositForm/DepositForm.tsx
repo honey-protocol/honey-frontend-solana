@@ -33,8 +33,6 @@ const DepositForm = (props: DepositFormProps) => {
   useEffect(() => {
   }, [userWalletBalance]);
 
-  useEffect(() => {}, [userWalletBalance]);
-
   const maxValue = userWalletBalance;
   const usdcPrice = 0.95;
 

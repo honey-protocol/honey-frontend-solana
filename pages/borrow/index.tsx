@@ -48,6 +48,7 @@ import {
 import { Metadata } from '@metaplex-foundation/mpl-token-metadata';
 import { MAX_LTV } from 'constants/loan';
 import { ToastProps } from 'hooks/useToast';
+import { RoundHalfDown } from 'helpers/utils';
 
 const { formatPercent: fp, formatUsd: fu } = formatNumber;
 
@@ -82,13 +83,15 @@ const Markets: NextPage = () => {
   const [expandedRowKeys, setExpandedRowKeys] = useState<readonly Key[]>([]);
   const [isMyCollectionsFilterEnabled, setIsMyCollectionsFilterEnabled] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
-  const [totalDeposits, setTotalDeposits] = useState(0);
-  const [totalBorrowed, setTotalBorrowed] = useState(0);
+
+  const [totalMarketDeposits, setTotalMarketDeposits] = useState(0);
   const [totalMarketDebt, setTotalMarketDebt] = useState(0);
+  
+
   const [nftPrice, setNftPrice] = useState(0);
   const [calculatedNftPrice, setCalculatedNftPrice] = useState(false);
   const [marketPositions, setMarketPositions] = useState(0);
-  const [userBorrowCapacity, setUserBorrowCapacity] = useState(0);
+
   const [userAvailableNFTs, setUserAvailableNFTs] = useState<Array<UserNFTs>>([]);
   const [userOpenPositions, setUserOpenPositions] = useState<Array<OpenPositions>>([]);
   const [userAllowance, setUserAllowance] = useState(0);
@@ -115,21 +118,27 @@ const Markets: NextPage = () => {
       const reserveState = depositReserve.data?.reserveState;
 
       if (reserveState?.outstandingDebt) {
+        // let marketDebt = BnDivided(reserveState?.outstandingDebt, 10, 15);
         let marketDebt = reserveState?.outstandingDebt.div(new BN(10 ** 15)).toNumber();
         if (marketDebt) {
           let sum = Number((marketDebt / LAMPORTS_PER_SOL));
-          setTotalMarketDebt(sum);
+          setTotalMarketDebt(RoundHalfDown(sum));
         }
       }
     }
 
   }, [honeyReserves]);
 
-  // sets total market deposits
-  useEffect(() => {
+  /**
+   * @description sets state of marketValue by parsing lamports outstanding debt amount to SOL
+   * @params none, requires parsedReserves
+   * @returns updates marketValue 
+  */
+   useEffect(() => {
     if (parsedReserves && parsedReserves[0].reserveState.totalDeposits) {
-      let totMarketDeposits = BnToDecimal(parsedReserves[0].reserveState.totalDeposits, 9, 2);
-      setTotalDeposits(totMarketDeposits);
+      let totalMarketDeposits = BnToDecimal(parsedReserves[0].reserveState.totalDeposits, 9, 2);
+      setTotalMarketDeposits(totalMarketDeposits);
+      // setTotalMarketDeposits(parsedReserves[0].reserveState.totalDeposits.div(new BN(10 ** 9)).toNumber());
     }
   }, [parsedReserves]);
   
@@ -194,10 +203,10 @@ const Markets: NextPage = () => {
     setUserAvailableNFTs(availableNFTs[0]);
   }, [availableNFTs]);
 
-  useEffect(() => {
-    console.log('total deposits', totalDeposits)
-    console.log('total marketDebt', totalMarketDebt);
-  }, [totalDeposits, totalBorrowed]);
+  // useEffect(() => {
+  //   console.log('total deposits', totalDeposits)
+  //   console.log('total marketDebt', totalMarketDebt);
+  // }, [totalDeposits, totalBorrowed]);
 
   useEffect(() => {
     console.log('--collateral nft positions--', collateralNFTPositions);
@@ -215,15 +224,17 @@ const Markets: NextPage = () => {
         key: '0',
         name: 'Honey Eyes',
         rate: 0.1,
-        available: (totalDeposits - totalMarketDebt),
-        value: totalDeposits,
+        // validated available to be totalMarketDeposits
+        available: totalMarketDeposits,
+        // validated value to be totalMarkDeposits + totalMarketDebt
+        value: (totalMarketDeposits + totalMarketDebt),
         positions: userOpenPositions
       }
     ];
 
     setTableData(mockData);
     setTableDataFiltered(mockData);
-  }, [totalDeposits, totalMarketDebt, nftPrice, userOpenPositions]);
+  }, [totalMarketDeposits, totalMarketDebt, nftPrice, userOpenPositions]);
 
   const handleToggle = (checked: boolean) => {
     setIsMyCollectionsFilterEnabled(checked);
@@ -360,7 +371,7 @@ const Markets: NextPage = () => {
                 ]
               }
             >
-              <span>Value</span> <div className={style.sortIcon[sortOrder]} />
+              <span>TVL</span> <div className={style.sortIcon[sortOrder]} />
             </div>
           );
         },
