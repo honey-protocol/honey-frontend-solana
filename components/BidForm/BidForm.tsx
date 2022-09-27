@@ -5,7 +5,7 @@ import { InputsBlock } from '../InputsBlock/InputsBlock';
 import { HoneySlider } from '../HoneySlider/HoneySlider';
 import * as styles from './BidForm.css';
 import { formatNumber } from '../../helpers/format';
-import mockNftImage from '/public/images/mock-collection-image@2x.png';
+import honeyEyes from '/public/nfts/honeyEyes.png';
 import HoneyButton from 'components/HoneyButton/HoneyButton';
 import HexaBoxContainer from '../HexaBoxContainer/HexaBoxContainer';
 import HoneyWarning from '../HoneyWarning/HoneyWarning';
@@ -85,7 +85,7 @@ const BidForm: FC<BidsFormsProps> = () => {
         <div className={styles.nftInfo}>
           <div className={styles.nftImage}>
             <HexaBoxContainer>
-              <Image src={mockNftImage} />
+              <Image src={honeyEyes} />
             </HexaBoxContainer>
           </div>
           <div className={styles.nftName}>Honey Eyes</div>
