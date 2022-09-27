@@ -27,7 +27,13 @@ globalStyle(
 );
 
 globalStyle(`${bcs('.ant-table-thead > tr > th')}`, {
-  padding: '0 16px'
+  padding: '0 16px',
+  border: 'none',
+  height: 30
+});
+
+globalStyle(`${bcs('.ant-table-thead > tr > th:before')}`, {
+  display: 'none',
 });
 
 globalStyle(`${bcs('.ant-table table')}`, {
@@ -36,7 +42,6 @@ globalStyle(`${bcs('.ant-table table')}`, {
 });
 
 export const honeyTableRow = style({
-  background: vars.colors.white,
   cursor: 'pointer'
 });
 

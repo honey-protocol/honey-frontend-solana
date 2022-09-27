@@ -1,18 +1,28 @@
 import { style } from '@vanilla-extract/css';
-import {typography, vars} from "../../styles/theme.css";
+import { breakpoints, typography, vars } from '../../styles/theme.css';
 
 export const honeyChart = style({
   padding: 16
 });
 
 export const honeyChartHeader = style({
-  display: "flex",
-  justifyContent: "flex-end",
-  alignItems: "center",
+  "@media": {
+    [`screen and (min-width: ${breakpoints.tablet}px)`]: {
+      display: "flex",
+      justifyContent: "flex-end",
+      alignItems: "center",
+    },
+  },
 })
 
 export const chartTitleText = style([typography.title, {
-  marginRight: "auto"
+  marginRight: "auto",
+  marginBottom: 4,
+  "@media": {
+    [`screen and (min-width: ${breakpoints.tablet}px)`]: {
+      marginBottom: 0,
+    },
+  },
 }])
 
 export const tooltip = style({

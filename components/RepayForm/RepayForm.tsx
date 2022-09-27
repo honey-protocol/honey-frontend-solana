@@ -30,7 +30,8 @@ const RepayForm = (props: RepayProps) => {
     userDebt,
     userUSDCBalance,
     loanToValue,
-    availableNFTs
+    availableNFTs,
+    hideMobileSidebar
   } = props;
 
   const [valueUSD, setValueUSD] = useState<number>();
@@ -111,7 +112,7 @@ const RepayForm = (props: RepayProps) => {
           ) : (
             <div className={styles.buttons}>
               <div className={styles.smallCol}>
-                <HoneyButton variant="secondary">Cancel</HoneyButton>
+                <HoneyButton variant="secondary" onClick={hideMobileSidebar}>Cancel</HoneyButton>
               </div>
               <div className={styles.bigCol}>
                 <HoneyButton

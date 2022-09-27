@@ -1,15 +1,26 @@
 import {style, styleVariants} from "@vanilla-extract/css";
-import {typography, vars} from "../../styles/theme.css";
+import { breakpoints, typography, vars } from '../../styles/theme.css';
 
 export const periodSelector = style({
   display: 'flex',
-  justifyContent: 'center',
+  justifyContent: 'flex-start',
+  "@media": {
+    [`screen and (min-width: ${breakpoints.tablet}px)`]: {
+      justifyContent: 'center',
+    },
+  },
 });
 export const periodSelectorContent = style({
   display: 'flex',
   background: vars.colors.grayMiddle,
   borderRadius: 10,
-  padding: 2
+  padding: 2,
+  width: '100%',
+  "@media": {
+    [`screen and (min-width: ${breakpoints.tablet}px)`]: {
+      width: 'auto',
+    },
+  },
 });
 const periodSelectorItemBase = style([
   typography.button,
@@ -27,6 +38,24 @@ export const verticalDivider = style({
   right: 0,
   top: '50%',
   transform: 'translateY(-50%)'
+});
+
+export const hideNameMobile = style({
+  display: 'none',
+  "@media": {
+    [`screen and (min-width: ${breakpoints.tablet}px)`]: {
+      display: 'block',
+    },
+  },
+});
+
+
+export const showNameMobile = style({
+  "@media": {
+    [`screen and (min-width: ${breakpoints.tablet}px)`]: {
+      display: 'none',
+    },
+  },
 });
 
 export const periodSelectorItem = styleVariants({
