@@ -97,6 +97,10 @@ export const RoundHalfDown = (val: number, decimals: number = 2): number => {
   return Math.floor(val * 10 ** decimals) / 10 ** decimals;
 };
 
+export const RoundHalfUp = (val: number, decimals: number = 2): number => {
+  return Math.ceil(val * 10 ** decimals) / 10 ** decimals;
+}
+
 /**
  * Check if null or undefined
  * @param value
