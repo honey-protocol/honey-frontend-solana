@@ -59,7 +59,7 @@ const BorrowForm = (props: BorrowProps) => {
 
   const borrowedValue = userDebt;
   const maxValue = userAllowance;
-  const usdcPrice = 32;
+  const solPrice = 32;
   const liquidationThreshold = 0.75;
 
   const newDebt = userDebt + 1.1 * (valueSOL ? valueSOL : 0);
@@ -72,7 +72,7 @@ const BorrowForm = (props: BorrowProps) => {
   const handleSliderChange = (value: number) => {
     if (userAllowance == 0) return;
     setSliderValue(value);
-    setValueUSD(value / usdcPrice);
+    setValueUSD(value * solPrice);
     setValueSOL(value);
   };
 
@@ -85,22 +85,22 @@ const BorrowForm = (props: BorrowProps) => {
       return;
     }
     setValueUSD(usdValue);
-    setValueSOL(usdValue / usdcPrice);
+    setValueSOL(usdValue / solPrice);
     setSliderValue(usdValue);
   };
 
-  const handleUsdcInputChange = (usdcValue: number | undefined) => {
+  const handleSolInputChange = (solValue: number | undefined) => {
     if (userAllowance == 0) return;
-    if (!usdcValue) {
+    if (!solValue) {
       setValueUSD(0);
       setValueSOL(0);
       setSliderValue(0);
       return;
     }
 
-    setValueUSD(usdcValue * usdcPrice);
-    setValueSOL(usdcValue);
-    setSliderValue(usdcValue * usdcPrice);
+    setValueUSD(solValue * solPrice);
+    setValueSOL(solValue);
+    setSliderValue(solValue * solPrice);
   };
 
   // set selection state and render (or not) detail nft
@@ -182,7 +182,7 @@ const BorrowForm = (props: BorrowProps) => {
           </div>
           <div className={styles.col}>
             <InfoBlock
-              value={f(userDebt / liquidationThreshold)}
+              value={fs(userDebt / liquidationThreshold)}
               valueSize="big"
               isDisabled={userDebt == 0 ? true : false}
               title={
@@ -323,7 +323,7 @@ const BorrowForm = (props: BorrowProps) => {
             valueUSD={p(f(valueUSD))}
             valueSOL={p(f(valueSOL))}
             onChangeUSD={handleUsdInputChange}
-            onChangeSOL={handleUsdcInputChange}
+            onChangeSOL={handleSolInputChange}
             maxValue={maxValue}
           />
         </div>

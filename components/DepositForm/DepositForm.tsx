@@ -28,7 +28,7 @@ const DepositForm = (props: DepositFormProps) => {
   } = props;
 
   const [valueUSD, setValueUSD] = useState<number>(0);
-  const [valueUSDC, setValueUSDC] = useState<number>(0);
+  const [valueSOL, setValueSOL] = useState<number>(0);
   const [sliderValue, setSliderValue] = useState(0);
   const [userInteraction, setUserInteraction] = useState<boolean>(false);
   const { toast, ToastComponent } = useToast();
@@ -41,7 +41,7 @@ const DepositForm = (props: DepositFormProps) => {
   useEffect(() => {}, [userWalletBalance]);
 
   const maxValue = userWalletBalance;
-  const usdcPrice = 0.95;
+  const solPrice = 32;
 
   // Put your validators here
   const isRepayButtonDisabled = () => {
@@ -50,37 +50,37 @@ const DepositForm = (props: DepositFormProps) => {
 
   const handleSliderChange = (value: number) => {
     setSliderValue(value);
-    setValueUSD(value / usdcPrice);
-    setValueUSDC(value);
+    setValueUSD(value * solPrice);
+    setValueSOL(value);
   };
 
   const handleUsdInputChange = (usdValue: number | undefined) => {
     if (!usdValue) {
       setValueUSD(0);
-      setValueUSDC(0);
+      setValueSOL(0);
       setSliderValue(0);
       return;
     }
     setValueUSD(usdValue);
-    setValueUSDC(usdValue / usdcPrice);
+    setValueSOL(usdValue / solPrice);
     setSliderValue(usdValue);
   };
 
-  const handleUsdcInputChange = (usdcValue: number | undefined) => {
-    if (!usdcValue) {
+  const handleSolInputChange = (solValue: number | undefined) => {
+    if (!solValue) {
       setValueUSD(0);
-      setValueUSDC(0);
+      setValueSOL(0);
       setSliderValue(0);
       return;
     }
 
-    setValueUSD(usdcValue * usdcPrice);
-    setValueUSDC(usdcValue);
-    setSliderValue(usdcValue * usdcPrice);
+    setValueUSD(solValue * solPrice);
+    setValueSOL(solValue);
+    setSliderValue(solValue * solPrice);
   };
 
   function handleDeposit() {
-    executeDeposit(valueUSDC, toast);
+    executeDeposit(valueSOL, toast);
     setTimeout(() => {}, 10000);
     userInteraction == false
       ? setUserInteraction(true)
@@ -157,9 +157,9 @@ const DepositForm = (props: DepositFormProps) => {
         <div className={styles.inputs}>
           <InputsBlock
             valueUSD={p(f(valueUSD))}
-            valueSOL={p(f(valueUSDC))}
+            valueSOL={p(f(valueSOL))}
             onChangeUSD={handleUsdInputChange}
-            onChangeSOL={handleUsdcInputChange}
+            onChangeSOL={handleSolInputChange}
             maxValue={maxValue}
           />
         </div>
