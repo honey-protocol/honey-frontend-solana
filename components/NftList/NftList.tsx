@@ -39,7 +39,7 @@ const NftList = (props: NftListProps) => {
                   hasBorder={
                     index !== data.length - 1 || item.mint === selectedNFTMint
                   }
-                  text={`$ ${nftPrice.toFixed(2)} value`}
+                  text={`◎ ${nftPrice.toFixed(2)} value`}
                   buttonText={RoundHalfDown(nftPrice * MAX_LTV, 4).toString()}
                 />
               </div>
