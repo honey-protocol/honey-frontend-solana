@@ -644,23 +644,31 @@ const Markets: NextPage = () => {
   ];
 
   const ExpandedTableFooter = () => (
-    <div className={style.expandedSectionFooter}>
-      <div className={style.expandedRowIcon} />
-      <div className={style.collectionLogo}>
-        <HexaBoxContainer variant="gray">
-          <div className={style.lampIconStyle} />
-        </HexaBoxContainer>
-      </div>
-      <div className={style.footerText}>
-        <span className={style.footerTitle}>
-          You can’t add one more NFT to this market
-        </span>
-        <span className={style.footerDescription}>
-          Choose another market or connect another wallet
-        </span>
+    <div className={style.expandedSection}>
+      <div className={style.expandedSectionFooter}>
+        <div className={style.expandedRowIcon} />
+        <div className={style.footer}>
+          <div className={style.collectionLogo}>
+            <HexaBoxContainer variant="gray">
+              <div className={style.lampIconStyle} />
+            </HexaBoxContainer>
+          </div>
+          <div className={style.footerText}>
+            <span className={style.footerTitle}>
+              You can’t add one more NFT to this market
+            </span>
+            <span className={style.footerDescription}>
+              Choose another market or connect another wallet
+            </span>
+          </div>
+        </div>
       </div>
       <div className={style.footerButton}>
-        <HoneyButton variant="secondary">
+        <HoneyButton
+          className={style.mobileConnectButton}
+          variant="secondary"
+          isFluid={windowWidth < TABLET_BP && true}
+        >
           <div className={style.swapWalletIcon} />
           Connect another wallet
         </HoneyButton>
