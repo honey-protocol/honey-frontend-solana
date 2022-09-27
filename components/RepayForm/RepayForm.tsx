@@ -36,16 +36,16 @@ const RepayForm = (props: RepayProps) => {
   } = props;
 
   const [valueUSD, setValueUSD] = useState<number>();
-  const [valueUSDC, setValueUSDC] = useState<number>();
+  const [valueSOL, setValueSOL] = useState<number>();
   const [sliderValue, setSliderValue] = useState(0);
   const { toast, ToastComponent } = useToast();
 
   const maxValue = userDebt != 0 ? userDebt : userAllowance;
-  const usdcPrice = 0.95;
+  const solPrice = 32;
   const liquidationThreshold = 0.75;
   const SOLBalance = useSolBalance();
 
-  const newDebt = userDebt - (valueUSDC ? valueUSDC : 0);
+  const newDebt = userDebt - (valueSOL ? valueSOL : 0);
 
   const borrowedValue = userDebt;
 
@@ -56,33 +56,33 @@ const RepayForm = (props: RepayProps) => {
 
   const handleSliderChange = (value: number) => {
     setSliderValue(value);
-    setValueUSD(value / usdcPrice);
-    setValueUSDC(value);
+    setValueUSD(value * solPrice);
+    setValueSOL(value);
   };
 
   const handleUsdInputChange = (usdValue: number | undefined) => {
     if (!usdValue) {
       setValueUSD(0);
-      setValueUSDC(0);
+      setValueSOL(0);
       setSliderValue(0);
       return;
     }
     setValueUSD(usdValue);
-    setValueUSDC(usdValue / usdcPrice);
+    setValueSOL(usdValue / solPrice);
     setSliderValue(usdValue);
   };
 
-  const handleUsdcInputChange = (usdcValue: number | undefined) => {
-    if (!usdcValue) {
+  const handleUsdcInputChange = (solValue: number | undefined) => {
+    if (!solValue) {
       setValueUSD(0);
-      setValueUSDC(0);
+      setValueSOL(0);
       setSliderValue(0);
       return;
     }
 
-    setValueUSD(usdcValue * usdcPrice);
-    setValueUSDC(usdcValue);
-    setSliderValue(usdcValue * usdcPrice);
+    setValueUSD(solValue * solPrice);
+    setValueSOL(solValue);
+    setSliderValue(solValue * solPrice);
   };
 
   const onRepay = async (event: any) => {
@@ -92,7 +92,7 @@ const RepayForm = (props: RepayProps) => {
     if (userDebt == 0 && openPositions[0]) {
       executeWithdrawNFT(openPositions[0].mint, toast);
     } else {
-      executeRepay(valueUSDC || 0, toast);
+      executeRepay(valueSOL || 0, toast);
     }
   };
 
@@ -120,7 +120,7 @@ const RepayForm = (props: RepayProps) => {
               <div className={styles.bigCol}>
                 <HoneyButton
                   variant="primary"
-                  solAmount={userDebt > 0 ? valueUSDC || 0 : undefined}
+                  solAmount={userDebt > 0 ? valueSOL || 0 : undefined}
                   usdcValue={userDebt > 0 ? valueUSD || 0 : undefined}
                   disabled={isRepayButtonDisabled()}
                   isFluid={true}
@@ -277,7 +277,7 @@ const RepayForm = (props: RepayProps) => {
                   <div className={questionIcon} />
                 </span>
               }
-              value={fs(userAllowance + 0.9 * (valueUSDC ?? 0))}
+              value={fs(userAllowance + 0.9 * (valueSOL ?? 0))}
               toolTipLabel="Placeholder text for tooltip" // TODO: CHANGE TO REAL INFO TEXT FOR liq price
             />
           </div>
@@ -294,13 +294,13 @@ const RepayForm = (props: RepayProps) => {
             <div className={cs(styles.balance, styles.col)}>
               <InfoBlock
                 title={'NEW SOL balance'}
-                value={f(SOLBalance - (valueUSDC || 0))}
+                value={f(SOLBalance - (valueSOL || 0))}
               ></InfoBlock>
             </div>
           </div>
           <InputsBlock
             valueUSD={p(f(valueUSD))}
-            valueSOL={p(f(valueUSDC))}
+            valueSOL={p(f(valueSOL))}
             onChangeUSD={handleUsdInputChange}
             onChangeSOL={handleUsdcInputChange}
           />

@@ -20,12 +20,12 @@ const { format: f, formatPercent: fp, formatSol: fs, parse: p } = formatNumber;
 const WithdrawForm = (props: WithdrawFormProps) => {
   const { executeWithdraw, userTotalDeposits, value, available } = props;
   const [valueUSD, setValueUSD] = useState<number>(0);
-  const [valueUSDC, setValueUSDC] = useState<number>(0);
+  const [valueSOL, setValueSOL] = useState<number>(0);
   const [sliderValue, setSliderValue] = useState(0);
   const { toast, ToastComponent } = useToast();
 
   const maxValue = userTotalDeposits;
-  const usdcPrice = 0.95;
+  const solPrice = 32;
 
   // Put your validators here
   const isRepayButtonDisabled = () => {
@@ -34,14 +34,14 @@ const WithdrawForm = (props: WithdrawFormProps) => {
 
   const handleSliderChange = (value: number) => {
     setSliderValue(value);
-    setValueUSD(value / usdcPrice);
-    setValueUSDC(value);
+    setValueUSD(value * solPrice);
+    setValueSOL(value);
   };
 
   const handleUsdInputChange = (usdValue: number | undefined) => {
     if (!usdValue) {
       setValueUSD(0);
-      setValueUSDC(0);
+      setValueSOL(0);
       setSliderValue(0);
       return;
     }
@@ -49,25 +49,25 @@ const WithdrawForm = (props: WithdrawFormProps) => {
     console.log('p(f(usdValue))', p(f(usdValue)));
 
     setValueUSD(usdValue);
-    setValueUSDC(usdValue / usdcPrice);
+    setValueSOL(usdValue / solPrice);
     setSliderValue(usdValue);
   };
 
-  const handleUsdcInputChange = (usdcValue: number | undefined) => {
-    if (!usdcValue) {
+  const handleSolInputChange = (solValue: number | undefined) => {
+    if (!solValue) {
       setValueUSD(0);
-      setValueUSDC(0);
+      setValueSOL(0);
       setSliderValue(0);
       return;
     }
 
-    setValueUSD(usdcValue * usdcPrice);
-    setValueUSDC(usdcValue);
-    setSliderValue(usdcValue * usdcPrice);
+    setValueUSD(solValue * solPrice);
+    setValueSOL(solValue);
+    setSliderValue(solValue * solPrice);
   };
 
   function handleWithdraw() {
-    executeWithdraw(valueUSDC, toast);
+    executeWithdraw(valueSOL, toast);
   }
 
   useEffect(() => {
@@ -144,9 +144,9 @@ const WithdrawForm = (props: WithdrawFormProps) => {
         <div className={styles.inputs}>
           <InputsBlock
             valueUSD={p(f(valueUSD))}
-            valueSOL={p(f(valueUSDC))}
+            valueSOL={p(f(valueSOL))}
             onChangeUSD={handleUsdInputChange}
-            onChangeSOL={handleUsdcInputChange}
+            onChangeSOL={handleSolInputChange}
             maxValue={maxValue}
           />
         </div>
