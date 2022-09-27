@@ -15,7 +15,7 @@ import { questionIcon } from 'styles/icons.css';
 import { hAlign } from 'styles/common.css';
 import useToast from 'hooks/useToast';
 
-const { format: f, formatPercent: fp, formatUsd: fu, parse: p } = formatNumber;
+const { format: f, formatPercent: fp, formatSol: fs, parse: p } = formatNumber;
 
 const WithdrawForm = (props: WithdrawFormProps) => {
   const { executeWithdraw, userTotalDeposits, value, available } = props;
@@ -106,7 +106,7 @@ const WithdrawForm = (props: WithdrawFormProps) => {
         <div className={styles.row}>
           <div className={styles.col}>
             <InfoBlock
-              value={fu(userTotalDeposits)}
+              value={fs(userTotalDeposits)}
               valueSize="big"
               footer={<span>Your Deposits</span>}
             />
@@ -125,7 +125,7 @@ const WithdrawForm = (props: WithdrawFormProps) => {
           </div>
           <div className={styles.col}>
             <InfoBlock
-              value={fp((value - available) / value * 100)}
+              value={fp(((value - available) / value) * 100)}
               valueSize="big"
               toolTipLabel=" Amount of supplied liquidity currently being borrowed"
               footer={

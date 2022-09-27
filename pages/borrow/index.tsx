@@ -60,7 +60,7 @@ import useWindowSize from '../../hooks/useWindowSize';
 
 const network = 'devnet'; // change to dynamic value
 
-const { formatPercent: fp, formatUsd: fu } = formatNumber;
+const { formatPercent: fp, formatSol: fs } = formatNumber;
 
 const Markets: NextPage = () => {
   const wallet = useConnectedWallet();
@@ -475,7 +475,7 @@ const Markets: NextPage = () => {
           sorter: (a: MarketTableRow, b: MarketTableRow) =>
             a.available - b.available,
           render: (available: number) => {
-            return <div className={style.availableCell}>{fu(available)}</div>;
+            return <div className={style.availableCell}>{fs(available)}</div>;
           }
         },
         {
@@ -499,7 +499,7 @@ const Markets: NextPage = () => {
           sorter: (a: MarketTableRow, b: MarketTableRow) =>
             a.available - b.available,
           render: (available: number) => {
-            return <div className={style.availableCell}>{fu(available)}</div>;
+            return <div className={style.availableCell}>{fs(available)}</div>;
           }
         },
         {
@@ -523,7 +523,7 @@ const Markets: NextPage = () => {
           hidden: windowWidth < TABLET_BP,
           sorter: (a: MarketTableRow, b: MarketTableRow) => a.value - b.value,
           render: (value: number) => {
-            return <div className={style.valueCell}>{fu(value)}</div>;
+            return <div className={style.valueCell}>{fs(value)}</div>;
           }
         },
         {
@@ -546,7 +546,7 @@ const Markets: NextPage = () => {
           hidden: windowWidth > TABLET_BP,
           sorter: (a: MarketTableRow, b: MarketTableRow) => a.value - b.value,
           render: (value: number) => {
-            return <div className={style.valueCell}>{fu(value)}</div>;
+            return <div className={style.valueCell}>{fs(value)}</div>;
           }
         },
         {
@@ -608,7 +608,7 @@ const Markets: NextPage = () => {
       width: columnsWidth[1],
       render: debt => (
         <div className={style.expandedRowCell}>
-          <InfoBlock title={'Debt:'} value={fu(userDebt)} />
+          <InfoBlock title={'Debt:'} value={fs(userDebt)} />
         </div>
       )
     },
@@ -617,7 +617,7 @@ const Markets: NextPage = () => {
       width: columnsWidth[2],
       render: available => (
         <div className={style.expandedRowCell}>
-          <InfoBlock title={'Allowance:'} value={fu(nftPrice * MAX_LTV)} />
+          <InfoBlock title={'Allowance:'} value={fs(nftPrice * MAX_LTV)} />
         </div>
       )
     },
@@ -626,7 +626,7 @@ const Markets: NextPage = () => {
       width: columnsWidth[3],
       render: value => (
         <div className={style.expandedRowCell}>
-          <InfoBlock title={'Value:'} value={fu(nftPrice)} />
+          <InfoBlock title={'Value:'} value={fs(nftPrice)} />
         </div>
       )
     },

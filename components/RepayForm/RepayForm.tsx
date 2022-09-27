@@ -17,8 +17,9 @@ import { questionIcon } from 'styles/icons.css';
 import cs from 'classnames';
 import useToast from 'hooks/useToast';
 import { useSolBalance } from 'hooks/useSolBalance';
+import { MAX_LTV } from 'constants/loan';
 
-const { format: f, formatPercent: fp, formatUsd: fu, parse: p } = formatNumber;
+const { format: f, formatPercent: fp, formatSol: fs, parse: p } = formatNumber;
 
 const RepayForm = (props: RepayProps) => {
   const {
@@ -44,7 +45,9 @@ const RepayForm = (props: RepayProps) => {
   const liquidationThreshold = 0.75;
   const SOLBalance = useSolBalance();
 
-  const newDebt = userDebt - (valueUSD ? valueUSD : 0);
+  const newDebt = userDebt - (valueUSDC ? valueUSDC : 0);
+
+  const borrowedValue = userDebt;
 
   // Put your validators here
   const isRepayButtonDisabled = () => {
@@ -143,9 +146,9 @@ const RepayForm = (props: RepayProps) => {
         <div className={styles.row}>
           <div className={styles.col}>
             <InfoBlock
-              value={fu(nftPrice)}
+              value={fs(nftPrice)}
               valueSize="big"
-              footer={
+              title={
                 <span className={hAlign}>
                   Estimated value <div className={questionIcon} />
                 </span>
@@ -158,7 +161,7 @@ const RepayForm = (props: RepayProps) => {
               value={f(userDebt / liquidationThreshold)}
               valueSize="big"
               isDisabled={userDebt == 0 ? true : false}
-              footer={
+              title={
                 <span className={hAlign}>
                   Liquidation price
                   <div className={questionIcon} />
@@ -192,6 +195,14 @@ const RepayForm = (props: RepayProps) => {
                 </span>
               }
             />
+            <HoneySlider
+              currentValue={0}
+              maxValue={maxValue}
+              minAvailableValue={borrowedValue}
+              maxSafePosition={0.4 - borrowedValue / 1000}
+              maxAvailablePosition={MAX_LTV}
+              isReadonly
+            />
           </div>
           <div className={styles.col}>
             <InfoBlock
@@ -205,6 +216,14 @@ const RepayForm = (props: RepayProps) => {
               isDisabled={true}
               toolTipLabel="Placeholder text for tooltip" // TODO: CHANGE TO REAL INFO TEXT FOR liq price
             />
+            <HoneySlider
+              currentValue={sliderValue}
+              maxValue={maxValue}
+              minAvailableValue={borrowedValue}
+              maxSafePosition={0.4 - borrowedValue / 1000}
+              maxAvailablePosition={MAX_LTV}
+              isReadonly
+            />
           </div>
         </div>
 
@@ -217,7 +236,7 @@ const RepayForm = (props: RepayProps) => {
                   <div className={questionIcon} />
                 </span>
               }
-              value={fu(userDebt)}
+              value={fs(userDebt)}
               toolTipLabel="Placeholder text for tooltip" // TODO: CHANGE TO REAL INFO TEXT FOR liq price
             />
           </div>
@@ -229,7 +248,7 @@ const RepayForm = (props: RepayProps) => {
                   <div className={questionIcon} />
                 </span>
               }
-              value={fu(newDebt < 0 ? 0 : newDebt)}
+              value={fs(newDebt < 0 ? 0 : newDebt)}
               isDisabled={true}
               toolTipLabel="Placeholder text for tooltip" // TODO: CHANGE TO REAL INFO TEXT FOR liq price
             />
@@ -239,7 +258,7 @@ const RepayForm = (props: RepayProps) => {
         <div className={styles.row}>
           <div className={styles.col}>
             <InfoBlock
-              value={fu(userAllowance)}
+              value={fs(userAllowance)}
               title={
                 <span className={hAlign}>
                   Allowance <div className={questionIcon} />
@@ -258,7 +277,7 @@ const RepayForm = (props: RepayProps) => {
                   <div className={questionIcon} />
                 </span>
               }
-              value={fu(userAllowance + 0.9 * (valueUSDC ?? 0))}
+              value={fs(userAllowance + 0.9 * (valueUSDC ?? 0))}
               toolTipLabel="Placeholder text for tooltip" // TODO: CHANGE TO REAL INFO TEXT FOR liq price
             />
           </div>
