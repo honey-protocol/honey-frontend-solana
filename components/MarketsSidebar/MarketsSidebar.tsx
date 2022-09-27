@@ -6,6 +6,8 @@ import { Typography } from 'antd';
 import RepayForm from '../RepayForm/RepayForm';
 import HoneyTabs, { HoneyTabItem } from 'components/HoneyTabs/HoneyTabs';
 import EmptyStateDetails from 'components/EmptyStateDetails/EmptyStateDetails';
+import { useConnectedWallet } from '@saberhq/use-solana';
+import { useWalletKit } from '@gokiprotocol/walletkit';
 
 const items: [HoneyTabItem, HoneyTabItem] = [
   { label: 'Borrow', key: 'borrow' },
@@ -17,7 +19,7 @@ const { Text } = Typography;
 type Tab = 'borrow' | 'repay';
 
 const MarketsSidebar = (props: MarketsSidebarProps) => {
-  const wallet = true;
+  const wallet = useConnectedWallet();
   const { 
     collectionId, 
     availableNFTs, 
@@ -31,6 +33,7 @@ const MarketsSidebar = (props: MarketsSidebarProps) => {
   } = props;
     
   const [activeTab, setActiveTab] = useState<Tab>('borrow');
+  const { connect } = useWalletKit();
 
   const handleTabChange = (tabKey: string) => {
     setActiveTab(tabKey as Tab);
@@ -47,12 +50,13 @@ const MarketsSidebar = (props: MarketsSidebarProps) => {
         items={items}
         active={Boolean(collectionId)}
       >
-        {!wallet ? (
+        {!wallet?.connected ? (
           <EmptyStateDetails
             icon={<div className={styles.lightIcon} />}
             title="You didn’t connect any wallet yet"
             description="First, choose a NFT collection"
             btnTitle="CONNECT WALLET"
+            onBtnClick={connect}
           />
         ) : !collectionId ? (
           <EmptyStateDetails
