@@ -58,8 +58,8 @@ import { Metadata } from '@metaplex-foundation/mpl-token-metadata';
 import { MAX_LTV } from 'constants/loan';
 import { ToastProps } from 'hooks/useToast';
 import { RoundHalfDown } from 'helpers/utils';
-// import { network } from 'pages/_app';
-const network = 'devnet'; // change to dynamic value
+import { network } from 'pages/_app';
+// const network = 'devnet'; // change to dynamic value
 
 const { formatPercent: fp, formatUsd: fu } = formatNumber;
 

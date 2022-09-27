@@ -32,8 +32,8 @@ import HoneyToggle from 'components/HoneyToggle/HoneyToggle';
 import { calcNFT } from 'helpers/loanHelpers/userCollection';
 import { ToastProps } from 'hooks/useToast';
 import { RoundHalfDown } from 'helpers/utils';
-// import { network } from 'pages/_app';
-const network = 'devnet';
+import { network } from 'pages/_app';
+// const network = 'devnet';
 
 const { formatPercent: fp, formatUsd: fu } = formatNumber;
 
