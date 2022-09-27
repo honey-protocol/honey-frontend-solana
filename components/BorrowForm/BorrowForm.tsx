@@ -22,6 +22,7 @@ import { questionIcon } from 'styles/icons.css';
 import useToast from 'hooks/useToast';
 import { useSolBalance } from 'hooks/useSolBalance';
 import cs from 'classnames';
+import Nft from 'pages/farm/[name]';
 
 const { format: f, formatPercent: fp, formatUsd: fu, parse: p } = formatNumber;
 
@@ -145,6 +146,7 @@ const BorrowForm = (props: BorrowProps) => {
             data={availableNFTs}
             selectNFT={selectNFT}
             nftPrice={nftPrice}
+            selectedNFTMint={selectedNft?.mint}
           />
         </>
       );
