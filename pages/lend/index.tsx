@@ -37,7 +37,7 @@ import { RoundHalfDown } from 'helpers/utils';
 
 const network = 'devnet';
 
-const { formatPercent: fp, formatUsd: fu } = formatNumber;
+const { formatPercent: fp, formatSol: fs } = formatNumber;
 
 const Lend: NextPage = () => {
   // Start: SDK integration
@@ -462,7 +462,7 @@ const Lend: NextPage = () => {
         dataIndex: 'available',
         sorter: (a, b) => a.available - b.available,
         render: (available: number) => {
-          return <div className={style.availableCell}>{fu(available)}</div>;
+          return <div className={style.availableCell}>{fs(available)}</div>;
         }
       },
       {
@@ -484,7 +484,7 @@ const Lend: NextPage = () => {
         dataIndex: 'value',
         sorter: (a, b) => a.value - b.value,
         render: (value: number) => {
-          return <div className={style.valueCell}>{fu(value)}</div>;
+          return <div className={style.valueCell}>{fs(value)}</div>;
         }
       },
       {
