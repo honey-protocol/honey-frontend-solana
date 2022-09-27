@@ -51,12 +51,14 @@ const RepayForm = (props: RepayProps) => {
   };
 
   const handleSliderChange = (value: number) => {
+    if (userDebt == 0) return;
     setSliderValue(value);
     setValueUSD(value / usdcPrice);
     setValueUSDC(value);
   };
 
   const handleUsdInputChange = (usdValue: number | undefined) => {
+    if (userDebt == 0) return;
     if (!usdValue) {
       setValueUSD(0);
       setValueUSDC(0);
@@ -69,6 +71,7 @@ const RepayForm = (props: RepayProps) => {
   };
 
   const handleUsdcInputChange = (usdcValue: number | undefined) => {
+    if (userDebt == 0) return;
     if (!usdcValue) {
       setValueUSD(0);
       setValueUSDC(0);
@@ -88,7 +91,7 @@ const RepayForm = (props: RepayProps) => {
     if (userDebt == 0 && openPositions[0]) {
       executeWithdrawNFT(openPositions[0].mint, toast);
     } else {
-      executeRepay(valueUSDC || 0, toast);
+      executeRepay((valueUSDC) || 0, toast);
     }
   };
 
