@@ -38,6 +38,7 @@ const { formatPercent: fp, formatUsd: fu } = formatNumber;
 
 const Liquidate: NextPage = () => {
   // start sdk integration
+  const liquidationThreshold = 0.75;
   // init anchor
   const { program } = useAnchor();
   // create wallet instance for PK
@@ -127,7 +128,7 @@ const Liquidate: NextPage = () => {
       return {
         name: 'Honey Eyes',
         riskLvl: (obligation.debt / nftPrice) * 100,
-        untilLiquidation: 1600,
+        untilLiquidation: obligation.debt !== 0 ? (nftPrice / (obligation.debt / liquidationThreshold)) : 0,
         debt: obligation.debt,
         estimatedValue: nftPrice,
         nftMint: obligation.nft_mint,
