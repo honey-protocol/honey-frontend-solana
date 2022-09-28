@@ -284,7 +284,6 @@ const BorrowForm = (props: BorrowProps) => {
                   Allowance <div className={questionIcon} />
                 </span>
               }
-              footer={<span></span>}
               toolTipLabel={`Allowance determines how much debt is available to a borrower. No more than ${fp(
                 60
               )}`}
