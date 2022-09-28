@@ -68,7 +68,7 @@ export const InputsBlock: FC<InputsBlockProps> = ({
           onChange={handleTokenChange}
         />
         <div className={styles.inputAddon}>
-          <Image src={SOLIcon} /> <span className={styles.tokenName}>SOL</span>
+          <Image src={SOLIcon} /> <span>SOL</span>
         </div>
       </div>
     </div>
