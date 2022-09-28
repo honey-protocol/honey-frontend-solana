@@ -115,7 +115,9 @@ const RepayForm = (props: RepayProps) => {
           ) : (
             <div className={styles.buttons}>
               <div className={styles.smallCol}>
-                <HoneyButton variant="secondary" onClick={hideMobileSidebar}>Cancel</HoneyButton>
+                <HoneyButton variant="secondary" onClick={hideMobileSidebar}>
+                  Cancel
+                </HoneyButton>
               </div>
               <div className={styles.bigCol}>
                 <HoneyButton
@@ -153,7 +155,19 @@ const RepayForm = (props: RepayProps) => {
                   Estimated value <div className={questionIcon} />
                 </span>
               }
-              toolTipLabel="Placeholder text for tooltip" // TODO: CHANGE TO REAL INFO TEXT FOR EST VAL
+              toolTipLabel={
+                <span>
+                  The worth of your collateral according to the market’s oracle.
+                  Learn more about this market’s{' '}
+                  <a
+                    className={styles.extLink}
+                    target="blank"
+                    href="https://switchboard.xyz/explorer"
+                  >
+                    Switchboard data-feed.
+                  </a>
+                </span>
+              }
             />
           </div>
           <div className={styles.col}>
@@ -214,7 +228,19 @@ const RepayForm = (props: RepayProps) => {
               }
               value={fp((loanToValue + newDebt / (nftPrice || 0)) * 100)}
               isDisabled={true}
-              toolTipLabel="Placeholder text for tooltip" // TODO: CHANGE TO REAL INFO TEXT FOR liq price
+              toolTipLabel={
+                <span>
+                  Estimated{' '}
+                  <a
+                    className={styles.extLink}
+                    target="blank"
+                    href=" https://docs.honey.finance/lending-protocol/borrowing#risk-level"
+                  >
+                    risk level{' '}
+                  </a>
+                  after the requested changes to the loan are approved.
+                </span>
+              }
             />
             <HoneySlider
               currentValue={sliderValue}
@@ -237,7 +263,19 @@ const RepayForm = (props: RepayProps) => {
                 </span>
               }
               value={fs(userDebt)}
-              toolTipLabel="Placeholder text for tooltip" // TODO: CHANGE TO REAL INFO TEXT FOR liq price
+              toolTipLabel={
+                <span>
+                  Value borrowed from the lending pool, upon which interest
+                  accrues.{' '}
+                  <a
+                    className={styles.extLink}
+                    target="blank"
+                    href="https://docs.honey.finance/learn/defi-lending#debt"
+                  >
+                    Learn more.
+                  </a>
+                </span>
+              }
             />
           </div>
           <div className={styles.col}>
@@ -250,7 +288,19 @@ const RepayForm = (props: RepayProps) => {
               }
               value={fs(newDebt < 0 ? 0 : newDebt)}
               isDisabled={true}
-              toolTipLabel="Placeholder text for tooltip" // TODO: CHANGE TO REAL INFO TEXT FOR liq price
+              toolTipLabel={
+                <span>
+                  Estimated{' '}
+                  <a
+                    className={styles.extLink}
+                    target="blank"
+                    href="https://docs.honey.finance/learn/defi-lending#debt"
+                  >
+                    debt{' '}
+                  </a>
+                  after the requested changes to the loan are approved.
+                </span>
+              }
             />
           </div>
         </div>
@@ -264,13 +314,14 @@ const RepayForm = (props: RepayProps) => {
                   Allowance <div className={questionIcon} />
                 </span>
               }
-              toolTipLabel={`Allowance determines how much debt is available to a borrower. No more than ${fp(
+              toolTipLabel={`Allowance determines how much debt is available to a borrower. This market supports no more than ${fp(
                 60
               )}`}
             />
           </div>
           <div className={styles.col}>
             <InfoBlock
+              isDisabled
               title={
                 <span className={hAlign}>
                   New allowance
@@ -278,7 +329,19 @@ const RepayForm = (props: RepayProps) => {
                 </span>
               }
               value={fs(userAllowance + 0.9 * (valueSOL ?? 0))}
-              toolTipLabel="Placeholder text for tooltip" // TODO: CHANGE TO REAL INFO TEXT FOR liq price
+              toolTipLabel={
+                <span>
+                  Estimated{' '}
+                  <a
+                    className={styles.extLink}
+                    target="blank"
+                    href="https://docs.honey.finance/learn/defi-lending#allowance"
+                  >
+                    allowance{' '}
+                  </a>
+                  after the requested changes to the loan are approved.
+                </span>
+              }
             />
           </div>
         </div>
@@ -293,6 +356,7 @@ const RepayForm = (props: RepayProps) => {
             </div>
             <div className={cs(styles.balance, styles.col)}>
               <InfoBlock
+                isDisabled
                 title={'NEW SOL balance'}
                 value={f(SOLBalance - (valueSOL || 0))}
               ></InfoBlock>
