@@ -28,13 +28,15 @@ import { formatNumber } from '../../helpers/format';
 import { LiquidateTableRow } from '../../types/liquidate';
 import { LiquidateExpandTable } from '../../components/LiquidateExpandTable/LiquidateExpandTable';
 import { useAnchor, LiquidatorClient, useAllPositions, NftPosition, useHoney, useMarket } from '@honey-finance/sdk';
-import { ConfigureSDK } from 'helpers/loanHelpers';
+import { ConfigureSDK, toastResponse } from 'helpers/loanHelpers';
 import { useConnectedWallet } from '@saberhq/use-solana';
 import { LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js';
 import { calcNFT, calculateCollectionwideAllowance } from 'helpers/loanHelpers/userCollection';
 import { LiquidateTablePosition, BiddingPosition } from '../../types/liquidate';
+import { HONEY_MARKET_ID, HONEY_PROGRAM_ID } from 'constants/loan';
+import { NATIVE_MINT } from '@solana/spl-token';
 
-const { formatPercent: fp, formatUsd: fu } = formatNumber;
+const { formatPercent: fp, formatUsd: fu, formatRoundDown: fd } = formatNumber;
 
 const Liquidate: NextPage = () => {
   // start sdk integration
@@ -210,6 +212,85 @@ const Liquidate: NextPage = () => {
     if (nftPrice && honeyUser && marketReserveInfo) fetchHelperValues(nftPrice, [], honeyUser, marketReserveInfo);
   }, [marketReserveInfo, honeyUser, honeyReserves]);      
 
+  /**
+   * @description calls upon liquidator client for placebid | revokebid | increasebid
+   * @params tpye | userbid | nftmint
+   * @returms toastresponse of executed call
+  */
+  async function fetchLiquidatorClient(type: string, userBid?: number) {
+    try {
+      const liquidatorClient = await LiquidatorClient.connect(program.provider, HONEY_PROGRAM_ID, false);
+      if (wallet) {
+        if (type == 'revoke_bid') {
+          if (!currentUserBid) return;
+
+          let transactionOutcome: any = await liquidatorClient.revokeBid({
+            market: new PublicKey(HONEY_MARKET_ID),
+            bidder: wallet.publicKey,
+            bid_mint: NATIVE_MINT,
+            withdraw_destination: wallet.publicKey
+          });
+
+          if (transactionOutcome[0] == 'SUCCESS') {
+            return toastResponse('SUCCESS', 'Bid revoked, fetching chain data', 'SUCCESS');
+          } else {
+            return toastResponse('ERROR', 'Revoke bid failed', 'ERROR');
+          }
+        } else if (type == 'place_bid') {
+            // if no user bid terminate action
+            if (!userBid) return;
+
+            let transactionOutcome: any = await liquidatorClient.placeBid({
+              bid_limit: userBid,
+              market: new PublicKey(HONEY_MARKET_ID),
+              bidder: wallet.publicKey,
+              bid_mint: NATIVE_MINT
+            });
+
+            // refreshDB();
+            if (transactionOutcome[0] == 'SUCCESS') {
+              return toastResponse('SUCCESS', 'Bid placed, fetching chain data', 'SUCCESS');
+            } else {
+              return toastResponse('ERROR', 'Bid failed', 'ERROR');
+            }
+
+        } else if (type == 'increase_bid') {
+            // if no user bid terminate action
+            if (!userBid) return;
+
+            let transactionOutcome: any = await liquidatorClient.increaseBid({
+              bid_increase: userBid,
+              market: new PublicKey(HONEY_MARKET_ID),
+              bidder: wallet.publicKey,
+              bid_mint: NATIVE_MINT,
+            });
+
+            if (transactionOutcome[0] == 'SUCCESS') {
+              return toastResponse('SUCCESS', 'Bid increased, fetching chain data', 'SUCCESS');
+            } else {
+              return toastResponse('ERROR', 'Bid increase failed', 'ERROR');
+            }
+          }
+      } else {
+          return;
+        }
+      } catch (error) {
+          console.log('The error:', error)
+          return toastResponse('ERROR', 'Bid failed', 'ERROR');
+        }
+  }
+
+  function handleRevokeBid(type: string) {
+    fetchLiquidatorClient(type);
+  }
+
+  function handleIncreaseBid(type: string, userBid: number) {
+    fetchLiquidatorClient(type, userBid);
+  }
+
+  function handlePlaceBid(type: string, userBid: number) {
+    fetchLiquidatorClient(type, userBid);
+  }
 
 
 
@@ -475,6 +556,10 @@ const Liquidate: NextPage = () => {
           biddingArray={biddingArray}
           userBalance={userBalance}
           highestBiddingValue={highestBiddingValue}
+          currentUserBid={currentUserBid}
+          handleRevokeBid={handleRevokeBid}
+          handleIncreaseBid={handleIncreaseBid}
+          handlePlaceBid={handlePlaceBid}
         />
       </Sider>
     </LayoutRedesign>

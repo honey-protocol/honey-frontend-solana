@@ -16,9 +16,9 @@ import { BidFormProps } from './types';
 const { format: f, formatPercent: fp, formatUsd: fu, parse: p } = formatNumber;
 
 const BidForm = (props: BidFormProps) => {
-  const { userBalance, highestBiddingValue } = props;
-  const [valueUSD, setValueUSD] = useState<number>();
-  const [valueUSDC, setValueUSDC] = useState<number>();
+  const { userBalance, highestBiddingValue, currentUserBid, handleRevokeBid, handleIncreaseBid, handlePlaceBid } = props;
+  const [valueUSD, setValueUSD] = useState<number>(0);
+  const [valueUSDC, setValueUSDC] = useState<number>(0);
   const [sliderValue, setSliderValue] = useState(0);
 
   const maxValue = 1000;
@@ -74,6 +74,7 @@ const BidForm = (props: BidFormProps) => {
               isFluid={true}
               usdcValue={valueUSD || 0}
               usdcAmount={valueUSDC || 0}
+              onClick={() => handlePlaceBid('place_bid', valueUSD)}
             >
               Place Bid
             </HoneyButton>
@@ -90,7 +91,6 @@ const BidForm = (props: BidFormProps) => {
           </div>
           <div className={styles.nftName}>Honey Eyes</div>
         </div>
-
         <div className={styles.row}>
           <div className={styles.col}>
             <HoneyWarning
@@ -99,13 +99,19 @@ const BidForm = (props: BidFormProps) => {
             ></HoneyWarning>
           </div>
         </div>
-
-        <div className={styles.row}>
-          <div className={styles.col}>
-            <CurrentBid value={10000} title="Your bid is #1" />
+        {
+          currentUserBid &&
+            <div className={styles.row}>
+            <div className={styles.col}>
+              <CurrentBid 
+                value={currentUserBid} 
+                title="Your bid is #1" 
+                handleIncreaseBid={handleIncreaseBid}
+                handleRevokeBid={handleRevokeBid}
+              />
+            </div>
           </div>
-        </div>
-
+        }
         <div className={styles.row}>
           <div className={styles.col}>
             <InfoBlock value={fu(highestBiddingValue)} valueSize="big" title="Highest bid" />
@@ -138,7 +144,7 @@ const BidForm = (props: BidFormProps) => {
 
         <HoneySlider
           currentValue={sliderValue}
-          maxValue={2000}
+          maxValue={userBalance}
           minAvailableValue={0}
           onChange={handleSliderChange}
         />

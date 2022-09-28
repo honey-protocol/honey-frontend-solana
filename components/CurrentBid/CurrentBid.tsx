@@ -7,17 +7,19 @@ import { formatNumber } from '../../helpers/format';
 interface CurrentBidProps {
   title?: string;
   value: number;
-  onClickButton?: () => void;
+  handleRevokeBid: (type: string) => void;
+  handleIncreaseBid: (type: string, userBid: number) => void;
 }
 
 const { format: f, formatPercent: fp, formatUsd: fu } = formatNumber;
 
 const CurrentBid = (props: CurrentBidProps) => {
+  const {handleRevokeBid, handleIncreaseBid} = props;
   return (
     <div className={styles.CurrentBidContainer}>
       <InfoBlock value={fu(props.value)} valueSize="big" title={props.title} />
 
-      <HoneyButton onClick={props.onClickButton} variant='secondary'>Cancel</HoneyButton>
+      <HoneyButton onClick={() => handleRevokeBid('revoke_bid')} variant='secondary'>Cancel</HoneyButton>
     </div>
   );
 };
