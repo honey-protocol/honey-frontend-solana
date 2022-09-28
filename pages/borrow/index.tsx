@@ -944,7 +944,9 @@ const Markets: NextPage = () => {
                     dataSource={record.positions}
                     pagination={false}
                     showHeader={false}
-                    footer={ExpandedTableFooter}
+                    footer={
+                      record.positions.length ? ExpandedTableFooter : undefined
+                    }
                   />
                 </div>
               );
