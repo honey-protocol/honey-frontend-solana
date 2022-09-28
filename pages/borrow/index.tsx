@@ -57,6 +57,8 @@ import HoneyContent from '../../components/HoneyContent/HoneyContent';
 import HoneySider from '../../components/HoneySider/HoneySider';
 import { TABLET_BP } from '../../constants/breakpoints';
 import useWindowSize from '../../hooks/useWindowSize';
+import { Typography } from 'antd';
+import { pageDescription, pageTitle } from 'styles/common.css';
 // import { network } from 'pages/_app';
 
 const network = 'devnet'; // change to dynamic value
@@ -897,6 +899,13 @@ const Markets: NextPage = () => {
 
   return (
     <LayoutRedesign>
+      <div>
+        <Typography.Title className={pageTitle}>Borrow</Typography.Title>
+        <Typography.Text className={pageDescription}>
+          Lorem Ipsum is simply dummy text of the printing and typesetting
+          industry. Lorem Ipsum has{' '}
+        </Typography.Text>
+      </div>
       <HoneyContent>
         <div className={style.mobileTableHeader}>
           <div className={style.mobileRow}>

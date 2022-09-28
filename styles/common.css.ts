@@ -1,5 +1,5 @@
 import { style } from '@vanilla-extract/css';
-import { breakpoints } from './theme.css';
+import { breakpoints, typography } from './theme.css';
 
 export const container = style({
   width: '100%',
@@ -31,3 +31,13 @@ export const hAlign = style({
   alignItems: 'center',
   gap: '4px'
 });
+
+export const pageTitle = style([
+  typography.title,
+  { marginBottom: '0 !important' }
+]);
+
+export const pageDescription = style([
+  typography.description,
+  { marginBottom: '20px !important', display: 'block' }
+]);

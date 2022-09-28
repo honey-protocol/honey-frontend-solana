@@ -27,6 +27,8 @@ import { LiquidateTableRow } from '../../types/liquidate';
 import { LiquidateExpandTable } from '../../components/LiquidateExpandTable/LiquidateExpandTable';
 import HoneySider from '../../components/HoneySider/HoneySider';
 import HoneyContent from 'components/HoneyContent/HoneyContent';
+import { pageDescription, pageTitle } from 'styles/common.css';
+import { Typography } from 'antd';
 
 const { formatPercent: fp, formatSol: fs } = formatNumber;
 
@@ -267,6 +269,13 @@ const Liquidate: NextPage = () => {
 
   return (
     <LayoutRedesign>
+      <div>
+        <Typography.Title className={pageTitle}>Liquidation</Typography.Title>
+        <Typography.Text className={pageDescription}>
+          Lorem Ipsum is simply dummy text of the printing and typesetting
+          industry. Lorem Ipsum has{' '}
+        </Typography.Text>
+      </div>
       <HoneyContent>
         <HoneyTable
           hasRowsShadow={true}

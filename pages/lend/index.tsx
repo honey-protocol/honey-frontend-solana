@@ -32,6 +32,8 @@ import HoneyToggle from 'components/HoneyToggle/HoneyToggle';
 import { calcNFT } from 'helpers/loanHelpers/userCollection';
 import { ToastProps } from 'hooks/useToast';
 import { RoundHalfDown } from 'helpers/utils';
+import { Typography } from 'antd';
+import { pageDescription, pageTitle } from 'styles/common.css';
 // import { network } from 'pages/_app';
 // import { network } from 'pages/_app';
 
@@ -506,6 +508,13 @@ const Lend: NextPage = () => {
 
   return (
     <LayoutRedesign>
+      <div>
+        <Typography.Title className={pageTitle}>Lend</Typography.Title>
+        <Typography.Text className={pageDescription}>
+          Lorem Ipsum is simply dummy text of the printing and typesetting
+          industry. Lorem Ipsum has{' '}
+        </Typography.Text>
+      </div>
       <HoneyContent>
         <HoneyTable
           hasRowsShadow={true}
