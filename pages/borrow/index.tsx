@@ -662,7 +662,7 @@ const Markets: NextPage = () => {
       width: columnsWidth[2],
       render: available => (
         <div className={style.expandedRowCell}>
-          <InfoBlock title={'Allowance:'} value={fs(nftPrice * MAX_LTV)} />
+          <InfoBlock title={'Allowance:'} value={fs(userAllowance)} />
         </div>
       )
     },
