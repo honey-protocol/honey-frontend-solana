@@ -36,6 +36,9 @@ export async function calculateCollectionwideAllowance(
     }
   }
 
+  console.log('total debt', totalDebt)
+  console.log('total debt', nftPrice)
+
   const ltv = totalDebt / nftPrice;
 
   let sumOfAllowance = RoundHalfDown(

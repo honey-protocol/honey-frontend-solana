@@ -144,7 +144,8 @@ const Liquidate: NextPage = () => {
       return acc + obligation.debt
     }, 0);
     
-    setTotalDebt(sumOfDebt)
+    setTotalDebt(sumOfDebt);
+    setLoanToValue((sumOfDebt / positions.length) / nftPrice);
 
     if (nftPrice) setTvl(nftPrice * positions.length);
 
@@ -157,6 +158,10 @@ const Liquidate: NextPage = () => {
   }
 
   const [statusState, setStatusState] = useState(false);
+
+  useEffect(() => {
+    console.log('this is has pos', hasPosition)
+  }, [hasPosition])
 
   /**
    * @description checks if there are positions, if so set state
@@ -178,7 +183,7 @@ const Liquidate: NextPage = () => {
     }
 
     return;
-  }, [statusState]);
+  }, [statusState, nftPrice, loanToValue]);
 
     // calculates nft price
     async function calculateNFTPrice() {
@@ -197,20 +202,24 @@ const Liquidate: NextPage = () => {
       calculateNFTPrice();
     }, [marketReserveInfo, parsedReserves]);
 
-  // calculate loan to value == risk level
-  async function fetchHelperValues(nftPrice: any, collateralNFTPositions: any, honeyUser: any, marketReserveInfo: any) {
-    let outcome = await calculateCollectionwideAllowance(nftPrice, collateralNFTPositions, honeyUser, marketReserveInfo)
-    setLoanToValue(outcome.sumOfLtv);
-  }
+  // // calculate loan to value == risk level
+  // async function fetchHelperValues(nftPrice: any, collateralNFTPositions: any, honeyUser: any, marketReserveInfo: any) {
+  //   // if (marketReserveInfo && honeyUser) {
+  //   //   let outcome = await calculateCollectionwideAllowance(nftPrice, collateralNFTPositions, honeyUser, marketReserveInfo)
+  //   //   setLoanToValue(outcome.sumOfLtv);
+  //   //   console.log('outcome', outcome.sumOfLtv)
+  //   // }
 
-  /**
-   * @description updates honeyUser | marketReserveInfo | - timeout required
-   * @params none
-   * @returns honeyUser | marketReserveInfo |
-  */
-  useEffect(() => {
-    if (nftPrice && honeyUser && marketReserveInfo) fetchHelperValues(nftPrice, [], honeyUser, marketReserveInfo);
-  }, [marketReserveInfo, honeyUser, honeyReserves]);      
+  // }
+
+  // /**
+  //  * @description updates honeyUser | marketReserveInfo | - timeout required
+  //  * @params none
+  //  * @returns honeyUser | marketReserveInfo |
+  // */
+  // useEffect(() => {
+  //   if (nftPrice && honeyUser && marketReserveInfo) fetchHelperValues(nftPrice, [], honeyUser, marketReserveInfo);
+  // }, [marketReserveInfo, honeyUser, honeyReserves, nftPrice]);      
 
   /**
    * @description calls upon liquidator client for placebid | revokebid | increasebid
@@ -239,6 +248,9 @@ const Liquidate: NextPage = () => {
         } else if (type == 'place_bid') {
             // if no user bid terminate action
             if (!userBid) return;
+
+            userBid = Number(userBid.toFixed(2));
+            console.log('@@--', typeof(userBid))
 
             let transactionOutcome: any = await liquidatorClient.placeBid({
               bid_limit: userBid,
@@ -285,11 +297,11 @@ const Liquidate: NextPage = () => {
   }
 
   function handleIncreaseBid(type: string, userBid: number) {
-    fetchLiquidatorClient(type, userBid);
+    fetchLiquidatorClient(type, userBid!);
   }
 
   function handlePlaceBid(type: string, userBid: number) {
-    fetchLiquidatorClient(type, userBid);
+    fetchLiquidatorClient(type, userBid!);
   }
 
 

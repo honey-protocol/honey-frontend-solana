@@ -21,6 +21,7 @@ const BidsList = (props: BidListProps) => {
 
   async function handleConvertion(bArray: any) {
     let converted = await bArray.map((bid: any, index: number) => {
+      console.log('@@@@@@', bid)
       return {
         id: index,
         date: 1663663018156,

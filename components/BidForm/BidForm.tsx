@@ -65,7 +65,7 @@ const BidForm = (props: BidFormProps) => {
       footer={
         <div className={styles.buttons}>
           <div className={styles.smallCol}>
-            <HoneyButton variant="secondary">Cancel</HoneyButton>
+            <HoneyButton variant="secondary" onClick={() => handleRevokeBid('revoke_bid')}>Cancel</HoneyButton>
           </div>
           <div className={styles.bigCol}>
             <HoneyButton
