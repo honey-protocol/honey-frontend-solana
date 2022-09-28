@@ -381,15 +381,15 @@ const Lend: NextPage = () => {
     setIsMyCollectionsFilterEnabled(checked);
   };
 
-  const MyCollectionsToggle = () => (
-    <div className={style.toggle}>
-      <HoneyToggle
-        checked={isMyCollectionsFilterEnabled}
-        onChange={handleToggle}
-      />
-      <span className={style.toggleText}>my collections</span>
-    </div>
-  );
+  const MyCollectionsToggle = () =>
+    // <div className={style.toggle}>
+    //   <HoneyToggle
+    //     checked={isMyCollectionsFilterEnabled}
+    //     onChange={handleToggle}
+    //   />
+    //   <span className={style.toggleText}>my collections</span>
+    // </div>
+    null;
 
   const columnsWidth: Array<number | string> = [240, 100, 150, 150, 200];
 
