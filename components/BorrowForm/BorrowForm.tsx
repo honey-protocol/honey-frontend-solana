@@ -62,7 +62,7 @@ const BorrowForm = (props: BorrowProps) => {
   const solPrice = 32;
   const liquidationThreshold = 0.75;
 
-  const newDebt = userDebt + 1.1 * (valueSOL ? valueSOL : 0);
+  const newDebt = valueSOL ? userDebt + 1.1 * valueSOL : userDebt;
 
   // Put your validators here
   const isBorrowButtonDisabled = () => {
@@ -298,7 +298,11 @@ const BorrowForm = (props: BorrowProps) => {
               }
               toolTipLabel="Placeholder text for tooltip" // TODO: CHANGE TO REAL INFO TEXT FOR NEW ALLOWANCE
               value={fs(
-                userAllowance - newDebt < 0 ? 0 : userAllowance - newDebt
+                userAllowance - newDebt < 0
+                  ? 0
+                  : !valueSOL
+                  ? userAllowance
+                  : userAllowance - newDebt
               )}
             />
           </div>
