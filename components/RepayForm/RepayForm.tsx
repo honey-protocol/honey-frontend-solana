@@ -158,7 +158,7 @@ const RepayForm = (props: RepayProps) => {
           </div>
           <div className={styles.col}>
             <InfoBlock
-              value={f(userDebt / liquidationThreshold)}
+              value={fs(userDebt / liquidationThreshold)}
               valueSize="big"
               isDisabled={userDebt == 0 ? true : false}
               title={
