@@ -433,7 +433,7 @@ const Lend: NextPage = () => {
                 ]
               }
             >
-              <span>Interest</span>{' '}
+              <span>Interest rate</span>{' '}
               <div className={style.sortIcon[sortOrder]} />
             </div>
           );
