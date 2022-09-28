@@ -98,7 +98,6 @@ const Liquidate: NextPage = () => {
       const userBalance =
         (await sdkConfig.saberHqConnection.getBalance(key)) / LAMPORTS_PER_SOL;
         setUserBalance(userBalance);
-      console.log('this is user balance', userBalance);
     } catch (error) {
       console.log('Error', error);
     }
@@ -153,7 +152,6 @@ const Liquidate: NextPage = () => {
     }
 
     setFetchedPositions(sorted);
-    console.log('these are the positions', sorted);
   }
 
   const [statusState, setStatusState] = useState(false);
@@ -175,7 +173,6 @@ const Liquidate: NextPage = () => {
     if (statusState == true && status.bids && status.positions) {
       handleBiddingState(status.bids, status.positions);
       setBiddingArray(status.bids);
-      console.log('@@--', status.bids);
     }
 
     return;
@@ -231,7 +228,6 @@ const Liquidate: NextPage = () => {
   // PUT YOUR DATA SOURCE HERE
   // MOCK DATA FOR NOW
   useEffect(() => {
-    console.log(fetchedPositions)
     const mockData: LiquidateTableRow[] = [
       {
         key: '0',
