@@ -68,7 +68,3 @@ export const inputAddon = style([
     color: vars.colors.grayTransparent
   }
 ]);
-
-export const tokenName = style({
-  marginLeft: 8
-});
