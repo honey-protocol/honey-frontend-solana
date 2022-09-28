@@ -1,73 +1,46 @@
-import { FC, useState } from 'react';
+import { FC, useEffect, useState } from 'react';
 import * as styles from './BidsList.css';
 import HoneyButton from 'components/HoneyButton/HoneyButton';
 import SidebarScroll from '../SidebarScroll/SidebarScroll';
 import { CurrentBidCardProps } from '../CurrentBidCard/types';
 import CurrentBidList from '../CurrentBidList/CurrentBidList';
+import { BidListProps } from './types';
+import { LAMPORTS_PER_SOL } from '@solana/web3.js';
 
-type BidsListProps = {};
 
-const BidsList: FC<BidsListProps> = () => {
+const BidsList = (props: BidListProps) => {
+  const {biddingArray} = props;
   const [valueUSD, setValueUSD] = useState<number>();
   const [valueUSDC, setValueUSDC] = useState<number>();
+  const [convertedBiddingArray, setConvertedBiddingArray] = useState([]);
 
   // Put your validators here
   const isSubmitButtonDisabled = () => {
     return false;
   };
 
-  const currentBidCardData: CurrentBidCardProps[] = [
-    {
-      id: '1',
-      date: 1663663018156,
-      walletAddress: '1BvBMSEYstWetqTFn5Au4m4GFg7xJaNVN2',
-      usdcValue: 100000,
-      usdcAmount: 100000
-    },
-    {
-      id: '2',
-      date: 1663663018156,
-      walletAddress: '1BvBMSEYstWetqTFn5Au4m4GFg7xJaNVN2',
-      usdcValue: 100000,
-      usdcAmount: 100000
-    },
-    {
-      id: '3',
-      date: 1663663018156,
-      walletAddress: '1BvBMSEYstWetqTFn5Au4m4GFg7xJaNVN2',
-      usdcValue: 100000,
-      usdcAmount: 100000
-    },
-    {
-      id: '4',
-      date: 1663663018156,
-      walletAddress: '1BvBMSEYstWetqTFn5Au4m4GFg7xJaNVN2',
-      usdcValue: 100000,
-      usdcAmount: 100000
-    }
-  ];
+  async function handleConvertion(bArray: any) {
+    let converted = await bArray.map((bid: any, index: number) => {
+      return {
+        id: index,
+        date: 1663663018156,
+        walletAddress: bid.bidder,
+        usdcValue: (bid.bidLimit / LAMPORTS_PER_SOL),
+        usdcAmount: (bid.bidLimit / LAMPORTS_PER_SOL)
+      }
+    });
+
+    setConvertedBiddingArray(converted);
+  }
+
+  useEffect(() => {
+    if (biddingArray.length) handleConvertion(biddingArray);
+  }, [biddingArray]);
+
+  const currentBidCardData: CurrentBidCardProps[] = convertedBiddingArray;
 
   return (
-    <SidebarScroll
-      footer={
-        <div className={styles.buttons}>
-          <div className={styles.smallCol}>
-            <HoneyButton variant='secondary'>Cancel</HoneyButton>
-          </div>
-          <div className={styles.bigCol}>
-            <HoneyButton
-              variant='primary'
-              disabled={isSubmitButtonDisabled()}
-              isFluid={true}
-              usdcValue={valueUSD || 0}
-              usdcAmount={valueUSDC || 0}
-            >
-              Place Bid
-            </HoneyButton>
-          </div>
-        </div>
-      }
-    >
+    <SidebarScroll>
       <div className={styles.bidsList}>
         <CurrentBidList data={currentBidCardData} />
       </div>

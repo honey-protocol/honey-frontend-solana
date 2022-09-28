@@ -175,6 +175,7 @@ const Liquidate: NextPage = () => {
     if (statusState == true && status.bids && status.positions) {
       handleBiddingState(status.bids, status.positions);
       setBiddingArray(status.bids);
+      console.log('@@--', status.bids);
     }
 
     return;
@@ -211,6 +212,12 @@ const Liquidate: NextPage = () => {
   useEffect(() => {
     if (nftPrice && honeyUser && marketReserveInfo) fetchHelperValues(nftPrice, [], honeyUser, marketReserveInfo);
   }, [marketReserveInfo, honeyUser, honeyReserves]);      
+
+
+
+
+
+
   // end of sdk integration
 
   const [tableData, setTableData] = useState<LiquidateTableRow[]>([]);
@@ -471,6 +478,7 @@ const Liquidate: NextPage = () => {
           collectionId="0" 
           biddingArray={biddingArray}
           userBalance={userBalance}
+          highestBiddingValue={highestBiddingValue}
         />
       </Sider>
     </LayoutRedesign>

@@ -25,10 +25,10 @@ const CurrentBidCard = (props: CurrentBidCardProps) => {
 
         <div onClick={() => navigator.clipboard.writeText(walletAddress)} className={styles.bidCardCopyIcon} />
       </div>
-
+      {/* TODO: fix sol fetcher */}
       <div className={styles.bidCardRight}>
         <p className={styles.bidCardPrice}>{fu(usdcAmount)}</p>
-        <p className={styles.bidCardUsdcCounts}>{f(usdcValue)} USDC</p>
+        <p className={styles.bidCardUsdcCounts}>{f(usdcValue)} USD</p>
       </div>
     </div>
   );

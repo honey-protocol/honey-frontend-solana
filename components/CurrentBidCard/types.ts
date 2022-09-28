@@ -1,5 +1,5 @@
 export type CurrentBidCardProps = {
-  id: string;
+  id: number;
   hasBorder?: boolean;
   date: number;
   walletAddress: string;

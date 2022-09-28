@@ -54,6 +54,7 @@ export async function calculateCollectionwideAllowance(
     sumOfTotalDebt
   };
 }
+
 /**
  * @description calculates the nft price based on switchboard
  * @params marketreserve | parsedreserve | honeymarket | connection

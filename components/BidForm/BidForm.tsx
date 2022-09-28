@@ -11,17 +11,17 @@ import HexaBoxContainer from '../HexaBoxContainer/HexaBoxContainer';
 import HoneyWarning from '../HoneyWarning/HoneyWarning';
 import CurrentBid from '../CurrentBid/CurrentBid';
 import SidebarScroll from '../SidebarScroll/SidebarScroll';
-
-type BidsFormsProps = {};
+import { BidFormProps } from './types';
 
 const { format: f, formatPercent: fp, formatUsd: fu, parse: p } = formatNumber;
 
-const BidForm: FC<BidsFormsProps> = () => {
+const BidForm = (props: BidFormProps) => {
+  const { userBalance, highestBiddingValue } = props;
   const [valueUSD, setValueUSD] = useState<number>();
   const [valueUSDC, setValueUSDC] = useState<number>();
   const [sliderValue, setSliderValue] = useState(0);
 
-  const maxValue = 2000;
+  const maxValue = 1000;
   const usdcPrice = 0.95;
 
   // Put your validators here
@@ -108,18 +108,18 @@ const BidForm: FC<BidsFormsProps> = () => {
 
         <div className={styles.row}>
           <div className={styles.col}>
-            <InfoBlock value={fu(10)} valueSize="big" title="Highest bid" />
+            <InfoBlock value={fu(highestBiddingValue)} valueSize="big" title="Highest bid" />
           </div>
         </div>
         <div className={styles.row}>
           <div className={styles.col}>
-            <InfoBlock title="Minimal bid" value={fp(20)} valueSize="big" />
+            <InfoBlock title="Minimal bid" value={fu((highestBiddingValue * 1.1))} valueSize="big" />
           </div>
         </div>
         <div className={styles.row}>
           <div className={styles.col}>
             <InfoBlock
-              value={fp(80)}
+              value={fu(userBalance)}
               valueSize="big"
               title="Your USDC balance"
             />

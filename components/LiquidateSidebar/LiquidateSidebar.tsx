@@ -15,7 +15,7 @@ type Tab = 'bid' | 'current';
 
 const LiquidateSidebar = (props: LendSidebarProps) => {
   const wallet = true;
-  const { collectionId, userBalance, biddingArray } = props;
+  const { collectionId, userBalance, biddingArray, highestBiddingValue } = props;
   const [activeTab, setActiveTab] = useState<Tab>('bid');
 
   const handleTabChange = (tabKey: string) => {
@@ -44,8 +44,8 @@ const LiquidateSidebar = (props: LendSidebarProps) => {
           />
         ) : (
           <>
-            {activeTab === 'bid' && <BidForm />}
-            {activeTab === 'current' && <BidsList />}
+            {activeTab === 'bid' && <BidForm userBalance={userBalance} highestBiddingValue={highestBiddingValue} />}
+            {activeTab === 'current' && <BidsList biddingArray={biddingArray} />}
           </>
         )}
       </HoneyTabs>
