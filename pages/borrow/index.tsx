@@ -358,15 +358,15 @@ const Markets: NextPage = () => {
     setIsMyCollectionsFilterEnabled(checked);
   };
 
-  const MyCollectionsToggle = () => (
-    <div className={style.toggle}>
-      <HoneyToggle
-        checked={isMyCollectionsFilterEnabled}
-        onChange={handleToggle}
-      />
-      <span className={style.toggleText}>my collections</span>
-    </div>
-  );
+  const MyCollectionsToggle = () =>
+    // <div className={style.toggle}>
+    //   <HoneyToggle
+    //     checked={isMyCollectionsFilterEnabled}
+    //     onChange={handleToggle}
+    //   />
+    //   <span className={style.toggleText}>my collections</span>
+    // </div>
+    null;
 
   const onSearch = (searchTerm: string): MarketTableRow[] => {
     if (!searchTerm) {
