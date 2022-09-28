@@ -15,7 +15,7 @@ type Tab = 'bid' | 'current';
 
 const LiquidateSidebar = (props: LendSidebarProps) => {
   const wallet = true;
-  const { collectionId } = props;
+  const { collectionId, userBalance, biddingArray } = props;
   const [activeTab, setActiveTab] = useState<Tab>('bid');
 
   const handleTabChange = (tabKey: string) => {

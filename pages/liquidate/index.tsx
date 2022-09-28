@@ -27,10 +27,12 @@ import HoneyButton from '../../components/HoneyButton/HoneyButton';
 import { formatNumber } from '../../helpers/format';
 import { LiquidateTableRow } from '../../types/liquidate';
 import { LiquidateExpandTable } from '../../components/LiquidateExpandTable/LiquidateExpandTable';
-import { useAnchor, LiquidatorClient, useAllPositions, NftPosition } from '@honey-finance/sdk';
+import { useAnchor, LiquidatorClient, useAllPositions, NftPosition, useHoney, useMarket } from '@honey-finance/sdk';
 import { ConfigureSDK } from 'helpers/loanHelpers';
 import { useConnectedWallet } from '@saberhq/use-solana';
 import { LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js';
+import { calcNFT, calculateCollectionwideAllowance } from 'helpers/loanHelpers/userCollection';
+import { LiquidateTablePosition, BiddingPosition } from '../../types/liquidate';
 
 const { formatPercent: fp, formatUsd: fu } = formatNumber;
 
@@ -52,12 +54,27 @@ const Liquidate: NextPage = () => {
     * @returns loading | nft positions | error
   */
   const { ...status } = useAllPositions(sdkConfig.saberHqConnection, sdkConfig.sdkWallet!, sdkConfig.honeyId, sdkConfig.marketId);
+  
+  /**
+   * @description calls upon markets which
+   * @params none
+   * @returns market | market reserve information | parsed reserves |
+  */
+  const { market, marketReserveInfo, parsedReserves, fetchMarket }  = useHoney();
+
+  /**
+   * @description calls upon the honey sdk
+   * @params  useConnection func. | useConnectedWallet func. | honeyID | marketID
+   * @returns honeyUser | honeyReserves - used for interaction regarding the SDK
+  */
+  const { honeyClient, honeyUser, honeyReserves, honeyMarket } = useMarket(sdkConfig.saberHqConnection, sdkConfig.sdkWallet!, sdkConfig.honeyId, sdkConfig.marketId);
+
   /**
     * @description declare state
     * @params none
     * @returns open positions | bidding data | userbid | user position
   */
-  const [fetchedPositions, setFetchedPositions] = useState<Array<NftPosition>>();
+  const [fetchedPositions, setFetchedPositions] = useState<Array<LiquidateTablePosition>>([]);
   const [hasPosition, setHasPosition] = useState(false);
   const [highestBiddingAddress, setHighestBiddingAddress] = useState('');
   const [highestBiddingValue, setHighestBiddingValue] = useState(0);
@@ -65,8 +82,32 @@ const Liquidate: NextPage = () => {
   const [userInput, setUserInput] = useState(0);
   const [loadingState, setLoadingState] = useState(false);
   const [refetchState, setRefetchState] = useState(false);
+  const [nftPrice, setNftPrice] = useState<number>(0);
+  const [totalDebt, setTotalDebt] = useState<number>(0);
+  const [tvl, setTvl] = useState<number>(0);
+  const [biddingArray, setBiddingArray] = useState({});
+  const [userBalance, setUserBalance] = useState(0);
+  const [loanToValue, setLoanToValue] = useState<number>(0);
   // create stringyfied instance of walletPK
   let stringyfiedWalletPK = sdkConfig.sdkWallet?.publicKey.toString();
+  let walletPK = sdkConfig.sdkWallet?.publicKey;
+
+  async function fetchWalletBalance(key: PublicKey) {
+    try {
+      const userBalance =
+        (await sdkConfig.saberHqConnection.getBalance(key)) / LAMPORTS_PER_SOL;
+        setUserBalance(userBalance);
+      console.log('this is user balance', userBalance);
+    } catch (error) {
+      console.log('Error', error);
+    }
+  }
+
+  useEffect(() => {
+    if (walletPK) {
+      fetchWalletBalance(walletPK);
+    }
+  }, [walletPK]);
 
   /**
    * @description sets the state if user has open bid
@@ -81,8 +122,29 @@ const Liquidate: NextPage = () => {
       }
     });
 
-    let sorted = await positions.sort((first: any,second: any) => first.is_healthy - second.is_healthy).reverse();
-    let highestBid = biddingArray.sort((first: any, second: any) => first.bidLimit - second.bidLimit).reverse();
+    // let sorted = await positions.sort((first: any,second: any) => first.is_healthy - second.is_healthy).reverse();
+    let sorted = await positions.map((obligation: any, index: number) => {
+      return {
+        name: 'Honey Eyes',
+        riskLvl: (obligation.debt / nftPrice) * 100,
+        untilLiquidation: 1600,
+        debt: obligation.debt,
+        estimatedValue: nftPrice,
+        nftMint: obligation.nft_mint,
+        owner: obligation.owner,
+        obligation: obligation.obligation,
+        highestBid: obligation.highest_bid
+      }
+    });
+
+    let highestBid = await biddingArray.sort((first: any, second: any) => first.bidLimit - second.bidLimit).reverse();
+    let sumOfDebt = await positions.reduce((acc: number, obligation: any) => {
+      return acc + obligation.debt
+    }, 0);
+    
+    setTotalDebt(sumOfDebt)
+
+    if (nftPrice) setTvl(nftPrice * positions.length);
 
     if (highestBid[0]) {
       setHighestBiddingAddress(highestBid[0].bidder);
@@ -103,22 +165,52 @@ const Liquidate: NextPage = () => {
   useEffect(() => {
     if (status.positions) {
       setStatusState(true);
-      // if (status.bids) handleBiddingState(status.bids, status.positions);
     }
-
     return;
   }, [status.positions]);
 
   // triggers if there are positions - inits fetch positions
   useEffect(() => {
     if (statusState == true && status.bids && status.positions) {
-      // handleHealthPositions(status)
       handleBiddingState(status.bids, status.positions);
+      setBiddingArray(status.bids);
     }
 
     return;
   }, [statusState]);
 
+    // calculates nft price
+    async function calculateNFTPrice() {
+      if (marketReserveInfo && parsedReserves && honeyMarket) {
+        let nftPrice = await calcNFT(
+          marketReserveInfo,
+          parsedReserves,
+          honeyMarket,
+          sdkConfig.saberHqConnection
+        );
+        setNftPrice(Number(nftPrice));
+      }
+    }
+  
+    useEffect(() => {
+      calculateNFTPrice();
+    }, [marketReserveInfo, parsedReserves]);
+
+  // calculate loan to value == risk level
+  async function fetchHelperValues(nftPrice: any, collateralNFTPositions: any, honeyUser: any, marketReserveInfo: any) {
+    let outcome = await calculateCollectionwideAllowance(nftPrice, collateralNFTPositions, honeyUser, marketReserveInfo)
+    setLoanToValue(outcome.sumOfLtv);
+  }
+
+  /**
+   * @description updates honeyUser | marketReserveInfo | - timeout required
+   * @params none
+   * @returns honeyUser | marketReserveInfo |
+  */
+  useEffect(() => {
+    if (nftPrice && honeyUser && marketReserveInfo) fetchHelperValues(nftPrice, [], honeyUser, marketReserveInfo);
+  }, [marketReserveInfo, honeyUser, honeyReserves]);      
+  // end of sdk integration
 
   const [tableData, setTableData] = useState<LiquidateTableRow[]>([]);
   const [tableDataFiltered, setTableDataFiltered] = useState<
@@ -131,50 +223,22 @@ const Liquidate: NextPage = () => {
   // PUT YOUR DATA SOURCE HERE
   // MOCK DATA FOR NOW
   useEffect(() => {
+    console.log(fetchedPositions)
     const mockData: LiquidateTableRow[] = [
       {
         key: '0',
         name: 'Honey Eyes',
-        risk: 0.1,
+        risk: loanToValue,
         liqThreshold: 0.75,
-        totalDebt: 1000,
-        tvl: 100000,
-        positions: [
-          {
-            name: 'Doodles #1291',
-            riskLvl: 40,
-            untilLiquidation: 1600,
-            debt: 100,
-            estimatedValue: 1000
-          },
-          {
-            name: 'Doodles #1292',
-            riskLvl: 33,
-            untilLiquidation: 1234,
-            debt: 150,
-            estimatedValue: 1500
-          },
-          {
-            name: 'Doodles #1293',
-            riskLvl: 50,
-            untilLiquidation: 1800,
-            debt: 200,
-            estimatedValue: 1700
-          },
-          {
-            name: 'Doodles #1293',
-            riskLvl: 52,
-            untilLiquidation: 200,
-            debt: 50,
-            estimatedValue: 90
-          }
-        ]
+        totalDebt: totalDebt,
+        tvl: nftPrice * fetchedPositions.length,
+        positions: fetchedPositions
       },
     ];
 
     setTableData(mockData);
     setTableDataFiltered(mockData);
-  }, []);
+  }, [fetchedPositions]);
 
   const handleToggle = (checked: boolean) => {
     setIsMyBidsFilterEnabled(checked);
@@ -402,7 +466,11 @@ const Liquidate: NextPage = () => {
           ))}
       </Content>
       <Sider width={350}>
-        <LiquidateSidebar collectionId="0" />
+        <LiquidateSidebar 
+          collectionId="0" 
+          biddingArray={biddingArray}
+          userBalance={userBalance}
+        />
       </Sider>
     </LayoutRedesign>
   );
