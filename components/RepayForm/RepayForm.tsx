@@ -92,7 +92,8 @@ const RepayForm = (props: RepayProps) => {
     if (userDebt == 0 && openPositions[0]) {
       executeWithdrawNFT(openPositions[0].mint, toast);
     } else {
-      executeRepay(valueSOL || 0, toast);
+      await executeRepay(valueSOL || 0, toast);
+      handleSliderChange(0);
     }
   };
 

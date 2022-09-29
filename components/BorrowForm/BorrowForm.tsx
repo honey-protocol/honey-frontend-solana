@@ -128,16 +128,18 @@ const BorrowForm = (props: BorrowProps) => {
     }
   }, [openPositions, availableNFTs]);
 
-  function handleDepositNFT() {
+  const handleDepositNFT = async () => {
     if (selectedNft && selectedNft.mint.length < 1)
       return toastResponse('ERROR', 'Please select an NFT', 'ERROR');
     if (selectedNft && selectedNft.mint.length > 1)
-      executeDepositNFT(selectedNft.mint, toast);
-  }
+      await executeDepositNFT(selectedNft.mint, toast);
+    handleSliderChange(0);
+  };
 
-  function handleBorrow() {
-    executeBorrow(valueSOL, toast);
-  }
+  const handleBorrow = async () => {
+    await executeBorrow(valueSOL, toast);
+    handleSliderChange(0);
+  };
 
   useEffect(() => {}, [selectedNft]);
 
