@@ -391,7 +391,7 @@ const Lend: NextPage = () => {
     // </div>
     null;
 
-  const columnsWidth: Array<number | string> = [240, 100, 150, 150, 200];
+  const columnsWidth: Array<number | string> = [240, 150, 150, 150, 150];
 
   const columns: ColumnType<LendTableRow>[] = useMemo(
     () => [

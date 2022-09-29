@@ -62,7 +62,10 @@ const BorrowForm = (props: BorrowProps) => {
   const solPrice = 32;
   const liquidationThreshold = 0.75;
 
-  const newDebt = valueSOL ? userDebt + 1.1 * valueSOL : userDebt;
+  const newAdditionalDebt = 1.1 * valueSOL;
+  const newTotalDebt = newAdditionalDebt
+    ? userDebt + newAdditionalDebt
+    : userDebt;
 
   // Put your validators here
   const isBorrowButtonDisabled = () => {
@@ -86,7 +89,7 @@ const BorrowForm = (props: BorrowProps) => {
     }
     setValueUSD(usdValue);
     setValueSOL(usdValue / solPrice);
-    setSliderValue(usdValue);
+    setSliderValue(usdValue / solPrice);
   };
 
   const handleSolInputChange = (solValue: number | undefined) => {
@@ -232,9 +235,10 @@ const BorrowForm = (props: BorrowProps) => {
             />
             <HoneySlider
               currentValue={0}
-              maxValue={maxValue}
+              maxValue={nftPrice}
               minAvailableValue={borrowedValue}
-              maxSafePosition={0.4 - borrowedValue / 1000}
+              maxSafePosition={0.3 - borrowedValue / 1000}
+              dangerPosition={0.45 - borrowedValue / 1000}
               maxAvailablePosition={MAX_LTV}
               isReadonly
             />
@@ -259,14 +263,15 @@ const BorrowForm = (props: BorrowProps) => {
                   after the requested changes to the loan are approved.
                 </span>
               }
-              value={fp((loanToValue + newDebt / nftPrice) * 100)}
+              value={fp((loanToValue + newAdditionalDebt / nftPrice) * 100)}
               isDisabled={true}
             />
             <HoneySlider
-              currentValue={sliderValue}
-              maxValue={maxValue}
+              currentValue={sliderValue * 1.1}
+              maxValue={nftPrice}
               minAvailableValue={borrowedValue}
-              maxSafePosition={0.4 - borrowedValue / 1000}
+              maxSafePosition={0.3 - borrowedValue / 1000}
+              dangerPosition={0.45 - borrowedValue / 1000}
               maxAvailablePosition={MAX_LTV}
               isReadonly
             />
@@ -317,7 +322,7 @@ const BorrowForm = (props: BorrowProps) => {
                   after the requested changes to the loan are approved.
                 </span>
               }
-              value={fs(newDebt < 0 ? 0 : newDebt)}
+              value={fs(newTotalDebt < 0 ? 0 : newTotalDebt)}
               isDisabled={true}
             />
           </div>
@@ -359,11 +364,11 @@ const BorrowForm = (props: BorrowProps) => {
                 </span>
               }
               value={fs(
-                userAllowance - newDebt < 0
+                userAllowance - newAdditionalDebt < 0
                   ? 0
                   : !valueSOL
                   ? userAllowance
-                  : userAllowance - newDebt
+                  : userAllowance - newAdditionalDebt
               )}
             />
           </div>
@@ -397,7 +402,8 @@ const BorrowForm = (props: BorrowProps) => {
           currentValue={sliderValue}
           maxValue={nftPrice}
           minAvailableValue={borrowedValue}
-          maxSafePosition={0.4 - borrowedValue / 1000}
+          maxSafePosition={0.3 - borrowedValue / 1000}
+          dangerPosition={0.45 - borrowedValue / 1000}
           maxAvailablePosition={MAX_LTV}
           onChange={handleSliderChange}
         />

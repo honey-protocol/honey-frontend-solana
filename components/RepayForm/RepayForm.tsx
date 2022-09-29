@@ -209,11 +209,13 @@ const RepayForm = (props: RepayProps) => {
                 </span>
               }
             />
+
             <HoneySlider
               currentValue={0}
-              maxValue={maxValue}
+              maxValue={nftPrice || 0}
               minAvailableValue={borrowedValue}
-              maxSafePosition={0.4 - borrowedValue / 1000}
+              maxSafePosition={0.3 - borrowedValue / 1000}
+              dangerPosition={0.45 - borrowedValue / 1000}
               maxAvailablePosition={MAX_LTV}
               isReadonly
             />
@@ -226,7 +228,7 @@ const RepayForm = (props: RepayProps) => {
                   <div className={questionIcon} />
                 </span>
               }
-              value={fp((loanToValue + newDebt / (nftPrice || 0)) * 100)}
+              value={fp((loanToValue - sliderValue / loanToValue) * 100)}
               isDisabled={true}
               toolTipLabel={
                 <span>
@@ -242,11 +244,13 @@ const RepayForm = (props: RepayProps) => {
                 </span>
               }
             />
+
             <HoneySlider
-              currentValue={sliderValue}
-              maxValue={maxValue}
+              currentValue={loanToValue / sliderValue}
+              maxValue={nftPrice || 0}
               minAvailableValue={borrowedValue}
-              maxSafePosition={0.4 - borrowedValue / 1000}
+              maxSafePosition={0.3 - borrowedValue / 1000}
+              dangerPosition={0.45 - borrowedValue / 1000}
               maxAvailablePosition={MAX_LTV}
               isReadonly
             />
