@@ -12,11 +12,26 @@ import HoneyWarning from '../HoneyWarning/HoneyWarning';
 import CurrentBid from '../CurrentBid/CurrentBid';
 import SidebarScroll from '../SidebarScroll/SidebarScroll';
 import { BidFormProps } from './types';
+import { hAlign } from 'styles/common.css';
+import { questionIcon } from 'styles/icons.css';
 
-const { format: f, formatPercent: fp, formatUsd: fu, parse: p } = formatNumber;
+const {
+  format: f,
+  formatPercent: fp,
+  formatUsd: fu,
+  formatSol: fs,
+  parse: p
+} = formatNumber;
 
 const BidForm = (props: BidFormProps) => {
-  const { userBalance, highestBiddingValue, currentUserBid, handleRevokeBid, handleIncreaseBid, handlePlaceBid } = props;
+  const {
+    userBalance,
+    highestBiddingValue,
+    currentUserBid,
+    handleRevokeBid,
+    handleIncreaseBid,
+    handlePlaceBid
+  } = props;
   const [valueUSD, setValueUSD] = useState<number>(0);
   const [valueSOL, setValueSOL] = useState<number>(0);
   const [valueUSDC, setValueUSDC] = useState<number>(0);
@@ -62,19 +77,26 @@ const BidForm = (props: BidFormProps) => {
   };
 
   function triggerIndicator() {
-    currentUserBid != 0 ? handlePlaceBid('increase_bid', valueUSD) : handleIncreaseBid('place_bid', valueUSD);
+    currentUserBid != 0
+      ? handlePlaceBid('increase_bid', valueUSD)
+      : handleIncreaseBid('place_bid', valueUSD);
   }
 
   useEffect(() => {
     console.log('@@--', currentUserBid);
-  }, [currentUserBid])
+  }, [currentUserBid]);
 
   return (
     <SidebarScroll
       footer={
         <div className={styles.buttons}>
           <div className={styles.smallCol}>
-            <HoneyButton variant="secondary" onClick={() => handleRevokeBid('revoke_bid')}>Cancel</HoneyButton>
+            <HoneyButton
+              variant="secondary"
+              onClick={() => handleRevokeBid('revoke_bid')}
+            >
+              Cancel
+            </HoneyButton>
           </div>
           <div className={styles.bigCol}>
             <HoneyButton
@@ -100,35 +122,52 @@ const BidForm = (props: BidFormProps) => {
           </div>
           <div className={styles.nftName}>Honey Eyes</div>
         </div>
-        {
-          currentUserBid &&
-            <div className={styles.row}>
+        {currentUserBid && (
+          <div className={styles.row}>
             <div className={styles.col}>
-              <CurrentBid 
-                value={currentUserBid} 
-                title={currentUserBid == highestBiddingValue ? "Your bid is #1" : 'Your bid is:'} 
+              <CurrentBid
+                value={currentUserBid}
+                title={
+                  currentUserBid == highestBiddingValue
+                    ? 'Your bid is #1'
+                    : 'Your bid is:'
+                }
                 handleIncreaseBid={handleIncreaseBid}
                 handleRevokeBid={handleRevokeBid}
               />
             </div>
           </div>
-        }
+        )}
         <div className={styles.row}>
           <div className={styles.col}>
-            <InfoBlock value={fu(highestBiddingValue)} valueSize="big" title="Highest bid" />
+            <InfoBlock
+              value={fs(highestBiddingValue)}
+              valueSize="big"
+              title={
+                <span className={hAlign}>
+                  Highest bid <div className={questionIcon} />
+                </span>
+              }
+            />
           </div>
-        </div>
-        <div className={styles.row}>
           <div className={styles.col}>
-            <InfoBlock title="Minimal bid" value={fu((highestBiddingValue * 1.1))} valueSize="big" />
+            <InfoBlock
+              title={
+                <span className={hAlign}>
+                  Minimal bid <div className={questionIcon} />
+                </span>
+              }
+              value={fs(highestBiddingValue * 1.1)}
+              valueSize="big"
+            />
           </div>
         </div>
         <div className={styles.row}>
           <div className={styles.col}>
             <InfoBlock
-              value={fu(userBalance)}
+              value={fs(userBalance)}
               valueSize="big"
-              title="Your USDC balance"
+              title="Your SOL balance"
             />
           </div>
         </div>
