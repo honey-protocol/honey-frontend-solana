@@ -87,8 +87,7 @@ export const HoneySlider: FC<HoneySliderProps> = ({
       <div
         className={styles.sliderWrapper}
         style={{
-          width:
-            minAvailablePosition < 0.1 ? 0 : `${minAvailablePosition * 100}%`
+          width: minAvailablePosition < 0 ? 0 : `${minAvailablePosition * 100}%`
           // display: minAvailableValue ? 'inherit' : 'none',
         }}
       >
