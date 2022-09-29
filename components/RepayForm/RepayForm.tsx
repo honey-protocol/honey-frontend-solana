@@ -28,7 +28,6 @@ const RepayForm = (props: RepayProps) => {
     executeWithdrawNFT,
     userAllowance,
     userDebt,
-    userUSDCBalance,
     loanToValue,
     availableNFTs,
   } = props;
@@ -98,7 +97,6 @@ const RepayForm = (props: RepayProps) => {
     userAllowance,
     nftPrice,
     loanToValue,
-    userUSDCBalance,
     availableNFTs
   ]);
 
@@ -221,8 +219,8 @@ const RepayForm = (props: RepayProps) => {
         <div className={styles.inputs}>
           <div className={styles.balance}>
             <InfoBlock
-              title={'Your USDC balance'}
-              value={f(userUSDCBalance)}
+              title={'Your SOL balance'}
+              value={f(SOLBalance)}
             ></InfoBlock>
           </div>
 

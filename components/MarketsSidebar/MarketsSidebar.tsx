@@ -27,7 +27,6 @@ const MarketsSidebar = (props: MarketsSidebarProps) => {
     nftPrice,
     userAllowance,
     userDebt,
-    userUSDCBalance,
     loanToValue,
     hideMobileSidebar,
     executeDepositNFT, executeWithdrawNFT, executeBorrow, executeRepay,
@@ -78,7 +77,6 @@ const MarketsSidebar = (props: MarketsSidebarProps) => {
                   executeDepositNFT={executeDepositNFT}
                   userAllowance={userAllowance}
                   loanToValue={loanToValue}
-                  userUSDCBalance={userUSDCBalance}
                   hideMobileSidebar={hideMobileSidebar}
                 />
             }
@@ -92,7 +90,6 @@ const MarketsSidebar = (props: MarketsSidebarProps) => {
                   executeWithdrawNFT={executeWithdrawNFT}
                   userDebt={userDebt}
                   userAllowance={userAllowance}
-                  userUSDCBalance={userUSDCBalance}
                   loanToValue={loanToValue}
                   hideMobileSidebar={hideMobileSidebar}
                 />

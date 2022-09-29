@@ -35,6 +35,10 @@ import { LiquidateTablePosition } from '../../types/liquidate';
 import { HONEY_MARKET_ID, HONEY_PROGRAM_ID } from 'constants/loan';
 import { NATIVE_MINT } from '@solana/spl-token';
 import { Content } from 'antd/lib/layout/layout';
+import HoneySider from 'components/HoneySider/HoneySider';
+import HoneyContent from 'components/HoneyContent/HoneyContent';
+import { pageDescription, pageTitle } from 'styles/common.css';	
+import { Typography } from 'antd';
 
 const { formatPercent: fp, formatSol: fs, formatRoundDown: fd } = formatNumber;
 const Liquidate: NextPage = () => {
@@ -494,7 +498,14 @@ const Liquidate: NextPage = () => {
 
   return (
     <LayoutRedesign>
-      <Content>
+      <div>	
+        <Typography.Title className={pageTitle}>Liquidation</Typography.Title>	
+        <Typography.Text className={pageDescription}>	
+          Lorem Ipsum is simply dummy text of the printing and typesetting	
+          industry. Lorem Ipsum has{' '}	
+        </Typography.Text>	
+      </div>
+      <HoneyContent>
         <HoneyTable
           hasRowsShadow={true}
           tableLayout="fixed"
@@ -538,8 +549,8 @@ const Liquidate: NextPage = () => {
               />
             </div>
           ))}
-      </Content>
-      <Sider width={350}>
+      </HoneyContent>
+      <HoneySider>
         <LiquidateSidebar 
           collectionId="0" 
           biddingArray={biddingArray}
@@ -550,7 +561,7 @@ const Liquidate: NextPage = () => {
           handleIncreaseBid={handleIncreaseBid}
           handlePlaceBid={handlePlaceBid}
         />
-      </Sider>
+      </HoneySider>
     </LayoutRedesign>
   );
 };
