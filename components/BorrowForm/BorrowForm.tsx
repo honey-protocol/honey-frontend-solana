@@ -103,7 +103,7 @@ const BorrowForm = (props: BorrowProps) => {
 
     setValueUSD(solValue * solPrice);
     setValueSOL(solValue);
-    setSliderValue(solValue * solPrice);
+    setSliderValue(solValue);
   };
 
   // set selection state and render (or not) detail nft
