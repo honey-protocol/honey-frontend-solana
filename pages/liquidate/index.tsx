@@ -129,7 +129,7 @@ const Liquidate: NextPage = () => {
       return {
         name: 'Honey Eyes',
         riskLvl: (obligation.debt / nftPrice) * 100,
-        untilLiquidation: obligation.debt !== 0 ? (nftPrice / (obligation.debt / liquidationThreshold)) : 0,
+        untilLiquidation: obligation.debt !== 0 ? (nftPrice - (obligation.debt / liquidationThreshold)) : 0,
         debt: obligation.debt,
         estimatedValue: nftPrice,
         nftMint: obligation.nft_mint,
@@ -231,7 +231,6 @@ const Liquidate: NextPage = () => {
       const liquidatorClient = await LiquidatorClient.connect(program.provider, HONEY_PROGRAM_ID, false);
       if (wallet) {
         if (type == 'revoke_bid') {
-          console.log('@@--curr user bid', currentUserBid)
           if (!currentUserBid) return;
 
           let transactionOutcome: any = await liquidatorClient.revokeBid({
@@ -244,7 +243,7 @@ const Liquidate: NextPage = () => {
           if (transactionOutcome[0] == 'SUCCESS') {
             return toastResponse('SUCCESS', 'Bid revoked, fetching chain data', 'SUCCESS');
           } else {
-            console.log('@@--error', transactionOutcome)
+            console.log('@@--error1', transactionOutcome)
             return toastResponse('ERROR', 'Revoke bid failed', 'ERROR');
           }
         } else if (type == 'place_bid') {
@@ -252,7 +251,6 @@ const Liquidate: NextPage = () => {
             if (!userBid) return;
 
             userBid = Number(userBid.toFixed(2));
-            console.log('@@--', typeof(userBid))
 
             let transactionOutcome: any = await liquidatorClient.placeBid({
               bid_limit: userBid,
@@ -282,6 +280,7 @@ const Liquidate: NextPage = () => {
             if (transactionOutcome[0] == 'SUCCESS') {
               return toastResponse('SUCCESS', 'Bid increased, fetching chain data', 'SUCCESS');
             } else {
+              console.log('@@--error2', transactionOutcome)
               return toastResponse('ERROR', 'Bid increase failed', 'ERROR');
             }
           }
@@ -305,10 +304,6 @@ const Liquidate: NextPage = () => {
   function handlePlaceBid(type: string, userBid: number) {
     fetchLiquidatorClient(type, userBid!);
   }
-
-
-
-
 
   // end of sdk integration
 

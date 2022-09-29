@@ -1,4 +1,4 @@
-import { FC, useState } from 'react';
+import { FC, useEffect, useState } from 'react';
 import Image from 'next/image';
 import { InfoBlock } from '../InfoBlock/InfoBlock';
 import { InputsBlock } from '../InputsBlock/InputsBlock';
@@ -61,8 +61,12 @@ const BidForm = (props: BidFormProps) => {
   };
 
   function triggerIndicator() {
-    currentUserBid != 0 ? handlePlaceBid('place_bid', valueUSD) : handleIncreaseBid('increase_bid', valueUSD);
+    currentUserBid != 0 ? handlePlaceBid('increase_bid', valueUSD) : handleIncreaseBid('place_bid', valueUSD);
   }
+
+  useEffect(() => {
+    console.log('@@--', currentUserBid);
+  }, [currentUserBid])
 
   return (
     <SidebarScroll
@@ -94,14 +98,6 @@ const BidForm = (props: BidFormProps) => {
             </HexaBoxContainer>
           </div>
           <div className={styles.nftName}>Honey Eyes</div>
-        </div>
-        <div className={styles.row}>
-          <div className={styles.col}>
-            <HoneyWarning
-              message="We’re now live on Ethereum!"
-              link="https://google.com"
-            ></HoneyWarning>
-          </div>
         </div>
         {
           currentUserBid &&

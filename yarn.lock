@@ -442,7 +442,7 @@
   dependencies:
     "@hapi/hoek" "^9.0.0"
 
-"@honey-finance/sdk@1.0.123":
+"@honey-finance/sdk@^1.0.123":
   version "1.0.123"
   resolved "https://registry.yarnpkg.com/@honey-finance/sdk/-/sdk-1.0.123.tgz#0bdc65615ce5c969d76ce0851507e81cc6d2ce24"
   integrity sha512-VzX2UTb4izp0IybKqgunIxPfdEXhc2CSQbL6I64yk0BvY2zpJC+Kfb69LS92jRd4fohoaV9ycwO/o+eVveM5Jg==

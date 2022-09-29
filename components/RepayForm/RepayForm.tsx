@@ -218,7 +218,7 @@ const RepayForm = (props: RepayProps) => {
           <div className={styles.balance}>
             <InfoBlock
               title={'Your USDC balance'}
-              value={f(8120.19)}
+              value={f(userUSDCBalance)}
             ></InfoBlock>
           </div>
 

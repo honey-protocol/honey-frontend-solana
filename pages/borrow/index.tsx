@@ -106,6 +106,24 @@ const Markets: NextPage = () => {
   const availableNFTs: any = useFetchNFTByUser(wallet);
   let reFetchNFTs = availableNFTs[2];
 
+  let walletPK = sdkConfig.sdkWallet?.publicKey;
+
+  async function fetchWalletBalance(key: PublicKey) {
+    try {
+      const userBalance =
+        (await sdkConfig.saberHqConnection.getBalance(key)) / LAMPORTS_PER_SOL;
+        setUserUSDCBalance(userBalance);
+    } catch (error) {
+      console.log('Error', error);
+    }
+  }
+
+  useEffect(() => {
+    if (walletPK) {
+      fetchWalletBalance(walletPK);
+    }
+  }, [walletPK]);
+
   // sets the market debt
   useEffect(() => {
     const depositTokenMint = new PublicKey('So11111111111111111111111111111111111111112');

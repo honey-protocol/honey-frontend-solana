@@ -40,6 +40,7 @@ const BorrowForm = (props: BorrowProps) => {
     userAllowance,
     userDebt,
     loanToValue,
+    userUSDCBalance
   } = props;
 
   const [valueUSD, setValueUSD] = useState<number>(0);
@@ -259,7 +260,7 @@ const BorrowForm = (props: BorrowProps) => {
           <div className={stylesRepay.balance}>
             <InfoBlock
               title={'Your USDC balance'}
-              value={f(8120.19)}
+              value={f(userUSDCBalance)}
             ></InfoBlock>
           </div>
           <InputsBlock
