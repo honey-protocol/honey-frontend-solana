@@ -9,11 +9,11 @@ import 'react-toastify/dist/ReactToastify.css';
 import { accentSequence, ThemeAccent } from 'helpers/theme-utils';
 import { PartialNetworkConfigMap } from '@saberhq/use-solana/src/utils/useConnectionInternal';
 import SecPopup from 'components/SecPopup';
-import { AnchorProvider, HoneyProvider } from '@honey-finance/sdk';
-import { useConnectedWallet, useConnection } from '@saberhq/use-solana';
+// import { AnchorProvider, HoneyProvider } from '@honey-finance/sdk';
+// import { useConnectedWallet, useConnection } from '@saberhq/use-solana';
 import React, { FC, ReactNode, useEffect, useState } from 'react';
 import Script from 'next/script';
-import { HONEY_MARKET_ID, HONEY_PROGRAM_ID } from '../constants/loan';
+// import { HONEY_MARKET_ID, HONEY_PROGRAM_ID } from '../constants/loan';
 export const network = process.env.NETWORK as Network;
 
 const networkConfiguration = () => {
@@ -30,29 +30,29 @@ const storedAccent =
     ? (localStorage.getItem('accent') as ThemeAccent)
     : undefined;
 
-const OnChainProvider: FC<{ children: ReactNode }> = ({ children }) => {
-  const wallet = useConnectedWallet();
-  const connection = useConnection();
-  const network = 'devnet';
+// const OnChainProvider: FC<{ children: ReactNode }> = ({ children }) => {
+//   const wallet = useConnectedWallet();
+//   const connection = useConnection();
+//   const network = 'devnet';
 
-  return (
-    <AnchorProvider
-      wallet={wallet}
-      connection={connection}
-      network={network}
-      honeyProgram={HONEY_PROGRAM_ID}
-    >
-      <HoneyProvider
-        wallet={wallet}
-        connection={connection}
-        honeyProgramId={HONEY_PROGRAM_ID}
-        honeyMarketId={HONEY_MARKET_ID}
-      >
-        {children}
-      </HoneyProvider>
-    </AnchorProvider>
-  );
-};
+//   return (
+//     <AnchorProvider
+//       wallet={wallet}
+//       connection={connection}
+//       network={network}
+//       honeyProgram={HONEY_PROGRAM_ID}
+//     >
+//       <HoneyProvider
+//         wallet={wallet}
+//         connection={connection}
+//         honeyProgramId={HONEY_PROGRAM_ID}
+//         honeyMarketId={HONEY_MARKET_ID}
+//       >
+//         {children}
+//       </HoneyProvider>
+//     </AnchorProvider>
+//   );
+// };
 
 function MyApp({ Component, pageProps }: AppProps) {
   const [showPopup, setShowPopup] = useState(true);
@@ -98,10 +98,10 @@ function MyApp({ Component, pageProps }: AppProps) {
           <SecPopup setShowPopup={setShowPopup} />
         ) : (
           <>
-            <OnChainProvider>
-              <Component {...pageProps} />
-              <ToastContainer theme="dark" position="bottom-right" />
-            </OnChainProvider>
+            {/* <OnChainProvider> */}
+            <Component {...pageProps} />
+            <ToastContainer theme="dark" position="bottom-right" />
+            {/* </OnChainProvider> */}
           </>
         )}
       </WalletKitProvider>
