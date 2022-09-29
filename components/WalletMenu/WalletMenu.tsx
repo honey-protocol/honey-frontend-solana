@@ -11,10 +11,9 @@ import { useConnectedWallet, useSolana } from '@saberhq/use-solana';
 const { Title, Text } = Typography;
 
 const WalletMenu = () => {
-
   const { disconnect } = useSolana();
-  const wallet = useConnectedWallet()
-  const { connect } = useWalletKit();  
+  const wallet = useConnectedWallet();
+  const { connect } = useWalletKit();
   const walletAddress = wallet?.publicKey.toString();
 
   function handleClick(e: any) {
@@ -29,11 +28,7 @@ const WalletMenu = () => {
         {
           key: '1',
           label: (
-            <a
-              target="_blank"
-              rel="noopener noreferrer"
-              href="https://www.antgroup.com"
-            >
+            <a target="_blank" rel="noopener noreferrer" href="">
               Connect different wallet
             </a>
           )
