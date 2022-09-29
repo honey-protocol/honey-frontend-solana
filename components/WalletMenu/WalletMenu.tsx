@@ -26,14 +26,6 @@ const WalletMenu = () => {
       selectable
       items={[
         {
-          key: '1',
-          label: (
-            <a target="_blank" rel="noopener noreferrer" href="">
-              Connect different wallet
-            </a>
-          )
-        },
-        {
           key: '4',
           label: 'Disconnect'
         }
