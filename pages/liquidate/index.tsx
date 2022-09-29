@@ -26,19 +26,15 @@ import HoneyButton from '../../components/HoneyButton/HoneyButton';
 import { formatNumber } from '../../helpers/format';
 import { LiquidateTableRow } from '../../types/liquidate';
 import { LiquidateExpandTable } from '../../components/LiquidateExpandTable/LiquidateExpandTable';
-import { useAnchor, LiquidatorClient, useAllPositions, NftPosition, useHoney, useMarket } from '@honey-finance/sdk';
+import { useAnchor, LiquidatorClient, useAllPositions, useHoney, useMarket } from '@honey-finance/sdk';
 import { ConfigureSDK, toastResponse } from 'helpers/loanHelpers';
 import { useConnectedWallet } from '@saberhq/use-solana';
 import { LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js';
-import { calcNFT, calculateCollectionwideAllowance } from 'helpers/loanHelpers/userCollection';
-import { LiquidateTablePosition, BiddingPosition } from '../../types/liquidate';
+import { calcNFT } from 'helpers/loanHelpers/userCollection';
+import { LiquidateTablePosition } from '../../types/liquidate';
 import { HONEY_MARKET_ID, HONEY_PROGRAM_ID } from 'constants/loan';
 import { NATIVE_MINT } from '@solana/spl-token';
 import { Content } from 'antd/lib/layout/layout';
-import HoneySider from '../../components/HoneySider/HoneySider';
-import HoneyContent from 'components/HoneyContent/HoneyContent';
-import { pageDescription, pageTitle } from 'styles/common.css';
-import { Typography } from 'antd';
 
 const { formatPercent: fp, formatSol: fs, formatRoundDown: fd } = formatNumber;
 const Liquidate: NextPage = () => {
@@ -203,26 +199,7 @@ const Liquidate: NextPage = () => {
   
     useEffect(() => {
       calculateNFTPrice();
-    }, [marketReserveInfo, parsedReserves]);
-
-  // // calculate loan to value == risk level
-  // async function fetchHelperValues(nftPrice: any, collateralNFTPositions: any, honeyUser: any, marketReserveInfo: any) {
-  //   // if (marketReserveInfo && honeyUser) {
-  //   //   let outcome = await calculateCollectionwideAllowance(nftPrice, collateralNFTPositions, honeyUser, marketReserveInfo)
-  //   //   setLoanToValue(outcome.sumOfLtv);
-  //   //   console.log('outcome', outcome.sumOfLtv)
-  //   // }
-
-  // }
-
-  // /**
-  //  * @description updates honeyUser | marketReserveInfo | - timeout required
-  //  * @params none
-  //  * @returns honeyUser | marketReserveInfo |
-  // */
-  // useEffect(() => {
-  //   if (nftPrice && honeyUser && marketReserveInfo) fetchHelperValues(nftPrice, [], honeyUser, marketReserveInfo);
-  // }, [marketReserveInfo, honeyUser, honeyReserves, nftPrice]);      
+    }, [marketReserveInfo, parsedReserves]);    
 
   /**
    * @description calls upon liquidator client for placebid | revokebid | increasebid
@@ -231,7 +208,7 @@ const Liquidate: NextPage = () => {
   */
   async function fetchLiquidatorClient(type: string, userBid?: number) {
     try {
-      const liquidatorClient = await LiquidatorClient.connect(program.provider, HONEY_PROGRAM_ID, false);
+      const liquidatorClient = await LiquidatorClient.connect(program.provider, HONEY_PROGRAM_ID, true);
       if (wallet) {
         if (type == 'revoke_bid') {
           if (!currentUserBid) return;

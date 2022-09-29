@@ -30,7 +30,6 @@ const BidForm = (props: BidFormProps) => {
     return false;
   };
 
-
   const handleSliderChange = (value: number) => {
     setSliderValue(value);
     setValueUSD(value / usdcPrice);
@@ -107,7 +106,7 @@ const BidForm = (props: BidFormProps) => {
             <div className={styles.col}>
               <CurrentBid 
                 value={currentUserBid} 
-                title="Your bid is #1" 
+                title={currentUserBid == highestBiddingValue ? "Your bid is #1" : 'Your bid is:'} 
                 handleIncreaseBid={handleIncreaseBid}
                 handleRevokeBid={handleRevokeBid}
               />
