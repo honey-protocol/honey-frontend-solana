@@ -199,7 +199,9 @@ const BorrowForm = (props: BorrowProps) => {
           </div>
           <div className={styles.col}>
             <InfoBlock
-              value={fs(userDebt / liquidationThreshold)}
+              value={`${fs(userDebt / liquidationThreshold)} ${
+                (nftPrice - userDebt / liquidationThreshold) / nftPrice
+              }`}
               valueSize="big"
               isDisabled={userDebt == 0 ? true : false}
               title={
