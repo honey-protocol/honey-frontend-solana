@@ -9,4 +9,5 @@ export type BorrowProps = {
   userUSDCBalance: number;
   executeDepositNFT: (mint: string, toast: any) => void;
   executeBorrow: (val: number, toast: any) => void;
+  hideMobileSidebar?: () => void;
 };

@@ -1,8 +1,17 @@
+import React from 'react';
+
 export const numberFormatter = new Intl.NumberFormat('en-US', {
   style: 'decimal',
   minimumFractionDigits: 2,
   maximumFractionDigits: 2
 });
+
+export const numberFormatterMobile = new Intl.NumberFormat('en-US', {
+  style: 'decimal',
+  minimumFractionDigits: 0,
+  maximumFractionDigits: 2
+});
+
 
 export const formatNumber = {
   format: (val?: number): string => {
@@ -10,6 +19,13 @@ export const formatNumber = {
       return '0';
     }
     return numberFormatter.format(val);
+  },
+
+  formatMobile: (val?: number): string => {
+    if (!val) {
+      return '0';
+    }
+    return numberFormatterMobile.format(val);
   },
 
   /**
@@ -38,7 +54,7 @@ export const formatNumber = {
    * @param val
    */
   formatPercent: (val?: number) => {
-    return `${formatNumber.format(val)}%`;
+    return `${formatNumber.format(val)} %`;
   },
 
   /**
@@ -50,8 +66,8 @@ export const formatNumber = {
     const power = Math.pow(10, precision);
     const precisedValue = Math.round(val * power) / power;
     return Number.isInteger(precisedValue)
-      ? `${precisedValue}%`
-      : `${formatNumber.format(precisedValue)}%`;
+      ? `${precisedValue} %`
+      : `${formatNumber.format(precisedValue)} %`;
   },
 
   /**
@@ -59,7 +75,20 @@ export const formatNumber = {
    * @param val
    */
   formatUsd: (val?: number) => {
+    return `$ ${formatNumber.format(val)}`;
+  },
+
+  formatUsdMobile: (val?: number) => {
+    return `$ ${formatNumber.formatMobile(val)}`;
     return `$ ${formatNumber.format(val)}`;
+  },
+
+  /**
+   * Works as formatNumber.format but adds ◎ at the start of the string
+   * @param val
+   */
+  formatSol: (val?: number) => {
+    return `◎ ${formatNumber.format(val)}`;
   },
 
   /**

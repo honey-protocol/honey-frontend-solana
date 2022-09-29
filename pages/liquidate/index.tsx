@@ -1,7 +1,5 @@
 import type { NextPage } from 'next';
 import LayoutRedesign from '../../components/LayoutRedesign/LayoutRedesign';
-import Sider from 'antd/lib/layout/Sider';
-import { Content } from 'antd/lib/layout/layout';
 import LiquidateSidebar from '../../components/LiquidateSidebar/LiquidateSidebar';
 import HoneyTable from '../../components/HoneyTable/HoneyTable';
 import classNames from 'classnames';
@@ -15,6 +13,7 @@ import React, {
   useState
 } from 'react';
 import { Key } from 'antd/lib/table/interface';
+import Sider from 'antd/lib/layout/Sider';
 import HoneyToggle from '../../components/HoneyToggle/HoneyToggle';
 import debounce from 'lodash/debounce';
 import SearchInput from '../../components/SearchInput/SearchInput';
@@ -35,9 +34,13 @@ import { calcNFT, calculateCollectionwideAllowance } from 'helpers/loanHelpers/u
 import { LiquidateTablePosition, BiddingPosition } from '../../types/liquidate';
 import { HONEY_MARKET_ID, HONEY_PROGRAM_ID } from 'constants/loan';
 import { NATIVE_MINT } from '@solana/spl-token';
+import { Content } from 'antd/lib/layout/layout';
+import HoneySider from '../../components/HoneySider/HoneySider';
+import HoneyContent from 'components/HoneyContent/HoneyContent';
+import { pageDescription, pageTitle } from 'styles/common.css';
+import { Typography } from 'antd';
 
-const { formatPercent: fp, formatUsd: fu, formatRoundDown: fd } = formatNumber;
-
+const { formatPercent: fp, formatSol: fs, formatRoundDown: fd } = formatNumber;
 const Liquidate: NextPage = () => {
   // start sdk integration
   const liquidationThreshold = 0.75;
@@ -327,7 +330,7 @@ const Liquidate: NextPage = () => {
         totalDebt: totalDebt,
         tvl: nftPrice * fetchedPositions.length,
         positions: fetchedPositions
-      },
+      }
     ];
 
     setTableData(mockData);
@@ -462,7 +465,7 @@ const Liquidate: NextPage = () => {
         dataIndex: 'totalDebt',
         sorter: (a, b) => a.totalDebt - b.totalDebt,
         render: (available: number) => {
-          return <div className={style.availableCell}>{fu(available)}</div>;
+          return <div className={style.availableCell}>{fs(available)}</div>;
         }
       },
       {
@@ -485,7 +488,7 @@ const Liquidate: NextPage = () => {
         dataIndex: 'tvl',
         sorter: (a, b) => a.tvl - b.tvl,
         render: (value: number) => {
-          return <div className={style.valueCell}>{fu(value)}</div>;
+          return <div className={style.valueCell}>{fs(value)}</div>;
         }
       },
       {

@@ -14,7 +14,7 @@ import { useConnectedWallet, useConnection } from '@saberhq/use-solana';
 import React, { FC, ReactNode, useEffect, useState } from 'react';
 import Script from 'next/script';
 import { HONEY_MARKET_ID, HONEY_PROGRAM_ID } from '../constants/loan';
-const network = process.env.NETWORK as Network;
+export const network = process.env.NETWORK as Network;
 
 const networkConfiguration = () => {
   if (process.env.NETWORK_CONFIGURATION) {

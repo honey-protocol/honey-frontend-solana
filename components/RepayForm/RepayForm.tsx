@@ -16,6 +16,7 @@ import { hAlign } from 'styles/common.css';
 import { questionIcon } from 'styles/icons.css';
 import cs from 'classnames';
 import useToast from 'hooks/useToast';
+import { useSolBalance } from 'hooks/useSolBalance';
 
 const { format: f, formatPercent: fp, formatUsd: fu, parse: p } = formatNumber;
 
@@ -34,47 +35,50 @@ const RepayForm = (props: RepayProps) => {
 
   const [valueUSD, setValueUSD] = useState<number>();
   const [valueUSDC, setValueUSDC] = useState<number>();
+  const [valueSOL, setValueSOL] = useState<number>();
   const [sliderValue, setSliderValue] = useState(0);
   const { toast, ToastComponent } = useToast();
 
   const maxValue = userDebt != 0 ? userDebt : userAllowance;
-  const usdcPrice = 0.95;
+  const solPrice = 32;
   const liquidationThreshold = 0.75;
+  const SOLBalance = useSolBalance();
 
   // Put your validators here
   const isRepayButtonDisabled = () => {
     return false;
   };
 
+
   const handleSliderChange = (value: number) => {
     setSliderValue(value);
-    setValueUSD(value / usdcPrice);
-    setValueUSDC(value);
+    setValueUSD(value * solPrice);
+    setValueSOL(value);
   };
 
   const handleUsdInputChange = (usdValue: number | undefined) => {
     if (!usdValue) {
       setValueUSD(0);
-      setValueUSDC(0);
+      setValueSOL(0);
       setSliderValue(0);
       return;
     }
     setValueUSD(usdValue);
-    setValueUSDC(usdValue / usdcPrice);
+    setValueSOL(usdValue / solPrice);
     setSliderValue(usdValue);
   };
 
-  const handleUsdcInputChange = (usdcValue: number | undefined) => {
-    if (!usdcValue) {
+  const handleUsdcInputChange = (solValue: number | undefined) => {
+    if (!solValue) {
       setValueUSD(0);
-      setValueUSDC(0);
+      setValueSOL(0);
       setSliderValue(0);
       return;
     }
 
-    setValueUSD(usdcValue * usdcPrice);
-    setValueUSDC(usdcValue);
-    setSliderValue(usdcValue * usdcPrice);
+    setValueUSD(solValue * solPrice);
+    setValueSOL(solValue);
+    setSliderValue(solValue * solPrice);
   };
 
   const onRepay = async (event: any) => {
@@ -112,8 +116,8 @@ const RepayForm = (props: RepayProps) => {
               <div className={styles.bigCol}>
                 <HoneyButton
                   variant="primary"
-                  usdcAmount={valueUSDC || 0}
-                  usdcValue={valueUSD || 0}
+                  solAmount={userDebt > 0 ? valueSOL || 0 : undefined}
+                  usdcValue={userDebt > 0 ? valueUSD || 0 : undefined}
                   disabled={isRepayButtonDisabled()}
                   isFluid={true}
                   onClick={onRepay}
@@ -224,9 +228,9 @@ const RepayForm = (props: RepayProps) => {
 
           <InputsBlock
             valueUSD={p(f(valueUSD))}
-            valueUSDC={p(f(valueUSDC))}
+            valueSOL={p(f(valueSOL))}
             onChangeUSD={handleUsdInputChange}
-            onChangeUSDC={handleUsdcInputChange}
+            onChangeSOL={handleUsdcInputChange}
           />
         </div>
 

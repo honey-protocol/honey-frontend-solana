@@ -1,7 +1,5 @@
 import type { NextPage } from 'next';
 import LayoutRedesign from '../../components/LayoutRedesign/LayoutRedesign';
-import Sider from 'antd/lib/layout/Sider';
-import { Content } from 'antd/lib/layout/layout';
 import LendSidebar from '../../components/LendSidebar/LendSidebar';
 import { LendTableRow } from '../../types/lend';
 import { ChangeEvent, useCallback, useEffect, useMemo, useState } from 'react';
@@ -19,41 +17,53 @@ import debounce from 'lodash/debounce';
 import { getColumnSortStatus } from '../../helpers/tableUtils';
 import { generateMockHistoryData } from '../../helpers/chartUtils';
 import { HoneyChart } from '../../components/HoneyChart/HoneyChart';
+import HoneySider from '../../components/HoneySider/HoneySider';
+import HoneyContent from '../../components/HoneyContent/HoneyContent';
+import { deposit, withdraw, useMarket, useHoney } from '@honey-finance/sdk';
 import {
-  deposit,
-  withdraw,
-  useMarket,
-  useHoney,
-} from '@honey-finance/sdk';
-import {toastResponse, BnToDecimal, BnDivided, ConfigureSDK} from '../../helpers/loanHelpers/index';
+  toastResponse,
+  BnToDecimal,
+  BnDivided,
+  ConfigureSDK
+} from '../../helpers/loanHelpers/index';
 import { LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js';
 import BN from 'bn.js';
 import HoneyToggle from 'components/HoneyToggle/HoneyToggle';
 import { calcNFT } from 'helpers/loanHelpers/userCollection';
 import { ToastProps } from 'hooks/useToast';
 import { RoundHalfDown } from 'helpers/utils';
+import { Typography } from 'antd';
+import { pageDescription, pageTitle } from 'styles/common.css';
+// import { network } from 'pages/_app';
+// import { network } from 'pages/_app';
 
-const { formatPercent: fp, formatUsd: fu } = formatNumber;
+const network = 'devnet';
+
+const { formatPercent: fp, formatSol: fs } = formatNumber;
 
 const Lend: NextPage = () => {
   // Start: SDK integration
   const sdkConfig = ConfigureSDK();
   let walletPK = sdkConfig.sdkWallet?.publicKey;
 
-
   /**
    * @description calls upon markets which
    * @params none
    * @returns market | market reserve information | parsed reserves |
-  */
-   const { market, marketReserveInfo, parsedReserves, fetchMarket }  = useHoney();
-  
-   /**
+   */
+  const { market, marketReserveInfo, parsedReserves, fetchMarket } = useHoney();
+
+  /**
    * @description calls upon the honey sdk - market
    * @params solanas useConnection func. && useConnectedWallet func. && JET ID
    * @returns honeyUser which is the main object - honeyMarket, honeyReserves are for testing purposes
-  */
-  const { honeyUser, honeyReserves, honeyMarket } = useMarket(sdkConfig.saberHqConnection, sdkConfig.sdkWallet!, sdkConfig.honeyId, sdkConfig.marketId);
+   */
+  const { honeyUser, honeyReserves, honeyMarket } = useMarket(
+    sdkConfig.saberHqConnection,
+    sdkConfig.sdkWallet!,
+    sdkConfig.honeyId,
+    sdkConfig.marketId
+  );
   const [totalMarketDeposits, setTotalMarketDeposits] = useState(0);
   const [userTotalDeposits, setUserTotalDeposits] = useState(0);
   const [reserveHoneyState, setReserveHoneyState] = useState(0);
@@ -83,75 +93,93 @@ const Lend: NextPage = () => {
    * @description updates honeyUser | marketReserveInfo | - timeout required
    * @params none
    * @returns honeyUser | marketReserveInfo |
-  */
+   */
   useEffect(() => {
     setTimeout(() => {
-      let depositNoteExchangeRate = 0, loanNoteExchangeRate = 0, nftPrice = 0, cRatio = 1;
-      
-      if(marketReserveInfo) {
+      let depositNoteExchangeRate = 0,
+        loanNoteExchangeRate = 0,
+        nftPrice = 0,
+        cRatio = 1;
+
+      if (marketReserveInfo) {
         nftPrice = 2;
-        depositNoteExchangeRate = BnToDecimal(marketReserveInfo[0].depositNoteExchangeRate, 15, 5);
+        depositNoteExchangeRate = BnToDecimal(
+          marketReserveInfo[0].depositNoteExchangeRate,
+          15,
+          5
+        );
       }
 
-      if(honeyUser?.deposits().length > 0) {
+      if (honeyUser?.deposits().length > 0) {
         // let totalDeposit = BnDivided(honeyUser.deposits()[0].amount, 10, 5) * depositNoteExchangeRate / (10 ** 4)
-        let totalDeposit = honeyUser.deposits()[0].amount.div(new BN(10 ** 5)).toNumber() * depositNoteExchangeRate / (10 ** 4);
+        let totalDeposit =
+          (honeyUser
+            .deposits()[0]
+            .amount.div(new BN(10 ** 5))
+            .toNumber() *
+            depositNoteExchangeRate) /
+          10 ** 4;
         setUserTotalDeposits(totalDeposit);
       }
     }, 3000);
   }, [marketReserveInfo, honeyUser]);
 
-
   /**
    * @description sets state of marketValue by parsing lamports outstanding debt amount to SOL
    * @params none, requires parsedReserves
-   * @returns updates marketValue 
-  */
+   * @returns updates marketValue
+   */
   useEffect(() => {
     if (parsedReserves && parsedReserves[0].reserveState.totalDeposits) {
-      let totalMarketDeposits = BnToDecimal(parsedReserves[0].reserveState.totalDeposits, 9, 2);
+      let totalMarketDeposits = BnToDecimal(
+        parsedReserves[0].reserveState.totalDeposits,
+        9,
+        2
+      );
       setTotalMarketDeposits(totalMarketDeposits);
       // setTotalMarketDeposits(parsedReserves[0].reserveState.totalDeposits.div(new BN(10 ** 9)).toNumber());
     }
   }, [parsedReserves]);
 
-  useEffect(() => {
-  }, [reserveHoneyState]);
+  useEffect(() => {}, [reserveHoneyState]);
 
-    // fetches total market positions
-    async function fetchObligations() {
-      let obligations = await honeyMarket.fetchObligations();
-      console.log('obligations:', obligations)
-      setMarketPositions(obligations.length);
+  // fetches total market positions
+  async function fetchObligations() {
+    let obligations = await honeyMarket.fetchObligations();
+    console.log('obligations:', obligations);
+    setMarketPositions(obligations.length);
+  }
+
+  useEffect(() => {
+    if (honeyMarket) {
+      fetchObligations();
     }
-  
-    useEffect(() => {
-      if(honeyMarket) {
-        fetchObligations();
-      }
-    }, [honeyMarket]);
+  }, [honeyMarket]);
 
   // sets the market debt
   useEffect(() => {
-    const depositTokenMint = new PublicKey('So11111111111111111111111111111111111111112');
+    const depositTokenMint = new PublicKey(
+      'So11111111111111111111111111111111111111112'
+    );
 
     if (honeyReserves) {
-      const depositReserve = honeyReserves.filter((reserve) =>
-        reserve?.data?.tokenMint?.equals(depositTokenMint),
+      const depositReserve = honeyReserves.filter(reserve =>
+        reserve?.data?.tokenMint?.equals(depositTokenMint)
       )[0];
 
       const reserveState = depositReserve.data?.reserveState;
 
       if (reserveState?.outstandingDebt) {
         // let marketDebt = BnDivided(reserveState?.outstandingDebt, 10, 15);
-        let marketDebt = reserveState?.outstandingDebt.div(new BN(10 ** 15)).toNumber();
+        let marketDebt = reserveState?.outstandingDebt
+          .div(new BN(10 ** 15))
+          .toNumber();
         if (marketDebt) {
-          let sum = Number((marketDebt / LAMPORTS_PER_SOL));
+          let sum = Number(marketDebt / LAMPORTS_PER_SOL);
           setTotalMarketDebt(RoundHalfDown(sum));
         }
       }
     }
-
   }, [honeyReserves]);
 
   // calculates nft price
@@ -171,49 +199,60 @@ const Lend: NextPage = () => {
     calculateNFTPrice();
   }, [marketReserveInfo, parsedReserves]);
 
-
   /**
    * @description deposits 1 sol
    * @params optional value from user input; amount of SOL
    * @returns succes | failure
-  */
+   */
   async function executeDeposit(value?: number, toast?: ToastProps['toast']) {
     if (!toast) return;
     try {
-      if (!value)
-        return toast.error('Deposit failed', 'error link (if available)');
+      if (!value) return toast.error('Deposit failed');
 
       console.log('this is value', value);
 
-      const tokenAmount =  value * LAMPORTS_PER_SOL;
+      const tokenAmount = value * LAMPORTS_PER_SOL;
       console.log('this is total amount', tokenAmount);
       toast.processing();
-      
-      const depositTokenMint = new PublicKey('So11111111111111111111111111111111111111112');
-      const tx = await deposit(honeyUser, tokenAmount, depositTokenMint, honeyReserves);
-      
+
+      const depositTokenMint = new PublicKey(
+        'So11111111111111111111111111111111111111112'
+      );
+      const tx = await deposit(
+        honeyUser,
+        tokenAmount,
+        depositTokenMint,
+        honeyReserves
+      );
+
       if (tx[0] == 'SUCCESS') {
         let refreshedHoneyReserves = await honeyReserves[0].sendRefreshTx();
-        const latestBlockHash = await sdkConfig.saberHqConnection.getLatestBlockhash()
+        const latestBlockHash =
+          await sdkConfig.saberHqConnection.getLatestBlockhash();
 
         await sdkConfig.saberHqConnection.confirmTransaction({
           blockhash: latestBlockHash.blockhash,
           lastValidBlockHeight: latestBlockHash.lastValidBlockHeight,
-          signature: refreshedHoneyReserves,
+          signature: refreshedHoneyReserves
         });
 
-        await fetchMarket()
+        await fetchMarket();
         await honeyUser.refresh().then((val: any) => {
-          reserveHoneyState ==  0 ? setReserveHoneyState(1) : setReserveHoneyState(0);
+          reserveHoneyState == 0
+            ? setReserveHoneyState(1)
+            : setReserveHoneyState(0);
         });
 
         if (walletPK) await fetchWalletBalance(walletPK);
-        toast.success('Deposit success', 'SUCCESS');
+        toast.success(
+          'Deposit success',
+          `https://solscan.io/tx/${tx[1][0]}?cluster=${network}`
+        );
       } else {
-        return toast.error('Deposit failed', 'More info');
+        return toast.error('Deposit failed');
       }
     } catch (error) {
-      return toast.error('Deposit failed', 'ERROR');
+      return toast.error('Deposit failed');
     }
   }
 
@@ -221,35 +260,48 @@ const Lend: NextPage = () => {
    * @description withdraws 1 sol
    * @params optional value from user input; amount of SOL
    * @returns succes | failure
-  */
+   */
   async function executeWithdraw(value: number, toast?: ToastProps['toast']) {
     if (!toast) return;
     try {
       console.log('this is the value', value);
-      if (!value) return toast.error('Withdraw failed', 'ERROR');
+      if (!value) return toast.error('Withdraw failed');
 
-      const tokenAmount =  value * LAMPORTS_PER_SOL;
+      const tokenAmount = value * LAMPORTS_PER_SOL;
       console.log('this is tokenAmount', tokenAmount);
-      const depositTokenMint = new PublicKey('So11111111111111111111111111111111111111112');
-      const tx = await withdraw(honeyUser, tokenAmount, depositTokenMint, honeyReserves);
-      
+      const depositTokenMint = new PublicKey(
+        'So11111111111111111111111111111111111111112'
+      );
+      const tx = await withdraw(
+        honeyUser,
+        tokenAmount,
+        depositTokenMint,
+        honeyReserves
+      );
+
       if (tx[0] == 'SUCCESS') {
         let refreshedHoneyReserves = await honeyReserves[0].sendRefreshTx();
-        const latestBlockHash = await sdkConfig.saberHqConnection.getLatestBlockhash()
+        const latestBlockHash =
+          await sdkConfig.saberHqConnection.getLatestBlockhash();
 
         await sdkConfig.saberHqConnection.confirmTransaction({
           blockhash: latestBlockHash.blockhash,
           lastValidBlockHeight: latestBlockHash.lastValidBlockHeight,
-          signature: refreshedHoneyReserves,
+          signature: refreshedHoneyReserves
         });
 
-        await fetchMarket()
+        await fetchMarket();
         await honeyUser.refresh().then((val: any) => {
-          reserveHoneyState ==  0 ? setReserveHoneyState(1) : setReserveHoneyState(0);
+          reserveHoneyState == 0
+            ? setReserveHoneyState(1)
+            : setReserveHoneyState(0);
         });
-        toast.success('Withdraw success', 'SUCCESS');
+        toast.success(
+          'Withdraw success',
+          `https://solscan.io/tx/${tx[1][0]}?cluster=${network}`
+        );
       } else {
-        return toast.error('Withdraw failed ', 'ERROR');
+        return toast.error('Withdraw failed ');
       }
     } catch (error) {
       return toast.error('Withdraw failed ');
@@ -317,7 +369,7 @@ const Lend: NextPage = () => {
         // validated available to be totalMarketDeposits
         available: totalMarketDeposits,
         // validated value to be totalMarkDeposits + totalMarketDebt
-        value: (totalMarketDeposits + totalMarketDebt),
+        value: totalMarketDeposits + totalMarketDebt,
         stats: getPositionData()
       }
     ];
@@ -329,17 +381,17 @@ const Lend: NextPage = () => {
     setIsMyCollectionsFilterEnabled(checked);
   };
 
-  const MyCollectionsToggle = () => (
-    <div className={style.toggle}>
-      <HoneyToggle
-        checked={isMyCollectionsFilterEnabled}
-        onChange={handleToggle}
-      />
-      <span className={style.toggleText}>my collections</span>
-    </div>
-  );
+  const MyCollectionsToggle = () =>
+    // <div className={style.toggle}>
+    //   <HoneyToggle
+    //     checked={isMyCollectionsFilterEnabled}
+    //     onChange={handleToggle}
+    //   />
+    //   <span className={style.toggleText}>my collections</span>
+    // </div>
+    null;
 
-  const columnsWidth: Array<number | string> = [240, 100, 150, 150, 200];
+  const columnsWidth: Array<number | string> = [240, 150, 150, 150, 150];
 
   const columns: ColumnType<LendTableRow>[] = useMemo(
     () => [
@@ -381,7 +433,7 @@ const Lend: NextPage = () => {
                 ]
               }
             >
-              <span>Interest</span>{' '}
+              <span>Interest rate</span>{' '}
               <div className={style.sortIcon[sortOrder]} />
             </div>
           );
@@ -412,7 +464,7 @@ const Lend: NextPage = () => {
         dataIndex: 'available',
         sorter: (a, b) => a.available - b.available,
         render: (available: number) => {
-          return <div className={style.availableCell}>{fu(available)}</div>;
+          return <div className={style.availableCell}>{fs(available)}</div>;
         }
       },
       {
@@ -434,7 +486,7 @@ const Lend: NextPage = () => {
         dataIndex: 'value',
         sorter: (a, b) => a.value - b.value,
         render: (value: number) => {
-          return <div className={style.valueCell}>{fu(value)}</div>;
+          return <div className={style.valueCell}>{fs(value)}</div>;
         }
       },
       {
@@ -456,7 +508,14 @@ const Lend: NextPage = () => {
 
   return (
     <LayoutRedesign>
-      <Content>
+      <div>
+        <Typography.Title className={pageTitle}>Lend</Typography.Title>
+        <Typography.Text className={pageDescription}>
+          Lorem Ipsum is simply dummy text of the printing and typesetting
+          industry. Lorem Ipsum has{' '}
+        </Typography.Text>
+      </div>
+      <HoneyContent>
         <HoneyTable
           hasRowsShadow={true}
           tableLayout="fixed"
@@ -480,18 +539,18 @@ const Lend: NextPage = () => {
             }
           }}
         />
-      </Content>
-      <Sider width={350}>
-        <LendSidebar 
+      </HoneyContent>
+      <HoneySider>
+        <LendSidebar
           collectionId="s"
           executeDeposit={executeDeposit}
           executeWithdraw={executeWithdraw}
           userTotalDeposits={userTotalDeposits}
           available={totalMarketDeposits}
-          value={(totalMarketDeposits + totalMarketDebt)}
+          value={totalMarketDeposits + totalMarketDebt}
           userWalletBalance={userWalletBalance}
         />
-      </Sider>
+      </HoneySider>
     </LayoutRedesign>
   );
 };

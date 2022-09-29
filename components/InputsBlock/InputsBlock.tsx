@@ -2,14 +2,14 @@ import { ChangeEvent, FC } from 'react';
 import * as styles from './InputsBlock.css';
 import Image from 'next/image';
 import EqualIcon from './assets/equalIcon.svg';
-import USDCIcon from './assets/USDC.svg';
+import SOLIcon from './assets/SOL.svg';
 import { formatNumber } from '../../helpers/format';
 
 interface InputsBlockProps {
   valueUSD: number | undefined;
-  valueUSDC: number | undefined;
+  valueSOL: number | undefined;
   onChangeUSD: (value: number | undefined) => void;
-  onChangeUSDC: (value: number | undefined) => void;
+  onChangeSOL: (value: number | undefined) => void;
   maxValue?: number;
 }
 
@@ -17,9 +17,9 @@ const { format: f, formatPercent: fp, formatUsd: fu } = formatNumber;
 
 export const InputsBlock: FC<InputsBlockProps> = ({
   valueUSD,
-  valueUSDC,
+  valueSOL,
   onChangeUSD,
-  onChangeUSDC,
+  onChangeSOL,
   maxValue = Infinity
 }) => {
   const isValidNumericInput = (value: string) => {
@@ -38,9 +38,9 @@ export const InputsBlock: FC<InputsBlockProps> = ({
   const handleTokenChange = (event: ChangeEvent<HTMLInputElement>) => {
     const value = event.target.value;
     if (isValidNumericInput(value) && value !== '') {
-      onChangeUSDC(parseFloat(value));
+      onChangeSOL(parseFloat(value));
     } else {
-      onChangeUSDC(undefined);
+      onChangeSOL(undefined);
     }
   };
 
@@ -54,7 +54,7 @@ export const InputsBlock: FC<InputsBlockProps> = ({
           value={valueUSD}
           onChange={handleUsdChange}
         />
-        <div className={styles.inputAddon}>$</div>
+        <div className={styles.inputAddon}>USD</div>
       </div>
       <div className={styles.equalSignContainer}>
         <Image src={EqualIcon} />
@@ -64,12 +64,11 @@ export const InputsBlock: FC<InputsBlockProps> = ({
           className={styles.input}
           type="text"
           placeholder="0.00"
-          value={valueUSDC}
+          value={valueSOL}
           onChange={handleTokenChange}
         />
         <div className={styles.inputAddon}>
-          <Image src={USDCIcon} />{' '}
-          <span className={styles.tokenName}>USDC</span>
+          <Image src={SOLIcon} /> <span>SOL</span>
         </div>
       </div>
     </div>

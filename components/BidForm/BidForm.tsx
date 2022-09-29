@@ -18,6 +18,7 @@ const { format: f, formatPercent: fp, formatUsd: fu, parse: p } = formatNumber;
 const BidForm = (props: BidFormProps) => {
   const { userBalance, highestBiddingValue, currentUserBid, handleRevokeBid, handleIncreaseBid, handlePlaceBid } = props;
   const [valueUSD, setValueUSD] = useState<number>(0);
+  const [valueSOL, setValueSOL] = useState<number>(0);
   const [valueUSDC, setValueUSDC] = useState<number>(0);
   const [sliderValue, setSliderValue] = useState(0);
 
@@ -28,6 +29,7 @@ const BidForm = (props: BidFormProps) => {
   const isSubmitButtonDisabled = () => {
     return false;
   };
+
 
   const handleSliderChange = (value: number) => {
     setSliderValue(value);
@@ -81,7 +83,7 @@ const BidForm = (props: BidFormProps) => {
               disabled={isSubmitButtonDisabled()}
               isFluid={true}
               usdcValue={valueUSD || 0}
-              usdcAmount={valueUSDC || 0}
+              solAmount={valueSOL || 0}
               onClick={triggerIndicator}
             >
               {currentUserBid != 0 ? 'Increase Bid' : 'Place Bid'}
@@ -135,9 +137,9 @@ const BidForm = (props: BidFormProps) => {
         <div className={styles.inputs}>
           <InputsBlock
             valueUSD={p(f(valueUSD))}
-            valueUSDC={p(f(valueUSDC))}
+            valueSOL={p(f(valueUSDC))}
             onChangeUSD={handleUsdInputChange}
-            onChangeUSDC={handleUsdcInputChange}
+            onChangeSOL={handleUsdcInputChange}
             maxValue={maxValue}
           />
         </div>

@@ -1,7 +1,8 @@
 import { globalStyle, style, styleVariants } from '@vanilla-extract/css';
-import { typography, vars } from './theme.css';
+import { breakpoints, typography, vars } from './theme.css';
 import { lampIcon } from './icons.css';
 import { container } from './common.css';
+import { honeyTableExpandedRow } from '../components/HoneyTable/HoneyTable.css';
 
 export const marketsPage = style([container, {}]);
 
@@ -11,36 +12,104 @@ export const nameCell = style({
   alignItems: 'center'
 });
 
+export const nameCellMobile = style({
+  display: 'flex',
+  justifyContent: 'center',
+  flexDirection: 'column'
+});
+
 export const logoWrapper = style({
   marginRight: 12
 });
 export const collectionLogo = style({
   width: '34px',
-  height: '34px'
+  height: '34px',
+  minWidth: '34px',
+  flexShrink: 0
 });
+
+export const collectionNameExpand = style([
+  typography.body,
+  {
+    color: vars.colors.black,
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+    whiteSpace: 'nowrap',
+    '@media': {
+      [`screen and (max-width: ${breakpoints.mobile}px)`]: {
+        fontSize: '12px'
+      }
+    }
+  }
+]);
 
 export const collectionName = style([
   typography.body,
   {
-    overflow: 'hidden',
-    textOverflow: 'ellipsis',
     whiteSpace: 'nowrap',
-    color: vars.colors.black
+    overflow: 'hidden',
+    textOverflow: 'ellipsis'
   }
 ]);
 
 export const availableCell = style([typography.numbersRegular, {}]);
 export const valueCell = style([typography.numbersRegular, {}]);
 export const rateCell = style([typography.numbersRegular, {}]);
+export const rateCellMobile = style([
+  typography.numbersMini,
+  {
+    color: vars.colors.green
+  }
+]);
 
 export const buttonsCell = style({
   display: 'flex',
-  justifyContent: 'flex-end'
+  justifyContent: 'center',
+  '@media': {
+    [`screen and (min-width: ${breakpoints.tablet}px)`]: {
+      justifyContent: 'flex-end'
+    }
+  }
+});
+
+export const hideTextMobile = style({
+  gap: '0',
+  '@media': {
+    [`screen and (min-width: ${breakpoints.tablet}px)`]: {
+      gap: '10px'
+    }
+  }
+});
+
+export const hideOnlyMobile = style({
+  display: 'none',
+  '@media': {
+    [`screen and (min-width: ${breakpoints.tablet}px)`]: {
+      display: 'block'
+    }
+  }
+});
+
+export const showOnlyMobile = style({
+  '@media': {
+    [`screen and (min-width: ${breakpoints.tablet}px)`]: {
+      display: 'none'
+    }
+  }
+});
+
+globalStyle(`${hideTextMobile} > span`, {
+  display: 'none',
+  '@media': {
+    [`screen and (min-width: ${breakpoints.tablet}px)`]: {
+      display: 'block'
+    }
+  }
 });
 
 const rowBase = style({
-  cursor: "pointer"
-})
+  cursor: 'pointer'
+});
 export const expandedRow = style([rowBase, {}]);
 
 export const arrowIcon = style({
@@ -49,10 +118,26 @@ export const arrowIcon = style({
   background: 'url(/images/arrow.svg) center no-repeat',
   transition: 'all .3s',
   selectors: {
-    [`${expandedRow} &`]: {
+    [`${honeyTableExpandedRow} &`]: {
       transform: 'rotate(-180deg)'
     }
   }
+});
+
+export const mobileTableHeader = style({
+  display: 'flex',
+  alignItems: 'ce',
+  background: vars.colors.grayLight,
+  borderRadius: 12,
+  '@media': {
+    [`screen and (min-width: ${breakpoints.tablet}px)`]: {
+      display: 'none'
+    }
+  }
+});
+
+export const mobileRow = style({
+  flex: '1 0 50%'
 });
 
 export const table = style({});
@@ -160,8 +245,13 @@ const expandContentTableChildSelector = (selector: string) => {
 const ectcs = expandContentTableChildSelector;
 globalStyle(ectcs(`.ant-table-cell`), {
   border: 'none !important',
-  padding: 15,
-  background: 'transparent !important'
+  background: 'transparent !important',
+  padding: 8,
+  '@media': {
+    [`screen and (min-width: ${breakpoints.tablet}px)`]: {
+      padding: 15
+    }
+  }
 });
 globalStyle(ectcs(`.ant-table-row`), {
   borderSpacing: 0
@@ -171,7 +261,12 @@ globalStyle(ectcs(`.ant-table table`), {
 });
 globalStyle(ectcs(`.ant-table-footer`), {
   background: 'transparent',
-  padding: 15
+  padding: 8,
+  '@media': {
+    [`screen and (min-width: ${breakpoints.tablet}px)`]: {
+      padding: 15
+    }
+  }
 });
 
 export const expandedRowCell = style([]);
@@ -179,8 +274,7 @@ export const expandedRowNameCell = style([
   nameCell,
   {
     display: 'flex',
-    alignItems: 'center',
-    paddingLeft: 10
+    alignItems: 'center'
   }
 ]);
 export const risk = styleVariants({
@@ -194,12 +288,29 @@ export const risk = styleVariants({
     color: vars.colors.red
   }
 });
-export const riskText = style([typography.caption]);
+export const riskText = style([
+  typography.caption,
+  {
+    display: 'none',
+    '@media': {
+      [`screen and (min-width: ${breakpoints.tablet}px)`]: {
+        display: 'initial'
+      }
+    }
+  }
+]);
 export const expandedRowIcon = style({
   background: 'url(/images/direct-left.svg) center no-repeat',
-  width: 20,
-  height: 20,
-  marginRight: 24
+  width: 40,
+  height: 40,
+  marginRight: 11,
+  flexShrink: 0,
+  backgroundSize: '20px',
+  '@media': {
+    [`screen and (min-width: ${breakpoints.tablet}px)`]: {
+      marginRight: 4
+    }
+  }
 });
 export const lampIconStyle = style([
   lampIcon,
@@ -225,13 +336,49 @@ export const nameCellText = style({
   marginLeft: 12
 });
 
-export const expandedSectionFooter = style({
+export const expandedSection = style({
   display: 'flex',
   alignItems: 'center',
-  paddingLeft: 10
+  flexWrap: 'wrap',
+  '@media': {
+    [`screen and (min-width: ${breakpoints.tablet}px)`]: {
+      flexWrap: 'initial'
+    }
+  }
 });
+
+export const expandedSectionFooter = style({
+  display: 'flex',
+  alignItems: 'flex-start',
+  '@media': {
+    [`screen and (min-width: ${breakpoints.tablet}px)`]: {
+      flexWrap: 'initial'
+    }
+  }
+});
+
 export const footerButton = style({
-  marginLeft: 'auto'
+  width: '100%',
+  marginTop: 6,
+  '@media': {
+    [`screen and (min-width: ${breakpoints.tablet}px)`]: {
+      width: 'auto',
+      marginLeft: 'auto',
+      marginTop: 0
+    }
+  }
+});
+
+export const mobileConnectButton = style({
+  justifyContent: 'center',
+  '@media': {
+    [`screen and (min-width: ${breakpoints.tablet}px)`]: {
+      justifyContent: 'space-between'
+    }
+  }
+});
+export const footer = style({
+  display: 'flex'
 });
 export const footerText = style({
   display: 'flex',
@@ -276,4 +423,3 @@ export const docIcon = style({
   height: 52,
   background: 'url("/images/docIcon.svg") center center no-repeat'
 });
-

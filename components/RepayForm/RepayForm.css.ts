@@ -24,7 +24,8 @@ export const row = style([
 ]);
 
 export const col = style({
-  flex: '100% 0 0'
+  flex: '100% 0 0',
+  paddingRight: 8
 });
 
 export const nftInfo = style([
@@ -44,7 +45,7 @@ export const nftImage = style([
 export const nftName = style([typography.title, {}]);
 
 export const balance = style({
-  marginBottom: 16
+  marginBottom: 0
 });
 
 export const inputs = style([

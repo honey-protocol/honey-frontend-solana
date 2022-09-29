@@ -3,19 +3,30 @@ import * as styles from './LendSidebar.css';
 import { LendSidebarProps } from './types';
 import DepositForm from '../DepositForm/DepositForm';
 import WithdrawForm from '../WithdrawForm/WithdrawForm';
-import HoneyTabs, {HoneyTabItem} from "../HoneyTabs/HoneyTabs";
-import EmptyStateDetails from "../EmptyStateDetails/EmptyStateDetails";
+import HoneyTabs, { HoneyTabItem } from '../HoneyTabs/HoneyTabs';
+import EmptyStateDetails from '../EmptyStateDetails/EmptyStateDetails';
+import { useConnectedWallet } from '@saberhq/use-solana';
+import { useWalletKit } from '@gokiprotocol/walletkit';
 
 const items: [HoneyTabItem, HoneyTabItem] = [
   { label: 'Deposit', key: 'deposit' },
-  { label: 'Withdraw', key: 'withdraw'}
+  { label: 'Withdraw', key: 'withdraw' }
 ];
 
 type Tab = 'deposit' | 'withdraw';
 
 const LendSidebar = (props: LendSidebarProps) => {
-  const wallet = true;
-  const { collectionId, executeDeposit, executeWithdraw, userTotalDeposits, available, value, userWalletBalance } = props;
+  const {
+    collectionId,
+    executeDeposit,
+    executeWithdraw,
+    userTotalDeposits,
+    available,
+    value,
+    userWalletBalance
+  } = props;
+  const wallet = useConnectedWallet();
+  const { connect } = useWalletKit();
   const [activeTab, setActiveTab] = useState<Tab>('deposit');
 
   const handleTabChange = (tabKey: string) => {
@@ -35,6 +46,7 @@ const LendSidebar = (props: LendSidebarProps) => {
             title="You didn’t connect any wallet yet"
             description="First, choose a NFT collection"
             btnTitle="CONNECT WALLET"
+            onBtnClick={connect}
           />
         ) : !collectionId ? (
           <EmptyStateDetails
@@ -44,14 +56,23 @@ const LendSidebar = (props: LendSidebarProps) => {
           />
         ) : (
           <>
-            {
-              activeTab === 'deposit' && 
-              <DepositForm executeDeposit={executeDeposit} userTotalDeposits={userTotalDeposits} available={available} value={value} userWalletBalance={userWalletBalance} />
-            }
-            {
-              activeTab === 'withdraw' && 
-              <WithdrawForm  executeWithdraw={executeWithdraw} userTotalDeposits={userTotalDeposits} available={available} value={value} />
-            }
+            {activeTab === 'deposit' && (
+              <DepositForm
+                executeDeposit={executeDeposit}
+                userTotalDeposits={userTotalDeposits}
+                available={available}
+                value={value}
+                userWalletBalance={userWalletBalance}
+              />
+            )}
+            {activeTab === 'withdraw' && (
+              <WithdrawForm
+                executeWithdraw={executeWithdraw}
+                userTotalDeposits={userTotalDeposits}
+                available={available}
+                value={value}
+              />
+            )}
           </>
         )}
       </HoneyTabs>

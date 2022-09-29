@@ -10,11 +10,14 @@ import Image from 'next/image';
 import honeyEyes from '/public/nfts/honeyEyes.png';
 import { InfoBlock } from '../InfoBlock/InfoBlock';
 import { formatNumber } from '../../helpers/format';
-const { formatPercent: fp, formatUsd: fu } = formatNumber;
+
+const { formatPercent: fp, formatSol: fs } = formatNumber;
 
 type FilterType = 'most_critical' | 'max_debt' | 'most_valuable';
 
-export const LiquidateExpandTable: FC<{ data: LiquidateTablePosition[] }> = ({ data }) => {
+export const LiquidateExpandTable: FC<{ data: LiquidateTablePosition[] }> = ({
+  data
+}) => {
   const [filter, setFilter] = useState<FilterType>('most_critical');
 
   const expandColumns: ColumnType<LiquidateTablePosition>[] = useMemo(
@@ -50,7 +53,7 @@ export const LiquidateExpandTable: FC<{ data: LiquidateTablePosition[] }> = ({ d
           <div className={sharedStyles.expandedRowCell}>
             <InfoBlock
               title={'Until liquidation:'}
-              value={fu(untilLiquidation)}
+              value={fs(untilLiquidation)}
             />
           </div>
         )
@@ -61,7 +64,7 @@ export const LiquidateExpandTable: FC<{ data: LiquidateTablePosition[] }> = ({ d
         sorter: (a, b) => a.debt - b.debt,
         render: debt => (
           <div className={sharedStyles.expandedRowCell}>
-            <InfoBlock title={'Debt:'} value={fu(debt)} />
+            <InfoBlock title={'Debt:'} value={fs(debt)} />
           </div>
         )
       },
@@ -71,7 +74,7 @@ export const LiquidateExpandTable: FC<{ data: LiquidateTablePosition[] }> = ({ d
         sorter: (a, b) => a.estimatedValue - b.estimatedValue,
         render: estimatedValue => (
           <div className={sharedStyles.expandedRowCell}>
-            <InfoBlock title={'Estimated value:'} value={fu(estimatedValue)} />
+            <InfoBlock title={'Estimated value:'} value={fs(estimatedValue)} />
           </div>
         )
       }

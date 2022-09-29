@@ -21,6 +21,7 @@ import * as stylesRepay from '../RepayForm/RepayForm.css';
 import { hAlign } from 'styles/common.css';
 import { questionIcon } from 'styles/icons.css';
 import useToast from 'hooks/useToast';
+import { useSolBalance } from 'hooks/useSolBalance';
 
 const { format: f, formatPercent: fp, formatUsd: fu, parse: p } = formatNumber;
 
@@ -44,19 +45,20 @@ const BorrowForm = (props: BorrowProps) => {
   } = props;
 
   const [valueUSD, setValueUSD] = useState<number>(0);
-  const [valueUSDC, setValueUSDC] = useState<number>(0);
+  const [valueSOL, setValueSOL] = useState<number>(0);
   const [isNftSelected, setIsNftSelected] = useState(false);
   const [selectedNft, setSelectedNft] = useState<NFT | null>(null);
   const [hasOpenPosition, setHasOpenPosition] = useState(false);
   const [sliderValue, setSliderValue] = useState(0);
   const { toast, ToastComponent } = useToast();
+  const SOLBalance = useSolBalance();
 
   // Only for test purposes
   // const isNftSelected = true;
 
   const borrowedValue = userDebt;
   const maxValue = userAllowance;
-  const usdcPrice = 0.95;
+  const solPrice = 32;
   const liquidationThreshold = 0.75;
 
   // Put your validators here
@@ -67,35 +69,35 @@ const BorrowForm = (props: BorrowProps) => {
   const handleSliderChange = (value: number) => {
     if (userAllowance == 0) return;
     setSliderValue(value);
-    setValueUSD(value / usdcPrice);
-    setValueUSDC(value);
+    setValueUSD(value * solPrice);
+    setValueSOL(value);
   };
 
   const handleUsdInputChange = (usdValue: number | undefined) => {
     if (userAllowance == 0) return;
     if (!usdValue) {
       setValueUSD(0);
-      setValueUSDC(0);
+      setValueSOL(0);
       setSliderValue(0);
       return;
     }
     setValueUSD(usdValue);
-    setValueUSDC(usdValue / usdcPrice);
-    setSliderValue(usdValue);
+    setValueSOL(usdValue / solPrice);
+    setSliderValue(usdValue / solPrice);
   };
 
-  const handleUsdcInputChange = (usdcValue: number | undefined) => {
+  const handleSolInputChange = (solValue: number | undefined) => {
     if (userAllowance == 0) return;
-    if (!usdcValue) {
+    if (!solValue) {
       setValueUSD(0);
-      setValueUSDC(0);
+      setValueSOL(0);
       setSliderValue(0);
       return;
     }
 
-    setValueUSD(usdcValue * usdcPrice);
-    setValueUSDC(usdcValue);
-    setSliderValue(usdcValue * usdcPrice);
+    setValueUSD(solValue * solPrice);
+    setValueSOL(solValue);
+    setSliderValue(solValue);
   };
 
   // set selection state and render (or not) detail nft
@@ -128,7 +130,7 @@ const BorrowForm = (props: BorrowProps) => {
   }
 
   function handleBorrow() {
-    executeBorrow(valueUSDC, toast);
+    executeBorrow(valueSOL, toast);
   }
 
   useEffect(() => {
@@ -143,6 +145,7 @@ const BorrowForm = (props: BorrowProps) => {
             data={availableNFTs}
             selectNFT={selectNFT}
             nftPrice={nftPrice}
+            selectedNFTMint={selectedNft?.mint}
           />
         </>
       );
@@ -265,9 +268,9 @@ const BorrowForm = (props: BorrowProps) => {
           </div>
           <InputsBlock
             valueUSD={p(f(valueUSD))}
-            valueUSDC={p(f(valueUSDC))}
+            valueSOL={p(f(valueSOL))}
             onChangeUSD={handleUsdInputChange}
-            onChangeUSDC={handleUsdcInputChange}
+            onChangeSOL={handleSolInputChange}
             maxValue={maxValue}
           />
         </div>
@@ -294,7 +297,7 @@ const BorrowForm = (props: BorrowProps) => {
         </div>
         <div className={styles.bigCol}>
           <HoneyButton
-            usdcAmount={valueUSDC || 0}
+            solAmount={valueSOL || 0}
             usdcValue={valueUSD || 0}
             variant="primary"
             disabled={isBorrowButtonDisabled()}

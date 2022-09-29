@@ -17,8 +17,10 @@ interface HoneySliderProps {
   minAvailableValue?: number;
   // max slider value
   maxValue: number;
-  // if slider position goes bigger then this mark active zone as 'risky'
+  // if slider position goes bigger then this mark active zone as 'unsafe'
   maxSafePosition?: number;
+  // if slider position goes bigger then this mark active zone as 'danger'
+  dangerPosition?: number;
   // max slder position user can set
   maxAvailablePosition?: number;
   // array of labels under the slider
@@ -29,7 +31,7 @@ interface HoneySliderProps {
   onChange?: (value: number) => void;
 }
 
-const { formatPercent: fp, formatUsd: fu } = formatNumber;
+const { formatPercent: fp, formatSol: fs } = formatNumber;
 
 export const HoneySlider: FC<HoneySliderProps> = ({
   maxValue,
@@ -37,6 +39,7 @@ export const HoneySlider: FC<HoneySliderProps> = ({
   currentValue,
   onChange,
   maxSafePosition = 1,
+  dangerPosition = 1,
   maxAvailablePosition = 1,
   labels = [],
   isReadonly
@@ -52,6 +55,15 @@ export const HoneySlider: FC<HoneySliderProps> = ({
 
   const isRisky =
     (currentValue + minAvailableValue) / maxValue > maxSafePosition;
+
+  const isDanger =
+    (currentValue + minAvailableValue) / maxValue > dangerPosition;
+
+  const riskColor = isDanger
+    ? vars.colors.red
+    : isRisky
+    ? vars.colors.brownLight
+    : vars.colors.green;
 
   const handleChange = (value: number) => {
     if (isReadonly) return;
@@ -75,15 +87,13 @@ export const HoneySlider: FC<HoneySliderProps> = ({
       <div
         className={styles.sliderWrapper}
         style={{
-          width: `${fp(
-            minAvailablePosition < 0.1 ? 10 : minAvailablePosition * 100
-          )}`,
-          display: minAvailableValue ? 'inherit' : 'none'
+          width: minAvailablePosition < 0 ? 0 : `${minAvailablePosition * 100}%`
+          // display: minAvailableValue ? 'inherit' : 'none',
         }}
       >
         {!isReadonly && (
           <div className={styles.sliderHeader.primary}>
-            $ {minAvailableValue}
+            {fs(minAvailableValue)}
           </div>
         )}
         <Slider
@@ -95,9 +105,7 @@ export const HoneySlider: FC<HoneySliderProps> = ({
           )}
           handleStyle={{ display: 'none' }}
           trackStyle={{
-            backgroundColor: isRisky
-              ? vars.colors.brownLight
-              : vars.colors.green
+            backgroundColor: riskColor
           }}
           value={100}
           marks={preparedLabels?.left}
@@ -109,23 +117,21 @@ export const HoneySlider: FC<HoneySliderProps> = ({
       >
         {!isReadonly && (
           <div className={styles.sliderHeader.secondary}>
-            {fu(maxValue * maxAvailablePosition)}
+            {fs(maxValue * maxAvailablePosition)}
           </div>
         )}
         <Slider
           tooltipVisible={false}
           className={styles.slider}
           trackStyle={{
-            background: isRisky ? vars.colors.brownLight : vars.colors.green
+            background: riskColor
           }}
           handleStyle={
             isReadonly
               ? { display: 'none' }
               : {
                   background: vars.colors.white,
-                  borderColor: isRisky
-                    ? vars.colors.brownLight
-                    : vars.colors.green,
+                  borderColor: riskColor,
                   zIndex: 9
                 }
           }
@@ -140,7 +146,7 @@ export const HoneySlider: FC<HoneySliderProps> = ({
           style={{ width: `${unavailablePosition * 100}%` }}
         >
           {!isReadonly && (
-            <div className={styles.sliderHeader.secondary}>{fu(maxValue)}</div>
+            <div className={styles.sliderHeader.secondary}>{fs(maxValue)}</div>
           )}
           <Slider
             className={c(styles.slider, styles.disabledBackgroundSlider)}
