@@ -138,7 +138,7 @@ const Markets: NextPage = () => {
   const [reserveHoneyState, setReserveHoneyState] = useState(0);
   const [userUSDCBalance, setUserUSDCBalance] = useState(0);
   const [userTotalDeposits, setUserTotalDeposits] = useState(0);
-  const [sumOfTotalValue, setSumOfTotalValue] = useState(0)
+  const [sumOfTotalValue, setSumOfTotalValue] = useState(0);
 
   const [isMobileSidebarVisible, setShowMobileSidebar] = useState(false);
 
@@ -171,7 +171,7 @@ const Markets: NextPage = () => {
     }
   }, [honeyReserves]);
 
-/**
+  /**
    * @description updates honeyUser | marketReserveInfo | - timeout required
    * @params none
    * @returns honeyUser | marketReserveInfo |
@@ -316,7 +316,7 @@ const Markets: NextPage = () => {
 
   useEffect(() => {
     setSumOfTotalValue(totalMarketDeposits + totalMarketDebt);
-  }, [totalMarketDebt, totalMarketDeposits])
+  }, [totalMarketDebt, totalMarketDeposits]);
 
   useEffect(() => {
     if (collateralNFTPositions) {
@@ -408,7 +408,7 @@ const Markets: NextPage = () => {
       />
     );
   };
-  const columnsWidth: Array<number | string> = [240, 100, 150, 150, 200];
+  const columnsWidth: Array<number | string> = [240, 150, 150, 150, 150];
 
   const columns: HoneyTableColumnType<MarketTableRow>[] = useMemo(
     () =>
