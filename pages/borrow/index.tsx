@@ -902,8 +902,8 @@ const Markets: NextPage = () => {
       <div>
         <Typography.Title className={pageTitle}>Borrow</Typography.Title>
         <Typography.Text className={pageDescription}>
-          Lorem Ipsum is simply dummy text of the printing and typesetting
-          industry. Lorem Ipsum has{' '}
+          Get instant liquidity using your NFTs as collateral
+          {' '}
         </Typography.Text>
       </div>
       <HoneyContent>

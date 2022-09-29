@@ -511,8 +511,8 @@ const Lend: NextPage = () => {
       <div>
         <Typography.Title className={pageTitle}>Lend</Typography.Title>
         <Typography.Text className={pageDescription}>
-          Lorem Ipsum is simply dummy text of the printing and typesetting
-          industry. Lorem Ipsum has{' '}
+          Earn yield by providing liquidity to NFT collections
+          {' '}
         </Typography.Text>
       </div>
       <HoneyContent>
