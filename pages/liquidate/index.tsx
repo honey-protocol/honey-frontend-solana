@@ -501,8 +501,7 @@ const Liquidate: NextPage = () => {
       <div>	
         <Typography.Title className={pageTitle}>Liquidation</Typography.Title>	
         <Typography.Text className={pageDescription}>	
-          Lorem Ipsum is simply dummy text of the printing and typesetting	
-          industry. Lorem Ipsum has{' '}	
+          Bid on discounted NFTs from borrowers {' '}	
         </Typography.Text>	
       </div>
       <HoneyContent>
