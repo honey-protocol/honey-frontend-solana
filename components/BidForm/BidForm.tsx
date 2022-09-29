@@ -1,27 +1,28 @@
-import { FC, useState } from 'react';
+import { FC, useEffect, useState } from 'react';
 import Image from 'next/image';
 import { InfoBlock } from '../InfoBlock/InfoBlock';
 import { InputsBlock } from '../InputsBlock/InputsBlock';
 import { HoneySlider } from '../HoneySlider/HoneySlider';
 import * as styles from './BidForm.css';
 import { formatNumber } from '../../helpers/format';
-import mockNftImage from '/public/images/mock-collection-image@2x.png';
+import honeyEyes from '/public/nfts/honeyEyes.png';
 import HoneyButton from 'components/HoneyButton/HoneyButton';
 import HexaBoxContainer from '../HexaBoxContainer/HexaBoxContainer';
 import HoneyWarning from '../HoneyWarning/HoneyWarning';
 import CurrentBid from '../CurrentBid/CurrentBid';
 import SidebarScroll from '../SidebarScroll/SidebarScroll';
-
-type BidsFormsProps = {};
+import { BidFormProps } from './types';
 
 const { format: f, formatPercent: fp, formatUsd: fu, parse: p } = formatNumber;
 
-const BidForm: FC<BidsFormsProps> = () => {
-  const [valueUSD, setValueUSD] = useState<number>();
-  const [valueUSDC, setValueUSDC] = useState<number>();
+const BidForm = (props: BidFormProps) => {
+  const { userBalance, highestBiddingValue, currentUserBid, handleRevokeBid, handleIncreaseBid, handlePlaceBid } = props;
+  const [valueUSD, setValueUSD] = useState<number>(0);
+  const [valueSOL, setValueSOL] = useState<number>(0);
+  const [valueUSDC, setValueUSDC] = useState<number>(0);
   const [sliderValue, setSliderValue] = useState(0);
 
-  const maxValue = 2000;
+  const maxValue = 1000;
   const usdcPrice = 0.95;
 
   // Put your validators here
@@ -60,12 +61,20 @@ const BidForm: FC<BidsFormsProps> = () => {
     setSliderValue(usdcValue * usdcPrice);
   };
 
+  function triggerIndicator() {
+    currentUserBid != 0 ? handlePlaceBid('increase_bid', valueUSD) : handleIncreaseBid('place_bid', valueUSD);
+  }
+
+  useEffect(() => {
+    console.log('@@--', currentUserBid);
+  }, [currentUserBid])
+
   return (
     <SidebarScroll
       footer={
         <div className={styles.buttons}>
           <div className={styles.smallCol}>
-            <HoneyButton variant="secondary">Cancel</HoneyButton>
+            <HoneyButton variant="secondary" onClick={() => handleRevokeBid('revoke_bid')}>Cancel</HoneyButton>
           </div>
           <div className={styles.bigCol}>
             <HoneyButton
@@ -73,9 +82,10 @@ const BidForm: FC<BidsFormsProps> = () => {
               disabled={isSubmitButtonDisabled()}
               isFluid={true}
               usdcValue={valueUSD || 0}
-              solAmount={valueUSDC || 0}
+              solAmount={valueSOL || 0}
+              onClick={triggerIndicator}
             >
-              Place Bid
+              {currentUserBid != 0 ? 'Increase Bid' : 'Place Bid'}
             </HoneyButton>
           </div>
         </div>
@@ -85,41 +95,38 @@ const BidForm: FC<BidsFormsProps> = () => {
         <div className={styles.nftInfo}>
           <div className={styles.nftImage}>
             <HexaBoxContainer>
-              <Image src={mockNftImage} />
+              <Image src={honeyEyes} />
             </HexaBoxContainer>
           </div>
           <div className={styles.nftName}>Honey Eyes</div>
         </div>
-
-        <div className={styles.row}>
-          <div className={styles.col}>
-            <HoneyWarning
-              message="We’re now live on Ethereum!"
-              link="https://google.com"
-            ></HoneyWarning>
+        {
+          currentUserBid &&
+            <div className={styles.row}>
+            <div className={styles.col}>
+              <CurrentBid 
+                value={currentUserBid} 
+                title={currentUserBid == highestBiddingValue ? "Your bid is #1" : 'Your bid is:'} 
+                handleIncreaseBid={handleIncreaseBid}
+                handleRevokeBid={handleRevokeBid}
+              />
+            </div>
           </div>
-        </div>
-
+        }
         <div className={styles.row}>
           <div className={styles.col}>
-            <CurrentBid value={10000} title="Your bid is #1" />
-          </div>
-        </div>
-
-        <div className={styles.row}>
-          <div className={styles.col}>
-            <InfoBlock value={fu(10)} valueSize="big" title="Highest bid" />
+            <InfoBlock value={fu(highestBiddingValue)} valueSize="big" title="Highest bid" />
           </div>
         </div>
         <div className={styles.row}>
           <div className={styles.col}>
-            <InfoBlock title="Minimal bid" value={fp(20)} valueSize="big" />
+            <InfoBlock title="Minimal bid" value={fu((highestBiddingValue * 1.1))} valueSize="big" />
           </div>
         </div>
         <div className={styles.row}>
           <div className={styles.col}>
             <InfoBlock
-              value={fp(80)}
+              value={fu(userBalance)}
               valueSize="big"
               title="Your USDC balance"
             />
@@ -138,7 +145,7 @@ const BidForm: FC<BidsFormsProps> = () => {
 
         <HoneySlider
           currentValue={sliderValue}
-          maxValue={2000}
+          maxValue={userBalance}
           minAvailableValue={0}
           onChange={handleSliderChange}
         />

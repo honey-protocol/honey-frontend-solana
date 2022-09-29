@@ -7,7 +7,7 @@ import { ColumnType } from 'antd/lib/table';
 import { LiquidateTablePosition } from '../../types/liquidate';
 import HexaBoxContainer from '../HexaBoxContainer/HexaBoxContainer';
 import Image from 'next/image';
-import mockNftImage from '/public/images/mock-collection-image@2x.png';
+import honeyEyes from '/public/nfts/honeyEyes.png';
 import { InfoBlock } from '../InfoBlock/InfoBlock';
 import { formatNumber } from '../../helpers/format';
 
@@ -32,7 +32,7 @@ export const LiquidateExpandTable: FC<{ data: LiquidateTablePosition[] }> = ({
             <div className={sharedStyles.expandedRowIcon} />
             <div className={sharedStyles.collectionLogo}>
               <HexaBoxContainer>
-                <Image src={mockNftImage} />
+                <Image src={honeyEyes} />
               </HexaBoxContainer>
             </div>
             <div className={sharedStyles.nameCellText}>
