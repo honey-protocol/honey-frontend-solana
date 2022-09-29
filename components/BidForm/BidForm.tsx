@@ -60,6 +60,10 @@ const BidForm = (props: BidFormProps) => {
     setSliderValue(usdcValue * usdcPrice);
   };
 
+  function triggerIndicator() {
+    currentUserBid != 0 ? handlePlaceBid('place_bid', valueUSD) : handleIncreaseBid('increase_bid', valueUSD);
+  }
+
   return (
     <SidebarScroll
       footer={
@@ -74,9 +78,9 @@ const BidForm = (props: BidFormProps) => {
               isFluid={true}
               usdcValue={valueUSD || 0}
               usdcAmount={valueUSDC || 0}
-              onClick={() => handlePlaceBid('place_bid', valueUSD)}
+              onClick={triggerIndicator}
             >
-              Place Bid
+              {currentUserBid != 0 ? 'Increase Bid' : 'Place Bid'}
             </HoneyButton>
           </div>
         </div>

@@ -231,6 +231,7 @@ const Liquidate: NextPage = () => {
       const liquidatorClient = await LiquidatorClient.connect(program.provider, HONEY_PROGRAM_ID, false);
       if (wallet) {
         if (type == 'revoke_bid') {
+          console.log('@@--curr user bid', currentUserBid)
           if (!currentUserBid) return;
 
           let transactionOutcome: any = await liquidatorClient.revokeBid({
@@ -243,6 +244,7 @@ const Liquidate: NextPage = () => {
           if (transactionOutcome[0] == 'SUCCESS') {
             return toastResponse('SUCCESS', 'Bid revoked, fetching chain data', 'SUCCESS');
           } else {
+            console.log('@@--error', transactionOutcome)
             return toastResponse('ERROR', 'Revoke bid failed', 'ERROR');
           }
         } else if (type == 'place_bid') {
