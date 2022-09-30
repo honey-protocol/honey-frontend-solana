@@ -26,7 +26,13 @@ import HoneyButton from '../../components/HoneyButton/HoneyButton';
 import { formatNumber } from '../../helpers/format';
 import { LiquidateTableRow } from '../../types/liquidate';
 import { LiquidateExpandTable } from '../../components/LiquidateExpandTable/LiquidateExpandTable';
-import { useAnchor, LiquidatorClient, useAllPositions, useHoney, useMarket } from '@honey-finance/sdk';
+import {
+  useAnchor,
+  LiquidatorClient,
+  useAllPositions,
+  useHoney,
+  useMarket
+} from '@honey-finance/sdk';
 import { ConfigureSDK, toastResponse } from 'helpers/loanHelpers';
 import { useConnectedWallet } from '@saberhq/use-solana';
 import { LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js';
@@ -37,7 +43,7 @@ import { NATIVE_MINT } from '@solana/spl-token';
 import { Content } from 'antd/lib/layout/layout';
 import HoneySider from 'components/HoneySider/HoneySider';
 import HoneyContent from 'components/HoneyContent/HoneyContent';
-import { pageDescription, pageTitle } from 'styles/common.css';	
+import { pageDescription, pageTitle } from 'styles/common.css';
 import { Typography } from 'antd';
 
 const { formatPercent: fp, formatSol: fs, formatRoundDown: fd } = formatNumber;
@@ -49,38 +55,50 @@ const Liquidate: NextPage = () => {
   // create wallet instance for PK
   const wallet = useConnectedWallet();
   /**
-    * @description sets program | market | connection | wallet
-    * @params none
-    * @returns connection with sdk
-  */
+   * @description sets program | market | connection | wallet
+   * @params none
+   * @returns connection with sdk
+   */
   const sdkConfig = ConfigureSDK();
   /**
-    * @description fetches open nft positions
-    * @params connection | wallet | honeyprogramID | honeymarketID
-    * @returns loading | nft positions | error
-  */
-  const { ...status } = useAllPositions(sdkConfig.saberHqConnection, sdkConfig.sdkWallet!, sdkConfig.honeyId, sdkConfig.marketId);
-  
+   * @description fetches open nft positions
+   * @params connection | wallet | honeyprogramID | honeymarketID
+   * @returns loading | nft positions | error
+   */
+  const { ...status } = useAllPositions(
+    sdkConfig.saberHqConnection,
+    sdkConfig.sdkWallet!,
+    sdkConfig.honeyId,
+    sdkConfig.marketId
+  );
+
   /**
    * @description calls upon markets which
    * @params none
    * @returns market | market reserve information | parsed reserves |
-  */
-  const { market, marketReserveInfo, parsedReserves, fetchMarket }  = useHoney();
+   */
+  const { market, marketReserveInfo, parsedReserves, fetchMarket } = useHoney();
 
   /**
    * @description calls upon the honey sdk
    * @params  useConnection func. | useConnectedWallet func. | honeyID | marketID
    * @returns honeyUser | honeyReserves - used for interaction regarding the SDK
-  */
-  const { honeyClient, honeyUser, honeyReserves, honeyMarket } = useMarket(sdkConfig.saberHqConnection, sdkConfig.sdkWallet!, sdkConfig.honeyId, sdkConfig.marketId);
+   */
+  const { honeyClient, honeyUser, honeyReserves, honeyMarket } = useMarket(
+    sdkConfig.saberHqConnection,
+    sdkConfig.sdkWallet!,
+    sdkConfig.honeyId,
+    sdkConfig.marketId
+  );
 
   /**
-    * @description declare state
-    * @params none
-    * @returns open positions | bidding data | userbid | user position
-  */
-  const [fetchedPositions, setFetchedPositions] = useState<Array<LiquidateTablePosition>>([]);
+   * @description declare state
+   * @params none
+   * @returns open positions | bidding data | userbid | user position
+   */
+  const [fetchedPositions, setFetchedPositions] = useState<
+    Array<LiquidateTablePosition>
+  >([]);
   const [hasPosition, setHasPosition] = useState(false);
   const [highestBiddingAddress, setHighestBiddingAddress] = useState('');
   const [highestBiddingValue, setHighestBiddingValue] = useState(0);
@@ -102,7 +120,7 @@ const Liquidate: NextPage = () => {
     try {
       const userBalance =
         (await sdkConfig.saberHqConnection.getBalance(key)) / LAMPORTS_PER_SOL;
-        setUserBalance(userBalance);
+      setUserBalance(userBalance);
     } catch (error) {
       console.log('Error', error);
     }
@@ -118,7 +136,7 @@ const Liquidate: NextPage = () => {
    * @description sets the state if user has open bid
    * @params array of bids
    * @returns state change
-  */
+   */
   async function handleBiddingState(biddingArray: any, positions: any) {
     biddingArray.map((obligation: any) => {
       if (obligation.bidder == stringyfiedWalletPK) {
@@ -132,23 +150,28 @@ const Liquidate: NextPage = () => {
       return {
         name: 'Honey Eyes',
         riskLvl: (obligation.debt / nftPrice) * 100,
-        untilLiquidation: obligation.debt !== 0 ? (nftPrice - (obligation.debt / liquidationThreshold)) : 0,
+        untilLiquidation:
+          obligation.debt !== 0
+            ? nftPrice - obligation.debt / liquidationThreshold
+            : 0,
         debt: obligation.debt,
         estimatedValue: nftPrice,
         nftMint: obligation.nft_mint,
         owner: obligation.owner,
         obligation: obligation.obligation,
         highestBid: obligation.highest_bid
-      }
+      };
     });
 
-    let highestBid = await biddingArray.sort((first: any, second: any) => first.bidLimit - second.bidLimit).reverse();
+    let highestBid = await biddingArray
+      .sort((first: any, second: any) => first.bidLimit - second.bidLimit)
+      .reverse();
     let sumOfDebt = await positions.reduce((acc: number, obligation: any) => {
-      return acc + obligation.debt
+      return acc + obligation.debt;
     }, 0);
-    
+
     setTotalDebt(sumOfDebt);
-    setLoanToValue((sumOfDebt / positions.length) / nftPrice);
+    setLoanToValue(sumOfDebt / positions.length / nftPrice);
 
     if (nftPrice) setTvl(nftPrice * positions.length);
 
@@ -163,14 +186,14 @@ const Liquidate: NextPage = () => {
   const [statusState, setStatusState] = useState(false);
 
   useEffect(() => {
-    console.log('this is has pos', hasPosition)
-  }, [hasPosition])
+    console.log('this is has pos', hasPosition);
+  }, [hasPosition]);
 
   /**
    * @description checks if there are positions, if so set state
    * @params none
    * @returns state positions && bids
-  */
+   */
   useEffect(() => {
     if (status.positions) {
       setStatusState(true);
@@ -188,31 +211,35 @@ const Liquidate: NextPage = () => {
     return;
   }, [statusState, nftPrice, loanToValue]);
 
-    // calculates nft price
-    async function calculateNFTPrice() {
-      if (marketReserveInfo && parsedReserves && honeyMarket) {
-        let nftPrice = await calcNFT(
-          marketReserveInfo,
-          parsedReserves,
-          honeyMarket,
-          sdkConfig.saberHqConnection
-        );
-        setNftPrice(Number(nftPrice));
-      }
+  // calculates nft price
+  async function calculateNFTPrice() {
+    if (marketReserveInfo && parsedReserves && honeyMarket) {
+      let nftPrice = await calcNFT(
+        marketReserveInfo,
+        parsedReserves,
+        honeyMarket,
+        sdkConfig.saberHqConnection
+      );
+      setNftPrice(Number(nftPrice));
     }
-  
-    useEffect(() => {
-      calculateNFTPrice();
-    }, [marketReserveInfo, parsedReserves]);    
+  }
+
+  useEffect(() => {
+    calculateNFTPrice();
+  }, [marketReserveInfo, parsedReserves]);
 
   /**
    * @description calls upon liquidator client for placebid | revokebid | increasebid
    * @params tpye | userbid | nftmint
    * @returms toastresponse of executed call
-  */
+   */
   async function fetchLiquidatorClient(type: string, userBid?: number) {
     try {
-      const liquidatorClient = await LiquidatorClient.connect(program.provider, HONEY_PROGRAM_ID, true);
+      const liquidatorClient = await LiquidatorClient.connect(
+        program.provider,
+        HONEY_PROGRAM_ID,
+        true
+      );
       if (wallet) {
         if (type == 'revoke_bid') {
           if (!currentUserBid) return;
@@ -225,56 +252,67 @@ const Liquidate: NextPage = () => {
           });
 
           if (transactionOutcome[0] == 'SUCCESS') {
-            return toastResponse('SUCCESS', 'Bid revoked, fetching chain data', 'SUCCESS');
+            return toastResponse(
+              'SUCCESS',
+              'Bid revoked, fetching chain data',
+              'SUCCESS'
+            );
           } else {
-            console.log('@@--error1', transactionOutcome)
+            console.log('@@--error1', transactionOutcome);
             return toastResponse('ERROR', 'Revoke bid failed', 'ERROR');
           }
         } else if (type == 'place_bid') {
-            // if no user bid terminate action
-            if (!userBid) return;
+          // if no user bid terminate action
+          if (!userBid) return;
 
-            userBid = Number(userBid.toFixed(2));
+          userBid = Number(userBid.toFixed(2));
 
-            let transactionOutcome: any = await liquidatorClient.placeBid({
-              bid_limit: userBid,
-              market: new PublicKey(HONEY_MARKET_ID),
-              bidder: wallet.publicKey,
-              bid_mint: NATIVE_MINT
-            });
+          let transactionOutcome: any = await liquidatorClient.placeBid({
+            bid_limit: userBid,
+            market: new PublicKey(HONEY_MARKET_ID),
+            bidder: wallet.publicKey,
+            bid_mint: NATIVE_MINT
+          });
 
-            // refreshDB();
-            if (transactionOutcome[0] == 'SUCCESS') {
-              return toastResponse('SUCCESS', 'Bid placed, fetching chain data', 'SUCCESS');
-            } else {
-              return toastResponse('ERROR', 'Bid failed', 'ERROR');
-            }
-
-        } else if (type == 'increase_bid') {
-            // if no user bid terminate action
-            if (!userBid) return;
-
-            let transactionOutcome: any = await liquidatorClient.increaseBid({
-              bid_increase: userBid,
-              market: new PublicKey(HONEY_MARKET_ID),
-              bidder: wallet.publicKey,
-              bid_mint: NATIVE_MINT,
-            });
-
-            if (transactionOutcome[0] == 'SUCCESS') {
-              return toastResponse('SUCCESS', 'Bid increased, fetching chain data', 'SUCCESS');
-            } else {
-              console.log('@@--error2', transactionOutcome)
-              return toastResponse('ERROR', 'Bid increase failed', 'ERROR');
-            }
+          // refreshDB();
+          if (transactionOutcome[0] == 'SUCCESS') {
+            return toastResponse(
+              'SUCCESS',
+              'Bid placed, fetching chain data',
+              'SUCCESS'
+            );
+          } else {
+            return toastResponse('ERROR', 'Bid failed', 'ERROR');
           }
+        } else if (type == 'increase_bid') {
+          // if no user bid terminate action
+          if (!userBid) return;
+
+          let transactionOutcome: any = await liquidatorClient.increaseBid({
+            bid_increase: userBid,
+            market: new PublicKey(HONEY_MARKET_ID),
+            bidder: wallet.publicKey,
+            bid_mint: NATIVE_MINT
+          });
+
+          if (transactionOutcome[0] == 'SUCCESS') {
+            return toastResponse(
+              'SUCCESS',
+              'Bid increased, fetching chain data',
+              'SUCCESS'
+            );
+          } else {
+            console.log('@@--error2', transactionOutcome);
+            return toastResponse('ERROR', 'Bid increase failed', 'ERROR');
+          }
+        }
       } else {
-          return;
-        }
-      } catch (error) {
-          console.log('The error:', error)
-          return toastResponse('ERROR', 'Bid failed', 'ERROR');
-        }
+        return;
+      }
+    } catch (error) {
+      console.log('The error:', error);
+      return toastResponse('ERROR', 'Bid failed', 'ERROR');
+    }
   }
 
   function handleRevokeBid(type: string) {
@@ -498,11 +536,11 @@ const Liquidate: NextPage = () => {
 
   return (
     <LayoutRedesign>
-      <div>	
-        <Typography.Title className={pageTitle}>Liquidation</Typography.Title>	
-        <Typography.Text className={pageDescription}>	
-          Bid on discounted NFTs from borrowers {' '}	
-        </Typography.Text>	
+      <div>
+        <Typography.Title className={pageTitle}>Liquidation</Typography.Title>
+        <Typography.Text className={pageDescription}>
+          Bid on discounted NFTs from borrowers{' '}
+        </Typography.Text>
       </div>
       <HoneyContent>
         <HoneyTable
@@ -550,8 +588,8 @@ const Liquidate: NextPage = () => {
           ))}
       </HoneyContent>
       <HoneySider>
-        <LiquidateSidebar 
-          collectionId="0" 
+        <LiquidateSidebar
+          collectionId="0"
           biddingArray={biddingArray}
           userBalance={userBalance}
           highestBiddingValue={highestBiddingValue}

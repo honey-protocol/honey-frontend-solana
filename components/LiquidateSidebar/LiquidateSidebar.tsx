@@ -5,6 +5,8 @@ import HoneyTabs, { HoneyTabItem } from '../HoneyTabs/HoneyTabs';
 import EmptyStateDetails from '../EmptyStateDetails/EmptyStateDetails';
 import BidForm from '../BidForm/BidForm';
 import BidsList from '../BidsList/BidsList';
+import { useConnectedWallet } from '@saberhq/use-solana';
+import { useWalletKit } from '@gokiprotocol/walletkit';
 
 const items: [HoneyTabItem, HoneyTabItem] = [
   { label: 'Place a bid', key: 'bid' },
@@ -14,17 +16,18 @@ const items: [HoneyTabItem, HoneyTabItem] = [
 type Tab = 'bid' | 'current';
 
 const LiquidateSidebar = (props: LendSidebarProps) => {
-  const wallet = true;
-  const { 
-    collectionId, 
-    userBalance, 
-    biddingArray, 
-    highestBiddingValue, 
+  const {
+    collectionId,
+    userBalance,
+    biddingArray,
+    highestBiddingValue,
     currentUserBid,
     handleRevokeBid,
     handleIncreaseBid,
     handlePlaceBid
   } = props;
+  const wallet = useConnectedWallet();
+  const { connect } = useWalletKit();
   const [activeTab, setActiveTab] = useState<Tab>('bid');
 
   const handleTabChange = (tabKey: string) => {
@@ -53,17 +56,19 @@ const LiquidateSidebar = (props: LendSidebarProps) => {
           />
         ) : (
           <>
-            {
-              activeTab === 'bid' && 
-              <BidForm 
-                currentUserBid={currentUserBid} 
-                userBalance={userBalance} 
-                highestBiddingValue={highestBiddingValue} 
+            {activeTab === 'bid' && (
+              <BidForm
+                currentUserBid={currentUserBid}
+                userBalance={userBalance}
+                highestBiddingValue={highestBiddingValue}
                 handleRevokeBid={handleRevokeBid}
                 handleIncreaseBid={handleIncreaseBid}
                 handlePlaceBid={handlePlaceBid}
-              />}
-            {activeTab === 'current' && <BidsList biddingArray={biddingArray} />}
+              />
+            )}
+            {activeTab === 'current' && (
+              <BidsList biddingArray={biddingArray} />
+            )}
           </>
         )}
       </HoneyTabs>
