@@ -122,6 +122,14 @@ const BidForm = (props: BidFormProps) => {
           </div>
           <div className={styles.nftName}>Honey Eyes</div>
         </div>
+        <div className={styles.row}>
+          <div className={styles.col}>
+            <HoneyWarning
+              message="Want to learn more about liquidations ?"
+              link="https://docs.honey.finance/learn/liquidations"
+            ></HoneyWarning>
+          </div>
+        </div>
         {currentUserBid && (
           <div className={styles.row}>
             <div className={styles.col}>
