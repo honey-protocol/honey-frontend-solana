@@ -352,7 +352,7 @@ const Liquidate: NextPage = () => {
     debouncedSearch(searchQuery);
   }, [tableData]);
 
-  const columnsWidth: Array<number | string> = [250, 90, 150, 150, 200];
+  const columnsWidth: Array<number | string> = [250, 120, 150, 150, 170];
 
   const columns: ColumnType<LiquidateTableRow>[] = useMemo(
     () => [
