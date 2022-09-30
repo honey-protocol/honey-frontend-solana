@@ -34,11 +34,13 @@ const BidForm = (props: BidFormProps) => {
   } = props;
   const [valueUSD, setValueUSD] = useState<number>(0);
   const [valueSOL, setValueSOL] = useState<number>(0);
-  const [valueUSDC, setValueUSDC] = useState<number>(0);
+  // const [valueUSDC, setValueUSDC] = useState<number>(0);
   const [sliderValue, setSliderValue] = useState(0);
 
   const maxValue = 1000;
-  const usdcPrice = 0.95;
+
+  // TODO: import SOL price via oracle
+  const solPrice = 32;
 
   // Put your validators here
   const isSubmitButtonDisabled = () => {
@@ -47,39 +49,39 @@ const BidForm = (props: BidFormProps) => {
 
   const handleSliderChange = (value: number) => {
     setSliderValue(value);
-    setValueUSD(value / usdcPrice);
-    setValueUSDC(value);
+    setValueUSD(value * solPrice);
+    setValueSOL(value);
   };
 
   const handleUsdInputChange = (usdValue: number | undefined) => {
     if (!usdValue) {
       setValueUSD(0);
-      setValueUSDC(0);
+      setValueSOL(0);
       setSliderValue(0);
       return;
     }
     setValueUSD(usdValue);
-    setValueUSDC(usdValue / usdcPrice);
-    setSliderValue(usdValue);
+    setValueSOL(usdValue / solPrice);
+    setSliderValue(usdValue / solPrice);
   };
 
-  const handleUsdcInputChange = (usdcValue: number | undefined) => {
-    if (!usdcValue) {
+  const handleSolInputChange = (solValue: number | undefined) => {
+    if (!solValue) {
       setValueUSD(0);
-      setValueUSDC(0);
+      setValueSOL(0);
       setSliderValue(0);
       return;
     }
 
-    setValueUSD(usdcValue * usdcPrice);
-    setValueUSDC(usdcValue);
-    setSliderValue(usdcValue * usdcPrice);
+    setValueUSD(solValue * solPrice);
+    setValueSOL(solValue);
+    setSliderValue(solValue);
   };
 
   function triggerIndicator() {
     currentUserBid != 0
-      ? handlePlaceBid('increase_bid', valueUSD)
-      : handleIncreaseBid('place_bid', valueUSD);
+      ? handlePlaceBid('increase_bid', valueSOL)
+      : handleIncreaseBid('place_bid', valueSOL);
   }
 
   useEffect(() => {
@@ -183,9 +185,9 @@ const BidForm = (props: BidFormProps) => {
         <div className={styles.inputs}>
           <InputsBlock
             valueUSD={p(f(valueUSD))}
-            valueSOL={p(f(valueUSDC))}
+            valueSOL={p(f(valueSOL))}
             onChangeUSD={handleUsdInputChange}
-            onChangeSOL={handleUsdcInputChange}
+            onChangeSOL={handleSolInputChange}
             maxValue={maxValue}
           />
         </div>
