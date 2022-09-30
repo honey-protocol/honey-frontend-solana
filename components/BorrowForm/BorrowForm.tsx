@@ -413,13 +413,21 @@ const BorrowForm = (props: BorrowProps) => {
     );
   };
 
+  const handleCancel = () => {
+    if (typeof hideMobileSidebar === 'function') {
+      hideMobileSidebar();
+    }
+  };
+
   const renderFooter = () => {
     return toast?.state ? (
       <ToastComponent />
     ) : hasOpenPosition ? (
       <div className={styles.buttons}>
         <div className={styles.smallCol}>
-          <HoneyButton variant="secondary">Cancel</HoneyButton>
+          <HoneyButton variant="secondary" onClick={handleCancel}>
+            Cancel
+          </HoneyButton>
         </div>
         <div className={styles.bigCol}>
           <HoneyButton
@@ -440,7 +448,7 @@ const BorrowForm = (props: BorrowProps) => {
           <HoneyButton
             variant="secondary"
             disabled={isBorrowButtonDisabled()}
-            onClick={hideMobileSidebar}
+            onClick={handleCancel}
             isFluid
           >
             Cancel

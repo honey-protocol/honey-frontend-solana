@@ -65,7 +65,7 @@ import HoneyTableNameCell from '../../components/HoneyTable/HoneyTableNameCell/H
 
 const network = 'devnet'; // change to dynamic value
 
-const { formatPercent: fp, formatSol: fs, formatUsd: fu } = formatNumber;
+const { formatPercent: fp, formatSol: fs } = formatNumber;
 
 const Markets: NextPage = () => {
   const wallet = useConnectedWallet();
@@ -338,7 +338,9 @@ const Markets: NextPage = () => {
         available: totalMarketDeposits,
         // validated value to be totalMarkDeposits + totalMarketDebt
         value: sumOfTotalValue,
-        positions: userOpenPositions
+        allowance: userAllowance,
+        positions: userOpenPositions,
+        debt: userDebt
       }
     ];
 
@@ -352,6 +354,7 @@ const Markets: NextPage = () => {
   };
 
   const hideMobileSidebar = () => {
+    debugger;
     setShowMobileSidebar(false);
     document.body.classList.remove('disable-scroll');
   };
@@ -481,7 +484,7 @@ const Markets: NextPage = () => {
           sorter: (a: MarketTableRow, b: MarketTableRow) =>
             a.available - b.available,
           render: (available: number) => {
-            return <div className={style.availableCell}>{fu(available)}</div>;
+            return <div className={style.availableCell}>{fs(available)}</div>;
           }
         },
         {
@@ -525,49 +528,50 @@ const Markets: NextPage = () => {
   );
 
   const columnsMobile: ColumnType<MarketTableRow>[] = useMemo(
-    () =>
-      [
-        {
-          width: columnsWidth[0],
-          dataIndex: 'name',
-          key: 'name',
-          render: (name: string,  row: MarketTableRow) => {
-            return (
-              <>
-                <HoneyTableNameCell
-                  leftSide={
-                   <>
-                     <div className={style.logoWrapper}>
-                       <div className={style.collectionLogo}>
-                         <HexaBoxContainer>
-                           <Image src={honeyEyes} />
-                         </HexaBoxContainer>
-                       </div>
-                     </div>
-                     <div className={style.nameCellMobile}>
-                       <div className={style.collectionName}>{name}</div>
-                       <div className={style.rateCellMobile}>{fp(row.rate * 100)}</div>
-                     </div>
-                   </>
-                  }
-                  rightSide={
-                    <div className={style.buttonsCell}>
-                      <HoneyButton variant="text">
-                        View <div className={style.arrowIcon} />
-                      </HoneyButton>
+    () => [
+      {
+        width: columnsWidth[0],
+        dataIndex: 'name',
+        key: 'name',
+        render: (name: string, row: MarketTableRow) => {
+          return (
+            <>
+              <HoneyTableNameCell
+                leftSide={
+                  <>
+                    <div className={style.logoWrapper}>
+                      <div className={style.collectionLogo}>
+                        <HexaBoxContainer>
+                          <Image src={honeyEyes} />
+                        </HexaBoxContainer>
+                      </div>
                     </div>
-                  }
-                />
+                    <div className={style.nameCellMobile}>
+                      <div className={style.collectionName}>{name}</div>
+                      <div className={style.rateCellMobile}>
+                        {fp(row.rate * 100)}
+                      </div>
+                    </div>
+                  </>
+                }
+                rightSide={
+                  <div className={style.buttonsCell}>
+                    <HoneyButton variant="text">
+                      View <div className={style.arrowIcon} />
+                    </HoneyButton>
+                  </div>
+                }
+              />
 
-                <HoneyTableRow>
-                  <div className={style.rateCell}>{fp(row.rate * 100)}</div>
-                  <div className={style.availableCell}>{fu(row.available)}</div>
-                </HoneyTableRow>
-              </>
-            );
-          }
-        },
-      ],
+              <HoneyTableRow>
+                <div className={style.rateCell}>{fp(row.rate * 100)}</div>
+                <div className={style.availableCell}>{fs(row.available)}</div>
+              </HoneyTableRow>
+            </>
+          );
+        }
+      }
+    ],
     [isMyCollectionsFilterEnabled, tableData, searchQuery]
   );
 
@@ -598,16 +602,16 @@ const Markets: NextPage = () => {
       width: columnsWidth[1],
       render: debt => (
         <div className={style.expandedRowCell}>
-          <InfoBlock title={'Debt:'} value={fs(userDebt)} />
+          <InfoBlock title={'Debt:'} value={fs(debt)} />
         </div>
       )
     },
     {
-      dataIndex: 'available',
+      dataIndex: 'allowance',
       width: columnsWidth[2],
-      render: available => (
+      render: allowance => (
         <div className={style.expandedRowCell}>
-          <InfoBlock title={'Allowance:'} value={fs(userAllowance)} />
+          <InfoBlock title={'Allowance:'} value={fs(allowance)} />
         </div>
       )
     },
@@ -657,7 +661,7 @@ const Markets: NextPage = () => {
       dataIndex: 'debt',
       render: debt => (
         <div className={style.expandedRowCell}>
-          <InfoBlock title={'Debt:'} value={fu(userDebt)} />
+          <InfoBlock title={'Debt:'} value={fs(userDebt)} />
         </div>
       )
     },
@@ -665,7 +669,7 @@ const Markets: NextPage = () => {
       dataIndex: 'available',
       render: available => (
         <div className={style.expandedRowCell}>
-          <InfoBlock title={'Allowance:'} value={fu(nftPrice * MAX_LTV)} />
+          <InfoBlock title={'Allowance:'} value={fs(nftPrice * MAX_LTV)} />
         </div>
       )
     },
@@ -675,7 +679,7 @@ const Markets: NextPage = () => {
       render: () => (
         <div className={style.buttonsCell}>
           <HoneyButton variant="text">
-             <div className={style.arrowRightIcon} />
+            <div className={style.arrowRightIcon} />
           </HoneyButton>
         </div>
       )
@@ -692,16 +696,20 @@ const Markets: NextPage = () => {
           </HexaBoxContainer>
         </div>
         <div className={style.footerText}>
-        <span className={style.footerTitle}>
-          You can’t add one more NFT to this market
-        </span>
+          <span className={style.footerTitle}>
+            You can’t add one more NFT to this market
+          </span>
           <span className={style.footerDescription}>
-          Choose another market or connect another wallet
-        </span>
+            Choose another market or connect another wallet
+          </span>
         </div>
       </div>
       <div className={style.footerButton}>
-        <HoneyButton className={style.mobileConnectButton} variant="secondary" isFluid={windowWidth < TABLET_BP}>
+        <HoneyButton
+          className={style.mobileConnectButton}
+          variant="secondary"
+          isFluid={windowWidth < TABLET_BP}
+        >
           <div className={style.swapWalletIcon} />
           Connect another wallet
         </HoneyButton>
@@ -936,7 +944,11 @@ const Markets: NextPage = () => {
                           dataSource={record.positions}
                           pagination={false}
                           showHeader={false}
-                          footer={record.positions.length ? ExpandedTableFooter : undefined}
+                          footer={
+                            record.positions.length
+                              ? ExpandedTableFooter
+                              : undefined
+                          }
                         />
                       </div>
                     </div>
@@ -979,7 +991,11 @@ const Markets: NextPage = () => {
                           dataSource={record.positions}
                           pagination={false}
                           showHeader={false}
-                          footer={ExpandedTableFooter}
+                          footer={
+                            record.positions.length
+                              ? ExpandedTableFooter
+                              : undefined
+                          }
                         />
                       </div>
                     </div>

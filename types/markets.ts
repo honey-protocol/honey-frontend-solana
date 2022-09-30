@@ -5,6 +5,8 @@ export type MarketTableRow = {
   key: string;
   name: string;
   rate: number;
+  debt: number;
+  allowance: number;
   available: number;
   value: number;
   positions: Array<MarketTablePosition>;
@@ -20,18 +22,20 @@ export type MarketTablePosition = {
 };
 
 export type UserNFTs = {
-  creators: [{
-    address: string,
-    share: number,
-    verified: number
-  }];
+  creators: [
+    {
+      address: string;
+      share: number;
+      verified: number;
+    }
+  ];
   image: string;
   mint: string;
   name: string;
   symbol: string;
   tokenId: string;
   updateAuthority: string;
-}
+};
 
 export type OpenPositions = {
   image: string;
@@ -40,7 +44,7 @@ export type OpenPositions = {
   symbol: string;
   updateAuthority: PublicKey;
   uri: string;
-}
+};
 
 export interface HoneyTableColumnType<RecordType>
   extends ColumnType<RecordType> {
