@@ -160,7 +160,7 @@ const BidForm = (props: BidFormProps) => {
               }
             />
           </div>
-          <div className={styles.col}>
+          {/* <div className={styles.col}>
             <InfoBlock
               title={
                 <span className={hAlign}>
@@ -170,7 +170,7 @@ const BidForm = (props: BidFormProps) => {
               value={fs(highestBiddingValue * 1.1)}
               valueSize="big"
             />
-          </div>
+          </div> */}
         </div>
         <div className={styles.row}>
           <div className={styles.col}>
