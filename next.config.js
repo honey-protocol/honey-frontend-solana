@@ -1,6 +1,6 @@
-const {createVanillaExtractPlugin} = require('@vanilla-extract/next-plugin');
+const { createVanillaExtractPlugin } = require('@vanilla-extract/next-plugin');
 const withVanillaExtract = createVanillaExtractPlugin();
-const {PHASE_DEVELOPMENT_SERVER} = require('next/constants')
+const { PHASE_DEVELOPMENT_SERVER } = require('next/constants');
 
 /** @type {import('next').NextConfig} */
 const mainNetEndpoint = process.env.NEXT_PUBLIC_RPC_NODE;
@@ -18,7 +18,7 @@ const ContentSecurityPolicy = `
   style-src 'self' honey.finance;
   font-src 'self';
   frame-ancestors 'none';
-`
+`;
 // Add security headers configuration
 const securityHeaders = [
   // Not supported on newest browser versions
@@ -30,9 +30,9 @@ const securityHeaders = [
     key: 'Content-Security-Policy',
     value: ContentSecurityPolicy.replace(/\s{2,}/g, ' ').trim()
   }
-]
+];
 
-module.exports = (phase, {defaultConfig}) => {
+module.exports = (phase, { defaultConfig }) => {
   if (phase === PHASE_DEVELOPMENT_SERVER) {
     const env = {
       NETWORK: 'devnet',
@@ -42,11 +42,11 @@ module.exports = (phase, {defaultConfig}) => {
           {
             // Apply these headers to all routes in your application.
             source: '/(.*)',
-            headers: securityHeaders,
-          },
-        ]
+            headers: securityHeaders
+          }
+        ];
       }
-    }
+    };
 
     const devNextConfig = {
       reactStrictMode: true,
@@ -55,34 +55,56 @@ module.exports = (phase, {defaultConfig}) => {
         domains: ['www.arweave.net']
       }
     };
-    return withVanillaExtract(devNextConfig)
+    return withVanillaExtract(devNextConfig);
   } else {
+    // const env = {
+    //   NETWORK: "mainnet-beta",
+    //   NETWORK_CONFIGURATION: {
+    //     'mainnet-beta': {
+    //       name: 'mainnet-beta',
+    //       endpoint: mainNetEndpoint,
+    //       confirmTransactionInitialTimeout: 180000,
+    //     }
+    //   },
+    //   async headers() {
+    //     return [
+    //       {
+    //         // Apply these headers to all routes in your application.
+    //         source: '/(.*)',
+    //         headers: securityHeaders,
+    //       },
+    //     ]
+    //   }
+    // }
+    // const ProdNextConfig = {
+    //   reactStrictMode: true,
+    //   env: env,
+    //   images: {
+    //     domains: ['www.arweave.net']
+    //   }
+    // };
+    // return withVanillaExtract(ProdNextConfig)
     const env = {
-      NETWORK: "mainnet-beta",
-      NETWORK_CONFIGURATION: {
-        'mainnet-beta': {
-          name: 'mainnet-beta',
-          endpoint: mainNetEndpoint,
-          confirmTransactionInitialTimeout: 180000,
-        }
-      },
+      NETWORK: 'devnet',
+      NETWORK_CONFIGURATION: undefined,
       async headers() {
         return [
           {
             // Apply these headers to all routes in your application.
             source: '/(.*)',
-            headers: securityHeaders,
-          },
-        ]
+            headers: securityHeaders
+          }
+        ];
       }
-    }
-    const ProdNextConfig = {
+    };
+
+    const devNextConfig = {
       reactStrictMode: true,
       env: env,
       images: {
         domains: ['www.arweave.net']
       }
     };
-    return withVanillaExtract(ProdNextConfig)
+    return withVanillaExtract(devNextConfig);
   }
-}
+};
