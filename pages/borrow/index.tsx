@@ -59,11 +59,13 @@ import { TABLET_BP } from '../../constants/breakpoints';
 import useWindowSize from '../../hooks/useWindowSize';
 import { Typography } from 'antd';
 import { pageDescription, pageTitle } from 'styles/common.css';
+import HoneyTableRow from 'components/HoneyTable/HoneyTableRow/HoneyTableRow';
+import HoneyTableNameCell from '../../components/HoneyTable/HoneyTableNameCell/HoneyTableNameCell';
 // import { network } from 'pages/_app';
 
 const network = 'devnet'; // change to dynamic value
 
-const { formatPercent: fp, formatSol: fs } = formatNumber;
+const { formatPercent: fp, formatSol: fs, formatUsd: fu } = formatNumber;
 
 const Markets: NextPage = () => {
   const wallet = useConnectedWallet();
@@ -418,7 +420,6 @@ const Markets: NextPage = () => {
           title: SearchForm,
           dataIndex: 'name',
           key: 'name',
-          hidden: windowWidth < TABLET_BP,
           render: (name: string) => {
             return (
               <div className={style.nameCell}>
@@ -430,46 +431,6 @@ const Markets: NextPage = () => {
                   </div>
                 </div>
                 <div className={style.collectionName}>{name}</div>
-              </div>
-            );
-          }
-        },
-        {
-          title: ({ sortColumns }: ColumnTitleProps<MarketTableRow>) => {
-            const sortOrder = getColumnSortStatus(sortColumns, 'rate');
-            return (
-              <div
-                className={
-                  style.headerCell[
-                    sortOrder === 'disabled' ? 'disabled' : 'active'
-                  ]
-                }
-              >
-                <span>Rate</span>
-                <div className={style.sortIcon[sortOrder]} />
-              </div>
-            );
-          },
-          dataIndex: 'name',
-          key: 'name',
-          hidden: windowWidth > TABLET_BP,
-          sorter: (a: MarketTableRow, b: MarketTableRow) => a.rate - b.rate,
-          render: (name: string, row: MarketTableRow) => {
-            return (
-              <div className={style.nameCell}>
-                <div className={style.logoWrapper}>
-                  <div className={style.collectionLogo}>
-                    <HexaBoxContainer>
-                      <Image src={honeyEyes} />
-                    </HexaBoxContainer>
-                  </div>
-                </div>
-                <div className={style.nameCellMobile}>
-                  <div className={style.collectionName}>{name}</div>
-                  <div className={style.rateCellMobile}>
-                    {fp(row.rate * 100)}
-                  </div>
-                </div>
               </div>
             );
           }
@@ -520,31 +481,7 @@ const Markets: NextPage = () => {
           sorter: (a: MarketTableRow, b: MarketTableRow) =>
             a.available - b.available,
           render: (available: number) => {
-            return <div className={style.availableCell}>{fs(available)}</div>;
-          }
-        },
-        {
-          title: ({ sortColumns }: ColumnTitleProps<MarketTableRow>) => {
-            const sortOrder = getColumnSortStatus(sortColumns, 'available');
-            return (
-              <div
-                className={
-                  style.headerCell[
-                    sortOrder === 'disabled' ? 'disabled' : 'active'
-                  ]
-                }
-              >
-                <span>Available</span>{' '}
-                <div className={style.sortIcon[sortOrder]} />
-              </div>
-            );
-          },
-          dataIndex: 'available',
-          hidden: windowWidth > TABLET_BP,
-          sorter: (a: MarketTableRow, b: MarketTableRow) =>
-            a.available - b.available,
-          render: (available: number) => {
-            return <div className={style.availableCell}>{fs(available)}</div>;
+            return <div className={style.availableCell}>{fu(available)}</div>;
           }
         },
         {
@@ -565,30 +502,6 @@ const Markets: NextPage = () => {
             );
           },
           dataIndex: 'value',
-          hidden: windowWidth < TABLET_BP,
-          sorter: (a: MarketTableRow, b: MarketTableRow) => a.value - b.value,
-          render: (value: number) => {
-            return <div className={style.valueCell}>{fs(value)}</div>;
-          }
-        },
-        {
-          title: ({ sortColumns }: ColumnTitleProps<MarketTableRow>) => {
-            const sortOrder = getColumnSortStatus(sortColumns, 'value');
-            return (
-              <div
-                className={
-                  style.headerCell[
-                    sortOrder === 'disabled' ? 'disabled' : 'active'
-                  ]
-                }
-              >
-                <span>Value</span>
-                <div className={style.sortIcon[sortOrder]} />
-              </div>
-            );
-          },
-          dataIndex: 'value',
-          hidden: windowWidth > TABLET_BP,
           sorter: (a: MarketTableRow, b: MarketTableRow) => a.value - b.value,
           render: (value: number) => {
             return <div className={style.valueCell}>{fs(value)}</div>;
@@ -597,7 +510,6 @@ const Markets: NextPage = () => {
         {
           width: columnsWidth[4],
           title: MyCollectionsToggle,
-          hidden: windowWidth < TABLET_BP,
           render: (_: null, row: MarketTableRow) => {
             return (
               <div className={style.buttonsCell}>
@@ -607,23 +519,56 @@ const Markets: NextPage = () => {
               </div>
             );
           }
-        },
-        {
-          width: '60px',
-          title: '',
-          hidden: windowWidth > TABLET_BP,
-          render: (_: null, row: MarketTableRow) => {
-            return (
-              <div className={style.buttonsCell}>
-                <HoneyButton variant="text">
-                  <div className={style.arrowIcon} />
-                </HoneyButton>
-              </div>
-            );
-          }
         }
       ].filter(column => !column.hidden),
     [isMyCollectionsFilterEnabled, tableData, searchQuery, windowWidth]
+  );
+
+  const columnsMobile: ColumnType<MarketTableRow>[] = useMemo(
+    () =>
+      [
+        {
+          width: columnsWidth[0],
+          dataIndex: 'name',
+          key: 'name',
+          render: (name: string,  row: MarketTableRow) => {
+            return (
+              <>
+                <HoneyTableNameCell
+                  leftSide={
+                   <>
+                     <div className={style.logoWrapper}>
+                       <div className={style.collectionLogo}>
+                         <HexaBoxContainer>
+                           <Image src={honeyEyes} />
+                         </HexaBoxContainer>
+                       </div>
+                     </div>
+                     <div className={style.nameCellMobile}>
+                       <div className={style.collectionName}>{name}</div>
+                       <div className={style.rateCellMobile}>{fp(row.rate * 100)}</div>
+                     </div>
+                   </>
+                  }
+                  rightSide={
+                    <div className={style.buttonsCell}>
+                      <HoneyButton variant="text">
+                        View <div className={style.arrowIcon} />
+                      </HoneyButton>
+                    </div>
+                  }
+                />
+
+                <HoneyTableRow>
+                  <div className={style.rateCell}>{fp(row.rate * 100)}</div>
+                  <div className={style.availableCell}>{fu(row.available)}</div>
+                </HoneyTableRow>
+              </>
+            );
+          }
+        },
+      ],
+    [isMyCollectionsFilterEnabled, tableData, searchQuery]
   );
 
   const expandColumns: ColumnType<MarketTablePosition>[] = [
@@ -688,32 +633,75 @@ const Markets: NextPage = () => {
     }
   ];
 
+  const expandColumnsMobile: ColumnType<MarketTablePosition>[] = [
+    {
+      dataIndex: 'name',
+      render: (name, record) => (
+        <div className={style.expandedRowNameCell}>
+          <div className={style.expandedRowIcon} />
+          <div className={style.collectionLogo}>
+            <HexaBoxContainer>
+              <Image src={honeyEyes} />
+            </HexaBoxContainer>
+          </div>
+          <div className={style.nameCellText}>
+            <div className={style.collectionNameMobile}>{name}</div>
+            <div className={style.risk.safe}>
+              <span className={style.valueCell}>{fp(loanToValue)}</span>
+            </div>
+          </div>
+        </div>
+      )
+    },
+    {
+      dataIndex: 'debt',
+      render: debt => (
+        <div className={style.expandedRowCell}>
+          <InfoBlock title={'Debt:'} value={fu(userDebt)} />
+        </div>
+      )
+    },
+    {
+      dataIndex: 'available',
+      render: available => (
+        <div className={style.expandedRowCell}>
+          <InfoBlock title={'Allowance:'} value={fu(nftPrice * MAX_LTV)} />
+        </div>
+      )
+    },
+    {
+      title: '',
+      width: '50px',
+      render: () => (
+        <div className={style.buttonsCell}>
+          <HoneyButton variant="text">
+             <div className={style.arrowRightIcon} />
+          </HoneyButton>
+        </div>
+      )
+    }
+  ];
+
   const ExpandedTableFooter = () => (
     <div className={style.expandedSection}>
       <div className={style.expandedSectionFooter}>
         <div className={style.expandedRowIcon} />
-        <div className={style.footer}>
-          <div className={style.collectionLogo}>
-            <HexaBoxContainer variant="gray">
-              <div className={style.lampIconStyle} />
-            </HexaBoxContainer>
-          </div>
-          <div className={style.footerText}>
-            <span className={style.footerTitle}>
-              You can’t add one more NFT to this market
-            </span>
-            <span className={style.footerDescription}>
-              Choose another market or connect another wallet
-            </span>
-          </div>
+        <div className={style.collectionLogo}>
+          <HexaBoxContainer variant="gray">
+            <div className={style.lampIconStyle} />
+          </HexaBoxContainer>
+        </div>
+        <div className={style.footerText}>
+        <span className={style.footerTitle}>
+          You can’t add one more NFT to this market
+        </span>
+          <span className={style.footerDescription}>
+          Choose another market or connect another wallet
+        </span>
         </div>
       </div>
       <div className={style.footerButton}>
-        <HoneyButton
-          className={style.mobileConnectButton}
-          variant="secondary"
-          isFluid={windowWidth < TABLET_BP && true}
-        >
+        <HoneyButton className={style.mobileConnectButton} variant="secondary" isFluid={windowWidth < TABLET_BP}>
           <div className={style.swapWalletIcon} />
           Connect another wallet
         </HoneyButton>
@@ -915,44 +903,92 @@ const Markets: NextPage = () => {
             <MyCollectionsToggle />
           </div>
         </div>
-        <HoneyTable
-          hasRowsShadow={true}
-          tableLayout="fixed"
-          columns={columns}
-          dataSource={tableDataFiltered}
-          pagination={false}
-          className={classNames(style.table, {
-            [style.emptyTable]: !tableDataFiltered.length
-          })}
-          expandable={{
-            // we use our own custom expand column
-            showExpandColumn: false,
-            onExpand: (expanded, row) =>
-              setExpandedRowKeys(expanded ? [row.key] : []),
-            expandedRowKeys,
-            expandedRowRender: record => {
-              return (
-                <div
-                  className={style.expandSection}
-                  onClick={showMobileSidebar}
-                >
-                  <div className={style.dashedDivider} />
-                  <HoneyTable
-                    tableLayout="fixed"
-                    className={style.expandContentTable}
-                    columns={expandColumns}
-                    dataSource={record.positions}
-                    pagination={false}
-                    showHeader={false}
-                    footer={
-                      record.positions.length ? ExpandedTableFooter : undefined
-                    }
-                  />
-                </div>
-              );
-            }
-          }}
-        />
+
+        <div className={style.hideTablet}>
+          <HoneyTable
+            hasRowsShadow={true}
+            tableLayout="fixed"
+            columns={columns}
+            dataSource={tableDataFiltered}
+            pagination={false}
+            className={classNames(style.table, {
+              [style.emptyTable]: !tableDataFiltered.length
+            })}
+            expandable={{
+              // we use our own custom expand column
+              showExpandColumn: false,
+              onExpand: (expanded, row) =>
+                setExpandedRowKeys(expanded ? [row.key] : []),
+              expandedRowKeys,
+              expandedRowRender: record => {
+                return (
+                  <>
+                    <div>
+                      <div
+                        className={style.expandSection}
+                        onClick={showMobileSidebar}
+                      >
+                        <div className={style.dashedDivider} />
+                        <HoneyTable
+                          tableLayout="fixed"
+                          className={style.expandContentTable}
+                          columns={expandColumns}
+                          dataSource={record.positions}
+                          pagination={false}
+                          showHeader={false}
+                          footer={record.positions.length ? ExpandedTableFooter : undefined}
+                        />
+                      </div>
+                    </div>
+                  </>
+                );
+              }
+            }}
+          />
+        </div>
+
+        <div className={style.showTablet}>
+          <HoneyTable
+            hasRowsShadow={true}
+            tableLayout="fixed"
+            columns={columnsMobile}
+            dataSource={tableDataFiltered}
+            pagination={false}
+            showHeader={false}
+            className={classNames(style.table, {
+              [style.emptyTable]: !tableDataFiltered.length
+            })}
+            expandable={{
+              // we use our own custom expand column
+              showExpandColumn: false,
+              onExpand: (expanded, row) =>
+                setExpandedRowKeys(expanded ? [row.key] : []),
+              expandedRowKeys,
+              expandedRowRender: record => {
+                return (
+                  <>
+                    <div>
+                      <div
+                        className={style.expandSection}
+                        onClick={showMobileSidebar}
+                      >
+                        <div className={style.dashedDivider} />
+                        <HoneyTable
+                          className={style.expandContentTable}
+                          columns={expandColumnsMobile}
+                          dataSource={record.positions}
+                          pagination={false}
+                          showHeader={false}
+                          footer={ExpandedTableFooter}
+                        />
+                      </div>
+                    </div>
+                  </>
+                );
+              }
+            }}
+          />
+        </div>
         {!tableDataFiltered.length &&
           (isMyCollectionsFilterEnabled ? (
             <div className={style.emptyStateContainer}>

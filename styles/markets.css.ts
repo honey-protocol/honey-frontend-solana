@@ -15,7 +15,8 @@ export const nameCell = style({
 export const nameCellMobile = style({
   display: 'flex',
   justifyContent: 'center',
-  flexDirection: 'column'
+  flexDirection: 'column',
+  overflow: 'hidden'
 });
 
 export const logoWrapper = style({
@@ -28,27 +29,25 @@ export const collectionLogo = style({
   flexShrink: 0
 });
 
-export const collectionNameExpand = style([
-  typography.body,
-  {
-    color: vars.colors.black,
-    overflow: 'hidden',
-    textOverflow: 'ellipsis',
-    whiteSpace: 'nowrap',
-    '@media': {
-      [`screen and (max-width: ${breakpoints.mobile}px)`]: {
-        fontSize: '12px'
-      }
-    }
-  }
-]);
-
 export const collectionName = style([
   typography.body,
   {
     whiteSpace: 'nowrap',
     overflow: 'hidden',
-    textOverflow: 'ellipsis'
+    textOverflow: 'ellipsis',
+  }
+]);
+export const collectionNameMobile = style([
+  typography.body,
+  {
+    whiteSpace: 'nowrap',
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+    '@media': {
+      [`screen and (max-width: ${breakpoints.mobile}px)`]: {
+        fontSize: 12
+      }
+    }
   }
 ]);
 
@@ -126,12 +125,30 @@ export const arrowIcon = style({
 
 export const mobileTableHeader = style({
   display: 'flex',
-  alignItems: 'ce',
+  alignItems: 'center',
   background: vars.colors.grayLight,
   borderRadius: 12,
   '@media': {
     [`screen and (min-width: ${breakpoints.tablet}px)`]: {
       display: 'none'
+    }
+  }
+});
+
+export const showTablet = style({
+  display: 'block',
+  '@media': {
+    [`screen and (min-width: ${breakpoints.tablet}px)`]: {
+      display: 'none'
+    }
+  }
+});
+
+export const hideTablet = style({
+  display: 'none',
+  '@media': {
+    [`screen and (min-width: ${breakpoints.tablet}px)`]: {
+      display: 'block'
     }
   }
 });
@@ -146,7 +163,13 @@ const tableChildSelector = (selector: string) => {
 };
 const tcs = tableChildSelector;
 globalStyle(tcs(`.ant-table-cell`), {
-  borderSpacing: '0 !important'
+  borderSpacing: '0 !important',
+  padding: 8,
+  '@media': {
+    [`screen and (min-width: ${breakpoints.tablet}px)`]: {
+      padding: 15
+    }
+  }
 });
 globalStyle(tcs(`.ant-table-expanded-row > .ant-table-cell`), {
   paddingBottom: 0,
@@ -236,7 +259,13 @@ globalStyle(tcs(`.ant-table-column-sorter`), {
 
 export const expandSection = style({
   position: 'relative',
-  overflow: 'hidden'
+  overflow: 'hidden',
+  paddingTop: 5,
+  '@media': {
+    [`screen and (min-width: ${breakpoints.tablet}px)`]: {
+      paddingTop: 0
+    }
+  }
 });
 export const expandContentTable = style({});
 const expandContentTableChildSelector = (selector: string) => {
@@ -251,7 +280,7 @@ globalStyle(ectcs(`.ant-table-cell`), {
     [`screen and (min-width: ${breakpoints.tablet}px)`]: {
       padding: 15
     }
-  }
+  },
 });
 globalStyle(ectcs(`.ant-table-row`), {
   borderSpacing: 0
@@ -333,7 +362,8 @@ export const arrowRightIcon = style({
 export const nameCellText = style({
   display: 'flex',
   flexDirection: 'column',
-  marginLeft: 12
+  marginLeft: 12,
+  overflow: 'hidden'
 });
 
 export const expandedSection = style({
@@ -359,7 +389,7 @@ export const expandedSectionFooter = style({
 
 export const footerButton = style({
   width: '100%',
-  marginTop: 6,
+  marginTop: 16,
   '@media': {
     [`screen and (min-width: ${breakpoints.tablet}px)`]: {
       width: 'auto',
@@ -385,20 +415,40 @@ export const footerText = style({
   flexDirection: 'column',
   marginLeft: 15
 });
-export const footerTitle = style([typography.body]);
+export const footerTitle = style([typography.body, {
+  '@media': {
+    [`screen and (max-width: ${breakpoints.mobile}px)`]: {
+      fontSize: 12
+    }
+  }
+}]);
 export const footerDescription = style([
   typography.description,
-  { color: vars.colors.grayTransparent }
+  {
+    color: vars.colors.grayTransparent,
+    '@media': {
+      [`screen and (max-width: ${breakpoints.mobile}px)`]: {
+        fontSize: 12
+      }
+    }
+  }
 ]);
 export const dashedDivider = style({
   position: 'absolute',
   top: 0,
-  left: 70,
+  left: 0,
   width: '100%',
   height: 2,
-  backgroundImage: `linear-gradient(to right, ${vars.colors.lightGrayTransparent} 50%, transparent 50%)`,
+  backgroundImage: `linear-gradient(to right, ${vars.colors.black} 50%, transparent 50%)`,
   backgroundRepeat: 'repeat-x, repeat-x, repeat-y, repeat-y',
-  backgroundSize: '20px 2px, 20px 2px, 2px 20px, 2px 20px'
+  backgroundSize: '20px 1px, 20px 1px, 1px 20px, 1px 20px',
+  '@media': {
+    [`screen and (min-width: ${breakpoints.tablet}px)`]: {
+      left: 70,
+      backgroundImage: `linear-gradient(to right, ${vars.colors.lightGrayTransparent} 50%, transparent 50%)`,
+      backgroundSize: '20px 2px, 20px 2px, 2px 20px, 2px 20px',
+    }
+  }
 });
 globalStyle(tcs(`.ant-table-column-sorter`), {
   display: 'none'
