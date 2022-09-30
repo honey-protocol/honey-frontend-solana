@@ -4,17 +4,19 @@ import c from 'classnames';
 import { CurrentBidCardProps } from './types';
 import { dateFromTimestamp, formatNumber } from '../../helpers/format';
 
-const { format: f, formatPercent: fp, formatUsd: fu } = formatNumber;
+const {
+  format: f,
+  formatPercent: fp,
+  formatUsd: fu,
+  formatSol: fs
+} = formatNumber;
+
+const solPrice = 32;
 
 const CurrentBidCard = (props: CurrentBidCardProps) => {
-  const {
-    date,
-    usdcValue,
-    usdcAmount,
-    walletAddress,
-    hasBorder = true
-  } = props;
+  const { date, usdcValue, solAmount, walletAddress, hasBorder = true } = props;
 
+  // TODO: add SOL/USDC conversion?
   return (
     <div className={c(styles.bidCard, { [styles.hasBorder]: hasBorder })}>
       <div className={styles.bidCardLeft}>
@@ -23,12 +25,16 @@ const CurrentBidCard = (props: CurrentBidCardProps) => {
           <p className={styles.bidCardDate}>{dateFromTimestamp(date)}</p>
         </div>
 
-        <div onClick={() => navigator.clipboard.writeText(walletAddress)} className={styles.bidCardCopyIcon} />
+        <div
+          onClick={() => navigator.clipboard.writeText(walletAddress)}
+          className={styles.bidCardCopyIcon}
+        />
       </div>
-
       <div className={styles.bidCardRight}>
-        <p className={styles.bidCardPrice}>{fu(usdcAmount)}</p>
-        <p className={styles.bidCardUsdcCounts}>{f(usdcValue)} USDC</p>
+        <p className={styles.bidCardPrice}>{fs(solAmount)}</p>
+        <p className={styles.bidCardUsdcCounts}>
+          {f(usdcValue * solPrice)} USDC
+        </p>
       </div>
     </div>
   );

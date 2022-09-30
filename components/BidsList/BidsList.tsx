@@ -7,11 +7,11 @@ import CurrentBidList from '../CurrentBidList/CurrentBidList';
 import { BidListProps } from './types';
 import { LAMPORTS_PER_SOL } from '@solana/web3.js';
 
-
 const BidsList = (props: BidListProps) => {
-  const {biddingArray} = props;
+  const { biddingArray } = props;
   const [valueUSD, setValueUSD] = useState<number>();
   const [valueUSDC, setValueUSDC] = useState<number>();
+  const [valueSOL, setValueSOL] = useState<number>(0);
   const [convertedBiddingArray, setConvertedBiddingArray] = useState([]);
 
   // Put your validators here
@@ -21,14 +21,14 @@ const BidsList = (props: BidListProps) => {
 
   async function handleConvertion(bArray: any) {
     let converted = await bArray.map((bid: any, index: number) => {
-      console.log('@@@@@@', bid)
+      console.log('@@@@@@', bid);
       return {
         id: index,
         date: 1663663018156,
         walletAddress: bid.bidder,
-        usdcValue: (bid.bidLimit / LAMPORTS_PER_SOL),
-        usdcAmount: (bid.bidLimit / LAMPORTS_PER_SOL)
-      }
+        usdcValue: bid.bidLimit / LAMPORTS_PER_SOL,
+        solAmount: bid.bidLimit / LAMPORTS_PER_SOL
+      };
     });
 
     setConvertedBiddingArray(converted);
