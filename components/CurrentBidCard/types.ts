@@ -5,4 +5,6 @@ export type CurrentBidCardProps = {
   walletAddress: string;
   usdcAmount: number;
   usdcValue: number;
+  solAmount: number;
+  solValue: number;
 };
