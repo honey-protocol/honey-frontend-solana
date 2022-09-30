@@ -47,6 +47,7 @@ const LiquidateSidebar = (props: LendSidebarProps) => {
             title="You didn’t connect any wallet yet"
             description="First, choose a NFT collection"
             btnTitle="CONNECT WALLET"
+            onBtnClick={connect}
           />
         ) : !collectionId ? (
           <EmptyStateDetails
