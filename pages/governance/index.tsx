@@ -38,16 +38,26 @@ const Governance: NextPage = () => {
       {
         id: 1,
         name: 'Upgrade the StarkProxy smart contract',
-        voted: 319487,
+        votes: 25000,
         against: 313,
+        votesRequired: 50000,
         status: 'approved'
       },
       {
         id: 2,
         name: 'Upgrade the StarkProxy smart contract',
-        voted: 319487,
+        votes: 39487,
         against: 313,
+        votesRequired: 50000,
         status: 'approved'
+      },
+      {
+        id: 3,
+        name: 'Draft proposal',
+        votes: 5000,
+        against: 313,
+        votesRequired: 50000,
+        status: 'draft'
       }
     ];
 
@@ -126,10 +136,10 @@ const Governance: NextPage = () => {
         },
         width: columnsWidth[1],
         dataIndex: 'status',
-        render: () => {
+        render: (status, row: GovernanceTableRow) => {
           return (
             <div>
-              <ProgressStatus percent={60} />
+              <ProgressStatus percent={(row.votes / row.votesRequired) * 100} />
             </div>
           );
         }

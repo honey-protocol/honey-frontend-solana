@@ -1,8 +1,9 @@
 export type GovernanceTableRow = {
   id: number;
   name: string;
-  voted: number;
+  votes: number;
   against: number;
+  votesRequired: number;
   status: ProposalStatus;
 };
 
