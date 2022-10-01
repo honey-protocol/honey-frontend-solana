@@ -12,7 +12,6 @@ export const numberFormatterMobile = new Intl.NumberFormat('en-US', {
   maximumFractionDigits: 2
 });
 
-
 export const formatNumber = {
   format: (val?: number): string => {
     if (!val) {
@@ -76,6 +75,38 @@ export const formatNumber = {
    */
   formatUsd: (val?: number) => {
     return `$ ${formatNumber.format(val)}`;
+  },
+
+  /**
+   * Converts 1000 into 1K, 1 000 000 to 1M, 1 000 000 000 to 1B, etc
+   * @param value
+   * @param decimals
+   */
+  formatShortName: (value: number, decimals = 2): string => {
+    if (value < 1000) {
+      return String(formatNumber.format(value));
+    }
+    const templates = [
+      { value: 1, symbol: '' },
+      { value: 1e3, symbol: 'K' },
+      { value: 1e6, symbol: 'M' }
+      // { value: 1e9, symbol: 'B' },
+      // { value: 1e12, symbol: 'T' },
+      // { value: 1e15, symbol: 'P' },
+      // { value: 1e18, symbol: 'E' },
+    ];
+    const rx = /\.0+$|(\.[0-9]*[1-9])0+$/;
+    const item = templates
+      .slice()
+      .reverse()
+      .find(it => {
+        return value >= it.value;
+      });
+    return item
+      ? formatNumber
+          .formatRoundDown(value / item.value, decimals)
+          .replace(rx, '$1') + item.symbol
+      : '0';
   },
 
   formatUsdMobile: (val?: number) => {

@@ -7,12 +7,11 @@ import HoneyButton from 'components/HoneyButton/HoneyButton';
 import SidebarScroll from '../../SidebarScroll/SidebarScroll';
 import { HoneyButtonTabs } from '../../HoneyButtonTabs/HoneyButtonTabs';
 import HoneyWarning from '../../HoneyWarning/HoneyWarning';
+import { VoteFormProps } from './types';
 
-type RepayFormProps = {};
+const { formatShortName: fsn } = formatNumber;
 
-const { format: f, formatPercent: fp, formatUsd: fu } = formatNumber;
-
-const VoteForm: FC<RepayFormProps> = () => {
+const VoteForm: FC<VoteFormProps> = () => {
   type VoteType = 'vote_for' | 'vote_against';
   const [voteType, setVoteType] = useState<VoteType>('vote_for');
 
@@ -62,14 +61,14 @@ const VoteForm: FC<RepayFormProps> = () => {
           </div>
           <div className={styles.col}>
             <InfoBlock
-              value="10m"
+              value={fsn(10000000)}
               valueSize="big"
               footer={<span>Min Quorum</span>}
             />
           </div>
           <div className={styles.col}>
             <InfoBlock
-              value="5m"
+              value={fsn(5000000)}
               valueSize="big"
               footer={<span>Min Diff</span>}
             />
