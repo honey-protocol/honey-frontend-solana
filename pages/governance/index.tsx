@@ -20,9 +20,7 @@ import NewProposalSidebar from '../../components/NewProposalSidebar/NewProposalS
 import GetVeHoneySidebar from '../../components/GetVeHoneySidebar/GetVeHoneySidebar';
 import { formatNumber } from '../../helpers/format';
 
-const { format: f } = formatNumber;
-
-export type FlowType = 'governance' | 'new_proposal' | 'get_ve_honey';
+const { format: f, formatShortName: fsn } = formatNumber;
 
 const Governance: NextPage = () => {
   const [tableData, setTableData] = useState<GovernanceTableRow[]>([]);
@@ -118,7 +116,7 @@ const Governance: NextPage = () => {
         },
         dataIndex: 'votes',
         render: (votes: number) => {
-          return <div className={style.textTablet}>{f(votes)}</div>;
+          return <div className={style.textTablet}>{fsn(votes)}</div>;
         }
       },
       {
@@ -127,7 +125,7 @@ const Governance: NextPage = () => {
         },
         dataIndex: 'against',
         render: (against: number) => {
-          return <div className={style.textTablet}>{f(against)}</div>;
+          return <div className={style.textTablet}>{fsn(against)}</div>;
         }
       },
       {
