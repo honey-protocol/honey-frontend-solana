@@ -116,9 +116,9 @@ const Governance: NextPage = () => {
         title: () => {
           return <div className={style.textTabletTitle}>Voted For</div>;
         },
-        dataIndex: 'voted',
-        render: (voted: number) => {
-          return <div className={style.textTablet}>{f(voted)}</div>;
+        dataIndex: 'votes',
+        render: (votes: number) => {
+          return <div className={style.textTablet}>{f(votes)}</div>;
         }
       },
       {
