@@ -2,13 +2,14 @@ import { style } from '@vanilla-extract/css';
 import { vars } from 'styles/theme.css';
 import { sidebar } from '../../styles/common.css';
 
-export const lendSidebarContainer = style([
-  sidebar,
+export const governanceSidebar = style([
   {
     display: 'flex',
     flexDirection: 'column',
-    alignItems: 'stretch'
-  }
+    alignItems: 'stretch',
+    height: `calc(100vh - ${156 + 160 + 16}px)`
+  },
+  sidebar
 ]);
 
 export const content = style({

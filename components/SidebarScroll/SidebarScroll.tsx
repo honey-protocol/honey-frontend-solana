@@ -10,9 +10,7 @@ interface SidebarScrollProps {
 const SidebarScroll: FC<SidebarScrollProps> = ({ children, footer }) => {
   return (
     <div className={styles.SidebarScroll}>
-      <div className={c(styles.content, { [styles.hasFooter]: footer })}>
-        {children}
-      </div>
+      <div className={c(styles.content)}>{children}</div>
 
       {footer && <div className={styles.footer}>{footer}</div>}
     </div>

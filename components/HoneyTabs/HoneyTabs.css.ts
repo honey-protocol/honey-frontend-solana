@@ -1,12 +1,14 @@
 import { globalStyle, style } from '@vanilla-extract/css';
 import { typography, vars } from 'styles/theme.css';
 
-export const tabs = style({});
+export const tabs = style({
+  height: '100%'
+});
 
 export const content = style({
   borderRadius: '0 0 15px 15px',
   background: vars.colors.white,
-  height: 'calc(100vh - 155px)',
+  height: '100%',
   overflow: 'hidden'
 });
 
@@ -122,9 +124,7 @@ export const inactiveText = style({
   }
 });
 
-export const tabText = style([
-  typography.button
-]);
+export const tabText = style([typography.button]);
 
 export const tabBottomCoverInactive = style({
   borderColor: vars.colors.grayDark

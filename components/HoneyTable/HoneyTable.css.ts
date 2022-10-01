@@ -33,7 +33,7 @@ globalStyle(`${bcs('.ant-table-thead > tr > th')}`, {
 });
 
 globalStyle(`${bcs('.ant-table-thead > tr > th:before')}`, {
-  display: 'none',
+  display: 'none'
 });
 
 globalStyle(`${bcs('.ant-table table')}`, {
@@ -88,15 +88,22 @@ globalStyle(`${bcs(`${rowTdSelector}:last-child`)}`, lastCellBorderAndRadius);
 // });
 
 export const honeyTableRowShadow = style({});
+export const honeyTableRowSelected = style({});
 const rowShadowTdSelector = `.ant-table-tbody > .ant-table-row.${honeyTableRow}.${honeyTableRowShadow} > td`;
-// const rowShadowTdHoverSelector = `.ant-table-tbody > .ant-table-row.${honeyTableRow}.${honeyTableRowShadow}:hover > td`;
+const rowShadowTdHoverSelector = `.ant-table-tbody > .ant-table-row.${honeyTableRow}.${honeyTableRowShadow}:hover > td`;
+const rowShadowTdSelectedSelector = `.ant-table-tbody > .ant-table-row.${honeyTableRow}.${honeyTableRowShadow}${honeyTableRowSelected} > td`;
 
 globalStyle(rowShadowTdSelector, {
   boxShadow: `4px 4px 0px 0px ${vars.colors.black}`
 });
-// globalStyle(rowShadowTdHoverSelector, {
-//   boxShadow: `4px 4px 0px 0px ${vars.colors.brownLight}`
-// });
+
+globalStyle(rowShadowTdHoverSelector, {
+  boxShadow: `4px 4px 0px 0px ${vars.colors.brownLight}`
+});
+
+globalStyle(rowShadowTdSelectedSelector, {
+  boxShadow: `4px 4px 0px 0px ${vars.colors.brownLight}`
+});
 
 // Styles for Expanded section
 export const expandedSectionRow = style({});

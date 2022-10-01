@@ -1,12 +1,15 @@
 import { style } from '@vanilla-extract/css';
 import { vars } from 'styles/theme.css';
-import { widthSidebar } from '../../styles/common.css';
+import { sidebar } from '../../styles/common.css';
 
-export const marketsSidebarContainer = style([widthSidebar, {
-  display: 'flex',
-  flexDirection: 'column',
-  alignItems: 'stretch'
-}]);
+export const marketsSidebarContainer = style([
+  sidebar,
+  {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'stretch'
+  }
+]);
 
 export const content = style({
   borderRadius: vars.space.medium,

@@ -3,7 +3,7 @@ import * as styles from './HexaBoxContainer.css';
 import c from "classnames";
 
 interface HexaBoxContainerProps {
-  variant?: 'black' | 'gray';
+  borderColor?: 'black' | 'gray' | 'green' | 'red';
   children: ReactNode;
 }
 
@@ -12,13 +12,13 @@ const HexaBoxContainer = (props: HexaBoxContainerProps) => {
     <div className={styles.container}>
       <div className={c(
           styles.shadow,
-          props.variant ? styles[props.variant] : styles.black,
+          props.borderColor ? styles[props.borderColor] : styles.black,
           )} />
       <div className={c(
           styles.content,
-          props.variant ? styles[props.variant] : styles.black,
+          props.borderColor ? styles[props.borderColor] : styles.black,
       )}>
-          <div className={props.variant ? styles.white : styles.black}>
+          <div className={styles.white}>
               {props.children}
           </div>
       </div>

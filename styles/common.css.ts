@@ -6,25 +6,25 @@ export const container = style({
   maxWidth: 564,
   padding: '0 12px',
   margin: '0 auto',
-  "@media": {
+  '@media': {
     [`screen and (min-width: ${breakpoints.tablet}px)`]: {
-      maxWidth: 874,
+      maxWidth: 874
     },
     [`screen and (min-width: ${breakpoints.desktop}px)`]: {
-      maxWidth: 1240,
-    },
-  },
+      maxWidth: 1240
+    }
+  }
 });
 
-export const widthSidebar  = style({
+export const sidebar = style({
   width: '100%',
-  height: 'calc(100vh - 102px)',
+  height: 'calc(100vh - 156px)',
   pointerEvents: 'all',
-  "@media": {
+  '@media': {
     [`screen and (min-width: ${breakpoints.desktop}px)`]: {
-      maxWidth: 350,
-    },
-  },
+      maxWidth: 350
+    }
+  }
 });
 export const hAlign = style({
   display: 'flex',
@@ -39,5 +39,5 @@ export const pageTitle = style([
 
 export const pageDescription = style([
   typography.description,
-  { marginBottom: '20px !important', display: 'block' }
+  { marginBottom: '20px', display: 'block' }
 ]);

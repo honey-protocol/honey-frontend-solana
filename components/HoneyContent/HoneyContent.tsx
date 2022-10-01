@@ -1,15 +1,19 @@
 import { Content } from 'antd/lib/layout/layout';
 import React, { ReactNode } from 'react';
 import * as styles from './HoneyContent.css';
+import c from 'classnames';
 
 export interface HoneyContentProps {
   children: ReactNode;
+  hasNoSider?: boolean;
 }
 
-const HoneyContent = (props: HoneyContentProps) => {
+const HoneyContent = ({ hasNoSider, children }: HoneyContentProps) => {
   return (
-    <Content className={styles.honeyContent}>
-      {props.children}
+    <Content
+      className={c(styles.honeyContent, { [styles.hasNoSider]: hasNoSider })}
+    >
+      {children}
     </Content>
   );
 };
