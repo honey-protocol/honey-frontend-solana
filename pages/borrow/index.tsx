@@ -691,7 +691,7 @@ const Markets: NextPage = () => {
       <div className={style.expandedSectionFooter}>
         <div className={style.expandedRowIcon} />
         <div className={style.collectionLogo}>
-          <HexaBoxContainer variant="gray">
+          <HexaBoxContainer borderColor="gray">
             <div className={style.lampIconStyle} />
           </HexaBoxContainer>
         </div>

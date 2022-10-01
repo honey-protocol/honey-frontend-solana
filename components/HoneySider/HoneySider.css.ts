@@ -30,3 +30,7 @@ export const honeySider = style({
 export const honeySiderShow = style({
   display: 'block'
 });
+
+export const governancePage = style({
+  top: 90 + 160 + 16
+});

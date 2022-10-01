@@ -3,10 +3,17 @@ import { breakpoints } from '../../styles/theme.css';
 
 export const honeyContent = style({
   width: '100%',
-  "@media": {
+  '@media': {
     [`screen and (min-width: ${breakpoints.desktop}px)`]: {
       paddingRight: 374
-    },
-  },
+    }
+  }
 });
 
+export const hasNoSider = style({
+  '@media': {
+    [`screen and (min-width: ${breakpoints.desktop}px)`]: {
+      paddingRight: 0
+    }
+  }
+});

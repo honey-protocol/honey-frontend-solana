@@ -5,7 +5,7 @@ import HoneyTooltip from 'components/HoneyTooltip/HoneyTooltip';
 
 interface InfoBlockProps {
   title?: string | ReactElement;
-  value: string;
+  value: string | ReactElement;
   footer?: ReactElement;
   valueSize?: 'normal' | 'big';
   isDisabled?: boolean;

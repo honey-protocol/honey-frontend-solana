@@ -1,344 +1,236 @@
 import type { NextPage } from 'next';
-import HeadSeo from 'components/HeadSeo/HeadSeo';
-import siteMetadata from 'constants/siteMetadata';
+import HoneyContent from '../../components/HoneyContent/HoneyContent';
+import LayoutRedesign from '../../components/LayoutRedesign/LayoutRedesign';
+import HoneySider from '../../components/HoneySider/HoneySider';
+import GovernanceSidebar from '../../components/GovernanceSidebar/GovernanceSidebar';
+import HoneyTable from '../../components/HoneyTable/HoneyTable';
+import React, { useEffect, useMemo, useState } from 'react';
 import {
-  Box,
-  Button,
-  Card,
-  IconChevronRight,
-  IconExclamation,
-  Input,
-  Tag,
-  Text
-} from 'degen';
-import { Stack } from 'degen';
-import Layout from '../../components/Layout/Layout';
-import ModalContainer from 'components/ModalContainer/ModalContainer';
-import { useState, useMemo } from 'react';
-import PHoneyModal from 'components/PHoneyModal/PHoneyModal';
-import VeHoneyModal from 'components/VeHoneyModal/VeHoneyModal';
-import HoneyModal from 'components/HoneyModal/HoneyModal';
-import { PublicKey } from '@solana/web3.js';
-import { useConnectedWallet } from '@saberhq/use-solana';
-import { useWalletKit } from '@gokiprotocol/walletkit';
-import { useStake } from 'hooks/useStake';
-import { useAccounts } from 'hooks/useAccounts';
-import {
-  PHONEY_DECIMALS,
-  PHONEY_MINT,
-  HONEY_MINT,
-  HONEY_DECIMALS
-} from 'helpers/sdk/constant';
-import {
-  convert,
-  convertToBN,
-  convertBnTimestampToDate,
-  calcVeHoneyAmount
-} from 'helpers/utils';
-import { HIPS } from 'constants/hip-links';
+  GovernanceSidebarForm,
+  GovernanceTableRow
+} from '../../types/governance';
+import * as style from '../../styles/governance.css';
+import HexaBoxContainer from '../../components/HexaBoxContainer/HexaBoxContainer';
+import { ColumnType } from 'antd/lib/table';
+import HoneyButton from '../../components/HoneyButton/HoneyButton';
+import HoneyToggle from '../../components/HoneyToggle/HoneyToggle';
+import ProgressStatus from '../../components/ProgressStatus/ProgressStatus';
+import c from 'classnames';
+import NewProposalSidebar from '../../components/NewProposalSidebar/NewProposalSidebar';
+import GetVeHoneySidebar from '../../components/GetVeHoneySidebar/GetVeHoneySidebar';
+import { formatNumber } from '../../helpers/format';
+
+const { format: f } = formatNumber;
+
+export type FlowType = 'governance' | 'new_proposal' | 'get_ve_honey';
 
 const Governance: NextPage = () => {
-  const wallet = useConnectedWallet();
-  const { connect } = useWalletKit();
-  const [showPHoneyModal, setShowPHoneyModal] = useState(false);
-  const [showVeHoneyModal, setShowVeHoneyModal] = useState(false);
-  const [showHoneyModal, setShowHoneyModal] = useState(false);
+  const [tableData, setTableData] = useState<GovernanceTableRow[]>([]);
+  const [isDraftFilterEnabled, setIsDraftFilterEnabled] = useState(false);
+  const [selectedProposalId, setSelectedProposalId] = useState(10);
 
-  const { tokenAccounts } = useAccounts();
+  const [sidebarMode, setSidebarMode] = useState<GovernanceSidebarForm>('vote');
 
-  // ======================== Should replace with configuration ================
-  const pHoneyToken = tokenAccounts.find(t => t.info.mint.equals(PHONEY_MINT));
-  const honeyToken = tokenAccounts.find(t => t.info.mint.equals(HONEY_MINT));
+  // PUT YOUR DATA SOURCE HERE
+  // MOCK DATA FOR NOW
+  useEffect(() => {
+    const mockData: GovernanceTableRow[] = [
+      {
+        id: 1,
+        name: 'Upgrade the StarkProxy smart contract',
+        voted: 319487,
+        against: 313,
+        status: 'approved'
+      },
+      {
+        id: 2,
+        name: 'Upgrade the StarkProxy smart contract',
+        voted: 319487,
+        against: 313,
+        status: 'approved'
+      }
+    ];
 
-  const STAKE_POOL_ADDRESS = new PublicKey(
-    process.env.NEXT_STAKE_POOL_ADDR ||
-      '4v62DWSwrUVEHe2g88MeyJ7g32vVzQsCnADZF8yUy8iU'
+    setTableData(mockData);
+  }, [isDraftFilterEnabled]);
+
+  const handleToggle = (checked: boolean) => {
+    setIsDraftFilterEnabled(checked);
+  };
+
+  const DraftToggle = () => (
+    <div className={style.draftToggle}>
+      <div className={style.toggle}>
+        <HoneyToggle checked={isDraftFilterEnabled} onChange={handleToggle} />
+        <span className={style.toggleText}>Drafts</span>
+      </div>
+    </div>
   );
-  const LOCKER_ADDRESS = new PublicKey(
-    process.env.NEXT_LOCKER_ADDR ||
-      '5FnK8H9kDbmPNpBYMuvSkDevkMfnVPRrPNNqmTQyBBae'
+
+  const MainTitleTable = () => (
+    <>
+      <div className={style.pageTitle}>Proposals</div>
+      <div className={style.pageDescription}>
+        Track proposal statuses and vote on changes
+      </div>
+    </>
   );
-  // ============================================================================
 
-  const { user, escrow } = useStake(STAKE_POOL_ADDRESS, LOCKER_ADDRESS);
+  const columnsWidth: Array<number | string> = [350, 120, 130];
 
-  const lockedAmount = useMemo(() => {
-    if (!escrow) {
-      return 0;
+  const columns: ColumnType<GovernanceTableRow>[] = useMemo(
+    () => [
+      {
+        title: MainTitleTable,
+        width: columnsWidth[0],
+        dataIndex: 'name',
+        key: 'name',
+        render: (name: string) => {
+          return (
+            <div className={style.nameCell}>
+              <div className={style.logoWrapper}>
+                <div className={style.collectionLogo}>
+                  <HexaBoxContainer>
+                    <div
+                      className={c(style.statusIcon, style.statusCheckIcon)}
+                    />
+                  </HexaBoxContainer>
+                </div>
+              </div>
+              <div className={style.collectionName}>{name}</div>
+            </div>
+          );
+        }
+      },
+      {
+        title: () => {
+          return <div className={style.textTabletTitle}>Voted For</div>;
+        },
+        dataIndex: 'voted',
+        render: (voted: number) => {
+          return <div className={style.textTablet}>{f(voted)}</div>;
+        }
+      },
+      {
+        title: () => {
+          return <div className={style.textTabletTitle}>Against</div>;
+        },
+        dataIndex: 'against',
+        render: (against: number) => {
+          return <div className={style.textTablet}>{f(against)}</div>;
+        }
+      },
+      {
+        title: () => {
+          return <div className={style.textTabletTitle}>Status</div>;
+        },
+        width: columnsWidth[1],
+        dataIndex: 'status',
+        render: () => {
+          return (
+            <div>
+              <ProgressStatus percent={60} />
+            </div>
+          );
+        }
+      },
+      {
+        title: DraftToggle,
+        width: columnsWidth[2],
+        render: (_: null) => {
+          return (
+            <div className={style.buttonsCell}>
+              <HoneyButton variant="text">
+                Vote <div className={style.arrowIcon} />
+              </HoneyButton>
+            </div>
+          );
+        }
+      }
+    ],
+    [tableData, isDraftFilterEnabled]
+  );
+
+  const renderSidebar = () => {
+    switch (sidebarMode) {
+      case 'vote':
+        return <GovernanceSidebar selectedProposalId={selectedProposalId} />;
+      case 'new_proposal':
+        return <NewProposalSidebar />;
+      case 'get_vehoney':
+        return <GetVeHoneySidebar />;
+      default:
+        return null;
     }
+  };
 
-    return convert(escrow.amount, HONEY_DECIMALS);
-  }, [escrow]);
+  const handleRowClick = (
+    event: React.MouseEvent<Element, MouseEvent>,
+    record: GovernanceTableRow
+  ) => {
+    setSelectedProposalId(record.id);
+    setSidebarMode('vote');
+  };
 
-  const lockedPeriodStart = useMemo(() => {
-    if (!escrow) {
-      return 0;
+  const getRowClassName = (record: GovernanceTableRow) => {
+    if (record.id === selectedProposalId) {
+      return style.selectedProposal;
     }
+    return '';
+  };
 
-    return convertBnTimestampToDate(escrow.escrowStartedAt);
-  }, [escrow]);
-
-  const lockedPeriodEnd = useMemo(() => {
-    if (!escrow) {
-      return 0;
-    }
-
-    return convertBnTimestampToDate(escrow.escrowEndsAt);
-  }, [escrow]);
-
-  const veHoneyAmount = useMemo(() => {
-    if (!escrow) {
-      return 0;
-    }
-    return calcVeHoneyAmount(
-      escrow.escrowStartedAt,
-      escrow.escrowEndsAt,
-      escrow.amount
-    );
-  }, [escrow]);
-
-  const depositedAmount = useMemo(() => {
-    if (!user) {
-      return 0;
-    }
-
-    return convert(user.depositAmount, PHONEY_DECIMALS);
-  }, [user]);
-
-  const pHoneyAmount = useMemo(() => {
-    if (!pHoneyToken) {
-      return 0;
-    }
-
-    return convert(pHoneyToken.info.amount, PHONEY_DECIMALS);
-  }, [pHoneyToken]);
-
-  const honeyAmount = useMemo(() => {
-    if (!honeyToken) {
-      return 0;
-    }
-
-    return convert(honeyToken.info.amount, HONEY_DECIMALS);
-  }, [honeyToken]);
+  const handleCreateProposal = () => {
+    setSidebarMode('new_proposal');
+  };
 
   return (
-    <Layout>
-      <HeadSeo
-        title={`Governance | ${siteMetadata.companyName}`}
-        description={`Propose, vote and vest your HONEY for veHONEY to participate in Honey DAO governance.`}
-        ogImageUrl={'https://app.honey.finance/honey-og-image.png'}
-        canonicalUrl={siteMetadata.siteUrl}
-        ogTwitterImage={siteMetadata.siteLogoSquare}
-        ogType={'website'}
-      />
-
-      <Stack space="5" flex={1}>
-        {/* Modals */}
-        <ModalContainer
-          onClose={() => setShowPHoneyModal(false)}
-          isVisible={showPHoneyModal}
-        >
-          <PHoneyModal />
-        </ModalContainer>
-        <ModalContainer
-          onClose={() => setShowVeHoneyModal(false)}
-          isVisible={showVeHoneyModal}
-        >
-          <VeHoneyModal />
-        </ModalContainer>
-        <ModalContainer
-          onClose={() => setShowHoneyModal(false)}
-          isVisible={showHoneyModal}
-        >
-          <HoneyModal />
-        </ModalContainer>
-        {/* Page title */}
-        {/* <Box marginTop="5">
-          <Text variant="extraLarge" weight="bold">
-            Vote on new collateral assets
-          </Text>
-        </Box> */}
-        {/* Cards row */}
-        <Stack
-          direction={{
-            lg: 'horizontal',
-            md: 'horizontal',
-            sm: 'vertical',
-            xs: 'vertical'
+    <LayoutRedesign>
+      <HoneyContent hasNoSider={true}>
+        <div className={style.stats}>
+          <div className={style.statsCard}>1</div>
+          <div className={style.statsCard}>2</div>
+          <div className={style.statsCard}>3</div>
+          <div className={style.statsCard}>4</div>
+        </div>
+      </HoneyContent>
+      <HoneyContent>
+        <HoneyTable
+          tableLayout={'fixed'}
+          pagination={false}
+          hasRowsShadow={true}
+          rowKey={'id'}
+          columns={columns}
+          dataSource={tableData}
+          onRow={(record, rowIndex) => {
+            return {
+              onClick: event => handleRowClick(event, record)
+            };
           }}
-          space="6"
-        >
-          <Box
-            height="full"
-            display="flex"
-            alignItems="stretch"
-            width={{ sm: 'full', md: '1/2' }}
-          >
-            <Card level="2" padding="6">
-              <Box display="flex" height="full">
-                <Stack flex={1} justify="center" align="center" space="3">
-                  <IconExclamation color="accent" />
-                  <Text as="span" color="accent">
-                    Maintenance warning
-                  </Text>{' '}
-                  <Text variant="small" align="center">
-                    Our governance program is{' '}
-                    <Text as="span" color="accent">
-                      currently undergoing a maintenance.
-                    </Text>{' '}
-                    Please wait before converting pHONEY to HONEY, or
-                    withdrawing HONEY from the conversion tool.
-                  </Text>
-                  <Stack direction="horizontal" justify="center" align="center">
-                    <Button
-                      as="a"
-                      href="https://discord.gg/honeydefi"
-                      target="_blank"
-                      size="small"
-                      variant="tertiary"
-                    >
-                      Learn more
-                    </Button>
-                  </Stack>
-                </Stack>
-              </Box>
-            </Card>
-          </Box>
-          <Box
-            height="full"
-            display="flex"
-            alignItems="stretch"
-            style={{ minWidth: '50%' }}
-            width={{ sm: 'full', md: 'fit' }}
-          >
-            <Card width="full" level="2" padding="6">
-              <Box height="full" width="full" display="flex">
-                <Stack
-                  flex={1}
-                  direction={{
-                    lg: 'horizontal',
-                    md: 'horizontal',
-                    sm: 'horizontal',
-                    xs: 'vertical'
-                  }}
-                  space="3"
-                >
-                  <Box
-                    width={{ lg: '3/4', md: '3/4', xs: 'full', sm: 'full' }}
-                    paddingRight={{ xs: '0', sm: '3' }}
-                    paddingBottom={{ xs: '3', sm: '0' }}
-                    borderBottomWidth={{ xs: '0.375', sm: '0' }}
-                    borderRightWidth={{ xs: '0', sm: '0.375' }}
-                  >
-                    <Stack flex={1} justify="space-between" space="6">
-                      <Stack justify="space-between" direction="horizontal">
-                        <Stack align="flex-end">
-                          <Text size="small">
-                            <b>{veHoneyAmount}</b> veHONEY balance
-                          </Text>
-                        </Stack>
-
-                        <Stack align="flex-end">
-                          {/* <Text size="small">$HONEY locked</Text> */}
-                          <Text size="small">
-                            <b>{lockedAmount}</b> $HONEY (locked)
-                          </Text>
-                        </Stack>
-                      </Stack>
-                      <Box marginTop="auto">
-                        <Stack space="3">
-                          <Stack justify="space-between" direction="horizontal">
-                            {/* <Text size="small">Lock period starts</Text> */}
-                            {/* <Text size="small">{lockedPeriodStart}</Text> */}
-                          </Stack>
-                          <Stack justify="space-between" direction="horizontal">
-                            <Text size="small">Lock period ends</Text>
-                            <Text size="small">{lockedPeriodEnd}</Text>
-                          </Stack>
-                          <Stack justify="space-between" direction="horizontal">
-                            <Text size="small">pHONEY deposited:</Text>
-                            <Text size="small">{depositedAmount}</Text>
-                          </Stack>
-                          <Stack justify="space-between" direction="horizontal">
-                            <Text size="small">pHONEY balance</Text>
-                            <Text size="small">{pHoneyAmount}</Text>
-                          </Stack>
-                          <Stack justify="space-between" direction="horizontal">
-                            <Text size="small">$HONEY balance</Text>
-                            <Text size="small">{honeyAmount}</Text>
-                          </Stack>
-                        </Stack>
-                      </Box>
-                    </Stack>
-                  </Box>
-                  <Stack flex={1} justify="space-around">
-                    <Button
-                      onClick={
-                        wallet ? () => setShowPHoneyModal(true) : connect
-                      }
-                      width="full"
-                      size="small"
-                      variant="secondary"
-                    >
-                      pHONEY → HONEY
-                    </Button>
-                    <Button
-                      onClick={
-                        wallet ? () => setShowVeHoneyModal(true) : connect
-                      }
-                      width="full"
-                      size="small"
-                      variant="secondary"
-                    >
-                      pHONEY → veHONEY
-                    </Button>
-                    <Button
-                      onClick={wallet ? () => setShowHoneyModal(true) : connect}
-                      width="full"
-                      size="small"
-                      variant="secondary"
-                    >
-                      HONEY → veHONEY
-                    </Button>
-                  </Stack>
-                </Stack>
-              </Box>
-            </Card>
-          </Box>
-        </Stack>
-        {/* HIP cards container */}
-        <Box
-          flex={1}
-          padding="10"
-          borderRadius="2xLarge"
-          backgroundColor="backgroundTertiary"
-        >
-          <Stack>
-            {HIPS.map(hip => (
-              <Box
-                as="a"
-                href={hip.link}
-                target="blank"
-                cursor="pointer"
-                key={hip.link}
-              >
-                <Card hover padding="5">
-                  <Stack align="center" direction="horizontal">
-                    <Stack flex={1}>
-                      <Text weight="bold" size="large">
-                        {hip.title}
-                      </Text>
-                      <Tag hover>{hip.date}</Tag>
-                    </Stack>
-                    <IconChevronRight color="text" />
-                  </Stack>
-                </Card>
-              </Box>
-            ))}
-          </Stack>
-        </Box>
-      </Stack>
-    </Layout>
+          rowClassName={getRowClassName}
+          selectedRowsKeys={[selectedProposalId]}
+        />
+        <div className={style.create}>
+          <div className={style.nameCell}>
+            <div className={style.logoWrapper}>
+              <div className={style.collectionLogo}>
+                <HexaBoxContainer borderColor="gray">
+                  <div className={style.lampIconStyle} />
+                </HexaBoxContainer>
+              </div>
+            </div>
+            <div className={style.collectionName}>
+              Do you want to suggest a new one?
+            </div>
+          </div>
+          <div className={style.buttonsCell}>
+            <HoneyButton variant="text" onClick={handleCreateProposal}>
+              Create <div className={style.arrowIcon} />
+            </HoneyButton>
+          </div>
+        </div>
+      </HoneyContent>
+      <HoneySider page={'governance'}>{renderSidebar()}</HoneySider>
+    </LayoutRedesign>
   );
 };
 
