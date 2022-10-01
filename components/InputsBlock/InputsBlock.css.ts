@@ -7,8 +7,7 @@ export const inputsBlockContainer = style({
   position: 'relative',
   border: '1px solid',
   borderColor: vars.colors.grayDark,
-  borderRadius: '12px',
-  overflow: 'hidden'
+  borderRadius: '12px'
 });
 
 export const equalSignContainer = style({
@@ -16,9 +15,9 @@ export const equalSignContainer = style({
   left: '50%',
   top: '50%',
   transform: 'translate(-50%,-50%)',
-  width: 20,
-  height: 20,
-  background: "url('/icons/EqualIcon.svg')"
+  background: vars.colors.white,
+  minWidth: 20,
+  minHeight: 20
 });
 
 export const inputWrapper = style({
@@ -68,3 +67,8 @@ export const inputAddon = style([
     color: vars.colors.grayTransparent
   }
 ]);
+
+export const delimiterIcon = style({
+  width: 20,
+  height: 20
+});

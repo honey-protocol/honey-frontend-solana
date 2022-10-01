@@ -368,10 +368,10 @@ const RepayForm = (props: RepayProps) => {
             </div>
           </div>
           <InputsBlock
-            valueUSD={p(f(valueUSD))}
-            valueSOL={p(f(valueSOL))}
-            onChangeUSD={handleUsdInputChange}
-            onChangeSOL={handleUsdcInputChange}
+            firstInputValue={p(f(valueUSD))}
+            secondInputValue={p(f(valueSOL))}
+            onChangeFirstInput={handleUsdInputChange}
+            onChangeSecondInput={handleUsdcInputChange}
           />
         </div>
 

@@ -1,13 +1,11 @@
 import React, { FC, useState } from 'react';
 import { InfoBlock } from '../../InfoBlock/InfoBlock';
-import { HoneySlider } from '../../HoneySlider/HoneySlider';
 import * as styles from './LockHoneyForm.css';
 import { formatNumber } from '../../../helpers/format';
 import HoneyButton from 'components/HoneyButton/HoneyButton';
 import SidebarScroll from '../../SidebarScroll/SidebarScroll';
 import { HoneyButtonTabs } from '../../HoneyButtonTabs/HoneyButtonTabs';
 import HoneyWarning from '../../HoneyWarning/HoneyWarning';
-import slug = Mocha.utils.slug;
 import { InputsBlock } from '../../InputsBlock/InputsBlock';
 
 const { format: f, formatPercent: fp, formatUsd: fu, parse: p } = formatNumber;
@@ -20,10 +18,10 @@ const PERIODS = [
   { name: '4 Y', slug: '4y' }
 ] as const;
 
-type PeriodType = typeof PERIODS[number]['slug'];
+type LockPeriod = typeof PERIODS[number]['slug'];
 
 const LockHoneyForm: FC = () => {
-  const [period, setPeriod] = useState<PeriodType>('1m');
+  const [lockPeriod, setLockPeriod] = useState<LockPeriod>('1m');
   const [valueUSD, setValueUSD] = useState<number>(0);
   const [valueUSDC, setValueUSDC] = useState<number>(0);
   const usdcPrice = 0.95;
@@ -51,7 +49,7 @@ const LockHoneyForm: FC = () => {
   };
 
   // Put your validators here
-  const isRepayButtonDisabled = () => {
+  const isLockButtonDisabled = () => {
     return false;
   };
 
@@ -65,7 +63,7 @@ const LockHoneyForm: FC = () => {
           <div className={styles.bigCol}>
             <HoneyButton
               variant="primary"
-              disabled={isRepayButtonDisabled()}
+              disabled={isLockButtonDisabled()}
               isFluid={true}
             >
               Lock
@@ -108,18 +106,21 @@ const LockHoneyForm: FC = () => {
               name: period.name,
               slug: period.slug
             }))}
-            activeItemSlug={period}
-            onClick={itemSlug => setPeriod(itemSlug as PeriodType)}
+            activeItemSlug={lockPeriod}
+            onClick={itemSlug => setLockPeriod(itemSlug as LockPeriod)}
             isFullWidth
           />
         </div>
 
         <InputsBlock
-          valueUSD={p(f(valueUSD))}
-          valueSOL={p(f(valueUSDC))}
-          onChangeUSD={handleUsdInputChange}
-          onChangeSOL={handleUsdcInputChange}
+          firstInputValue={p(f(valueUSD))}
+          secondInputValue={p(f(valueUSDC))}
+          onChangeFirstInput={handleUsdInputChange}
+          onChangeSecondInput={handleUsdcInputChange}
           maxValue={maxValue}
+          delimiterIcon={<div className={styles.inputsDelimiter}>1 to 1.5</div>}
+          firstInputAddon="HONEY"
+          secondInputAddon="veHONEY"
         />
       </div>
     </SidebarScroll>
