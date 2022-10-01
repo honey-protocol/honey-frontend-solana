@@ -2,12 +2,12 @@ import { style } from '@vanilla-extract/css';
 import { typography, vars } from '../../../styles/theme.css';
 
 export const depositForm = style({
-    width: '100%',
-    height: '100%',
-    display: 'flex',
-    flexDirection: 'column',
-    background: vars.colors.white,
-    padding: 16
+  width: '100%',
+  height: '100%',
+  display: 'flex',
+  flexDirection: 'column',
+  background: vars.colors.white,
+  padding: 16
 });
 
 const formSection = style([
@@ -27,10 +27,13 @@ export const col = style({
   flex: '100% 0 0'
 });
 
-export const tabTitle = style([typography.title, {
-  color: vars.colors.black,
-  marginBottom: 12
-}])
+export const tabTitle = style([
+  typography.title,
+  {
+    color: vars.colors.black,
+    marginBottom: 12
+  }
+]);
 
 export const buttons = style([
   {
@@ -59,4 +62,14 @@ export const divider = style({
   height: 2,
   width: '100%',
   marginBottom: 16
+});
+
+export const inputsDelimiter = style({
+  padding: '8px 7px',
+  border: `1px dashed ${vars.colors.black}`,
+  opacity: 0.4,
+  borderRadius: 40,
+  fontWeight: 500,
+  fontSize: 12,
+  lineHeight: '14px'
 });

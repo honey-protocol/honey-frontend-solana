@@ -392,10 +392,10 @@ const BorrowForm = (props: BorrowProps) => {
             </div>
           </div>
           <InputsBlock
-            valueUSD={p(f(valueUSD))}
-            valueSOL={p(f(valueSOL))}
-            onChangeUSD={handleUsdInputChange}
-            onChangeSOL={handleSolInputChange}
+            firstInputValue={p(f(valueUSD))}
+            secondInputValue={p(f(valueSOL))}
+            onChangeFirstInput={handleUsdInputChange}
+            onChangeSecondInput={handleSolInputChange}
             maxValue={maxValue}
           />
         </div>

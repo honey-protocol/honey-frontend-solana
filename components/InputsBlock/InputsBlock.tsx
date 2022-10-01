@@ -1,26 +1,40 @@
 import { ChangeEvent, FC } from 'react';
 import * as styles from './InputsBlock.css';
 import Image from 'next/image';
-import EqualIcon from './assets/equalIcon.svg';
 import SOLIcon from './assets/SOL.svg';
 import { formatNumber } from '../../helpers/format';
+import EqualIcon from './assets/equalIcon.svg';
 
 interface InputsBlockProps {
-  valueUSD: number | undefined;
-  valueSOL: number | undefined;
-  onChangeUSD: (value: number | undefined) => void;
-  onChangeSOL: (value: number | undefined) => void;
+  firstInputValue: number | undefined;
+  secondInputValue: number | undefined;
+  onChangeFirstInput: (value: number | undefined) => void;
+  onChangeSecondInput: (value: number | undefined) => void;
   maxValue?: number;
+  delimiterIcon?: string | JSX.Element;
+  firstInputAddon?: string | JSX.Element;
+  secondInputAddon?: string | JSX.Element;
 }
 
 const { format: f, formatPercent: fp, formatUsd: fu } = formatNumber;
 
 export const InputsBlock: FC<InputsBlockProps> = ({
-  valueUSD,
-  valueSOL,
-  onChangeUSD,
-  onChangeSOL,
-  maxValue = Infinity
+  firstInputValue,
+  secondInputValue,
+  onChangeFirstInput,
+  onChangeSecondInput,
+  maxValue = Infinity,
+  delimiterIcon = (
+    <div className={styles.delimiterIcon}>
+      <Image src={EqualIcon} />
+    </div>
+  ),
+  firstInputAddon = <> USD </>,
+  secondInputAddon = (
+    <>
+      <Image src={SOLIcon} /> <span>SOL</span>
+    </>
+  )
 }) => {
   const isValidNumericInput = (value: string) => {
     return Number.isFinite(Number(value));
@@ -29,18 +43,18 @@ export const InputsBlock: FC<InputsBlockProps> = ({
   const handleUsdChange = (event: ChangeEvent<HTMLInputElement>) => {
     const value = event.target.value;
     if (isValidNumericInput(value) && value !== '') {
-      onChangeUSD(Math.min(parseFloat(value), maxValue));
+      onChangeFirstInput(Math.min(parseFloat(value), maxValue));
     } else {
-      onChangeUSD(undefined);
+      onChangeFirstInput(undefined);
     }
   };
 
   const handleTokenChange = (event: ChangeEvent<HTMLInputElement>) => {
     const value = event.target.value;
     if (isValidNumericInput(value) && value !== '') {
-      onChangeSOL(parseFloat(value));
+      onChangeSecondInput(parseFloat(value));
     } else {
-      onChangeSOL(undefined);
+      onChangeSecondInput(undefined);
     }
   };
 
@@ -51,25 +65,21 @@ export const InputsBlock: FC<InputsBlockProps> = ({
           className={styles.input}
           type="text"
           placeholder="0.00"
-          value={valueUSD}
+          value={firstInputValue}
           onChange={handleUsdChange}
         />
-        <div className={styles.inputAddon}>USD</div>
+        <div className={styles.inputAddon}>{firstInputAddon}</div>
       </div>
-      <div className={styles.equalSignContainer}>
-        <Image src={EqualIcon} />
-      </div>
+      <div className={styles.equalSignContainer}>{delimiterIcon}</div>
       <div className={styles.inputWrapper}>
         <input
           className={styles.input}
           type="text"
           placeholder="0.00"
-          value={valueSOL}
+          value={secondInputValue}
           onChange={handleTokenChange}
         />
-        <div className={styles.inputAddon}>
-          <Image src={SOLIcon} /> <span>SOL</span>
-        </div>
+        <div className={styles.inputAddon}>{secondInputAddon}</div>
       </div>
     </div>
   );

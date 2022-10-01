@@ -71,8 +71,8 @@ const WithdrawForm = (props: WithdrawFormProps) => {
   }
 
   useEffect(() => {
-    console.log('running user total deposits')
-  }, [userTotalDeposits])
+    console.log('running user total deposits');
+  }, [userTotalDeposits]);
 
   return (
     <SidebarScroll
@@ -143,10 +143,10 @@ const WithdrawForm = (props: WithdrawFormProps) => {
 
         <div className={styles.inputs}>
           <InputsBlock
-            valueUSD={p(f(valueUSD))}
-            valueSOL={p(f(valueSOL))}
-            onChangeUSD={handleUsdInputChange}
-            onChangeSOL={handleSolInputChange}
+            firstInputValue={p(f(valueUSD))}
+            secondInputValue={p(f(valueSOL))}
+            onChangeFirstInput={handleUsdInputChange}
+            onChangeSecondInput={handleSolInputChange}
             maxValue={maxValue}
           />
         </div>
