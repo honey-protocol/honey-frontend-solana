@@ -22,3 +22,7 @@ export const footer = style({
   borderRadius: '0 0 15px 15px',
   zIndex: 9
 });
+
+export const hasFooter = style({
+  height: 'calc(100% - 90px)'
+});

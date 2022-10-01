@@ -27,7 +27,8 @@ const Governance: NextPage = () => {
   const [isDraftFilterEnabled, setIsDraftFilterEnabled] = useState(false);
   const [selectedProposalId, setSelectedProposalId] = useState(10);
 
-  const [sidebarMode, setSidebarMode] = useState<GovernanceSidebarForm>('vote');
+  const [sidebarMode, setSidebarMode] =
+    useState<GovernanceSidebarForm>('get_vehoney');
 
   // PUT YOUR DATA SOURCE HERE
   // MOCK DATA FOR NOW
