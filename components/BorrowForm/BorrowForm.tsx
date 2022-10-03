@@ -380,14 +380,14 @@ const BorrowForm = (props: BorrowProps) => {
             <div className={cs(stylesRepay.balance, styles.col)}>
               <InfoBlock
                 title={'Your SOL balance'}
-                value={f(SOLBalance)}
+                value={fs(SOLBalance)}
               ></InfoBlock>
             </div>
             <div className={cs(stylesRepay.balance, styles.col)}>
               <InfoBlock
                 isDisabled
                 title={'New SOL balance'}
-                value={f(SOLBalance + valueSOL)}
+                value={fs(SOLBalance + valueSOL)}
               ></InfoBlock>
             </div>
           </div>

@@ -356,14 +356,14 @@ const RepayForm = (props: RepayProps) => {
             <div className={cs(styles.balance, styles.col)}>
               <InfoBlock
                 title={'Your SOL balance'}
-                value={f(SOLBalance)}
+                value={fs(SOLBalance)}
               ></InfoBlock>
             </div>
             <div className={cs(styles.balance, styles.col)}>
               <InfoBlock
                 isDisabled
                 title={'NEW SOL balance'}
-                value={f(SOLBalance - (valueSOL || 0))}
+                value={fs(SOLBalance - (valueSOL || 0))}
               ></InfoBlock>
             </div>
           </div>
