@@ -42,7 +42,7 @@ const DepositForm = (props: DepositFormProps) => {
   const solPrice = 32;
 
   // Put your validators here
-  const isRepayButtonDisabled = () => {
+  const isDepositButtonDisabled = () => {
     return false;
   };
 
@@ -77,19 +77,16 @@ const DepositForm = (props: DepositFormProps) => {
     setSliderValue(solValue * solPrice);
   };
 
-  function handleDeposit() {
-    executeDeposit(valueSOL, toast);
-    setTimeout(() => {}, 10000);
-    userInteraction == false
-      ? setUserInteraction(true)
-      : setUserInteraction(false);
-  }
+  const handleDeposit = async () => {
+    await executeDeposit(valueSOL, toast);
+    handleSliderChange(0);
+  };
 
   return (
     <SidebarScroll
       footer={
-        toast.state ? (
-          ToastComponent
+        toast?.state ? (
+          <ToastComponent />
         ) : (
           <div className={styles.buttons}>
             <div className={styles.smallCol}>
@@ -98,7 +95,7 @@ const DepositForm = (props: DepositFormProps) => {
             <div className={styles.bigCol}>
               <HoneyButton
                 variant="primary"
-                disabled={isRepayButtonDisabled()}
+                disabled={isDepositButtonDisabled()}
                 isFluid={true}
                 onClick={handleDeposit}
               >

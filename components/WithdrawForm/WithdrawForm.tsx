@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import React, { FC, useState, useEffect } from 'react';
 import Image from 'next/image';
 import { InfoBlock } from '../InfoBlock/InfoBlock';
 import { InputsBlock } from '../InputsBlock/InputsBlock';
@@ -28,7 +28,7 @@ const WithdrawForm = (props: WithdrawFormProps) => {
   const solPrice = 32;
 
   // Put your validators here
-  const isRepayButtonDisabled = () => {
+  const isWithdrawButtonDisabled = () => {
     return false;
   };
 
@@ -66,9 +66,10 @@ const WithdrawForm = (props: WithdrawFormProps) => {
     setSliderValue(solValue * solPrice);
   };
 
-  function handleWithdraw() {
-    executeWithdraw(valueSOL, toast);
-  }
+  const handleWithdraw = async () => {
+    await executeWithdraw(valueSOL, toast);
+    handleSliderChange(0);
+  };
 
   useEffect(() => {
     console.log('running user total deposits');
@@ -87,7 +88,7 @@ const WithdrawForm = (props: WithdrawFormProps) => {
             <div className={styles.bigCol}>
               <HoneyButton
                 variant="primary"
-                disabled={isRepayButtonDisabled()}
+                disabled={isWithdrawButtonDisabled()}
                 isFluid={true}
                 onClick={handleWithdraw}
               >
@@ -155,7 +156,7 @@ const WithdrawForm = (props: WithdrawFormProps) => {
           currentValue={sliderValue}
           maxValue={maxValue}
           minAvailableValue={0}
-          maxSafePosition={0.4}
+          // maxSafePosition={0.4}
           // maxAvailablePosition={maxValue} // TODO: should be capped by available liquidity
           onChange={handleSliderChange}
         />
