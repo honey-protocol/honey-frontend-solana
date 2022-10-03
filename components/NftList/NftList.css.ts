@@ -4,10 +4,11 @@ import { vars } from 'styles/theme.css';
 export const nftsListContainer = style({});
 
 export const listItem = style({
-  marginBottom: 14
+  paddingTop: 14
+  // border: '1px solid'
 });
 
 export const selectedListItem = style({
-  borderTop: `1px solid ${vars.colors.brownMiddle}`,
-  borderBottom: `1px solid ${vars.colors.brownMiddle}`
+  border: `2px solid ${vars.colors.brownMiddle}`,
+  borderRadius: '10px'
 });
