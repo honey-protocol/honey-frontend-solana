@@ -1,13 +1,13 @@
 import { style } from '@vanilla-extract/css';
 import { vars } from 'degen';
-
 export const cardContainer = style({
   transition: 'all .3s',
   boxSizing: 'border-box',
   borderWidth: 2,
-  borderColor: 'transparent',
+  borderColor: 'black',
   ':hover': {
-    borderColor: vars.colors.foregroundSecondary
+    borderColor: vars.colors.yellow,
+    borderWidth: 5
   }
 });
 
