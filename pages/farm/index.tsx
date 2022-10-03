@@ -3,7 +3,7 @@ import HeadSeo from 'components/HeadSeo/HeadSeo';
 import siteMetadata from 'constants/siteMetadata';
 import Link from 'next/link';
 import { Box, Text, Stack, Button, IconSearch, Input, Spinner } from 'degen';
-import Layout from '../../components/Layout/Layout';
+// import Layout from '../../components/Layout/Layout';
 import * as styles from '../../styles/farm.css';
 import ToggleSwitch from '../../components/ToggleSwitch';
 import { useState, useEffect, useCallback } from 'react';
@@ -14,6 +14,11 @@ import FarmCollectionCard from 'components/FarmCollectionCard/FarmCollectionCard
 import getCollectionExpireDate from 'helpers/dateUtils';
 import { getFarmsStakedIn } from 'helpers/gemFarm';
 import SmallToggleSwitch from 'components/SmallToggleSwitch/SmallToggleSwitch';
+
+// new imports for testing
+import LayoutRedesign from '../../components/LayoutRedesign/LayoutRedesign';
+import { pageDescription, pageTitle } from 'styles/common.css';
+import { Typography } from 'antd';
 
 /**
  * @params collection and i
@@ -28,7 +33,6 @@ const liveFarms = newFarmCollections.filter((collection, i) => {
   );
   return expireDate > new Date();
 });
-
 /**
  * @params collection and i
  * @description filters based off completion date
@@ -52,7 +56,6 @@ const Farm: NextPage = (props: any) => {
   const [searchInput, setSearchInput] = useState('');
   const [displayedCollections, setDisplayedCollections] = useState(liveFarms);
   const [isLoading, setIsLoading] = useState(false);
-
   /**
    * @params event object
    * @description filters collections based off user input; completed or live
@@ -67,7 +70,6 @@ const Farm: NextPage = (props: any) => {
     );
     setDisplayedCollections(searchResult);
   };
-
   const stakedInFilter = useCallback(
     async (farms: TGFarm[]) => {
       setIsLoading(true);
@@ -81,7 +83,6 @@ const Farm: NextPage = (props: any) => {
     },
     [connection, wallet]
   );
-
   /**
    * @params None
    * @description sets the UI to live or completed farms
@@ -99,14 +100,13 @@ const Farm: NextPage = (props: any) => {
       setDisplayedCollections(completedFarms);
     }
   }, [allOrStakedIn, liveOrCompleted, stakedInFilter]);
-
   useEffect(() => {
     if (!wallet) return;
     onFarmFilter();
   }, [onFarmFilter, wallet]);
 
   return (
-    <Layout>
+    <LayoutRedesign>
       <HeadSeo
         title={`Farms | ${siteMetadata.companyName}`}
         description={`Stake your favorite Solana NFTs to earn crypto rewards. Start earning now!`}
@@ -115,7 +115,12 @@ const Farm: NextPage = (props: any) => {
         ogTwitterImage={siteMetadata.siteLogoSquare}
         ogType={'website'}
       />
-
+      <div>
+        <Typography.Title className={pageTitle}>Farms</Typography.Title>
+        <Typography.Text className={pageDescription}>
+          Stake your NFTs for governance tokens{' '}
+        </Typography.Text>
+      </div>
       <Box display={'flex'} flexDirection="column" flex={1}>
         <Box minWidth="full" gap="3" paddingTop="4">
           <Stack
@@ -135,6 +140,7 @@ const Farm: NextPage = (props: any) => {
                   Staking v3 Alpha
                 </Text>
               </Box> */}
+
             <Stack align="center" direction={'horizontal'}>
               <SmallToggleSwitch
                 isActive={Boolean(allOrStakedIn)}
@@ -205,7 +211,7 @@ const Farm: NextPage = (props: any) => {
           </Box>
         )}
       </Box>
-    </Layout>
+    </LayoutRedesign>
   );
 };
 

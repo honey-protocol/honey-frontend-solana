@@ -67,10 +67,11 @@ function MyApp({ Component, pageProps }: AppProps) {
   if (!shouldRender) return null;
 
   return (
-    <ThemeProvider
-      defaultMode="dark"
-      defaultAccent={storedAccent || defaultAccent}
-    >
+    // <ThemeProvider
+    //   defaultMode="dark"
+    //   defaultAccent={storedAccent || defaultAccent}
+    // >
+    <ThemeProvider defaultMode="light" defaultAccent={'yellow'}>
       <Script
         strategy="lazyOnload"
         src={`https://www.googletagmanager.com/gtag/js?id=${process.env.NEXT_PUBLIC_GA}`}

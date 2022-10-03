@@ -2,7 +2,7 @@ import HeadSeo from 'components/HeadSeo/HeadSeo';
 import siteMetadata from 'constants/siteMetadata';
 import type { NextPage } from 'next';
 import { Box, Stack, Button, IconChevronLeft } from 'degen';
-import Layout from '../../../components/Layout/Layout';
+// import Layout from '../../../components/Layout/Layout';
 import FarmHeaderComponent from 'components/FarmHeaderComponent/FarmHeaderComponent';
 import useGemFarm from 'hooks/useGemFarm';
 import FarmNFTsContainer from 'components/FarmNFTsContainer/FarmNFTsContainer';
@@ -10,6 +10,11 @@ import Link from 'next/link';
 import * as styles from '../../../styles/name.css';
 import { useState } from 'react';
 import { useRouter } from 'next/router';
+
+// new imports for testing
+import LayoutRedesign from '../../../components/LayoutRedesign/LayoutRedesign';
+import { pageDescription, pageTitle } from 'styles/common.css';
+import { Typography } from 'antd';
 
 const Nft: NextPage = () => {
   const {
@@ -33,16 +38,13 @@ const Nft: NextPage = () => {
     rewardTokenName,
     lockVault
   } = useGemFarm();
-
   const router = useRouter();
   const { name } = router.query;
   console.log('Page Id ' + name);
-
   const [txLoading, setTxLoading] = useState({
     value: false,
     txName: ''
   });
-
   const withTxLoading = async (tx: Function, txName: string) => {
     try {
       setTxLoading({ value: true, txName });
@@ -55,7 +57,7 @@ const Nft: NextPage = () => {
   };
 
   return (
-    <Layout>
+    <LayoutRedesign>
       <HeadSeo
         title={`${name} | Farms | ${siteMetadata.companyName}`}
         description={`Start staking your ${name} NFT to earn ${rewardTokenName} token in Solana.`}
@@ -64,7 +66,12 @@ const Nft: NextPage = () => {
         ogTwitterImage={siteMetadata.siteLogoSquare}
         ogType={'website'}
       />
-
+      <div>
+        <Typography.Title className={pageTitle}>{name}</Typography.Title>
+        <Typography.Text className={pageDescription}>
+          Stake your {name} NFTs for {rewardTokenName} governance tokens{' '}
+        </Typography.Text>
+      </div>
       <Box marginTop="3" marginBottom="2">
         <Stack
           direction={{ lg: 'horizontal', xs: 'vertical' }}
@@ -155,7 +162,7 @@ const Nft: NextPage = () => {
           onNFTUnselect={onStakedNFTUnselect}
         />
       </Box>
-    </Layout>
+    </LayoutRedesign>
   );
 };
 
