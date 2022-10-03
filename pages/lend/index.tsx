@@ -272,6 +272,8 @@ const Lend: NextPage = () => {
       const depositTokenMint = new PublicKey(
         'So11111111111111111111111111111111111111112'
       );
+
+      toast.processing();
       const tx = await withdraw(
         honeyUser,
         tokenAmount,
@@ -511,8 +513,7 @@ const Lend: NextPage = () => {
       <div>
         <Typography.Title className={pageTitle}>Lend</Typography.Title>
         <Typography.Text className={pageDescription}>
-          Earn yield by providing liquidity to NFT collections
-          {' '}
+          Earn yield by providing liquidity to NFT collections{' '}
         </Typography.Text>
       </div>
       <HoneyContent>
