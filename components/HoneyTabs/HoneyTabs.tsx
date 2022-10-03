@@ -8,6 +8,7 @@ import TabBgRight from './TabBgRight';
 export type HoneyTabItem = {
   label: string;
   key: string;
+  disabled?: boolean;
 };
 
 const HoneyTabs = (props: {
@@ -29,10 +30,16 @@ const HoneyTabs = (props: {
         {props.items.map((tabInfo, i) => (
           <div
             key={tabInfo.key}
-            className={classNames(styles.tab,
-              props.activeKey === tabInfo.key ? styles.activeText : styles.inactiveText
+            className={classNames(
+              styles.tab,
+              props.activeKey === tabInfo.key
+                ? styles.activeText
+                : styles.inactiveText,
+              tabInfo.disabled ? styles.disabled : ''
             )}
-            onClick={() => props.onTabChange(tabInfo.key)}
+            onClick={() =>
+              tabInfo.disabled ? null : props.onTabChange(tabInfo.key)
+            }
           >
             <Typography.Text className={styles.tabText}>
               {tabInfo.label}

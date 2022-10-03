@@ -9,11 +9,6 @@ import EmptyStateDetails from 'components/EmptyStateDetails/EmptyStateDetails';
 import { useConnectedWallet } from '@saberhq/use-solana';
 import { useWalletKit } from '@gokiprotocol/walletkit';
 
-const items: [HoneyTabItem, HoneyTabItem] = [
-  { label: 'Borrow', key: 'borrow' },
-  { label: 'Repay', key: 'repay' }
-];
-
 const { Text } = Typography;
 
 type Tab = 'borrow' | 'repay';
@@ -40,8 +35,12 @@ const MarketsSidebar = (props: MarketsSidebarProps) => {
     setActiveTab(tabKey as Tab);
   };
 
-  useEffect(() => {
-  }, [openPositions, availableNFTs]);
+  useEffect(() => {}, [openPositions, availableNFTs]);
+
+  const items: [HoneyTabItem, HoneyTabItem] = [
+    { label: 'Borrow', key: 'borrow' },
+    { label: 'Repay', key: 'repay', disabled: !Boolean(openPositions.length) }
+  ];
 
   return (
     <div className={styles.marketsSidebarContainer}>
@@ -67,8 +66,7 @@ const MarketsSidebar = (props: MarketsSidebarProps) => {
           />
         ) : (
           <>
-            {
-              activeTab === 'borrow' &&
+            {activeTab === 'borrow' && (
                 <BorrowForm
                   userDebt={userDebt}
                   executeBorrow={executeBorrow}
@@ -80,9 +78,8 @@ const MarketsSidebar = (props: MarketsSidebarProps) => {
                   loanToValue={loanToValue}
                   hideMobileSidebar={hideMobileSidebar}
                 />
-            }
-            {
-              (activeTab === 'repay' && openPositions.length) &&
+            )}
+            {activeTab === 'repay' && Boolean(openPositions.length) && (
                 <RepayForm
                   executeRepay={executeRepay}
                   openPositions={openPositions}
@@ -94,8 +91,9 @@ const MarketsSidebar = (props: MarketsSidebarProps) => {
                   userUSDCBalance={userUSDCBalance}
                   loanToValue={loanToValue}
                   hideMobileSidebar={hideMobileSidebar}
+                changeTab={handleTabChange}
                 />
-              }
+            )}
           </>
         )}
       </HoneyTabs>
