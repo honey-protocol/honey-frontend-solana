@@ -32,7 +32,8 @@ const RepayForm = (props: RepayProps) => {
     userUSDCBalance,
     loanToValue,
     availableNFTs,
-    hideMobileSidebar
+    hideMobileSidebar,
+    changeTab
   } = props;
 
   const [valueUSD, setValueUSD] = useState<number>();
@@ -86,11 +87,11 @@ const RepayForm = (props: RepayProps) => {
   };
 
   const onRepay = async (event: any) => {
-    const btnText = event.target.innerHTML;
-    const mintId = new PublicKey(openPositions[0].mint).toString();
-    // repay function here
     if (userDebt == 0 && openPositions[0]) {
-      executeWithdrawNFT(openPositions[0].mint, toast);
+      await executeWithdrawNFT(openPositions[0].mint, toast);
+      if (changeTab) {
+        changeTab('borrow');
+      }
     } else {
       await executeRepay(valueSOL || 0, toast);
       handleSliderChange(0);

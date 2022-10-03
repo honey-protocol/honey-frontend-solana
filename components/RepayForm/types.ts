@@ -10,4 +10,5 @@ export type RepayProps = {
   executeWithdrawNFT: (mint: string, toast: any) => void;
   executeRepay: (val: number, toast: any) => void;
   hideMobileSidebar?: () => void;
+  changeTab?: (tabKey: string) => void;
 };

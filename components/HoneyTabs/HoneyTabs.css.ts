@@ -110,6 +110,10 @@ export const tab = style({
   }
 });
 
+export const disabled = style({
+  cursor: 'not-allowed'
+});
+
 export const activeText = style({
   opacity: 1,
   ':after': {
