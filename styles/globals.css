@@ -24,8 +24,15 @@ p {
   margin: 0;
 }
 
-
-
 [data-reach-dialog-overlay] {
   z-index: 100000;
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+input[type='number'] {
+  -moz-appearance: textfield;
 }

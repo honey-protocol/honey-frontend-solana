@@ -43,7 +43,7 @@ export const InputsBlock: FC<InputsBlockProps> = ({
   const handleUsdChange = (event: ChangeEvent<HTMLInputElement>) => {
     const value = event.target.value;
     if (isValidNumericInput(value) && value !== '') {
-      onChangeFirstInput(Math.min(parseFloat(value), maxValue));
+      onChangeFirstInput(parseFloat(value));
     } else {
       onChangeFirstInput(undefined);
     }
@@ -52,7 +52,7 @@ export const InputsBlock: FC<InputsBlockProps> = ({
   const handleTokenChange = (event: ChangeEvent<HTMLInputElement>) => {
     const value = event.target.value;
     if (isValidNumericInput(value) && value !== '') {
-      onChangeSecondInput(parseFloat(value));
+      onChangeSecondInput(Number(value) < maxValue ? Number(value) : maxValue);
     } else {
       onChangeSecondInput(undefined);
     }
@@ -63,7 +63,7 @@ export const InputsBlock: FC<InputsBlockProps> = ({
       <div className={styles.inputWrapper}>
         <input
           className={styles.input}
-          type="text"
+          type="number"
           placeholder="0.00"
           value={firstInputValue}
           onChange={handleUsdChange}
@@ -74,7 +74,7 @@ export const InputsBlock: FC<InputsBlockProps> = ({
       <div className={styles.inputWrapper}>
         <input
           className={styles.input}
-          type="text"
+          type="number"
           placeholder="0.00"
           value={secondInputValue}
           onChange={handleTokenChange}
