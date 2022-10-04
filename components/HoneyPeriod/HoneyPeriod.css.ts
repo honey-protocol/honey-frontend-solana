@@ -10,6 +10,14 @@ export const dateWrapper = style({
   marginRight: 4
 });
 
+export const value = style([
+  typography.numbersLarge,
+  {
+    marginTop: 4,
+    color: vars.colors.black
+  }
+]);
+
 export const dateLetter = style([
   typography.numbersLarge,
   {
