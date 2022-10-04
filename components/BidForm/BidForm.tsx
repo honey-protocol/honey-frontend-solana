@@ -14,6 +14,7 @@ import SidebarScroll from '../SidebarScroll/SidebarScroll';
 import { BidFormProps } from './types';
 import { hAlign } from 'styles/common.css';
 import { questionIcon } from 'styles/icons.css';
+import useToast from 'hooks/useToast';
 
 const {
   format: f,
@@ -36,6 +37,7 @@ const BidForm = (props: BidFormProps) => {
   const [valueSOL, setValueSOL] = useState<number>(0);
   // const [valueUSDC, setValueUSDC] = useState<number>(0);
   const [sliderValue, setSliderValue] = useState(0);
+  const { toast, ToastComponent } = useToast();
 
   const maxValue = 1000;
 
@@ -80,8 +82,8 @@ const BidForm = (props: BidFormProps) => {
 
   function triggerIndicator() {
     currentUserBid != 0
-      ? handlePlaceBid('increase_bid', valueSOL)
-      : handleIncreaseBid('place_bid', valueSOL);
+      ? handlePlaceBid('increase_bid', valueSOL, toast)
+      : handleIncreaseBid('place_bid', valueSOL, toast);
   }
 
   useEffect(() => {
@@ -91,28 +93,32 @@ const BidForm = (props: BidFormProps) => {
   return (
     <SidebarScroll
       footer={
-        <div className={styles.buttons}>
-          <div className={styles.smallCol}>
-            <HoneyButton
-              variant="secondary"
-              onClick={() => handleRevokeBid('revoke_bid')}
-            >
-              Cancel
-            </HoneyButton>
+        toast.state ? (
+          <ToastComponent />
+        ) : (
+          <div className={styles.buttons}>
+            <div className={styles.smallCol}>
+              <HoneyButton
+                variant="secondary"
+                onClick={() => handleRevokeBid('revoke_bid', toast)}
+              >
+                Cancel
+              </HoneyButton>
+            </div>
+            <div className={styles.bigCol}>
+              <HoneyButton
+                variant="primary"
+                disabled={isSubmitButtonDisabled()}
+                isFluid={true}
+                usdcValue={valueUSD || 0}
+                solAmount={valueSOL || 0}
+                onClick={triggerIndicator}
+              >
+                {currentUserBid != 0 ? 'Increase Bid' : 'Place Bid'}
+              </HoneyButton>
+            </div>
           </div>
-          <div className={styles.bigCol}>
-            <HoneyButton
-              variant="primary"
-              disabled={isSubmitButtonDisabled()}
-              isFluid={true}
-              usdcValue={valueUSD || 0}
-              solAmount={valueSOL || 0}
-              onClick={triggerIndicator}
-            >
-              {currentUserBid != 0 ? 'Increase Bid' : 'Place Bid'}
-            </HoneyButton>
-          </div>
-        </div>
+        )
       }
     >
       <div className={styles.depositForm}>
@@ -142,8 +148,7 @@ const BidForm = (props: BidFormProps) => {
                     ? 'Your bid is #1'
                     : 'Your bid is:'
                 }
-                handleIncreaseBid={handleIncreaseBid}
-                handleRevokeBid={handleRevokeBid}
+                handleRevokeBid={() => handleRevokeBid('revoke_bid', toast)}
               />
             </div>
           </div>

@@ -33,7 +33,7 @@ import {
   useHoney,
   useMarket
 } from '@honey-finance/sdk';
-import { ConfigureSDK, toastResponse } from 'helpers/loanHelpers';
+import { ConfigureSDK } from 'helpers/loanHelpers';
 import { useConnectedWallet } from '@saberhq/use-solana';
 import { LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js';
 import { calcNFT } from 'helpers/loanHelpers/userCollection';
@@ -45,6 +45,7 @@ import HoneySider from 'components/HoneySider/HoneySider';
 import HoneyContent from 'components/HoneyContent/HoneyContent';
 import { pageDescription, pageTitle } from 'styles/common.css';
 import { Typography } from 'antd';
+import { ToastProps } from 'hooks/useToast';
 
 const { formatPercent: fp, formatSol: fs, formatRoundDown: fd } = formatNumber;
 const Liquidate: NextPage = () => {
@@ -233,7 +234,11 @@ const Liquidate: NextPage = () => {
    * @params tpye | userbid | nftmint
    * @returms toastresponse of executed call
    */
-  async function fetchLiquidatorClient(type: string, userBid?: number) {
+  async function fetchLiquidatorClient(
+    type: string,
+    userBid: number | undefined,
+    toast: ToastProps['toast']
+  ) {
     try {
       const liquidatorClient = await LiquidatorClient.connect(
         program.provider,
@@ -244,6 +249,7 @@ const Liquidate: NextPage = () => {
         if (type == 'revoke_bid') {
           if (!currentUserBid) return;
 
+          toast.processing();
           let transactionOutcome: any = await liquidatorClient.revokeBid({
             market: new PublicKey(HONEY_MARKET_ID),
             bidder: wallet.publicKey,
@@ -252,14 +258,10 @@ const Liquidate: NextPage = () => {
           });
 
           if (transactionOutcome[0] == 'SUCCESS') {
-            return toastResponse(
-              'SUCCESS',
-              'Bid revoked, fetching chain data',
-              'SUCCESS'
-            );
+            return toast.success('Bid revoked, fetching chain data');
           } else {
             console.log('@@--error1', transactionOutcome);
-            return toastResponse('ERROR', 'Revoke bid failed', 'ERROR');
+            return toast.error('Revoke bid failed');
           }
         } else if (type == 'place_bid') {
           // if no user bid terminate action
@@ -267,27 +269,24 @@ const Liquidate: NextPage = () => {
 
           userBid = Number(userBid.toFixed(2));
 
+          toast.processing();
           let transactionOutcome: any = await liquidatorClient.placeBid({
             bid_limit: userBid,
             market: new PublicKey(HONEY_MARKET_ID),
             bidder: wallet.publicKey,
             bid_mint: NATIVE_MINT
           });
-
           // refreshDB();
           if (transactionOutcome[0] == 'SUCCESS') {
-            return toastResponse(
-              'SUCCESS',
-              'Bid placed, fetching chain data',
-              'SUCCESS'
-            );
+            return toast.success('Bid placed, fetching chain data');
           } else {
-            return toastResponse('ERROR', 'Bid failed', 'ERROR');
+            return toast.error('Bid failed 45');
           }
         } else if (type == 'increase_bid') {
           // if no user bid terminate action
           if (!userBid) return;
 
+          toast.processing();
           let transactionOutcome: any = await liquidatorClient.increaseBid({
             bid_increase: userBid,
             market: new PublicKey(HONEY_MARKET_ID),
@@ -296,14 +295,10 @@ const Liquidate: NextPage = () => {
           });
 
           if (transactionOutcome[0] == 'SUCCESS') {
-            return toastResponse(
-              'SUCCESS',
-              'Bid increased, fetching chain data',
-              'SUCCESS'
-            );
+            return toast.success('Bid increased, fetching chain data');
           } else {
             console.log('@@--error2', transactionOutcome);
-            return toastResponse('ERROR', 'Bid increase failed', 'ERROR');
+            return toast.error('Bid increase failed');
           }
         }
       } else {
@@ -311,20 +306,28 @@ const Liquidate: NextPage = () => {
       }
     } catch (error) {
       console.log('The error:', error);
-      return toastResponse('ERROR', 'Bid failed', 'ERROR');
+      return toast.error('Bid failed');
     }
   }
 
-  function handleRevokeBid(type: string) {
-    fetchLiquidatorClient(type);
+  function handleRevokeBid(type: string, toast: ToastProps['toast']) {
+    fetchLiquidatorClient(type, undefined, toast);
   }
 
-  function handleIncreaseBid(type: string, userBid: number) {
-    fetchLiquidatorClient(type, userBid!);
+  function handleIncreaseBid(
+    type: string,
+    userBid: number,
+    toast: ToastProps['toast']
+  ) {
+    fetchLiquidatorClient(type, userBid!, toast);
   }
 
-  function handlePlaceBid(type: string, userBid: number) {
-    fetchLiquidatorClient(type, userBid!);
+  function handlePlaceBid(
+    type: string,
+    userBid: number,
+    toast: ToastProps['toast']
+  ) {
+    fetchLiquidatorClient(type, userBid!, toast);
   }
 
   // end of sdk integration
