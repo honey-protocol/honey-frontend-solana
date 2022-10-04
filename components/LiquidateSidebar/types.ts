@@ -1,3 +1,4 @@
+import { ToastProps } from 'hooks/useToast';
 import { BiddingPosition } from '../../types/liquidate';
 
 export type LendSidebarProps = {
@@ -6,7 +7,15 @@ export type LendSidebarProps = {
   biddingArray: any;
   highestBiddingValue: number;
   currentUserBid: number;
-  handleRevokeBid: (type: string) => void;
-  handleIncreaseBid: (type: string, userBid: number) => void;
-  handlePlaceBid: (type: string, userBid: number) => void;
+  handleRevokeBid: (type: string, toast: ToastProps['toast']) => void;
+  handleIncreaseBid: (
+    type: string,
+    userBid: number,
+    toast: ToastProps['toast']
+  ) => void;
+  handlePlaceBid: (
+    type: string,
+    userBid: number,
+    toast: ToastProps['toast']
+  ) => void;
 };
