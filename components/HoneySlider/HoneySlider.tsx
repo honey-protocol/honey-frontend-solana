@@ -46,8 +46,10 @@ export const HoneySlider: FC<HoneySliderProps> = ({
 }) => {
   const minAvailablePosition = minAvailableValue / maxValue;
   const unavailablePosition = 1 - maxAvailablePosition;
-  const availablePosition = 1 - minAvailablePosition - unavailablePosition;
-
+  const availablePosition =
+    minAvailablePosition >= maxAvailablePosition
+      ? 0
+      : 1 - minAvailablePosition - unavailablePosition;
   const maxAvailable = maxValue * maxAvailablePosition;
   const currentSliderValue =
     (currentValue / (maxValue * maxAvailablePosition - minAvailableValue)) *
