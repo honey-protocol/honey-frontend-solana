@@ -109,6 +109,13 @@ export const formatNumber = {
       : '0';
   },
 
+  formatToThousands: (value: number): string => {
+    if (value < 1000) {
+      return '0 k';
+    }
+    return `${Math.floor(value / 1000)} k`;
+  },
+
   formatUsdMobile: (val?: number) => {
     return `$ ${formatNumber.formatMobile(val)}`;
     return `$ ${formatNumber.format(val)}`;

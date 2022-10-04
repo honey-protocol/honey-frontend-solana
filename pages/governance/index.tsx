@@ -19,6 +19,7 @@ import c from 'classnames';
 import NewProposalSidebar from '../../components/NewProposalSidebar/NewProposalSidebar';
 import GetVeHoneySidebar from '../../components/GetVeHoneySidebar/GetVeHoneySidebar';
 import { formatNumber } from '../../helpers/format';
+import {GovernanceStats} from "../../components/GovernanceStats/GovernanceStats";
 
 const { format: f, formatShortName: fsn } = formatNumber;
 
@@ -181,6 +182,10 @@ const Governance: NextPage = () => {
     setSidebarMode('vote');
   };
 
+  const handleGetVeHoneyClick = () => {
+    setSidebarMode('get_vehoney')
+  }
+
   const getRowClassName = (record: GovernanceTableRow) => {
     if (record.id === selectedProposalId) {
       return style.selectedProposal;
@@ -195,12 +200,9 @@ const Governance: NextPage = () => {
   return (
     <LayoutRedesign>
       <HoneyContent hasNoSider={true}>
-        <div className={style.stats}>
-          <div className={style.statsCard}>1</div>
-          <div className={style.statsCard}>2</div>
-          <div className={style.statsCard}>3</div>
-          <div className={style.statsCard}>4</div>
-        </div>
+        <GovernanceStats
+          onGetVeHoneyClick={handleGetVeHoneyClick}
+        />
       </HoneyContent>
       <HoneyContent>
         <HoneyTable

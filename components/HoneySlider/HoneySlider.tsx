@@ -86,7 +86,7 @@ export const HoneySlider: FC<HoneySliderProps> = ({
 
   return (
     <div className={styles.rangeContainer}>
-      <div
+      {Boolean(minAvailablePosition) && <div
         className={styles.sliderWrapper}
         style={{
           width: minAvailablePosition < 0 ? 0 : `${minAvailablePosition * 100}%`
@@ -105,14 +105,14 @@ export const HoneySlider: FC<HoneySliderProps> = ({
               ? styles.enabledWarningBackgroundSlider
               : styles.enabledBackgroundSlider
           )}
-          handleStyle={{ display: 'none' }}
+          handleStyle={{display: 'none'}}
           trackStyle={{
             backgroundColor: riskColor
           }}
           value={100}
           marks={preparedLabels?.left}
         />
-      </div>
+      </div>}
       <div
         className={styles.sliderWrapper}
         style={{ width: `${availablePosition * 100}%` }}
