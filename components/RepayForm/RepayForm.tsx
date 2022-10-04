@@ -174,8 +174,12 @@ const RepayForm = (props: RepayProps) => {
           </div>
           <div className={styles.col}>
             <InfoBlock
-              value={fs(userDebt / liquidationThreshold)}
-              valueSize="big"
+              value={`${fs(userDebt / liquidationThreshold)} ${
+                userDebt && nftPrice
+                  ? fp((nftPrice - userDebt / liquidationThreshold) / nftPrice)
+                  : ''
+              }`}
+              valueSize="normal"
               isDisabled={userDebt == 0 ? true : false}
               title={
                 <span className={hAlign}>
