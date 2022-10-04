@@ -283,6 +283,7 @@ const Markets: NextPage = () => {
    * @returns honeyUser | marketReserveInfo |
    */
   useEffect(() => {
+    console.log('@@--', userAllowance)
     if (marketReserveInfo && parsedReserves) {
       setDepositNoteExchangeRate(
         BnToDecimal(marketReserveInfo[0].depositNoteExchangeRate, 15, 5)
@@ -309,7 +310,9 @@ const Markets: NextPage = () => {
     honeyReserves,
     cRatio,
     reserveHoneyState,
-    calculatedNftPrice
+    calculatedNftPrice,
+    userAllowance,
+    userDebt
   ]);
 
   useEffect(() => {
@@ -329,6 +332,7 @@ const Markets: NextPage = () => {
   // PUT YOUR DATA SOURCE HERE
   // MOCK DATA FOR NOW
   useEffect(() => {
+    console.log('@@--::', userAllowance)
     const mockData: MarketTableRow[] = [
       {
         key: '0',
@@ -346,7 +350,7 @@ const Markets: NextPage = () => {
 
     setTableData(mockData);
     setTableDataFiltered(mockData);
-  }, [totalMarketDeposits, totalMarketDebt, nftPrice, userOpenPositions]);
+  }, [totalMarketDeposits, totalMarketDebt, nftPrice, userOpenPositions, userAllowance, userDebt]);
 
   const showMobileSidebar = () => {
     setShowMobileSidebar(true);
@@ -611,7 +615,7 @@ const Markets: NextPage = () => {
       width: columnsWidth[2],
       render: allowance => (
         <div className={style.expandedRowCell}>
-          <InfoBlock title={'Allowance:'} value={fs(allowance)} />
+          <InfoBlock title={'Allowance:'} value={fs(userAllowance)} />
         </div>
       )
     },
