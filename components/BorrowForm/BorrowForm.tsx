@@ -142,6 +142,8 @@ const BorrowForm = (props: BorrowProps) => {
   };
 
   useEffect(() => {}, [selectedNft]);
+  const liqPercent =
+    ((nftPrice - userDebt / liquidationThreshold) / nftPrice) * 100;
 
   const renderContent = () => {
     if (isNftSelected == false) {
@@ -200,9 +202,7 @@ const BorrowForm = (props: BorrowProps) => {
           <div className={styles.col}>
             <InfoBlock
               value={`${fs(userDebt / liquidationThreshold)} ${
-                userDebt
-                  ? fp((nftPrice - userDebt / liquidationThreshold) / nftPrice)
-                  : ''
+                userDebt ? `(-${liqPercent.toFixed(0)}%)` : ''
               }`}
               valueSize="normal"
               isDisabled={userDebt == 0 ? true : false}
