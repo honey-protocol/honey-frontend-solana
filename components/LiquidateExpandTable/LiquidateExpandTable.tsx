@@ -91,9 +91,9 @@ export const LiquidateExpandTable: FC<{ data: LiquidateTablePosition[] }> = ({
         </div>
         <HoneyButtonTabs
           items={[
-            { name: 'The most critical', slug: 'most_critical' },
+            { name: 'most critical', slug: 'most_critical' },
             { name: 'Maximum debt', slug: 'max_debt' },
-            { name: 'The most valuable', slug: 'most_valuable' }
+            { name: 'most valuable', slug: 'most_valuable' }
           ]}
           activeItemSlug={filter}
           onClick={itemSlug => setFilter(itemSlug as FilterType)}
