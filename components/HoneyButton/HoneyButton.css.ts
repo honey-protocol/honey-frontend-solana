@@ -22,6 +22,7 @@ export const honeyButton = style([
 
 export const primary = style({
   background: vars.colors.brownLight,
+  color: vars.colors.black,
   ':hover': {
     color: vars.colors.black,
     background: vars.colors.brownLight,
