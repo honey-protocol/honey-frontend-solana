@@ -19,7 +19,9 @@ import c from 'classnames';
 import NewProposalSidebar from '../../components/NewProposalSidebar/NewProposalSidebar';
 import GetVeHoneySidebar from '../../components/GetVeHoneySidebar/GetVeHoneySidebar';
 import { formatNumber } from '../../helpers/format';
-import {GovernanceStats} from "../../components/GovernanceStats/GovernanceStats";
+import { GovernanceStats } from '../../components/GovernanceStats/GovernanceStats';
+import { useGovernor } from 'hooks/tribeca/useGovernor';
+import { useProposals } from 'hooks/tribeca/useProposals';
 
 const { format: f, formatShortName: fsn } = formatNumber;
 
@@ -32,6 +34,12 @@ const Governance: NextPage = () => {
     useState<GovernanceSidebarForm>('get_vehoney');
 
   // PUT YOUR DATA SOURCE HERE
+  const { proposalCount } = useGovernor();
+  const proposals = useProposals();
+  const [currentPage, setCurrentPage] = useState(0);
+
+  console.log({ proposals });
+
   // MOCK DATA FOR NOW
   useEffect(() => {
     const mockData: GovernanceTableRow[] = [
@@ -183,8 +191,8 @@ const Governance: NextPage = () => {
   };
 
   const handleGetVeHoneyClick = () => {
-    setSidebarMode('get_vehoney')
-  }
+    setSidebarMode('get_vehoney');
+  };
 
   const getRowClassName = (record: GovernanceTableRow) => {
     if (record.id === selectedProposalId) {
@@ -200,9 +208,7 @@ const Governance: NextPage = () => {
   return (
     <LayoutRedesign>
       <HoneyContent hasNoSider={true}>
-        <GovernanceStats
-          onGetVeHoneyClick={handleGetVeHoneyClick}
-        />
+        <GovernanceStats onGetVeHoneyClick={handleGetVeHoneyClick} />
       </HoneyContent>
       <HoneyContent>
         <HoneyTable
