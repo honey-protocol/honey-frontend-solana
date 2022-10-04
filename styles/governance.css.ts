@@ -150,22 +150,3 @@ export const create = style({
 });
 
 export const selectedProposal = style({});
-
-export const stats = style({
-  display: 'flex',
-  marginBottom: '16px'
-});
-
-export const statsCard = style({
-  width: '100%',
-  padding: '20px 24px 10px 24px',
-  height: '160px',
-  background: vars.colors.white,
-  borderRadius: '16px',
-  marginRight: 16,
-  selectors: {
-    '&:last-child': {
-      marginRight: 0
-    }
-  }
-});

@@ -16,27 +16,27 @@ const { format: f, formatPercent: fp, formatUsd: fu } = formatNumber;
 const nftToBurn = [
   {
     name: 'HONEY #1291',
-    value: '1,000',
+    value: 1000,
     id: '1'
   },
   {
     name: 'HONEY #1291',
-    value: '1,000',
+    value: 1000,
     id: '2'
   },
   {
     name: 'HONEY #1291',
-    value: '1,000',
+    value: 1000,
     id: '3'
   },
   {
     name: 'HONEY #1291',
-    value: '1,000',
+    value: 1000,
     id: '4'
   },
   {
     name: 'HONEY #1291',
-    value: '1,000',
+    value: 1000,
     id: '5'
   }
 ];
@@ -123,10 +123,7 @@ const BurnNftsForm: FC = () => {
 
         <div className={styles.row}>
           <div className={styles.col}>
-            <HoneyWarning
-              message="You can burn your Bee NFT and get some veHONEY tokens to participate in governance. Note that it can’t be undone"
-              link="https://google.com"
-            />
+            <HoneyWarning message="You can burn your Bee NFT and get some veHONEY tokens to participate in governance. Note that it can’t be undone" />
           </div>
         </div>
 
@@ -136,7 +133,7 @@ const BurnNftsForm: FC = () => {
               key={index}
               id={token.id}
               name={token.name}
-              value={token.value}
+              value={f(token.value)}
               isSelected={selected.includes(token.id)}
               onChange={onItemSelect}
             />

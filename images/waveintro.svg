@@ -2,7 +2,7 @@
           .path-0{
             animation:pathAnim-0 4s;
             animation-timing-function: linear;
-            animation-iteration-count: infinite;
+            animation-iteration-value: infinite;
           }
           @keyframes pathAnim-0{
             0%{
@@ -24,7 +24,7 @@
           .path-1{
             animation:pathAnim-1 4s;
             animation-timing-function: linear;
-            animation-iteration-count: infinite;
+            animation-iteration-value: infinite;
           }
           @keyframes pathAnim-1{
             0%{
