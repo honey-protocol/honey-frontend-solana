@@ -697,10 +697,10 @@ const Markets: NextPage = () => {
         </div>
         <div className={style.footerText}>
           <span className={style.footerTitle}>
-            You can’t add one more NFT to this market
+            You can not add any more NFTs to this market{' '}
           </span>
           <span className={style.footerDescription}>
-            Choose another market or connect another wallet
+            Choose another market or connect a different wallet{' '}
           </span>
         </div>
       </div>
@@ -711,7 +711,7 @@ const Markets: NextPage = () => {
           isFluid={windowWidth < TABLET_BP}
         >
           <div className={style.swapWalletIcon} />
-          Connect another wallet
+          Change active wallet{' '}
         </HoneyButton>
       </div>
     </div>
@@ -898,8 +898,7 @@ const Markets: NextPage = () => {
       <div>
         <Typography.Title className={pageTitle}>Borrow</Typography.Title>
         <Typography.Text className={pageDescription}>
-          Get instant liquidity using your NFTs as collateral
-          {' '}
+          Get instant liquidity using your NFTs as collateral{' '}
         </Typography.Text>
       </div>
       <HoneyContent>
