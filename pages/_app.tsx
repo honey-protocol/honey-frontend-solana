@@ -12,9 +12,22 @@ import SecPopup from 'components/SecPopup';
 import { AnchorProvider, HoneyProvider } from '@honey-finance/sdk';
 import { useConnectedWallet, useConnection } from '@saberhq/use-solana';
 import React, { FC, ReactNode, useEffect, useState } from 'react';
+import { GovernorProvider } from 'hooks/tribeca/useGovernor';
+import { GovernanceProvider } from 'contexts/GovernanceProvider';
 import Script from 'next/script';
 import { HONEY_MARKET_ID, HONEY_PROGRAM_ID } from '../constants/loan';
 // import NoMobilePopup from 'components/NoMobilePopup/NoMobilePopup';
+import { SailProvider } from '@saberhq/sail';
+import { onSailError } from '../helpers/error';
+import { ReactQueryDevtools } from 'react-query/devtools';
+
+import {
+  GOVERNOR_ADDRESS,
+  HONEY_MINT,
+  HONEY_MINT_WRAPPER,
+  SDKProvider
+} from 'helpers/sdk';
+import { QueryClient, QueryClientProvider } from 'react-query';
 export const network = process.env.NETWORK as Network;
 
 const networkConfiguration = () => {
@@ -24,6 +37,8 @@ const networkConfiguration = () => {
     return undefined;
   }
 };
+
+const queryClient = new QueryClient();
 
 const defaultAccent: ThemeAccent = accentSequence[0];
 const storedAccent =
@@ -102,25 +117,48 @@ function MyApp({ Component, pageProps }: AppProps) {
 
          `}
       </Script>
-      <WalletKitProvider
-        defaultNetwork={network}
-        app={{
-          name: 'Honey Finance'
-        }}
-        networkConfigs={networkConfiguration()}
-      >
-        {/* {children} */}
-        {showPopup ? (
-          <SecPopup setShowPopup={setShowPopup} />
-        ) : (
-          <>
-            <OnChainProvider>
-              <Component {...pageProps} />
-              <ToastContainer theme="dark" position="bottom-right" />
-            </OnChainProvider>
-          </>
-        )}
-      </WalletKitProvider>
+      <QueryClientProvider client={queryClient}>
+        {/* <ReactQueryDevtools initialIsOpen={false} /> */}
+        <WalletKitProvider
+          defaultNetwork={network}
+          app={{
+            name: 'Honey Finance'
+          }}
+          // networkConfigs={networkConfiguration()}
+        >
+          <GovernanceProvider>
+            <SailProvider
+              initialState={{
+                onSailError
+              }}
+            >
+              <SDKProvider>
+                <GovernorProvider
+                  initialState={{
+                    governor: GOVERNOR_ADDRESS,
+                    govToken: HONEY_MINT,
+                    minter: {
+                      mintWrapper: HONEY_MINT_WRAPPER
+                    }
+                  }}
+                >
+                  {/* {children} */}
+                  {showPopup ? (
+                    <SecPopup setShowPopup={setShowPopup} />
+                  ) : (
+                    <>
+                      <OnChainProvider>
+                        <Component {...pageProps} />
+                        <ToastContainer theme="dark" position="bottom-right" />
+                      </OnChainProvider>
+                    </>
+                  )}
+                </GovernorProvider>
+              </SDKProvider>
+            </SailProvider>
+          </GovernanceProvider>
+        </WalletKitProvider>
+      </QueryClientProvider>
     </ThemeProvider>
   );
 }
