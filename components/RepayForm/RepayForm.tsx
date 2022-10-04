@@ -108,6 +108,10 @@ const RepayForm = (props: RepayProps) => {
     availableNFTs
   ]);
 
+  const liqPercent = nftPrice
+    ? ((nftPrice - userDebt / liquidationThreshold) / nftPrice) * 100
+    : 0;
+
   return (
     <SidebarScroll
       footer={
@@ -175,9 +179,7 @@ const RepayForm = (props: RepayProps) => {
           <div className={styles.col}>
             <InfoBlock
               value={`${fs(userDebt / liquidationThreshold)} ${
-                userDebt && nftPrice
-                  ? fp((nftPrice - userDebt / liquidationThreshold) / nftPrice)
-                  : ''
+                userDebt ? `(-${liqPercent.toFixed(0)}%)` : ''
               }`}
               valueSize="normal"
               isDisabled={userDebt == 0 ? true : false}
