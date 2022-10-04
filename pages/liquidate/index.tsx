@@ -280,7 +280,7 @@ const Liquidate: NextPage = () => {
           if (transactionOutcome[0] == 'SUCCESS') {
             return toast.success('Bid placed, fetching chain data');
           } else {
-            return toast.error('Bid failed 45');
+            return toast.error('Bid failed');
           }
         } else if (type == 'increase_bid') {
           // if no user bid terminate action
