@@ -4,8 +4,22 @@ import LayoutRedesign from '../../components/LayoutRedesign/LayoutRedesign';
 import React from 'react';
 import * as styles from '../../styles/dashboard.css';
 import { HoneyPositionsSlider } from '../../components/HoneyPositionsSlider/HoneyPositionsSlider';
+import { CollectionPosition } from '../../components/HoneyPositionsSlider/types';
 
 const Dashboard: NextPage = () => {
+  const getMockPositions = () => {
+    const mockData: CollectionPosition[] = [];
+
+    for (let i = 0; i < 20; i++) {
+      mockData.push({
+        name: `Any name loooong ${i}`,
+        value: Math.random() * 10000,
+        difference: Math.random(),
+        image: '/nfts/honeyEyes.png'
+      });
+    }
+    return mockData;
+  };
   return (
     <LayoutRedesign>
       <HoneyContent hasNoSider>
@@ -13,7 +27,7 @@ const Dashboard: NextPage = () => {
           <div className={styles.chartContainer}>Chart</div>
           <div className={styles.notificationsWrapper}>Notifications</div>
         </div>
-        <HoneyPositionsSlider />
+        <HoneyPositionsSlider positions={getMockPositions()} />
       </HoneyContent>
       <HoneyContent hasNoSider>
         <div className={styles.pageContent}>
