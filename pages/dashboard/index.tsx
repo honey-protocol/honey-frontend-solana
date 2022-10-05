@@ -1,13 +1,18 @@
 import type { NextPage } from 'next';
 import HoneyContent from '../../components/HoneyContent/HoneyContent';
 import LayoutRedesign from '../../components/LayoutRedesign/LayoutRedesign';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import * as styles from '../../styles/dashboard.css';
 import { HoneyPositionsSlider } from '../../components/HoneyPositionsSlider/HoneyPositionsSlider';
 import { NotificationCardProps } from '../../components/NotificationCard/types';
 import NotificationsList from '../../components/NotificationsList/NotificationsList';
 import { CollectionPosition } from '../../components/HoneyPositionsSlider/types';
 import HoneySider from '../../components/HoneySider/HoneySider';
+import { HoneyCardsGrid } from '../../components/HoneyCardsGrid/HoneyCardsGrid';
+import {
+  BorrowUserPosition,
+  LendUserPosition
+} from '../../components/HoneyCardsGrid/types';
 import MarketsSidebar from '../../components/MarketsSidebar/MarketsSidebar';
 import { OpenPositions, UserNFTs } from '../../types/markets';
 import { borrow, depositNFT, repay, useBorrowPositions, useHoney, useMarket, withdrawNFT } from '@honey-finance/sdk';
@@ -43,6 +48,60 @@ const data: NotificationCardProps[] = [
 ];
 
 const Dashboard: NextPage = () => {
+  const [selected, setSelected] = useState<string | undefined>();
+
+  const getBorrowUserPositionsMock = () => {
+    const preparedPositions: BorrowUserPosition[] = [];
+    for (let i = 0; i < 20; i++) {
+      preparedPositions.push({
+        name: 'Any user position',
+        price: Math.random() * 1000,
+        debt: Math.random() * 1000,
+        ir: Math.random(),
+        imageUrl: '/nfts/azuki.jpg',
+        id: i.toString() + '_borrow'
+      });
+    }
+    for (let j = 0; j < 5; j++) {
+      preparedPositions.push({
+        name: 'Any user position',
+        price: Math.random() * 1000,
+        debt: 0,
+        ir: Math.random(),
+        imageUrl: '/nfts/azuki.jpg',
+        id: j.toString() + '_borrow_nodebt'
+      });
+    }
+    return preparedPositions;
+  };
+
+  const getLendUserPositionsMock = () => {
+    const preparedPositions: LendUserPosition[] = [];
+    for (let i = 0; i < 20; i++) {
+      preparedPositions.push({
+        name: 'Any user position',
+        deposit: Math.random() * 1000,
+        value: Math.random() * 1000,
+        ir: Math.random(),
+        available: Math.random() * 1000,
+        imageUrl: '/nfts/gecko.jpg',
+        id: i.toString() + '_lend'
+      });
+    }
+    return preparedPositions;
+  };
+
+  const handleSelect = (id: string) => {
+    setSelected(id);
+  };
+
+  const mockBorrowUserPositions = useMemo(
+    () => getBorrowUserPositionsMock(),
+    []
+  );
+
+  const mockLendUserPositions = useMemo(() => getLendUserPositionsMock(), []);
+
   const wallet = useConnectedWallet();
   const sdkConfig = ConfigureSDK();
 
@@ -495,7 +554,14 @@ const Dashboard: NextPage = () => {
         <div className={styles.pageContent}>
           <div className={styles.pageTitle}>My assets</div>
           <div className={styles.pageContentElements}>
-            <div className={styles.gridWrapper}>Grid with cards</div>
+            <div className={styles.gridWrapper}>
+              <HoneyCardsGrid
+                borrowPositions={mockBorrowUserPositions}
+                lendPositions={mockLendUserPositions}
+                selected={selected}
+                onSelect={handleSelect}
+              />
+            </div>
           </div>
         </div>
       </HoneyContent>

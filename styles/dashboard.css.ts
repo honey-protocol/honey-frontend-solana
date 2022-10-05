@@ -32,7 +32,8 @@ export const pageContent = style({
 });
 
 export const pageContentElements = style({
-  display: 'flex'
+  display: 'flex',
+  marginTop: 20
 });
 
 export const gridWrapper = style({
