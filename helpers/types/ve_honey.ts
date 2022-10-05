@@ -1,3 +1,5 @@
+import { generateErrorMap } from '@saberhq/anchor-contrib';
+
 export type VeHoney = {
   version: '0.1.0';
   name: 've_honey';
@@ -26,16 +28,17 @@ export type VeHoney = {
           isSigner: false;
         },
         {
+          name: 'governor';
+          isMut: false;
+          isSigner: false;
+        },
+        {
           name: 'systemProgram';
           isMut: false;
           isSigner: false;
         }
       ];
       args: [
-        {
-          name: 'admin';
-          type: 'publicKey';
-        },
         {
           name: 'params';
           type: {
@@ -54,7 +57,7 @@ export type VeHoney = {
         },
         {
           name: 'locker';
-          isMut: true;
+          isMut: false;
           isSigner: false;
         },
         {
@@ -76,6 +79,34 @@ export type VeHoney = {
       args: [];
     },
     {
+      name: 'setLockerParams';
+      accounts: [
+        {
+          name: 'locker';
+          isMut: true;
+          isSigner: false;
+        },
+        {
+          name: 'governor';
+          isMut: false;
+          isSigner: false;
+        },
+        {
+          name: 'smartWallet';
+          isMut: false;
+          isSigner: true;
+        }
+      ];
+      args: [
+        {
+          name: 'params';
+          type: {
+            defined: 'LockerParams';
+          };
+        }
+      ];
+    },
+    {
       name: 'approveProgramLockPrivilege';
       accounts: [
         {
@@ -89,14 +120,19 @@ export type VeHoney = {
           isSigner: false;
         },
         {
-          name: 'lockerAdmin';
-          isMut: false;
-          isSigner: true;
-        },
-        {
           name: 'whitelistEntry';
           isMut: true;
           isSigner: false;
+        },
+        {
+          name: 'governor';
+          isMut: false;
+          isSigner: false;
+        },
+        {
+          name: 'smartWallet';
+          isMut: false;
+          isSigner: true;
         },
         {
           name: 'executableId';
@@ -130,19 +166,19 @@ export type VeHoney = {
           isSigner: false;
         },
         {
-          name: 'lockerAdmin';
-          isMut: false;
-          isSigner: true;
-        },
-        {
           name: 'whitelistEntry';
           isMut: true;
           isSigner: false;
         },
         {
-          name: 'executableId';
+          name: 'governor';
           isMut: false;
           isSigner: false;
+        },
+        {
+          name: 'smartWallet';
+          isMut: false;
+          isSigner: true;
         }
       ];
       args: [];
@@ -237,6 +273,109 @@ export type VeHoney = {
         }
       ];
       args: [];
+    },
+    {
+      name: 'activateProposal';
+      accounts: [
+        {
+          name: 'locker';
+          isMut: false;
+          isSigner: false;
+        },
+        {
+          name: 'governor';
+          isMut: false;
+          isSigner: false;
+        },
+        {
+          name: 'proposal';
+          isMut: true;
+          isSigner: false;
+        },
+        {
+          name: 'escrow';
+          isMut: false;
+          isSigner: false;
+        },
+        {
+          name: 'escrowOwner';
+          isMut: false;
+          isSigner: true;
+        },
+        {
+          name: 'governProgram';
+          isMut: false;
+          isSigner: false;
+        }
+      ];
+      args: [];
+    },
+    {
+      name: 'castVote';
+      accounts: [
+        {
+          name: 'locker';
+          isMut: false;
+          isSigner: false;
+        },
+        {
+          name: 'escrow';
+          isMut: false;
+          isSigner: false;
+        },
+        {
+          name: 'voteDelegate';
+          isMut: false;
+          isSigner: true;
+        },
+        {
+          name: 'proposal';
+          isMut: true;
+          isSigner: false;
+        },
+        {
+          name: 'vote';
+          isMut: true;
+          isSigner: false;
+        },
+        {
+          name: 'governor';
+          isMut: false;
+          isSigner: false;
+        },
+        {
+          name: 'governProgram';
+          isMut: false;
+          isSigner: false;
+        }
+      ];
+      args: [
+        {
+          name: 'side';
+          type: 'u8';
+        }
+      ];
+    },
+    {
+      name: 'setVoteDelegate';
+      accounts: [
+        {
+          name: 'escrow';
+          isMut: true;
+          isSigner: false;
+        },
+        {
+          name: 'escrowOwner';
+          isMut: false;
+          isSigner: true;
+        }
+      ];
+      args: [
+        {
+          name: 'newDelegate';
+          type: 'publicKey';
+        }
+      ];
     }
   ];
   accounts: [
@@ -272,6 +411,10 @@ export type VeHoney = {
           {
             name: 'escrowEndsAt';
             type: 'i64';
+          },
+          {
+            name: 'voteDelegate';
+            type: 'publicKey';
           }
         ];
       };
@@ -298,7 +441,7 @@ export type VeHoney = {
             type: 'u64';
           },
           {
-            name: 'admin';
+            name: 'governor';
             type: 'publicKey';
           },
           {
@@ -356,6 +499,10 @@ export type VeHoney = {
           {
             name: 'multiplier';
             type: 'u8';
+          },
+          {
+            name: 'proposalActivationMinVotes';
+            type: 'u64';
           }
         ];
       };
@@ -431,7 +578,7 @@ export type VeHoney = {
           index: false;
         },
         {
-          name: 'admin';
+          name: 'governor';
           type: 'publicKey';
           index: false;
         },
@@ -490,6 +637,26 @@ export type VeHoney = {
         {
           name: 'nextEscrowStartedAt';
           type: 'i64';
+          index: false;
+        }
+      ];
+    },
+    {
+      name: 'SetVoteDelegateEvent';
+      fields: [
+        {
+          name: 'escrowOwner';
+          type: 'publicKey';
+          index: false;
+        },
+        {
+          name: 'oldDelegate';
+          type: 'publicKey';
+          index: false;
+        },
+        {
+          name: 'newDelegate';
+          type: 'publicKey';
           index: false;
         }
       ];
@@ -600,6 +767,26 @@ export type VeHoney = {
       code: 6011;
       name: 'EscrowNoBalance';
       msg: "The escrow doesn't have balance";
+    },
+    {
+      code: 6012;
+      name: 'ProposalMustBeActive';
+      msg: 'The proposal must be active';
+    },
+    {
+      code: 6013;
+      name: 'GovernorMismatch';
+      msg: 'Governor mismatch';
+    },
+    {
+      code: 6014;
+      name: 'ProgramIdMustBeExecutable';
+      msg: 'Program id must be executable';
+    },
+    {
+      code: 6015;
+      name: 'InsufficientVotingPower';
+      msg: 'Insufficient voting power to activate a proposal';
     }
   ];
 };
@@ -632,16 +819,17 @@ export const IDL: VeHoney = {
           isSigner: false
         },
         {
+          name: 'governor',
+          isMut: false,
+          isSigner: false
+        },
+        {
           name: 'systemProgram',
           isMut: false,
           isSigner: false
         }
       ],
       args: [
-        {
-          name: 'admin',
-          type: 'publicKey'
-        },
         {
           name: 'params',
           type: {
@@ -660,7 +848,7 @@ export const IDL: VeHoney = {
         },
         {
           name: 'locker',
-          isMut: true,
+          isMut: false,
           isSigner: false
         },
         {
@@ -682,6 +870,34 @@ export const IDL: VeHoney = {
       args: []
     },
     {
+      name: 'setLockerParams',
+      accounts: [
+        {
+          name: 'locker',
+          isMut: true,
+          isSigner: false
+        },
+        {
+          name: 'governor',
+          isMut: false,
+          isSigner: false
+        },
+        {
+          name: 'smartWallet',
+          isMut: false,
+          isSigner: true
+        }
+      ],
+      args: [
+        {
+          name: 'params',
+          type: {
+            defined: 'LockerParams'
+          }
+        }
+      ]
+    },
+    {
       name: 'approveProgramLockPrivilege',
       accounts: [
         {
@@ -695,14 +911,19 @@ export const IDL: VeHoney = {
           isSigner: false
         },
         {
-          name: 'lockerAdmin',
-          isMut: false,
-          isSigner: true
-        },
-        {
           name: 'whitelistEntry',
           isMut: true,
           isSigner: false
+        },
+        {
+          name: 'governor',
+          isMut: false,
+          isSigner: false
+        },
+        {
+          name: 'smartWallet',
+          isMut: false,
+          isSigner: true
         },
         {
           name: 'executableId',
@@ -736,19 +957,19 @@ export const IDL: VeHoney = {
           isSigner: false
         },
         {
-          name: 'lockerAdmin',
-          isMut: false,
-          isSigner: true
-        },
-        {
           name: 'whitelistEntry',
           isMut: true,
           isSigner: false
         },
         {
-          name: 'executableId',
+          name: 'governor',
           isMut: false,
           isSigner: false
+        },
+        {
+          name: 'smartWallet',
+          isMut: false,
+          isSigner: true
         }
       ],
       args: []
@@ -843,6 +1064,109 @@ export const IDL: VeHoney = {
         }
       ],
       args: []
+    },
+    {
+      name: 'activateProposal',
+      accounts: [
+        {
+          name: 'locker',
+          isMut: false,
+          isSigner: false
+        },
+        {
+          name: 'governor',
+          isMut: false,
+          isSigner: false
+        },
+        {
+          name: 'proposal',
+          isMut: true,
+          isSigner: false
+        },
+        {
+          name: 'escrow',
+          isMut: false,
+          isSigner: false
+        },
+        {
+          name: 'escrowOwner',
+          isMut: false,
+          isSigner: true
+        },
+        {
+          name: 'governProgram',
+          isMut: false,
+          isSigner: false
+        }
+      ],
+      args: []
+    },
+    {
+      name: 'castVote',
+      accounts: [
+        {
+          name: 'locker',
+          isMut: false,
+          isSigner: false
+        },
+        {
+          name: 'escrow',
+          isMut: false,
+          isSigner: false
+        },
+        {
+          name: 'voteDelegate',
+          isMut: false,
+          isSigner: true
+        },
+        {
+          name: 'proposal',
+          isMut: true,
+          isSigner: false
+        },
+        {
+          name: 'vote',
+          isMut: true,
+          isSigner: false
+        },
+        {
+          name: 'governor',
+          isMut: false,
+          isSigner: false
+        },
+        {
+          name: 'governProgram',
+          isMut: false,
+          isSigner: false
+        }
+      ],
+      args: [
+        {
+          name: 'side',
+          type: 'u8'
+        }
+      ]
+    },
+    {
+      name: 'setVoteDelegate',
+      accounts: [
+        {
+          name: 'escrow',
+          isMut: true,
+          isSigner: false
+        },
+        {
+          name: 'escrowOwner',
+          isMut: false,
+          isSigner: true
+        }
+      ],
+      args: [
+        {
+          name: 'newDelegate',
+          type: 'publicKey'
+        }
+      ]
     }
   ],
   accounts: [
@@ -878,6 +1202,10 @@ export const IDL: VeHoney = {
           {
             name: 'escrowEndsAt',
             type: 'i64'
+          },
+          {
+            name: 'voteDelegate',
+            type: 'publicKey'
           }
         ]
       }
@@ -904,7 +1232,7 @@ export const IDL: VeHoney = {
             type: 'u64'
           },
           {
-            name: 'admin',
+            name: 'governor',
             type: 'publicKey'
           },
           {
@@ -962,6 +1290,10 @@ export const IDL: VeHoney = {
           {
             name: 'multiplier',
             type: 'u8'
+          },
+          {
+            name: 'proposalActivationMinVotes',
+            type: 'u64'
           }
         ]
       }
@@ -1037,7 +1369,7 @@ export const IDL: VeHoney = {
           index: false
         },
         {
-          name: 'admin',
+          name: 'governor',
           type: 'publicKey',
           index: false
         },
@@ -1096,6 +1428,26 @@ export const IDL: VeHoney = {
         {
           name: 'nextEscrowStartedAt',
           type: 'i64',
+          index: false
+        }
+      ]
+    },
+    {
+      name: 'SetVoteDelegateEvent',
+      fields: [
+        {
+          name: 'escrowOwner',
+          type: 'publicKey',
+          index: false
+        },
+        {
+          name: 'oldDelegate',
+          type: 'publicKey',
+          index: false
+        },
+        {
+          name: 'newDelegate',
+          type: 'publicKey',
           index: false
         }
       ]
@@ -1206,6 +1558,28 @@ export const IDL: VeHoney = {
       code: 6011,
       name: 'EscrowNoBalance',
       msg: "The escrow doesn't have balance"
+    },
+    {
+      code: 6012,
+      name: 'ProposalMustBeActive',
+      msg: 'The proposal must be active'
+    },
+    {
+      code: 6013,
+      name: 'GovernorMismatch',
+      msg: 'Governor mismatch'
+    },
+    {
+      code: 6014,
+      name: 'ProgramIdMustBeExecutable',
+      msg: 'Program id must be executable'
+    },
+    {
+      code: 6015,
+      name: 'InsufficientVotingPower',
+      msg: 'Insufficient voting power to activate a proposal'
     }
   ]
 };
+
+export const LockedVoterErrors = generateErrorMap(IDL);

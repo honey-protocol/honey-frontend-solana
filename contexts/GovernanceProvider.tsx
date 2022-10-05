@@ -51,10 +51,7 @@ export function GovernanceProvider({ children }: Props) {
   );
   const LOCKER_ADDRESS = new PublicKey(config.NEXT_PUBLIC_LOCKER_ADDR);
 
-  const { user, escrow, locker, totalVeHoney } = useStake(
-    STAKE_POOL_ADDRESS,
-    LOCKER_ADDRESS
-  );
+  const { user, escrow, locker } = useStake(STAKE_POOL_ADDRESS, LOCKER_ADDRESS);
 
   // use token accounts for honey and phoney
   const { tokenAccounts } = useAccounts();
