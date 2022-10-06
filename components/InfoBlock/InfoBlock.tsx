@@ -1,4 +1,4 @@
-import { ReactElement, FC, Fragment } from 'react';
+import { ReactElement, FC, Fragment, ReactNode } from 'react';
 import * as styles from './InfoBlock.css';
 import c from 'classnames';
 import HoneyTooltip from 'components/HoneyTooltip/HoneyTooltip';
@@ -20,9 +20,14 @@ export const InfoBlock: FC<InfoBlockProps> = ({
   isDisabled,
   toolTipLabel
 }) => {
-  const Container = toolTipLabel ? HoneyTooltip : Fragment;
+  const Container = (a: { children: ReactNode }) =>
+    toolTipLabel ? (
+      <HoneyTooltip label={toolTipLabel}>{a.children}</HoneyTooltip>
+    ) : (
+      <Fragment>{a.children}</Fragment>
+    );
   return (
-    <Container label={toolTipLabel}>
+    <Container>
       <div
         className={c(styles.infoBlockContainer, {
           [styles.disabled]: isDisabled
