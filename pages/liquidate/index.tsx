@@ -514,15 +514,16 @@ const Liquidate: NextPage = () => {
         }
       },
       {
-        title: (
-          <div className={style.toggle}>
-            <HoneyToggle
-              checked={isMyBidsFilterEnabled}
-              onChange={handleToggle}
-            />
-            <span className={style.toggleText}>my bids</span>
-          </div>
-        ),
+        // TODO: add toggle back when its functional
+        // title: (
+        //   // <div className={style.toggle}>
+        //   //   <HoneyToggle
+        //   //     checked={isMyBidsFilterEnabled}
+        //   //     onChange={handleToggle}
+        //   //   />
+        //   //   <span className={style.toggleText}>my bids</span>
+        //   // </div>
+        // ),
         render: (_: null, row: LiquidateTableRow) => {
           return (
             <div className={style.buttonsCell}>
