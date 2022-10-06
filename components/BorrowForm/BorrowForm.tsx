@@ -212,7 +212,18 @@ const BorrowForm = (props: BorrowProps) => {
                   Liquidation price <div className={questionIcon} />
                 </span>
               }
-              toolTipLabel="Placeholder text for tooltip" // TODO: CHANGE TO REAL INFO TEXT FOR LIQ PRICE
+              toolTipLabel={
+                <span>
+                  Price at which the position (NFT) will be liquidated.{' '}
+                  <a
+                    className={styles.extLink}
+                    target="blank"
+                    href=" " //TODO: add link to docs
+                  >
+                    Learn more.
+                  </a>
+                </span>
+              }
             />
           </div>
         </div>
