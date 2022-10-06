@@ -4,10 +4,11 @@ import LayoutRedesign from '../../components/LayoutRedesign/LayoutRedesign';
 import HoneySider from '../../components/HoneySider/HoneySider';
 import GovernanceSidebar from '../../components/GovernanceSidebar/GovernanceSidebar';
 import HoneyTable from '../../components/HoneyTable/HoneyTable';
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import {
   GovernanceSidebarForm,
-  GovernanceTableRow
+  GovernanceTableRow,
+  ProposalStatus
 } from '../../types/governance';
 import * as style from '../../styles/governance.css';
 import HexaBoxContainer from '../../components/HexaBoxContainer/HexaBoxContainer';
@@ -22,55 +23,61 @@ import { formatNumber } from '../../helpers/format';
 import { GovernanceStats } from '../../components/GovernanceStats/GovernanceStats';
 import { useGovernor } from 'hooks/tribeca/useGovernor';
 import { useProposals } from 'hooks/tribeca/useProposals';
+import { ProposalState } from 'helpers/dao';
 
 const { format: f, formatShortName: fsn } = formatNumber;
 
 const Governance: NextPage = () => {
-  const [tableData, setTableData] = useState<GovernanceTableRow[]>([]);
+  // const [tableData, setTableData] = useState<GovernanceTableRow[]>([]);
   const [isDraftFilterEnabled, setIsDraftFilterEnabled] = useState(false);
   const [selectedProposalId, setSelectedProposalId] = useState(10);
+  const [tableData, setTableData] = useState<GovernanceTableRow[]>();
 
   const [sidebarMode, setSidebarMode] =
     useState<GovernanceSidebarForm>('get_vehoney');
 
-  // PUT YOUR DATA SOURCE HERE
-  const { proposalCount } = useGovernor();
   const proposals = useProposals();
-  const [currentPage, setCurrentPage] = useState(0);
 
   console.log({ proposals });
 
-  // MOCK DATA FOR NOW
-  useEffect(() => {
-    const mockData: GovernanceTableRow[] = [
-      {
-        id: 1,
-        name: 'Upgrade the StarkProxy smart contract',
-        votes: 25000,
-        against: 313,
-        votesRequired: 50000,
-        status: 'approved'
-      },
-      {
-        id: 2,
-        name: 'Upgrade the StarkProxy smart contract',
-        votes: 39487,
-        against: 313,
-        votesRequired: 50000,
-        status: 'approved'
-      },
-      {
-        id: 3,
-        name: 'Draft proposal',
-        votes: 5000,
-        against: 313,
-        votesRequired: 50000,
-        status: 'draft'
-      }
-    ];
+  const getStatus = (state: ProposalState): ProposalStatus => {
+    // if(!state) return 'approved';
+    switch (state) {
+      case ProposalState.Active:
+        return 'approved';
+      case ProposalState.Succeeded:
+        return 'approved';
+      case ProposalState.Draft:
+        return 'draft';
+      case ProposalState.Queued:
+        return 'processing';
+      case ProposalState.Canceled:
+        return 'rejected';
+      case ProposalState.Defeated:
+        return 'rejected';
+    }
+  };
 
-    setTableData(mockData);
-  }, [isDraftFilterEnabled]);
+  const getTableData = useCallback(() => {
+    const data = proposals.map((proposal, i) => ({
+      id: proposal.data?.index || 0,
+      name: proposal.data?.proposalMetaData?.title || '',
+      votes: proposal.data?.proposalData.forVotes.toNumber() || 0,
+      against: proposal.data?.proposalData.againstVotes.toNumber() || 0,
+      votesRequired: 0,
+      status:
+        proposal.data?.status.state !== undefined
+          ? getStatus(proposal.data?.status.state)
+          : 'approved'
+    }));
+    if (!data || !data[0]?.id || data.length === tableData?.length) return;
+    console.log({ data });
+    setTableData(data);
+  }, [proposals]);
+
+  useEffect(() => {
+    getTableData();
+  }, [getTableData]);
 
   const handleToggle = (checked: boolean) => {
     setIsDraftFilterEnabled(checked);
@@ -166,7 +173,7 @@ const Governance: NextPage = () => {
         }
       }
     ],
-    [tableData, isDraftFilterEnabled]
+    [isDraftFilterEnabled]
   );
 
   const renderSidebar = () => {

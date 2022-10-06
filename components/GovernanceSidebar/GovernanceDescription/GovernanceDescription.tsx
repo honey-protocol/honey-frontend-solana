@@ -2,14 +2,15 @@ import { FC, useState } from 'react';
 import * as styles from './GovernanceDescription.css';
 import { formatNumber } from '../../../helpers/format';
 import SidebarScroll from '../../SidebarScroll/SidebarScroll';
+import ReactMarkdown from 'react-markdown';
 
 const { format: f, formatPercent: fp, formatUsd: fu } = formatNumber;
 
-const GovernanceDescription: FC = () => {
+const GovernanceDescription = (props: { description: string }) => {
   return (
     <SidebarScroll>
       <div className={styles.governanceDescription}>
-        <div className={styles.articleWrapper}>
+        {/* <div className={styles.articleWrapper}>
           <div className={styles.articleTitle}>Simple Summary</div>
           <div className={styles.articleDescription}>
             Upgrade StarkProxy smart contracts to support deposit cancellation
@@ -51,7 +52,11 @@ const GovernanceDescription: FC = () => {
             would allow us to recover the 50M USDC and ensure that other market
             makers can safely make use of the Liquidity Staking Pool.
           </div>
-        </div>
+        </div> */}
+
+        <ReactMarkdown className={styles.markdown} linkTarget="_blank">
+          {props.description}
+        </ReactMarkdown>
       </div>
     </SidebarScroll>
   );
