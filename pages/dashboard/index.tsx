@@ -15,7 +15,15 @@ import {
 } from '../../components/HoneyCardsGrid/types';
 import MarketsSidebar from '../../components/MarketsSidebar/MarketsSidebar';
 import { OpenPositions, UserNFTs } from '../../types/markets';
-import { borrow, depositNFT, repay, useBorrowPositions, useHoney, useMarket, withdrawNFT } from '@honey-finance/sdk';
+import {
+  borrow,
+  depositNFT,
+  repay,
+  useBorrowPositions,
+  useHoney,
+  useMarket,
+  withdrawNFT
+} from '@honey-finance/sdk';
 import { LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js';
 import { BnToDecimal, ConfigureSDK } from '../../helpers/loanHelpers';
 import useFetchNFTByUser from '../../hooks/useNFTV2';
@@ -23,32 +31,55 @@ import { useConnectedWallet } from '@saberhq/use-solana';
 
 import BN from 'bn.js';
 import { RoundHalfDown } from '../../helpers/utils';
-import { calcNFT, calculateCollectionwideAllowance } from '../../helpers/loanHelpers/userCollection';
+import {
+  calcNFT,
+  calculateCollectionwideAllowance
+} from '../../helpers/loanHelpers/userCollection';
 import { ToastProps } from '../../hooks/useToast';
 import { Metadata } from '@metaplex-foundation/mpl-token-metadata';
+import { generateMockHistoryData } from '../../helpers/chartUtils';
+import { HoneyProfileChart } from '../../components/HoneyProfileChart/HoneyProfileChart';
 
 const network = 'devnet'; // change to dynamic value
 
 const data: NotificationCardProps[] = [
   {
     title: 'Title of notification',
-    description: 'Lorem Ipsum is simply dummy text of the' +
-      ' Lorem Ipsum is simply dummy text of the',
+    description:
+      'Lorem Ipsum is simply dummy text of the' +
+      ' Lorem Ipsum is simply dummy text of the'
   },
   {
     title: 'Title of notification',
-    description: 'Lorem Ipsum is simply dummy text of the' +
-      ' Lorem Ipsum is simply dummy text of the',
+    description:
+      'Lorem Ipsum is simply dummy text of the' +
+      ' Lorem Ipsum is simply dummy text of the'
   },
   {
     title: 'Title of notification',
-    description: 'Lorem Ipsum is simply dummy text of the' +
-      ' Lorem Ipsum is simply dummy text of the',
-  },
+    description:
+      'Lorem Ipsum is simply dummy text of the' +
+      ' Lorem Ipsum is simply dummy text of the'
+  }
 ];
 
 const Dashboard: NextPage = () => {
   const [selected, setSelected] = useState<string | undefined>();
+  const isMock = true;
+  const userExposure = 4129.1;
+
+  const getUserExposureData = () => {
+    if (isMock) {
+      const from = new Date()
+        .setFullYear(new Date().getFullYear() - 1)
+        .valueOf();
+      const to = new Date().valueOf();
+      return generateMockHistoryData(from, to, 10000);
+    }
+    return [];
+  };
+
+  const userExposureData = useMemo(() => getUserExposureData(), []);
 
   const getBorrowUserPositionsMock = () => {
     const preparedPositions: BorrowUserPosition[] = [];
@@ -154,7 +185,7 @@ const Dashboard: NextPage = () => {
   );
   const [userOpenPositions, setUserOpenPositions] = useState<
     Array<OpenPositions>
-    >([]);
+  >([]);
   const [userAllowance, setUserAllowance] = useState(0);
   const [loanToValue, setLoanToValue] = useState(0);
   const [userDebt, setUserDebt] = useState(0);
@@ -220,9 +251,9 @@ const Dashboard: NextPage = () => {
         // let totalDeposit = BnDivided(honeyUser.deposits()[0].amount, 10, 5) * depositNoteExchangeRate / (10 ** 4)
         let totalDeposit =
           (honeyUser
-              .deposits()[0]
-              .amount.div(new BN(10 ** 5))
-              .toNumber() *
+            .deposits()[0]
+            .amount.div(new BN(10 ** 5))
+            .toNumber() *
             depositNoteExchangeRate) /
           10 ** 4;
         setUserTotalDeposits(totalDeposit);
@@ -347,7 +378,6 @@ const Dashboard: NextPage = () => {
       setUserOpenPositions(collateralNFTPositions);
     }
   }, [collateralNFTPositions]);
-
 
   /**
    * @description executes the deposit NFT func. from SDK
@@ -543,7 +573,9 @@ const Dashboard: NextPage = () => {
     <LayoutRedesign>
       <HoneyContent hasNoSider>
         <div className={styles.pageHeader}>
-          <div className={styles.chartContainer}>Chart</div>
+          <div className={styles.chartContainer}>
+            <HoneyProfileChart data={userExposureData} value={userExposure} />
+          </div>
           <div className={styles.notificationsWrapper}>
             <NotificationsList data={data} />
           </div>

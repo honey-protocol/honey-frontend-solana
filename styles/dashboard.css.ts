@@ -14,7 +14,8 @@ export const pageHeader = style({
 export const pageTitle = style([pageTitleCommon]);
 
 export const chartContainer = style({
-  padding: '16px 12px',
+  padding: 12,
+  paddingBottom: 0,
   width: '100%',
   height: 258,
   background: vars.colors.white,
