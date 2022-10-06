@@ -29,12 +29,12 @@ export const InputsBlock: FC<InputsBlockProps> = ({
       <Image src={EqualIcon} />
     </div>
   ),
-  firstInputAddon = <> USD </>,
-  secondInputAddon = (
+  firstInputAddon = (
     <>
       <Image src={SOLIcon} /> <span>SOL</span>
     </>
-  )
+  ),
+  secondInputAddon = <> USD </>
 }) => {
   const isValidNumericInput = (value: string) => {
     return Number.isFinite(Number(value));
@@ -65,8 +65,8 @@ export const InputsBlock: FC<InputsBlockProps> = ({
           className={styles.input}
           type="number"
           placeholder="0.00"
-          value={firstInputValue}
-          onChange={handleUsdChange}
+          value={secondInputValue}
+          onChange={handleTokenChange}
         />
         <div className={styles.inputAddon}>{firstInputAddon}</div>
       </div>
@@ -76,8 +76,8 @@ export const InputsBlock: FC<InputsBlockProps> = ({
           className={styles.input}
           type="number"
           placeholder="0.00"
-          value={secondInputValue}
-          onChange={handleTokenChange}
+          value={firstInputValue}
+          onChange={handleUsdChange}
         />
         <div className={styles.inputAddon}>{secondInputAddon}</div>
       </div>

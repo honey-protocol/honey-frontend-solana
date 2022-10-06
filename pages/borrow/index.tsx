@@ -283,7 +283,7 @@ const Markets: NextPage = () => {
    * @returns honeyUser | marketReserveInfo |
    */
   useEffect(() => {
-    console.log('@@--', userAllowance)
+    console.log('@@--', userAllowance);
     if (marketReserveInfo && parsedReserves) {
       setDepositNoteExchangeRate(
         BnToDecimal(marketReserveInfo[0].depositNoteExchangeRate, 15, 5)
@@ -332,7 +332,7 @@ const Markets: NextPage = () => {
   // PUT YOUR DATA SOURCE HERE
   // MOCK DATA FOR NOW
   useEffect(() => {
-    console.log('@@--::', userAllowance)
+    console.log('@@--::', userAllowance);
     const mockData: MarketTableRow[] = [
       {
         key: '0',
@@ -350,7 +350,14 @@ const Markets: NextPage = () => {
 
     setTableData(mockData);
     setTableDataFiltered(mockData);
-  }, [totalMarketDeposits, totalMarketDebt, nftPrice, userOpenPositions, userAllowance, userDebt]);
+  }, [
+    totalMarketDeposits,
+    totalMarketDebt,
+    nftPrice,
+    userOpenPositions,
+    userAllowance,
+    userDebt
+  ]);
 
   const showMobileSidebar = () => {
     setShowMobileSidebar(true);
@@ -594,7 +601,7 @@ const Markets: NextPage = () => {
           <div className={style.nameCellText}>
             <div className={style.collectionName}>{name}</div>
             <div className={style.risk.safe}>
-              <span className={style.valueCell}>{fp(loanToValue)}</span>{' '}
+              <span className={style.valueCell}>{fp(loanToValue * 100)}</span>{' '}
               <span className={style.riskText}>Risk lvl</span>
             </div>
           </div>
