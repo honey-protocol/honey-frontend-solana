@@ -160,6 +160,7 @@ const ProfileChart: FC<ProfileChartProps> = ({ data = [], size, value }) => {
           onClick={itemSlug => setPeriod(itemSlug as PeriodName)}
         />
       </div>
+
       <VictoryChart
         padding={{ top: 27, right: 60, bottom: 52, left: 56 }}
         width={size.width || undefined}
@@ -201,7 +202,7 @@ const ProfileChart: FC<ProfileChartProps> = ({ data = [], size, value }) => {
           data={dataByPeriod}
           style={{
             data: {
-              fill: vars.colors.brownMiddle,
+              fill: 'url(#gradient)',
               fillOpacity: '0.1',
               stroke: 'transparent'
             }
@@ -221,6 +222,22 @@ const ProfileChart: FC<ProfileChartProps> = ({ data = [], size, value }) => {
           }
         />
       </VictoryChart>
+
+      <svg style={{ height: 0 }}>
+        <defs>
+          <linearGradient
+            id="gradient"
+            x1="352"
+            y1="0"
+            x2="352"
+            y2="129"
+            gradientUnits="userSpaceOnUse"
+          >
+            <stop stopColor="#E7B400" />
+            <stop offset="1" stopColor="#E7B400" stopOpacity="0" />
+          </linearGradient>
+        </defs>
+      </svg>
     </div>
   );
 };
