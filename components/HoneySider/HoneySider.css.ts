@@ -4,7 +4,7 @@ import { breakpoints, vars } from '../../styles/theme.css';
 export const honeySider = style({
   width: '100%',
   maxWidth: 550,
-  position: 'fixed',
+  position: 'absolute',
   zIndex: 1,
   top: 90,
   left: '50%',
@@ -33,4 +33,8 @@ export const honeySiderShow = style({
 
 export const governancePage = style({
   top: 90 + 160 + 16
+});
+
+export const dashboardPage = style({
+  top: 90 + 360 + 16
 });

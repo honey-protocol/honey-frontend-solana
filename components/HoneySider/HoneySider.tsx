@@ -5,7 +5,7 @@ import c from 'classnames';
 export interface HoneySiderProps {
   children: ReactNode;
   isMobileSidebarVisible?: boolean;
-  page?: 'governance';
+  page?: 'governance' | 'dashboard';
 }
 
 const HoneySider = ({
@@ -17,7 +17,8 @@ const HoneySider = ({
     <div
       className={c(styles.honeySider, {
         [styles.honeySiderShow]: isMobileSidebarVisible,
-        [styles.governancePage]: page === 'governance'
+        [styles.governancePage]: page === 'governance',
+        [styles.dashboardPage]: page === 'dashboard'
       })}
     >
       {children}

@@ -39,7 +39,3 @@ export const gridWrapper = style({
   marginRight: 16,
   width: '100%'
 });
-
-export const sidebarWrapper = style({
-  width: 360
-});
