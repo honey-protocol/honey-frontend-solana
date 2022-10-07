@@ -5,7 +5,7 @@ import { InputsBlock } from '../InputsBlock/InputsBlock';
 import { HoneySlider } from '../HoneySlider/HoneySlider';
 import * as styles from './DepositForm.css';
 import { formatNumber } from '../../helpers/format';
-import honeyEyes from '/public/nfts/honeyEyes.png';
+import honeyGenesisBee from '/public/images/imagePlaceholder.png';
 import HoneyButton from 'components/HoneyButton/HoneyButton';
 import HexaBoxContainer from '../HexaBoxContainer/HexaBoxContainer';
 import SidebarScroll from '../SidebarScroll/SidebarScroll';
@@ -110,10 +110,10 @@ const DepositForm = (props: DepositFormProps) => {
         <div className={styles.nftInfo}>
           <div className={styles.nftImage}>
             <HexaBoxContainer>
-              <Image src={honeyEyes} />
+              <Image src={honeyGenesisBee} />
             </HexaBoxContainer>
           </div>
-          <div className={styles.nftName}>Honey Eyes</div>
+          <div className={styles.nftName}>Honey Genesis Bee</div>
         </div>
         <div className={styles.row}>
           <div className={styles.col}>

@@ -8,7 +8,7 @@ import * as style from '../../styles/markets.css';
 import { ColumnType } from 'antd/lib/table';
 import HexaBoxContainer from '../../components/HexaBoxContainer/HexaBoxContainer';
 import Image from 'next/image';
-import honeyEyes from '/public/nfts/honeyEyes.png';
+import honeyGenesisBee from '/public/images/imagePlaceholder.png';
 import HoneyButton from '../../components/HoneyButton/HoneyButton';
 import { Key } from 'antd/lib/table/interface';
 import { formatNumber } from '../../helpers/format';
@@ -366,7 +366,7 @@ const Lend: NextPage = () => {
     const mockData: LendTableRow[] = [
       {
         key: '0',
-        name: 'Honey Eyes',
+        name: 'Honey Genesis Bee',
         interest: 10,
         // validated available to be totalMarketDeposits
         available: totalMarketDeposits,
@@ -414,7 +414,7 @@ const Lend: NextPage = () => {
               <div className={style.logoWrapper}>
                 <div className={style.collectionLogo}>
                   <HexaBoxContainer>
-                    <Image src={honeyEyes} />
+                    <Image src={honeyGenesisBee} />
                   </HexaBoxContainer>
                 </div>
               </div>

@@ -20,7 +20,7 @@ import React, {
 } from 'react';
 import { formatNumber } from '../../helpers/format';
 import Image from 'next/image';
-import honeyEyes from '/public/nfts/honeyEyes.png';
+import honeyGenesisBee from '/public/images/imagePlaceholder.png';
 import { ColumnTitleProps, Key } from 'antd/lib/table/interface';
 import HoneyToggle from '../../components/HoneyToggle/HoneyToggle';
 import debounce from 'lodash/debounce';
@@ -336,7 +336,7 @@ const Markets: NextPage = () => {
     const mockData: MarketTableRow[] = [
       {
         key: '0',
-        name: 'Honey Eyes',
+        name: 'Honey Genesis Bee',
         rate: 0.1,
         // validated available to be totalMarketDeposits
         available: totalMarketDeposits,
@@ -440,7 +440,7 @@ const Markets: NextPage = () => {
                 <div className={style.logoWrapper}>
                   <div className={style.collectionLogo}>
                     <HexaBoxContainer>
-                      <Image src={honeyEyes} />
+                      <Image src={honeyGenesisBee} />
                     </HexaBoxContainer>
                   </div>
                 </div>
@@ -553,7 +553,7 @@ const Markets: NextPage = () => {
                     <div className={style.logoWrapper}>
                       <div className={style.collectionLogo}>
                         <HexaBoxContainer>
-                          <Image src={honeyEyes} />
+                          <Image src={honeyGenesisBee} />
                         </HexaBoxContainer>
                       </div>
                     </div>
@@ -595,7 +595,7 @@ const Markets: NextPage = () => {
           <div className={style.expandedRowIcon} />
           <div className={style.collectionLogo}>
             <HexaBoxContainer>
-              <Image src={honeyEyes} />
+              <Image src={honeyGenesisBee} />
             </HexaBoxContainer>
           </div>
           <div className={style.nameCellText}>
@@ -656,7 +656,7 @@ const Markets: NextPage = () => {
           <div className={style.expandedRowIcon} />
           <div className={style.collectionLogo}>
             <HexaBoxContainer>
-              <Image src={honeyEyes} />
+              <Image src={honeyGenesisBee} />
             </HexaBoxContainer>
           </div>
           <div className={style.nameCellText}>
