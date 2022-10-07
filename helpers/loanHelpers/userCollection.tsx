@@ -67,12 +67,12 @@ export async function calcNFT(
 ) {
   if (marketReserveInfo && parsedReserves && honeyMarket) {
     let solPrice = await getOraclePrice(
-      'devnet',
+      'mainnet-beta',
       connection,
       parsedReserves[0].switchboardPriceAggregator
     ); //in sol
     let nftPrice = await getOraclePrice(
-      'devnet',
+      'mainnet-beta',
       connection,
       honeyMarket.nftSwitchboardPriceAggregator
     ); //in usd

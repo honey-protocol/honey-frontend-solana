@@ -33,7 +33,7 @@ const storedAccent =
 const OnChainProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const wallet = useConnectedWallet();
   const connection = useConnection();
-  const network = 'devnet';
+  const network = 'mainnet-beta';
 
   return (
     <AnchorProvider

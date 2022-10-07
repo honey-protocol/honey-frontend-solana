@@ -63,7 +63,7 @@ import HoneyTableRow from 'components/HoneyTable/HoneyTableRow/HoneyTableRow';
 import HoneyTableNameCell from '../../components/HoneyTable/HoneyTableNameCell/HoneyTableNameCell';
 // import { network } from 'pages/_app';
 
-const network = 'devnet'; // change to dynamic value
+const network = 'mainnet-beta'; // change to dynamic value
 
 const { formatPercent: fp, formatSol: fs } = formatNumber;
 

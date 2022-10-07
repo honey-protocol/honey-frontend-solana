@@ -37,7 +37,7 @@ import { pageDescription, pageTitle } from 'styles/common.css';
 // import { network } from 'pages/_app';
 // import { network } from 'pages/_app';
 
-const network = 'devnet';
+const network = 'mainnet-beta';
 
 const { formatPercent: fp, formatSol: fs } = formatNumber;
 

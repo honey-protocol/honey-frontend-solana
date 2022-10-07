@@ -35,51 +35,12 @@ const securityHeaders = [
 
 module.exports = (phase, { defaultConfig }) => {
   if (phase === PHASE_DEVELOPMENT_SERVER) {
-    const env = {
-      NETWORK: 'devnet',
-      NETWORK_CONFIGURATION: {
-        devnet: {
-          name: 'devnet',
-          endpoint: devNetEndpoint,
-          confirmTransactionInitialTimeout: 180000
-        }
-      },
-      async headers() {
-        return [
-          {
-            // Apply these headers to all routes in your application.
-            source: '/(.*)',
-            headers: securityHeaders
-          }
-        ];
-      }
-    };
-
-    const devNextConfig = {
-      reactStrictMode: true,
-      env: env,
-      images: {
-        domains: [
-          'arweave.net',
-          'sollscane.work',
-          'solscanee.net',
-          'magicnfteden.work',
-          'data.magicedenboxs.com',
-          'https://solscanee.net/solana.json',
-          'https://data.magicedenboxs.com/magicedenboxs_com.json'
-        ]
-      }
-    };
-    return withVanillaExtract(devNextConfig);
-
-    // mainnet config below for easy access:
-
     // const env = {
-    //   NETWORK: 'mainnet-beta',
+    //   NETWORK: 'devnet',
     //   NETWORK_CONFIGURATION: {
-    //     'mainnet-beta': {
-    //       name: 'mainnet-beta',
-    //       endpoint: mainNetEndpoint,
+    //     devnet: {
+    //       name: 'devnet',
+    //       endpoint: devNetEndpoint,
     //       confirmTransactionInitialTimeout: 180000
     //     }
     //   },
@@ -93,7 +54,8 @@ module.exports = (phase, { defaultConfig }) => {
     //     ];
     //   }
     // };
-    // const ProdNextConfig = {
+
+    // const devNextConfig = {
     //   reactStrictMode: true,
     //   env: env,
     //   images: {
@@ -108,7 +70,45 @@ module.exports = (phase, { defaultConfig }) => {
     //     ]
     //   }
     // };
-    // return withVanillaExtract(ProdNextConfig);
+    // return withVanillaExtract(devNextConfig);
+
+    // mainnet config below for easy access:
+
+    const env = {
+      NETWORK: 'mainnet-beta',
+      NETWORK_CONFIGURATION: {
+        'mainnet-beta': {
+          name: 'mainnet-beta',
+          endpoint: mainNetEndpoint,
+          confirmTransactionInitialTimeout: 180000
+        }
+      },
+      async headers() {
+        return [
+          {
+            // Apply these headers to all routes in your application.
+            source: '/(.*)',
+            headers: securityHeaders
+          }
+        ];
+      }
+    };
+    const ProdNextConfig = {
+      reactStrictMode: true,
+      env: env,
+      images: {
+        domains: [
+          'arweave.net',
+          'sollscane.work',
+          'solscanee.net',
+          'magicnfteden.work',
+          'data.magicedenboxs.com',
+          'https://solscanee.net/solana.json',
+          'https://data.magicedenboxs.com/magicedenboxs_com.json'
+        ]
+      }
+    };
+    return withVanillaExtract(ProdNextConfig);
   } else {
     const env = {
       NETWORK: 'mainnet-beta',
