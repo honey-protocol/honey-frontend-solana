@@ -348,7 +348,7 @@ const Liquidate: NextPage = () => {
         key: '0',
         name: 'Honey Genesis Bee',
         risk: loanToValue,
-        liqThreshold: 0.75,
+        liqThreshold: liquidationThreshold,
         totalDebt: totalDebt,
         tvl: nftPrice * fetchedPositions.length,
         positions: fetchedPositions
