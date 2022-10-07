@@ -199,12 +199,14 @@ const Governance: NextPage = () => {
 
   return (
     <LayoutRedesign>
-      <HoneyContent hasNoSider={true}>
+      <HoneyContent>
         <GovernanceStats
           onGetVeHoneyClick={handleGetVeHoneyClick}
         />
       </HoneyContent>
-      <HoneyContent>
+      <HoneyContent sidebar={
+        <HoneySider>{renderSidebar()}</HoneySider>
+      }>
         <HoneyTable
           tableLayout={'fixed'}
           pagination={false}
@@ -240,7 +242,6 @@ const Governance: NextPage = () => {
           </div>
         </div>
       </HoneyContent>
-      <HoneySider page={'governance'}>{renderSidebar()}</HoneySider>
     </LayoutRedesign>
   );
 };

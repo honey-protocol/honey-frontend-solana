@@ -2,7 +2,7 @@ import type { NextPage } from 'next';
 import LayoutRedesign from '../../components/LayoutRedesign/LayoutRedesign';
 import LendSidebar from '../../components/LendSidebar/LendSidebar';
 import { LendTableRow } from '../../types/lend';
-import { ChangeEvent, useCallback, useEffect, useMemo, useState } from 'react';
+import React, { ChangeEvent, useCallback, useEffect, useMemo, useState } from 'react';
 import HoneyTable from '../../components/HoneyTable/HoneyTable';
 import * as style from '../../styles/markets.css';
 import { ColumnType } from 'antd/lib/table';
@@ -508,15 +508,29 @@ const Lend: NextPage = () => {
     [tableData, isMyCollectionsFilterEnabled, searchQuery]
   );
 
+  const lendSidebar = () => (
+    <HoneySider>
+      <LendSidebar
+        collectionId="s"
+        executeDeposit={executeDeposit}
+        executeWithdraw={executeWithdraw}
+        userTotalDeposits={userTotalDeposits}
+        available={totalMarketDeposits}
+        value={totalMarketDeposits + totalMarketDebt}
+        userWalletBalance={userWalletBalance}
+      />
+    </HoneySider>
+  );
+
   return (
     <LayoutRedesign>
-      <div>
+      <HoneyContent>
         <Typography.Title className={pageTitle}>Lend</Typography.Title>
         <Typography.Text className={pageDescription}>
           Earn yield by providing liquidity to NFT collections{' '}
         </Typography.Text>
-      </div>
-      <HoneyContent>
+      </HoneyContent>
+      <HoneyContent sidebar={lendSidebar()}>
         <HoneyTable
           hasRowsShadow={true}
           tableLayout="fixed"
@@ -541,17 +555,6 @@ const Lend: NextPage = () => {
           }}
         />
       </HoneyContent>
-      <HoneySider>
-        <LendSidebar
-          collectionId="s"
-          executeDeposit={executeDeposit}
-          executeWithdraw={executeWithdraw}
-          userTotalDeposits={userTotalDeposits}
-          available={totalMarketDeposits}
-          value={totalMarketDeposits + totalMarketDebt}
-          userWalletBalance={userWalletBalance}
-        />
-      </HoneySider>
     </LayoutRedesign>
   );
 };

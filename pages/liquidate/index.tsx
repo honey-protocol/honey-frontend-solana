@@ -13,7 +13,6 @@ import React, {
   useState
 } from 'react';
 import { Key } from 'antd/lib/table/interface';
-import Sider from 'antd/lib/layout/Sider';
 import HoneyToggle from '../../components/HoneyToggle/HoneyToggle';
 import debounce from 'lodash/debounce';
 import SearchInput from '../../components/SearchInput/SearchInput';
@@ -40,7 +39,6 @@ import { calcNFT } from 'helpers/loanHelpers/userCollection';
 import { LiquidateTablePosition } from '../../types/liquidate';
 import { HONEY_MARKET_ID, HONEY_PROGRAM_ID } from 'constants/loan';
 import { NATIVE_MINT } from '@solana/spl-token';
-import { Content } from 'antd/lib/layout/layout';
 import HoneySider from 'components/HoneySider/HoneySider';
 import HoneyContent from 'components/HoneyContent/HoneyContent';
 import { pageDescription, pageTitle } from 'styles/common.css';
@@ -538,15 +536,30 @@ const Liquidate: NextPage = () => {
     [isMyBidsFilterEnabled, tableData, searchQuery]
   );
 
+  const liquidateSidebar = () => (
+    <HoneySider>
+      <LiquidateSidebar
+        collectionId="0"
+        biddingArray={biddingArray}
+        userBalance={userBalance}
+        highestBiddingValue={highestBiddingValue}
+        currentUserBid={currentUserBid}
+        handleRevokeBid={handleRevokeBid}
+        handleIncreaseBid={handleIncreaseBid}
+        handlePlaceBid={handlePlaceBid}
+      />
+    </HoneySider>
+  );
+
   return (
     <LayoutRedesign>
-      <div>
+      <HoneyContent>
         <Typography.Title className={pageTitle}>Liquidation</Typography.Title>
         <Typography.Text className={pageDescription}>
           Bid on discounted NFTs from borrowers{' '}
         </Typography.Text>
-      </div>
-      <HoneyContent>
+      </HoneyContent>
+      <HoneyContent sidebar={liquidateSidebar()}>
         <HoneyTable
           hasRowsShadow={true}
           tableLayout="fixed"
@@ -591,18 +604,6 @@ const Liquidate: NextPage = () => {
             </div>
           ))}
       </HoneyContent>
-      <HoneySider>
-        <LiquidateSidebar
-          collectionId="0"
-          biddingArray={biddingArray}
-          userBalance={userBalance}
-          highestBiddingValue={highestBiddingValue}
-          currentUserBid={currentUserBid}
-          handleRevokeBid={handleRevokeBid}
-          handleIncreaseBid={handleIncreaseBid}
-          handlePlaceBid={handlePlaceBid}
-        />
-      </HoneySider>
     </LayoutRedesign>
   );
 };

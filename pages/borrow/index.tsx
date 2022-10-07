@@ -904,15 +904,36 @@ const Markets: NextPage = () => {
     }
   }
 
+  const borrowSidebar = () => (
+    <HoneySider>
+      {/* borrow repay module */}
+      <MarketsSidebar
+        collectionId="s"
+        availableNFTs={userAvailableNFTs}
+        openPositions={userOpenPositions}
+        nftPrice={nftPrice}
+        executeDepositNFT={executeDepositNFT}
+        executeWithdrawNFT={executeWithdrawNFT}
+        executeBorrow={executeBorrow}
+        executeRepay={executeRepay}
+        userDebt={userDebt}
+        userAllowance={userAllowance}
+        userUSDCBalance={userUSDCBalance}
+        loanToValue={loanToValue}
+        hideMobileSidebar={hideMobileSidebar}
+      />
+    </HoneySider>
+  );
+
   return (
     <LayoutRedesign>
-      <div>
+      <HoneyContent>
         <Typography.Title className={pageTitle}>Borrow</Typography.Title>
         <Typography.Text className={pageDescription}>
           Get instant liquidity using your NFTs as collateral{' '}
         </Typography.Text>
-      </div>
-      <HoneyContent>
+      </HoneyContent>
+      <HoneyContent sidebar={borrowSidebar()}>
         <div className={style.mobileTableHeader}>
           <div className={style.mobileRow}>
             <SearchForm />
@@ -1034,24 +1055,6 @@ const Markets: NextPage = () => {
             </div>
           ))}
       </HoneyContent>
-      <HoneySider isMobileSidebarVisible={isMobileSidebarVisible}>
-        {/* borrow repay module */}
-        <MarketsSidebar
-          collectionId="s"
-          availableNFTs={userAvailableNFTs}
-          openPositions={userOpenPositions}
-          nftPrice={nftPrice}
-          executeDepositNFT={executeDepositNFT}
-          executeWithdrawNFT={executeWithdrawNFT}
-          executeBorrow={executeBorrow}
-          executeRepay={executeRepay}
-          userDebt={userDebt}
-          userAllowance={userAllowance}
-          userUSDCBalance={userUSDCBalance}
-          loanToValue={loanToValue}
-          hideMobileSidebar={hideMobileSidebar}
-        />
-      </HoneySider>
     </LayoutRedesign>
   );
 };

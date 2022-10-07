@@ -569,9 +569,28 @@ const Dashboard: NextPage = () => {
     return mockData;
   };
 
+  const dashboardSidebar = () => (
+    <HoneySider>
+      <MarketsSidebar
+        collectionId="s"
+        availableNFTs={userAvailableNFTs}
+        openPositions={userOpenPositions}
+        nftPrice={nftPrice}
+        executeDepositNFT={executeDepositNFT}
+        executeWithdrawNFT={executeWithdrawNFT}
+        executeBorrow={executeBorrow}
+        executeRepay={executeRepay}
+        userDebt={userDebt}
+        userAllowance={userAllowance}
+        userUSDCBalance={userUSDCBalance}
+        loanToValue={loanToValue}
+      />
+    </HoneySider>
+  );
+
   return (
     <LayoutRedesign>
-      <HoneyContent hasNoSider>
+      <HoneyContent className={styles.dashboard}>
         <div className={styles.pageHeader}>
           <div className={styles.chartContainer}>
             <HoneyProfileChart data={userExposureData} value={userExposure} />
@@ -582,37 +601,19 @@ const Dashboard: NextPage = () => {
         </div>
         <HoneyPositionsSlider positions={getMockPositions()} />
       </HoneyContent>
-      <HoneyContent>
-        <div className={styles.pageContent}>
-          <div className={styles.pageTitle}>My assets</div>
-          <div className={styles.pageContentElements}>
-            <div className={styles.gridWrapper}>
-              <HoneyCardsGrid
-                borrowPositions={mockBorrowUserPositions}
-                lendPositions={mockLendUserPositions}
-                selected={selected}
-                onSelect={handleSelect}
-              />
-            </div>
+      <HoneyContent sidebar={dashboardSidebar()}>
+        <div className={styles.pageTitle}>My assets</div>
+        <div className={styles.pageContentElements}>
+          <div className={styles.gridWrapper}>
+            <HoneyCardsGrid
+              borrowPositions={mockBorrowUserPositions}
+              lendPositions={mockLendUserPositions}
+              selected={selected}
+              onSelect={handleSelect}
+            />
           </div>
         </div>
       </HoneyContent>
-      <HoneySider page={'dashboard'}>
-        <MarketsSidebar
-          collectionId="s"
-          availableNFTs={userAvailableNFTs}
-          openPositions={userOpenPositions}
-          nftPrice={nftPrice}
-          executeDepositNFT={executeDepositNFT}
-          executeWithdrawNFT={executeWithdrawNFT}
-          executeBorrow={executeBorrow}
-          executeRepay={executeRepay}
-          userDebt={userDebt}
-          userAllowance={userAllowance}
-          userUSDCBalance={userUSDCBalance}
-          loanToValue={loanToValue}
-        />
-      </HoneySider>
     </LayoutRedesign>
   );
 };

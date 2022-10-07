@@ -5,15 +5,19 @@ import c from 'classnames';
 
 export interface HoneyContentProps {
   children: ReactNode;
-  hasNoSider?: boolean;
+  sidebar?: ReactNode;
+  className?: string;
 }
 
-const HoneyContent = ({ hasNoSider, children }: HoneyContentProps) => {
+const HoneyContent = ({ children, sidebar, className }: HoneyContentProps) => {
   return (
     <Content
-      className={c(styles.honeyContent, { [styles.hasNoSider]: hasNoSider })}
+      className={c(styles.honeyContent, className, { ['hasNoSider']: !sidebar })}
+      id={'scrollSider'}
     >
       {children}
+
+      {sidebar}
     </Content>
   );
 };

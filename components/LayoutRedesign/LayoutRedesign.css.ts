@@ -27,11 +27,11 @@ globalStyle(`body`, {
 export const layoutHeader = style({
   height: 'unset',
   width: '100%',
-  padding: 0,
+  padding: '12px 0 0 0',
   background: vars.colors.grayLight,
   zIndex: '2',
   position: 'fixed',
-  top: 12,
+  top: 0,
   left: 0,
 });
 
