@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, MutableRefObject, SetStateAction, Dispatch } from 'react';
-import { Connection, PublicKey } from '@solana/web3.js';
+import { Connection, PublicKey, clusterApiUrl } from '@solana/web3.js';
 import {
   resolveToWalletAddress,
   getParsedNftAccountsByOwner
@@ -33,7 +33,7 @@ export default function useFetchNFTByUser(wallet: ConnectedWallet | null): [Arra
     let didCancel = false
     const fetchNFTByUser = async () => {
       if (!didCancel) {
-        const connection = providerMut?.connection
+        const connection = new Connection(clusterApiUrl('mainnet-beta'), 'processed');
         const walletPublicKey = wallet?.publicKey?.toString() || ""
         if (walletPublicKey != "") {
           // we need to check if shouldRefetchNFTs trigger this function and we should do refetch instead of getting from cache
