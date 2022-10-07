@@ -31,12 +31,20 @@ const DepositForm = (props: DepositFormProps) => {
   const [valueSOL, setValueSOL] = useState<number>(0);
   const [sliderValue, setSliderValue] = useState(0);
   const [userInteraction, setUserInteraction] = useState<boolean>(false);
+  const [utilizationRate, setUtilizationRate] = useState(0);
+
   const { toast, ToastComponent } = useToast();
 
   const sdkConfig = ConfigureSDK();
   let walletPK = sdkConfig.sdkWallet?.publicKey;
 
   useEffect(() => {}, [userWalletBalance]);
+
+  useEffect(() => {
+    if (value && available) {
+      setUtilizationRate(Number(f(((value - available) / value) * 100)))
+    }
+  }, [value, available]);
 
   const maxValue = userWalletBalance;
   const solPrice = 32;
@@ -137,7 +145,7 @@ const DepositForm = (props: DepositFormProps) => {
           </div>
           <div className={styles.col}>
             <InfoBlock
-              value={fp(((value - available) / value) * 100)}
+              value={fp(utilizationRate)}
               valueSize="big"
               toolTipLabel=" Amount of supplied liquidity currently being borrowed"
               footer={

@@ -12,6 +12,7 @@ import honeyGenesisBee from '/public/images/imagePlaceholder.png';
 import HoneyButton from '../../components/HoneyButton/HoneyButton';
 import { Key } from 'antd/lib/table/interface';
 import { formatNumber } from '../../helpers/format';
+import {getInterestRate} from '../../helpers/loanHelpers/userCollection';
 import SearchInput from '../../components/SearchInput/SearchInput';
 import debounce from 'lodash/debounce';
 import { getColumnSortStatus } from '../../helpers/tableUtils';
@@ -39,7 +40,7 @@ import { pageDescription, pageTitle } from 'styles/common.css';
 
 const network = 'mainnet-beta';
 
-const { formatPercent: fp, formatSol: fs } = formatNumber;
+const { format: f, formatPercent: fp, formatSol: fs } = formatNumber;
 
 const Lend: NextPage = () => {
   // Start: SDK integration
@@ -71,6 +72,26 @@ const Lend: NextPage = () => {
   const [totalMarketDebt, setTotalMarketDebt] = useState(0);
   const [nftPrice, setNftPrice] = useState(0);
   const [userWalletBalance, setUserWalletBalance] = useState<number>(0);
+  const [utilizationRate, setUtilizationRate] = useState(0);
+  const [calculatedInterestRate, setCalculatedInterestRate] = useState<number>(0);
+
+  useEffect(() => {
+    if (totalMarketDeposits && totalMarketDebt && totalMarketDeposits) {
+      setUtilizationRate(Number(f((((totalMarketDeposits + totalMarketDebt) - totalMarketDeposits) / (totalMarketDeposits + totalMarketDebt)))))
+    }
+  }, [totalMarketDeposits, totalMarketDebt, totalMarketDeposits]);
+
+  async function calculateInterestRate(utilizationRate: number) {
+    let interestRate = await getInterestRate(utilizationRate);
+    if (interestRate) setCalculatedInterestRate(interestRate);
+  }
+
+  useEffect(() => {
+    console.log('Runnig')
+    if (utilizationRate) {
+      calculateInterestRate(utilizationRate)
+    }
+  }, [utilizationRate])
 
   async function fetchWalletBalance(key: PublicKey) {
     try {
@@ -367,7 +388,7 @@ const Lend: NextPage = () => {
       {
         key: '0',
         name: 'Honey Genesis Bee',
-        interest: 10,
+        interest: 1,
         // validated available to be totalMarketDeposits
         available: totalMarketDeposits,
         // validated value to be totalMarkDeposits + totalMarketDebt
@@ -443,7 +464,7 @@ const Lend: NextPage = () => {
         dataIndex: 'rate',
         sorter: (a, b) => a.interest - b.interest,
         render: (rate: number) => {
-          return <div className={style.rateCell}>{fp(10)}</div>;
+          return <div className={style.rateCell}>{fp(calculatedInterestRate)}</div>;
         }
       },
       {
