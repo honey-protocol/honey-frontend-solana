@@ -59,9 +59,10 @@ const BorrowForm = (props: BorrowProps) => {
   const borrowedValue = userDebt;
   const maxValue = userAllowance;
   const solPrice = 32;
-  const liquidationThreshold = 0.75;
+  const liquidationThreshold = 0.65; // TODO: change where relevant, currently set to 65% on mainnet
+  const borrowFee = 0.0; // TODO: 1,5% later but 0% for now
 
-  const newAdditionalDebt = 1.1 * valueSOL;
+  const newAdditionalDebt = valueSOL * (1 + borrowFee);
   const newTotalDebt = newAdditionalDebt
     ? userDebt + newAdditionalDebt
     : userDebt;
@@ -210,7 +211,18 @@ const BorrowForm = (props: BorrowProps) => {
                   Liquidation price <div className={questionIcon} />
                 </span>
               }
-              toolTipLabel="Placeholder text for tooltip" // TODO: CHANGE TO REAL INFO TEXT FOR LIQ PRICE
+              toolTipLabel={
+                <span>
+                  Price at which the position (NFT) will be liquidated.{' '}
+                  <a
+                    className={styles.extLink}
+                    target="blank"
+                    href=" " //TODO: add link to docs
+                  >
+                    Learn more.
+                  </a>
+                </span>
+              }
             />
           </div>
         </div>
@@ -382,15 +394,45 @@ const BorrowForm = (props: BorrowProps) => {
           <div className={styles.row}>
             <div className={cs(stylesRepay.balance, styles.col)}>
               <InfoBlock
-                title={'Your SOL balance'}
-                value={fs(SOLBalance)}
+                title={
+                  <span className={hAlign}>
+                    Interest Rate <div className={questionIcon} />
+                  </span>
+                }
+                toolTipLabel={
+                  <span>
+                    Variable interest rate, based on Utilization rate.{' '}
+                    <a
+                      className={styles.extLink}
+                      target="blank"
+                      href=" " //TODO: add link to docs
+                    >
+                      Learn more.
+                    </a>
+                  </span>
+                }
+                value={fp(10)}
               ></InfoBlock>
             </div>
             <div className={cs(stylesRepay.balance, styles.col)}>
               <InfoBlock
                 isDisabled
-                title={'New SOL balance'}
-                value={fs(SOLBalance + valueSOL)}
+                title={
+                  <span className={hAlign}>
+                    Borrow Fee <div className={questionIcon} />
+                  </span>
+                }
+                value={fs(valueSOL * borrowFee)}
+                //TODO: add link to docs
+                toolTipLabel={
+                  <span>
+                    Borrow Fee is a{' '}
+                    <a className={styles.extLink} target="blank" href=" ">
+                      protocol fee{' '}
+                    </a>
+                    that is charged upon borrowing. For now it is set at 0,00%.
+                  </span>
+                }
               ></InfoBlock>
             </div>
           </div>

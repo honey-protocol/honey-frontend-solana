@@ -188,7 +188,18 @@ const RepayForm = (props: RepayProps) => {
                   <div className={questionIcon} />
                 </span>
               }
-              toolTipLabel="Placeholder text for tooltip" // TODO: CHANGE TO REAL INFO TEXT FOR liq price
+              toolTipLabel={
+                <span>
+                  Price at which the position (NFT) will be liquidated.{' '}
+                  <a
+                    className={styles.extLink}
+                    target="blank"
+                    href=" " //TODO: add link to docs
+                  >
+                    Learn more.
+                  </a>
+                </span>
+              }
             />
           </div>
         </div>
