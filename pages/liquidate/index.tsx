@@ -50,7 +50,7 @@ import { ToastProps } from 'hooks/useToast';
 const { formatPercent: fp, formatSol: fs, formatRoundDown: fd } = formatNumber;
 const Liquidate: NextPage = () => {
   // start sdk integration
-  const liquidationThreshold = 0.75;
+  const liquidationThreshold = 0.65; // TODO: values like this should be imported from constants per collection
   // init anchor
   const { program } = useAnchor();
   // create wallet instance for PK
