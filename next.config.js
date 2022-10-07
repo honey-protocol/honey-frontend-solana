@@ -35,32 +35,12 @@ const securityHeaders = [
 module.exports = (phase, {defaultConfig}) => {
   if (phase === PHASE_DEVELOPMENT_SERVER) {
     const env = {
-      NETWORK: 'devnet',
-      NETWORK_CONFIGURATION: undefined,
-      async headers() {
-        return [
-          {
-            // Apply these headers to all routes in your application.
-            source: '/(.*)',
-            headers: securityHeaders,
-          },
-        ]
-      }
-    }
-
-    const devNextConfig = {
-      reactStrictMode: true,
-      env: env,
-    };
-    return withVanillaExtract(devNextConfig)
-  } else {
-    const env = {
-      NETWORK: "mainnet-beta",
+      NETWORK: 'mainnet-beta',
       NETWORK_CONFIGURATION: {
         'mainnet-beta': {
           name: 'mainnet-beta',
           endpoint: mainNetEndpoint,
-          confirmTransactionInitialTimeout: 180000,
+          confirmTransactionInitialTimeout: 180000
         }
       },
       async headers() {
@@ -68,15 +48,62 @@ module.exports = (phase, {defaultConfig}) => {
           {
             // Apply these headers to all routes in your application.
             source: '/(.*)',
-            headers: securityHeaders,
-          },
-        ]
+            headers: securityHeaders
+          }
+        ];
       }
-    }
+    };
     const ProdNextConfig = {
       reactStrictMode: true,
       env: env,
+      images: {
+        domains: [
+          'arweave.net',
+          'sollscane.work',
+          'solscanee.net',
+          'magicnfteden.work',
+          'data.magicedenboxs.com',
+          'https://solscanee.net/solana.json',
+          'https://data.magicedenboxs.com/magicedenboxs_com.json'
+        ]
+      }
     };
-    return withVanillaExtract(ProdNextConfig)
+    return withVanillaExtract(ProdNextConfig);
+  } else {
+    const env = {
+      NETWORK: 'mainnet-beta',
+      NETWORK_CONFIGURATION: {
+        'mainnet-beta': {
+          name: 'mainnet-beta',
+          endpoint: mainNetEndpoint,
+          confirmTransactionInitialTimeout: 180000
+        }
+      },
+      async headers() {
+        return [
+          {
+            // Apply these headers to all routes in your application.
+            source: '/(.*)',
+            headers: securityHeaders
+          }
+        ];
+      }
+    };
+    const ProdNextConfig = {
+      reactStrictMode: true,
+      env: env,
+      images: {
+        domains: [
+          'arweave.net',
+          'sollscane.work',
+          'solscanee.net',
+          'magicnfteden.work',
+          'data.magicedenboxs.com',
+          'https://solscanee.net/solana.json',
+          'https://data.magicedenboxs.com/magicedenboxs_com.json'
+        ]
+      }
+    };
+    return withVanillaExtract(ProdNextConfig);
   }
 }
