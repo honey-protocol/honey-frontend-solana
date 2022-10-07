@@ -4,7 +4,27 @@ import LayoutRedesign from '../../components/LayoutRedesign/LayoutRedesign';
 import React from 'react';
 import * as styles from '../../styles/dashboard.css';
 import { HoneyPositionsSlider } from '../../components/HoneyPositionsSlider/HoneyPositionsSlider';
+import { NotificationCardProps } from '../../components/NotificationCard/types';
+import NotificationsList from '../../components/NotificationsList/NotificationsList';
 import { CollectionPosition } from '../../components/HoneyPositionsSlider/types';
+
+const data: NotificationCardProps[] = [
+  {
+    title: 'Title of notification',
+    description: 'Lorem Ipsum is simply dummy text of the' +
+      ' Lorem Ipsum is simply dummy text of the',
+  },
+  {
+    title: 'Title of notification',
+    description: 'Lorem Ipsum is simply dummy text of the' +
+      ' Lorem Ipsum is simply dummy text of the',
+  },
+  {
+    title: 'Title of notification',
+    description: 'Lorem Ipsum is simply dummy text of the' +
+      ' Lorem Ipsum is simply dummy text of the',
+  },
+];
 
 const Dashboard: NextPage = () => {
   const getMockPositions = () => {
@@ -20,12 +40,15 @@ const Dashboard: NextPage = () => {
     }
     return mockData;
   };
+
   return (
     <LayoutRedesign>
       <HoneyContent hasNoSider>
         <div className={styles.pageHeader}>
           <div className={styles.chartContainer}>Chart</div>
-          <div className={styles.notificationsWrapper}>Notifications</div>
+          <div className={styles.notificationsWrapper}>
+            <NotificationsList data={data} />
+          </div>
         </div>
         <HoneyPositionsSlider positions={getMockPositions()} />
       </HoneyContent>
