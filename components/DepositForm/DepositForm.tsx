@@ -24,7 +24,8 @@ const DepositForm = (props: DepositFormProps) => {
     userTotalDeposits,
     value,
     available,
-    userWalletBalance
+    userWalletBalance,
+    fetchedSolPrice
   } = props;
 
   const [valueUSD, setValueUSD] = useState<number>(0);
@@ -47,7 +48,7 @@ const DepositForm = (props: DepositFormProps) => {
   }, [value, available]);
 
   const maxValue = userWalletBalance;
-  const solPrice = 32;
+  const solPrice = fetchedSolPrice;
 
   // Put your validators here
   const isDepositButtonDisabled = () => {

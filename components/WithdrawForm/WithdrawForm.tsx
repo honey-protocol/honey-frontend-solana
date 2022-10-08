@@ -18,14 +18,14 @@ import useToast from 'hooks/useToast';
 const { format: f, formatPercent: fp, formatSol: fs, parse: p } = formatNumber;
 
 const WithdrawForm = (props: WithdrawFormProps) => {
-  const { executeWithdraw, userTotalDeposits, value, available } = props;
+  const { executeWithdraw, userTotalDeposits, value, available, fetchedSolPrice } = props;
   const [valueUSD, setValueUSD] = useState<number>(0);
   const [valueSOL, setValueSOL] = useState<number>(0);
   const [sliderValue, setSliderValue] = useState(0);
   const { toast, ToastComponent } = useToast();
 
   const maxValue = userTotalDeposits;
-  const solPrice = 32;
+  const solPrice = fetchedSolPrice;
 
   // Put your validators here
   const isWithdrawButtonDisabled = () => {

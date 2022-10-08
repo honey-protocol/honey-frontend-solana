@@ -23,7 +23,8 @@ const LendSidebar = (props: LendSidebarProps) => {
     userTotalDeposits,
     available,
     value,
-    userWalletBalance
+    userWalletBalance,
+    fetchedSolPrice
   } = props;
   const wallet = useConnectedWallet();
   const { connect } = useWalletKit();
@@ -63,6 +64,7 @@ const LendSidebar = (props: LendSidebarProps) => {
                 available={available}
                 value={value}
                 userWalletBalance={userWalletBalance}
+                fetchedSolPrice={fetchedSolPrice}
               />
             )}
             {activeTab === 'withdraw' && (
@@ -71,6 +73,7 @@ const LendSidebar = (props: LendSidebarProps) => {
                 userTotalDeposits={userTotalDeposits}
                 available={available}
                 value={value}
+                fetchedSolPrice={fetchedSolPrice}
               />
             )}
           </>

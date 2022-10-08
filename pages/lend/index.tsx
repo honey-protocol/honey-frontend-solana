@@ -12,7 +12,6 @@ import honeyGenesisBee from '/public/images/imagePlaceholder.png';
 import HoneyButton from '../../components/HoneyButton/HoneyButton';
 import { Key } from 'antd/lib/table/interface';
 import { formatNumber } from '../../helpers/format';
-import {getInterestRate} from '../../helpers/loanHelpers/userCollection';
 import SearchInput from '../../components/SearchInput/SearchInput';
 import debounce from 'lodash/debounce';
 import { getColumnSortStatus } from '../../helpers/tableUtils';
@@ -30,7 +29,7 @@ import {
 import { LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js';
 import BN from 'bn.js';
 import HoneyToggle from 'components/HoneyToggle/HoneyToggle';
-import { calcNFT } from 'helpers/loanHelpers/userCollection';
+import { calcNFT, getInterestRate, fetchSolPrice } from 'helpers/loanHelpers/userCollection';
 import { ToastProps } from 'hooks/useToast';
 import { RoundHalfDown } from 'helpers/utils';
 import { Typography } from 'antd';
@@ -74,6 +73,7 @@ const Lend: NextPage = () => {
   const [userWalletBalance, setUserWalletBalance] = useState<number>(0);
   const [utilizationRate, setUtilizationRate] = useState(0);
   const [calculatedInterestRate, setCalculatedInterestRate] = useState<number>(0);
+  const [fetchedSolPrice, setFetchedSolPrice] = useState(0);
 
   useEffect(() => {
     if (totalMarketDeposits && totalMarketDebt && totalMarketDeposits) {
@@ -145,6 +145,12 @@ const Lend: NextPage = () => {
     }, 3000);
   }, [marketReserveInfo, honeyUser]);
 
+  async function fetchSolValue(reserves: any, connection: any) {
+    const slPrice = await fetchSolPrice(reserves, connection);
+    console.log('@@--', slPrice);
+    setFetchedSolPrice(slPrice)
+  }
+
   /**
    * @description sets state of marketValue by parsing lamports outstanding debt amount to SOL
    * @params none, requires parsedReserves
@@ -159,6 +165,9 @@ const Lend: NextPage = () => {
       );
       setTotalMarketDeposits(totalMarketDeposits);
       // setTotalMarketDeposits(parsedReserves[0].reserveState.totalDeposits.div(new BN(10 ** 9)).toNumber());
+      if (parsedReserves && sdkConfig.saberHqConnection) {
+        fetchSolValue(parsedReserves, sdkConfig.saberHqConnection);
+      }
     }
   }, [parsedReserves]);
 
@@ -571,6 +580,7 @@ const Lend: NextPage = () => {
           available={totalMarketDeposits}
           value={totalMarketDeposits + totalMarketDebt}
           userWalletBalance={userWalletBalance}
+          fetchedSolPrice={fetchedSolPrice}
         />
       </HoneySider>
     </LayoutRedesign>
