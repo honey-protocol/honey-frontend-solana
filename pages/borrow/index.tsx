@@ -48,7 +48,7 @@ import {
 import {
   calcNFT,
   calculateCollectionwideAllowance,
-  fetchSolPrice, 
+  fetchSolPrice,
   getInterestRate
 } from 'helpers/loanHelpers/userCollection';
 import { Metadata } from '@metaplex-foundation/mpl-token-metadata';
@@ -144,7 +144,8 @@ const Markets: NextPage = () => {
   const [userTotalDeposits, setUserTotalDeposits] = useState(0);
   const [sumOfTotalValue, setSumOfTotalValue] = useState(0);
   const [fetchedSolPrice, setFetchedSolPrice] = useState(0);
-  const [calculatedInterestRate, setCalculatedInterestRate] = useState<number>(0);
+  const [calculatedInterestRate, setCalculatedInterestRate] =
+    useState<number>(0);
   const [utilizationRate, setUtilizationRate] = useState(0);
 
   const [isMobileSidebarVisible, setShowMobileSidebar] = useState(false);
@@ -215,7 +216,7 @@ const Markets: NextPage = () => {
 
   async function fetchSolValue(reserves: any, connection: any) {
     const slPrice = await fetchSolPrice(reserves, connection);
-    setFetchedSolPrice(slPrice)
+    setFetchedSolPrice(slPrice);
   }
 
   /**
@@ -240,10 +241,16 @@ const Markets: NextPage = () => {
 
   useEffect(() => {
     if (totalMarketDeposits && totalMarketDebt && totalMarketDeposits) {
-      setUtilizationRate(Number(f((((totalMarketDeposits + totalMarketDebt) - totalMarketDeposits) / (totalMarketDeposits + totalMarketDebt)))))
+      setUtilizationRate(
+        Number(
+          f(
+            (totalMarketDeposits + totalMarketDebt - totalMarketDeposits) /
+              (totalMarketDeposits + totalMarketDebt)
+          )
+        )
+      );
     }
   }, [totalMarketDeposits, totalMarketDebt, totalMarketDeposits]);
-
 
   // fetches total market positions
   async function fetchObligations() {
@@ -348,13 +355,13 @@ const Markets: NextPage = () => {
 
   async function calculateInterestRate(utilizationRate: number) {
     let interestRate = await getInterestRate(utilizationRate);
-    if (interestRate) setCalculatedInterestRate(interestRate * utilizationRate);
+    if (interestRate) setCalculatedInterestRate(interestRate);
   }
 
   useEffect(() => {
-    console.log('Runnig')
+    console.log('Runnig');
     if (utilizationRate) {
-      calculateInterestRate(utilizationRate)
+      calculateInterestRate(utilizationRate);
     }
   }, [utilizationRate]);
 
@@ -498,7 +505,9 @@ const Markets: NextPage = () => {
           hidden: windowWidth < TABLET_BP,
           sorter: (a: MarketTableRow, b: MarketTableRow) => a.rate - b.rate,
           render: (rate: number) => {
-            return <div className={style.rateCell}>{fp(calculatedInterestRate)}</div>;
+            return (
+              <div className={style.rateCell}>{fp(calculatedInterestRate)}</div>
+            );
           }
         },
         {
