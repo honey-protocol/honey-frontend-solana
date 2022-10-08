@@ -748,7 +748,7 @@ const Markets: NextPage = () => {
             You can not add any more NFTs to this market{' '}
           </span>
           <span className={style.footerDescription}>
-            This market's risk parameters limit to 1 loan per wallet{' '}
+            Current risk parameters limit to 1 loan per wallet{' '}
           </span>
         </div>
       </div>
