@@ -2,7 +2,13 @@ import type { NextPage } from 'next';
 import LayoutRedesign from '../../components/LayoutRedesign/LayoutRedesign';
 import LendSidebar from '../../components/LendSidebar/LendSidebar';
 import { LendTableRow } from '../../types/lend';
-import React, { ChangeEvent, useCallback, useEffect, useMemo, useState } from 'react';
+import React, {
+  ChangeEvent,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState
+} from 'react';
 import HoneyTable from '../../components/HoneyTable/HoneyTable';
 import * as style from '../../styles/markets.css';
 import { ColumnType } from 'antd/lib/table';
@@ -548,7 +554,10 @@ const Lend: NextPage = () => {
               return (
                 <div className={style.expandSection}>
                   <div className={style.dashedDivider} />
-                  <HoneyChart title="Interest rate" data={record.stats} />
+                  <HoneyChart
+                    title="Interest rate (DUMMY / WIP)"
+                    data={record.stats}
+                  />
                 </div>
               );
             }
