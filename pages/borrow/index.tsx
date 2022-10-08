@@ -212,7 +212,6 @@ const Markets: NextPage = () => {
 
   async function fetchSolValue(reserves: any, connection: any) {
     const slPrice = await fetchSolPrice(reserves, connection);
-    console.log('@@--', slPrice);
     setFetchedSolPrice(slPrice)
   }
 
@@ -284,8 +283,6 @@ const Markets: NextPage = () => {
       : setUserAllowance(outcome.sumOfAllowance);
     setUserDebt(outcome.sumOfTotalDebt);
     setLoanToValue(outcome.sumOfLtv);
-    console.log('this is ltv', loanToValue);
-    console.log('this is user allowance', userAllowance);
   }
 
   /**
@@ -294,7 +291,6 @@ const Markets: NextPage = () => {
    * @returns honeyUser | marketReserveInfo |
    */
   useEffect(() => {
-    console.log('@@--', userAllowance);
     if (marketReserveInfo && parsedReserves) {
       setDepositNoteExchangeRate(
         BnToDecimal(marketReserveInfo[0].depositNoteExchangeRate, 15, 5)
@@ -343,7 +339,6 @@ const Markets: NextPage = () => {
   // PUT YOUR DATA SOURCE HERE
   // MOCK DATA FOR NOW
   useEffect(() => {
-    console.log('@@--::', userAllowance);
     const mockData: MarketTableRow[] = [
       {
         key: '0',

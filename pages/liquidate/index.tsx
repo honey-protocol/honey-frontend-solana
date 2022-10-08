@@ -229,7 +229,6 @@ const Liquidate: NextPage = () => {
 
   async function fetchSolValue(reserves: any, connection: any) {
     const slPrice = await fetchSolPrice(reserves, connection);
-    console.log('@@--', slPrice);
     setFetchedSolPrice(slPrice)
   }
 

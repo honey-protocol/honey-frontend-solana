@@ -44,7 +44,6 @@ const BidForm = (props: BidFormProps) => {
 
   // TODO: import SOL price via oracle
   const solPrice = fetchedSolPrice;
-  console.log('@@::-- solprice bidform', solPrice)
   // Put your validators here
   const isSubmitButtonDisabled = () => {
     return false;

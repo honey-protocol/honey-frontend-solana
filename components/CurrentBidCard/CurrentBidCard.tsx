@@ -13,7 +13,6 @@ const {
 
 const CurrentBidCard = (props: CurrentBidCardProps) => {
   const {fetchedSolPrice, date, usdcValue, solAmount, walletAddress, hasBorder = true } = props;
-  console.log('current bid card', fetchedSolPrice)
   // TODO: add SOL/USDC conversion?
   return (
     <div className={c(styles.bidCard, { [styles.hasBorder]: hasBorder })}>
