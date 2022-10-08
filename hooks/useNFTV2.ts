@@ -42,11 +42,11 @@ export default function useFetchNFTByUser(
     let didCancel = false;
     const fetchNFTByUser = async () => {
       if (!didCancel) {
-        const connection = new Connection(
-          clusterApiUrl('mainnet-beta'),
-          'processed'
-        );
-        // const connection = providerMut?.connection;
+        // const connection = new Connection(
+        //   clusterApiUrl('mainnet-beta'),
+        //   'processed'
+        // );
+        const connection = providerMut?.connection;
         const walletPublicKey = wallet?.publicKey?.toString() || '';
         if (walletPublicKey != '') {
           // we need to check if shouldRefetchNFTs trigger this function and we should do refetch instead of getting from cache
