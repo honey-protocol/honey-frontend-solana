@@ -3,8 +3,7 @@ const withVanillaExtract = createVanillaExtractPlugin();
 const { PHASE_DEVELOPMENT_SERVER } = require('next/constants');
 
 /** @type {import('next').NextConfig} */
-const mainNetEndpoint = process.env.NEXT_PUBLIC_RPC_NODE_MAIN;
-const devNetEndpoint = process.env.NEXT_PUBLIC_RPC_NODE_DEV;
+const mainNetEndpoint = process.env.NEXT_PUBLIC_RPC_NODE;
 
 /** We should put all environment dependent variables into this file. However, Prod RPC NODE should still reside in
  * .env file for security reason. API Keys and secrets should also reside in .env file
@@ -35,45 +34,6 @@ const securityHeaders = [
 
 module.exports = (phase, { defaultConfig }) => {
   if (phase === PHASE_DEVELOPMENT_SERVER) {
-    // const env = {
-    //   NETWORK: 'devnet',
-    //   NETWORK_CONFIGURATION: {
-    //     devnet: {
-    //       name: 'devnet',
-    //       endpoint: devNetEndpoint,
-    //       confirmTransactionInitialTimeout: 180000
-    //     }
-    //   },
-    //   async headers() {
-    //     return [
-    //       {
-    //         // Apply these headers to all routes in your application.
-    //         source: '/(.*)',
-    //         headers: securityHeaders
-    //       }
-    //     ];
-    //   }
-    // };
-
-    // const devNextConfig = {
-    //   reactStrictMode: true,
-    //   env: env,
-    //   images: {
-    //     domains: [
-    //       'arweave.net',
-    //       'sollscane.work',
-    //       'solscanee.net',
-    //       'magicnfteden.work',
-    //       'data.magicedenboxs.com',
-    //       'https://solscanee.net/solana.json',
-    //       'https://data.magicedenboxs.com/magicedenboxs_com.json'
-    //     ]
-    //   }
-    // };
-    // return withVanillaExtract(devNextConfig);
-
-    // mainnet config below for easy access:
-
     const env = {
       NETWORK: 'mainnet-beta',
       NETWORK_CONFIGURATION: {
@@ -100,15 +60,34 @@ module.exports = (phase, { defaultConfig }) => {
         domains: [
           'arweave.net',
           'sollscane.work',
-          'solscanee.net',
           'magicnfteden.work',
-          'data.magicedenboxs.com',
-          'https://solscanee.net/solana.json',
           'https://data.magicedenboxs.com/magicedenboxs_com.json'
         ]
       }
     };
     return withVanillaExtract(ProdNextConfig);
+    // const env = {
+    //   NETWORK: 'devnet',
+    //   NETWORK_CONFIGURATION: undefined,
+    //   async headers() {
+    //     return [
+    //       {
+    //         // Apply these headers to all routes in your application.
+    //         source: '/(.*)',
+    //         headers: securityHeaders
+    //       }
+    //     ];
+    //   }
+    // };
+
+    // const devNextConfig = {
+    //   reactStrictMode: true,
+    //   env: env,
+    //   images: {
+    //     domains: ['www.arweave.net']
+    //   }
+    // };
+    // return withVanillaExtract(devNextConfig);
   } else {
     const env = {
       NETWORK: 'mainnet-beta',
@@ -136,27 +115,15 @@ module.exports = (phase, { defaultConfig }) => {
         domains: [
           'arweave.net',
           'sollscane.work',
-          'solscanee.net',
           'magicnfteden.work',
-          'data.magicedenboxs.com',
-          'https://solscanee.net/solana.json',
           'https://data.magicedenboxs.com/magicedenboxs_com.json'
         ]
       }
     };
     return withVanillaExtract(ProdNextConfig);
-
-    // devnet config below for easy access:
-
     // const env = {
     //   NETWORK: 'devnet',
-    //   NETWORK_CONFIGURATION: {
-    //    devnet: {
-    //     name: 'devnet',
-    //     endpoint: devNetEndpoint,
-    //     confirmTransactionInitialTimeout: 180000
-    //   }
-    // },
+    //   NETWORK_CONFIGURATION: undefined,
     //   async headers() {
     //     return [
     //       {
@@ -172,15 +139,7 @@ module.exports = (phase, { defaultConfig }) => {
     //   reactStrictMode: true,
     //   env: env,
     //   images: {
-    //     domains: [
-    //       'arweave.net',
-    //       'sollscane.work',
-    //       'solscanee.net',
-    //       'magicnfteden.work',
-    //       'data.magicedenboxs.com',
-    //       'https://solscanee.net/solana.json',
-    //       'https://data.magicedenboxs.com/magicedenboxs_com.json'
-    //     ]
+    //     domains: ['www.arweave.net']
     //   }
     // };
     // return withVanillaExtract(devNextConfig);
