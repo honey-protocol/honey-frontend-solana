@@ -36,7 +36,7 @@ import {
 import { ConfigureSDK } from 'helpers/loanHelpers';
 import { useConnectedWallet } from '@saberhq/use-solana';
 import { LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js';
-import { calcNFT } from 'helpers/loanHelpers/userCollection';
+import { calcNFT, fetchSolPrice } from 'helpers/loanHelpers/userCollection';
 import { LiquidateTablePosition } from '../../types/liquidate';
 import { HONEY_MARKET_ID, HONEY_PROGRAM_ID } from 'constants/loan';
 import { NATIVE_MINT } from '@solana/spl-token';
@@ -113,6 +113,8 @@ const Liquidate: NextPage = () => {
   const [biddingArray, setBiddingArray] = useState({});
   const [userBalance, setUserBalance] = useState(0);
   const [loanToValue, setLoanToValue] = useState<number>(0);
+  const [fetchedSolPrice, setFetchedSolPrice] = useState(0);
+
   // create stringyfied instance of walletPK
   let stringyfiedWalletPK = sdkConfig.sdkWallet?.publicKey.toString();
   let walletPK = sdkConfig.sdkWallet?.publicKey;
@@ -224,6 +226,18 @@ const Liquidate: NextPage = () => {
       setNftPrice(Number(nftPrice));
     }
   }
+
+  async function fetchSolValue(reserves: any, connection: any) {
+    const slPrice = await fetchSolPrice(reserves, connection);
+    console.log('@@--', slPrice);
+    setFetchedSolPrice(slPrice)
+  }
+
+  useEffect(() => {
+    if (parsedReserves && sdkConfig.saberHqConnection) {
+      fetchSolValue(parsedReserves, sdkConfig.saberHqConnection);
+    }
+  }, [parsedReserves])
 
   useEffect(() => {
     calculateNFTPrice();
@@ -601,6 +615,7 @@ const Liquidate: NextPage = () => {
           handleRevokeBid={handleRevokeBid}
           handleIncreaseBid={handleIncreaseBid}
           handlePlaceBid={handlePlaceBid}
+          fetchedSolPrice={fetchedSolPrice}
         />
       </HoneySider>
     </LayoutRedesign>

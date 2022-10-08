@@ -8,7 +8,7 @@ import { BidListProps } from './types';
 import { LAMPORTS_PER_SOL } from '@solana/web3.js';
 
 const BidsList = (props: BidListProps) => {
-  const { biddingArray } = props;
+  const { biddingArray, fetchedSolPrice } = props;
   const [valueUSD, setValueUSD] = useState<number>();
   const [valueUSDC, setValueUSDC] = useState<number>();
   const [valueSOL, setValueSOL] = useState<number>(0);
@@ -43,7 +43,7 @@ const BidsList = (props: BidListProps) => {
   return (
     <SidebarScroll>
       <div className={styles.bidsList}>
-        <CurrentBidList data={currentBidCardData} />
+        <CurrentBidList data={currentBidCardData} fetchedSolPrice={fetchedSolPrice} />
       </div>
     </SidebarScroll>
   );

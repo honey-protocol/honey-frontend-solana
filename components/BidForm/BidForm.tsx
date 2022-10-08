@@ -29,6 +29,7 @@ const BidForm = (props: BidFormProps) => {
     userBalance,
     highestBiddingValue,
     currentUserBid,
+    fetchedSolPrice,
     handleRevokeBid,
     handleIncreaseBid,
     handlePlaceBid
@@ -42,8 +43,8 @@ const BidForm = (props: BidFormProps) => {
   const maxValue = 1000;
 
   // TODO: import SOL price via oracle
-  const solPrice = 32;
-
+  const solPrice = fetchedSolPrice;
+  console.log('@@::-- solprice bidform', solPrice)
   // Put your validators here
   const isSubmitButtonDisabled = () => {
     return false;
