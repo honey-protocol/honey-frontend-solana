@@ -103,7 +103,7 @@ const Liquidate: NextPage = () => {
   const [hasPosition, setHasPosition] = useState(false);
   const [highestBiddingAddress, setHighestBiddingAddress] = useState('');
   const [highestBiddingValue, setHighestBiddingValue] = useState(0);
-  const [currentUserBid, setCurrentUserBid] = useState(0);
+  const [currentUserBid, setCurrentUserBid] = useState<number>(0);
   const [userInput, setUserInput] = useState(0);
   const [loadingState, setLoadingState] = useState(false);
   const [refetchState, setRefetchState] = useState(false);
