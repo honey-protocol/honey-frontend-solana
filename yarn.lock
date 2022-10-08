@@ -442,10 +442,10 @@
   dependencies:
     "@hapi/hoek" "^9.0.0"
 
-"@honey-finance/sdk@^1.0.129":
-  version "1.0.129"
-  resolved "https://registry.yarnpkg.com/@honey-finance/sdk/-/sdk-1.0.129.tgz#7b1b68b8c2938dff4781e669b37a5d0fd9f11b5a"
-  integrity sha512-3u7fzkjLEPM7NNiv3Al8QpaWQLFh37fwv4sQPYhKHZwLL1qMD9VasM4irDpJzilo5VNC+kga649xcCP+9y2IVw==
+"@honey-finance/sdk@1.0.123":
+  version "1.0.123"
+  resolved "https://registry.yarnpkg.com/@honey-finance/sdk/-/sdk-1.0.123.tgz#0bdc65615ce5c969d76ce0851507e81cc6d2ce24"
+  integrity sha512-VzX2UTb4izp0IybKqgunIxPfdEXhc2CSQbL6I64yk0BvY2zpJC+Kfb69LS92jRd4fohoaV9ycwO/o+eVveM5Jg==
   dependencies:
     "@honey-finance/sdk" "^1.0.59"
     "@metaplex-foundation/mpl-token-metadata" "^1.2.0"
@@ -1535,6 +1535,18 @@
   version "0.0.29"
   resolved "https://registry.yarnpkg.com/@types/json5/-/json5-0.0.29.tgz#ee28707ae94e11d2b827bcbe5270bcea7f3e71ee"
   integrity sha512-dRLjCWHYg4oaA77cxO64oO+7JwCwnIzkZPdrrC71jQmQtlhM556pwKo5bUzqvZndkVbeFLIIi+9TC40JNF5hNQ==
+
+"@types/lodash.debounce@^4.0.7":
+  version "4.0.7"
+  resolved "https://registry.yarnpkg.com/@types/lodash.debounce/-/lodash.debounce-4.0.7.tgz#0285879defb7cdb156ae633cecd62d5680eded9f"
+  integrity sha512-X1T4wMZ+gT000M2/91SYj0d/7JfeNZ9PeeOldSNoE/lunLeQXKvkmIumI29IaKMotU/ln/McOIvgzZcQ/3TrSA==
+  dependencies:
+    "@types/lodash" "*"
+
+"@types/lodash@*":
+  version "4.14.186"
+  resolved "https://registry.yarnpkg.com/@types/lodash/-/lodash-4.14.186.tgz#862e5514dd7bd66ada6c70ee5fce844b06c8ee97"
+  integrity sha512-eHcVlLXP0c2FlMPm56ITode2AgLMSa6aJ05JTTbYbI+7EMkCEE5qk2E41d5g2lCVTqRe0GnnRFurmlCsDODrPw==
 
 "@types/lodash@^4.14.159":
   version "4.14.182"
