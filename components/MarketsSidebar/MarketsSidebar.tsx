@@ -24,6 +24,7 @@ const MarketsSidebar = (props: MarketsSidebarProps) => {
     userDebt,
     userUSDCBalance,
     loanToValue,
+    fetchedSolPrice,
     hideMobileSidebar,
     executeDepositNFT, executeWithdrawNFT, executeBorrow, executeRepay,
   } = props;
@@ -77,6 +78,7 @@ const MarketsSidebar = (props: MarketsSidebarProps) => {
                   userAllowance={userAllowance}
                   loanToValue={loanToValue}
                   hideMobileSidebar={hideMobileSidebar}
+                  fetchedSolPrice={fetchedSolPrice}
                 />
             )}
             {activeTab === 'repay' && Boolean(openPositions.length) && (
@@ -91,7 +93,8 @@ const MarketsSidebar = (props: MarketsSidebarProps) => {
                   userUSDCBalance={userUSDCBalance}
                   loanToValue={loanToValue}
                   hideMobileSidebar={hideMobileSidebar}
-                changeTab={handleTabChange}
+                  changeTab={handleTabChange}
+                  fetchedSolPrice={fetchedSolPrice}
                 />
             )}
           </>

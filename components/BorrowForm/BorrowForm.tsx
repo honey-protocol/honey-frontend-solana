@@ -41,7 +41,8 @@ const BorrowForm = (props: BorrowProps) => {
     userAllowance,
     userDebt,
     loanToValue,
-    hideMobileSidebar
+    hideMobileSidebar,
+    fetchedSolPrice
   } = props;
 
   const [valueUSD, setValueUSD] = useState<number>(0);
@@ -58,7 +59,7 @@ const BorrowForm = (props: BorrowProps) => {
 
   const borrowedValue = userDebt;
   const maxValue = userAllowance;
-  const solPrice = 32;
+  const solPrice = fetchedSolPrice;
   const liquidationThreshold = 0.65; // TODO: change where relevant, currently set to 65% on mainnet
   const borrowFee = 0.0; // TODO: 1,5% later but 0% for now
 

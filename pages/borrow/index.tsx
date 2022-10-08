@@ -47,7 +47,8 @@ import {
 } from '@honey-finance/sdk';
 import {
   calcNFT,
-  calculateCollectionwideAllowance
+  calculateCollectionwideAllowance,
+  fetchSolPrice
 } from 'helpers/loanHelpers/userCollection';
 import { Metadata } from '@metaplex-foundation/mpl-token-metadata';
 import { MAX_LTV } from 'constants/loan';
@@ -141,6 +142,7 @@ const Markets: NextPage = () => {
   const [userUSDCBalance, setUserUSDCBalance] = useState(0);
   const [userTotalDeposits, setUserTotalDeposits] = useState(0);
   const [sumOfTotalValue, setSumOfTotalValue] = useState(0);
+  const [fetchedSolPrice, setFetchedSolPrice] = useState(0);
 
   const [isMobileSidebarVisible, setShowMobileSidebar] = useState(false);
 
@@ -208,6 +210,12 @@ const Markets: NextPage = () => {
     }, 3000);
   }, [marketReserveInfo, honeyUser]);
 
+  async function fetchSolValue(reserves: any, connection: any) {
+    const slPrice = await fetchSolPrice(reserves, connection);
+    console.log('@@--', slPrice);
+    setFetchedSolPrice(slPrice)
+  }
+
   /**
    * @description sets state of marketValue by parsing lamports outstanding debt amount to SOL
    * @params none, requires parsedReserves
@@ -222,6 +230,9 @@ const Markets: NextPage = () => {
       );
       setTotalMarketDeposits(totalMarketDeposits);
       // setTotalMarketDeposits(parsedReserves[0].reserveState.totalDeposits.div(new BN(10 ** 9)).toNumber());
+      if (parsedReserves && sdkConfig.saberHqConnection) {
+        fetchSolValue(parsedReserves, sdkConfig.saberHqConnection);
+      }
     }
   }, [parsedReserves]);
 
@@ -1050,6 +1061,7 @@ const Markets: NextPage = () => {
           userUSDCBalance={userUSDCBalance}
           loanToValue={loanToValue}
           hideMobileSidebar={hideMobileSidebar}
+          fetchedSolPrice={fetchedSolPrice}
         />
       </HoneySider>
     </LayoutRedesign>

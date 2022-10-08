@@ -31,9 +31,12 @@ const RepayForm = (props: RepayProps) => {
     userUSDCBalance,
     loanToValue,
     availableNFTs,
+    fetchedSolPrice,
     hideMobileSidebar,
     changeTab
   } = props;
+
+  console.log('@@-- repay form:: sol price', fetchedSolPrice);
 
   const [valueUSD, setValueUSD] = useState<number>();
   const [valueSOL, setValueSOL] = useState<number>();
@@ -41,7 +44,7 @@ const RepayForm = (props: RepayProps) => {
   const { toast, ToastComponent } = useToast();
 
   const maxValue = userDebt != 0 ? userDebt : userAllowance;
-  const solPrice = 32;
+  const solPrice = fetchedSolPrice;
   const liquidationThreshold = 0.75;
   const SOLBalance = useSolBalance();
 

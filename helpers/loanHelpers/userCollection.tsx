@@ -89,6 +89,32 @@ export async function calcNFT(
   }
 }
 
+/**
+ * @description fetches the sol price from switchboard
+ * @params marketreserve | parsedreserve | honeymarket | connection
+ * @returns the current sol price
+ */
+ export async function fetchSolPrice(
+  parsedReserves: any,
+  connection: any
+) {
+  if (parsedReserves && connection) {
+    try {
+      let solPrice = await getOraclePrice(
+        // when in devnet uncomment the below
+        // 'devnet',
+        'mainnet-beta',
+        connection,
+        parsedReserves[0].switchboardPriceAggregator
+      );
+      console.log(`Solprice: ${solPrice}`)
+      return solPrice; 
+    } catch (error) {
+      return `An error occurred: ${error}`
+    }
+  }
+}
+
 export async function getInterestRate(utilizationRate: number) {
   let interestRate = 0;
 
