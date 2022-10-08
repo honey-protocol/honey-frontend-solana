@@ -42,7 +42,8 @@ const BorrowForm = (props: BorrowProps) => {
     userDebt,
     loanToValue,
     hideMobileSidebar,
-    fetchedSolPrice
+    fetchedSolPrice,
+    calculatedInterestRate
   } = props;
 
   const [valueUSD, setValueUSD] = useState<number>(0);
@@ -412,7 +413,7 @@ const BorrowForm = (props: BorrowProps) => {
                     </a>
                   </span>
                 }
-                value={fp(10)}
+                value={fp(calculatedInterestRate)}
               ></InfoBlock>
             </div>
             <div className={cs(stylesRepay.balance, styles.col)}>

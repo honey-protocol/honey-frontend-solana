@@ -48,7 +48,8 @@ import {
 import {
   calcNFT,
   calculateCollectionwideAllowance,
-  fetchSolPrice
+  fetchSolPrice, 
+  getInterestRate
 } from 'helpers/loanHelpers/userCollection';
 import { Metadata } from '@metaplex-foundation/mpl-token-metadata';
 import { MAX_LTV } from 'constants/loan';
@@ -66,7 +67,7 @@ import HoneyTableNameCell from '../../components/HoneyTable/HoneyTableNameCell/H
 
 const network = 'mainnet-beta'; // change to dynamic value
 
-const { formatPercent: fp, formatSol: fs } = formatNumber;
+const { format: f, formatPercent: fp, formatSol: fs } = formatNumber;
 
 const Markets: NextPage = () => {
   const wallet = useConnectedWallet();
@@ -143,6 +144,8 @@ const Markets: NextPage = () => {
   const [userTotalDeposits, setUserTotalDeposits] = useState(0);
   const [sumOfTotalValue, setSumOfTotalValue] = useState(0);
   const [fetchedSolPrice, setFetchedSolPrice] = useState(0);
+  const [calculatedInterestRate, setCalculatedInterestRate] = useState<number>(0);
+  const [utilizationRate, setUtilizationRate] = useState(0);
 
   const [isMobileSidebarVisible, setShowMobileSidebar] = useState(false);
 
@@ -234,6 +237,13 @@ const Markets: NextPage = () => {
       }
     }
   }, [parsedReserves]);
+
+  useEffect(() => {
+    if (totalMarketDeposits && totalMarketDebt && totalMarketDeposits) {
+      setUtilizationRate(Number(f((((totalMarketDeposits + totalMarketDebt) - totalMarketDeposits) / (totalMarketDeposits + totalMarketDebt)))))
+    }
+  }, [totalMarketDeposits, totalMarketDebt, totalMarketDeposits]);
+
 
   // fetches total market positions
   async function fetchObligations() {
@@ -335,6 +345,18 @@ const Markets: NextPage = () => {
       setUserOpenPositions(collateralNFTPositions);
     }
   }, [collateralNFTPositions]);
+
+  async function calculateInterestRate(utilizationRate: number) {
+    let interestRate = await getInterestRate(utilizationRate);
+    if (interestRate) setCalculatedInterestRate(interestRate * utilizationRate);
+  }
+
+  useEffect(() => {
+    console.log('Runnig')
+    if (utilizationRate) {
+      calculateInterestRate(utilizationRate)
+    }
+  }, [utilizationRate]);
 
   // PUT YOUR DATA SOURCE HERE
   // MOCK DATA FOR NOW
@@ -476,7 +498,7 @@ const Markets: NextPage = () => {
           hidden: windowWidth < TABLET_BP,
           sorter: (a: MarketTableRow, b: MarketTableRow) => a.rate - b.rate,
           render: (rate: number) => {
-            return <div className={style.rateCell}>{fp(rate * 100)}</div>;
+            return <div className={style.rateCell}>{fp(calculatedInterestRate)}</div>;
           }
         },
         {
@@ -1057,6 +1079,7 @@ const Markets: NextPage = () => {
           loanToValue={loanToValue}
           hideMobileSidebar={hideMobileSidebar}
           fetchedSolPrice={fetchedSolPrice}
+          calculatedInterestRate={calculatedInterestRate}
         />
       </HoneySider>
     </LayoutRedesign>

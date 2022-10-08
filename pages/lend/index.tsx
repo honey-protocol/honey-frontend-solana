@@ -83,7 +83,7 @@ const Lend: NextPage = () => {
 
   async function calculateInterestRate(utilizationRate: number) {
     let interestRate = await getInterestRate(utilizationRate);
-    if (interestRate) setCalculatedInterestRate(interestRate);
+    if (interestRate) setCalculatedInterestRate(interestRate * utilizationRate);
   }
 
   useEffect(() => {
@@ -91,7 +91,7 @@ const Lend: NextPage = () => {
     if (utilizationRate) {
       calculateInterestRate(utilizationRate)
     }
-  }, [utilizationRate])
+  }, [utilizationRate]);
 
   async function fetchWalletBalance(key: PublicKey) {
     try {
