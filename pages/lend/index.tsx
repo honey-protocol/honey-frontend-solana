@@ -476,6 +476,28 @@ const Lend: NextPage = () => {
         }
       },
       {
+        width: columnsWidth[3],
+        title: ({ sortColumns }) => {
+          const sortOrder = getColumnSortStatus(sortColumns, 'value');
+          return (
+            <div
+              className={
+                style.headerCell[
+                  sortOrder === 'disabled' ? 'disabled' : 'active'
+                ]
+              }
+            >
+              <span>Supplied</span> <div className={style.sortIcon[sortOrder]} />
+            </div>
+          );
+        },
+        dataIndex: 'value',
+        sorter: (a, b) => a.value - b.value,
+        render: (value: number) => {
+          return <div className={style.valueCell}>{fs(value)}</div>;
+        }
+      },
+      {
         width: columnsWidth[2],
         title: ({ sortColumns }) => {
           const sortOrder = getColumnSortStatus(sortColumns, 'available');
@@ -496,28 +518,6 @@ const Lend: NextPage = () => {
         sorter: (a, b) => a.available - b.available,
         render: (available: number) => {
           return <div className={style.availableCell}>{fs(available)}</div>;
-        }
-      },
-      {
-        width: columnsWidth[3],
-        title: ({ sortColumns }) => {
-          const sortOrder = getColumnSortStatus(sortColumns, 'value');
-          return (
-            <div
-              className={
-                style.headerCell[
-                  sortOrder === 'disabled' ? 'disabled' : 'active'
-                ]
-              }
-            >
-              <span>TVL</span> <div className={style.sortIcon[sortOrder]} />
-            </div>
-          );
-        },
-        dataIndex: 'value',
-        sorter: (a, b) => a.value - b.value,
-        render: (value: number) => {
-          return <div className={style.valueCell}>{fs(value)}</div>;
         }
       },
       {

@@ -511,6 +511,29 @@ const Markets: NextPage = () => {
           }
         },
         {
+          width: columnsWidth[3],
+          title: ({ sortColumns }: ColumnTitleProps<MarketTableRow>) => {
+            const sortOrder = getColumnSortStatus(sortColumns, 'value');
+            return (
+              <div
+                className={
+                  style.headerCell[
+                    sortOrder === 'disabled' ? 'disabled' : 'active'
+                  ]
+                }
+              >
+                <span>Supplied</span>
+                <div className={style.sortIcon[sortOrder]} />
+              </div>
+            );
+          },
+          dataIndex: 'value',
+          sorter: (a: MarketTableRow, b: MarketTableRow) => a.value - b.value,
+          render: (value: number) => {
+            return <div className={style.valueCell}>{fs(value)}</div>;
+          }
+        },
+        {
           width: columnsWidth[2],
           title: ({ sortColumns }: ColumnTitleProps<MarketTableRow>) => {
             const sortOrder = getColumnSortStatus(sortColumns, 'available');
@@ -535,29 +558,7 @@ const Markets: NextPage = () => {
             return <div className={style.availableCell}>{fs(available)}</div>;
           }
         },
-        {
-          width: columnsWidth[3],
-          title: ({ sortColumns }: ColumnTitleProps<MarketTableRow>) => {
-            const sortOrder = getColumnSortStatus(sortColumns, 'value');
-            return (
-              <div
-                className={
-                  style.headerCell[
-                    sortOrder === 'disabled' ? 'disabled' : 'active'
-                  ]
-                }
-              >
-                <span>TVL</span>
-                <div className={style.sortIcon[sortOrder]} />
-              </div>
-            );
-          },
-          dataIndex: 'value',
-          sorter: (a: MarketTableRow, b: MarketTableRow) => a.value - b.value,
-          render: (value: number) => {
-            return <div className={style.valueCell}>{fs(value)}</div>;
-          }
-        },
+
         {
           width: columnsWidth[4],
           title: MyCollectionsToggle,
