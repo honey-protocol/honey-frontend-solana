@@ -15,6 +15,11 @@ import { ConfigureSDK } from 'helpers/loanHelpers';
 import { questionIcon } from 'styles/icons.css';
 import { hAlign } from 'styles/common.css';
 import useToast from 'hooks/useToast';
+import {
+  calcNFT,
+  getInterestRate,
+  fetchSolPrice
+} from 'helpers/loanHelpers/userCollection';
 
 const { format: f, formatPercent: fp, formatSol: fs, parse: p } = formatNumber;
 
@@ -33,6 +38,10 @@ const DepositForm = (props: DepositFormProps) => {
   const [sliderValue, setSliderValue] = useState(0);
   const [userInteraction, setUserInteraction] = useState<boolean>(false);
   const [utilizationRate, setUtilizationRate] = useState(0);
+  const [calculatedInterestRate, setCalculatedInterestRate] =
+    useState<number>(0);
+  const [totalMarketDebt, setTotalMarketDebt] = useState(0);
+  const [totalMarketDeposits, setTotalMarketDeposits] = useState(0);
 
   const { toast, ToastComponent } = useToast();
 
@@ -42,8 +51,33 @@ const DepositForm = (props: DepositFormProps) => {
   useEffect(() => {}, [userWalletBalance]);
 
   useEffect(() => {
+    if (totalMarketDeposits && totalMarketDebt && totalMarketDeposits) {
+      setUtilizationRate(
+        Number(
+          f(
+            (totalMarketDeposits + totalMarketDebt - totalMarketDeposits) /
+              (totalMarketDeposits + totalMarketDebt)
+          )
+        )
+      );
+    }
+  }, [totalMarketDeposits, totalMarketDebt, totalMarketDeposits]);
+
+  async function calculateInterestRate(utilizationRate: number) {
+    let interestRate = await getInterestRate(utilizationRate);
+    if (interestRate) setCalculatedInterestRate(interestRate * utilizationRate);
+  }
+
+  useEffect(() => {
+    console.log('Runnig');
+    if (utilizationRate) {
+      calculateInterestRate(utilizationRate);
+    }
+  }, [utilizationRate]);
+
+  useEffect(() => {
     if (value && available) {
-      setUtilizationRate(Number(f(((value - available) / value) * 100)))
+      setUtilizationRate(Number(f(((value - available) / value) * 100)));
     }
   }, [value, available]);
 
@@ -134,7 +168,7 @@ const DepositForm = (props: DepositFormProps) => {
           </div>
           <div className={styles.col}>
             <InfoBlock
-              value={fp(20)}
+              value={fp(((1 + calculatedInterestRate / 52) ^ 52) - 1)}
               valueSize="big"
               toolTipLabel="APY is measured by compounding the weekly interest rate"
               footer={
