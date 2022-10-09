@@ -168,7 +168,7 @@ const DepositForm = (props: DepositFormProps) => {
           </div>
           <div className={styles.col}>
             <InfoBlock
-              value={fp(((1 + calculatedInterestRate / 52) ^ 52) - 1)}
+              value={fp(((1 + calculatedInterestRate / 100 / 52) ^ 52) - 1)}
               valueSize="big"
               toolTipLabel="APY is measured by compounding the weekly interest rate"
               footer={
