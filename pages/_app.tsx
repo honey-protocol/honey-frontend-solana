@@ -14,6 +14,7 @@ import { useConnectedWallet, useConnection } from '@saberhq/use-solana';
 import React, { FC, ReactNode, useEffect, useState } from 'react';
 import Script from 'next/script';
 import { HONEY_MARKET_ID, HONEY_PROGRAM_ID } from '../constants/loan';
+import NoMobilePopup from 'components/NoMobilePopup/NoMobilePopup';
 export const network = process.env.NETWORK as Network;
 
 const networkConfiguration = () => {
@@ -57,14 +58,28 @@ const OnChainProvider: FC<{ children: ReactNode }> = ({ children }) => {
 function MyApp({ Component, pageProps }: AppProps) {
   const [showPopup, setShowPopup] = useState(true);
   const [shouldRender, setShouldRender] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
 
+  const onWindowResize = () => {
+    if (window.innerWidth < 768) {
+      setIsMobile(true);
+    } else {
+      setIsMobile(false);
+    }
+  };
   useEffect(() => {
     const cautionAgreed = localStorage.getItem('caution-agreed');
     setShowPopup(cautionAgreed === 'true' ? false : true);
+    onWindowResize();
+    window.addEventListener('resize', () => onWindowResize());
     setShouldRender(true);
+
+    return window.removeEventListener('resize', () => onWindowResize());
   }, []);
 
   if (!shouldRender) return null;
+
+  if (isMobile) return <NoMobilePopup />;
 
   return (
     // <ThemeProvider
