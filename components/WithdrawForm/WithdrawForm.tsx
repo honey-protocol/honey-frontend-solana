@@ -18,7 +18,13 @@ import useToast from 'hooks/useToast';
 const { format: f, formatPercent: fp, formatSol: fs, parse: p } = formatNumber;
 
 const WithdrawForm = (props: WithdrawFormProps) => {
-  const { executeWithdraw, userTotalDeposits, value, available, fetchedSolPrice } = props;
+  const {
+    executeWithdraw,
+    userTotalDeposits,
+    value,
+    available,
+    fetchedSolPrice
+  } = props;
   const [valueUSD, setValueUSD] = useState<number>(0);
   const [valueSOL, setValueSOL] = useState<number>(0);
   const [sliderValue, setSliderValue] = useState(0);
@@ -118,7 +124,7 @@ const WithdrawForm = (props: WithdrawFormProps) => {
           </div>
           <div className={styles.col}>
             <InfoBlock
-              value={fp(20)}
+              value={fp()}
               valueSize="big"
               toolTipLabel="APY is measured by compounding the weekly interest rate"
               footer={
