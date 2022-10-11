@@ -558,7 +558,7 @@ const Dashboard: NextPage = () => {
   const getMockPositions = () => {
     const mockData: CollectionPosition[] = [];
 
-    for (let i = 0; i < 20; i++) {
+    for (let i = 0; i < 30; i++) {
       mockData.push({
         name: `Any name loooong ${i}`,
         value: Math.random() * 10000,

@@ -8,9 +8,11 @@ export const HoneyPositionsSlider: FC<HoneyPositionsSliderProps> = ({
 }) => {
   return (
     <div className={styles.honeyPositionsSlider}>
-      {positions.map((position, index) => (
-        <SliderPosition key={index} position={position} />
-      ))}
+      <div className={styles.honeyAnimationSlider}>
+        {positions.map((position, index) => (
+          <SliderPosition key={index} position={position} />
+        ))}
+      </div>
     </div>
   );
 };
