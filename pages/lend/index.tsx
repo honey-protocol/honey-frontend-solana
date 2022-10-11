@@ -511,8 +511,14 @@ const Lend: NextPage = () => {
       <div>
         <Typography.Title className={pageTitle}>Lend</Typography.Title>
         <Typography.Text className={pageDescription}>
-          Lorem Ipsum is simply dummy text of the printing and typesetting
-          industry. Lorem Ipsum has{' '}
+                  Earn yield on SOL deposited{' '}
+                  <a
+                    className={styles.extLink}
+                    target="blank"
+                    href="https://docs.honey.finance/learn/defi-lending#debt"
+                  >
+                    Learn more.
+                  </a>
         </Typography.Text>
       </div>
       <HoneyContent>
