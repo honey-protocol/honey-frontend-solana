@@ -43,7 +43,7 @@ const DepositForm = (props: DepositFormProps) => {
 
   useEffect(() => {
     if (value && available) {
-      setUtilizationRate(Number(f(((value - available) / value) * 100)))
+      setUtilizationRate(Number(f(((value - available) / value) * 100)));
     }
   }, [value, available]);
 
@@ -134,7 +134,7 @@ const DepositForm = (props: DepositFormProps) => {
           </div>
           <div className={styles.col}>
             <InfoBlock
-              value={fp(20)}
+              value={fp()}
               valueSize="big"
               toolTipLabel="APY is measured by compounding the weekly interest rate"
               footer={
