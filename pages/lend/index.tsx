@@ -11,6 +11,7 @@ import React, {
 } from 'react';
 import HoneyTable from '../../components/HoneyTable/HoneyTable';
 import * as style from '../../styles/markets.css';
+import c from 'classnames';
 import { ColumnType } from 'antd/lib/table';
 import HexaBoxContainer from '../../components/HexaBoxContainer/HexaBoxContainer';
 import Image from 'next/image';
@@ -449,7 +450,7 @@ const Lend: NextPage = () => {
         dataIndex: 'rate',
         sorter: (a, b) => a.interest - b.interest,
         render: (rate: number) => {
-          return <div className={style.rateCell}>{fp(10)}</div>;
+          return <div className={c(style.rateCell, style.lendRate)}>{fp(10)}</div>;
         }
       },
       {

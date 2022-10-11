@@ -61,6 +61,9 @@ export const rateCellMobile = style([
   }
 ]);
 
+export const borrowRate = style({ color: vars.colors.red });
+export const lendRate = style({ color: vars.colors.green });
+
 export const buttonsCell = style({
   display: 'flex',
   justifyContent: 'center',

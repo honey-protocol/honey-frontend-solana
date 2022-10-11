@@ -4,6 +4,7 @@ import MarketsSidebar from '../../components/MarketsSidebar/MarketsSidebar';
 import HoneyTable from '../../components/HoneyTable/HoneyTable';
 import { ColumnType } from 'antd/lib/table';
 import * as style from '../../styles/markets.css';
+import c from 'classnames';
 import {
   HoneyTableColumnType,
   MarketTablePosition,
@@ -471,7 +472,7 @@ const Markets: NextPage = () => {
           hidden: windowWidth < TABLET_BP,
           sorter: (a: MarketTableRow, b: MarketTableRow) => a.rate - b.rate,
           render: (rate: number) => {
-            return <div className={style.rateCell}>{fp(rate * 100)}</div>;
+            return <div className={c(style.rateCell, style.borrowRate)}>{fp(rate * 100)}</div>;
           }
         },
         {
