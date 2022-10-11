@@ -29,7 +29,11 @@ import {
 import { LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js';
 import BN from 'bn.js';
 import HoneyToggle from 'components/HoneyToggle/HoneyToggle';
-import { calcNFT, getInterestRate, fetchSolPrice } from 'helpers/loanHelpers/userCollection';
+import {
+  calcNFT,
+  getInterestRate,
+  fetchSolPrice
+} from 'helpers/loanHelpers/userCollection';
 import { ToastProps } from 'hooks/useToast';
 import { RoundHalfDown } from 'helpers/utils';
 import { Typography } from 'antd';
@@ -72,12 +76,20 @@ const Lend: NextPage = () => {
   const [nftPrice, setNftPrice] = useState(0);
   const [userWalletBalance, setUserWalletBalance] = useState<number>(0);
   const [utilizationRate, setUtilizationRate] = useState(0);
-  const [calculatedInterestRate, setCalculatedInterestRate] = useState<number>(0);
+  const [calculatedInterestRate, setCalculatedInterestRate] =
+    useState<number>(0);
   const [fetchedSolPrice, setFetchedSolPrice] = useState(0);
 
   useEffect(() => {
     if (totalMarketDeposits && totalMarketDebt && totalMarketDeposits) {
-      setUtilizationRate(Number(f((((totalMarketDeposits + totalMarketDebt) - totalMarketDeposits) / (totalMarketDeposits + totalMarketDebt)))))
+      setUtilizationRate(
+        Number(
+          f(
+            (totalMarketDeposits + totalMarketDebt - totalMarketDeposits) /
+              (totalMarketDeposits + totalMarketDebt)
+          )
+        )
+      );
     }
   }, [totalMarketDeposits, totalMarketDebt, totalMarketDeposits]);
 
@@ -87,9 +99,9 @@ const Lend: NextPage = () => {
   }
 
   useEffect(() => {
-    console.log('Runnig')
+    console.log('Runnig');
     if (utilizationRate) {
-      calculateInterestRate(utilizationRate)
+      calculateInterestRate(utilizationRate);
     }
   }, [utilizationRate]);
 
@@ -147,7 +159,7 @@ const Lend: NextPage = () => {
 
   async function fetchSolValue(reserves: any, connection: any) {
     const slPrice = await fetchSolPrice(reserves, connection);
-    setFetchedSolPrice(slPrice)
+    setFetchedSolPrice(slPrice);
   }
 
   /**
@@ -478,7 +490,9 @@ const Lend: NextPage = () => {
         dataIndex: 'rate',
         sorter: (a, b) => a.interest - b.interest,
         render: (rate: number) => {
-          return <div className={style.rateCell}>{fp(calculatedInterestRate)}</div>;
+          return (
+            <div className={style.rateCell}>{fp(calculatedInterestRate)}</div>
+          );
         }
       },
       {
@@ -493,7 +507,8 @@ const Lend: NextPage = () => {
                 ]
               }
             >
-              <span>Supplied</span> <div className={style.sortIcon[sortOrder]} />
+              <span>Supplied</span>{' '}
+              <div className={style.sortIcon[sortOrder]} />
             </div>
           );
         },
@@ -566,21 +581,22 @@ const Lend: NextPage = () => {
           dataSource={tableDataFiltered}
           pagination={false}
           className={style.table}
-          expandable={{
-            // we use our own custom expand column
-            showExpandColumn: false,
-            onExpand: (expanded, row) =>
-              setExpandedRowKeys(expanded ? [row.key] : []),
-            expandedRowKeys,
-            expandedRowRender: record => {
-              return (
-                <div className={style.expandSection}>
-                  <div className={style.dashedDivider} />
-                  <HoneyChart title="Interest rate" data={record.stats} />
-                </div>
-              );
-            }
-          }}
+          // TODO: uncomment when the chart has been replaced and implemented
+          // expandable={{
+          //   // we use our own custom expand column
+          //   showExpandColumn: false,
+          //   onExpand: (expanded, row) =>
+          //     setExpandedRowKeys(expanded ? [row.key] : []),
+          //   expandedRowKeys,
+          //   expandedRowRender: record => {
+          //     return (
+          //       <div className={style.expandSection}>
+          //         <div className={style.dashedDivider} />
+          //         <HoneyChart title="Interest rate" data={record.stats} />
+          //       </div>
+          //   );
+          // }
+          // }}
         />
       </HoneyContent>
       <HoneySider>
