@@ -43,8 +43,16 @@ export const links = [
     href: 'https://feedback.honey.finance'
   },
   {
+    title: 'BLOG',
+    href: 'https://blog.honey.finance'
+  },
+  {
     title: 'LEGACY WEBSITE',
     href: 'https://honeylend.netlify.app/farm'
+  },
+  {
+    title: 'V1',
+    href: 'https://app.honey.finance'
   }
 ];
 
