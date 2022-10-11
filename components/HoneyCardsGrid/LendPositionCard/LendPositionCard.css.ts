@@ -35,28 +35,22 @@ export const collectionIcon = style({
   height: 46
 });
 
-export const positionName = style({
-  display: 'flex',
-  justifyContent: 'center'
-});
-
-export const nameText = style([
+export const positionName = style([
   typography.title,
   {
+    display: 'flex',
+    justifyContent: 'center',
     color: vars.colors.black,
-    textAlign: 'center',
+    alignItems: 'center',
     marginBottom: 16,
-    maxWidth: 153,
-    textOverflow: 'ellipsis',
-    whiteSpace: 'nowrap',
-    overflow: 'hidden'
+    width: '100%'
   }
 ]);
 
 export const arrowIcon = style({
   width: 20,
-  height: 20,
-  background: 'url("/images/arrow-right-black.svg") bottom no-repeat'
+  height: '100%',
+  background: 'url("/images/arrow-right-black.svg") center no-repeat'
 });
 
 export const positionValues = style({

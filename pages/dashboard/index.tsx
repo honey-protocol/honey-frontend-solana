@@ -85,7 +85,7 @@ const Dashboard: NextPage = () => {
     const preparedPositions: BorrowUserPosition[] = [];
     for (let i = 0; i < 20; i++) {
       preparedPositions.push({
-        name: 'Any user position',
+        name: `Any user position #${i + 1000}`,
         price: Math.random() * 1000,
         debt: Math.random() * 1000,
         ir: Math.random(),
@@ -110,7 +110,7 @@ const Dashboard: NextPage = () => {
     const preparedPositions: LendUserPosition[] = [];
     for (let i = 0; i < 20; i++) {
       preparedPositions.push({
-        name: 'Any user position',
+        name: `Any user position #${i + 1000}`,
         deposit: Math.random() * 1000,
         value: Math.random() * 1000,
         ir: Math.random(),
@@ -560,7 +560,7 @@ const Dashboard: NextPage = () => {
 
     for (let i = 0; i < 30; i++) {
       mockData.push({
-        name: `Any name loooong ${i}`,
+        name: `Any name loooong #${i}`,
         value: Math.random() * 10000,
         difference: Math.random(),
         image: '/nfts/honeyEyes.png'

@@ -4,9 +4,9 @@ import * as styles from './LendPositionCard.css';
 import HexaBoxContainer from '../../HexaBoxContainer/HexaBoxContainer';
 import Image from 'next/image';
 import { InfoBlock } from '../../InfoBlock/InfoBlock';
-import { formatNumber } from '../../../helpers/format';
-import { HoneySlider } from '../../HoneySlider/HoneySlider';
+import { formatNumber, formatTokenName as fcn } from '../../../helpers/format';
 import c from 'classnames';
+import HoneyTooltip from '../../HoneyTooltip/HoneyTooltip';
 
 const { formatUsd: fu, formatPercent: fp } = formatNumber;
 
@@ -26,7 +26,7 @@ export const LendPositionCard: FC<LendPositionCardProps> = ({
         </HexaBoxContainer>
       </div>
       <div className={styles.positionName}>
-        <span className={styles.nameText}>{position.name}</span>
+        <HoneyTooltip label={position.name}>{fcn(position.name)}</HoneyTooltip>
         <div className={styles.arrowIcon} />
       </div>
       <div className={styles.positionValues}>

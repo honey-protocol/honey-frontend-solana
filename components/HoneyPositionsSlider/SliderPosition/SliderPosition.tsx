@@ -3,7 +3,8 @@ import * as styles from './SliderPosition.css';
 import HexaBoxContainer from '../../HexaBoxContainer/HexaBoxContainer';
 import Image from 'next/image';
 import { SliderPositionProps } from '../types';
-import { formatNumber } from '../../../helpers/format';
+import { formatNumber, formatTokenName as fcn } from '../../../helpers/format';
+import HoneyTooltip from '../../HoneyTooltip/HoneyTooltip';
 
 const { formatPercent: fp, formatShortName: fsn } = formatNumber;
 
@@ -17,7 +18,9 @@ export const SliderPosition: FC<SliderPositionProps> = ({ position }) => {
         </HexaBoxContainer>
       </div>
       <div className={styles.honeyPositionValues}>
-        <span className={styles.honeyPositionName}>{name}</span>
+        <span className={styles.honeyPositionName}>
+          <HoneyTooltip label={name}>{fcn(name)}</HoneyTooltip>
+        </span>
         <div className={styles.honeyPositionDigits}>
           <div className={styles.honeyPositionPrice}>$ {fsn(value)}</div>
           <div className={styles.honeyPositionDifference}>

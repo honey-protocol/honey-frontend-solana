@@ -151,6 +151,28 @@ export const formatNumber = {
   }
 };
 
+/**
+ * Convert long token name into short.
+ * @param {string} tokenName - full token name, consist of collection name + token number
+ * @param {number} maxLength - max formatted name length, 10 by default
+ */
+export const formatTokenName = (tokenName: string, maxLength = 10) => {
+  if (tokenName.length <= maxLength) {
+    return tokenName;
+  }
+
+  const tokenNumber = tokenName.match(/\d+$/)?.[0] || '';
+  const collectionName = tokenNumber.length
+    ? tokenName.split(tokenNumber)[0]
+    : tokenName;
+
+  const splicedCollectionName = collectionName.slice(
+    0,
+    maxLength - tokenNumber.length
+  );
+  return `${splicedCollectionName}...${tokenNumber}`;
+};
+
 export const dateFromTimestamp = (timestamp: number | string) => {
   const time = new Date(timestamp);
 
