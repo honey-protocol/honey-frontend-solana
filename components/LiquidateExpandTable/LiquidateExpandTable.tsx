@@ -10,6 +10,7 @@ import Image from 'next/image';
 import honeyEyes from '/public/nfts/honeyEyes.png';
 import { InfoBlock } from '../InfoBlock/InfoBlock';
 import { formatNumber } from '../../helpers/format';
+import RiskLvl from '../RiskLvl/RiskLvl';
 
 const { formatPercent: fp, formatSol: fs } = formatNumber;
 
@@ -37,12 +38,7 @@ export const LiquidateExpandTable: FC<{ data: LiquidateTablePosition[] }> = ({
             </div>
             <div className={sharedStyles.nameCellText}>
               <div className={sharedStyles.collectionName}>{name}</div>
-              <div className={sharedStyles.risk.safe}>
-                <span className={sharedStyles.valueCell}>
-                  {fp(record.riskLvl)}
-                </span>{' '}
-                <span className={sharedStyles.riskText}>Risk lvl</span>
-              </div>
+              <RiskLvl riskLvl={record.riskLvl} />
             </div>
           </div>
         )

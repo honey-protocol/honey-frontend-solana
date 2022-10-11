@@ -306,28 +306,6 @@ export const expandedRowNameCell = style([
     alignItems: 'center'
   }
 ]);
-export const risk = styleVariants({
-  safe: {
-    color: vars.colors.green
-  },
-  warning: {
-    color: vars.colors.brownLight
-  },
-  danger: {
-    color: vars.colors.red
-  }
-});
-export const riskText = style([
-  typography.caption,
-  {
-    display: 'none',
-    '@media': {
-      [`screen and (min-width: ${breakpoints.tablet}px)`]: {
-        display: 'initial'
-      }
-    }
-  }
-]);
 export const expandedRowIcon = style({
   background: 'url(/images/direct-left.svg) center no-repeat',
   width: 40,

@@ -61,6 +61,7 @@ import { Typography } from 'antd';
 import { pageDescription, pageTitle } from 'styles/common.css';
 import HoneyTableRow from 'components/HoneyTable/HoneyTableRow/HoneyTableRow';
 import HoneyTableNameCell from '../../components/HoneyTable/HoneyTableNameCell/HoneyTableNameCell';
+import RiskLvl from '../../components/RiskLvl/RiskLvl';
 // import { network } from 'pages/_app';
 
 const network = 'devnet'; // change to dynamic value
@@ -600,10 +601,7 @@ const Markets: NextPage = () => {
           </div>
           <div className={style.nameCellText}>
             <div className={style.collectionName}>{name}</div>
-            <div className={style.risk.safe}>
-              <span className={style.valueCell}>{fp(loanToValue * 100)}</span>{' '}
-              <span className={style.riskText}>Risk lvl</span>
-            </div>
+            <RiskLvl riskLvl={loanToValue} />
           </div>
         </div>
       )
@@ -661,9 +659,7 @@ const Markets: NextPage = () => {
           </div>
           <div className={style.nameCellText}>
             <div className={style.collectionNameMobile}>{name}</div>
-            <div className={style.risk.safe}>
-              <span className={style.valueCell}>{fp(loanToValue)}</span>
-            </div>
+            <RiskLvl riskLvl={loanToValue} />
           </div>
         </div>
       )
