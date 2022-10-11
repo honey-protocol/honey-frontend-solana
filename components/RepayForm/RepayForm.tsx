@@ -250,7 +250,7 @@ const RepayForm = (props: RepayProps) => {
                 </span>
               }
               value={fp((newDebt / (nftPrice || 0)) * 100)}
-              isDisabled={true}
+              isDisabled={userDebt == 0 ? true : false}
               toolTipLabel={
                 <span>
                   Estimated{' '}
@@ -312,7 +312,7 @@ const RepayForm = (props: RepayProps) => {
                 </span>
               }
               value={fs(newDebt < 0 ? 0 : newDebt)}
-              isDisabled={true}
+              isDisabled={userDebt == 0 ? true : false}
               toolTipLabel={
                 <span>
                   Estimated{' '}
@@ -346,7 +346,7 @@ const RepayForm = (props: RepayProps) => {
           </div>
           <div className={styles.col}>
             <InfoBlock
-              isDisabled
+              isDisabled={userDebt == 0 ? true : false}
               title={
                 <span className={hAlign}>
                   New allowance
@@ -381,7 +381,7 @@ const RepayForm = (props: RepayProps) => {
             </div>
             <div className={cs(styles.balance, styles.col)}>
               <InfoBlock
-                isDisabled
+                isDisabled={userDebt == 0 ? true : false}
                 title={'NEW SOL balance'}
                 value={fs(SOLBalance - (valueSOL || 0))}
               ></InfoBlock>
