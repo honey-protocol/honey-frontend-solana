@@ -47,16 +47,6 @@ export const important = style({
   right: 16
 });
 
-export const unread = style({
-  width: 8,
-  height: 8,
-  background: vars.colors.red,
-  borderRadius: '50%',
-  position: 'absolute',
-  top: 16,
-  right: 16
-});
-
 export const notificationTitle = style([
   typography.body,
   {

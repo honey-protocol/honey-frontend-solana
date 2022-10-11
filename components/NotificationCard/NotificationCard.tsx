@@ -15,7 +15,6 @@ const NotificationCard = (props: NotificationCardProps) => {
       </div>
 
       <div className={styles.important} />
-      <div className={styles.unread} />
     </div>
   );
 };
