@@ -548,7 +548,14 @@ const Lend: NextPage = () => {
       <div>
         <Typography.Title className={pageTitle}>Lend</Typography.Title>
         <Typography.Text className={pageDescription}>
-          Earn yield by providing liquidity to NFT collections{' '}
+          Earn yield by depositing crypto into NFT markets.{' '}
+          <span>
+            <a target="_blank" href="https://buy.moonpay.com" rel="noreferrer">
+              <HoneyButton style={{ display: 'inline' }} variant="text">
+                Need crypto?
+              </HoneyButton>
+            </a>
+          </span>
         </Typography.Text>
       </div>
       <HoneyContent>
