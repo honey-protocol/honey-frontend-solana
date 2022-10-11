@@ -548,7 +548,7 @@ const Lend: NextPage = () => {
           return (
             <div className={style.buttonsCell}>
               <HoneyButton variant="text">
-                View <div className={style.arrowIcon} />
+                Select <div className={style.arrowRightIcon} />
               </HoneyButton>
             </div>
           );
