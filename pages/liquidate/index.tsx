@@ -358,13 +358,31 @@ const Liquidate: NextPage = () => {
   useEffect(() => {
     const mockData: LiquidateTableRow[] = [
       {
-        key: '0',
+        key: 'HNYG',
         name: 'Honey Genesis Bee',
         risk: loanToValue,
         liqThreshold: liquidationThreshold,
         totalDebt: totalDebt,
         tvl: nftPrice * fetchedPositions.length,
         positions: fetchedPositions
+      },
+      {
+        key: 'LIFINITY',
+        name: 'Lifinity Flares',
+        risk: loanToValue,
+        liqThreshold: liquidationThreshold,
+        totalDebt: totalDebt,
+        tvl: nftPrice * fetchedPositions.length,
+        positions: []
+      },
+      {
+        key: 'ATD',
+        name: 'OG Atadians',
+        risk: loanToValue,
+        liqThreshold: liquidationThreshold,
+        totalDebt: totalDebt,
+        tvl: nftPrice * fetchedPositions.length,
+        positions: []
       }
     ];
 
@@ -408,6 +426,17 @@ const Liquidate: NextPage = () => {
 
   const columnsWidth: Array<number | string> = [250, 120, 150, 150, 170];
 
+  const renderImage = (name: string) => {
+    console.log('input', name)
+    if (name == 'Honey Genesis Bee') {
+      return <Image src={'https://img-cdn.magiceden.dev/rs:fill:400:400:0:0/plain/https://dl.airtable.com/.attachmentThumbnails/6b6c8954aed777a74de52fd70f8751ab/46b325db'} layout="fill" />
+    } else if (name == 'Lifinity Flares') {
+      return <Image src={'https://img-cdn.magiceden.dev/rs:fill:400:400:0:0/plain/https://dl.airtable.com/.attachmentThumbnails/6972d5c2efb77d49be97b07ccf4fbc69/e9572fb8'} layout="fill" />
+    } else {
+      return <Image src={'https://img-cdn.magiceden.dev/rs:fill:400:400:0:0/plain/https://creator-hub-prod.s3.us-east-2.amazonaws.com/atadians_pfp_1646721263627.gif'} layout="fill" />
+    }
+  }
+
   const columns: ColumnType<LiquidateTableRow>[] = useMemo(
     () => [
       {
@@ -426,7 +455,7 @@ const Liquidate: NextPage = () => {
               <div className={style.logoWrapper}>
                 <div className={style.collectionLogo}>
                   <HexaBoxContainer>
-                    <Image src={honeyGenesisBee} />
+                    {renderImage(name)}
                   </HexaBoxContainer>
                 </div>
               </div>

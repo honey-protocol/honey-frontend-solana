@@ -8,7 +8,6 @@ import {
   HoneyTableColumnType,
   MarketTablePosition,
   MarketTableRow,
-  OpenPositions,
   UserNFTs
 } from '../../types/markets';
 import React, {
@@ -63,7 +62,7 @@ import { Typography } from 'antd';
 import { pageDescription, pageTitle } from 'styles/common.css';
 import HoneyTableRow from 'components/HoneyTable/HoneyTableRow/HoneyTableRow';
 import HoneyTableNameCell from '../../components/HoneyTable/HoneyTableNameCell/HoneyTableNameCell';
-// import { network } from 'pages/_app';
+import { marketCollections, OpenPositions } from 'constants/borrowLendMarkets';
 
 const network = 'mainnet-beta'; // change to dynamic value
 
@@ -308,6 +307,8 @@ const Markets: NextPage = () => {
    * @returns honeyUser | marketReserveInfo |
    */
   useEffect(() => {
+    console.log('@@-- market', market)
+    console.log('collateral', collateralNFTPositions)
     if (marketReserveInfo && parsedReserves) {
       setDepositNoteExchangeRate(
         BnToDecimal(marketReserveInfo[0].depositNoteExchangeRate, 15, 5)
@@ -359,7 +360,6 @@ const Markets: NextPage = () => {
   }
 
   useEffect(() => {
-    console.log('Runnig');
     if (utilizationRate) {
       calculateInterestRate(utilizationRate);
     }
@@ -368,31 +368,26 @@ const Markets: NextPage = () => {
   // PUT YOUR DATA SOURCE HERE
   // MOCK DATA FOR NOW
   useEffect(() => {
-    const mockData: MarketTableRow[] = [
-      {
-        key: '0',
-        name: 'Honey Genesis Bee',
-        rate: 0.1,
-        // validated available to be totalMarketDeposits
-        available: totalMarketDeposits,
-        // validated value to be totalMarkDeposits + totalMarketDebt
-        value: sumOfTotalValue,
-        allowance: userAllowance,
-        positions: userOpenPositions,
-        debt: userDebt
-      }
-    ];
-
-    setTableData(mockData);
-    setTableDataFiltered(mockData);
+    marketCollections.map((collection) => 
+      (
+        collection.available = totalMarketDeposits,
+        collection.value = sumOfTotalValue,
+        collection.allowance = userAllowance,
+        collection.positions = userOpenPositions,
+        collection.debt = userDebt
+      )
+    );
+    setTableData(marketCollections);
+    setTableDataFiltered(marketCollections);
   }, [
-    totalMarketDeposits,
-    totalMarketDebt,
-    nftPrice,
-    userOpenPositions,
-    userAllowance,
-    userDebt
-  ]);
+      totalMarketDeposits,
+      totalMarketDebt,
+      nftPrice,
+      userOpenPositions,
+      userAllowance,
+      userDebt, 
+    ]
+  );
 
   const showMobileSidebar = () => {
     setShowMobileSidebar(true);
@@ -418,6 +413,16 @@ const Markets: NextPage = () => {
     //   <span className={style.toggleText}>my collections</span>
     // </div>
     null;
+
+  const renderImage = (name: string) => {
+    if (name == 'Honey Genesis Bee') {
+      return <Image src={'https://img-cdn.magiceden.dev/rs:fill:400:400:0:0/plain/https://dl.airtable.com/.attachmentThumbnails/6b6c8954aed777a74de52fd70f8751ab/46b325db'} layout="fill" />
+    } else if (name == 'Lifinity Flares') {
+      return <Image src={'https://img-cdn.magiceden.dev/rs:fill:400:400:0:0/plain/https://dl.airtable.com/.attachmentThumbnails/6972d5c2efb77d49be97b07ccf4fbc69/e9572fb8'} layout="fill" />
+    } else {
+      return <Image src={'https://img-cdn.magiceden.dev/rs:fill:400:400:0:0/plain/https://creator-hub-prod.s3.us-east-2.amazonaws.com/atadians_pfp_1646721263627.gif'} layout="fill" />
+    }
+  }
 
   const onSearch = (searchTerm: string): MarketTableRow[] => {
     if (!searchTerm) {
@@ -475,7 +480,9 @@ const Markets: NextPage = () => {
                 <div className={style.logoWrapper}>
                   <div className={style.collectionLogo}>
                     <HexaBoxContainer>
-                      <Image src={honeyGenesisBee} />
+                      {
+                        renderImage(name)
+                      }
                     </HexaBoxContainer>
                   </div>
                 </div>
@@ -774,6 +781,7 @@ const Markets: NextPage = () => {
   async function executeDepositNFT(mintID: any, toast: ToastProps['toast']) {
     try {
       if (!mintID) return;
+      console.log('mint id', mintID);
       toast.processing();
 
       const metadata = await Metadata.findByMint(

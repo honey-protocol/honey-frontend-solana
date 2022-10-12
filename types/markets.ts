@@ -1,4 +1,3 @@
-import { PublicKey } from '@solana/web3.js';
 import { ColumnType } from 'antd/lib/table';
 
 export type MarketTableRow = {
@@ -35,15 +34,6 @@ export type UserNFTs = {
   symbol: string;
   tokenId: string;
   updateAuthority: string;
-};
-
-export type OpenPositions = {
-  image: string;
-  mint: PublicKey;
-  name: string;
-  symbol: string;
-  updateAuthority: PublicKey;
-  uri: string;
 };
 
 export interface HoneyTableColumnType<RecordType>

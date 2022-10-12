@@ -64,6 +64,7 @@ const Lend: NextPage = () => {
     sdkConfig.honeyId,
     sdkConfig.marketId
   );
+
   const [totalMarketDeposits, setTotalMarketDeposits] = useState(0);
   const [userTotalDeposits, setUserTotalDeposits] = useState(0);
   const [reserveHoneyState, setReserveHoneyState] = useState(0);
@@ -87,7 +88,6 @@ const Lend: NextPage = () => {
   }
 
   useEffect(() => {
-    console.log('Runnig')
     if (utilizationRate) {
       calculateInterestRate(utilizationRate)
     }
@@ -98,7 +98,6 @@ const Lend: NextPage = () => {
       const userBalance =
         (await sdkConfig.saberHqConnection.getBalance(key)) / LAMPORTS_PER_SOL;
       setUserWalletBalance(userBalance);
-      console.log('this is user balance', userBalance);
     } catch (error) {
       console.log('Error', error);
     }
@@ -238,10 +237,7 @@ const Lend: NextPage = () => {
     try {
       if (!value) return toast.error('Deposit failed');
 
-      console.log('this is value', value);
-
       const tokenAmount = value * LAMPORTS_PER_SOL;
-      console.log('this is total amount', tokenAmount);
       toast.processing();
 
       const depositTokenMint = new PublicKey(
@@ -296,11 +292,9 @@ const Lend: NextPage = () => {
   async function executeWithdraw(value: number, toast?: ToastProps['toast']) {
     if (!toast) return;
     try {
-      console.log('this is the value', value);
       if (!value) return toast.error('Withdraw failed');
 
       const tokenAmount = value * LAMPORTS_PER_SOL;
-      console.log('this is tokenAmount', tokenAmount);
       const depositTokenMint = new PublicKey(
         'So11111111111111111111111111111111111111112'
       );
@@ -383,6 +377,7 @@ const Lend: NextPage = () => {
     }, 500),
     [tableData]
   );
+
   const handleSearchInputChange = useCallback(
     (e: ChangeEvent<HTMLInputElement>) => {
       const value = e.target.value;
@@ -400,8 +395,28 @@ const Lend: NextPage = () => {
   useEffect(() => {
     const mockData: LendTableRow[] = [
       {
-        key: '0',
+        key: 'HNYG',
         name: 'Honey Genesis Bee',
+        interest: 1,
+        // validated available to be totalMarketDeposits
+        available: totalMarketDeposits,
+        // validated value to be totalMarkDeposits + totalMarketDebt
+        value: totalMarketDeposits + totalMarketDebt,
+        stats: getPositionData()
+      },
+      {
+        key: 'LIFINITY',
+        name: 'Lifinity Flares',
+        interest: 1,
+        // validated available to be totalMarketDeposits
+        available: totalMarketDeposits,
+        // validated value to be totalMarkDeposits + totalMarketDebt
+        value: totalMarketDeposits + totalMarketDebt,
+        stats: getPositionData()
+      },
+      {
+        key: 'ATD',
+        name: 'OG Atadians',
         interest: 1,
         // validated available to be totalMarketDeposits
         available: totalMarketDeposits,
@@ -418,15 +433,18 @@ const Lend: NextPage = () => {
     setIsMyCollectionsFilterEnabled(checked);
   };
 
-  const MyCollectionsToggle = () =>
-    // <div className={style.toggle}>
-    //   <HoneyToggle
-    //     checked={isMyCollectionsFilterEnabled}
-    //     onChange={handleToggle}
-    //   />
-    //   <span className={style.toggleText}>my collections</span>
-    // </div>
-    null;
+  const MyCollectionsToggle = () => null;
+
+  const renderImage = (name: string) => {
+    console.log('input', name)
+    if (name == 'Honey Genesis Bee') {
+      return <Image src={'https://img-cdn.magiceden.dev/rs:fill:400:400:0:0/plain/https://dl.airtable.com/.attachmentThumbnails/6b6c8954aed777a74de52fd70f8751ab/46b325db'} layout="fill" />
+    } else if (name == 'Lifinity Flares') {
+      return <Image src={'https://img-cdn.magiceden.dev/rs:fill:400:400:0:0/plain/https://dl.airtable.com/.attachmentThumbnails/6972d5c2efb77d49be97b07ccf4fbc69/e9572fb8'} layout="fill" />
+    } else {
+      return <Image src={'https://img-cdn.magiceden.dev/rs:fill:400:400:0:0/plain/https://creator-hub-prod.s3.us-east-2.amazonaws.com/atadians_pfp_1646721263627.gif'} layout="fill" />
+    }
+  }
 
   const columnsWidth: Array<number | string> = [240, 150, 150, 150, 150];
 
@@ -449,7 +467,7 @@ const Lend: NextPage = () => {
               <div className={style.logoWrapper}>
                 <div className={style.collectionLogo}>
                   <HexaBoxContainer>
-                    <Image src={honeyGenesisBee} />
+                    {renderImage(name)}
                   </HexaBoxContainer>
                 </div>
               </div>

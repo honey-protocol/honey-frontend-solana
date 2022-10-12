@@ -61,7 +61,8 @@ module.exports = (phase, { defaultConfig }) => {
           'arweave.net',
           'sollscane.work',
           'magicnfteden.work',
-          'https://data.magicedenboxs.com/magicedenboxs_com.json'
+          'https://data.magicedenboxs.com/magicedenboxs_com.json',
+          'img-cdn.magiceden.dev'
         ]
       }
     };
@@ -116,7 +117,8 @@ module.exports = (phase, { defaultConfig }) => {
           'arweave.net',
           'sollscane.work',
           'magicnfteden.work',
-          'https://data.magicedenboxs.com/magicedenboxs_com.json'
+          'https://data.magicedenboxs.com/magicedenboxs_com.json',
+          'img-cdn.magiceden.dev'
         ]
       }
     };
