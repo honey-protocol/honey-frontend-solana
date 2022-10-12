@@ -26,6 +26,7 @@ import { useProposals } from 'hooks/tribeca/useProposals';
 import { ProposalState } from 'helpers/dao';
 
 const { format: f, formatShortName: fsn } = formatNumber;
+const NUM_PLACEHOLDERS = 0;
 
 const Governance: NextPage = () => {
   // const [tableData, setTableData] = useState<GovernanceTableRow[]>([]);
@@ -38,7 +39,18 @@ const Governance: NextPage = () => {
 
   const proposals = useProposals();
 
-  console.log({ proposals });
+  const allProposals = [
+    ...proposals,
+    ...new Array<null>(NUM_PLACEHOLDERS).fill(null)
+  ].filter(p => {
+    const proposalState = p?.data?.status.state;
+    return isDraftFilterEnabled
+      ? true
+      : proposalState !== ProposalState.Draft &&
+          proposalState !== ProposalState.Canceled;
+  });
+
+  console.log({ allProposals });
 
   const getStatus = (state: ProposalState): ProposalStatus => {
     // if(!state) return 'approved';
@@ -59,21 +71,22 @@ const Governance: NextPage = () => {
   };
 
   const getTableData = useCallback(() => {
-    const data = proposals.map((proposal, i) => ({
-      id: proposal.data?.index || 0,
-      name: proposal.data?.proposalMetaData?.title || '',
-      votes: proposal.data?.proposalData.forVotes.toNumber() || 0,
-      against: proposal.data?.proposalData.againstVotes.toNumber() || 0,
+    const data = allProposals.map((proposal, i) => ({
+      id: proposal?.data?.index || 0,
+      name: proposal?.data?.proposalMetaData?.title || '',
+      votes: proposal?.data?.proposalData.forVotes.toNumber() || 0,
+      against: proposal?.data?.proposalData.againstVotes.toNumber() || 0,
       votesRequired: 0,
-      status:
-        proposal.data?.status.state !== undefined
-          ? getStatus(proposal.data?.status.state)
-          : 'approved'
+      status: proposal?.data?.status.executed
+        ? 'approved'
+        : proposal?.data?.status.state !== undefined
+        ? getStatus(proposal?.data?.status.state)
+        : 'approved'
     }));
     if (!data || !data[0]?.id || data.length === tableData?.length) return;
     console.log({ data });
     setTableData(data);
-  }, [proposals]);
+  }, [allProposals]);
 
   useEffect(() => {
     getTableData();
@@ -110,19 +123,28 @@ const Governance: NextPage = () => {
         width: columnsWidth[0],
         dataIndex: 'name',
         key: 'name',
-        render: (name: string) => {
+        render: (_, row: GovernanceTableRow) => {
           return (
             <div className={style.nameCell}>
               <div className={style.logoWrapper}>
                 <div className={style.collectionLogo}>
                   <HexaBoxContainer>
                     <div
-                      className={c(style.statusIcon, style.statusCheckIcon)}
+                      className={c(
+                        style.statusIcon,
+                        row.status === 'draft'
+                          ? style.statusDraftIcon
+                          : row.status === 'approved'
+                          ? style.statusCheckIcon
+                          : row.status === 'processing'
+                          ? style.statusWaitIcon
+                          : style.statusErrorRedIcon
+                      )}
                     />
                   </HexaBoxContainer>
                 </div>
               </div>
-              <div className={style.collectionName}>{name}</div>
+              <div className={style.collectionName}>{row.name}</div>
             </div>
           );
         }
@@ -151,7 +173,7 @@ const Governance: NextPage = () => {
         },
         width: columnsWidth[1],
         dataIndex: 'status',
-        render: (status, row: GovernanceTableRow) => {
+        render: (row: GovernanceTableRow) => {
           return (
             <div>
               <ProgressStatus percent={(row.votes / row.votesRequired) * 100} />
@@ -179,7 +201,12 @@ const Governance: NextPage = () => {
   const renderSidebar = () => {
     switch (sidebarMode) {
       case 'vote':
-        return <GovernanceSidebar selectedProposalId={selectedProposalId} />;
+        return (
+          <GovernanceSidebar
+            selectedProposalId={selectedProposalId}
+            setSidebarMode={setSidebarMode}
+          />
+        );
       case 'new_proposal':
         return <NewProposalSidebar />;
       case 'get_vehoney':

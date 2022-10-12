@@ -11,6 +11,7 @@ import { useWalletKit } from '@gokiprotocol/walletkit';
 
 type GovernanceSidebarProps = {
   selectedProposalId?: number;
+  setSidebarMode: Function;
 };
 
 const items: [HoneyTabItem, HoneyTabItem] = [
@@ -20,7 +21,10 @@ const items: [HoneyTabItem, HoneyTabItem] = [
 
 type Tab = 'vote' | 'description';
 
-const GovernanceSidebar = ({ selectedProposalId }: GovernanceSidebarProps) => {
+const GovernanceSidebar = ({
+  selectedProposalId,
+  setSidebarMode
+}: GovernanceSidebarProps) => {
   const wallet = useConnectedWallet();
   const { connect } = useWalletKit();
   const [activeTab, setActiveTab] = useState<Tab>('vote');
@@ -55,7 +59,12 @@ const GovernanceSidebar = ({ selectedProposalId }: GovernanceSidebarProps) => {
           />
         ) : (
           <>
-            {activeTab === 'vote' && <VoteForm proposalInfo={proposalInfo} />}
+            {activeTab === 'vote' && (
+              <VoteForm
+                setSidebarMode={setSidebarMode}
+                proposalInfo={proposalInfo}
+              />
+            )}
             {activeTab === 'description' && (
               <GovernanceDescription
                 description={
