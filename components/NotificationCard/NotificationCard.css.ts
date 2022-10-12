@@ -59,7 +59,7 @@ export const notificationTitle = style([
   }
 ]);
 
-export const notificationDescription = style( {
+export const notificationDescription = style({
   display: 'flex',
   alignItems: 'center',
   gap: '5px'
@@ -71,7 +71,8 @@ export const notificationText = style([
     color: vars.colors.grayTransparent,
     whiteSpace: 'nowrap',
     overflow: 'hidden',
-    textOverflow: 'ellipsis'
+    textOverflow: 'ellipsis',
+    marginBottom: 0
   }
 ]);
 
