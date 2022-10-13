@@ -47,11 +47,11 @@ const HoneyModal = () => {
   const handleLock = useCallback(async () => {
     if (!amount || !vestingPeriodInSeconds) return;
 
-    await lock(
-      convertToBN(amount, HONEY_DECIMALS),
-      new anchor.BN(vestingPeriodInSeconds),
-      !!escrow
-    );
+    // await lock(
+    //   convertToBN(amount, HONEY_DECIMALS),
+    //   new anchor.BN(vestingPeriodInSeconds),
+    //   !!escrow
+    // );
   }, [lock, escrow, amount, vestingPeriodInSeconds]);
 
   return (
