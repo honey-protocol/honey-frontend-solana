@@ -48,7 +48,6 @@ const storedAccent =
 const OnChainProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const wallet = useConnectedWallet();
   const connection = useConnection();
-  const network = 'devnet';
 
   return (
     <AnchorProvider
@@ -109,7 +108,7 @@ function MyApp({ Component, pageProps }: AppProps) {
           app={{
             name: 'Honey Finance'
           }}
-          // networkConfigs={networkConfiguration()}
+          networkConfigs={networkConfiguration()}
         >
           <GovernanceProvider>
             <SailProvider
