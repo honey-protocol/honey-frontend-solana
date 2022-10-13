@@ -8,9 +8,9 @@ import { StakeClient } from 'helpers/sdk/stake';
 import { useAccounts } from './useAccounts';
 import { HONEY_MINT, PHONEY_MINT, HONEY_DECIMALS } from 'helpers/sdk/constant';
 import { VeHoneyClient, PoolParams } from 'helpers/sdk';
-import { toast } from 'react-toastify';
-import { convert } from 'helpers/utils';
+import { calcVeHoneyAmount, convert } from 'helpers/utils';
 import { ToastProps } from './useToast';
+import { toast } from 'react-toastify';
 
 //this fn takes the error caught in a tryCatch block and check for
 //some specified errors and show toast notifications for them
@@ -232,6 +232,32 @@ export const useStake = (stakePool: PublicKey, locker: PublicKey) => {
     }
   }, [vc, escrowKey, honeyToken]);
 
+  const totalVeHoney = useCallback(async () => {
+    const allEscrowAccounts = await vc?.getAllEscrowAccounts();
+    const lockerAcc = await vc?.fetchLocker(locker);
+
+    let totalHoney: number = 0;
+
+    allEscrowAccounts?.forEach(async escrow => {
+      const pubKey = escrow.publicKey;
+      const amount = escrow.account.amount;
+      const startDate = escrow.account.escrowStartedAt;
+      const endDate = escrow.account.escrowEndsAt;
+
+      const userVeHoneyAmount = calcVeHoneyAmount(
+        amount,
+        startDate,
+        endDate,
+        lockerAcc!.params.multiplier,
+        lockerAcc!.params.maxStakeDuration,
+        HONEY_DECIMALS
+      );
+
+      totalHoney += userVeHoneyAmount;
+    });
+    return totalHoney;
+  }, [vc]);
+
   const claimableAmount = useMemo(() => {
     if (pool && user) {
       const params = pool.params as PoolParams;
@@ -284,6 +310,7 @@ export const useStake = (stakePool: PublicKey, locker: PublicKey) => {
     stake,
     lock,
     unlock,
-    claimableAmount
+    claimableAmount,
+    totalVeHoney
   };
 };
