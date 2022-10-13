@@ -62,7 +62,7 @@ const ProposalVote = (props: ProposalVoteProps) => {
         </div>
         <div className={styles.gridCell}>
           <InfoBlock
-            value={vePower?.toString() || '--'}
+            value={vePower?.asNumber.toString() || '--'}
             footer={<span>Your voting power</span>}
           />
         </div>
