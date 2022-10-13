@@ -231,7 +231,9 @@ const VoteForm: FC<VoteFormProps> = (props: VoteFormProps) => {
     veToken,
     earliestActivationTime,
     vePower,
-    escrow
+    escrow,
+    side,
+    hasVoted
   });
 
   return (
@@ -320,49 +322,6 @@ const VoteForm: FC<VoteFormProps> = (props: VoteFormProps) => {
             />
           </div>
         </div>
-        <div className={styles.divider} />
-        {proposalInfo?.status.state !== ProposalState.Active && (
-          <>
-            {/* <div className={styles.grid}>
-              <div className={styles.gridCell}>
-                <InfoBlock
-                  value={proposalInfo?.proposalData.forVotes.toString() || ''}
-                  footer={<span>Voted for</span>}
-                />
-                <HoneySlider
-                  currentValue={
-                    proposalInfo?.proposalData.forVotes.toNumber() || 0
-                  }
-                  maxValue={totalDeterminingVotes?.toNumber() || 0}
-                  minAvailableValue={10}
-                  isReadonly
-                />
-              </div>
-              <div className={styles.gridCell}>
-                <InfoBlock
-                  value={
-                    proposalInfo?.proposalData.againstVotes.toString() || ''
-                  }
-                  footer={<span>Voted against</span>}
-                />
-                <HoneySlider
-                  currentValue={
-                    proposalInfo?.proposalData.againstVotes.toNumber() || 0
-                  }
-                  maxValue={totalDeterminingVotes?.toNumber() || 0}
-                  minAvailableValue={0}
-                  isReadonly
-                />
-              </div>
-            </div> */}
-            <div className={styles.row}>
-              <InfoBlock
-                value={vePower?.asNumber.toString() || '0'}
-                title={<span>Your voting power</span>}
-              />
-            </div>
-          </>
-        )}
 
         {!proposalInfo?.status.executed && <div className={styles.divider} />}
         <div className={styles.row}>
