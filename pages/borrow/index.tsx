@@ -368,13 +368,15 @@ const Markets: NextPage = () => {
   // PUT YOUR DATA SOURCE HERE
   // MOCK DATA FOR NOW
   useEffect(() => {
+    console.log('user open pos', marketCollections)
     marketCollections.map((collection) => 
       (
-        collection.available = totalMarketDeposits,
-        collection.value = sumOfTotalValue,
-        collection.allowance = userAllowance,
-        collection.positions = userOpenPositions,
-        collection.debt = userDebt
+        collection.available = collection.key == 'HNYG' ? totalMarketDeposits : 0,
+        collection.value = collection.key == 'HNYG' ? sumOfTotalValue : 0,
+        collection.allowance = collection.key == 'HNYG' ? userAllowance : 0,
+        collection.rate = collection.key == 'HNYG' ? calculatedInterestRate : 0,
+        collection.positions = userOpenPositions.filter((position: any) => position.symbol == collection.key),
+        collection.debt = collection.key == 'HNYG' ? userDebt : 0
       )
     );
     setTableData(marketCollections);
@@ -385,7 +387,9 @@ const Markets: NextPage = () => {
       nftPrice,
       userOpenPositions,
       userAllowance,
-      userDebt, 
+      userDebt,
+      marketCollections,
+      calculatedInterestRate
     ]
   );
 
@@ -419,9 +423,15 @@ const Markets: NextPage = () => {
       return <Image src={'https://img-cdn.magiceden.dev/rs:fill:400:400:0:0/plain/https://dl.airtable.com/.attachmentThumbnails/6b6c8954aed777a74de52fd70f8751ab/46b325db'} layout="fill" />
     } else if (name == 'Lifinity Flares') {
       return <Image src={'https://img-cdn.magiceden.dev/rs:fill:400:400:0:0/plain/https://dl.airtable.com/.attachmentThumbnails/6972d5c2efb77d49be97b07ccf4fbc69/e9572fb8'} layout="fill" />
-    } else {
+    } else if (name == 'OG Atadians') {
       return <Image src={'https://img-cdn.magiceden.dev/rs:fill:400:400:0:0/plain/https://creator-hub-prod.s3.us-east-2.amazonaws.com/atadians_pfp_1646721263627.gif'} layout="fill" />
+    } else {
+      return <Image src={'https://img-cdn.magiceden.dev/rs:fill:400:400:0:0/plain/https://i.imgur.com/37nsjBZ.png'} layout="fill" />
     }
+  }
+
+  const renderInterest = (name: string) => {
+
   }
 
   const onSearch = (searchTerm: string): MarketTableRow[] => {
@@ -511,10 +521,8 @@ const Markets: NextPage = () => {
           dataIndex: 'rate',
           hidden: windowWidth < TABLET_BP,
           sorter: (a: MarketTableRow, b: MarketTableRow) => a.rate - b.rate,
-          render: (rate: number) => {
-            return (
-              <div className={style.rateCell}>{fp(calculatedInterestRate)}</div>
-            );
+          render: (rate: number, market: any) => {
+            return ( <div className={style.rateCell}>{fp(market.rate)}</div> )
           }
         },
         {

@@ -356,6 +356,7 @@ const Liquidate: NextPage = () => {
   // PUT YOUR DATA SOURCE HERE
   // MOCK DATA FOR NOW
   useEffect(() => {
+    console.log('this is fetched positions', fetchedPositions);
     const mockData: LiquidateTableRow[] = [
       {
         key: 'HNYG',
@@ -364,25 +365,34 @@ const Liquidate: NextPage = () => {
         liqThreshold: liquidationThreshold,
         totalDebt: totalDebt,
         tvl: nftPrice * fetchedPositions.length,
-        positions: fetchedPositions
+        positions: fetchedPositions.filter((position: any) => position.name == 'Honey Genesis Bee')
       },
       {
         key: 'LIFINITY',
         name: 'Lifinity Flares',
-        risk: loanToValue,
-        liqThreshold: liquidationThreshold,
-        totalDebt: totalDebt,
-        tvl: nftPrice * fetchedPositions.length,
-        positions: []
+        risk: 0,
+        liqThreshold: 0,
+        totalDebt: 0,
+        tvl: 0,
+        positions: fetchedPositions.filter((position: any) => position.name == 'Lifinity Flares')
       },
       {
         key: 'ATD',
         name: 'OG Atadians',
-        risk: loanToValue,
-        liqThreshold: liquidationThreshold,
-        totalDebt: totalDebt,
-        tvl: nftPrice * fetchedPositions.length,
-        positions: []
+        risk: 0,
+        liqThreshold: 0,
+        totalDebt: 0,
+        tvl: 0,
+        positions: fetchedPositions.filter((position: any) => position.name == 'OG Atadians')
+      },
+      {
+        key: 'NOOT',
+        name: 'Pesky Penguins',
+        risk: 0,
+        liqThreshold: 0,
+        totalDebt: 0,
+        tvl: 0,
+        positions: fetchedPositions.filter((position: any) => position.name == 'OG Atadians')
       }
     ];
 
@@ -427,13 +437,14 @@ const Liquidate: NextPage = () => {
   const columnsWidth: Array<number | string> = [250, 120, 150, 150, 170];
 
   const renderImage = (name: string) => {
-    console.log('input', name)
     if (name == 'Honey Genesis Bee') {
       return <Image src={'https://img-cdn.magiceden.dev/rs:fill:400:400:0:0/plain/https://dl.airtable.com/.attachmentThumbnails/6b6c8954aed777a74de52fd70f8751ab/46b325db'} layout="fill" />
     } else if (name == 'Lifinity Flares') {
       return <Image src={'https://img-cdn.magiceden.dev/rs:fill:400:400:0:0/plain/https://dl.airtable.com/.attachmentThumbnails/6972d5c2efb77d49be97b07ccf4fbc69/e9572fb8'} layout="fill" />
-    } else {
+    } else if (name == 'OG Atadians') {
       return <Image src={'https://img-cdn.magiceden.dev/rs:fill:400:400:0:0/plain/https://creator-hub-prod.s3.us-east-2.amazonaws.com/atadians_pfp_1646721263627.gif'} layout="fill" />
+    } else {
+      return <Image src={'https://img-cdn.magiceden.dev/rs:fill:400:400:0:0/plain/https://i.imgur.com/37nsjBZ.png'} layout="fill" />
     }
   }
 

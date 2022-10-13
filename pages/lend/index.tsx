@@ -393,11 +393,12 @@ const Lend: NextPage = () => {
   }, [tableData]);
 
   useEffect(() => {
+    console.log('calculated interest rate', calculatedInterestRate)
     const mockData: LendTableRow[] = [
       {
         key: 'HNYG',
         name: 'Honey Genesis Bee',
-        interest: 1,
+        interest: calculatedInterestRate,
         // validated available to be totalMarketDeposits
         available: totalMarketDeposits,
         // validated value to be totalMarkDeposits + totalMarketDebt
@@ -407,27 +408,37 @@ const Lend: NextPage = () => {
       {
         key: 'LIFINITY',
         name: 'Lifinity Flares',
-        interest: 1,
+        interest: 0,
         // validated available to be totalMarketDeposits
-        available: totalMarketDeposits,
+        available: 0,
         // validated value to be totalMarkDeposits + totalMarketDebt
-        value: totalMarketDeposits + totalMarketDebt,
+        value: 0,
         stats: getPositionData()
       },
       {
         key: 'ATD',
         name: 'OG Atadians',
-        interest: 1,
+        interest: 0,
         // validated available to be totalMarketDeposits
-        available: totalMarketDeposits,
+        available: 0,
         // validated value to be totalMarkDeposits + totalMarketDebt
-        value: totalMarketDeposits + totalMarketDebt,
+        value: 0,
+        stats: getPositionData()
+      },
+      {
+        key: 'NOOT',
+        name: 'Pesky Penguins',
+        interest: 0,
+        // validated available to be totalMarketDeposits
+        available: 0,
+        // validated value to be totalMarkDeposits + totalMarketDebt
+        value: 0,
         stats: getPositionData()
       }
     ];
     setTableData(mockData);
     setTableDataFiltered(mockData);
-  }, [totalMarketDeposits, totalMarketDebt, marketPositions, nftPrice]);
+  }, [totalMarketDeposits, totalMarketDebt, marketPositions, nftPrice, calculatedInterestRate]);
 
   const handleToggle = (checked: boolean) => {
     setIsMyCollectionsFilterEnabled(checked);
@@ -436,13 +447,14 @@ const Lend: NextPage = () => {
   const MyCollectionsToggle = () => null;
 
   const renderImage = (name: string) => {
-    console.log('input', name)
     if (name == 'Honey Genesis Bee') {
       return <Image src={'https://img-cdn.magiceden.dev/rs:fill:400:400:0:0/plain/https://dl.airtable.com/.attachmentThumbnails/6b6c8954aed777a74de52fd70f8751ab/46b325db'} layout="fill" />
     } else if (name == 'Lifinity Flares') {
       return <Image src={'https://img-cdn.magiceden.dev/rs:fill:400:400:0:0/plain/https://dl.airtable.com/.attachmentThumbnails/6972d5c2efb77d49be97b07ccf4fbc69/e9572fb8'} layout="fill" />
-    } else {
+    } else if (name == 'OG Atadians') {
       return <Image src={'https://img-cdn.magiceden.dev/rs:fill:400:400:0:0/plain/https://creator-hub-prod.s3.us-east-2.amazonaws.com/atadians_pfp_1646721263627.gif'} layout="fill" />
+    } else {
+      return <Image src={'https://img-cdn.magiceden.dev/rs:fill:400:400:0:0/plain/https://i.imgur.com/37nsjBZ.png'} layout="fill" />
     }
   }
 
@@ -495,8 +507,9 @@ const Lend: NextPage = () => {
         },
         dataIndex: 'rate',
         sorter: (a, b) => a.interest - b.interest,
-        render: (rate: number) => {
-          return <div className={style.rateCell}>{fp(calculatedInterestRate)}</div>;
+        render: (rate: number, market: any) => {
+          console.log('rate', market);
+          return <div className={style.rateCell}>{fp(market.interest)}</div>;
         }
       },
       {
