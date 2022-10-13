@@ -57,36 +57,15 @@ module.exports = (phase, { defaultConfig }) => {
     };
     return withVanillaExtract(devNextConfig);
   } else {
-    // const env = {
-    //   NETWORK: "mainnet-beta",
-    //   NETWORK_CONFIGURATION: {
-    //     'mainnet-beta': {
-    //       name: 'mainnet-beta',
-    //       endpoint: mainNetEndpoint,
-    //       confirmTransactionInitialTimeout: 180000,
-    //     }
-    //   },
-    //   async headers() {
-    //     return [
-    //       {
-    //         // Apply these headers to all routes in your application.
-    //         source: '/(.*)',
-    //         headers: securityHeaders,
-    //       },
-    //     ]
-    //   }
-    // }
-    // const ProdNextConfig = {
-    //   reactStrictMode: true,
-    //   env: env,
-    //   images: {
-    //     domains: ['www.arweave.net']
-    //   }
-    // };
-    // return withVanillaExtract(ProdNextConfig)
     const env = {
-      NETWORK: 'devnet',
-      NETWORK_CONFIGURATION: undefined,
+      NETWORK: 'mainnet-beta',
+      NETWORK_CONFIGURATION: {
+        'mainnet-beta': {
+          name: 'mainnet-beta',
+          endpoint: mainNetEndpoint,
+          confirmTransactionInitialTimeout: 180000
+        }
+      },
       async headers() {
         return [
           {
@@ -97,14 +76,35 @@ module.exports = (phase, { defaultConfig }) => {
         ];
       }
     };
-
-    const devNextConfig = {
+    const ProdNextConfig = {
       reactStrictMode: true,
       env: env,
       images: {
         domains: ['www.arweave.net']
       }
     };
-    return withVanillaExtract(devNextConfig);
+    return withVanillaExtract(ProdNextConfig);
+    // const env = {
+    //   NETWORK: 'devnet',
+    //   NETWORK_CONFIGURATION: undefined,
+    //   async headers() {
+    //     return [
+    //       {
+    //         // Apply these headers to all routes in your application.
+    //         source: '/(.*)',
+    //         headers: securityHeaders
+    //       }
+    //     ];
+    //   }
+    // };
+
+    // const devNextConfig = {
+    //   reactStrictMode: true,
+    //   env: env,
+    //   images: {
+    //     domains: ['www.arweave.net']
+    //   }
+    // };
+    // return withVanillaExtract(devNextConfig);
   }
 };
