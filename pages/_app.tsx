@@ -28,7 +28,7 @@ import {
   SDKProvider
 } from 'helpers/sdk';
 import { QueryClient, QueryClientProvider } from 'react-query';
-export const network = process.env.NETWORK as Network;
+export const network = (process.env.NETWORK as Network) || 'mainnet-beta';
 
 const networkConfiguration = () => {
   if (process.env.NETWORK_CONFIGURATION) {
@@ -49,7 +49,6 @@ const storedAccent =
 const OnChainProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const wallet = useConnectedWallet();
   const connection = useConnection();
-  const network = 'mainnet-beta';
 
   return (
     <AnchorProvider
@@ -124,7 +123,7 @@ function MyApp({ Component, pageProps }: AppProps) {
           app={{
             name: 'Honey Finance'
           }}
-          // networkConfigs={networkConfiguration()}
+          networkConfigs={networkConfiguration()}
         >
           <GovernanceProvider>
             <SailProvider
