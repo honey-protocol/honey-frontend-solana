@@ -70,7 +70,13 @@ const LockHoneyForm: FC = () => {
     setValueVeHONEY(veHoneyPrice);
   };
 
-  console.log({ lockPeriodHasEnded });
+  console.log({
+    veHoneyAmount,
+    lockedAmount,
+    lockedPeriodEnd,
+    honeyAmount,
+    lockPeriodHasEnded
+  });
   // Put your validators here
   const isLockButtonDisabled = () => {
     if (lockPeriodHasEnded) return true;
