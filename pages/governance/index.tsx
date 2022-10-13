@@ -24,6 +24,7 @@ import { GovernanceStats } from '../../components/GovernanceStats/GovernanceStat
 import { useGovernor } from 'hooks/tribeca/useGovernor';
 import { useProposals } from 'hooks/tribeca/useProposals';
 import { ProposalState } from 'helpers/dao';
+import { vars } from 'styles/theme.css';
 
 const { format: f, formatShortName: fsn } = formatNumber;
 const NUM_PLACEHOLDERS = 0;
@@ -128,7 +129,17 @@ const Governance: NextPage = () => {
             <div className={style.nameCell}>
               <div className={style.logoWrapper}>
                 <div className={style.collectionLogo}>
-                  <HexaBoxContainer>
+                  <HexaBoxContainer
+                    borderColor={
+                      ['succeeded', 'queued', 'executed'].includes(row.status)
+                        ? 'green'
+                        : row.status === 'rejected'
+                        ? 'red'
+                        : row.status === 'draft'
+                        ? 'gray'
+                        : 'black'
+                    }
+                  >
                     <div
                       className={c(
                         style.statusIcon,
@@ -181,7 +192,12 @@ const Governance: NextPage = () => {
           });
           return (
             <div>
-              <ProgressStatus percent={(row.votes / 10000000) * 100} />
+              <ProgressStatus
+                strokeColor={
+                  row.status === 'rejected' ? vars.colors.red : undefined
+                }
+                percent={(row.votes / 10000000) * 100}
+              />
             </div>
           );
         }
@@ -189,11 +205,12 @@ const Governance: NextPage = () => {
       {
         title: DraftToggle,
         width: columnsWidth[2],
-        render: (_: null) => {
+        render: (_: null, row: GovernanceTableRow) => {
           return (
             <div className={style.buttonsCell}>
               <HoneyButton variant="text">
-                Vote <div className={style.arrowIcon} />
+                {row.status === 'active' ? 'Vote' : 'View'}
+                <div className={style.arrowIcon} />
               </HoneyButton>
             </div>
           );

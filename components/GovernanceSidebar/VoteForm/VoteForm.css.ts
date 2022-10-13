@@ -78,6 +78,7 @@ export const divider = style({
   backgroundRepeat: 'repeat-x, repeat-x, repeat-y, repeat-y',
   backgroundSize: '20px 1px, 20px 1px, 1px 20px, 1px 20px',
   height: 1,
+  minHeight: 1,
   width: '100%',
   marginBottom: 16
 });

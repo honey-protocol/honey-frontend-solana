@@ -47,7 +47,7 @@ const ProposalActivate = (props: ProposalActivateProps) => {
   return (
     <Space size="middle">
       <div className={styles.iconContainer}>
-        <HexaBoxContainer>
+        <HexaBoxContainer borderColor="black" shadowColor="brownLight">
           <div className={icons.lampIcon} />
         </HexaBoxContainer>
       </div>
