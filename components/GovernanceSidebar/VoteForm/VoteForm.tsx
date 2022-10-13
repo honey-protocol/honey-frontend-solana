@@ -25,7 +25,6 @@ import ProposalQueue from './Proposals/ProposalQueue/ProposalQueue';
 import ProposalExecute from './Proposals/ProposalExecute/ProposalExecute';
 import ProposalActivate from './Proposals/ProposalActivate/ProposalActivate';
 import ProposalHistory from './Proposals/ProposalHistory/ProposalHistory';
-import HoneyCardYellowShadow from 'components/HoneyCardYellowShadow/HoneyCardYellowShadow';
 import cs from 'classnames';
 
 const { formatShortName: fsn } = formatNumber;
@@ -51,11 +50,8 @@ const VoteForm: FC<VoteFormProps> = (props: VoteFormProps) => {
   );
 
   const side: VoteSide =
-    myVote?.accountInfo.data.side || voteType === 'vote_for'
-      ? VoteSide.For
-      : VoteSide.Against;
-
-  myVote?.accountInfo.data.side;
+    myVote?.accountInfo.data.side ||
+    (voteType === 'vote_for' ? VoteSide.For : VoteSide.Against);
 
   const totalDeterminingVotes = proposalInfo?.proposalData.forVotes.add(
     proposalInfo.proposalData.againstVotes
@@ -85,9 +81,7 @@ const VoteForm: FC<VoteFormProps> = (props: VoteFormProps) => {
   );
 
   useEffect(() => {
-    if (!earliestActivationTime) {
-      return;
-    }
+    if (!earliestActivationTime) return;
     const remainingTime = earliestActivationTime.getTime() - Date.now();
     const timeout = setTimeout(() => {
       void refetch();
@@ -96,13 +90,22 @@ const VoteForm: FC<VoteFormProps> = (props: VoteFormProps) => {
   }, [earliestActivationTime, refetch]);
 
   const activateProposal = async () => {
-    if (!proposalInfo) return;
-    invariant(escrow);
-    const tx = escrow.escrowW.activateProposal(proposalInfo?.proposalKey);
-    await signAndConfirmTX(tx, 'Activate Proposal');
-    await sleep(1_000);
-    await refetch();
-    noop();
+    try {
+      if (!proposalInfo) return;
+      toast.processing();
+      invariant(escrow);
+      const tx = escrow.escrowW.activateProposal(proposalInfo?.proposalKey);
+      await signAndConfirmTX(tx, 'Activate Proposal');
+      await sleep(1_000);
+      await refetch();
+      noop();
+      toast.success('Successfully activated proposal');
+    } catch (error) {
+      console.log(error);
+      toast.error('Failed to activate proposal');
+    } finally {
+      toast.clear();
+    }
   };
 
   const cancelProposal = async () => {
@@ -194,8 +197,7 @@ const VoteForm: FC<VoteFormProps> = (props: VoteFormProps) => {
               : () => {},
           disabled: Boolean(
             (earliestActivationTime && earliestActivationTime > new Date()) ||
-              (minActivationThreshold &&
-                !veBalance?.greaterThan(minActivationThreshold))
+              !veBalance?.greaterThan(minActivationThreshold || 0)
           )
         };
       case ProposalState.Active:
@@ -295,6 +297,8 @@ const VoteForm: FC<VoteFormProps> = (props: VoteFormProps) => {
               value={
                 proposalInfo?.status.executed
                   ? 'Executed'
+                  : proposalInfo?.status.state === ProposalState.Active
+                  ? 'Voting'
                   : PROPOSAL_STATE_LABELS[proposalInfo?.status.state || 0]
               }
               valueSize="big"
@@ -317,46 +321,48 @@ const VoteForm: FC<VoteFormProps> = (props: VoteFormProps) => {
           </div>
         </div>
         <div className={styles.divider} />
-        <div className={styles.grid}>
-          <div className={styles.gridCell}>
-            <InfoBlock
-              value={proposalInfo?.proposalData.forVotes.toString() || ''}
-              footer={<span>Voted for</span>}
-            />
-            <HoneySlider
-              currentValue={proposalInfo?.proposalData.forVotes.toNumber() || 0}
-              maxValue={totalDeterminingVotes?.toNumber() || 0}
-              minAvailableValue={10}
-              isReadonly
-            />
-          </div>
-          <div className={styles.gridCell}>
-            <InfoBlock
-              value={proposalInfo?.proposalData.againstVotes.toString() || ''}
-              footer={<span>Voted against</span>}
-            />
-            <HoneySlider
-              currentValue={
-                proposalInfo?.proposalData.againstVotes.toNumber() || 0
-              }
-              maxValue={totalDeterminingVotes?.toNumber() || 0}
-              minAvailableValue={0}
-              isReadonly
-            />
-          </div>
-        </div>
-        <div className={styles.row}>
-          <InfoBlock
-            value={vePower?.toString() || '0'}
-            title={<span>Your voting power</span>}
-          />
-          <HoneySlider
-            currentValue={vePower?.asNumber || 0}
-            maxValue={1000}
-            minAvailableValue={0}
-            isReadonly
-          />
-        </div>
+        {proposalInfo?.status.state !== ProposalState.Active && (
+          <>
+            {/* <div className={styles.grid}>
+              <div className={styles.gridCell}>
+                <InfoBlock
+                  value={proposalInfo?.proposalData.forVotes.toString() || ''}
+                  footer={<span>Voted for</span>}
+                />
+                <HoneySlider
+                  currentValue={
+                    proposalInfo?.proposalData.forVotes.toNumber() || 0
+                  }
+                  maxValue={totalDeterminingVotes?.toNumber() || 0}
+                  minAvailableValue={10}
+                  isReadonly
+                />
+              </div>
+              <div className={styles.gridCell}>
+                <InfoBlock
+                  value={
+                    proposalInfo?.proposalData.againstVotes.toString() || ''
+                  }
+                  footer={<span>Voted against</span>}
+                />
+                <HoneySlider
+                  currentValue={
+                    proposalInfo?.proposalData.againstVotes.toNumber() || 0
+                  }
+                  maxValue={totalDeterminingVotes?.toNumber() || 0}
+                  minAvailableValue={0}
+                  isReadonly
+                />
+              </div>
+            </div> */}
+            <div className={styles.row}>
+              <InfoBlock
+                value={vePower?.toString() || '0'}
+                title={<span>Your voting power</span>}
+              />
+            </div>
+          </>
+        )}
 
         {!proposalInfo?.status.executed && <div className={styles.divider} />}
         <div className={styles.row}>
