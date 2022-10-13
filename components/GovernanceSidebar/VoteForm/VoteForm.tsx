@@ -357,7 +357,7 @@ const VoteForm: FC<VoteFormProps> = (props: VoteFormProps) => {
             </div> */}
             <div className={styles.row}>
               <InfoBlock
-                value={vePower?.toString() || '0'}
+                value={vePower?.asNumber.toString() || '0'}
                 title={<span>Your voting power</span>}
               />
             </div>

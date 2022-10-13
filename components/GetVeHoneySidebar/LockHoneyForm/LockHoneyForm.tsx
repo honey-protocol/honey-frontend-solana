@@ -79,7 +79,6 @@ const LockHoneyForm: FC = () => {
   });
   // Put your validators here
   const isLockButtonDisabled = () => {
-    if (lockPeriodHasEnded) return true;
     return false;
   };
 
