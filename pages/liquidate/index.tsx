@@ -46,6 +46,7 @@ import HoneyContent from 'components/HoneyContent/HoneyContent';
 import { pageDescription, pageTitle } from 'styles/common.css';
 import { Typography } from 'antd';
 import { ToastProps } from 'hooks/useToast';
+import { HONEY_GENESIS_BEE, LIFINITY_FLARES, OG_ATADIANS, PESKY_PENGUINS } from '../../constants/borrowLendMarkets';
 
 const { formatPercent: fp, formatSol: fs, formatRoundDown: fd } = formatNumber;
 const Liquidate: NextPage = () => {
@@ -151,7 +152,7 @@ const Liquidate: NextPage = () => {
     // let sorted = await positions.sort((first: any,second: any) => first.is_healthy - second.is_healthy).reverse();
     let sorted = await positions.map((obligation: any, index: number) => {
       return {
-        name: 'Honey Genesis Bee',
+        name: HONEY_GENESIS_BEE,
         riskLvl: (obligation.debt / nftPrice) * 100,
         untilLiquidation:
           obligation.debt !== 0
@@ -360,39 +361,39 @@ const Liquidate: NextPage = () => {
     const mockData: LiquidateTableRow[] = [
       {
         key: 'HNYG',
-        name: 'Honey Genesis Bee',
+        name: HONEY_GENESIS_BEE,
         risk: loanToValue,
         liqThreshold: liquidationThreshold,
         totalDebt: totalDebt,
         tvl: nftPrice * fetchedPositions.length,
-        positions: fetchedPositions.filter((position: any) => position.name == 'Honey Genesis Bee')
+        positions: fetchedPositions.filter((position: any) => position.name == HONEY_GENESIS_BEE)
       },
       {
         key: 'LIFINITY',
-        name: 'Lifinity Flares',
+        name: LIFINITY_FLARES,
         risk: 0,
         liqThreshold: 0,
         totalDebt: 0,
         tvl: 0,
-        positions: fetchedPositions.filter((position: any) => position.name == 'Lifinity Flares')
+        positions: fetchedPositions.filter((position: any) => position.name == LIFINITY_FLARES)
       },
       {
         key: 'ATD',
-        name: 'OG Atadians',
+        name: OG_ATADIANS,
         risk: 0,
         liqThreshold: 0,
         totalDebt: 0,
         tvl: 0,
-        positions: fetchedPositions.filter((position: any) => position.name == 'OG Atadians')
+        positions: fetchedPositions.filter((position: any) => position.name == OG_ATADIANS)
       },
       {
         key: 'NOOT',
-        name: 'Pesky Penguins',
+        name: PESKY_PENGUINS,
         risk: 0,
         liqThreshold: 0,
         totalDebt: 0,
         tvl: 0,
-        positions: fetchedPositions.filter((position: any) => position.name == 'OG Atadians')
+        positions: fetchedPositions.filter((position: any) => position.name == PESKY_PENGUINS)
       }
     ];
 
@@ -437,11 +438,11 @@ const Liquidate: NextPage = () => {
   const columnsWidth: Array<number | string> = [250, 120, 150, 150, 170];
 
   const renderImage = (name: string) => {
-    if (name == 'Honey Genesis Bee') {
+    if (name == HONEY_GENESIS_BEE) {
       return <Image src={'https://img-cdn.magiceden.dev/rs:fill:400:400:0:0/plain/https://dl.airtable.com/.attachmentThumbnails/6b6c8954aed777a74de52fd70f8751ab/46b325db'} layout="fill" />
-    } else if (name == 'Lifinity Flares') {
+    } else if (name == LIFINITY_FLARES) {
       return <Image src={'https://img-cdn.magiceden.dev/rs:fill:400:400:0:0/plain/https://dl.airtable.com/.attachmentThumbnails/6972d5c2efb77d49be97b07ccf4fbc69/e9572fb8'} layout="fill" />
-    } else if (name == 'OG Atadians') {
+    } else if (name == OG_ATADIANS) {
       return <Image src={'https://img-cdn.magiceden.dev/rs:fill:400:400:0:0/plain/https://creator-hub-prod.s3.us-east-2.amazonaws.com/atadians_pfp_1646721263627.gif'} layout="fill" />
     } else {
       return <Image src={'https://img-cdn.magiceden.dev/rs:fill:400:400:0:0/plain/https://i.imgur.com/37nsjBZ.png'} layout="fill" />

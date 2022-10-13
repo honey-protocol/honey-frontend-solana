@@ -34,6 +34,7 @@ import { ToastProps } from 'hooks/useToast';
 import { RoundHalfDown } from 'helpers/utils';
 import { Typography } from 'antd';
 import { pageDescription, pageTitle } from 'styles/common.css';
+import { HONEY_GENESIS_BEE, LIFINITY_FLARES, OG_ATADIANS, PESKY_PENGUINS } from '../../constants/borrowLendMarkets';
 // import { network } from 'pages/_app';
 // import { network } from 'pages/_app';
 
@@ -397,7 +398,7 @@ const Lend: NextPage = () => {
     const mockData: LendTableRow[] = [
       {
         key: 'HNYG',
-        name: 'Honey Genesis Bee',
+        name: HONEY_GENESIS_BEE,
         interest: calculatedInterestRate,
         // validated available to be totalMarketDeposits
         available: totalMarketDeposits,
@@ -407,7 +408,7 @@ const Lend: NextPage = () => {
       },
       {
         key: 'LIFINITY',
-        name: 'Lifinity Flares',
+        name: LIFINITY_FLARES,
         interest: 0,
         // validated available to be totalMarketDeposits
         available: 0,
@@ -417,7 +418,7 @@ const Lend: NextPage = () => {
       },
       {
         key: 'ATD',
-        name: 'OG Atadians',
+        name: OG_ATADIANS,
         interest: 0,
         // validated available to be totalMarketDeposits
         available: 0,
@@ -427,7 +428,7 @@ const Lend: NextPage = () => {
       },
       {
         key: 'NOOT',
-        name: 'Pesky Penguins',
+        name: PESKY_PENGUINS,
         interest: 0,
         // validated available to be totalMarketDeposits
         available: 0,

@@ -5,6 +5,7 @@ import NftCard from '../NftCard/NftCard';
 import { NftCardProps } from '../NftCard/types';
 import * as style from './NftList.css';
 import cs from 'classnames';
+import { HONEY_GENESIS_BEE, LIFINITY_FLARES, OG_ATADIANS, PESKY_PENGUINS } from '../../constants/borrowLendMarkets';
 
 type NftListProps = {
   data: NftCardProps[];
@@ -26,7 +27,7 @@ const NftList = (props: NftListProps) => {
       {data &&
         data.map(
           (item, index) =>
-            item.name.includes('Honey Genesis') && (
+            item.name.includes(HONEY_GENESIS_BEE || LIFINITY_FLARES || OG_ATADIANS || PESKY_PENGUINS) && (
               <div
                 className={cs(style.listItem, {
                   [style.selectedListItem]: item.mint === selectedNFTMint

@@ -68,3 +68,7 @@ export type Market = {
     }
   ];
   
+  export const HONEY_GENESIS_BEE = 'Honey Genesis Bee';
+  export const LIFINITY_FLARES = 'Lifinity Flares';
+  export const OG_ATADIANS = 'OG Atadians';
+  export const PESKY_PENGUINS = 'Pesky Penguins';
