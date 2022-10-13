@@ -56,13 +56,13 @@ const Governance: NextPage = () => {
     // if(!state) return 'approved';
     switch (state) {
       case ProposalState.Active:
-        return 'approved';
+        return 'active';
       case ProposalState.Succeeded:
-        return 'approved';
+        return 'succeeded';
       case ProposalState.Draft:
         return 'draft';
       case ProposalState.Queued:
-        return 'processing';
+        return 'queued';
       case ProposalState.Canceled:
         return 'rejected';
       case ProposalState.Defeated:
@@ -78,10 +78,10 @@ const Governance: NextPage = () => {
       against: proposal?.data?.proposalData.againstVotes.toNumber() || 0,
       votesRequired: 0,
       status: proposal?.data?.status.executed
-        ? 'approved'
+        ? 'executed'
         : proposal?.data?.status.state !== undefined
         ? getStatus(proposal?.data?.status.state)
-        : 'approved'
+        : 'draft'
     }));
     if (!data || !data[0]?.id || data.length === tableData?.length) return;
     console.log({ data });
@@ -134,9 +134,11 @@ const Governance: NextPage = () => {
                         style.statusIcon,
                         row.status === 'draft'
                           ? style.statusDraftIcon
-                          : row.status === 'approved'
+                          : row.status === 'succeeded' ||
+                            row.status === 'queued' ||
+                            row.status === 'executed'
                           ? style.statusCheckIcon
-                          : row.status === 'processing'
+                          : row.status === 'active'
                           ? style.statusWaitIcon
                           : style.statusErrorRedIcon
                       )}
@@ -173,10 +175,13 @@ const Governance: NextPage = () => {
         },
         width: columnsWidth[1],
         dataIndex: 'status',
-        render: (row: GovernanceTableRow) => {
+        render: (_, row: GovernanceTableRow) => {
+          console.log(row.votes, row.votesRequired, {
+            percent: (row.votes / row.votesRequired) * 100
+          });
           return (
             <div>
-              <ProgressStatus percent={(row.votes / row.votesRequired) * 100} />
+              <ProgressStatus percent={(row.votes / 10000000) * 100} />
             </div>
           );
         }

@@ -9,9 +9,10 @@ export type GovernanceTableRow = {
 
 export type ProposalStatus =
   | 'draft'
-  | 'processing'
-  | 'approved'
-  | 'rejected'
-  | 'Executed';
+  | 'active'
+  | 'succeeded'
+  | 'queued'
+  | 'executed'
+  | 'rejected';
 
 export type GovernanceSidebarForm = 'vote' | 'new_proposal' | 'get_vehoney';

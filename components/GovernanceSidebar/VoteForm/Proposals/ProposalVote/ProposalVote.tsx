@@ -41,8 +41,8 @@ const ProposalVote = (props: ProposalVoteProps) => {
           />
           <HoneySlider
             currentValue={proposalInfo?.proposalData.forVotes.toNumber() || 0}
-            maxValue={totalDeterminingVotes?.toNumber() || 0}
-            minAvailableValue={10}
+            maxValue={totalDeterminingVotes?.toNumber() || 1000}
+            minAvailableValue={0}
             isReadonly
           />
         </div>
@@ -60,19 +60,12 @@ const ProposalVote = (props: ProposalVoteProps) => {
             isReadonly
           />
         </div>
-        {/* 
         <div className={styles.gridCell}>
           <InfoBlock
             value={vePower?.toString() || '--'}
             footer={<span>Your voting power</span>}
           />
-          <HoneySlider
-            currentValue={vePower?.asNumber || 0}
-            maxValue={1000}
-            minAvailableValue={0}
-            isReadonly
-          />
-        </div> */}
+        </div>
       </div>
     </div>
   );
