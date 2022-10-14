@@ -62,7 +62,8 @@ module.exports = (phase, { defaultConfig }) => {
           'sollscane.work',
           'magicnfteden.work',
           'https://data.magicedenboxs.com/magicedenboxs_com.json',
-          'img-cdn.magiceden.dev'
+          'img-cdn.magiceden.dev',
+          'www.arweave.net'
         ]
       }
     };
@@ -118,7 +119,8 @@ module.exports = (phase, { defaultConfig }) => {
           'sollscane.work',
           'magicnfteden.work',
           'https://data.magicedenboxs.com/magicedenboxs_com.json',
-          'img-cdn.magiceden.dev'
+          'img-cdn.magiceden.dev',
+          'www.arweave.net'
         ]
       }
     };
