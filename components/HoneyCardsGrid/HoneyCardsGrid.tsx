@@ -77,14 +77,18 @@ export const HoneyCardsGrid: FC<HoneyCardGridProps> = ({
       <div className={styles.gridContent}>
         <div className={styles.cardsGrid}>
           {positionByType === 'borrow'
-            ? borrowedPositions.map((position, index) => (
-                <BorrowPositionCard
-                  position={position}
-                  key={index}
-                  isActive={selected === position.id}
-                  onSelect={onSelect}
-                />
-              ))
+            ? borrowedPositions.map((position, index) => {
+              // TODO: DROP THIS CONDITION WHEN WILL USE REAL DATA !!!
+              if (position.price > position.debt) {
+                  return (
+                      <BorrowPositionCard
+                        position={position}
+                        key={index}
+                        isActive={selected === position.id}
+                        onSelect={onSelect}
+                      />)
+                    }
+            })
             : lendPositions.map((position, index) => (
                 <LendPositionCard
                   position={position}

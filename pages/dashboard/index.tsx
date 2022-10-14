@@ -39,6 +39,7 @@ import { ToastProps } from '../../hooks/useToast';
 import { Metadata } from '@metaplex-foundation/mpl-token-metadata';
 import { generateMockHistoryData } from '../../helpers/chartUtils';
 import { HoneyProfileChart } from '../../components/HoneyProfileChart/HoneyProfileChart';
+import {MAX_LTV} from "../../constants/loan";
 import useWindowSize from '../../hooks/useWindowSize';
 import { TABLET_BP } from '../../constants/breakpoints';
 
@@ -117,13 +118,20 @@ const Dashboard: NextPage = () => {
 
   const userExposureData = useMemo(() => getUserExposureData(), []);
 
+  const getMockPriceDebtValue = () => {
+    const price = Math.floor(Math.random() * 1000)
+    const debt = Math.floor(Math.random() * (price - ((price / 100) * MAX_LTV)))
+    return {price, debt}
+  }
+
+
   const getBorrowUserPositionsMock = () => {
     const preparedPositions: BorrowUserPosition[] = [];
     for (let i = 0; i < 20; i++) {
       preparedPositions.push({
         name: `Any user position #${i + 1000}`,
-        price: Math.random() * 1000,
-        debt: Math.random() * 1000,
+        price: getMockPriceDebtValue().price,
+        debt: getMockPriceDebtValue().debt,
         ir: Math.random(),
         imageUrl: '/nfts/azuki.jpg',
         id: i.toString() + '_borrow'
@@ -132,7 +140,7 @@ const Dashboard: NextPage = () => {
     for (let j = 0; j < 5; j++) {
       preparedPositions.push({
         name: 'Any user position',
-        price: Math.random() * 1000,
+        price: getMockPriceDebtValue().price,
         debt: 0,
         ir: Math.random(),
         imageUrl: '/nfts/azuki.jpg',

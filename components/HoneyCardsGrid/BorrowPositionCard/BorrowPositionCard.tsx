@@ -8,6 +8,8 @@ import { formatNumber, formatTokenName as fcn } from '../../../helpers/format';
 import { HoneySlider } from '../../HoneySlider/HoneySlider';
 import c from 'classnames';
 import HoneyTooltip from '../../HoneyTooltip/HoneyTooltip';
+import {BorrowPositionCardSlider} from "../../BorrowPositionCardSlider/BorrowPositionCardSlider";
+import {LIQUIDATION_THRESHOLD, MAX_LTV} from "../../../constants/loan";
 
 const { formatUsd: fu, formatPercent: fp } = formatNumber;
 
@@ -36,12 +38,11 @@ export const BorrowPositionCard: FC<BorrowPositionCardProps> = ({
         <InfoBlock title="IR" value={fp(position.ir * 100)} />
       </div>
       <div className={styles.divider} />
-      <HoneySlider
-        minAvailableValue={200}
-        currentValue={400}
-        maxValue={1000}
-        maxAvailablePosition={0.6}
-        isReadonly
+      <BorrowPositionCardSlider
+        debt={position.debt}
+        collateralValue={position.price}
+        liquidationThreshold={LIQUIDATION_THRESHOLD}
+        maxLoanToValue={MAX_LTV}
       />
     </div>
   );
