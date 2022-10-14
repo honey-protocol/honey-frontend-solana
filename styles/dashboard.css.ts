@@ -1,14 +1,12 @@
 import { style } from '@vanilla-extract/css';
 import { breakpoints, vars } from './theme.css';
-import {
-  pageTitle as pageTitleCommon,
-} from './common.css';
+import { pageTitle as pageTitleCommon } from './common.css';
 
 export const dashboard = style({
   paddingBottom: 18,
   '@media': {
     [`screen and (min-width: ${breakpoints.tablet}px)`]: {
-      paddingBottom: 32,
+      paddingBottom: 32
     }
   }
 });
@@ -18,7 +16,7 @@ export const pageHeader = style({
   '@media': {
     [`screen and (min-width: ${breakpoints.tablet}px)`]: {
       display: 'flex',
-      marginBottom: 16,
+      marginBottom: 16
     }
   }
 });
@@ -35,7 +33,7 @@ export const chartContainer = style({
   '@media': {
     [`screen and (min-width: ${breakpoints.tablet}px)`]: {
       marginBottom: 0,
-      height: 258,
+      height: 258
     }
   }
 });
@@ -46,20 +44,21 @@ export const notificationsWrapper = style({
   '@media': {
     [`screen and (min-width: ${breakpoints.tablet}px)`]: {
       width: 360,
-      marginBottom: 0,
+      marginBottom: 0
     }
   }
 });
 
 export const pageContentElements = style({
-  display: 'flex'
+  display: 'flex',
+  paddingBottom: 32
 });
 
 export const gridWrapper = style({
   width: '100%',
   '@media': {
     [`screen and (min-width: ${breakpoints.tablet}px)`]: {
-      marginRight: 16,
+      marginRight: 16
     }
   }
 });
