@@ -35,8 +35,7 @@ import { RoundHalfDown } from 'helpers/utils';
 import { Typography } from 'antd';
 import { pageDescription, pageTitle } from 'styles/common.css';
 import { HONEY_GENESIS_BEE, LIFINITY_FLARES, OG_ATADIANS, PESKY_PENGUINS } from '../../constants/borrowLendMarkets';
-// import { network } from 'pages/_app';
-// import { network } from 'pages/_app';
+import { HONEY_GENESIS_MARKET_ID, PESKY_PENGUINS_MARKET_ID } from '../../constants/loan';
 
 const network = 'mainnet-beta';
 
@@ -44,6 +43,8 @@ const { format: f, formatPercent: fp, formatSol: fs } = formatNumber;
 
 const Lend: NextPage = () => {
   // Start: SDK integration
+  // TODO: write dynamic currentMarketId based on user interaction
+  const [currentMarketId, setCurrentMarketId] = useState(PESKY_PENGUINS_MARKET_ID);
   const sdkConfig = ConfigureSDK();
   let walletPK = sdkConfig.sdkWallet?.publicKey;
 
@@ -63,7 +64,7 @@ const Lend: NextPage = () => {
     sdkConfig.saberHqConnection,
     sdkConfig.sdkWallet!,
     sdkConfig.honeyId,
-    sdkConfig.marketId
+    currentMarketId
   );
 
   const [totalMarketDeposits, setTotalMarketDeposits] = useState(0);

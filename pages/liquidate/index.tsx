@@ -38,7 +38,7 @@ import { useConnectedWallet } from '@saberhq/use-solana';
 import { LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js';
 import { calcNFT, fetchSolPrice } from 'helpers/loanHelpers/userCollection';
 import { LiquidateTablePosition } from '../../types/liquidate';
-import { HONEY_MARKET_ID, HONEY_PROGRAM_ID } from 'constants/loan';
+import { HONEY_GENESIS_MARKET_ID, PESKY_PENGUINS_MARKET_ID, HONEY_PROGRAM_ID } from 'constants/loan';
 import { NATIVE_MINT } from '@solana/spl-token';
 import { Content } from 'antd/lib/layout/layout';
 import HoneySider from 'components/HoneySider/HoneySider';
@@ -46,12 +46,14 @@ import HoneyContent from 'components/HoneyContent/HoneyContent';
 import { pageDescription, pageTitle } from 'styles/common.css';
 import { Typography } from 'antd';
 import { ToastProps } from 'hooks/useToast';
-import { HONEY_GENESIS_BEE, LIFINITY_FLARES, OG_ATADIANS, PESKY_PENGUINS } from '../../constants/borrowLendMarkets';
+import { HONEY_GENESIS_BEE, LIFINITY_FLARES, LIQUIDATION_FEE, OG_ATADIANS, PESKY_PENGUINS } from '../../constants/borrowLendMarkets';
 
 const { formatPercent: fp, formatSol: fs, formatRoundDown: fd } = formatNumber;
 const Liquidate: NextPage = () => {
+  // TODO: write dynamic currentMarketId based on user interaction
+  const [currentMarketId, setCurrentMarketId] = useState(PESKY_PENGUINS_MARKET_ID);
   // start sdk integration
-  const liquidationThreshold = 0.65; // TODO: values like this should be imported from constants per collection
+  const liquidationThreshold = LIQUIDATION_FEE; // TODO: values like this should be imported from constants per collection
   // init anchor
   const { program } = useAnchor();
   // create wallet instance for PK
@@ -61,6 +63,7 @@ const Liquidate: NextPage = () => {
    * @params none
    * @returns connection with sdk
    */
+
   const sdkConfig = ConfigureSDK();
   /**
    * @description fetches open nft positions
@@ -71,7 +74,7 @@ const Liquidate: NextPage = () => {
     sdkConfig.saberHqConnection,
     sdkConfig.sdkWallet!,
     sdkConfig.honeyId,
-    sdkConfig.marketId
+    currentMarketId
   );
 
   /**
@@ -90,7 +93,7 @@ const Liquidate: NextPage = () => {
     sdkConfig.saberHqConnection,
     sdkConfig.sdkWallet!,
     sdkConfig.honeyId,
-    sdkConfig.marketId
+    currentMarketId
   );
 
   /**
@@ -265,7 +268,8 @@ const Liquidate: NextPage = () => {
 
           toast.processing();
           let transactionOutcome: any = await liquidatorClient.revokeBid({
-            market: new PublicKey(HONEY_MARKET_ID),
+            // TODO: pass market id for each call
+            market: new PublicKey(HONEY_GENESIS_MARKET_ID),
             bidder: wallet.publicKey,
             bid_mint: NATIVE_MINT,
             withdraw_destination: wallet.publicKey
@@ -286,7 +290,8 @@ const Liquidate: NextPage = () => {
           toast.processing();
           let transactionOutcome: any = await liquidatorClient.placeBid({
             bid_limit: userBid,
-            market: new PublicKey(HONEY_MARKET_ID),
+            // TODO: pass market id for each call
+            market: new PublicKey(HONEY_GENESIS_MARKET_ID),
             bidder: wallet.publicKey,
             bid_mint: NATIVE_MINT
           });
@@ -303,7 +308,8 @@ const Liquidate: NextPage = () => {
           toast.processing();
           let transactionOutcome: any = await liquidatorClient.increaseBid({
             bid_increase: userBid,
-            market: new PublicKey(HONEY_MARKET_ID),
+            // TODO: pass market id for each call
+            market: new PublicKey(HONEY_GENESIS_MARKET_ID),
             bidder: wallet.publicKey,
             bid_mint: NATIVE_MINT
           });

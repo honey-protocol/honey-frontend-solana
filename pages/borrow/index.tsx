@@ -63,21 +63,19 @@ import { pageDescription, pageTitle } from 'styles/common.css';
 import HoneyTableRow from 'components/HoneyTable/HoneyTableRow/HoneyTableRow';
 import HoneyTableNameCell from '../../components/HoneyTable/HoneyTableNameCell/HoneyTableNameCell';
 import { marketCollections, OpenPositions } from 'constants/borrowLendMarkets';
+import { HONEY_GENESIS_BEE, LIFINITY_FLARES, OG_ATADIANS, PESKY_PENGUINS } from '../../constants/borrowLendMarkets';
+import { HONEY_GENESIS_MARKET_ID, PESKY_PENGUINS_MARKET_ID } from '../../constants/loan';
 
 const network = 'mainnet-beta'; // change to dynamic value
 
 const { format: f, formatPercent: fp, formatSol: fs } = formatNumber;
 
 const Markets: NextPage = () => {
+  // TODO: write dynamic currentMarketId based on user interaction
+  const [currentMarketId, setCurrentMarketId] = useState(PESKY_PENGUINS_MARKET_ID);
   const wallet = useConnectedWallet();
   const sdkConfig = ConfigureSDK();
 
-  /**
-   * @description calls upon markets which
-   * @params none
-   * @returns market | market reserve information | parsed reserves |
-   */
-  const { market, marketReserveInfo, parsedReserves, fetchMarket } = useHoney();
   /**
    * @description calls upon the honey sdk
    * @params  useConnection func. | useConnectedWallet func. | honeyID | marketID
@@ -87,7 +85,7 @@ const Markets: NextPage = () => {
     sdkConfig.saberHqConnection,
     sdkConfig.sdkWallet!,
     sdkConfig.honeyId,
-    sdkConfig.marketId
+    currentMarketId
   );
 
   /**
@@ -106,8 +104,16 @@ const Markets: NextPage = () => {
     sdkConfig.saberHqConnection,
     sdkConfig.sdkWallet!,
     sdkConfig.honeyId,
-    sdkConfig.marketId
+    currentMarketId
   );
+
+  /**
+   * @description calls upon markets which
+   * @params none
+   * @returns market | market reserve information | parsed reserves |
+   */
+  const { market, marketReserveInfo, parsedReserves, fetchMarket } = useHoney();
+  
   const { width: windowWidth } = useWindowSize();
 
   const [tableData, setTableData] = useState<MarketTableRow[]>([]);
@@ -419,11 +425,11 @@ const Markets: NextPage = () => {
     null;
 
   const renderImage = (name: string) => {
-    if (name == 'Honey Genesis Bee') {
+    if (name == HONEY_GENESIS_BEE) {
       return <Image src={'https://img-cdn.magiceden.dev/rs:fill:400:400:0:0/plain/https://dl.airtable.com/.attachmentThumbnails/6b6c8954aed777a74de52fd70f8751ab/46b325db'} layout="fill" />
-    } else if (name == 'Lifinity Flares') {
+    } else if (name == LIFINITY_FLARES) {
       return <Image src={'https://img-cdn.magiceden.dev/rs:fill:400:400:0:0/plain/https://dl.airtable.com/.attachmentThumbnails/6972d5c2efb77d49be97b07ccf4fbc69/e9572fb8'} layout="fill" />
-    } else if (name == 'OG Atadians') {
+    } else if (name == OG_ATADIANS) {
       return <Image src={'https://img-cdn.magiceden.dev/rs:fill:400:400:0:0/plain/https://creator-hub-prod.s3.us-east-2.amazonaws.com/atadians_pfp_1646721263627.gif'} layout="fill" />
     } else {
       return <Image src={'https://img-cdn.magiceden.dev/rs:fill:400:400:0:0/plain/https://i.imgur.com/37nsjBZ.png'} layout="fill" />
