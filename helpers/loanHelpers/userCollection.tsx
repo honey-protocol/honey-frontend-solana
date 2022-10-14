@@ -1,8 +1,8 @@
 import { RoundHalfDown, RoundHalfUp } from 'helpers/utils';
 import { MAX_LTV } from '../../constants/loan';
 import BN from 'bn.js';
-import { LAMPORTS_PER_SOL } from '@solana/web3.js';
-import { getOraclePrice } from '../../helpers/loanHelpers/index';
+import { Connection, LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js';
+import { BnToDecimal, getOraclePrice } from '../../helpers/loanHelpers/index';
 import {
   OPTIMAL_RATIO_ONE,
   OPTIMAL_RATIO_TWO,
@@ -11,6 +11,11 @@ import {
   BORROW_RATE_TWO,
   BORROW_RATE_THREE
 } from '../../constants/interestRate'
+import { Market } from 'constants/borrowLendMarkets';
+import { ConnectedWallet } from '@saberhq/use-solana';
+
+import * as anchor from "@project-serum/anchor";
+import { HoneyClient, HoneyMarket, HoneyReserve, TReserve } from '@honey-finance/sdk';
 
 /**
  * @description calculates the total user debt, ltv and allowance over all collections
@@ -137,4 +142,42 @@ export async function getInterestRate(utilizationRate: number) {
   } catch (error) {
     console.log('Error:', error)
   }
+}
+
+export async function populateMarketData(collection: Market, connection: Connection, wallet: ConnectedWallet) {
+  const provider = new anchor.AnchorProvider(connection, wallet, anchor.AnchorProvider.defaultOptions());
+  const honeyClient = await HoneyClient.connect(provider, collection.id, false);
+  const honeyMarket = await HoneyMarket.load(honeyClient, new PublicKey(collection.id));
+  const reserveInfoList = honeyMarket.reserves;
+  let parsedReserve:TReserve | undefined = undefined;
+
+  for (const reserve of reserveInfoList) {
+    if (reserve.reserve.equals(PublicKey.default)) {
+      continue;
+    }
+    console.log('reserve', reserve.reserve.toString());
+
+    const { data, state } = await HoneyReserve.decodeReserve(honeyClient, reserve.reserve);
+    parsedReserve = data;
+
+    break;
+  }
+
+  if(parsedReserve !== undefined) {
+    let totalMarketDeposits = BnToDecimal(
+      parsedReserve.reserveState.totalDeposits,
+      9,
+      2
+    );
+    const totalMarketDebt = RoundHalfDown(parsedReserve.reserveState.outstandingDebt.div(new BN(10 ** 15))
+      .toNumber() / LAMPORTS_PER_SOL);
+    const sumOfTotalValue = totalMarketDeposits + totalMarketDebt;
+    collection.available = totalMarketDeposits;
+    collection.value = sumOfTotalValue;
+    
+
+  }
+
+
+
 }

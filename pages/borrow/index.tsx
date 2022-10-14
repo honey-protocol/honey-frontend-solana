@@ -48,7 +48,8 @@ import {
   calcNFT,
   calculateCollectionwideAllowance,
   fetchSolPrice,
-  getInterestRate
+  getInterestRate,
+  populateMarketData
 } from 'helpers/loanHelpers/userCollection';
 import { Metadata } from '@metaplex-foundation/mpl-token-metadata';
 import { MAX_LTV } from 'constants/loan';
@@ -65,6 +66,7 @@ import HoneyTableNameCell from '../../components/HoneyTable/HoneyTableNameCell/H
 import { marketCollections, OpenPositions } from 'constants/borrowLendMarkets';
 import { HONEY_GENESIS_BEE, LIFINITY_FLARES, OG_ATADIANS, PESKY_PENGUINS } from '../../constants/borrowLendMarkets';
 import { HONEY_GENESIS_MARKET_ID, PESKY_PENGUINS_MARKET_ID } from '../../constants/loan';
+import { collectionCard } from 'styles/liquidation.css';
 
 const network = 'mainnet-beta'; // change to dynamic value
 
@@ -377,14 +379,19 @@ const Markets: NextPage = () => {
   useEffect(() => {
     console.log('user open pos', marketCollections)
     marketCollections.map((collection) => 
-      (
-        collection.available = collection.key == 'HNYG' ? totalMarketDeposits : 0,
-        collection.value = collection.key == 'HNYG' ? sumOfTotalValue : 0,
-        collection.allowance = collection.key == 'HNYG' ? userAllowance : 0,
-        collection.rate = collection.key == 'HNYG' ? calculatedInterestRate : 0,
-        collection.positions = userOpenPositions.filter((position: any) => position.symbol == collection.key),
-        collection.debt = collection.key == 'HNYG' ? userDebt : 0
-      )
+      {
+        if(collection.id == '')
+          return;
+
+        populateMarketData(collection, sdkConfig.saberHqConnection, sdkConfig.sdkWallet!);
+        console.log('collection', collection)
+        // collection.available = collection.id != 'HNYG' ? totalMarketDeposits : 0,
+        // collection.value = collection.key == 'HNYG' ? sumOfTotalValue : 0,
+        // collection.allowance = collection.key == 'HNYG' ? userAllowance : 0,
+        // collection.rate = collection.key == 'HNYG' ? calculatedInterestRate : 0,
+        // collection.positions = userOpenPositions.filter((position: any) => position.symbol == collection.key),
+        // collection.debt = collection.key == 'HNYG' ? userDebt : 0
+      }
     );
     setTableData(marketCollections);
     setTableDataFiltered(marketCollections);

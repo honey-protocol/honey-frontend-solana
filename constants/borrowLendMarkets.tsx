@@ -10,6 +10,7 @@ export type OpenPositions = {
 };
 
 export type Market = {
+    id: string;
     key: string;
     // imageUrl: string;
     name: string;
@@ -23,6 +24,7 @@ export type Market = {
   
   export const marketCollections: Market[] = [
     {
+      id: '6FcJaAzQnuoA6o3sVw1GD6Ba69XuL5jinZpQTzJhd2R3',
       key: 'HNYG',
       // imageUrl: 'https://img-cdn.magiceden.dev/rs:fill:400:400:0:0/plain/https://dl.airtable.com/.attachmentThumbnails/6b6c8954aed777a74de52fd70f8751ab/46b325db',
       name: 'Honey Genesis Bee',
@@ -34,6 +36,7 @@ export type Market = {
       debt: 0,
     },
     {
+      id: '',
       key: 'LIFINITY',
       // imageUrl: 'https://img-cdn.magiceden.dev/rs:fill:400:400:0:0/plain/https://dl.airtable.com/.attachmentThumbnails/6972d5c2efb77d49be97b07ccf4fbc69/e9572fb8',
       name: 'Lifinity Flares',
@@ -45,6 +48,7 @@ export type Market = {
       debt: 0,
     },
     {
+      id: '',
       key: 'ATD',
       // imageUrl: 'https://img-cdn.magiceden.dev/rs:fill:400:400:0:0/plain/https://creator-hub-prod.s3.us-east-2.amazonaws.com/atadians_pfp_1646721263627.gif',
       name: 'OG Atadians',
@@ -56,6 +60,7 @@ export type Market = {
       debt: 0,
     },
     {
+      id: 'Bw77MGpg189EaATjN67WXcnp3c4544LhKoV4Ftmdg4C',
       key: 'NOOT',
       // imageUrl: 'https://img-cdn.magiceden.dev/rs:fill:400:400:0:0/plain/https://i.imgur.com/37nsjBZ.png',
       name: 'Pesky Penguins',
