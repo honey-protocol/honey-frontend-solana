@@ -248,7 +248,7 @@ const BorrowForm = (props: BorrowProps) => {
               }
               title={
                 <span className={hAlign}>
-                  Risk level <div className={questionIcon} />
+                  Loan to Value <div className={questionIcon} />
                 </span>
               }
             />
@@ -266,7 +266,7 @@ const BorrowForm = (props: BorrowProps) => {
             <InfoBlock
               title={
                 <span className={hAlign}>
-                  New risk level <div className={questionIcon} />
+                  New LTV <div className={questionIcon} />
                 </span>
               }
               toolTipLabel={
