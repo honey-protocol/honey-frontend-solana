@@ -67,8 +67,11 @@ export type Market = {
       debt: 0,
     }
   ];
-  
+  // market names
   export const HONEY_GENESIS_BEE = 'Honey Genesis Bee';
   export const LIFINITY_FLARES = 'Lifinity Flares';
   export const OG_ATADIANS = 'OG Atadians';
-  export const PESKY_PENGUINS = 'Pesky Penguins';
+  export const PESKY_PENGUINS = 'Pesky Penguin';
+  // fees
+  export const LIQUIDATION_FEE = 0.65;
+  export const BORROW_FEE = 0;
