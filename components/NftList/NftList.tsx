@@ -26,14 +26,18 @@ const NftList = (props: NftListProps) => {
     <div className={style.nftsListContainer}>
       {data &&
         data.map(
-          (item, index) =>
-            item.name.includes(HONEY_GENESIS_BEE || LIFINITY_FLARES || OG_ATADIANS || PESKY_PENGUINS) && (
-              <div
-                className={cs(style.listItem, {
-                  [style.selectedListItem]: item.mint === selectedNFTMint
-                })}
-                key={item.name}
-              >
+          (item, index) => {
+            if (
+              item.name.includes(PESKY_PENGUINS) || 
+              item.name.includes(HONEY_GENESIS_BEE) || 
+              item.name.includes(OG_ATADIANS) || 
+              item.name.includes(LIFINITY_FLARES)
+            ) {
+              return (
+                <div 
+                  className={cs(style.listItem, {[style.selectedListItem]: item.mint === selectedNFTMint })}
+                  key={item.name}
+                >
                 <NftCard
                   onClick={() => handleClick(item)}
                   {...item}
@@ -44,8 +48,11 @@ const NftList = (props: NftListProps) => {
                   buttonText={RoundHalfDown(nftPrice * MAX_LTV, 4).toString()}
                 />
               </div>
-            )
-        )}
+              )
+            }
+          }
+        )
+      }
     </div>
   );
 };
