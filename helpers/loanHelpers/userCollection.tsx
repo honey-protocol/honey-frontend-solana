@@ -2,7 +2,7 @@ import { RoundHalfDown, RoundHalfUp } from 'helpers/utils';
 import { MAX_LTV } from '../../constants/loan';
 import BN from 'bn.js';
 import { LAMPORTS_PER_SOL } from '@solana/web3.js';
-import { getOraclePrice, ConfigureSDK } from '../../helpers/loanHelpers/index';
+import { getOraclePrice } from '../../helpers/loanHelpers/index';
 import {
   OPTIMAL_RATIO_ONE,
   OPTIMAL_RATIO_TWO,
