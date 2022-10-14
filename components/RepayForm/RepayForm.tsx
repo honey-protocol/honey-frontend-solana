@@ -17,6 +17,7 @@ import cs from 'classnames';
 import useToast from 'hooks/useToast';
 import { useSolBalance } from 'hooks/useSolBalance';
 import { MAX_LTV } from 'constants/loan';
+import { LIQUIDATION_FEE } from 'constants/borrowLendMarkets';
 
 const { format: f, formatPercent: fp, formatSol: fs, parse: p } = formatNumber;
 
@@ -45,7 +46,7 @@ const RepayForm = (props: RepayProps) => {
 
   const maxValue = userDebt != 0 ? userDebt : userAllowance;
   const solPrice = fetchedSolPrice;
-  const liquidationThreshold = 0.65;
+  const liquidationThreshold = LIQUIDATION_FEE;
   const SOLBalance = useSolBalance();
 
   const newDebt = userDebt - (valueSOL ? valueSOL : 0);
