@@ -9,6 +9,7 @@ import {
 import { ConfigureSDK, BnToDecimal } from 'helpers/loanHelpers';
 import { calcNFT, calculateCollectionwideAllowance } from 'helpers/loanHelpers/userCollection';
 import { LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js';
+import { HONEY_GENESIS_MARKET_ID, PESKY_PENGUINS_MARKET_ID } from '../../constants/loan'
 
 interface CollateralNFT {
   image: string,
@@ -25,6 +26,8 @@ interface LoanHeaderComponentProps {
 
 const LoanHeaderComponent = (props: LoanHeaderComponentProps) => {
   const { handleCreateMarket, openPositions } = props;
+  // TODO: write dynamic currentMarketId based on user interaction
+  const [currentMarketId, setCurrentMarketId] = useState(PESKY_PENGUINS_MARKET_ID);
   const sdkConfig = ConfigureSDK();
   
   /**
@@ -32,7 +35,7 @@ const LoanHeaderComponent = (props: LoanHeaderComponentProps) => {
     * @params  useConnection func. | useConnectedWallet func. | honeyID | marketID
     * @returns honeyUser | honeyReserves - used for interaction regarding the SDK
   */
-  const { honeyClient, honeyUser, honeyReserves, honeyMarket } = useMarket(sdkConfig.saberHqConnection, sdkConfig.sdkWallet!, sdkConfig.honeyId, sdkConfig.marketId);
+  const { honeyClient, honeyUser, honeyReserves, honeyMarket } = useMarket(sdkConfig.saberHqConnection, sdkConfig.sdkWallet!, sdkConfig.honeyId, currentMarketId);
 
   /**
     * @description calls upon markets which
@@ -46,7 +49,7 @@ const LoanHeaderComponent = (props: LoanHeaderComponentProps) => {
     * @params none
     * @returns collateralNFTPositions | loanPositions | fungibleCollateralPosition | loading | error
   */
-  let { loading, collateralNFTPositions, loanPositions, fungibleCollateralPosition, refreshPositions, error } = useBorrowPositions(sdkConfig.saberHqConnection, sdkConfig.sdkWallet!, sdkConfig.honeyId, sdkConfig.marketId);
+  let { loading, collateralNFTPositions, loanPositions, fungibleCollateralPosition, refreshPositions, error } = useBorrowPositions(sdkConfig.saberHqConnection, sdkConfig.sdkWallet!, sdkConfig.honeyId, currentMarketId);
   
   const [calculatedNFTPrice, setCalculatedNFTPrice] = useState(false);
   const [defaultNFT, setDefaultNFT] = useState<Array<CollateralNFT>>([]);
