@@ -15,7 +15,7 @@ export const honeyChartHeader = style({
 
 export const chartTitle = style({
   marginRight: 'auto',
-  marginBottom: 4,
+  marginBottom: 12,
   display: 'flex',
   flexDirection: 'column',
   '@media': {

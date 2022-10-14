@@ -20,12 +20,12 @@ const NotificationsList = (props: notificationListProps) => {
         </div>
       </div>
 
-      {data &&
-        data.map((item, index) => (
-          <div key={index}>
+      {data.map((item, index) => (
+          <div className={styles.hasBorder} key={index}>
             <NotificationCard {...item} />
           </div>
-        ))}
+        ))
+      }
     </div>
   );
 };

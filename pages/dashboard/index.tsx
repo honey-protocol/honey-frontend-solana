@@ -39,10 +39,36 @@ import { ToastProps } from '../../hooks/useToast';
 import { Metadata } from '@metaplex-foundation/mpl-token-metadata';
 import { generateMockHistoryData } from '../../helpers/chartUtils';
 import { HoneyProfileChart } from '../../components/HoneyProfileChart/HoneyProfileChart';
+import useWindowSize from '../../hooks/useWindowSize';
+import { TABLET_BP } from '../../constants/breakpoints';
 
 const network = 'devnet'; // change to dynamic value
 
 const data: NotificationCardProps[] = [
+  {
+    title: 'Title of notification',
+    description:
+      'Lorem Ipsum is simply dummy text of the' +
+      ' Lorem Ipsum is simply dummy text of the'
+  },
+  {
+    title: 'Title of notification',
+    description:
+      'Lorem Ipsum is simply dummy text of the' +
+      ' Lorem Ipsum is simply dummy text of the'
+  },
+  {
+    title: 'Title of notification',
+    description:
+      'Lorem Ipsum is simply dummy text of the' +
+      ' Lorem Ipsum is simply dummy text of the'
+  },
+  {
+    title: 'Title of notification',
+    description:
+      'Lorem Ipsum is simply dummy text of the' +
+      ' Lorem Ipsum is simply dummy text of the'
+  },
   {
     title: 'Title of notification',
     description:
@@ -67,6 +93,16 @@ const Dashboard: NextPage = () => {
   const [selected, setSelected] = useState<string | undefined>();
   const isMock = true;
   const userExposure = 4129.1;
+  const { width } = useWindowSize();
+  const [ dataArray, setDataArray ] = useState<NotificationCardProps[]>([]);
+
+  useEffect(() => {
+    if (width >= TABLET_BP) {
+      setDataArray(data.slice(0, 3));
+    } else {
+      setDataArray(data.slice(0, 1));
+    }
+  }, [width, data]);
 
   const getUserExposureData = () => {
     if (isMock) {
@@ -596,13 +632,12 @@ const Dashboard: NextPage = () => {
             <HoneyProfileChart data={userExposureData} value={userExposure} />
           </div>
           <div className={styles.notificationsWrapper}>
-            <NotificationsList data={data} />
+            <NotificationsList data={dataArray} />
           </div>
         </div>
         <HoneyPositionsSlider positions={getMockPositions()} />
       </HoneyContent>
       <HoneyContent sidebar={dashboardSidebar()}>
-        <div className={styles.pageTitle}>My assets</div>
         <div className={styles.pageContentElements}>
           <div className={styles.gridWrapper}>
             <HoneyCardsGrid

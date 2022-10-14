@@ -61,10 +61,26 @@ export const hideNameMobile = style({
   },
 });
 
+export const hideNameTablet = style({
+  display: 'none',
+  "@media": {
+    [`screen and (min-width: ${breakpoints.desktop}px)`]: {
+      display: 'block',
+    },
+  },
+});
 
 export const showNameMobile = style({
   "@media": {
     [`screen and (min-width: ${breakpoints.tablet}px)`]: {
+      display: 'none',
+    },
+  },
+});
+
+export const showNameTablet = style({
+  "@media": {
+    [`screen and (min-width: ${breakpoints.desktop}px)`]: {
       display: 'none',
     },
   },

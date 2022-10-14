@@ -153,7 +153,7 @@ const ProfileChart: FC<ProfileChartProps> = ({ data = [], size, value }) => {
         <HoneyButtonTabs
           items={PERIOD_NAMES.map(slug => ({
             name: PERIODS_NAME_MAPPING[slug],
-            nameMobile: PERIODS_NAME_MAPPING_MOBILE[slug],
+            nameTablet: PERIODS_NAME_MAPPING_MOBILE[slug],
             slug
           }))}
           activeItemSlug={period}

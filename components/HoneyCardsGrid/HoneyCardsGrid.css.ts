@@ -1,5 +1,6 @@
 import { globalStyle, style } from '@vanilla-extract/css';
-import { typography, vars } from '../../styles/theme.css';
+import { breakpoints, typography, vars } from '../../styles/theme.css';
+import { pageTitle as pageTitleCommon } from '../../styles/common.css';
 
 export const honeyCardsGrid = style({
   width: '100%',
@@ -9,7 +10,51 @@ export const honeyCardsGrid = style({
 
 export const gridFilters = style({
   marginBottom: 40,
-  display: 'flex'
+  display: 'flex',
+  '@media': {
+    [`screen and (max-width: ${breakpoints.mobile}px)`]: {
+      flexWrap: 'wrap',
+    },
+  },
+});
+
+export const hideMobile = style({
+  '@media': {
+    [`screen and (max-width: ${breakpoints.mobile}px)`]: {
+      display: 'none',
+    },
+  },
+});
+
+export const showMobile = style({
+  '@media': {
+    [`screen and (min-width: ${breakpoints.tablet}px)`]: {
+      display: 'none'
+    },
+  },
+});
+
+export const pageTitle = style([
+  pageTitleCommon,
+  {
+    '@media': {
+      [`screen and (min-width: ${breakpoints.tablet}px)`]: {
+        marginBottom: '12px!important'
+      },
+    },
+  }
+]);
+
+export const mobilePageTitle = style({
+  '@media': {
+    [`screen and (max-width: ${breakpoints.mobile}px)`]: {
+      width: '100%',
+      display: 'flex',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      marginBottom: 8,
+    },
+  },
 });
 
 export const gridContent = style({
@@ -19,8 +64,16 @@ export const gridContent = style({
 
 export const cardsGrid = style({
   display: 'grid',
-  gridTemplateColumns: 'repeat(3, 1fr)',
-  gridGap: '40px 12px'
+  gridTemplateColumns: 'repeat(1, 1fr)',
+  gridGap: '40px 12px',
+  '@media': {
+    [`screen and (min-width: ${breakpoints.tablet}px)`]: {
+      gridTemplateColumns: 'repeat(2, 1fr)',
+    },
+    [`screen and (min-width: ${breakpoints.desktop}px)`]: {
+      gridTemplateColumns: 'repeat(3, 1fr)',
+    }
+  },
 });
 
 export const searchInputWrapper = style({
@@ -29,7 +82,13 @@ export const searchInputWrapper = style({
   display: 'flex',
   alignItems: 'center',
   width: '100%',
-  margin: '0 4px'
+  height: 36,
+  marginBottom: 8,
+  '@media': {
+    [`screen and (min-width: ${breakpoints.tablet}px)`]: {
+      margin: '0 4px',
+    },
+  },
 });
 
 globalStyle(`${searchInputWrapper} input::placeholder`, {

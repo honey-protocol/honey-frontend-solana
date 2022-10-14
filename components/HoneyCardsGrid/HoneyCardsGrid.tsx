@@ -1,5 +1,6 @@
-import { ChangeEvent, FC, useCallback, useMemo, useState } from 'react';
+import React, { ChangeEvent, FC, useCallback, useMemo, useState } from 'react';
 import * as styles from './HoneyCardsGrid.css';
+import c from 'classnames';
 import { HoneyCardGridProps } from './types';
 import { BorrowPositionCard } from './BorrowPositionCard/BorrowPositionCard';
 import { HoneyButtonTabs } from '../HoneyButtonTabs/HoneyButtonTabs';
@@ -39,15 +40,20 @@ export const HoneyCardsGrid: FC<HoneyCardGridProps> = ({
 
   return (
     <div className={styles.honeyCardsGrid}>
+      <div className={c(styles.pageTitle, styles.hideMobile)}>My assets</div>
       <div className={styles.gridFilters}>
-        <HoneyButtonTabs
-          items={[
-            { name: 'Borrow', slug: 'borrow' },
-            { name: 'Lend', slug: 'lend' }
-          ]}
-          activeItemSlug={positionByType}
-          onClick={slug => setPositionByType(slug as PositionByType)}
-        />
+        <div className={styles.mobilePageTitle}>
+          <div className={c(styles.pageTitle, styles.showMobile)}>My assets</div>
+
+          <HoneyButtonTabs
+            items={[
+              { name: 'Borrow', slug: 'borrow' },
+              { name: 'Lend', slug: 'lend' }
+            ]}
+            activeItemSlug={positionByType}
+            onClick={slug => setPositionByType(slug as PositionByType)}
+          />
+        </div>
 
         <div className={styles.searchInputWrapper}>
           <SearchInput
@@ -63,6 +69,7 @@ export const HoneyCardsGrid: FC<HoneyCardGridProps> = ({
             { name: 'High IR', slug: 'high_ir' },
             { name: 'High Debt', slug: 'high_debt' }
           ]}
+          isFullWidth
           activeItemSlug={positionByValue}
           onClick={slug => setPositionByValue(slug as PositionByValue)}
         />
