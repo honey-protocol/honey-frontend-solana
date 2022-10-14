@@ -22,6 +22,7 @@ import useToast from 'hooks/useToast';
 import { useSolBalance } from 'hooks/useSolBalance';
 import cs from 'classnames';
 import Nft from 'pages/farm/[name]';
+import { BORROW_FEE, LIQUIDATION_FEE } from 'constants/borrowLendMarkets';
 
 const { format: f, formatPercent: fp, formatSol: fs, parse: p } = formatNumber;
 
@@ -61,8 +62,8 @@ const BorrowForm = (props: BorrowProps) => {
   const borrowedValue = userDebt;
   const maxValue = userAllowance;
   const solPrice = fetchedSolPrice;
-  const liquidationThreshold = 0.65; // TODO: change where relevant, currently set to 65% on mainnet
-  const borrowFee = 0.0; // TODO: 1,5% later but 0% for now
+  const liquidationThreshold = LIQUIDATION_FEE; // TODO: change where relevant, currently set to 65% on mainnet
+  const borrowFee = BORROW_FEE; // TODO: 1,5% later but 0% for now
 
   const newAdditionalDebt = valueSOL * (1 + borrowFee);
   const newTotalDebt = newAdditionalDebt
