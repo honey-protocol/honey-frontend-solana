@@ -72,7 +72,7 @@ const { format: f, formatPercent: fp, formatSol: fs } = formatNumber;
 
 const Markets: NextPage = () => {
   // TODO: write dynamic currentMarketId based on user interaction
-  const [currentMarketId, setCurrentMarketId] = useState(PESKY_PENGUINS_MARKET_ID);
+  const [currentMarketId, setCurrentMarketId] = useState(HONEY_GENESIS_MARKET_ID);
   const wallet = useConnectedWallet();
   const sdkConfig = ConfigureSDK();
 
@@ -88,6 +88,7 @@ const Markets: NextPage = () => {
     currentMarketId
   );
 
+  console.log('honey client', honeyClient);
   /**
    * @description fetches open positions and the amount regarding loan positions / token account
    * @params none

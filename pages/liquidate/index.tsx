@@ -51,7 +51,7 @@ import { HONEY_GENESIS_BEE, LIFINITY_FLARES, LIQUIDATION_FEE, OG_ATADIANS, PESKY
 const { formatPercent: fp, formatSol: fs, formatRoundDown: fd } = formatNumber;
 const Liquidate: NextPage = () => {
   // TODO: write dynamic currentMarketId based on user interaction
-  const [currentMarketId, setCurrentMarketId] = useState(PESKY_PENGUINS_MARKET_ID);
+  const [currentMarketId, setCurrentMarketId] = useState(HONEY_GENESIS_MARKET_ID);
   // start sdk integration
   const liquidationThreshold = LIQUIDATION_FEE; // TODO: values like this should be imported from constants per collection
   // init anchor

@@ -44,7 +44,7 @@ const { format: f, formatPercent: fp, formatSol: fs } = formatNumber;
 const Lend: NextPage = () => {
   // Start: SDK integration
   // TODO: write dynamic currentMarketId based on user interaction
-  const [currentMarketId, setCurrentMarketId] = useState(PESKY_PENGUINS_MARKET_ID);
+  const [currentMarketId, setCurrentMarketId] = useState(HONEY_GENESIS_MARKET_ID);
   const sdkConfig = ConfigureSDK();
   let walletPK = sdkConfig.sdkWallet?.publicKey;
 
