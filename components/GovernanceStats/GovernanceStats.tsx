@@ -9,6 +9,7 @@ import { vars } from 'styles/theme.css';
 import { formatNumber } from '../../helpers/format';
 import { GoveranceStatsProps } from './types';
 import HoneyPeriod from '../HoneyPeriod/HoneyPeriod';
+import {HoneyLockedStatus} from "../HoneyLockedStatus/HoneyLockedStatus";
 
 const { format: f, formatPercent: fp, formatShortName: fsn } = formatNumber;
 
@@ -103,14 +104,10 @@ export const GovernanceStats: FC<GoveranceStatsProps> = ({
           </div>
         </div>
         <div className={styles.sliderWrapper}>
-          <div className={c(styles.title, styles.yellow)}>
-            {fp(lockedHoney / honeySupply)}
-          </div>
-          <HoneySlider
-            currentValue={0}
-            maxValue={honeySupply}
-            minAvailableValue={lockedHoney}
-            isReadonly
+          <HoneyLockedStatus
+            circulatingHoneyTokens={Math.random() * honeySupply}
+            lockedHoneyTokens={lockedHoney}
+            totalHoneyTokens={honeySupply}
           />
         </div>
       </div>
