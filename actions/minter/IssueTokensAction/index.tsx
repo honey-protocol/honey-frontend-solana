@@ -24,7 +24,9 @@ import { useParseTokenAmount } from 'hooks/useParseTokenAmount';
 import { serializeToBase64 } from 'helpers/makeTransaction';
 import { useParsedMintWrapper } from 'helpers/parser';
 import type { ActionFormProps } from '../../types';
-import { Input } from 'degen';
+import cs from 'classnames';
+import { HoneyTextArea } from 'components/HoneyTextArea/HoneyTextArea';
+import * as styles from '../../../components/NewProposalSidebar/CreateProposalTab/CreateProposalTab.css';
 
 export const IssueTokensAction: React.FC<ActionFormProps> = ({
   actor,
@@ -161,14 +163,17 @@ export const IssueTokensAction: React.FC<ActionFormProps> = ({
 
   return (
     <>
-      <Input
-        label="Amount"
-        type="number"
-        min={0}
-        value={amountStr || ''}
-        onChange={e => setAmountStr(e.target.value)}
-        disabled={!actor}
-      />
+      <div className={cs(styles.mb12, styles.singleLineInput)}>
+        <HoneyTextArea
+          title="Amount"
+          // type="number"
+          // min={0}
+          placeholder="Amount"
+          value={amountStr}
+          onChange={e => setAmountStr(e.target.value)}
+          // disabled={!actor}
+        />
+      </div>
       {/* <InputTokenAmount
         label="Amount"
         token={govToken ?? null}
@@ -180,12 +185,15 @@ export const IssueTokensAction: React.FC<ActionFormProps> = ({
           setAmountStr(e);
         }}
       /> */}
-      <Input
-        label="Recipient"
-        id="destination"
-        placeholder="Address to give tokens to"
-        onChange={e => setDestinationStr(e.target.value)}
-      />
+      <div className={cs(styles.mb12, styles.singleLineInput)}>
+        <HoneyTextArea
+          title="Recipient"
+          id="destination"
+          placeholder="Token recipient address"
+          value={destinationStr}
+          onChange={e => setDestinationStr(e.target.value)}
+        />
+      </div>
       {/* <label tw="flex flex-col gap-1" htmlFor="destination">
         <span tw="text-sm">Recipient</span>
         <InputText

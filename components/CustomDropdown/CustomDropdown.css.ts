@@ -1,13 +1,19 @@
 import { style } from '@vanilla-extract/css';
-import { vars } from 'degen';
+import { typography, vars } from 'styles/theme.css';
 
-export const dropdown = style({
-  width: '100%',
-  position: 'relative',
-  borderWidth: '2px',
-  borderRadius: vars.radii['2xLarge'],
-  cursor: 'pointer',
-  color: vars.colors.text
+export const dropdown = style([
+  typography.body,
+  {
+    width: '100%',
+    position: 'relative',
+    borderRadius: 12,
+    border: `2px solid ${vars.colors.grayDark}`,
+    cursor: 'pointer'
+  }
+]);
+
+export const dropdownActive = style({
+  borderColor: vars.colors.brownLight
 });
 
 export const dropdownFilterSelected = style({
@@ -20,26 +26,28 @@ export const dropdownSelect = style({
   top: 'calc(100% + 5px)',
   width: '100%',
   listStyle: 'none',
-  background: vars.colors.backgroundSecondary,
-  borderRadius: vars.radii['2xLarge'],
+  background: vars.colors.white,
+  borderRadius: 12,
+  border: `2px solid ${vars.colors.grayDark}`,
   margin: '0',
   padding: '0',
   borderWidth: '2px',
   overflow: 'hidden',
   transitionDuration: '0.5s',
-  cursor: 'pointer'
+  cursor: 'pointer',
+  zIndex: 10
 });
 
 export const dropdownSelectOption = style({
   padding: '12px 20px',
   cursor: 'pointer',
-  borderBottomWidth: '1.5px',
-  borderBottomColor: vars.colors.foregroundSecondary,
+  borderBottom: '1.5px solid',
+  borderBottomColor: vars.colors.grayMiddle,
   transitionDuration: '.5s',
   ':last-child': {
     borderBottomWidth: 0
   },
   ':hover': {
-    background: vars.colors.background
+    background: vars.colors.grayLight
   }
 });

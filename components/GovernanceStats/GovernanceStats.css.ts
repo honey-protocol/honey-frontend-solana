@@ -1,4 +1,4 @@
-import { style } from '@vanilla-extract/css';
+import { globalStyle, style } from '@vanilla-extract/css';
 import { typography, vars } from '../../styles/theme.css';
 
 export const governanceGraphs = style({
@@ -102,3 +102,29 @@ export const sliderWrapper = style({
 export const content = style({
   height: 41
 });
+
+export const currentValueSlider = style({});
+
+globalStyle(`${currentValueSlider} > .ant-slider-rail`, {
+  backgroundColor: `${vars.colors.black} !important`
+});
+
+export const minAvailableSlider = style({});
+
+globalStyle(
+  `${minAvailableSlider} > .ant-slider-rail, ${minAvailableSlider} > .ant-slider-track`,
+  {
+    backgroundColor: `${vars.colors.brownMiddle} !important`,
+    background: `${vars.colors.brownMiddle} !important`
+  }
+);
+
+export const maxUnavailableSlider = style({});
+
+globalStyle(
+  `${maxUnavailableSlider} > .ant-slider-rail, ${maxUnavailableSlider} > .ant-slider-track`,
+  {
+    backgroundColor: `${vars.colors.grayMiddle} !important`,
+    background: `${vars.colors.grayMiddle} !important`
+  }
+);

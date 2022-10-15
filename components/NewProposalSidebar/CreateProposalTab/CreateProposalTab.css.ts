@@ -2,12 +2,12 @@ import { style } from '@vanilla-extract/css';
 import { typography, vars } from '../../../styles/theme.css';
 
 export const createProposalTab = style({
-    width: '100%',
-    height: '100%',
-    display: 'flex',
-    flexDirection: 'column',
-    background: vars.colors.white,
-    padding: 16
+  width: '100%',
+  height: '100%',
+  display: 'flex',
+  flexDirection: 'column',
+  background: vars.colors.white,
+  padding: 16
 });
 
 const formSection = style([
@@ -22,15 +22,21 @@ export const row = style([
     display: 'flex'
   }
 ]);
+export const mb12 = style({
+  marginBottom: 12
+});
 
 export const col = style({
   flex: '100% 0 0'
 });
 
-export const tabTitle = style([typography.title, {
-  color: vars.colors.black,
-  marginBottom: 12
-}])
+export const tabTitle = style([
+  typography.title,
+  mb12,
+  {
+    color: vars.colors.black
+  }
+]);
 
 export const buttons = style([
   {
@@ -51,16 +57,30 @@ export const bigCol = style([
   }
 ]);
 
-export const titleInput = style({
-  marginBottom: 12,
-  minHeight: 72
-})
+export const titleInput = style([
+  mb12,
+  {
+    marginBottom: 12,
+    minHeight: 72
+  }
+]);
 
-export const descriptionInput = style({
-  marginBottom: 12,
-  minHeight: 152
-})
+export const descriptionInput = style([
+  mb12,
+  {
+    marginBottom: 12,
+    minHeight: 152
+  }
+]);
 
-export const discussionInput = style({
+export const singleLineInput = style({
   height: 52
-})
+});
+
+export const discussionInput = style([
+  formSection,
+  singleLineInput,
+  {
+    width: '100%'
+  }
+]);

@@ -25,6 +25,7 @@ import { useGovernor } from 'hooks/tribeca/useGovernor';
 import { useProposals } from 'hooks/tribeca/useProposals';
 import { ProposalState } from 'helpers/dao';
 import { vars } from 'styles/theme.css';
+import { getVoteCountFmt } from 'helpers/utils';
 
 const { format: f, formatShortName: fsn } = formatNumber;
 const NUM_PLACEHOLDERS = 0;
@@ -37,7 +38,7 @@ const Governance: NextPage = () => {
 
   const [sidebarMode, setSidebarMode] =
     useState<GovernanceSidebarForm>('get_vehoney');
-
+  const { veToken } = useGovernor();
   const proposals = useProposals();
 
   const allProposals = [
@@ -88,6 +89,8 @@ const Governance: NextPage = () => {
     console.log({ data });
     setTableData(data);
   }, [allProposals]);
+
+  console.log({ tableData });
 
   useEffect(() => {
     getTableData();
@@ -168,7 +171,11 @@ const Governance: NextPage = () => {
         },
         dataIndex: 'votes',
         render: (votes: number) => {
-          return <div className={style.textTablet}>{fsn(votes)}</div>;
+          return (
+            <div className={style.textTablet}>
+              {veToken ? fsn(getVoteCountFmt(votes, veToken)) : 0}
+            </div>
+          );
         }
       },
       {
@@ -177,7 +184,11 @@ const Governance: NextPage = () => {
         },
         dataIndex: 'against',
         render: (against: number) => {
-          return <div className={style.textTablet}>{fsn(against)}</div>;
+          return (
+            <div className={style.textTablet}>
+              {veToken ? fsn(getVoteCountFmt(against, veToken)) : 0}
+            </div>
+          );
         }
       },
       {

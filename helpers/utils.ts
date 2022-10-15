@@ -18,7 +18,7 @@ import {
 import * as anchor from '@project-serum/anchor';
 import type { Network } from '@saberhq/solana-contrib';
 import type { Cluster, TransactionInstruction } from '@solana/web3.js';
-import { TokenInfo } from '@saberhq/token-utils';
+import { Fraction, Token, TokenInfo } from '@saberhq/token-utils';
 import { VoteSide } from 'helpers/dao';
 import { SmartWalletTransactionData } from '@gokiprotocol/client';
 import BN from 'bn.js';
@@ -428,3 +428,13 @@ export const sideColor = (side: VoteSide) =>
     : side === VoteSide.Abstain
     ? `colors.yellow.500`
     : `colors.transparent`;
+
+export const getVoteCountFmt = (votes: number, veToken: Token) => {
+  const voteCount = new BN(votes);
+
+  if (veToken && voteCount !== null) {
+    return new Fraction(voteCount, 10 ** veToken.decimals).asNumber;
+  } else {
+    return 0;
+  }
+};

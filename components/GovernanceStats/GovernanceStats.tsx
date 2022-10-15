@@ -9,6 +9,9 @@ import { vars } from 'styles/theme.css';
 import { formatNumber } from '../../helpers/format';
 import { GoveranceStatsProps } from './types';
 import HoneyPeriod from '../HoneyPeriod/HoneyPeriod';
+import HoneyTooltip from 'components/HoneyTooltip/HoneyTooltip';
+import { questionIcon, questionIconYellow } from 'styles/icons.css';
+import { Space } from 'antd';
 
 const { format: f, formatPercent: fp, formatShortName: fsn } = formatNumber;
 
@@ -20,7 +23,7 @@ export const GovernanceStats: FC<GoveranceStatsProps> = ({
   const honeyBalance = 10012.94;
   const veHoneyBalance = 12012.94;
   const honeySupply = 2_000_932;
-  const lockedHoney = 100_500;
+  const lockedHoney = 5_00_500;
   const lockPeriodEnd = 1759488639952;
 
   const getChartData = () => {
@@ -38,7 +41,11 @@ export const GovernanceStats: FC<GoveranceStatsProps> = ({
     <div className={styles.governanceGraphs}>
       <div className={c(styles.statBlock, styles.lockPeriodBlock)}>
         <div className={styles.blockTitle}>
-          <div className={c(styles.title, styles.yellow)}>Lock period</div>
+          <HoneyTooltip label="Placeholder tooltip label">
+            <Space className={c(styles.title, styles.yellow)} size="small">
+              Lock period <div className={questionIconYellow} />
+            </Space>
+          </HoneyTooltip>
           <div className={c(styles.value, styles.lockPeriodValue)}>
             <HoneyPeriod from={Date.now()} to={lockPeriodEnd} />
           </div>
@@ -47,13 +54,23 @@ export const GovernanceStats: FC<GoveranceStatsProps> = ({
           <div className={c(styles.title, styles.yellow)}>
             {fp(lockedPercent)}
           </div>
-          <HoneySlider currentValue={200} maxValue={1000} isReadonly />
+          <HoneySlider
+            maxSafePosition={0}
+            currentValue={200}
+            maxValue={1000}
+            isReadonly
+          />
         </div>
       </div>
 
       <div className={styles.statBlock}>
         <div className={styles.blockTitle}>
-          <div className={c(styles.title, styles.yellow)}>Honey balance</div>
+          <HoneyTooltip label="Placeholder tooltip lable">
+            <Space size="small" className={c(styles.title, styles.yellow)}>
+              Honey balance
+              <div className={questionIconYellow} />
+            </Space>
+          </HoneyTooltip>
           <div className={styles.value}>{f(honeyBalance)}</div>
         </div>
 
@@ -73,7 +90,11 @@ export const GovernanceStats: FC<GoveranceStatsProps> = ({
 
       <div className={styles.statBlock}>
         <div className={styles.blockTitle}>
-          <div className={styles.title}>veHoney or voting power</div>
+          <HoneyTooltip label="Placeholder tooltip label">
+            <Space className={styles.title}>
+              veHoney or voting power <div className={questionIcon} />
+            </Space>
+          </HoneyTooltip>
           <div className={styles.value}>{f(veHoneyBalance)}</div>
         </div>
 
@@ -106,12 +127,18 @@ export const GovernanceStats: FC<GoveranceStatsProps> = ({
           <div className={c(styles.title, styles.yellow)}>
             {fp(lockedHoney / honeySupply)}
           </div>
-          <HoneySlider
-            currentValue={0}
-            maxValue={honeySupply}
-            minAvailableValue={lockedHoney}
-            isReadonly
-          />
+          <HoneyTooltip label="Total Honey supply: 1 billion">
+            <HoneySlider
+              currentValue={0}
+              maxValue={honeySupply}
+              minAvailableValue={lockedHoney}
+              maxAvailablePosition={0.6}
+              isReadonly
+              minAvailableSliderClassName={styles.minAvailableSlider}
+              currentValueSliderClassName={styles.currentValueSlider}
+              maxUnavailableSliderClassName={styles.maxUnavailableSlider}
+            />
+          </HoneyTooltip>
         </div>
       </div>
     </div>

@@ -1,14 +1,15 @@
 import { style } from '@vanilla-extract/css';
-import {
-  Box,
-  IconCheck,
-  IconChevronDown,
-  IconChevronUp,
-  Stack,
-  Text
-} from 'degen';
+import { Space, Typography } from 'antd';
 import React, { useEffect, useRef, useState } from 'react';
 import * as styles from './CustomDropdown.css';
+import {
+  CaretDownOutlined,
+  CaretUpOutlined,
+  CheckOutlined
+} from '@ant-design/icons';
+import cs from 'classnames';
+
+const { Text } = Typography;
 
 type Option = {
   value: string;
@@ -42,18 +43,21 @@ const CustomDropdown = (props: CustomDropdownProps) => {
   }, [isOpen, setIsOpen, optionsContainerRef]);
 
   return (
-    <Box className={styles.dropdown}>
-      <Box
+    <div className={cs(styles.dropdown, { [styles.dropdownActive]: isOpen })}>
+      <div
         onClick={() => setIsOpen(!isOpen)}
         className={styles.dropdownFilterSelected}
       >
-        <Stack direction="horizontal" justify="space-between">
+        <Space
+          direction="horizontal"
+          style={{ justifyContent: 'space-between' }}
+        >
           <Text>{selectedOption.title}</Text>
-          {!isOpen ? <IconChevronDown /> : <IconChevronUp />}
-        </Stack>
-      </Box>
-      <Box
-        display={isOpen ? 'block' : 'none'}
+          {!isOpen ? <CaretDownOutlined /> : <CaretUpOutlined />}
+        </Space>
+      </div>
+      <div
+        style={{ display: isOpen ? 'block' : 'none' }}
         className={styles.dropdownSelect}
         ref={optionsContainerRef}
       >
@@ -61,20 +65,23 @@ const CustomDropdown = (props: CustomDropdownProps) => {
           (option, i) =>
             option.title.length > 0 &&
             option.value.length > 0 && (
-              <Box
+              <div
                 onClick={() => onSelect(option)}
                 key={option.value}
                 className={styles.dropdownSelectOption}
               >
-                <Stack direction="horizontal" justify="space-between">
-                  <Text size="small">{option.title}</Text>
-                  {option.value === selectedOption.value && <IconCheck />}
-                </Stack>
-              </Box>
+                <Space
+                  direction="horizontal"
+                  style={{ justifyContent: 'space-between' }}
+                >
+                  <Text>{option.title}</Text>
+                  {option.value === selectedOption.value && <CheckOutlined />}
+                </Space>
+              </div>
             )
         )}
-      </Box>
-    </Box>
+      </div>
+    </div>
   );
 };
 
