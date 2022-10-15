@@ -10,7 +10,7 @@ const HoneyTableRow = (props: HoneyTableMobileProps) => {
 
   return (
     <div className={style.tableLayout}>
-      <div className={style.tableRow}>
+      <div className='tableRow'>
         {children}
       </div>
     </div>

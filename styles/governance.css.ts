@@ -1,4 +1,4 @@
-import { style } from '@vanilla-extract/css';
+import { globalStyle, style } from '@vanilla-extract/css';
 import { breakpoints, typography, vars } from './theme.css';
 import { honeyTableExpandedRow } from '../components/HoneyTable/HoneyTable.css';
 import {
@@ -38,7 +38,8 @@ export const toggleText = style([
 export const nameCell = style({
   display: 'flex',
   alignItems: 'center',
-  overflow: 'hidden'
+  overflow: 'hidden',
+  width: '100%'
 });
 
 export const logoWrapper = style({
@@ -78,7 +79,18 @@ export const collectionName = style([
   {
     whiteSpace: 'nowrap',
     overflow: 'hidden',
-    textOverflow: 'ellipsis'
+    textOverflow: 'ellipsis',
+  }
+]);
+
+export const collectionNameCreate = style([
+  typography.body,
+  {
+    '@media': {
+      [`screen and (max-width: ${breakpoints.mobile}px)`]: {
+        fontSize: 12
+      },
+    }
   }
 ]);
 
@@ -148,5 +160,54 @@ export const create = style({
   backgroundImage: `repeating-linear-gradient(0deg, ${vars.colors.grayDark}, ${vars.colors.grayDark} 10px, transparent 10px, transparent 20px), repeating-linear-gradient(90deg, ${vars.colors.grayDark}, ${vars.colors.grayDark} 10px, transparent 10px, transparent 20px), repeating-linear-gradient(180deg, ${vars.colors.grayDark}, ${vars.colors.grayDark} 10px, transparent 10px, transparent 20px), repeating-linear-gradient(270deg, ${vars.colors.grayDark}, ${vars.colors.grayDark} 10px, transparent 10px, transparent 20px)`,
   borderImage: `repeating-linear-gradient(0deg, ${vars.colors.grayDark}, ${vars.colors.grayDark} 10px, transparent 10px, transparent 20px)`
 });
+
+export const mobileTableTitle = style({
+  width: '100%',
+  display: 'flex',
+  alignItems: 'flex-start',
+  justifyContent: 'space-between',
+  marginBottom: 20
+});
+
+export const mobileTableHeader = style({
+  width: '100%',
+  display: 'flex',
+  alignItems: 'flex-start',
+  justifyContent: 'space-between',
+});
+
+export const governanceTableMobile = style({});
+export const governanceTable = style({});
+
+globalStyle(`${governanceTableMobile} tr:first-child ${governanceTable}`, {
+  display: 'flex',
+  flexWrap: 'wrap',
+  width: '100%',
+  flexDirection: 'column-reverse'
+});
+
+globalStyle(`${governanceTableMobile} tr:first-child .tableRow > div`, {
+  paddingTop: 8,
+  paddingBottom: 14
+});
+
+globalStyle(`${governanceTableMobile} tr:first-child ${governanceTable} .tableTitle:after`, {
+  bottom: 'initial',
+  top: 0
+});
+
+globalStyle(`${governanceTableMobile} tr:first-child ${governanceTable} .tableTitle`, {
+  paddingBottom: 0,
+  paddingTop: 11
+});
+
+export const tableCell = style([
+  typography.button,
+  {
+    width: '33.3%',
+    textAlign: 'center',
+    color: vars.colors.grayTransparent
+  }
+]);
 
 export const selectedProposal = style({});

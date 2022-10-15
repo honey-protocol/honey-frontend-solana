@@ -19,11 +19,11 @@ export const tableLayout = style({
   tableLayout: 'fixed',
 });
 
-export const tableRow = style({
+globalStyle(`.tableRow`, {
   display: 'table-row'
 });
 
-globalStyle(`${tableRow} > div`, {
+globalStyle(`.tableRow > div`, {
   display: 'table-cell',
   position: 'relative',
   paddingTop: '14px',
@@ -31,7 +31,7 @@ globalStyle(`${tableRow} > div`, {
   height: 40
 });
 
-globalStyle(`${tableRow} > div:after`, {
+globalStyle(`.tableRow > div:after`, {
   content: '',
   position: 'absolute',
   width: 20,
@@ -45,7 +45,7 @@ globalStyle(`${tableRow} > div:after`, {
   backgroundSize: '5px 1px, 5px 1px, 1px 5px, 1px 5px'
 });
 
-globalStyle(`${tableRow} > div:last-child:after`, {
+globalStyle(`.tableRow > div:last-child:after`, {
   display: 'none'
 });
 

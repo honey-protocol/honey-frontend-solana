@@ -20,6 +20,9 @@ import NewProposalSidebar from '../../components/NewProposalSidebar/NewProposalS
 import GetVeHoneySidebar from '../../components/GetVeHoneySidebar/GetVeHoneySidebar';
 import { formatNumber } from '../../helpers/format';
 import {GovernanceStats} from "../../components/GovernanceStats/GovernanceStats";
+import { hideTablet, showTablet, table } from 'styles/markets.css';
+import HoneyTableNameCell from '../../components/HoneyTable/HoneyTableNameCell/HoneyTableNameCell';
+import HoneyTableRow from '../../components/HoneyTable/HoneyTableRow/HoneyTableRow';
 
 const { format: f, formatShortName: fsn } = formatNumber;
 
@@ -161,6 +164,53 @@ const Governance: NextPage = () => {
     [tableData, isDraftFilterEnabled]
   );
 
+  const columnsMobile: ColumnType<GovernanceTableRow>[] = useMemo(
+    () => [
+      {
+        dataIndex: 'name',
+        key: 'name',
+        render: (name: string, row: GovernanceTableRow) => {
+          return (
+            <div className={style.governanceTable}>
+              <HoneyTableNameCell
+                leftSide={
+                  <div className={style.nameCell}>
+                    <div className={style.logoWrapper}>
+                      <div className={style.collectionLogo}>
+                        <HexaBoxContainer>
+                          <div
+                            className={c(style.statusIcon, style.statusExecutedIcon)}
+                          />
+                        </HexaBoxContainer>
+                      </div>
+                    </div>
+                    <div className={style.collectionName}>{name}</div>
+                  </div>
+                }
+                rightSide={
+                  <div className={style.buttonsCell}>
+                    <HoneyButton variant="text">
+                      Vote <div className={style.arrowIcon} />
+                    </HoneyButton>
+                  </div>
+                }
+              />
+
+              <HoneyTableRow>
+                <div className={style.textTablet}>{fsn(row.votes)}</div>
+                <div className={style.textTablet}>{fsn(row.against)}</div>
+                <div>
+                  <ProgressStatus percent={(row.votes / row.votesRequired) * 100} />
+                </div>
+              </HoneyTableRow>
+            </div>
+          );
+        }
+      }
+    ],
+    [tableData, isDraftFilterEnabled]
+  );
+
   const renderSidebar = () => {
     switch (sidebarMode) {
       case 'vote':
@@ -207,21 +257,50 @@ const Governance: NextPage = () => {
       <HoneyContent sidebar={
         <HoneySider>{renderSidebar()}</HoneySider>
       }>
-        <HoneyTable
-          tableLayout={'fixed'}
-          pagination={false}
-          hasRowsShadow={true}
-          rowKey={'id'}
-          columns={columns}
-          dataSource={tableData}
-          onRow={(record, rowIndex) => {
-            return {
-              onClick: event => handleRowClick(event, record)
-            };
-          }}
-          rowClassName={getRowClassName}
-          selectedRowsKeys={[selectedProposalId]}
-        />
+        <div className={hideTablet}>
+          <HoneyTable
+            tableLayout={'fixed'}
+            pagination={false}
+            hasRowsShadow={true}
+            rowKey={'id'}
+            columns={columns}
+            dataSource={tableData}
+            onRow={(record, rowIndex) => {
+              return {
+                onClick: event => handleRowClick(event, record)
+              };
+            }}
+            rowClassName={getRowClassName}
+            selectedRowsKeys={[selectedProposalId]}
+          />
+        </div>
+
+        <div className={showTablet}>
+          <div className={style.mobileTableTitle}>
+            <div>
+              {MainTitleTable()}
+            </div>
+
+            {DraftToggle()}
+          </div>
+
+          <div className={style.mobileTableHeader}>
+            <div className={style.tableCell}>Voted For</div>
+            <div className={style.tableCell}>Against</div>
+            <div className={style.tableCell}>Status</div>
+          </div>
+
+          <HoneyTable
+            hasRowsShadow={true}
+            tableLayout="fixed"
+            columns={columnsMobile}
+            dataSource={tableData}
+            pagination={false}
+            showHeader={false}
+            className={c(table, style.governanceTableMobile)}
+          />
+        </div>
+
         <div className={style.create}>
           <div className={style.nameCell}>
             <div className={style.logoWrapper}>
@@ -231,7 +310,7 @@ const Governance: NextPage = () => {
                 </HexaBoxContainer>
               </div>
             </div>
-            <div className={style.collectionName}>
+            <div className={style.collectionNameCreate}>
               Do you want to suggest a new one?
             </div>
           </div>

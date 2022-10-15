@@ -1,10 +1,24 @@
 import { style } from '@vanilla-extract/css';
-import { typography, vars } from '../../styles/theme.css';
+import { breakpoints, typography, vars } from '../../styles/theme.css';
 
 export const governanceGraphs = style({
   display: 'flex',
   marginBottom: '16px',
-  width: '100%'
+  width: '100%',
+  overflowX: 'auto',
+  scrollbarWidth: 'none',
+  selectors: {
+    '&::-webkit-scrollbar': {
+      display: 'none'
+    }
+  },
+  "@media": {
+    [`screen and (max-width: ${breakpoints.mobile}px)`]: {
+      margin: '0 -12px 24px',
+      width: 'calc(100% + 24px)',
+      padding: '0 12px'
+    },
+  },
 });
 
 export const statBlock = style({
@@ -21,7 +35,13 @@ export const statBlock = style({
     '&:not(:last-child)': {
       marginRight: 16
     }
-  }
+  },
+  "@media": {
+    [`screen and (max-width: ${breakpoints.mobile}px)`]: {
+      width: 327,
+      flexShrink: 0
+    },
+  },
 });
 
 export const buttonWrapper = style({
