@@ -26,6 +26,7 @@ import ProposalExecute from './Proposals/ProposalExecute/ProposalExecute';
 import ProposalActivate from './Proposals/ProposalActivate/ProposalActivate';
 import ProposalHistory from './Proposals/ProposalHistory/ProposalHistory';
 import cs from 'classnames';
+import { questionIcon } from 'styles/icons.css';
 
 const { formatShortName: fsn } = formatNumber;
 
@@ -303,7 +304,8 @@ const VoteForm: FC<VoteFormProps> = (props: VoteFormProps) => {
                   ? 'Voting'
                   : PROPOSAL_STATE_LABELS[proposalInfo?.status.state || 0]
               }
-              valueSize="big"
+              valueColor={proposalInfo?.status.executed ? 'green' : undefined}
+              valueSize="normal"
               footer={<span>Status</span>}
             />
           </div>
@@ -311,14 +313,24 @@ const VoteForm: FC<VoteFormProps> = (props: VoteFormProps) => {
             <InfoBlock
               value={fsn(10000000)}
               valueSize="big"
-              footer={<span>Min Quorum</span>}
+              footer={
+                <span>
+                  Min Quorum <span className={questionIcon} />
+                </span>
+              }
+              toolTipLabel="Tooltip label for Min Quorum"
             />
           </div>
           <div className={styles.col}>
             <InfoBlock
               value={fsn(5000000)}
               valueSize="big"
-              footer={<span>Min Diff</span>}
+              footer={
+                <span>
+                  Min Diff <span className={questionIcon} />
+                </span>
+              }
+              toolTipLabel="Label for Min Diff"
             />
           </div>
         </div>

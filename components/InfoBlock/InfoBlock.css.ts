@@ -28,4 +28,8 @@ export const label = style([
   }
 ]);
 
+export const green = style({
+  color: vars.colors.green
+});
+
 export const footer = style([label]);

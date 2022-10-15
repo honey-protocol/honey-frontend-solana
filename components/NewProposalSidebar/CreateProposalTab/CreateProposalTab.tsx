@@ -16,6 +16,8 @@ import { HelperCard } from 'components/common/HelperCard';
 import { Spinner, Text } from 'degen';
 import { useExecutiveCouncil } from 'hooks/tribeca/useExecutiveCouncil';
 import useToast from 'hooks/useToast';
+import HoneyWarning from 'components/HoneyWarning/HoneyWarning';
+import cs from 'classnames';
 
 const { format: f, formatPercent: fp, formatUsd: fu } = formatNumber;
 
@@ -159,28 +161,32 @@ const CreateProposalTab: FC = () => {
           />
         </div>
 
-        <CustomDropdown
-          onChange={value => {
-            setActionType(value as ActionType);
-            setError(null);
-            setTxRaw('');
-          }}
-          options={ACTIONS.map(({ title, isEnabled }) => {
-            if (isEnabled && ctx && !isEnabled(ctx)) {
-              return { title: '', value: '' };
-            }
-            return {
-              title,
-              value: title
-            };
-          })}
-        />
+        <div className={styles.tabTitle}>Proposed Action</div>
+        <div className={cs(styles.row, styles.mb12)}>
+          <CustomDropdown
+            onChange={value => {
+              setActionType(value as ActionType);
+              setError(null);
+              setTxRaw('');
+            }}
+            options={ACTIONS.map(({ title, isEnabled }) => {
+              if (isEnabled && ctx && !isEnabled(ctx)) {
+                return { title: '', value: '' };
+              }
+              return {
+                title,
+                value: title
+              };
+            })}
+          />
+        </div>
+
         {currentAction && (
           <>
             {currentAction.description && (
-              <HelperCard>
-                <Text>{currentAction.description}</Text>
-              </HelperCard>
+              <div className={styles.row}>
+                <HoneyWarning message={currentAction.description} />
+              </div>
             )}
             <currentAction.Renderer
               actor={actor}

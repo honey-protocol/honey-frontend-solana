@@ -16,6 +16,13 @@ export const questionIcon = style({
   background: 'url("/images/question.svg") center center no-repeat'
 });
 
+export const questionIconYellow = style([
+  questionIcon,
+  {
+    background: 'url("/images/question-yellow.svg") center center no-repeat'
+  }
+]);
+
 export const arrowRightIcon = style({
   background: 'url(/images/arrow-right.svg) center no-repeat'
 });

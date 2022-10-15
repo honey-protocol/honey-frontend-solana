@@ -25,7 +25,18 @@ const content = [
   'For a proposal to be executed there should be a minimum of 10,000,000 $veHONEY votes casted resulting in at least 2/3 of the votes for one option.'
 ];
 
-const HowItWorksTab: FC = () => {
+interface HowItWorksTabProps {
+  setActiveTab: Function;
+  setHasReadHowItWorks: Function;
+  hasReadHowItWorks: boolean;
+}
+
+const HowItWorksTab = (props: HowItWorksTabProps) => {
+  const onDontShowAgainToggle = (checked: boolean) => {
+    window.localStorage.setItem('hasReadHowItWorks', JSON.stringify(checked));
+    props.setHasReadHowItWorks(checked);
+  };
+
   return (
     <SidebarScroll
       footer={
@@ -33,7 +44,10 @@ const HowItWorksTab: FC = () => {
           <div className={styles.toggle}>
             <div className={styles.divider} />
             <div>
-              <HoneyToggle />
+              <HoneyToggle
+                checked={props.hasReadHowItWorks}
+                onChange={onDontShowAgainToggle}
+              />
               <span className={styles.toggleText}>Don’t show it anymore</span>
             </div>
           </div>
@@ -42,7 +56,11 @@ const HowItWorksTab: FC = () => {
               <HoneyButton variant="secondary">Cancel</HoneyButton>
             </div>
             <div className={styles.bigCol}>
-              <HoneyButton variant="primary" isFluid={true}>
+              <HoneyButton
+                onClick={() => props.setActiveTab('create')}
+                variant="primary"
+                isFluid={true}
+              >
                 I understand
               </HoneyButton>
             </div>
