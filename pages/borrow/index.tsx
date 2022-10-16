@@ -69,6 +69,8 @@ const network = 'mainnet-beta'; // change to dynamic value
 
 const { format: f, formatPercent: fp, formatSol: fs } = formatNumber;
 
+const liquidationThreshold = 0.65; // TODO: change where relevant, currently set to 65% on mainnet
+
 const Markets: NextPage = () => {
   const wallet = useConnectedWallet();
   const sdkConfig = ConfigureSDK();
@@ -353,13 +355,17 @@ const Markets: NextPage = () => {
     }
   }, [collateralNFTPositions]);
 
+  useEffect(() => {}, [selectedNft]);
+  const liqPercent =
+    ((nftPrice - userDebt / liquidationThreshold) / nftPrice) * 100;
+
   async function calculateInterestRate(utilizationRate: number) {
     let interestRate = await getInterestRate(utilizationRate);
     if (interestRate) setCalculatedInterestRate(interestRate);
   }
 
   useEffect(() => {
-    console.log('Runnig');
+    console.log('Running');
     if (utilizationRate) {
       calculateInterestRate(utilizationRate);
     }
@@ -639,7 +645,9 @@ const Markets: NextPage = () => {
           <div className={style.nameCellText}>
             <div className={style.collectionName}>{name}</div>
             <div className={style.risk.safe}>
-              <span className={style.valueCell}>{fp(loanToValue * 100)}</span>{' '}
+              <span className={style.valueCell}>
+                {`${userDebt ? `(-${liqPercent.toFixed(0)}%)` : ''}`}
+              </span>{' '}
               <span className={style.riskText}>Risk lvl</span>
             </div>
           </div>
