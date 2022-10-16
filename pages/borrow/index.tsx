@@ -355,7 +355,7 @@ const Markets: NextPage = () => {
     }
   }, [collateralNFTPositions]);
 
-  useEffect(() => {}, [selectedNft]);
+  useEffect(() => {}, [collateralNFTPositions]);
   const liqPercent =
     ((nftPrice - userDebt / liquidationThreshold) / nftPrice) * 100;
 
