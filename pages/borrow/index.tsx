@@ -63,6 +63,8 @@ import { Typography } from 'antd';
 import { pageDescription, pageTitle } from 'styles/common.css';
 import HoneyTableRow from 'components/HoneyTable/HoneyTableRow/HoneyTableRow';
 import HoneyTableNameCell from '../../components/HoneyTable/HoneyTableNameCell/HoneyTableNameCell';
+import c from 'classnames';
+import HealthLvl from '../../components/HealthLvl/HealthLvl';
 // import { network } from 'pages/_app';
 
 const network = 'mainnet-beta'; // change to dynamic value
@@ -356,7 +358,7 @@ const Markets: NextPage = () => {
   }, [collateralNFTPositions]);
 
   useEffect(() => {}, [collateralNFTPositions]);
-  const liqPercent =
+  const healthPercent =
     ((nftPrice - userDebt / liquidationThreshold) / nftPrice) * 100;
 
   async function calculateInterestRate(utilizationRate: number) {
@@ -564,7 +566,6 @@ const Markets: NextPage = () => {
             return <div className={style.availableCell}>{fs(available)}</div>;
           }
         },
-
         {
           width: columnsWidth[4],
           title: MyCollectionsToggle,
@@ -644,12 +645,7 @@ const Markets: NextPage = () => {
           </div>
           <div className={style.nameCellText}>
             <div className={style.collectionName}>{name}</div>
-            <div className={style.risk.safe}>
-              <span className={style.valueCell}>
-                {`${userDebt ? `(-${liqPercent.toFixed(0)}%)` : ''}`}
-              </span>{' '}
-              <span className={style.riskText}>Risk lvl</span>
-            </div>
+            <HealthLvl healthLvl={healthPercent} />
           </div>
         </div>
       )
@@ -707,9 +703,7 @@ const Markets: NextPage = () => {
           </div>
           <div className={style.nameCellText}>
             <div className={style.collectionNameMobile}>{name}</div>
-            <div className={style.risk.safe}>
-              <span className={style.valueCell}>{fp(loanToValue)}</span>
-            </div>
+            <HealthLvl healthLvl={healthPercent} />
           </div>
         </div>
       )
