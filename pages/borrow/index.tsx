@@ -75,6 +75,7 @@ const { format: f, formatPercent: fp, formatSol: fs } = formatNumber;
 const Markets: NextPage = () => {
   // TODO: write dynamic currentMarketId based on user interaction
   const [currentMarketId, setCurrentMarketId] = useState(HONEY_GENESIS_MARKET_ID);
+
   const wallet = useConnectedWallet();
   const sdkConfig = ConfigureSDK();
 
@@ -378,13 +379,12 @@ const Markets: NextPage = () => {
   // MOCK DATA FOR NOW
   useEffect(() => {
     // console.log('user open pos', marketCollections)
-    marketCollections.map((collection) => 
+    if (sdkConfig.saberHqConnection && sdkConfig.sdkWallet && calculatedInterestRate) {
+      marketCollections.map((collection) => 
       {
-        if(collection.id == '')
-          return;
-
+        if(collection.id == '') return;
+        collection.rate = calculatedInterestRate;
         populateMarketData(collection, sdkConfig.saberHqConnection, sdkConfig.sdkWallet!);
-        console.log('@@--:: collection', collection)
         // collection.available = collection.id != 'HNYG' ? totalMarketDeposits : 0,
         // collection.value = collection.key == 'HNYG' ? sumOfTotalValue : 0,
         // collection.allowance = collection.key == 'HNYG' ? userAllowance : 0,
@@ -395,6 +395,7 @@ const Markets: NextPage = () => {
     );
     setTableData(marketCollections);
     setTableDataFiltered(marketCollections);
+    }
   }, [
       totalMarketDeposits,
       totalMarketDebt,
@@ -402,8 +403,9 @@ const Markets: NextPage = () => {
       userOpenPositions,
       userAllowance,
       userDebt,
-      marketCollections,
-      calculatedInterestRate
+      calculatedInterestRate,
+      sdkConfig.saberHqConnection,
+      sdkConfig.sdkWallet
     ]
   );
 
@@ -916,6 +918,7 @@ const Markets: NextPage = () => {
           'Borrow success',
           `https://solscan.io/tx/${tx[1][0]}?cluster=${network}`
         );
+
       } else {
         return toast.error('Borrow failed');
       }
@@ -970,6 +973,7 @@ const Markets: NextPage = () => {
           'Repay success',
           `https://solscan.io/tx/${tx[1][0]}?cluster=${network}`
         );
+
       } else {
         return toast.error('Repay failed');
       }
