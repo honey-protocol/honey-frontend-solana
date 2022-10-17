@@ -5,9 +5,13 @@ import EmptyStateDetails from '../EmptyStateDetails/EmptyStateDetails';
 import VoteForm from './VoteForm/VoteForm';
 import GovernanceDescription from './GovernanceDescription/GovernanceDescription';
 import { governanceSidebar } from './GovernanceSidebar.css';
+import { useConnectedWallet, useSolana } from '@saberhq/use-solana';
+import { ProposalInfo, useProposal } from 'hooks/tribeca/useProposals';
+import { useWalletKit } from '@gokiprotocol/walletkit';
 
 type GovernanceSidebarProps = {
   selectedProposalId?: number;
+  setSidebarMode: Function;
 };
 
 const items: [HoneyTabItem, HoneyTabItem] = [
@@ -17,9 +21,16 @@ const items: [HoneyTabItem, HoneyTabItem] = [
 
 type Tab = 'vote' | 'description';
 
-const GovernanceSidebar = ({ selectedProposalId }: GovernanceSidebarProps) => {
-  const wallet = true;
+const GovernanceSidebar = ({
+  selectedProposalId,
+  setSidebarMode
+}: GovernanceSidebarProps) => {
+  const wallet = useConnectedWallet();
+  const { connect } = useWalletKit();
   const [activeTab, setActiveTab] = useState<Tab>('vote');
+  const { info: proposalInfo } = useProposal(
+    parseInt(selectedProposalId?.toString() || '')
+  );
 
   const handleTabChange = (tabKey: string) => {
     setActiveTab(tabKey as Tab);
@@ -30,16 +41,17 @@ const GovernanceSidebar = ({ selectedProposalId }: GovernanceSidebarProps) => {
         activeKey={activeTab}
         onTabChange={handleTabChange}
         items={items}
-        active={Boolean(selectedProposalId)}
+        active={Boolean(selectedProposalId?.toString())}
       >
-        {!wallet ? (
+        {!wallet?.connected ? (
           <EmptyStateDetails
             icon={<div className={styles.lightIcon} />}
             title="You didn’t connect any wallet yet"
             description="First, choose a proposal"
             btnTitle="CONNECT WALLET"
+            onBtnClick={connect}
           />
-        ) : !selectedProposalId ? (
+        ) : !selectedProposalId?.toString() ? (
           <EmptyStateDetails
             icon={<div className={styles.boltIcon} />}
             title="Manage panel"
@@ -47,8 +59,19 @@ const GovernanceSidebar = ({ selectedProposalId }: GovernanceSidebarProps) => {
           />
         ) : (
           <>
-            {activeTab === 'vote' && <VoteForm />}
-            {activeTab === 'description' && <GovernanceDescription />}
+            {activeTab === 'vote' && (
+              <VoteForm
+                setSidebarMode={setSidebarMode}
+                proposalInfo={proposalInfo}
+              />
+            )}
+            {activeTab === 'description' && (
+              <GovernanceDescription
+                description={
+                  proposalInfo?.proposalMetaData?.descriptionLink || ''
+                }
+              />
+            )}
           </>
         )}
       </HoneyTabs>

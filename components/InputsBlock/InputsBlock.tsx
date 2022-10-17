@@ -40,19 +40,20 @@ export const InputsBlock: FC<InputsBlockProps> = ({
     return Number.isFinite(Number(value));
   };
 
-  const handleUsdChange = (event: ChangeEvent<HTMLInputElement>) => {
+  const handleFirstInputChange = (event: ChangeEvent<HTMLInputElement>) => {
     const value = event.target.value;
     if (isValidNumericInput(value) && value !== '') {
-      onChangeFirstInput(parseFloat(value));
+      onChangeFirstInput(Number(value) < maxValue ? Number(value) : maxValue);
     } else {
       onChangeFirstInput(undefined);
     }
   };
 
-  const handleTokenChange = (event: ChangeEvent<HTMLInputElement>) => {
+  const handleSecondInputChange = (event: ChangeEvent<HTMLInputElement>) => {
     const value = event.target.value;
+    console.log(event);
     if (isValidNumericInput(value) && value !== '') {
-      onChangeSecondInput(Number(value) < maxValue ? Number(value) : maxValue);
+      onChangeSecondInput(Number(value));
     } else {
       onChangeSecondInput(undefined);
     }
@@ -65,8 +66,8 @@ export const InputsBlock: FC<InputsBlockProps> = ({
           className={styles.input}
           type="number"
           placeholder="0.00"
-          value={secondInputValue}
-          onChange={handleTokenChange}
+          value={firstInputValue}
+          onChange={handleFirstInputChange}
         />
         <div className={styles.inputAddon}>{firstInputAddon}</div>
       </div>
@@ -76,8 +77,8 @@ export const InputsBlock: FC<InputsBlockProps> = ({
           className={styles.input}
           type="number"
           placeholder="0.00"
-          value={firstInputValue}
-          onChange={handleUsdChange}
+          value={secondInputValue}
+          onChange={handleSecondInputChange}
         />
         <div className={styles.inputAddon}>{secondInputAddon}</div>
       </div>

@@ -36,6 +36,10 @@ export const red = style({
   background: vars.colors.redDark
 });
 
+export const brownLight = style({
+  background: vars.colors.brownLight
+});
+
 globalStyle(`${content} > *`, {
   position: 'absolute',
   top: '1px',

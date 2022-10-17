@@ -9,6 +9,13 @@ import { vars } from 'styles/theme.css';
 import { formatNumber } from '../../helpers/format';
 import { GoveranceStatsProps } from './types';
 import HoneyPeriod from '../HoneyPeriod/HoneyPeriod';
+import HoneyTooltip from 'components/HoneyTooltip/HoneyTooltip';
+import { questionIcon, questionIconYellow } from 'styles/icons.css';
+import { Space } from 'antd';
+import { TokenAmount } from '@saberhq/token-utils';
+import { useGovernance } from 'contexts/GovernanceProvider';
+import { useTokenMint } from '@saberhq/sail';
+import { useGovernor } from 'hooks/tribeca/useGovernor';
 
 const { format: f, formatPercent: fp, formatShortName: fsn } = formatNumber;
 
@@ -17,12 +24,32 @@ export const GovernanceStats: FC<GoveranceStatsProps> = ({
 }) => {
   const isMock = true;
   const lockedPercent = 24;
-  const honeyBalance = 10012.94;
-  const veHoneyBalance = 12012.94;
-  const honeySupply = 2_000_932;
-  const lockedHoney = 100_500;
-  const lockPeriodEnd = 1759488639952;
 
+  const { govToken, lockedSupply } = useGovernor();
+  const { data: govTokenData } = useTokenMint(govToken?.mintAccount);
+
+  const totalSupplyFmt =
+    govTokenData && govToken
+      ? new TokenAmount(govToken, govTokenData.account.supply).format({
+          numberFormatOptions: {
+            maximumFractionDigits: 0
+          }
+        })
+      : govTokenData;
+
+  const totalSupply = Number(totalSupplyFmt?.toString().replaceAll(',', ''));
+
+  const lockedSupplyFmt = lockedSupply
+    ? lockedSupply.format({
+        numberFormatOptions: {
+          maximumFractionDigits: 0
+        }
+      })
+    : lockedSupply;
+  const lockedHoney = Number(lockedSupplyFmt?.toString().replaceAll(',', ''));
+
+  const { honeyAmount, veHoneyAmount, lockedPeriodEnd } = useGovernance();
+  console.log(Number(totalSupply), { lockedHoney, lockedSupplyFmt });
   const getChartData = () => {
     if (isMock) {
       const from = new Date()
@@ -38,23 +65,37 @@ export const GovernanceStats: FC<GoveranceStatsProps> = ({
     <div className={styles.governanceGraphs}>
       <div className={c(styles.statBlock, styles.lockPeriodBlock)}>
         <div className={styles.blockTitle}>
-          <div className={c(styles.title, styles.yellow)}>Lock period</div>
+          <HoneyTooltip label="Placeholder tooltip label">
+            <Space className={c(styles.title, styles.yellow)} size="small">
+              Lock period <div className={questionIconYellow} />
+            </Space>
+          </HoneyTooltip>
           <div className={c(styles.value, styles.lockPeriodValue)}>
-            <HoneyPeriod from={Date.now()} to={lockPeriodEnd} />
+            {lockedPeriodEnd.toString()}
           </div>
         </div>
         <div className={styles.sliderWrapper}>
           <div className={c(styles.title, styles.yellow)}>
             {fp(lockedPercent)}
           </div>
-          <HoneySlider currentValue={200} maxValue={1000} isReadonly />
+          <HoneySlider
+            maxSafePosition={0}
+            currentValue={200}
+            maxValue={1000}
+            isReadonly
+          />
         </div>
       </div>
 
       <div className={styles.statBlock}>
         <div className={styles.blockTitle}>
-          <div className={c(styles.title, styles.yellow)}>Honey balance</div>
-          <div className={styles.value}>{f(honeyBalance)}</div>
+          <HoneyTooltip label="Placeholder tooltip lable">
+            <Space size="small" className={c(styles.title, styles.yellow)}>
+              Honey balance
+              <div className={questionIconYellow} />
+            </Space>
+          </HoneyTooltip>
+          <div className={styles.value}>{f(honeyAmount)}</div>
         </div>
 
         <div className={styles.content}>
@@ -62,19 +103,29 @@ export const GovernanceStats: FC<GoveranceStatsProps> = ({
         </div>
 
         <div className={styles.buttonWrapper}>
-          <HoneyButton variant="text">
-            <div className={styles.buttonContent}>
-              <span>Buy more</span>
-              <div className={styles.buyMoreIcon} />
-            </div>
-          </HoneyButton>
+          <a
+            href="https://jup.ag/swap/SOL-$HONEY"
+            target="_blank"
+            rel="noreferrer"
+          >
+            <HoneyButton variant="text">
+              <div className={styles.buttonContent}>
+                <span>Buy more</span>
+                <div className={styles.buyMoreIcon} />
+              </div>
+            </HoneyButton>
+          </a>
         </div>
       </div>
 
       <div className={styles.statBlock}>
         <div className={styles.blockTitle}>
-          <div className={styles.title}>veHoney or voting power</div>
-          <div className={styles.value}>{f(veHoneyBalance)}</div>
+          <HoneyTooltip label="Placeholder tooltip label">
+            <Space className={styles.title}>
+              veHoney or voting power <div className={questionIcon} />
+            </Space>
+          </HoneyTooltip>
+          <div className={styles.value}>{f(veHoneyAmount)}</div>
         </div>
 
         <div className={styles.content}>
@@ -99,19 +150,24 @@ export const GovernanceStats: FC<GoveranceStatsProps> = ({
           </div>
           <div className={styles.lockedRight}>
             <div className={styles.title}>Circulating Honey supply</div>
-            <div className={styles.value}>{fsn(honeySupply)}</div>
+            <div className={styles.value}>{fsn(totalSupply)}</div>
           </div>
         </div>
         <div className={styles.sliderWrapper}>
           <div className={c(styles.title, styles.yellow)}>
-            {fp(lockedHoney / honeySupply)}
+            {fp((lockedHoney / totalSupply) * 100)}
           </div>
-          <HoneySlider
-            currentValue={0}
-            maxValue={honeySupply}
-            minAvailableValue={lockedHoney}
-            isReadonly
-          />
+          <HoneyTooltip label={`Total Honey supply: 1 billion`}>
+            <HoneySlider
+              minAvailableValue={lockedHoney}
+              currentValue={0}
+              maxValue={totalSupply}
+              isReadonly
+              minAvailableSliderClassName={styles.minAvailableSlider}
+              currentValueSliderClassName={styles.currentValueSlider}
+              maxUnavailableSliderClassName={styles.maxUnavailableSlider}
+            />
+          </HoneyTooltip>
         </div>
       </div>
     </div>

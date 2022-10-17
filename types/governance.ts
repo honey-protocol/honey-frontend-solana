@@ -7,6 +7,12 @@ export type GovernanceTableRow = {
   status: ProposalStatus;
 };
 
-export type ProposalStatus = 'draft' | 'processing' | 'approved' | 'rejected';
+export type ProposalStatus =
+  | 'draft'
+  | 'active'
+  | 'succeeded'
+  | 'queued'
+  | 'executed'
+  | 'rejected';
 
 export type GovernanceSidebarForm = 'vote' | 'new_proposal' | 'get_vehoney';

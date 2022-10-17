@@ -4,10 +4,11 @@ import LayoutRedesign from '../../components/LayoutRedesign/LayoutRedesign';
 import HoneySider from '../../components/HoneySider/HoneySider';
 import GovernanceSidebar from '../../components/GovernanceSidebar/GovernanceSidebar';
 import HoneyTable from '../../components/HoneyTable/HoneyTable';
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import {
   GovernanceSidebarForm,
-  GovernanceTableRow
+  GovernanceTableRow,
+  ProposalStatus
 } from '../../types/governance';
 import * as style from '../../styles/governance.css';
 import HexaBoxContainer from '../../components/HexaBoxContainer/HexaBoxContainer';
@@ -19,50 +20,82 @@ import c from 'classnames';
 import NewProposalSidebar from '../../components/NewProposalSidebar/NewProposalSidebar';
 import GetVeHoneySidebar from '../../components/GetVeHoneySidebar/GetVeHoneySidebar';
 import { formatNumber } from '../../helpers/format';
-import {GovernanceStats} from "../../components/GovernanceStats/GovernanceStats";
+import { GovernanceStats } from '../../components/GovernanceStats/GovernanceStats';
+import { useGovernor } from 'hooks/tribeca/useGovernor';
+import { useProposals } from 'hooks/tribeca/useProposals';
+import { ProposalState } from 'helpers/dao';
+import { vars } from 'styles/theme.css';
+import { getVoteCountFmt } from 'helpers/utils';
+import HoneyTooltip from 'components/HoneyTooltip/HoneyTooltip';
 
 const { format: f, formatShortName: fsn } = formatNumber;
+const NUM_PLACEHOLDERS = 0;
 
 const Governance: NextPage = () => {
-  const [tableData, setTableData] = useState<GovernanceTableRow[]>([]);
+  // const [tableData, setTableData] = useState<GovernanceTableRow[]>([]);
   const [isDraftFilterEnabled, setIsDraftFilterEnabled] = useState(false);
   const [selectedProposalId, setSelectedProposalId] = useState(10);
+  const [tableData, setTableData] = useState<GovernanceTableRow[]>();
 
   const [sidebarMode, setSidebarMode] =
     useState<GovernanceSidebarForm>('get_vehoney');
+  const { veToken } = useGovernor();
+  const proposals = useProposals();
 
-  // PUT YOUR DATA SOURCE HERE
-  // MOCK DATA FOR NOW
+  const allProposals = [
+    ...proposals,
+    ...new Array<null>(NUM_PLACEHOLDERS).fill(null)
+  ].filter(p => {
+    const proposalState = p?.data?.status.state;
+    return isDraftFilterEnabled
+      ? true
+      : proposalState !== ProposalState.Draft &&
+          proposalState !== ProposalState.Canceled;
+  });
+
+  // console.log({ allProposals });
+
+  const getStatus = (state: ProposalState): ProposalStatus => {
+    // if(!state) return 'approved';
+    switch (state) {
+      case ProposalState.Active:
+        return 'active';
+      case ProposalState.Succeeded:
+        return 'succeeded';
+      case ProposalState.Draft:
+        return 'draft';
+      case ProposalState.Queued:
+        return 'queued';
+      case ProposalState.Canceled:
+        return 'rejected';
+      case ProposalState.Defeated:
+        return 'rejected';
+    }
+  };
+
+  const getTableData = useCallback(() => {
+    const data = allProposals.map((proposal, i) => ({
+      id: proposal?.data?.index || 0,
+      name: proposal?.data?.proposalMetaData?.title || '',
+      votes: proposal?.data?.proposalData.forVotes.toNumber() || 0,
+      against: proposal?.data?.proposalData.againstVotes.toNumber() || 0,
+      votesRequired: 0,
+      status: proposal?.data?.status.executed
+        ? 'executed'
+        : proposal?.data?.status.state !== undefined
+        ? getStatus(proposal?.data?.status.state)
+        : 'draft'
+    }));
+    if (!data || !data[0]?.id || data.length === tableData?.length) return;
+    // console.log({ data });
+    setTableData(data);
+  }, [allProposals]);
+
+  // console.log({ tableData });
+
   useEffect(() => {
-    const mockData: GovernanceTableRow[] = [
-      {
-        id: 1,
-        name: 'Upgrade the StarkProxy smart contract',
-        votes: 25000,
-        against: 313,
-        votesRequired: 50000,
-        status: 'approved'
-      },
-      {
-        id: 2,
-        name: 'Upgrade the StarkProxy smart contract',
-        votes: 39487,
-        against: 313,
-        votesRequired: 50000,
-        status: 'approved'
-      },
-      {
-        id: 3,
-        name: 'Draft proposal',
-        votes: 5000,
-        against: 313,
-        votesRequired: 50000,
-        status: 'draft'
-      }
-    ];
-
-    setTableData(mockData);
-  }, [isDraftFilterEnabled]);
+    getTableData();
+  }, [getTableData]);
 
   const handleToggle = (checked: boolean) => {
     setIsDraftFilterEnabled(checked);
@@ -95,19 +128,44 @@ const Governance: NextPage = () => {
         width: columnsWidth[0],
         dataIndex: 'name',
         key: 'name',
-        render: (name: string) => {
+        render: (_, row: GovernanceTableRow) => {
           return (
             <div className={style.nameCell}>
               <div className={style.logoWrapper}>
                 <div className={style.collectionLogo}>
-                  <HexaBoxContainer>
+                  <HexaBoxContainer
+                    borderColor={
+                      ['succeeded', 'queued', 'executed'].includes(row.status)
+                        ? 'green'
+                        : row.status === 'rejected'
+                        ? 'red'
+                        : row.status === 'draft'
+                        ? 'gray'
+                        : 'black'
+                    }
+                  >
                     <div
-                      className={c(style.statusIcon, style.statusCheckIcon)}
+                      className={c(
+                        style.statusIcon,
+                        row.status === 'draft'
+                          ? style.statusDraftIcon
+                          : row.status === 'succeeded' ||
+                            row.status === 'queued' ||
+                            row.status === 'executed'
+                          ? style.statusCheckIcon
+                          : row.status === 'active'
+                          ? style.statusWaitIcon
+                          : style.statusErrorRedIcon
+                      )}
                     />
                   </HexaBoxContainer>
                 </div>
               </div>
-              <div className={style.collectionName}>{name}</div>
+              <div className={style.titleTooltipContainer}>
+                <HoneyTooltip label={row.name}>
+                  <div className={style.collectionName}>{row.name}</div>
+                </HoneyTooltip>
+              </div>
             </div>
           );
         }
@@ -118,7 +176,11 @@ const Governance: NextPage = () => {
         },
         dataIndex: 'votes',
         render: (votes: number) => {
-          return <div className={style.textTablet}>{fsn(votes)}</div>;
+          return (
+            <div className={style.textTablet}>
+              {veToken ? fsn(getVoteCountFmt(votes, veToken)) : 0}
+            </div>
+          );
         }
       },
       {
@@ -127,7 +189,11 @@ const Governance: NextPage = () => {
         },
         dataIndex: 'against',
         render: (against: number) => {
-          return <div className={style.textTablet}>{fsn(against)}</div>;
+          return (
+            <div className={style.textTablet}>
+              {veToken ? fsn(getVoteCountFmt(against, veToken)) : 0}
+            </div>
+          );
         }
       },
       {
@@ -136,10 +202,18 @@ const Governance: NextPage = () => {
         },
         width: columnsWidth[1],
         dataIndex: 'status',
-        render: (status, row: GovernanceTableRow) => {
+        render: (_, row: GovernanceTableRow) => {
+          console.log(row.votes, row.votesRequired, {
+            percent: (row.votes / row.votesRequired) * 100
+          });
           return (
             <div>
-              <ProgressStatus percent={(row.votes / row.votesRequired) * 100} />
+              <ProgressStatus
+                strokeColor={
+                  row.status === 'rejected' ? vars.colors.red : undefined
+                }
+                percent={(row.votes / 10000000) * 100}
+              />
             </div>
           );
         }
@@ -147,24 +221,30 @@ const Governance: NextPage = () => {
       {
         title: DraftToggle,
         width: columnsWidth[2],
-        render: (_: null) => {
+        render: (_: null, row: GovernanceTableRow) => {
           return (
             <div className={style.buttonsCell}>
               <HoneyButton variant="text">
-                Vote <div className={style.arrowIcon} />
+                {row.status === 'active' ? 'Vote' : 'View'}
+                <div className={style.arrowIcon} />
               </HoneyButton>
             </div>
           );
         }
       }
     ],
-    [tableData, isDraftFilterEnabled]
+    [isDraftFilterEnabled]
   );
 
   const renderSidebar = () => {
     switch (sidebarMode) {
       case 'vote':
-        return <GovernanceSidebar selectedProposalId={selectedProposalId} />;
+        return (
+          <GovernanceSidebar
+            selectedProposalId={selectedProposalId}
+            setSidebarMode={setSidebarMode}
+          />
+        );
       case 'new_proposal':
         return <NewProposalSidebar />;
       case 'get_vehoney':
@@ -183,8 +263,8 @@ const Governance: NextPage = () => {
   };
 
   const handleGetVeHoneyClick = () => {
-    setSidebarMode('get_vehoney')
-  }
+    setSidebarMode('get_vehoney');
+  };
 
   const getRowClassName = (record: GovernanceTableRow) => {
     if (record.id === selectedProposalId) {
@@ -200,9 +280,7 @@ const Governance: NextPage = () => {
   return (
     <LayoutRedesign>
       <HoneyContent hasNoSider={true}>
-        <GovernanceStats
-          onGetVeHoneyClick={handleGetVeHoneyClick}
-        />
+        <GovernanceStats onGetVeHoneyClick={handleGetVeHoneyClick} />
       </HoneyContent>
       <HoneyContent>
         <HoneyTable

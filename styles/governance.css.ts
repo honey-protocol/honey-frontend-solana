@@ -135,6 +135,11 @@ export const textTabletTitle = style([
   }
 ]);
 
+export const titleTooltipContainer = style({
+  width: '100%',
+  overflow: 'hidden'
+});
+
 export const create = style({
   width: '100%',
   display: 'flex',
