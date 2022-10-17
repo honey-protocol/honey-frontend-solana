@@ -98,7 +98,9 @@ export const value = style([
   }
 ]);
 
-export const lockPeriodValue = style({});
+export const lockPeriodValue = style({
+  whiteSpace: 'nowrap'
+});
 
 export const lockedHoneyTitle = style({
   display: 'flex',

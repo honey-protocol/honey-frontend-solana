@@ -6,6 +6,8 @@ export type BorrowProps = {
   userAllowance: number;
   userDebt: number;
   loanToValue: number;
+  fetchedSolPrice: number;
+  calculatedInterestRate: number;
   executeDepositNFT: (mint: string, toast: any) => void;
   executeBorrow: (val: number, toast: any) => void;
   hideMobileSidebar?: () => void;

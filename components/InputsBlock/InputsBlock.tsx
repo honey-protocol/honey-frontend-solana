@@ -39,15 +39,15 @@ export const InputsBlock: FC<InputsBlockProps> = ({
   ),
   secondInputAddon = <> USD </>
 }) => {
-  const handleUsdChange = (value: ValueType) => {
+  const handleFirstInputChange = (value: ValueType) => {
     if (isNil(value)) {
-      onChangeFirstInput(Number(value));
+      onChangeFirstInput(Number(value) < maxValue ? Number(value) : maxValue);
     } else {
       onChangeFirstInput(undefined);
     }
   };
 
-  const handleTokenChange = (value: ValueType) => {
+  const handleSecondInputChange = (value: ValueType) => {
     if (isNil(value)) {
       onChangeSecondInput(undefined);
     } else {
@@ -70,10 +70,10 @@ export const InputsBlock: FC<InputsBlockProps> = ({
         <HoneyFormattedNumericInput
           className={styles.input}
           placeholder="0.00"
-          value={secondInputValue}
+          value={firstInputValue}
           decimalSeparator="."
           formatter={defaultInputFormatted}
-          onChange={handleTokenChange}
+          onChange={handleFirstInputChange}
           bordered={false}
         />
         <div className={styles.inputAddon}>{firstInputAddon}</div>
@@ -83,10 +83,10 @@ export const InputsBlock: FC<InputsBlockProps> = ({
         <HoneyFormattedNumericInput
           className={styles.input}
           placeholder="0.00"
-          value={firstInputValue}
+          value={secondInputValue}
           formatter={defaultInputFormatted}
           decimalSeparator="."
-          onChange={handleUsdChange}
+          onChange={handleSecondInputChange}
           bordered={false}
         />
         <div className={styles.inputAddon}>{secondInputAddon}</div>

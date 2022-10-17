@@ -300,15 +300,15 @@ const LiquidationPool = () => {
               <Box paddingX={{ xs: '10', md: 'none' }}>
               <Avatar
                 size={{ xs: 'full', sm: '32' }}
-                label="Honey eyes"
+                label="Honey Genesis Bee"
                 shape="square"
-                src="https://mint-site-ten.vercel.app/when-loans.gif"
+                src="/public/images/imagePlaceholder.png"
               />
               </Box>
               <Stack space="5">
                 <Stack direction="horizontal" align="center">
                   <Text size="extraLarge" weight="bold" color="textPrimary">
-                    Honey Eyes
+                    Honey Genesis Bee
                   </Text>
                   <VerifiedIcon />
                 </Stack>

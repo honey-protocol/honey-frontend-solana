@@ -1,10 +1,11 @@
-import { ReactElement, FC, Fragment } from 'react';
+import { ReactElement, FC, Fragment, ReactNode } from 'react';
 import * as styles from './InfoBlock.css';
 import c from 'classnames';
 import HoneyTooltip from 'components/HoneyTooltip/HoneyTooltip';
 
 interface InfoBlockProps {
   title?: string | ReactElement;
+  valueColor?: 'green';
   value: string | ReactElement;
   footer?: ReactElement;
   valueSize?: 'normal' | 'big';
@@ -18,18 +19,37 @@ export const InfoBlock: FC<InfoBlockProps> = ({
   footer,
   valueSize = 'normal',
   isDisabled,
-  toolTipLabel
+  toolTipLabel,
+  valueColor
 }) => {
-  const Container = toolTipLabel ? HoneyTooltip : Fragment;
+  const Container = (a: { children: ReactNode }) =>
+    toolTipLabel ? (
+      <HoneyTooltip label={toolTipLabel}>{a.children}</HoneyTooltip>
+    ) : (
+      <Fragment>{a.children}</Fragment>
+    );
   return (
-    <Container label={toolTipLabel}>
+    <Container>
       <div
         className={c(styles.infoBlockContainer, {
           [styles.disabled]: isDisabled
         })}
       >
-        {title && <div className={styles.label}>{title}</div>}
-        <div className={styles.value[valueSize]}>{value}</div>
+        {title && (
+          <div
+            className={c(styles.label, valueColor ? styles[valueColor] : '')}
+          >
+            {title}
+          </div>
+        )}
+        <div
+          className={c(
+            styles.value[valueSize],
+            valueColor ? styles[valueColor] : ''
+          )}
+        >
+          {value}
+        </div>
         {footer && <div className={styles.footer}>{footer}</div>}
       </div>
     </Container>

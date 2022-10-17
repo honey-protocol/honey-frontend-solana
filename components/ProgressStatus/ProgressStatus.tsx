@@ -4,9 +4,9 @@ import { vars } from 'styles/theme.css';
 import * as style from './ProgressStatus.css';
 
 const colorsGrade = [
-  [0, vars.colors.black],
-  [20, vars.colors.red],
-  [50, vars.colors.green]
+  [0, vars.colors.brownLight],
+  // [20, vars.colors.red],
+  [99, vars.colors.green]
 ];
 
 const ProgressStatus: FC<ProgressProps> = props => {

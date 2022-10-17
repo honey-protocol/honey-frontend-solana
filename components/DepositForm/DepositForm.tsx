@@ -5,7 +5,7 @@ import { InputsBlock } from '../InputsBlock/InputsBlock';
 import { HoneySlider } from '../HoneySlider/HoneySlider';
 import * as styles from './DepositForm.css';
 import { formatNumber } from '../../helpers/format';
-import honeyEyes from '/public/nfts/honeyEyes.png';
+import honeyGenesisBee from '/public/images/imagePlaceholder.png';
 import HoneyButton from 'components/HoneyButton/HoneyButton';
 import HexaBoxContainer from '../HexaBoxContainer/HexaBoxContainer';
 import SidebarScroll from '../SidebarScroll/SidebarScroll';
@@ -24,13 +24,16 @@ const DepositForm = (props: DepositFormProps) => {
     userTotalDeposits,
     value,
     available,
-    userWalletBalance
+    userWalletBalance,
+    fetchedSolPrice
   } = props;
 
   const [valueUSD, setValueUSD] = useState<number>(0);
   const [valueSOL, setValueSOL] = useState<number>(0);
   const [sliderValue, setSliderValue] = useState(0);
   const [userInteraction, setUserInteraction] = useState<boolean>(false);
+  const [utilizationRate, setUtilizationRate] = useState(0);
+
   const { toast, ToastComponent } = useToast();
 
   const sdkConfig = ConfigureSDK();
@@ -38,8 +41,14 @@ const DepositForm = (props: DepositFormProps) => {
 
   useEffect(() => {}, [userWalletBalance]);
 
+  useEffect(() => {
+    if (value && available) {
+      setUtilizationRate(Number(f(((value - available) / value) * 100)));
+    }
+  }, [value, available]);
+
   const maxValue = userWalletBalance;
-  const solPrice = 32;
+  const solPrice = fetchedSolPrice;
 
   // Put your validators here
   const isDepositButtonDisabled = () => {
@@ -110,10 +119,10 @@ const DepositForm = (props: DepositFormProps) => {
         <div className={styles.nftInfo}>
           <div className={styles.nftImage}>
             <HexaBoxContainer>
-              <Image src={honeyEyes} />
+              <Image src={honeyGenesisBee} />
             </HexaBoxContainer>
           </div>
-          <div className={styles.nftName}>Honey Eyes</div>
+          <div className={styles.nftName}>Honey Genesis Bee</div>
         </div>
         <div className={styles.row}>
           <div className={styles.col}>
@@ -125,7 +134,7 @@ const DepositForm = (props: DepositFormProps) => {
           </div>
           <div className={styles.col}>
             <InfoBlock
-              value={fp(20)}
+              value={fp()}
               valueSize="big"
               toolTipLabel="APY is measured by compounding the weekly interest rate"
               footer={
@@ -137,7 +146,7 @@ const DepositForm = (props: DepositFormProps) => {
           </div>
           <div className={styles.col}>
             <InfoBlock
-              value={fp(((value - available) / value) * 100)}
+              value={fp(utilizationRate)}
               valueSize="big"
               toolTipLabel=" Amount of supplied liquidity currently being borrowed"
               footer={

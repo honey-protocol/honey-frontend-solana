@@ -13,7 +13,7 @@ interface HoneyButtonProps extends ButtonProps {
 }
 const { format: f, formatPercent: fp, formatUsd: fu } = formatNumber;
 
-const HoneyButton: FC<HoneyButtonProps> = props => {
+const HoneyButton = (props: HoneyButtonProps) => {
   const {
     solAmount,
     usdcValue,

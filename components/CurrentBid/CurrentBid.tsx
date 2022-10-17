@@ -10,13 +10,13 @@ interface CurrentBidProps {
   handleRevokeBid: () => void;
 }
 
-const { format: f, formatPercent: fp, formatUsd: fu } = formatNumber;
+const { format: f, formatPercent: fp, formatUsd: fu, formatSol: fs } = formatNumber;
 
 const CurrentBid = (props: CurrentBidProps) => {
   const { handleRevokeBid } = props;
   return (
     <div className={styles.CurrentBidContainer}>
-      <InfoBlock value={fu(props.value)} valueSize="big" title={props.title} />
+      <InfoBlock value={fs(props.value)} valueSize="big" title={props.title} />
 
       <HoneyButton onClick={handleRevokeBid} variant="secondary">
         Cancel

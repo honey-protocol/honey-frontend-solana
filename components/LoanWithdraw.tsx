@@ -83,7 +83,7 @@ const LoanWithdraw = (props: LoanWithdrawProps) => {
           color="foreground"
           variant="large"
         >
-          Honey Eyes
+          Honey Genesis Bee
         </Text>
       </Stack>
       <Stack>

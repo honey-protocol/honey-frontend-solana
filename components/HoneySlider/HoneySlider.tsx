@@ -29,6 +29,12 @@ interface HoneySliderProps {
   isReadonly?: boolean;
   // triggered if slider value changed
   onChange?: (value: number) => void;
+  // className for minAvailable section of slider
+  minAvailableSliderClassName?: string;
+  //className for current value slider
+  currentValueSliderClassName?: string;
+  //className for max-unavailable section of slider
+  maxUnavailableSliderClassName?: string;
 }
 
 const { formatPercent: fp, formatSol: fs } = formatNumber;
@@ -42,7 +48,10 @@ export const HoneySlider: FC<HoneySliderProps> = ({
   dangerPosition = 1,
   maxAvailablePosition = 1,
   labels = [],
-  isReadonly
+  isReadonly,
+  minAvailableSliderClassName,
+  currentValueSliderClassName,
+  maxUnavailableSliderClassName
 }) => {
   const minAvailablePosition = minAvailableValue / maxValue;
   const unavailablePosition = 1 - maxAvailablePosition;
@@ -86,33 +95,37 @@ export const HoneySlider: FC<HoneySliderProps> = ({
 
   return (
     <div className={styles.rangeContainer}>
-      {Boolean(minAvailablePosition) && <div
-        className={styles.sliderWrapper}
-        style={{
-          width: minAvailablePosition < 0 ? 0 : `${minAvailablePosition * 100}%`
-          // display: minAvailableValue ? 'inherit' : 'none',
-        }}
-      >
-        {!isReadonly && (
-          <div className={styles.sliderHeader.primary}>
-            {fs(minAvailableValue)}
-          </div>
-        )}
-        <Slider
-          className={c(
-            styles.slider,
-            isRisky
-              ? styles.enabledWarningBackgroundSlider
-              : styles.enabledBackgroundSlider
-          )}
-          handleStyle={{display: 'none'}}
-          trackStyle={{
-            backgroundColor: riskColor
+      {Boolean(minAvailablePosition) && (
+        <div
+          className={styles.sliderWrapper}
+          style={{
+            width:
+              minAvailablePosition < 0 ? 0 : `${minAvailablePosition * 100}%`
+            // display: minAvailableValue ? 'inherit' : 'none',
           }}
-          value={100}
-          marks={preparedLabels?.left}
-        />
-      </div>}
+        >
+          {!isReadonly && (
+            <div className={styles.sliderHeader.primary}>
+              {fs(minAvailableValue)}
+            </div>
+          )}
+          <Slider
+            className={c(
+              styles.slider,
+              isRisky
+                ? styles.enabledWarningBackgroundSlider
+                : styles.enabledBackgroundSlider,
+              minAvailableSliderClassName
+            )}
+            handleStyle={{ display: 'none' }}
+            trackStyle={{
+              backgroundColor: riskColor
+            }}
+            value={100}
+            marks={preparedLabels?.left}
+          />
+        </div>
+      )}
       <div
         className={styles.sliderWrapper}
         style={{ width: `${availablePosition * 100}%` }}
@@ -124,7 +137,7 @@ export const HoneySlider: FC<HoneySliderProps> = ({
         )}
         <Slider
           tooltipVisible={false}
-          className={styles.slider}
+          className={c(styles.slider, currentValueSliderClassName)}
           trackStyle={{
             background: riskColor
           }}
@@ -151,7 +164,11 @@ export const HoneySlider: FC<HoneySliderProps> = ({
             <div className={styles.sliderHeader.secondary}>{fs(maxValue)}</div>
           )}
           <Slider
-            className={c(styles.slider, styles.disabledBackgroundSlider)}
+            className={c(
+              styles.slider,
+              styles.disabledBackgroundSlider,
+              maxUnavailableSliderClassName
+            )}
             handleStyle={{ display: 'none' }}
             disabled
           />

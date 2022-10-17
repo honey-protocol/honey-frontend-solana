@@ -5,7 +5,7 @@ import { InputsBlock } from '../InputsBlock/InputsBlock';
 import { HoneySlider } from '../HoneySlider/HoneySlider';
 import * as styles from './WithdrawForm.css';
 import { formatNumber } from '../../helpers/format';
-import honeyEyes from '/public/nfts/honeyEyes.png';
+import honeyGenesisBee from '/public/images/imagePlaceholder.png';
 import HoneyButton from 'components/HoneyButton/HoneyButton';
 import HexaBoxContainer from '../HexaBoxContainer/HexaBoxContainer';
 import { MAX_LTV } from '../../constants/loan';
@@ -18,14 +18,20 @@ import useToast from 'hooks/useToast';
 const { format: f, formatPercent: fp, formatSol: fs, parse: p } = formatNumber;
 
 const WithdrawForm = (props: WithdrawFormProps) => {
-  const { executeWithdraw, userTotalDeposits, value, available } = props;
+  const {
+    executeWithdraw,
+    userTotalDeposits,
+    value,
+    available,
+    fetchedSolPrice
+  } = props;
   const [valueUSD, setValueUSD] = useState<number>(0);
   const [valueSOL, setValueSOL] = useState<number>(0);
   const [sliderValue, setSliderValue] = useState(0);
   const { toast, ToastComponent } = useToast();
 
   const maxValue = userTotalDeposits;
-  const solPrice = 32;
+  const solPrice = fetchedSolPrice;
 
   // Put your validators here
   const isWithdrawButtonDisabled = () => {
@@ -103,10 +109,10 @@ const WithdrawForm = (props: WithdrawFormProps) => {
         <div className={styles.nftInfo}>
           <div className={styles.nftImage}>
             <HexaBoxContainer>
-              <Image src={honeyEyes} />
+              <Image src={honeyGenesisBee} />
             </HexaBoxContainer>
           </div>
-          <div className={styles.nftName}>Honey Eyes</div>
+          <div className={styles.nftName}>Honey Genesis Bee</div>
         </div>
         <div className={styles.row}>
           <div className={styles.col}>
@@ -118,7 +124,7 @@ const WithdrawForm = (props: WithdrawFormProps) => {
           </div>
           <div className={styles.col}>
             <InfoBlock
-              value={fp(20)}
+              value={fp()}
               valueSize="big"
               toolTipLabel="APY is measured by compounding the weekly interest rate"
               footer={

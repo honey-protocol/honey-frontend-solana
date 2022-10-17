@@ -26,7 +26,7 @@ export const getPositionedLabels = ({
 
   if (!labels.length) {
     const autoLabels = [];
-    const labelsStep = 0.2;
+    const labelsStep = 0.25;
     let currentLabel = 0;
     while (currentLabel < lastLabelValue) {
       autoLabels.push(currentLabel * 100);

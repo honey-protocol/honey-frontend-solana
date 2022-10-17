@@ -4,6 +4,8 @@ import HoneyTabs, { HoneyTabItem } from '../HoneyTabs/HoneyTabs';
 import EmptyStateDetails from '../EmptyStateDetails/EmptyStateDetails';
 import LockHoneyForm from './LockHoneyForm/LockHoneyForm';
 import BurnNftsForm from './BurnNftsForm/BurnNftsForm';
+import { useConnectedWallet } from '@saberhq/use-solana';
+import { useWalletKit } from '@gokiprotocol/walletkit';
 
 const items: [HoneyTabItem, HoneyTabItem] = [
   { label: 'Lock Honey', key: 'lock_honey' },
@@ -13,7 +15,8 @@ const items: [HoneyTabItem, HoneyTabItem] = [
 type Tab = 'lock_honey' | 'burn_nfts';
 
 const GetVeHoneySidebar = () => {
-  const wallet = true;
+  const wallet = useConnectedWallet();
+  const { connect } = useWalletKit();
   const [activeTab, setActiveTab] = useState<Tab>('lock_honey');
 
   const handleTabChange = (tabKey: string) => {
@@ -27,12 +30,13 @@ const GetVeHoneySidebar = () => {
         items={items}
         active={true}
       >
-        {!wallet ? (
+        {!wallet?.connected ? (
           <EmptyStateDetails
             icon={<div className={styles.lightIcon} />}
             title="You didn’t connect any wallet yet"
             description="First, choose a proposal"
             btnTitle="CONNECT WALLET"
+            onBtnClick={connect}
           />
         ) : (
           <>
