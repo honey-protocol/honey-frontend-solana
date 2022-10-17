@@ -155,11 +155,11 @@ export async function populateMarketData(collection: Market, connection: Connect
     if (reserve.reserve.equals(PublicKey.default)) {
       continue;
     }
-    console.log('reserve', reserve.reserve.toString());
+    console.log('@@--::reserve', reserve.reserve.toString());
 
     const { data, state } = await HoneyReserve.decodeReserve(honeyClient, reserve.reserve);
     parsedReserve = data;
-
+    console.log('@@--::parsed reserve', parsedReserve);
     break;
   }
 
@@ -169,15 +169,12 @@ export async function populateMarketData(collection: Market, connection: Connect
       9,
       2
     );
+    console.log('@@--::total market deposits', totalMarketDeposits);
     const totalMarketDebt = RoundHalfDown(parsedReserve.reserveState.outstandingDebt.div(new BN(10 ** 15))
       .toNumber() / LAMPORTS_PER_SOL);
+    console.log('@@--::total market debt', totalMarketDebt);
     const sumOfTotalValue = totalMarketDeposits + totalMarketDebt;
     collection.available = totalMarketDeposits;
     collection.value = sumOfTotalValue;
-    
-
   }
-
-
-
 }

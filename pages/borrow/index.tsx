@@ -377,14 +377,14 @@ const Markets: NextPage = () => {
   // PUT YOUR DATA SOURCE HERE
   // MOCK DATA FOR NOW
   useEffect(() => {
-    console.log('user open pos', marketCollections)
+    // console.log('user open pos', marketCollections)
     marketCollections.map((collection) => 
       {
         if(collection.id == '')
           return;
 
         populateMarketData(collection, sdkConfig.saberHqConnection, sdkConfig.sdkWallet!);
-        console.log('collection', collection)
+        console.log('@@--:: collection', collection)
         // collection.available = collection.id != 'HNYG' ? totalMarketDeposits : 0,
         // collection.value = collection.key == 'HNYG' ? sumOfTotalValue : 0,
         // collection.allowance = collection.key == 'HNYG' ? userAllowance : 0,
