@@ -9,8 +9,9 @@ import HexaBoxContainer from '../HexaBoxContainer/HexaBoxContainer';
 import Image from 'next/image';
 import honeyEyes from '/public/nfts/honeyEyes.png';
 import { InfoBlock } from '../InfoBlock/InfoBlock';
-import { formatNumber } from '../../helpers/format';
+import { formatNumber, formatTokenName } from '../../helpers/format';
 import RiskLvl from '../RiskLvl/RiskLvl';
+import HoneyTooltip from '../HoneyTooltip/HoneyTooltip';
 
 const { formatPercent: fp, formatSol: fs } = formatNumber;
 
@@ -37,7 +38,11 @@ export const LiquidateExpandTable: FC<{ data: LiquidateTablePosition[] }> = ({
               </HexaBoxContainer>
             </div>
             <div className={sharedStyles.nameCellText}>
-              <div className={sharedStyles.collectionName}>{name}</div>
+              <HoneyTooltip label={name}>
+                <div className={sharedStyles.collectionName}>
+                  {formatTokenName(name)}
+                </div>
+              </HoneyTooltip>
               <RiskLvl riskLvl={record.riskLvl} />
             </div>
           </div>
