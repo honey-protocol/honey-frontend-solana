@@ -155,11 +155,14 @@ const sdkConfig = ConfigureSDK();
         let refreshedHoneyReserves = await honeyReserves[0].sendRefreshTx();
         const latestBlockHash = await sdkConfig.saberHqConnection.getLatestBlockhash()
 
-        await sdkConfig.saberHqConnection.confirmTransaction({
-          blockhash: latestBlockHash.blockhash,
-          lastValidBlockHeight: latestBlockHash.lastValidBlockHeight,
-          signature: refreshedHoneyReserves,
-        });
+        await sdkConfig.saberHqConnection.confirmTransaction(
+          {
+            blockhash: latestBlockHash.blockhash,
+            lastValidBlockHeight: latestBlockHash.lastValidBlockHeight,
+            signature: refreshedHoneyReserves
+          },
+          'processed'
+        );
 
         await fetchMarket()
         await honeyUser.refresh().then((val: any) => {
@@ -193,11 +196,14 @@ const sdkConfig = ConfigureSDK();
         let refreshedHoneyReserves = await honeyReserves[0].sendRefreshTx();
         const latestBlockHash = await sdkConfig.saberHqConnection.getLatestBlockhash()
 
-        await sdkConfig.saberHqConnection.confirmTransaction({
-          blockhash: latestBlockHash.blockhash,
-          lastValidBlockHeight: latestBlockHash.lastValidBlockHeight,
-          signature: refreshedHoneyReserves,
-        });
+        await sdkConfig.saberHqConnection.confirmTransaction(
+          {
+            blockhash: latestBlockHash.blockhash,
+            lastValidBlockHeight: latestBlockHash.lastValidBlockHeight,
+            signature: refreshedHoneyReserves
+          },
+          'processed'
+        );
 
         await fetchMarket()
         await honeyUser.refresh().then((val: any) => {

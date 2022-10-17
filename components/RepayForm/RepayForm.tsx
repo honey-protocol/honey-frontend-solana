@@ -5,7 +5,6 @@ import { InputsBlock } from '../InputsBlock/InputsBlock';
 import { HoneySlider } from '../HoneySlider/HoneySlider';
 import * as styles from './RepayForm.css';
 import { formatNumber } from '../../helpers/format';
-import honeyEyes from '/public/nfts/honeyEyes.png';
 import HoneyButton from 'components/HoneyButton/HoneyButton';
 import HexaBoxContainer from '../HexaBoxContainer/HexaBoxContainer';
 import { RepayProps } from './types';
@@ -32,9 +31,12 @@ const RepayForm = (props: RepayProps) => {
     userUSDCBalance,
     loanToValue,
     availableNFTs,
+    fetchedSolPrice,
     hideMobileSidebar,
     changeTab
   } = props;
+
+  console.log('@@-- repay form:: sol price', fetchedSolPrice);
 
   const [valueUSD, setValueUSD] = useState<number>();
   const [valueSOL, setValueSOL] = useState<number>();
@@ -42,8 +44,8 @@ const RepayForm = (props: RepayProps) => {
   const { toast, ToastComponent } = useToast();
 
   const maxValue = userDebt != 0 ? userDebt : userAllowance;
-  const solPrice = 32;
-  const liquidationThreshold = 0.75;
+  const solPrice = fetchedSolPrice;
+  const liquidationThreshold = 0.65;
   const SOLBalance = useSolBalance();
 
   const newDebt = userDebt - (valueSOL ? valueSOL : 0);
@@ -248,7 +250,7 @@ const RepayForm = (props: RepayProps) => {
                 </span>
               }
               value={fp((newDebt / (nftPrice || 0)) * 100)}
-              isDisabled={true}
+              isDisabled={userDebt == 0 ? true : false}
               toolTipLabel={
                 <span>
                   Estimated{' '}
@@ -310,7 +312,7 @@ const RepayForm = (props: RepayProps) => {
                 </span>
               }
               value={fs(newDebt < 0 ? 0 : newDebt)}
-              isDisabled={true}
+              isDisabled={userDebt == 0 ? true : false}
               toolTipLabel={
                 <span>
                   Estimated{' '}
@@ -344,7 +346,7 @@ const RepayForm = (props: RepayProps) => {
           </div>
           <div className={styles.col}>
             <InfoBlock
-              isDisabled
+              isDisabled={userDebt == 0 ? true : false}
               title={
                 <span className={hAlign}>
                   New allowance
@@ -379,7 +381,7 @@ const RepayForm = (props: RepayProps) => {
             </div>
             <div className={cs(styles.balance, styles.col)}>
               <InfoBlock
-                isDisabled
+                isDisabled={userDebt == 0 ? true : false}
                 title={'NEW SOL balance'}
                 value={fs(SOLBalance - (valueSOL || 0))}
               ></InfoBlock>

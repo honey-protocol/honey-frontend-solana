@@ -8,7 +8,7 @@ import * as style from '../../styles/markets.css';
 import { ColumnType } from 'antd/lib/table';
 import HexaBoxContainer from '../../components/HexaBoxContainer/HexaBoxContainer';
 import Image from 'next/image';
-import honeyEyes from '/public/nfts/honeyEyes.png';
+import honeyGenesisBee from '/public/images/imagePlaceholder.png';
 import HoneyButton from '../../components/HoneyButton/HoneyButton';
 import { Key } from 'antd/lib/table/interface';
 import { formatNumber } from '../../helpers/format';
@@ -29,7 +29,11 @@ import {
 import { LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js';
 import BN from 'bn.js';
 import HoneyToggle from 'components/HoneyToggle/HoneyToggle';
-import { calcNFT } from 'helpers/loanHelpers/userCollection';
+import {
+  calcNFT,
+  getInterestRate,
+  fetchSolPrice
+} from 'helpers/loanHelpers/userCollection';
 import { ToastProps } from 'hooks/useToast';
 import { RoundHalfDown } from 'helpers/utils';
 import { Typography } from 'antd';
@@ -37,9 +41,9 @@ import { pageDescription, pageTitle } from 'styles/common.css';
 // import { network } from 'pages/_app';
 // import { network } from 'pages/_app';
 
-const network = 'devnet';
+const network = 'mainnet-beta';
 
-const { formatPercent: fp, formatSol: fs } = formatNumber;
+const { format: f, formatPercent: fp, formatSol: fs } = formatNumber;
 
 const Lend: NextPage = () => {
   // Start: SDK integration
@@ -71,6 +75,35 @@ const Lend: NextPage = () => {
   const [totalMarketDebt, setTotalMarketDebt] = useState(0);
   const [nftPrice, setNftPrice] = useState(0);
   const [userWalletBalance, setUserWalletBalance] = useState<number>(0);
+  const [utilizationRate, setUtilizationRate] = useState(0);
+  const [calculatedInterestRate, setCalculatedInterestRate] =
+    useState<number>(0);
+  const [fetchedSolPrice, setFetchedSolPrice] = useState(0);
+
+  useEffect(() => {
+    if (totalMarketDeposits && totalMarketDebt && totalMarketDeposits) {
+      setUtilizationRate(
+        Number(
+          f(
+            (totalMarketDeposits + totalMarketDebt - totalMarketDeposits) /
+              (totalMarketDeposits + totalMarketDebt)
+          )
+        )
+      );
+    }
+  }, [totalMarketDeposits, totalMarketDebt, totalMarketDeposits]);
+
+  async function calculateInterestRate(utilizationRate: number) {
+    let interestRate = await getInterestRate(utilizationRate);
+    if (interestRate) setCalculatedInterestRate(interestRate * utilizationRate);
+  }
+
+  useEffect(() => {
+    console.log('Runnig');
+    if (utilizationRate) {
+      calculateInterestRate(utilizationRate);
+    }
+  }, [utilizationRate]);
 
   async function fetchWalletBalance(key: PublicKey) {
     try {
@@ -124,6 +157,11 @@ const Lend: NextPage = () => {
     }, 3000);
   }, [marketReserveInfo, honeyUser]);
 
+  async function fetchSolValue(reserves: any, connection: any) {
+    const slPrice = await fetchSolPrice(reserves, connection);
+    setFetchedSolPrice(slPrice);
+  }
+
   /**
    * @description sets state of marketValue by parsing lamports outstanding debt amount to SOL
    * @params none, requires parsedReserves
@@ -138,6 +176,9 @@ const Lend: NextPage = () => {
       );
       setTotalMarketDeposits(totalMarketDeposits);
       // setTotalMarketDeposits(parsedReserves[0].reserveState.totalDeposits.div(new BN(10 ** 9)).toNumber());
+      if (parsedReserves && sdkConfig.saberHqConnection) {
+        fetchSolValue(parsedReserves, sdkConfig.saberHqConnection);
+      }
     }
   }, [parsedReserves]);
 
@@ -230,11 +271,14 @@ const Lend: NextPage = () => {
         const latestBlockHash =
           await sdkConfig.saberHqConnection.getLatestBlockhash();
 
-        await sdkConfig.saberHqConnection.confirmTransaction({
-          blockhash: latestBlockHash.blockhash,
-          lastValidBlockHeight: latestBlockHash.lastValidBlockHeight,
-          signature: refreshedHoneyReserves
-        });
+        await sdkConfig.saberHqConnection.confirmTransaction(
+          {
+            blockhash: latestBlockHash.blockhash,
+            lastValidBlockHeight: latestBlockHash.lastValidBlockHeight,
+            signature: refreshedHoneyReserves
+          },
+          'processed'
+        );
 
         await fetchMarket();
         await honeyUser.refresh().then((val: any) => {
@@ -286,11 +330,14 @@ const Lend: NextPage = () => {
         const latestBlockHash =
           await sdkConfig.saberHqConnection.getLatestBlockhash();
 
-        await sdkConfig.saberHqConnection.confirmTransaction({
-          blockhash: latestBlockHash.blockhash,
-          lastValidBlockHeight: latestBlockHash.lastValidBlockHeight,
-          signature: refreshedHoneyReserves
-        });
+        await sdkConfig.saberHqConnection.confirmTransaction(
+          {
+            blockhash: latestBlockHash.blockhash,
+            lastValidBlockHeight: latestBlockHash.lastValidBlockHeight,
+            signature: refreshedHoneyReserves
+          },
+          'processed'
+        );
 
         await fetchMarket();
         await honeyUser.refresh().then((val: any) => {
@@ -366,8 +413,8 @@ const Lend: NextPage = () => {
     const mockData: LendTableRow[] = [
       {
         key: '0',
-        name: 'Honey Eyes',
-        interest: 10,
+        name: 'Honey Genesis Bee',
+        interest: 1,
         // validated available to be totalMarketDeposits
         available: totalMarketDeposits,
         // validated value to be totalMarkDeposits + totalMarketDebt
@@ -414,7 +461,7 @@ const Lend: NextPage = () => {
               <div className={style.logoWrapper}>
                 <div className={style.collectionLogo}>
                   <HexaBoxContainer>
-                    <Image src={honeyEyes} />
+                    <Image src={honeyGenesisBee} />
                   </HexaBoxContainer>
                 </div>
               </div>
@@ -443,7 +490,32 @@ const Lend: NextPage = () => {
         dataIndex: 'rate',
         sorter: (a, b) => a.interest - b.interest,
         render: (rate: number) => {
-          return <div className={style.rateCell}>{fp(10)}</div>;
+          return (
+            <div className={style.rateCell}>{fp(calculatedInterestRate)}</div>
+          );
+        }
+      },
+      {
+        width: columnsWidth[3],
+        title: ({ sortColumns }) => {
+          const sortOrder = getColumnSortStatus(sortColumns, 'value');
+          return (
+            <div
+              className={
+                style.headerCell[
+                  sortOrder === 'disabled' ? 'disabled' : 'active'
+                ]
+              }
+            >
+              <span>Supplied</span>{' '}
+              <div className={style.sortIcon[sortOrder]} />
+            </div>
+          );
+        },
+        dataIndex: 'value',
+        sorter: (a, b) => a.value - b.value,
+        render: (value: number) => {
+          return <div className={style.valueCell}>{fs(value)}</div>;
         }
       },
       {
@@ -470,35 +542,13 @@ const Lend: NextPage = () => {
         }
       },
       {
-        width: columnsWidth[3],
-        title: ({ sortColumns }) => {
-          const sortOrder = getColumnSortStatus(sortColumns, 'value');
-          return (
-            <div
-              className={
-                style.headerCell[
-                  sortOrder === 'disabled' ? 'disabled' : 'active'
-                ]
-              }
-            >
-              <span>TVL</span> <div className={style.sortIcon[sortOrder]} />
-            </div>
-          );
-        },
-        dataIndex: 'value',
-        sorter: (a, b) => a.value - b.value,
-        render: (value: number) => {
-          return <div className={style.valueCell}>{fs(value)}</div>;
-        }
-      },
-      {
         width: columnsWidth[4],
         title: MyCollectionsToggle,
         render: (_: null, row: LendTableRow) => {
           return (
             <div className={style.buttonsCell}>
               <HoneyButton variant="text">
-                View <div className={style.arrowIcon} />
+                Manage <div className={style.arrowRightIcon} />
               </HoneyButton>
             </div>
           );
@@ -513,7 +563,14 @@ const Lend: NextPage = () => {
       <div>
         <Typography.Title className={pageTitle}>Lend</Typography.Title>
         <Typography.Text className={pageDescription}>
-          Earn yield by providing liquidity to NFT collections{' '}
+          Earn yield by depositing crypto into NFT markets.{' '}
+          <span>
+            <a target="_blank" href="https://buy.moonpay.com" rel="noreferrer">
+              <HoneyButton style={{ display: 'inline' }} variant="text">
+                Need crypto?
+              </HoneyButton>
+            </a>
+          </span>
         </Typography.Text>
       </div>
       <HoneyContent>
@@ -524,21 +581,22 @@ const Lend: NextPage = () => {
           dataSource={tableDataFiltered}
           pagination={false}
           className={style.table}
-          expandable={{
-            // we use our own custom expand column
-            showExpandColumn: false,
-            onExpand: (expanded, row) =>
-              setExpandedRowKeys(expanded ? [row.key] : []),
-            expandedRowKeys,
-            expandedRowRender: record => {
-              return (
-                <div className={style.expandSection}>
-                  <div className={style.dashedDivider} />
-                  <HoneyChart title="Interest rate" data={record.stats} />
-                </div>
-              );
-            }
-          }}
+          // TODO: uncomment when the chart has been replaced and implemented
+          // expandable={{
+          //   // we use our own custom expand column
+          //   showExpandColumn: false,
+          //   onExpand: (expanded, row) =>
+          //     setExpandedRowKeys(expanded ? [row.key] : []),
+          //   expandedRowKeys,
+          //   expandedRowRender: record => {
+          //     return (
+          //       <div className={style.expandSection}>
+          //         <div className={style.dashedDivider} />
+          //         <HoneyChart title="Interest rate" data={record.stats} />
+          //       </div>
+          //   );
+          // }
+          // }}
         />
       </HoneyContent>
       <HoneySider>
@@ -550,6 +608,7 @@ const Lend: NextPage = () => {
           available={totalMarketDeposits}
           value={totalMarketDeposits + totalMarketDebt}
           userWalletBalance={userWalletBalance}
+          fetchedSolPrice={fetchedSolPrice}
         />
       </HoneySider>
     </LayoutRedesign>

@@ -20,7 +20,7 @@ import React, {
 } from 'react';
 import { formatNumber } from '../../helpers/format';
 import Image from 'next/image';
-import honeyEyes from '/public/nfts/honeyEyes.png';
+import honeyGenesisBee from '/public/images/imagePlaceholder.png';
 import { ColumnTitleProps, Key } from 'antd/lib/table/interface';
 import HoneyToggle from '../../components/HoneyToggle/HoneyToggle';
 import debounce from 'lodash/debounce';
@@ -47,7 +47,9 @@ import {
 } from '@honey-finance/sdk';
 import {
   calcNFT,
-  calculateCollectionwideAllowance
+  calculateCollectionwideAllowance,
+  fetchSolPrice,
+  getInterestRate
 } from 'helpers/loanHelpers/userCollection';
 import { Metadata } from '@metaplex-foundation/mpl-token-metadata';
 import { MAX_LTV } from 'constants/loan';
@@ -63,9 +65,9 @@ import HoneyTableRow from 'components/HoneyTable/HoneyTableRow/HoneyTableRow';
 import HoneyTableNameCell from '../../components/HoneyTable/HoneyTableNameCell/HoneyTableNameCell';
 // import { network } from 'pages/_app';
 
-const network = 'devnet'; // change to dynamic value
+const network = 'mainnet-beta'; // change to dynamic value
 
-const { formatPercent: fp, formatSol: fs } = formatNumber;
+const { format: f, formatPercent: fp, formatSol: fs } = formatNumber;
 
 const Markets: NextPage = () => {
   const wallet = useConnectedWallet();
@@ -141,6 +143,10 @@ const Markets: NextPage = () => {
   const [userUSDCBalance, setUserUSDCBalance] = useState(0);
   const [userTotalDeposits, setUserTotalDeposits] = useState(0);
   const [sumOfTotalValue, setSumOfTotalValue] = useState(0);
+  const [fetchedSolPrice, setFetchedSolPrice] = useState(0);
+  const [calculatedInterestRate, setCalculatedInterestRate] =
+    useState<number>(0);
+  const [utilizationRate, setUtilizationRate] = useState(0);
 
   const [isMobileSidebarVisible, setShowMobileSidebar] = useState(false);
 
@@ -208,6 +214,11 @@ const Markets: NextPage = () => {
     }, 3000);
   }, [marketReserveInfo, honeyUser]);
 
+  async function fetchSolValue(reserves: any, connection: any) {
+    const slPrice = await fetchSolPrice(reserves, connection);
+    setFetchedSolPrice(slPrice);
+  }
+
   /**
    * @description sets state of marketValue by parsing lamports outstanding debt amount to SOL
    * @params none, requires parsedReserves
@@ -222,8 +233,24 @@ const Markets: NextPage = () => {
       );
       setTotalMarketDeposits(totalMarketDeposits);
       // setTotalMarketDeposits(parsedReserves[0].reserveState.totalDeposits.div(new BN(10 ** 9)).toNumber());
+      if (parsedReserves && sdkConfig.saberHqConnection) {
+        fetchSolValue(parsedReserves, sdkConfig.saberHqConnection);
+      }
     }
   }, [parsedReserves]);
+
+  useEffect(() => {
+    if (totalMarketDeposits && totalMarketDebt && totalMarketDeposits) {
+      setUtilizationRate(
+        Number(
+          f(
+            (totalMarketDeposits + totalMarketDebt - totalMarketDeposits) /
+              (totalMarketDeposits + totalMarketDebt)
+          )
+        )
+      );
+    }
+  }, [totalMarketDeposits, totalMarketDebt, totalMarketDeposits]);
 
   // fetches total market positions
   async function fetchObligations() {
@@ -273,8 +300,6 @@ const Markets: NextPage = () => {
       : setUserAllowance(outcome.sumOfAllowance);
     setUserDebt(outcome.sumOfTotalDebt);
     setLoanToValue(outcome.sumOfLtv);
-    console.log('this is ltv', loanToValue);
-    console.log('this is user allowance', userAllowance);
   }
 
   /**
@@ -283,7 +308,6 @@ const Markets: NextPage = () => {
    * @returns honeyUser | marketReserveInfo |
    */
   useEffect(() => {
-    console.log('@@--', userAllowance);
     if (marketReserveInfo && parsedReserves) {
       setDepositNoteExchangeRate(
         BnToDecimal(marketReserveInfo[0].depositNoteExchangeRate, 15, 5)
@@ -329,14 +353,25 @@ const Markets: NextPage = () => {
     }
   }, [collateralNFTPositions]);
 
+  async function calculateInterestRate(utilizationRate: number) {
+    let interestRate = await getInterestRate(utilizationRate);
+    if (interestRate) setCalculatedInterestRate(interestRate);
+  }
+
+  useEffect(() => {
+    console.log('Runnig');
+    if (utilizationRate) {
+      calculateInterestRate(utilizationRate);
+    }
+  }, [utilizationRate]);
+
   // PUT YOUR DATA SOURCE HERE
   // MOCK DATA FOR NOW
   useEffect(() => {
-    console.log('@@--::', userAllowance);
     const mockData: MarketTableRow[] = [
       {
         key: '0',
-        name: 'Honey Eyes',
+        name: 'Honey Genesis Bee',
         rate: 0.1,
         // validated available to be totalMarketDeposits
         available: totalMarketDeposits,
@@ -440,7 +475,7 @@ const Markets: NextPage = () => {
                 <div className={style.logoWrapper}>
                   <div className={style.collectionLogo}>
                     <HexaBoxContainer>
-                      <Image src={honeyEyes} />
+                      <Image src={honeyGenesisBee} />
                     </HexaBoxContainer>
                   </div>
                 </div>
@@ -470,7 +505,32 @@ const Markets: NextPage = () => {
           hidden: windowWidth < TABLET_BP,
           sorter: (a: MarketTableRow, b: MarketTableRow) => a.rate - b.rate,
           render: (rate: number) => {
-            return <div className={style.rateCell}>{fp(rate * 100)}</div>;
+            return (
+              <div className={style.rateCell}>{fp(calculatedInterestRate)}</div>
+            );
+          }
+        },
+        {
+          width: columnsWidth[3],
+          title: ({ sortColumns }: ColumnTitleProps<MarketTableRow>) => {
+            const sortOrder = getColumnSortStatus(sortColumns, 'value');
+            return (
+              <div
+                className={
+                  style.headerCell[
+                    sortOrder === 'disabled' ? 'disabled' : 'active'
+                  ]
+                }
+              >
+                <span>Supplied</span>
+                <div className={style.sortIcon[sortOrder]} />
+              </div>
+            );
+          },
+          dataIndex: 'value',
+          sorter: (a: MarketTableRow, b: MarketTableRow) => a.value - b.value,
+          render: (value: number) => {
+            return <div className={style.valueCell}>{fs(value)}</div>;
           }
         },
         {
@@ -498,29 +558,7 @@ const Markets: NextPage = () => {
             return <div className={style.availableCell}>{fs(available)}</div>;
           }
         },
-        {
-          width: columnsWidth[3],
-          title: ({ sortColumns }: ColumnTitleProps<MarketTableRow>) => {
-            const sortOrder = getColumnSortStatus(sortColumns, 'value');
-            return (
-              <div
-                className={
-                  style.headerCell[
-                    sortOrder === 'disabled' ? 'disabled' : 'active'
-                  ]
-                }
-              >
-                <span>TVL</span>
-                <div className={style.sortIcon[sortOrder]} />
-              </div>
-            );
-          },
-          dataIndex: 'value',
-          sorter: (a: MarketTableRow, b: MarketTableRow) => a.value - b.value,
-          render: (value: number) => {
-            return <div className={style.valueCell}>{fs(value)}</div>;
-          }
-        },
+
         {
           width: columnsWidth[4],
           title: MyCollectionsToggle,
@@ -553,7 +591,7 @@ const Markets: NextPage = () => {
                     <div className={style.logoWrapper}>
                       <div className={style.collectionLogo}>
                         <HexaBoxContainer>
-                          <Image src={honeyEyes} />
+                          <Image src={honeyGenesisBee} />
                         </HexaBoxContainer>
                       </div>
                     </div>
@@ -595,7 +633,7 @@ const Markets: NextPage = () => {
           <div className={style.expandedRowIcon} />
           <div className={style.collectionLogo}>
             <HexaBoxContainer>
-              <Image src={honeyEyes} />
+              <Image src={honeyGenesisBee} />
             </HexaBoxContainer>
           </div>
           <div className={style.nameCellText}>
@@ -656,7 +694,7 @@ const Markets: NextPage = () => {
           <div className={style.expandedRowIcon} />
           <div className={style.collectionLogo}>
             <HexaBoxContainer>
-              <Image src={honeyEyes} />
+              <Image src={honeyGenesisBee} />
             </HexaBoxContainer>
           </div>
           <div className={style.nameCellText}>
@@ -711,7 +749,7 @@ const Markets: NextPage = () => {
             You can not add any more NFTs to this market{' '}
           </span>
           <span className={style.footerDescription}>
-            Choose another market or connect a different wallet{' '}
+            Current risk parameters limit to 1 loan per wallet{' '}
           </span>
         </div>
       </div>
@@ -828,11 +866,14 @@ const Markets: NextPage = () => {
         const latestBlockHash =
           await sdkConfig.saberHqConnection.getLatestBlockhash();
 
-        await sdkConfig.saberHqConnection.confirmTransaction({
-          blockhash: latestBlockHash.blockhash,
-          lastValidBlockHeight: latestBlockHash.lastValidBlockHeight,
-          signature: refreshedHoneyReserves
-        });
+        await sdkConfig.saberHqConnection.confirmTransaction(
+          {
+            blockhash: latestBlockHash.blockhash,
+            lastValidBlockHeight: latestBlockHash.lastValidBlockHeight,
+            signature: refreshedHoneyReserves
+          },
+          'processed'
+        );
 
         await fetchMarket();
         await honeyUser.refresh().then((val: any) => {
@@ -879,11 +920,14 @@ const Markets: NextPage = () => {
         const latestBlockHash =
           await sdkConfig.saberHqConnection.getLatestBlockhash();
 
-        await sdkConfig.saberHqConnection.confirmTransaction({
-          blockhash: latestBlockHash.blockhash,
-          lastValidBlockHeight: latestBlockHash.lastValidBlockHeight,
-          signature: refreshedHoneyReserves
-        });
+        await sdkConfig.saberHqConnection.confirmTransaction(
+          {
+            blockhash: latestBlockHash.blockhash,
+            lastValidBlockHeight: latestBlockHash.lastValidBlockHeight,
+            signature: refreshedHoneyReserves
+          },
+          'processed'
+        );
 
         await fetchMarket();
         await honeyUser.refresh().then((val: any) => {
@@ -1050,6 +1094,8 @@ const Markets: NextPage = () => {
           userUSDCBalance={userUSDCBalance}
           loanToValue={loanToValue}
           hideMobileSidebar={hideMobileSidebar}
+          fetchedSolPrice={fetchedSolPrice}
+          calculatedInterestRate={calculatedInterestRate}
         />
       </HoneySider>
     </LayoutRedesign>

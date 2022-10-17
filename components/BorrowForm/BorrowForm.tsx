@@ -5,7 +5,6 @@ import { InputsBlock } from '../InputsBlock/InputsBlock';
 import { HoneySlider } from '../HoneySlider/HoneySlider';
 import * as styles from './BorrowForm.css';
 import { formatNumber } from '../../helpers/format';
-import honeyEyes from '/public/nfts/honeyEyes.png';
 import HoneyButton from 'components/HoneyButton/HoneyButton';
 import HexaBoxContainer from 'components/HexaBoxContainer/HexaBoxContainer';
 import NftList from '../NftList/NftList';
@@ -42,7 +41,9 @@ const BorrowForm = (props: BorrowProps) => {
     userAllowance,
     userDebt,
     loanToValue,
-    hideMobileSidebar
+    hideMobileSidebar,
+    fetchedSolPrice,
+    calculatedInterestRate
   } = props;
 
   const [valueUSD, setValueUSD] = useState<number>(0);
@@ -59,9 +60,9 @@ const BorrowForm = (props: BorrowProps) => {
 
   const borrowedValue = userDebt;
   const maxValue = userAllowance;
-  const solPrice = 32;
-  const liquidationThreshold = 0.75;
-  const borrowFee = 0.015; // 1,5%
+  const solPrice = fetchedSolPrice;
+  const liquidationThreshold = 0.65; // TODO: change where relevant, currently set to 65% on mainnet
+  const borrowFee = 0.0; // TODO: 1,5% later but 0% for now
 
   const newAdditionalDebt = valueSOL * (1 + borrowFee);
   const newTotalDebt = newAdditionalDebt
@@ -282,7 +283,7 @@ const BorrowForm = (props: BorrowProps) => {
                 </span>
               }
               value={fp((loanToValue + newAdditionalDebt / nftPrice) * 100)}
-              isDisabled={true}
+              isDisabled={userDebt == 0 ? true : false}
             />
             <HoneySlider
               currentValue={sliderValue * 1.1}
@@ -341,7 +342,7 @@ const BorrowForm = (props: BorrowProps) => {
                 </span>
               }
               value={fs(newTotalDebt < 0 ? 0 : newTotalDebt)}
-              isDisabled={true}
+              isDisabled={userDebt == 0 ? true : false}
             />
           </div>
         </div>
@@ -362,7 +363,7 @@ const BorrowForm = (props: BorrowProps) => {
           </div>
           <div className={styles.col}>
             <InfoBlock
-              isDisabled
+              isDisabled={userDebt == 0 ? true : false}
               title={
                 <span className={hAlign}>
                   New allowance <div className={questionIcon} />
@@ -412,12 +413,12 @@ const BorrowForm = (props: BorrowProps) => {
                     </a>
                   </span>
                 }
-                value={fp(10)}
+                value={fp(calculatedInterestRate)}
               ></InfoBlock>
             </div>
             <div className={cs(stylesRepay.balance, styles.col)}>
               <InfoBlock
-                isDisabled
+                isDisabled={userDebt == 0 ? true : false}
                 title={
                   <span className={hAlign}>
                     Borrow Fee <div className={questionIcon} />

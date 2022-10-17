@@ -4,7 +4,6 @@ import HexaBoxContainer from '../HexaBoxContainer/HexaBoxContainer';
 import HoneyButton from '../HoneyButton/HoneyButton';
 import { NftCardProps } from './types';
 import c from 'classnames';
-import honeyEyes from '/public/nfts/honeyEyes.png';
 import Image from 'next/image';
 
 const NftCard = (props: NftCardProps) => {

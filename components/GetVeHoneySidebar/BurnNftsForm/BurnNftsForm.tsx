@@ -5,7 +5,7 @@ import SidebarScroll from '../../SidebarScroll/SidebarScroll';
 import HoneyWarning from '../../HoneyWarning/HoneyWarning';
 import HoneyButton from '../../HoneyButton/HoneyButton';
 import HexaBoxContainer from '../../HexaBoxContainer/HexaBoxContainer';
-import honeyEyes from '/public/nfts/honeyEyes.png';
+import honeyGenesisBee from '/public/images/imagePlaceholder.png';
 import { Checkbox } from 'antd';
 import Image from 'next/image';
 import { CheckboxChangeEvent } from 'antd/es/checkbox';
@@ -61,7 +61,7 @@ const ListItem: FC<ListItemProps> = ({
       <div className={styles.listItemLeft}>
         <div className={styles.listItemIcon}>
           <HexaBoxContainer>
-            <Image src={honeyEyes} />
+            <Image src={honeyGenesisBee} />
           </HexaBoxContainer>
         </div>
 

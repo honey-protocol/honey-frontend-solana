@@ -66,7 +66,7 @@ const Liquidation: NextPage = () => {
    */
   const dataSet = [
     {
-      collection: 'Honey Eyes',
+      collection: 'Honey Genesis Bee',
       totalCollateral: totalMarketNFTs,
       totalDebt: totalMarketDebt.toFixed(2),
       averageLTV: averageMarketLVT

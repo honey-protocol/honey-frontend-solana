@@ -4,6 +4,7 @@ export type BidFormProps = {
   highestBiddingValue: number;
   userBalance: number;
   currentUserBid: number;
+  fetchedSolPrice: number;
   handleRevokeBid: (type: string, toast: ToastProps['toast']) => void;
   handleIncreaseBid: (
     type: string,

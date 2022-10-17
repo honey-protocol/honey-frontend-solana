@@ -20,7 +20,7 @@ import SearchInput from '../../components/SearchInput/SearchInput';
 import { ColumnType } from 'antd/lib/table';
 import HexaBoxContainer from '../../components/HexaBoxContainer/HexaBoxContainer';
 import Image from 'next/image';
-import honeyEyes from '/public/nfts/honeyEyes.png';
+import honeyGenesisBee from '/public/images/imagePlaceholder.png';
 import { getColumnSortStatus } from '../../helpers/tableUtils';
 import HoneyButton from '../../components/HoneyButton/HoneyButton';
 import { formatNumber } from '../../helpers/format';
@@ -36,7 +36,7 @@ import {
 import { ConfigureSDK } from 'helpers/loanHelpers';
 import { useConnectedWallet } from '@saberhq/use-solana';
 import { LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js';
-import { calcNFT } from 'helpers/loanHelpers/userCollection';
+import { calcNFT, fetchSolPrice } from 'helpers/loanHelpers/userCollection';
 import { LiquidateTablePosition } from '../../types/liquidate';
 import { HONEY_MARKET_ID, HONEY_PROGRAM_ID } from 'constants/loan';
 import { NATIVE_MINT } from '@solana/spl-token';
@@ -50,7 +50,7 @@ import { ToastProps } from 'hooks/useToast';
 const { formatPercent: fp, formatSol: fs, formatRoundDown: fd } = formatNumber;
 const Liquidate: NextPage = () => {
   // start sdk integration
-  const liquidationThreshold = 0.75;
+  const liquidationThreshold = 0.65; // TODO: values like this should be imported from constants per collection
   // init anchor
   const { program } = useAnchor();
   // create wallet instance for PK
@@ -103,7 +103,7 @@ const Liquidate: NextPage = () => {
   const [hasPosition, setHasPosition] = useState(false);
   const [highestBiddingAddress, setHighestBiddingAddress] = useState('');
   const [highestBiddingValue, setHighestBiddingValue] = useState(0);
-  const [currentUserBid, setCurrentUserBid] = useState(0);
+  const [currentUserBid, setCurrentUserBid] = useState<number>(0);
   const [userInput, setUserInput] = useState(0);
   const [loadingState, setLoadingState] = useState(false);
   const [refetchState, setRefetchState] = useState(false);
@@ -113,6 +113,8 @@ const Liquidate: NextPage = () => {
   const [biddingArray, setBiddingArray] = useState({});
   const [userBalance, setUserBalance] = useState(0);
   const [loanToValue, setLoanToValue] = useState<number>(0);
+  const [fetchedSolPrice, setFetchedSolPrice] = useState(0);
+
   // create stringyfied instance of walletPK
   let stringyfiedWalletPK = sdkConfig.sdkWallet?.publicKey.toString();
   let walletPK = sdkConfig.sdkWallet?.publicKey;
@@ -149,7 +151,7 @@ const Liquidate: NextPage = () => {
     // let sorted = await positions.sort((first: any,second: any) => first.is_healthy - second.is_healthy).reverse();
     let sorted = await positions.map((obligation: any, index: number) => {
       return {
-        name: 'Honey Eyes',
+        name: 'Honey Genesis Bee',
         riskLvl: (obligation.debt / nftPrice) * 100,
         untilLiquidation:
           obligation.debt !== 0
@@ -224,6 +226,17 @@ const Liquidate: NextPage = () => {
       setNftPrice(Number(nftPrice));
     }
   }
+
+  async function fetchSolValue(reserves: any, connection: any) {
+    const slPrice = await fetchSolPrice(reserves, connection);
+    setFetchedSolPrice(slPrice)
+  }
+
+  useEffect(() => {
+    if (parsedReserves && sdkConfig.saberHqConnection) {
+      fetchSolValue(parsedReserves, sdkConfig.saberHqConnection);
+    }
+  }, [parsedReserves])
 
   useEffect(() => {
     calculateNFTPrice();
@@ -346,9 +359,9 @@ const Liquidate: NextPage = () => {
     const mockData: LiquidateTableRow[] = [
       {
         key: '0',
-        name: 'Honey Eyes',
+        name: 'Honey Genesis Bee',
         risk: loanToValue,
-        liqThreshold: 0.75,
+        liqThreshold: liquidationThreshold,
         totalDebt: totalDebt,
         tvl: nftPrice * fetchedPositions.length,
         positions: fetchedPositions
@@ -413,7 +426,7 @@ const Liquidate: NextPage = () => {
               <div className={style.logoWrapper}>
                 <div className={style.collectionLogo}>
                   <HexaBoxContainer>
-                    <Image src={honeyEyes} />
+                    <Image src={honeyGenesisBee} />
                   </HexaBoxContainer>
                 </div>
               </div>
@@ -601,6 +614,7 @@ const Liquidate: NextPage = () => {
           handleRevokeBid={handleRevokeBid}
           handleIncreaseBid={handleIncreaseBid}
           handlePlaceBid={handlePlaceBid}
+          fetchedSolPrice={fetchedSolPrice}
         />
       </HoneySider>
     </LayoutRedesign>

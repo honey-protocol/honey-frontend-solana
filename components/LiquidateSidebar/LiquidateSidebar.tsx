@@ -22,6 +22,7 @@ const LiquidateSidebar = (props: LendSidebarProps) => {
     biddingArray,
     highestBiddingValue,
     currentUserBid,
+    fetchedSolPrice,
     handleRevokeBid,
     handleIncreaseBid,
     handlePlaceBid
@@ -65,10 +66,11 @@ const LiquidateSidebar = (props: LendSidebarProps) => {
                 handleRevokeBid={handleRevokeBid}
                 handleIncreaseBid={handleIncreaseBid}
                 handlePlaceBid={handlePlaceBid}
+                fetchedSolPrice={fetchedSolPrice}
               />
             )}
             {activeTab === 'current' && (
-              <BidsList biddingArray={biddingArray} />
+              <BidsList biddingArray={biddingArray} fetchedSolPrice={fetchedSolPrice} />
             )}
           </>
         )}

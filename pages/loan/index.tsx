@@ -45,8 +45,8 @@ const Loan: NextPage = () => {
   // TODO: should be fetched by SDK
   const assetData: Array<AssetRowType> = [
     {
-      vaultName: 'Honey Eyes',
-      vaultImageUrl: 'https://mint-site-ten.vercel.app/when-loans.gif',
+      vaultName: 'Honey Genesis Bee',
+      vaultImageUrl: '/public/images/imagePlaceholder.png',
       totalBorrowed: RoundHalfDown(totalMarketDebt),
       interest: 10,
       available: totalMarkDeposits,

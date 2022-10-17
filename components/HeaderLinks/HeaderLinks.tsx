@@ -10,7 +10,8 @@ import cs from 'classnames';
 export const links = [
   {
     title: 'DASHBOARD',
-    href: '/dashboard'
+    href: '/dashboard',
+    disabled: true
   },
   {
     title: 'BORROW',
@@ -30,19 +31,28 @@ export const links = [
   },
   {
     title: 'GOVERNANCE',
-    href: '/governance'
+    href: '/governance',
+    disabled: true
   },
   {
     title: 'DOCUMENTATION',
-    href: '/documentation'
+    href: 'https://docs.honey.finance'
   },
   {
     title: 'FEEDBACK',
     href: 'https://feedback.honey.finance'
   },
   {
+    title: 'BLOG',
+    href: 'https://blog.honey.finance'
+  },
+  {
     title: 'LEGACY WEBSITE',
     href: 'https://honeylend.netlify.app/farm'
+  },
+  {
+    title: 'V1',
+    href: 'https://app.honey.finance'
   }
 ];
 
@@ -93,9 +103,15 @@ const HeaderDropdownMenu = () => {
             })}
             key={i}
           >
-            <Link href={link.href} passHref>
-              <HoneyButton variant="textSecondary">{link.title}</HoneyButton>
-            </Link>
+            {link.disabled ? (
+              <HoneyButton disabled variant="textSecondary">
+                {link.title}
+              </HoneyButton>
+            ) : (
+              <Link href={link.href} passHref>
+                <HoneyButton variant="textSecondary">{link.title}</HoneyButton>
+              </Link>
+            )}
           </li>
         ))}
       <li>
@@ -111,5 +127,4 @@ const HeaderDropdownMenu = () => {
     </ul>
   );
 };
-
 export default HeaderDropdownMenu;

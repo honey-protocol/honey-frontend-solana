@@ -26,7 +26,7 @@ const NftList = (props: NftListProps) => {
       {data &&
         data.map(
           (item, index) =>
-            item.name.includes('When') && (
+            item.name.includes('Honey Genesis') && (
               <div
                 className={cs(style.listItem, {
                   [style.selectedListItem]: item.mint === selectedNFTMint
