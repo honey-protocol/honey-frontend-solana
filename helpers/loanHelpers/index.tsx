@@ -135,9 +135,11 @@ export function BnDivided(val: BN, a: number, b: number) {
 export async function getOraclePrice(
   cluster: 'devnet' | 'mainnet-beta' = 'mainnet-beta',
   connection: Connection,
-  aggregatorKey: PublicKey
+  aggregatorKey: PublicKey | undefined
 ): Promise<any> {
   // load the switchboard program
+  if(!aggregatorKey)
+    return 0;
   console.log('@@@-- cluster', cluster);
   const program = await loadSwitchboardProgram(
     cluster,
