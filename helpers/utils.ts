@@ -107,4 +107,4 @@ export function isNil(value: any): boolean {
 
 export const RoundHalfUp = (val: number, decimals: number = 2): number => {
   return Math.ceil(val * 10 ** decimals) / 10 ** decimals;
-}
+};

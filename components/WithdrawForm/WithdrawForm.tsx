@@ -144,8 +144,8 @@ const WithdrawForm = (props: WithdrawFormProps) => {
 
         <div className={styles.inputs}>
           <InputsBlock
-            firstInputValue={p(f(valueUSD))}
-            secondInputValue={p(f(valueSOL))}
+            firstInputValue={valueUSD}
+            secondInputValue={valueSOL}
             onChangeFirstInput={handleUsdInputChange}
             onChangeSecondInput={handleSolInputChange}
             maxValue={maxValue}

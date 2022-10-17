@@ -148,6 +148,16 @@ export const formatNumber = {
         .replace(new RegExp('\\' + thousandSeparator, 'g'), '')
         .replace(new RegExp('\\' + decimalSeparator), '.')
     );
+  },
+
+  formatTokenInput: (input: string, decimals: number | undefined) => {
+    const [integersValue, decimalsValue] = input.split('.');
+
+    if (!decimalsValue || decimalsValue.length === 0) {
+      return input;
+    }
+
+    return `${integersValue}.${decimalsValue.slice(0, decimals)}`;
   }
 };
 

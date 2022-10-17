@@ -113,8 +113,8 @@ const LockHoneyForm: FC = () => {
         </div>
 
         <InputsBlock
-          firstInputValue={p(f(valueUSD))}
-          secondInputValue={p(f(valueUSDC))}
+          firstInputValue={valueUSD}
+          secondInputValue={valueUSDC}
           onChangeFirstInput={handleUsdInputChange}
           onChangeSecondInput={handleUsdcInputChange}
           maxValue={maxValue}
