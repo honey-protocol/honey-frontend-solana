@@ -6,17 +6,16 @@ import { BorrowPositionCard } from './BorrowPositionCard/BorrowPositionCard';
 import { HoneyButtonTabs } from '../HoneyButtonTabs/HoneyButtonTabs';
 import SearchInput from '../SearchInput/SearchInput';
 import { LendPositionCard } from './LendPositionCard/LendPositionCard';
+import { PositionType } from "../../types/dashboard";
 
 export const HoneyCardsGrid: FC<HoneyCardGridProps> = ({
   borrowPositions,
   selected,
   lendPositions,
+  positionType,
+  onChangePositionType,
   onSelect
 }) => {
-  type PositionByType = 'borrow' | 'lend';
-  const [positionByType, setPositionByType] =
-    useState<PositionByType>('borrow');
-
   type PositionByValue = 'high_risk' | 'high_ir' | 'high_debt';
   const [positionByValue, setPositionByValue] =
     useState<PositionByValue>('high_risk');
@@ -50,8 +49,8 @@ export const HoneyCardsGrid: FC<HoneyCardGridProps> = ({
               { name: 'Borrow', slug: 'borrow' },
               { name: 'Lend', slug: 'lend' }
             ]}
-            activeItemSlug={positionByType}
-            onClick={slug => setPositionByType(slug as PositionByType)}
+            activeItemSlug={positionType}
+            onClick={slug => onChangePositionType(slug as PositionType)}
           />
         </div>
 
@@ -76,7 +75,7 @@ export const HoneyCardsGrid: FC<HoneyCardGridProps> = ({
       </div>
       <div className={styles.gridContent}>
         <div className={styles.cardsGrid}>
-          {positionByType === 'borrow'
+          {positionType === 'borrow'
             ? borrowedPositions.map((position, index) => {
               // TODO: DROP THIS CONDITION WHEN WILL USE REAL DATA !!!
               if (position.price > position.debt) {
@@ -98,7 +97,7 @@ export const HoneyCardsGrid: FC<HoneyCardGridProps> = ({
                 />
               ))}
         </div>
-        {Boolean(notBorrowedPositions.length) && positionByType === 'borrow' && (
+        {Boolean(notBorrowedPositions.length) && positionType === 'borrow' && (
           <>
             <div className={styles.cardsDivider}>
               <div className={styles.divider} />

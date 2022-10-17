@@ -42,6 +42,8 @@ import { HoneyProfileChart } from '../../components/HoneyProfileChart/HoneyProfi
 import {MAX_LTV} from "../../constants/loan";
 import useWindowSize from '../../hooks/useWindowSize';
 import { TABLET_BP } from '../../constants/breakpoints';
+import LendSidebar from "../../components/LendSidebar/LendSidebar";
+import { PositionType } from "../../types/dashboard";
 
 const network = 'devnet'; // change to dynamic value
 
@@ -96,6 +98,8 @@ const Dashboard: NextPage = () => {
   const userExposure = 4129.1;
   const { width } = useWindowSize();
   const [ dataArray, setDataArray ] = useState<NotificationCardProps[]>([]);
+  const sdkConfig = ConfigureSDK();
+  const userWalletBalance = 50;
 
   useEffect(() => {
     if (width >= TABLET_BP) {
@@ -123,7 +127,6 @@ const Dashboard: NextPage = () => {
     const debt = Math.floor(Math.random() * (price - ((price / 100) * MAX_LTV)))
     return {price, debt}
   }
-
 
   const getBorrowUserPositionsMock = () => {
     const preparedPositions: BorrowUserPosition[] = [];
@@ -178,7 +181,6 @@ const Dashboard: NextPage = () => {
   const mockLendUserPositions = useMemo(() => getLendUserPositionsMock(), []);
 
   const wallet = useConnectedWallet();
-  const sdkConfig = ConfigureSDK();
 
   /**
    * @description calls upon markets which
@@ -219,7 +221,8 @@ const Dashboard: NextPage = () => {
 
   const [totalMarketDeposits, setTotalMarketDeposits] = useState(0);
   const [totalMarketDebt, setTotalMarketDebt] = useState(0);
-
+  const [positionType, setPositionType] =
+    useState<PositionType>('borrow');
   const [nftPrice, setNftPrice] = useState(0);
   const [calculatedNftPrice, setCalculatedNftPrice] = useState(false);
   const [marketPositions, setMarketPositions] = useState(0);
@@ -615,7 +618,8 @@ const Dashboard: NextPage = () => {
 
   const dashboardSidebar = () => (
     <HoneySider>
-      <MarketsSidebar
+      {positionType === 'borrow' ? (
+        <MarketsSidebar
         collectionId="s"
         availableNFTs={userAvailableNFTs}
         openPositions={userOpenPositions}
@@ -629,6 +633,16 @@ const Dashboard: NextPage = () => {
         userUSDCBalance={userUSDCBalance}
         loanToValue={loanToValue}
       />
+        ) : (
+          <LendSidebar
+        collectionId="s"
+        executeDeposit={() => {console.log('deposit pressed')}}
+        executeWithdraw={() => {console.log('widthdraw pressed')}}
+        userTotalDeposits={userTotalDeposits}
+        available={totalMarketDeposits}
+        value={totalMarketDeposits + totalMarketDebt}
+        userWalletBalance={userWalletBalance}
+        />)}
     </HoneySider>
   );
 
@@ -652,6 +666,8 @@ const Dashboard: NextPage = () => {
               borrowPositions={mockBorrowUserPositions}
               lendPositions={mockLendUserPositions}
               selected={selected}
+              onChangePositionType={setPositionType}
+              positionType={positionType}
               onSelect={handleSelect}
             />
           </div>

@@ -1,3 +1,5 @@
+import { PositionType } from "../../types/dashboard";
+
 export type BorrowUserPosition = {
   name: string;
   price: number;
@@ -21,6 +23,8 @@ export interface HoneyCardGridProps {
   borrowPositions: BorrowUserPosition[];
   lendPositions: LendUserPosition[];
   onSelect: (id: string) => void;
+  onChangePositionType: (value: PositionType) => void;
+  positionType: PositionType;
   selected: string | undefined;
 }
 
