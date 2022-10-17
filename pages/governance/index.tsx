@@ -26,6 +26,7 @@ import { useProposals } from 'hooks/tribeca/useProposals';
 import { ProposalState } from 'helpers/dao';
 import { vars } from 'styles/theme.css';
 import { getVoteCountFmt } from 'helpers/utils';
+import HoneyTooltip from 'components/HoneyTooltip/HoneyTooltip';
 
 const { format: f, formatShortName: fsn } = formatNumber;
 const NUM_PLACEHOLDERS = 0;
@@ -52,7 +53,7 @@ const Governance: NextPage = () => {
           proposalState !== ProposalState.Canceled;
   });
 
-  console.log({ allProposals });
+  // console.log({ allProposals });
 
   const getStatus = (state: ProposalState): ProposalStatus => {
     // if(!state) return 'approved';
@@ -86,11 +87,11 @@ const Governance: NextPage = () => {
         : 'draft'
     }));
     if (!data || !data[0]?.id || data.length === tableData?.length) return;
-    console.log({ data });
+    // console.log({ data });
     setTableData(data);
   }, [allProposals]);
 
-  console.log({ tableData });
+  // console.log({ tableData });
 
   useEffect(() => {
     getTableData();
@@ -160,7 +161,11 @@ const Governance: NextPage = () => {
                   </HexaBoxContainer>
                 </div>
               </div>
-              <div className={style.collectionName}>{row.name}</div>
+              <div className={style.titleTooltipContainer}>
+                <HoneyTooltip label={row.name}>
+                  <div className={style.collectionName}>{row.name}</div>
+                </HoneyTooltip>
+              </div>
             </div>
           );
         }
