@@ -438,7 +438,3 @@ export const getVoteCountFmt = (votes: number, veToken: Token) => {
     return 0;
   }
 };
-
-export const RoundHalfUp = (val: number, decimals: number = 2): number => {
-  return Math.ceil(val * 10 ** decimals) / 10 ** decimals;
-};
