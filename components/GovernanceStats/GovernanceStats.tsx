@@ -12,6 +12,10 @@ import HoneyPeriod from '../HoneyPeriod/HoneyPeriod';
 import HoneyTooltip from 'components/HoneyTooltip/HoneyTooltip';
 import { questionIcon, questionIconYellow } from 'styles/icons.css';
 import { Space } from 'antd';
+import { TokenAmount } from '@saberhq/token-utils';
+import { useGovernance } from 'contexts/GovernanceProvider';
+import { useTokenMint } from '@saberhq/sail';
+import { useGovernor } from 'hooks/tribeca/useGovernor';
 
 const { format: f, formatPercent: fp, formatShortName: fsn } = formatNumber;
 
@@ -20,12 +24,32 @@ export const GovernanceStats: FC<GoveranceStatsProps> = ({
 }) => {
   const isMock = true;
   const lockedPercent = 24;
-  const honeyBalance = 10012.94;
-  const veHoneyBalance = 12012.94;
-  const honeySupply = 2_000_932;
-  const lockedHoney = 5_00_500;
-  const lockPeriodEnd = 1759488639952;
 
+  const { govToken, lockedSupply } = useGovernor();
+  const { data: govTokenData } = useTokenMint(govToken?.mintAccount);
+
+  const totalSupplyFmt =
+    govTokenData && govToken
+      ? new TokenAmount(govToken, govTokenData.account.supply).format({
+          numberFormatOptions: {
+            maximumFractionDigits: 0
+          }
+        })
+      : govTokenData;
+
+  const totalSupply = Number(totalSupplyFmt?.toString().replaceAll(',', ''));
+
+  const lockedSupplyFmt = lockedSupply
+    ? lockedSupply.format({
+        numberFormatOptions: {
+          maximumFractionDigits: 0
+        }
+      })
+    : lockedSupply;
+  const lockedHoney = Number(lockedSupplyFmt);
+
+  const { honeyAmount, veHoneyAmount, lockedPeriodEnd } = useGovernance();
+  console.log(Number(totalSupply), lockedHoney, lockedSupplyFmt);
   const getChartData = () => {
     if (isMock) {
       const from = new Date()
@@ -47,7 +71,7 @@ export const GovernanceStats: FC<GoveranceStatsProps> = ({
             </Space>
           </HoneyTooltip>
           <div className={c(styles.value, styles.lockPeriodValue)}>
-            <HoneyPeriod from={Date.now()} to={lockPeriodEnd} />
+            <div>{lockedPeriodEnd.toString()}</div>
           </div>
         </div>
         <div className={styles.sliderWrapper}>
@@ -71,7 +95,7 @@ export const GovernanceStats: FC<GoveranceStatsProps> = ({
               <div className={questionIconYellow} />
             </Space>
           </HoneyTooltip>
-          <div className={styles.value}>{f(honeyBalance)}</div>
+          <div className={styles.value}>{f(honeyAmount)}</div>
         </div>
 
         <div className={styles.content}>
@@ -79,12 +103,18 @@ export const GovernanceStats: FC<GoveranceStatsProps> = ({
         </div>
 
         <div className={styles.buttonWrapper}>
-          <HoneyButton variant="text">
-            <div className={styles.buttonContent}>
-              <span>Buy more</span>
-              <div className={styles.buyMoreIcon} />
-            </div>
-          </HoneyButton>
+          <a
+            href="https://jup.ag/swap/SOL-$HONEY"
+            target="_blank"
+            rel="noreferrer"
+          >
+            <HoneyButton variant="text">
+              <div className={styles.buttonContent}>
+                <span>Buy more</span>
+                <div className={styles.buyMoreIcon} />
+              </div>
+            </HoneyButton>
+          </a>
         </div>
       </div>
 
@@ -95,7 +125,7 @@ export const GovernanceStats: FC<GoveranceStatsProps> = ({
               veHoney or voting power <div className={questionIcon} />
             </Space>
           </HoneyTooltip>
-          <div className={styles.value}>{f(veHoneyBalance)}</div>
+          <div className={styles.value}>{f(veHoneyAmount)}</div>
         </div>
 
         <div className={styles.content}>
@@ -120,17 +150,17 @@ export const GovernanceStats: FC<GoveranceStatsProps> = ({
           </div>
           <div className={styles.lockedRight}>
             <div className={styles.title}>Circulating Honey supply</div>
-            <div className={styles.value}>{fsn(honeySupply)}</div>
+            <div className={styles.value}>{fsn(totalSupply)}</div>
           </div>
         </div>
         <div className={styles.sliderWrapper}>
           <div className={c(styles.title, styles.yellow)}>
-            {fp(lockedHoney / honeySupply)}
+            {fp(lockedHoney / totalSupply)}
           </div>
-          <HoneyTooltip label="Total Honey supply: 1 billion">
+          <HoneyTooltip label={`Total Honey supply: ${totalSupply.toString()}`}>
             <HoneySlider
               currentValue={0}
-              maxValue={honeySupply}
+              maxValue={totalSupply}
               minAvailableValue={lockedHoney}
               maxAvailablePosition={0.6}
               isReadonly
