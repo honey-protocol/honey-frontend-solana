@@ -3,6 +3,7 @@ import { MAX_LTV } from '../../constants/loan';
 import BN from 'bn.js';
 import { Connection, LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js';
 import { BnToDecimal, getOraclePrice } from '../../helpers/loanHelpers/index';
+import { OpenPositions } from 'constants/borrowLendMarkets';
 import {
   OPTIMAL_RATIO_ONE,
   OPTIMAL_RATIO_TWO,
@@ -156,20 +157,19 @@ export async function populateMarketData(collection: Market, connection: Connect
   const honeyReserves: HoneyReserve[] = honeyMarket.reserves.map(
     (reserve) => new HoneyReserve(honeyClient, honeyMarket, reserve.reserve),
   );
-  const honeyUser = HoneyUser.load(honeyClient, honeyMarket, wallet.publicKey, honeyReserves);
-
+  
+  const honeyUser = await HoneyUser.load(honeyClient, honeyMarket, wallet.publicKey, honeyReserves);
   const reserveInfoList = honeyMarket.reserves;
+
   let parsedReserve:TReserve | undefined = undefined;
 
   for (const reserve of reserveInfoList) {
     if (reserve.reserve.equals(PublicKey.default)) {
       continue;
     }
-    console.log('@@--::reserve', reserve.reserve.toString());
 
     const { data, state } = await HoneyReserve.decodeReserve(honeyClient, reserve.reserve);
     parsedReserve = data;
-    console.log('@@--::parsed reserve', parsedReserve);
     break;
   }
 
@@ -179,14 +179,24 @@ export async function populateMarketData(collection: Market, connection: Connect
       9,
       2
     );
-    console.log('@@--::total market deposits', totalMarketDeposits);
-    const totalMarketDebt = RoundHalfDown(parsedReserve.reserveState.outstandingDebt.div(new BN(10 ** 15))
-      .toNumber() / LAMPORTS_PER_SOL);
-    console.log('@@--::total market debt', totalMarketDebt);
+
+    const totalMarketDebt = RoundHalfDown(parsedReserve.reserveState.outstandingDebt.div(new BN(10 ** 15)).toNumber() / LAMPORTS_PER_SOL);
     const sumOfTotalValue = totalMarketDeposits + totalMarketDebt;
+
     collection.available = totalMarketDeposits;
     collection.value = sumOfTotalValue;
+    collection.connection = connection;
+    collection.user = honeyUser;
+    collection.utilizationRate = (totalMarketDeposits + totalMarketDebt - totalMarketDeposits) / (totalMarketDeposits + totalMarketDebt)
+    // if (connection && honeyUser) {
+    //   let val = await fetchBorrowPositions(connection, honeyUser);
+    //   console.log('this is val', val);
+    //   if (val) {
+    //     console.log('@@@@---', val)
+    //   }
 
+    // }
+    console.log('////', collection.utilizationRate, collection.value, collection.available, totalMarketDebt, totalMarketDeposits)
   }
 }
 
@@ -273,10 +283,14 @@ export const fetchBorrowPositions = async (connection: Connection, honeyUser: Ho
 
   const collateralNFTPositions: CollateralNFTPosition[] = [];
   const obligation = (await honeyUser.getObligationData()) as ObligationAccount;
+
   if (!obligation.market) {
+    return [];
     throw Error('Obligation does not have a valid market');
   }
+
   const collateralNftMint: PublicKey[] = obligation.collateralNftMint;
+  
   if (!collateralNftMint || collateralNftMint.length === 0) {
     throw Error('Obligation does not have a valid collateral nft mint');
   }

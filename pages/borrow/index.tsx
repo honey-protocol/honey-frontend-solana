@@ -75,6 +75,8 @@ const { format: f, formatPercent: fp, formatSol: fs } = formatNumber;
 const Markets: NextPage = () => {
   // TODO: write dynamic currentMarketId based on user interaction
   const [currentMarketId, setCurrentMarketId] = useState(HONEY_GENESIS_MARKET_ID);
+  // setUserOpenPositions(collateralNFTPositions);
+  const [honeyMarketCollateralNftPositions, setHoneyMarketCollateralNftPositions] = useState<Array<OpenPositions>>([])
 
   const wallet = useConnectedWallet();
   const sdkConfig = ConfigureSDK();
@@ -109,6 +111,8 @@ const Markets: NextPage = () => {
     sdkConfig.honeyId,
     currentMarketId
   );
+
+  if (honeyUser) console.log('@@--honey user', honeyUser);
 
   /**
    * @description calls upon markets which
@@ -239,6 +243,7 @@ const Markets: NextPage = () => {
         9,
         2
       );
+      console.log('@@--debt', totalMarketDeposits)
       setTotalMarketDeposits(totalMarketDeposits);
       // setTotalMarketDeposits(parsedReserves[0].reserveState.totalDeposits.div(new BN(10 ** 9)).toNumber());
       if (parsedReserves && sdkConfig.saberHqConnection) {
@@ -366,10 +371,12 @@ const Markets: NextPage = () => {
 
   async function calculateInterestRate(utilizationRate: number) {
     let interestRate = await getInterestRate(utilizationRate);
+
     if (interestRate) setCalculatedInterestRate(interestRate);
   }
 
   useEffect(() => {
+    console.log('util@@', utilizationRate)
     if (utilizationRate) {
       calculateInterestRate(utilizationRate);
     }
@@ -378,19 +385,23 @@ const Markets: NextPage = () => {
   // PUT YOUR DATA SOURCE HERE
   // MOCK DATA FOR NOW
   useEffect(() => {
+    console.log('connection', sdkConfig.saberHqConnection, sdkConfig.sdkWallet, calculatedInterestRate);
     // console.log('user open pos', marketCollections)
-    if (sdkConfig.saberHqConnection && sdkConfig.sdkWallet && calculatedInterestRate) {
-      marketCollections.map((collection) => 
+    if (sdkConfig.saberHqConnection && sdkConfig.sdkWallet) {
+      marketCollections.map(async (collection) => 
       {
         if(collection.id == '') return;
-        collection.rate = calculatedInterestRate;
-        populateMarketData(collection, sdkConfig.saberHqConnection, sdkConfig.sdkWallet!);
+        collection.rate = calculatedInterestRate || 0;
+        await populateMarketData(collection, sdkConfig.saberHqConnection, sdkConfig.sdkWallet!);
         // collection.available = collection.id != 'HNYG' ? totalMarketDeposits : 0,
         // collection.value = collection.key == 'HNYG' ? sumOfTotalValue : 0,
         // collection.allowance = collection.key == 'HNYG' ? userAllowance : 0,
         // collection.rate = collection.key == 'HNYG' ? calculatedInterestRate : 0,
         // collection.positions = userOpenPositions.filter((position: any) => position.symbol == collection.key),
         // collection.debt = collection.key == 'HNYG' ? userDebt : 0
+        setUtilizationRate(collection.utilizationRate);
+        // setHoneyMarketCollateralNftPositions(collection.positions);
+        // console.log('open - pos', collection.positions);
       }
     );
     setTableData(marketCollections);
@@ -403,7 +414,10 @@ const Markets: NextPage = () => {
       userOpenPositions,
       userAllowance,
       userDebt,
+      loanToValue,
       calculatedInterestRate,
+      honeyReserves,
+      parsedReserves,
       sdkConfig.saberHqConnection,
       sdkConfig.sdkWallet
     ]
@@ -816,13 +830,15 @@ const Markets: NextPage = () => {
           console.log('@@--name collection', collection)
 
           const metadata = await Metadata.findByMint(
-            sdkConfig.saberHqConnection,
+            // sdkConfig.saberHqConnection,
+            collection.connection,
             mintID
           );
     
           const tx = await depositNFT(
-            sdkConfig.saberHqConnection,
-            honeyUser,
+            // sdkConfig.saberHqConnection,
+            collection.connection,
+            collection.user,
             metadata.pubkey
           );
           
@@ -1128,7 +1144,7 @@ const Markets: NextPage = () => {
         <MarketsSidebar
           collectionId="s"
           availableNFTs={userAvailableNFTs}
-          openPositions={userOpenPositions}
+          openPositions={honeyMarketCollateralNftPositions}
           nftPrice={nftPrice}
           executeDepositNFT={executeDepositNFT}
           executeWithdrawNFT={executeWithdrawNFT}

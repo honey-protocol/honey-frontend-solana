@@ -1,4 +1,4 @@
-import { PublicKey } from '@solana/web3.js';
+import { Connection, PublicKey } from '@solana/web3.js';
 
 export type OpenPositions = {
   image: string;
@@ -19,7 +19,10 @@ export type Market = {
     value: number;
     allowance: number;
     positions: Array<OpenPositions>;
+    connection?: any;
+    user?: any;
     debt: number;
+    utilizationRate: number;
   };
   
   export const marketCollections: Market[] = [
@@ -33,7 +36,10 @@ export type Market = {
       value: 0,
       allowance: 0,
       positions: [],
+      connection: undefined,
+      user: undefined,
       debt: 0,
+      utilizationRate: 0,
     },
     // TODO: uncomment below stated markets when market ID exists 
     // {
@@ -70,7 +76,10 @@ export type Market = {
       value: 0,
       allowance: 0,
       positions: [],
+      connection: undefined,
+      user: undefined,
       debt: 0,
+      utilizationRate: 0
     }
   ];
   // market names
