@@ -802,31 +802,42 @@ const Markets: NextPage = () => {
    * @params mint of the NFT
    * @returns succes | failure
    */
-  async function executeDepositNFT(mintID: any, toast: ToastProps['toast']) {
+  async function executeDepositNFT(mintID: any, toast: ToastProps['toast'], name: string) {
     try {
       if (!mintID) return;
       console.log('mint id', mintID);
       toast.processing();
 
-      const metadata = await Metadata.findByMint(
-        sdkConfig.saberHqConnection,
-        mintID
-      );
-      const tx = await depositNFT(
-        sdkConfig.saberHqConnection,
-        honeyUser,
-        metadata.pubkey
-      );
-      if (tx[0] == 'SUCCESS') {
-        toast.success(
-          'Deposit success',
-          `https://solscan.io/tx/${tx[1][0]}?cluster=${network}`
-        );
-        console.log('is there a success?');
+      marketCollections.map(async (collection) => {
+        console.log('collection::', collection)
+        console.log('name', name)
+        if (name.includes(collection.name)) {
+          console.log('@@--name', name);
+          console.log('@@--name collection', collection)
 
-        await refreshPositions();
-        await reFetchNFTs({});
-      }
+          const metadata = await Metadata.findByMint(
+            sdkConfig.saberHqConnection,
+            mintID
+          );
+    
+          const tx = await depositNFT(
+            sdkConfig.saberHqConnection,
+            honeyUser,
+            metadata.pubkey
+          );
+          
+          if (tx[0] == 'SUCCESS') {
+            toast.success(
+              'Deposit success',
+              `https://solscan.io/tx/${tx[1][0]}?cluster=${network}`
+            );
+            console.log('is there a success?');
+    
+            await refreshPositions();
+            await reFetchNFTs({});
+          }
+        }
+      })
     } catch (error) {
       return toast.error(
         'Error depositing NFT'

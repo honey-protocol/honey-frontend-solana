@@ -64,7 +64,7 @@ export type Market = {
       id: 'Bw77MGpg189EaATjN67WXcnp3c4544LhKoV4Ftmdg4C',
       key: 'NOOT',
       // imageUrl: 'https://img-cdn.magiceden.dev/rs:fill:400:400:0:0/plain/https://i.imgur.com/37nsjBZ.png',
-      name: 'Pesky Penguins',
+      name: 'Pesky Penguin',
       rate: 0,
       available: 0,
       value: 0,

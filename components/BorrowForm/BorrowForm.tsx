@@ -135,7 +135,7 @@ const BorrowForm = (props: BorrowProps) => {
     if (selectedNft && selectedNft.mint.length < 1)
       return toastResponse('ERROR', 'Please select an NFT', 'ERROR');
     if (selectedNft && selectedNft.mint.length > 1)
-      await executeDepositNFT(selectedNft.mint, toast);
+      executeDepositNFT(selectedNft.mint, toast, selectedNft.name);
     handleSliderChange(0);
   };
 
