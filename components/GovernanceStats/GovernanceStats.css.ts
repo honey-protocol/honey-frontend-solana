@@ -22,7 +22,7 @@ export const governanceGraphs = style({
 });
 
 export const statBlock = style({
-  height: 160,
+  // height: 160,
   padding: '24px 20px',
   borderRadius: 16,
   position: 'relative',

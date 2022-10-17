@@ -16,7 +16,7 @@ import { TokenAmount } from '@saberhq/token-utils';
 import { useGovernance } from 'contexts/GovernanceProvider';
 import { useTokenMint } from '@saberhq/sail';
 import { useGovernor } from 'hooks/tribeca/useGovernor';
-import {HoneyLockedStatus} from "../HoneyLockedStatus/HoneyLockedStatus";
+import { HoneyLockedStatus } from '../HoneyLockedStatus/HoneyLockedStatus';
 
 const { format: f, formatPercent: fp, formatShortName: fsn } = formatNumber;
 
@@ -89,7 +89,7 @@ export const GovernanceStats: FC<GoveranceStatsProps> = ({
             )}
           </div>
         </div>
-        <div className={styles.sliderWrapper}>
+        {/* <div className={styles.sliderWrapper}>
           <div className={c(styles.title, styles.yellow)}>
             {fp(lockedPercent)}
           </div>
@@ -99,7 +99,7 @@ export const GovernanceStats: FC<GoveranceStatsProps> = ({
             maxValue={1000}
             isReadonly
           />
-        </div>
+        </div> */}
       </div>
 
       <div className={styles.statBlock}>
@@ -113,9 +113,9 @@ export const GovernanceStats: FC<GoveranceStatsProps> = ({
           <div className={styles.value}>{f(honeyAmount)}</div>
         </div>
 
-        <div className={styles.content}>
+        {/* <div className={styles.content}>
           <HoneyLineChart data={getChartData()} />
-        </div>
+        </div> */}
 
         <div className={styles.buttonWrapper}>
           <a
@@ -143,9 +143,9 @@ export const GovernanceStats: FC<GoveranceStatsProps> = ({
           <div className={styles.value}>{f(veHoneyAmount)}</div>
         </div>
 
-        <div className={styles.content}>
+        {/* <div className={styles.content}>
           <HoneyLineChart data={getChartData()} color={vars.colors.black} />
-        </div>
+        </div> */}
 
         <div className={styles.buttonWrapper}>
           <HoneyButton variant="text" onClick={onGetVeHoneyClick}>
@@ -168,13 +168,13 @@ export const GovernanceStats: FC<GoveranceStatsProps> = ({
             <div className={styles.value}>{fsn(totalSupply)}</div>
           </div>
         </div>
-        <div className={styles.sliderWrapper}>
+        {/* <div className={styles.sliderWrapper}>
           <HoneyLockedStatus
             circulatingHoneyTokens={0}
             lockedHoneyTokens={lockedHoney}
             totalHoneyTokens={totalSupply}
           />
-        </div>
+        </div> */}
       </div>
     </div>
   );
