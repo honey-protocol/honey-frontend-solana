@@ -10,8 +10,7 @@ import cs from 'classnames';
 export const links = [
   {
     title: 'DASHBOARD',
-    href: '/dashboard',
-    disabled: true
+    href: '/dashboard'
   },
   {
     title: 'BORROW',
@@ -31,8 +30,7 @@ export const links = [
   },
   {
     title: 'GOVERNANCE',
-    href: '/governance',
-    disabled: true
+    href: '/governance'
   },
   {
     title: 'DOCUMENTATION',
