@@ -14,7 +14,7 @@ import { useConnectedWallet, useConnection } from '@saberhq/use-solana';
 import React, { FC, ReactNode, useEffect, useState } from 'react';
 import Script from 'next/script';
 import { HONEY_MARKET_ID, HONEY_PROGRAM_ID } from '../constants/loan';
-import NoMobilePopup from 'components/NoMobilePopup/NoMobilePopup';
+// import NoMobilePopup from 'components/NoMobilePopup/NoMobilePopup';
 export const network = process.env.NETWORK as Network;
 
 const networkConfiguration = () => {
@@ -79,7 +79,7 @@ function MyApp({ Component, pageProps }: AppProps) {
 
   if (!shouldRender) return null;
 
-  if (isMobile) return <NoMobilePopup />;
+  // if (isMobile) return <NoMobilePopup />;
 
   return (
     // <ThemeProvider
