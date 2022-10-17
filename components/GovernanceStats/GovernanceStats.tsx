@@ -71,7 +71,7 @@ export const GovernanceStats: FC<GoveranceStatsProps> = ({
             </Space>
           </HoneyTooltip>
           <div className={c(styles.value, styles.lockPeriodValue)}>
-            <div>{lockedPeriodEnd.toString()}</div>
+            {lockedPeriodEnd.toString()}
           </div>
         </div>
         <div className={styles.sliderWrapper}>
