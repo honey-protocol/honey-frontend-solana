@@ -19,7 +19,7 @@ import React, {
   useMemo,
   useState
 } from 'react';
-import { formatNumber } from '../../helpers/format';
+import { formatNumber, formatTokenName } from '../../helpers/format';
 import Image from 'next/image';
 import honeyEyes from '/public/nfts/honeyEyes.png';
 import { ColumnTitleProps, Key } from 'antd/lib/table/interface';
@@ -63,6 +63,7 @@ import { pageDescription, pageTitle } from 'styles/common.css';
 import HoneyTableRow from 'components/HoneyTable/HoneyTableRow/HoneyTableRow';
 import HoneyTableNameCell from '../../components/HoneyTable/HoneyTableNameCell/HoneyTableNameCell';
 import RiskLvl from '../../components/RiskLvl/RiskLvl';
+import HoneyTooltip from '../../components/HoneyTooltip/HoneyTooltip';
 // import { network } from 'pages/_app';
 
 const network = 'devnet'; // change to dynamic value
@@ -472,7 +473,11 @@ const Markets: NextPage = () => {
           hidden: windowWidth < TABLET_BP,
           sorter: (a: MarketTableRow, b: MarketTableRow) => a.rate - b.rate,
           render: (rate: number) => {
-            return <div className={c(style.rateCell, style.borrowRate)}>{fp(rate * 100)}</div>;
+            return (
+              <div className={c(style.rateCell, style.borrowRate)}>
+                {fp(rate * 100)}
+              </div>
+            );
           }
         },
         {
@@ -560,7 +565,9 @@ const Markets: NextPage = () => {
                       </div>
                     </div>
                     <div className={style.nameCellMobile}>
-                      <div className={style.collectionName}>{name}</div>
+                      <div className={style.collectionName}>
+                        {formatTokenName(name)}
+                      </div>
                       <div className={style.rateCellMobile}>
                         {fp(row.rate * 100)}
                       </div>
@@ -601,7 +608,11 @@ const Markets: NextPage = () => {
             </HexaBoxContainer>
           </div>
           <div className={style.nameCellText}>
-            <div className={style.collectionName}>{name}</div>
+            <HoneyTooltip label={name}>
+              <div className={style.collectionName}>
+                {formatTokenName(name)}
+              </div>
+            </HoneyTooltip>
             <RiskLvl riskLvl={loanToValue} />
           </div>
         </div>

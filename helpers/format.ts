@@ -171,7 +171,7 @@ export const formatTokenName = (tokenName: string, maxLength = 10) => {
     return tokenName;
   }
 
-  const tokenNumber = tokenName.match(/\d+$/)?.[0] || '';
+  const tokenNumber = tokenName.match(/#\d+$/)?.[0] || '';
   const collectionName = tokenNumber.length
     ? tokenName.split(tokenNumber)[0]
     : tokenName;
