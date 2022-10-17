@@ -46,7 +46,7 @@ export const GovernanceStats: FC<GoveranceStatsProps> = ({
         }
       })
     : lockedSupply;
-  const lockedHoney = Number(lockedSupplyFmt);
+  const lockedHoney = Number(lockedSupplyFmt?.toString().replaceAll(',', ''));
 
   const { honeyAmount, veHoneyAmount, lockedPeriodEnd } = useGovernance();
   console.log(Number(totalSupply), { lockedHoney, lockedSupplyFmt });
