@@ -29,6 +29,9 @@ export const GovernanceStats: FC<GoveranceStatsProps> = ({
   const { data: govTokenData } = useTokenMint(govToken?.mintAccount);
   const { honeyAmount, veHoneyAmount, lockedPeriodEnd } = useGovernance();
 
+  const lockTimeLeft =
+    new Date(lockedPeriodEnd.toString()).getTime() - new Date().getTime();
+
   const totalSupplyFmt =
     govTokenData && govToken
       ? new TokenAmount(govToken, govTokenData.account.supply).format({
@@ -75,10 +78,14 @@ export const GovernanceStats: FC<GoveranceStatsProps> = ({
             </Space>
           </HoneyTooltip>
           <div className={c(styles.value, styles.lockPeriodValue)}>
-            <HoneyPeriod
-              from={new Date().getTime()}
-              to={new Date(lockedPeriodEnd.toString()).getTime()}
-            />
+            {lockTimeLeft < 0 ? (
+              '0'
+            ) : (
+              <HoneyPeriod
+                from={new Date().getTime()}
+                to={new Date(lockedPeriodEnd.toString()).getTime()}
+              />
+            )}
           </div>
         </div>
         <div className={styles.sliderWrapper}>
