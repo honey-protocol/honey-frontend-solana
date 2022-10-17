@@ -103,12 +103,6 @@ export const content = style({
   height: 41
 });
 
-export const currentValueSlider = style({});
-
-globalStyle(`${currentValueSlider} > .ant-slider-rail`, {
-  backgroundColor: `${vars.colors.black} !important`
-});
-
 export const minAvailableSlider = style({});
 
 globalStyle(
@@ -119,12 +113,19 @@ globalStyle(
   }
 );
 
+export const currentValueSlider = style({});
+
+globalStyle(`${currentValueSlider} > .ant-slider-rail`, {
+  backgroundColor: `${vars.colors.black} !important`,
+  background: `${vars.colors.black} !important`
+});
+
 export const maxUnavailableSlider = style({});
 
 globalStyle(
   `${maxUnavailableSlider} > .ant-slider-rail, ${maxUnavailableSlider} > .ant-slider-track`,
   {
-    backgroundColor: `${vars.colors.grayMiddle} !important`,
-    background: `${vars.colors.grayMiddle} !important`
+    backgroundColor: `${vars.colors.black} !important`,
+    background: `${vars.colors.black} !important`
   }
 );

@@ -49,7 +49,7 @@ export const GovernanceStats: FC<GoveranceStatsProps> = ({
   const lockedHoney = Number(lockedSupplyFmt);
 
   const { honeyAmount, veHoneyAmount, lockedPeriodEnd } = useGovernance();
-  console.log(Number(totalSupply), lockedHoney, lockedSupplyFmt);
+  console.log(Number(totalSupply), { lockedHoney, lockedSupplyFmt });
   const getChartData = () => {
     if (isMock) {
       const from = new Date()
@@ -155,14 +155,13 @@ export const GovernanceStats: FC<GoveranceStatsProps> = ({
         </div>
         <div className={styles.sliderWrapper}>
           <div className={c(styles.title, styles.yellow)}>
-            {fp(lockedHoney / totalSupply)}
+            {fp((lockedHoney / totalSupply) * 100)}
           </div>
-          <HoneyTooltip label={`Total Honey supply: ${totalSupply.toString()}`}>
+          <HoneyTooltip label={`Total Honey supply: 1 billion`}>
             <HoneySlider
+              minAvailableValue={lockedHoney}
               currentValue={0}
               maxValue={totalSupply}
-              minAvailableValue={lockedHoney}
-              maxAvailablePosition={0.6}
               isReadonly
               minAvailableSliderClassName={styles.minAvailableSlider}
               currentValueSliderClassName={styles.currentValueSlider}
