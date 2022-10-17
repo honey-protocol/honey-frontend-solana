@@ -19,7 +19,7 @@ import React, {
   useMemo,
   useState
 } from 'react';
-import { formatNumber, formatTokenName } from '../../helpers/format';
+import { formatNumber, formatNFTName } from '../../helpers/format';
 import Image from 'next/image';
 import honeyEyes from '/public/nfts/honeyEyes.png';
 import { ColumnTitleProps, Key } from 'antd/lib/table/interface';
@@ -566,7 +566,7 @@ const Markets: NextPage = () => {
                     </div>
                     <div className={style.nameCellMobile}>
                       <div className={style.collectionName}>
-                        {formatTokenName(name)}
+                        {formatNFTName(name)}
                       </div>
                       <div className={style.rateCellMobile}>
                         {fp(row.rate * 100)}
@@ -609,9 +609,7 @@ const Markets: NextPage = () => {
           </div>
           <div className={style.nameCellText}>
             <HoneyTooltip label={name}>
-              <div className={style.collectionName}>
-                {formatTokenName(name)}
-              </div>
+              <div className={style.collectionName}>{formatNFTName(name)}</div>
             </HoneyTooltip>
             <RiskLvl riskLvl={loanToValue} />
           </div>

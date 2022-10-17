@@ -162,25 +162,25 @@ export const formatNumber = {
 };
 
 /**
- * Convert long token name into short.
- * @param {string} tokenName - full token name, consist of collection name + token number
+ * Convert long NFT name into short.
+ * @param {string} nftName - full NFT name, consist of collection name + NFT number
  * @param {number} maxLength - max formatted name length, 10 by default
  */
-export const formatTokenName = (tokenName: string, maxLength = 10) => {
-  if (tokenName.length <= maxLength) {
-    return tokenName;
+export const formatNFTName = (nftName: string, maxLength = 10) => {
+  if (nftName.length <= maxLength) {
+    return nftName;
   }
 
-  const tokenNumber = tokenName.match(/#\d+$/)?.[0] || '';
-  const collectionName = tokenNumber.length
-    ? tokenName.split(tokenNumber)[0]
-    : tokenName;
+  const nftNumber = nftName.match(/#\d+$/)?.[0] || '';
+  const collectionName = nftNumber.length
+    ? nftName.split(nftNumber)[0]
+    : nftName;
 
   const splicedCollectionName = collectionName.slice(
     0,
-    maxLength - tokenNumber.length
+    maxLength - nftNumber.length
   );
-  return `${splicedCollectionName}...${tokenNumber}`;
+  return `${splicedCollectionName}...${nftNumber}`;
 };
 
 export const dateFromTimestamp = (timestamp: number | string) => {

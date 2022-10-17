@@ -4,7 +4,7 @@ import * as styles from './LendPositionCard.css';
 import HexaBoxContainer from '../../HexaBoxContainer/HexaBoxContainer';
 import Image from 'next/image';
 import { InfoBlock } from '../../InfoBlock/InfoBlock';
-import { formatNumber, formatTokenName as fcn } from '../../../helpers/format';
+import { formatNumber, formatNFTName as fnn } from '../../../helpers/format';
 import c from 'classnames';
 import HoneyTooltip from '../../HoneyTooltip/HoneyTooltip';
 
@@ -26,7 +26,7 @@ export const LendPositionCard: FC<LendPositionCardProps> = ({
         </HexaBoxContainer>
       </div>
       <div className={styles.positionName}>
-        <HoneyTooltip label={position.name}>{fcn(position.name)}</HoneyTooltip>
+        <HoneyTooltip label={position.name}>{fnn(position.name)}</HoneyTooltip>
         <div className={styles.arrowIcon} />
       </div>
       <div className={styles.positionValues}>
