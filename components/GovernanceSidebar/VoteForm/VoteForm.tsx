@@ -8,6 +8,8 @@ import SidebarScroll from '../../SidebarScroll/SidebarScroll';
 import { HoneyButtonTabs } from '../../HoneyButtonTabs/HoneyButtonTabs';
 import HoneyWarning from '../../HoneyWarning/HoneyWarning';
 import { VoteFormProps } from './types';
+import StatusVote from '../../StatusVote/StatusVote';
+import HoneyBorder from '../../HoneyBorder/HoneyBorder';
 
 const { formatShortName: fsn } = formatNumber;
 
@@ -51,13 +53,18 @@ const VoteForm: FC<VoteFormProps> = () => {
             />
           </div>
         </div>
+
         <div className={styles.row}>
           <div className={styles.col}>
-            <InfoBlock
-              value="Voting"
-              valueSize="big"
-              footer={<span>Status</span>}
-            />
+            <HoneyBorder className={styles.voted}>
+              You voted <span className={styles.votedGreen}>for</span>
+            </HoneyBorder>
+          </div>
+        </div>
+
+        <div className={styles.row}>
+          <div className={styles.statusCol}>
+            <StatusVote status={1} />
           </div>
           <div className={styles.col}>
             <InfoBlock

@@ -105,7 +105,7 @@ const Governance: NextPage = () => {
                 <div className={style.collectionLogo}>
                   <HexaBoxContainer>
                     <div
-                      className={c(style.statusIcon, style.statusCheckIcon)}
+                      className={c(style.statusIcon, style.statusExecutedIcon)}
                     />
                   </HexaBoxContainer>
                 </div>

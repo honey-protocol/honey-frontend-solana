@@ -10,6 +10,17 @@ export const depositForm = style({
     padding: 16
 });
 
+export const voted = style([
+  typography.body,
+  {
+    padding: '16px 16px 14px'
+  }
+]);
+
+export const votedGreen = style({
+  color: vars.colors.green,
+});
+
 const formSection = style([
   {
     marginBottom: '24px'
@@ -25,6 +36,10 @@ export const row = style([
 
 export const col = style({
   flex: '100% 0 0'
+});
+
+export const statusCol = style({
+  paddingRight: 20
 });
 
 export const grid = style({

@@ -22,7 +22,7 @@ export const sidebar = style({
   pointerEvents: 'all',
   '@media': {
     [`screen and (min-width: ${breakpoints.desktop}px)`]: {
-      maxWidth: 350
+      maxWidth: 360
     }
   }
 });

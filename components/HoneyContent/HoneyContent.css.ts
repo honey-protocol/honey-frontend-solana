@@ -7,7 +7,7 @@ export const honeyContent = style({
   position: 'relative',
   '@media': {
     [`screen and (min-width: ${breakpoints.desktop}px)`]: {
-      paddingRight: 374
+      paddingRight: 384
     }
   }
 });

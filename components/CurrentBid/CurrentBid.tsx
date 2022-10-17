@@ -3,7 +3,6 @@ import HoneyButton from '../HoneyButton/HoneyButton';
 import { InfoBlock } from '../InfoBlock/InfoBlock';
 import * as styles from './CurrentBid.css';
 import { formatNumber } from '../../helpers/format';
-import useToast, { ToastProps } from 'hooks/useToast';
 
 interface CurrentBidProps {
   title?: string;

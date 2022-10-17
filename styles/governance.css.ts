@@ -8,12 +8,12 @@ import {
 
 import {
   arrowRightIcon,
-  checkIcon,
-  clockIcon,
-  errorBlackIcon,
-  errorRedIcon,
+  canceledIcon,
+  draftIcon,
+  executedIcon,
+  failedIcon,
   lampIcon,
-  penIcon
+  progressIcon
 } from './icons.css';
 
 export const draftToggle = style({
@@ -59,11 +59,11 @@ export const statusIcon = style({
   backgroundPosition: 'center'
 });
 
-export const statusCheckIcon = style([checkIcon]);
-export const statusWaitIcon = style([clockIcon]);
-export const statusDraftIcon = style([penIcon]);
-export const statusErrorBlackIcon = style([errorBlackIcon]);
-export const statusErrorRedIcon = style([errorRedIcon]);
+export const statusExecutedIcon = style([executedIcon]);
+export const statusProgressIcon = style([progressIcon]);
+export const statusDraftIcon = style([draftIcon]);
+export const statusCanceledIcon = style([canceledIcon]);
+export const statusFailedIcon = style([failedIcon]);
 
 export const lampIconStyle = style([
   lampIcon,

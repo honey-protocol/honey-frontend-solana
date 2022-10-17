@@ -18,22 +18,22 @@ export const arrowRightIcon = style({
   background: 'url(/images/arrow-right.svg) center no-repeat',
 });
 
-export const checkIcon = style({
+export const executedIcon = style({
   background: 'url(/images/Check.svg) center no-repeat',
 });
 
-export const clockIcon = style({
+export const progressIcon = style({
   background: 'url(/images/Clock.svg) center no-repeat',
 });
 
-export const penIcon = style({
+export const draftIcon = style({
   background: 'url(/images/Pen.svg) center no-repeat',
 });
 
-export const errorBlackIcon = style({
+export const canceledIcon = style({
   background: 'url(/images/error-black.svg) center no-repeat',
 });
 
-export const errorRedIcon = style({
+export const failedIcon = style({
   background: 'url(/images/error-red.svg) center no-repeat',
 });
