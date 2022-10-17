@@ -226,16 +226,16 @@ const VoteForm: FC<VoteFormProps> = (props: VoteFormProps) => {
     }
   };
 
-  console.log({
-    proposalInfo,
-    minActivationThreshold,
-    veToken,
-    earliestActivationTime,
-    vePower,
-    escrow,
-    side,
-    hasVoted
-  });
+  // console.log({
+  //   proposalInfo,
+  //   minActivationThreshold,
+  //   veToken,
+  //   earliestActivationTime,
+  //   vePower,
+  //   escrow,
+  //   side,
+  //   hasVoted
+  // });
 
   return (
     <SidebarScroll

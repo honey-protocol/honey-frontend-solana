@@ -33,7 +33,16 @@ const LockHoneyForm: FC = () => {
   const [valueHONEY, setValueHONEY] = useState<number>(0);
   const [valueVeHONEY, setValueVeHONEY] = useState<number>(0);
   const { toast, ToastComponent } = useToast();
-  const veHoneyPrice = 0.95;
+  const veHoneyPrice =
+    lockPeriod === '1'
+      ? 50
+      : lockPeriod === '3'
+      ? 6.25 / 100
+      : lockPeriod === '6'
+      ? 12.5 / 100
+      : lockPeriod === '12'
+      ? 25 / 100
+      : 1;
   const STAKE_POOL_ADDRESS = new PublicKey(
     config.NEXT_PUBLIC_STAKE_POOL_ADDRESS
   );
@@ -56,7 +65,7 @@ const LockHoneyForm: FC = () => {
       return;
     }
     setValueHONEY(honeyValue);
-    setValueVeHONEY(honeyValue / veHoneyPrice);
+    setValueVeHONEY(honeyValue * veHoneyPrice);
   };
 
   const handleVeHoneyInputChange = (veHoneyValue: number | undefined) => {
@@ -66,17 +75,17 @@ const LockHoneyForm: FC = () => {
       return;
     }
 
-    setValueHONEY(veHoneyPrice * veHoneyPrice);
+    setValueHONEY(veHoneyPrice / veHoneyPrice);
     setValueVeHONEY(veHoneyPrice);
   };
 
-  console.log({
-    veHoneyAmount,
-    lockedAmount,
-    lockedPeriodEnd,
-    honeyAmount,
-    lockPeriodHasEnded
-  });
+  // console.log({
+  //   veHoneyAmount,
+  //   lockedAmount,
+  //   lockedPeriodEnd,
+  //   honeyAmount,
+  //   lockPeriodHasEnded
+  // });
   // Put your validators here
   const isLockButtonDisabled = () => {
     return false;
@@ -169,7 +178,10 @@ const LockHoneyForm: FC = () => {
               slug: period.slug
             }))}
             activeItemSlug={lockPeriod}
-            onClick={itemSlug => setLockPeriod(itemSlug as LockPeriod)}
+            onClick={itemSlug => {
+              setLockPeriod(itemSlug as LockPeriod);
+              handleHoneyInputChange(0);
+            }}
             isFullWidth
           />
         </div>
@@ -180,7 +192,9 @@ const LockHoneyForm: FC = () => {
           onChangeFirstInput={handleHoneyInputChange}
           onChangeSecondInput={handleVeHoneyInputChange}
           maxValue={maxValue}
-          delimiterIcon={<div className={styles.inputsDelimiter}>1 to 1.5</div>}
+          delimiterIcon={
+            <div className={styles.inputsDelimiter}>{veHoneyPrice} to 1</div>
+          }
           firstInputAddon="HONEY"
           secondInputAddon="veHONEY"
         />
