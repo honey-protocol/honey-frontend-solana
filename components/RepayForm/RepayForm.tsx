@@ -218,7 +218,7 @@ const RepayForm = (props: RepayProps) => {
                     target="blank"
                     href="https://docs.honey.finance/learn/defi-lending#loan-to-value-ratio"
                   >
-                    Loan-to-value ratio
+                    Loan-to-value ratio{' '}
                   </a>
                   measures the ratio of the debt, compared to the value of the
                   collateral.
@@ -256,9 +256,9 @@ const RepayForm = (props: RepayProps) => {
                   <a
                     className={styles.extLink}
                     target="blank"
-                    href=" https://docs.honey.finance/lending-protocol/borrowing#risk-level"
+                    href="https://docs.honey.finance/learn/defi-lending#loan-to-value-ratio"
                   >
-                    Loan-to-value %{' '}
+                    Loan-to-value ratio{' '}
                   </a>
                   after the requested changes to the loan are approved.
                 </span>
