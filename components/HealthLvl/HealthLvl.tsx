@@ -10,32 +10,32 @@ const HealthLvl: FC<HealthLvlProps> = props => {
 
   const getStatus = (healthLvl: number): React.ReactNode => {
     if (
-      HealthLvlPoint.Safe <= healthLvl &&
-      healthLvl > HealthLvlPoint.Warning
+      healthLvl > HealthLvlPoint.Warning &&
+      healthLvl <= HealthLvlPoint.Safe
     ) {
       return (
         <div className={style.health.safe}>
           <span className={style.valueCell}>{fp(healthLvl)}</span>{' '}
-          <span className={style.healthText}>Health lvl</span>
+          <span className={style.healthText}>Health</span>
         </div>
       );
     }
     if (
-      HealthLvlPoint.Warning <= healthLvl &&
+      healthLvl <= HealthLvlPoint.Warning &&
       healthLvl > HealthLvlPoint.Danger
     ) {
       return (
         <div className={style.health.warning}>
           <span className={style.valueCell}>{fp(healthLvl)}</span>{' '}
-          <span className={style.healthText}>Health lvl</span>
+          <span className={style.healthText}>Health</span>
         </div>
       );
     }
-    if (HealthLvlPoint.Danger <= healthLvl && healthLvl > HealthLvlPoint.Min) {
+    if (healthLvl <= HealthLvlPoint.Danger && healthLvl > HealthLvlPoint.Min) {
       return (
         <div className={style.health.danger}>
           <span className={style.valueCell}>{fp(healthLvl)}</span>{' '}
-          <span className={style.healthText}>Health lvl</span>
+          <span className={style.healthText}>Health</span>
         </div>
       );
     }
