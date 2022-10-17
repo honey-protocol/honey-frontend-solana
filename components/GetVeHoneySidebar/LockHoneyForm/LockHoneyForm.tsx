@@ -35,7 +35,7 @@ const LockHoneyForm: FC = () => {
   const { toast, ToastComponent } = useToast();
   const veHoneyPrice =
     lockPeriod === '1'
-      ? 50
+      ? 1 / 50
       : lockPeriod === '3'
       ? 6.25 / 100
       : lockPeriod === '6'
@@ -193,7 +193,9 @@ const LockHoneyForm: FC = () => {
           onChangeSecondInput={handleVeHoneyInputChange}
           maxValue={maxValue}
           delimiterIcon={
-            <div className={styles.inputsDelimiter}>{veHoneyPrice} to 1</div>
+            <div className={styles.inputsDelimiter}>
+              {1 / veHoneyPrice} to 1
+            </div>
           }
           firstInputAddon="HONEY"
           secondInputAddon="veHONEY"
