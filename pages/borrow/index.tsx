@@ -91,7 +91,6 @@ const Markets: NextPage = () => {
     currentMarketId
   );
 
-  console.log('honey client', honeyClient);
   /**
    * @description fetches open positions and the amount regarding loan positions / token account
    * @params none
@@ -249,7 +248,7 @@ const Markets: NextPage = () => {
   }, [parsedReserves]);
 
   useEffect(() => {
-    if (totalMarketDeposits && totalMarketDebt && totalMarketDeposits) {
+    if (totalMarketDeposits && totalMarketDebt) {
       setUtilizationRate(
         Number(
           f(
@@ -259,7 +258,7 @@ const Markets: NextPage = () => {
         )
       );
     }
-  }, [totalMarketDeposits, totalMarketDebt, totalMarketDeposits]);
+  }, [totalMarketDeposits, totalMarketDebt]);
 
   // fetches total market positions
   async function fetchObligations() {
@@ -347,7 +346,8 @@ const Markets: NextPage = () => {
     reserveHoneyState,
     calculatedNftPrice,
     userAllowance,
-    userDebt
+    userDebt,
+    nftPrice
   ]);
 
   useEffect(() => {
@@ -436,13 +436,13 @@ const Markets: NextPage = () => {
 
   const renderImage = (name: string) => {
     if (name == HONEY_GENESIS_BEE) {
-      return <Image src={'https://img-cdn.magiceden.dev/rs:fill:400:400:0:0/plain/https://dl.airtable.com/.attachmentThumbnails/6b6c8954aed777a74de52fd70f8751ab/46b325db'} layout="fill" />
+      return <Image src={'https://img-cdn.magiceden.dev/rs:fill:400:400:0:0/plain/https://dl.airtable.com/.attachmentThumbnails/6b6c8954aed777a74de52fd70f8751ab/46b325db'} layout="fill" alt="honey" />
     } else if (name == LIFINITY_FLARES) {
-      return <Image src={'https://img-cdn.magiceden.dev/rs:fill:400:400:0:0/plain/https://dl.airtable.com/.attachmentThumbnails/6972d5c2efb77d49be97b07ccf4fbc69/e9572fb8'} layout="fill" />
+      return <Image src={'https://img-cdn.magiceden.dev/rs:fill:400:400:0:0/plain/https://dl.airtable.com/.attachmentThumbnails/6972d5c2efb77d49be97b07ccf4fbc69/e9572fb8'} layout="fill"  alt="Lifinity" />
     } else if (name == OG_ATADIANS) {
-      return <Image src={'https://img-cdn.magiceden.dev/rs:fill:400:400:0:0/plain/https://creator-hub-prod.s3.us-east-2.amazonaws.com/atadians_pfp_1646721263627.gif'} layout="fill" />
+      return <Image src={'https://img-cdn.magiceden.dev/rs:fill:400:400:0:0/plain/https://creator-hub-prod.s3.us-east-2.amazonaws.com/atadians_pfp_1646721263627.gif'} layout="fill" alt="OG Atadians" />
     } else {
-      return <Image src={'https://img-cdn.magiceden.dev/rs:fill:400:400:0:0/plain/https://i.imgur.com/37nsjBZ.png'} layout="fill" />
+      return <Image src={'https://img-cdn.magiceden.dev/rs:fill:400:400:0:0/plain/https://i.imgur.com/37nsjBZ.png'} layout="fill" alt="Pesky Penguins" />
     }
   }
 
@@ -622,7 +622,7 @@ const Markets: NextPage = () => {
                     <div className={style.logoWrapper}>
                       <div className={style.collectionLogo}>
                         <HexaBoxContainer>
-                          <Image src={honeyGenesisBee} />
+                          <Image src={honeyGenesisBee} alt="Honey Genesis Bee" />
                         </HexaBoxContainer>
                       </div>
                     </div>
@@ -664,7 +664,7 @@ const Markets: NextPage = () => {
           <div className={style.expandedRowIcon} />
           <div className={style.collectionLogo}>
             <HexaBoxContainer>
-              <Image src={honeyGenesisBee} />
+              <Image src={honeyGenesisBee} alt="Honey Genesis Bee" />
             </HexaBoxContainer>
           </div>
           <div className={style.nameCellText}>
@@ -725,7 +725,7 @@ const Markets: NextPage = () => {
           <div className={style.expandedRowIcon} />
           <div className={style.collectionLogo}>
             <HexaBoxContainer>
-              <Image src={honeyGenesisBee} />
+              <Image src={honeyGenesisBee} alt="Honey Genesis Bee" />
             </HexaBoxContainer>
           </div>
           <div className={style.nameCellText}>
