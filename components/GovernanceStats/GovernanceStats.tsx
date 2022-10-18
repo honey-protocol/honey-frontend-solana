@@ -71,37 +71,6 @@ export const GovernanceStats: FC<GoveranceStatsProps> = ({
 
   return (
     <div className={styles.governanceGraphs}>
-      <div className={c(styles.statBlock, styles.lockPeriodBlock)}>
-        <div className={styles.blockTitle}>
-          <HoneyTooltip label="Placeholder tooltip label">
-            <Space className={c(styles.title, styles.yellow)} size="small">
-              Lock period <div className={questionIconYellow} />
-            </Space>
-          </HoneyTooltip>
-          <div className={c(styles.value, styles.lockPeriodValue)}>
-            {lockTimeLeft < 0 ? (
-              '0'
-            ) : (
-              <HoneyPeriod
-                from={new Date().getTime()}
-                to={new Date(lockedPeriodEnd.toString()).getTime()}
-              />
-            )}
-          </div>
-        </div>
-        {/* <div className={styles.sliderWrapper}>
-          <div className={c(styles.title, styles.yellow)}>
-            {fp(lockedPercent)}
-          </div>
-          <HoneySlider
-            maxSafePosition={0}
-            currentValue={200}
-            maxValue={1000}
-            isReadonly
-          />
-        </div> */}
-      </div>
-
       <div className={styles.statBlock}>
         <div className={styles.blockTitle}>
           <HoneyTooltip label="Placeholder tooltip lable">
@@ -155,6 +124,37 @@ export const GovernanceStats: FC<GoveranceStatsProps> = ({
             </div>
           </HoneyButton>
         </div>
+      </div>
+
+      <div className={c(styles.statBlock, styles.lockPeriodBlock)}>
+        <div className={styles.blockTitle}>
+          <HoneyTooltip label="Placeholder tooltip label">
+            <Space className={c(styles.title, styles.yellow)} size="small">
+              Lock period <div className={questionIconYellow} />
+            </Space>
+          </HoneyTooltip>
+          <div className={c(styles.value, styles.lockPeriodValue)}>
+            {lockTimeLeft < 0 ? (
+              '0'
+            ) : (
+              <HoneyPeriod
+                from={new Date().getTime()}
+                to={new Date(lockedPeriodEnd.toString()).getTime()}
+              />
+            )}
+          </div>
+        </div>
+        {/* <div className={styles.sliderWrapper}>
+          <div className={c(styles.title, styles.yellow)}>
+            {fp(lockedPercent)}
+          </div>
+          <HoneySlider
+            maxSafePosition={0}
+            currentValue={200}
+            maxValue={1000}
+            isReadonly
+          />
+        </div> */}
       </div>
 
       <div className={styles.statBlock}>
