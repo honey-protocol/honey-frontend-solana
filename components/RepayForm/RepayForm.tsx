@@ -72,10 +72,10 @@ const RepayForm = (props: RepayProps) => {
     }
     setValueUSD(usdValue);
     setValueSOL(usdValue / solPrice);
-    setSliderValue(usdValue);
+    setSliderValue(usdValue / solPrice);
   };
 
-  const handleUsdcInputChange = (solValue: number | undefined) => {
+  const handleSolInputChange = (solValue: number | undefined) => {
     if (!solValue) {
       setValueUSD(0);
       setValueSOL(0);
@@ -85,7 +85,7 @@ const RepayForm = (props: RepayProps) => {
 
     setValueUSD(solValue * solPrice);
     setValueSOL(solValue);
-    setSliderValue(solValue * solPrice);
+    setSliderValue(solValue);
   };
 
   const onRepay = async (event: any) => {
@@ -388,10 +388,10 @@ const RepayForm = (props: RepayProps) => {
             </div>
           </div>
           <InputsBlock
-            firstInputValue={valueUSD}
-            secondInputValue={valueSOL}
-            onChangeFirstInput={handleUsdInputChange}
-            onChangeSecondInput={handleUsdcInputChange}
+            firstInputValue={valueSOL}
+            secondInputValue={valueUSD}
+            onChangeFirstInput={handleSolInputChange}
+            onChangeSecondInput={handleUsdInputChange}
           />
         </div>
 

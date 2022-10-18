@@ -70,7 +70,7 @@ const DepositForm = (props: DepositFormProps) => {
     }
     setValueUSD(usdValue);
     setValueSOL(usdValue / solPrice);
-    setSliderValue(usdValue);
+    setSliderValue(usdValue / solPrice);
   };
 
   const handleSolInputChange = (solValue: number | undefined) => {
@@ -83,7 +83,7 @@ const DepositForm = (props: DepositFormProps) => {
 
     setValueUSD(solValue * solPrice);
     setValueSOL(solValue);
-    setSliderValue(solValue * solPrice);
+    setSliderValue(solValue);
   };
 
   const handleDeposit = async () => {
@@ -160,10 +160,10 @@ const DepositForm = (props: DepositFormProps) => {
 
         <div className={styles.inputs}>
           <InputsBlock
-            firstInputValue={valueUSD}
-            secondInputValue={valueSOL}
-            onChangeFirstInput={handleUsdInputChange}
-            onChangeSecondInput={handleSolInputChange}
+            firstInputValue={valueSOL}
+            secondInputValue={valueUSD}
+            onChangeFirstInput={handleSolInputChange}
+            onChangeSecondInput={handleUsdInputChange}
             maxValue={maxValue}
           />
         </div>

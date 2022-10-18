@@ -75,8 +75,8 @@ const LockHoneyForm: FC = () => {
       return;
     }
 
-    setValueHONEY(veHoneyPrice / veHoneyPrice);
-    setValueVeHONEY(veHoneyPrice);
+    setValueHONEY(veHoneyValue / veHoneyPrice);
+    setValueVeHONEY(veHoneyValue);
   };
 
   // console.log({
