@@ -76,7 +76,7 @@ const Markets: NextPage = () => {
   // TODO: write dynamic currentMarketId based on user interaction
   const [currentMarketId, setCurrentMarketId] = useState(HONEY_GENESIS_MARKET_ID);
   // setUserOpenPositions(collateralNFTPositions);
-  const [honeyMarketCollateralNftPositions, setHoneyMarketCollateralNftPositions] = useState<Array<OpenPositions>>([])
+  const [honeyMarketCollateralNftPositions, setHoneyMarketCollateralNftPositions] = useState<Array<OpenPositions>>([]);
 
   const wallet = useConnectedWallet();
   const sdkConfig = ConfigureSDK();
@@ -820,25 +820,32 @@ const Markets: NextPage = () => {
     try {
       if (!mintID) return;
       console.log('mint id', mintID);
-      toast.processing();
+      // toast.processing();
 
       marketCollections.map(async (collection) => {
         console.log('collection::', collection)
         console.log('name', name)
         if (name.includes(collection.name)) {
-          console.log('@@--name', name);
-          console.log('@@--name collection', collection)
+          
+          console.log('~~collection', collection)
+          console.log('~~collection name', name)
 
           const metadata = await Metadata.findByMint(
             // sdkConfig.saberHqConnection,
             collection.connection,
             mintID
           );
-    
+
+          console.log('market.address', honeyUser.market.address.toString());
+          console.log('market.authority', honeyUser.market.marketAuthority.toString());
+          console.log('market.nftSwitchBoardPriceAggre', honeyUser.market.address.toString());
+          console.log('market.owner', honeyUser.market.owner.toString());
+          console.log('market.quoteTOkenMint', honeyUser.market.quoteTokenMint.toString());
+          
           const tx = await depositNFT(
-            // sdkConfig.saberHqConnection,
             collection.connection,
-            collection.user,
+            // collection.user, - TODO: this user is created in the helper and fails
+            honeyUser,
             metadata.pubkey
           );
           
@@ -1164,3 +1171,19 @@ const Markets: NextPage = () => {
 };
 
 export default Markets;
+
+
+
+
+
+// market.address 6FcJaAzQnuoA6o3sVw1GD6Ba69XuL5jinZpQTzJhd2R3
+// market.authority Ed3HoRyQ5oBMiV7QUi1tBNzNcgN4qNHyKEmKrcd8Fv7A
+// market.nftSwitchBoardPriceAggre 6FcJaAzQnuoA6o3sVw1GD6Ba69XuL5jinZpQTzJhd2R3
+// market.owner 7hbW5pCbb39P4kVUPbzmnzUSHAvRj7c4phfSEZ2dRK1T
+// market.quoteTOkenMint EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v
+
+// market.address 6FcJaAzQnuoA6o3sVw1GD6Ba69XuL5jinZpQTzJhd2R3
+// market.authority Ed3HoRyQ5oBMiV7QUi1tBNzNcgN4qNHyKEmKrcd8Fv7A
+// market.nftSwitchBoardPriceAggre 6FcJaAzQnuoA6o3sVw1GD6Ba69XuL5jinZpQTzJhd2R3
+// market.owner 7hbW5pCbb39P4kVUPbzmnzUSHAvRj7c4phfSEZ2dRK1T
+// market.quoteTOkenMint EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v
