@@ -106,7 +106,7 @@ export const GovernanceStats: FC<GoveranceStatsProps> = ({
         <div className={styles.blockTitle}>
           <HoneyTooltip label="Placeholder tooltip label">
             <Space className={styles.title}>
-              veHoney or voting power <div className={questionIcon} />
+              veHoney || Voting power <div className={questionIcon} />
             </Space>
           </HoneyTooltip>
           <div className={styles.value}>{f(veHoneyAmount)}</div>
@@ -129,8 +129,8 @@ export const GovernanceStats: FC<GoveranceStatsProps> = ({
       <div className={c(styles.statBlock, styles.lockPeriodBlock)}>
         <div className={styles.blockTitle}>
           <HoneyTooltip label="Placeholder tooltip label">
-            <Space className={c(styles.title, styles.yellow)} size="small">
-              Lock period <div className={questionIconYellow} />
+            <Space className={styles.title} size="small">
+              Lock period <div className={questionIcon} />
             </Space>
           </HoneyTooltip>
           <div className={c(styles.value, styles.lockPeriodValue)}>
@@ -160,11 +160,11 @@ export const GovernanceStats: FC<GoveranceStatsProps> = ({
       <div className={styles.statBlock}>
         <div className={styles.lockedHoneyTitle}>
           <div className={styles.lockedLeft}>
-            <div className={styles.title}>Locked Honey</div>
+            <div className={styles.title}>Total Locked Honey</div>
             <div className={styles.value}>{fsn(lockedHoney)}</div>
           </div>
           <div className={styles.lockedRight}>
-            <div className={styles.title}>Circulating Honey supply</div>
+            <div className={styles.title}>Total Circulating Honey</div>
             <div className={styles.value}>{fsn(totalSupply)}</div>
           </div>
         </div>
