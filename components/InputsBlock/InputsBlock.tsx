@@ -51,11 +51,7 @@ export const InputsBlock: FC<InputsBlockProps> = ({
     if (isNil(value)) {
       onChangeSecondInput(undefined);
     } else {
-      if (Number(value) >= maxValue) {
-        onChangeSecondInput(Number(maxValue));
-      } else {
-        onChangeSecondInput(Number(value));
-      }
+      onChangeSecondInput(Number(value));
     }
   };
 
