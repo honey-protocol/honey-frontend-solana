@@ -18,7 +18,7 @@ export const container = style({
 
 export const sidebar = style({
   width: '100%',
-  height: 'calc(100vh - 256px)',
+  height: 'calc(100vh - 180px)',
   pointerEvents: 'all',
   '@media': {
     [`screen and (min-width: ${breakpoints.desktop}px)`]: {
