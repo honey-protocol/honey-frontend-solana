@@ -30,6 +30,7 @@ import HoneyTooltip from 'components/HoneyTooltip/HoneyTooltip';
 import { hideTablet, showTablet, table } from 'styles/markets.css';
 import HoneyTableNameCell from '../../components/HoneyTable/HoneyTableNameCell/HoneyTableNameCell';
 import HoneyTableRow from '../../components/HoneyTable/HoneyTableRow/HoneyTableRow';
+import { statusCheckIcon } from '../../styles/governance.css';
 
 const { format: f, formatShortName: fsn } = formatNumber;
 const NUM_PLACEHOLDERS = 0;
@@ -254,7 +255,10 @@ const Governance: NextPage = () => {
                       <div className={style.collectionLogo}>
                         <HexaBoxContainer>
                           <div
-                            className={c(style.statusIcon, style.statusExecutedIcon)}
+                            className={c(
+                              style.statusIcon,
+                              style.statusCheckIcon
+                            )}
                           />
                         </HexaBoxContainer>
                       </div>
@@ -275,7 +279,9 @@ const Governance: NextPage = () => {
                 <div className={style.textTablet}>{fsn(row.votes)}</div>
                 <div className={style.textTablet}>{fsn(row.against)}</div>
                 <div>
-                  <ProgressStatus percent={(row.votes / row.votesRequired) * 100} />
+                  <ProgressStatus
+                    percent={(row.votes / row.votesRequired) * 100}
+                  />
                 </div>
               </HoneyTableRow>
             </div>
@@ -332,9 +338,7 @@ const Governance: NextPage = () => {
       <HoneyContent>
         <GovernanceStats onGetVeHoneyClick={handleGetVeHoneyClick} />
       </HoneyContent>
-      <HoneyContent sidebar={
-        <HoneySider>{renderSidebar()}</HoneySider>
-      }>
+      <HoneyContent sidebar={<HoneySider>{renderSidebar()}</HoneySider>}>
         <div className={hideTablet}>
           <HoneyTable
             tableLayout={'fixed'}
@@ -355,9 +359,7 @@ const Governance: NextPage = () => {
 
         <div className={showTablet}>
           <div className={style.mobileTableTitle}>
-            <div>
-              {MainTitleTable()}
-            </div>
+            <div>{MainTitleTable()}</div>
 
             {DraftToggle()}
           </div>

@@ -227,14 +227,14 @@ const Liquidate: NextPage = () => {
 
   async function fetchSolValue(reserves: any, connection: any) {
     const slPrice = await fetchSolPrice(reserves, connection);
-    setFetchedSolPrice(slPrice)
+    setFetchedSolPrice(slPrice);
   }
 
   useEffect(() => {
     if (parsedReserves && sdkConfig.saberHqConnection) {
       fetchSolValue(parsedReserves, sdkConfig.saberHqConnection);
     }
-  }, [parsedReserves])
+  }, [parsedReserves]);
 
   useEffect(() => {
     calculateNFTPrice();
@@ -551,16 +551,19 @@ const Liquidate: NextPage = () => {
 
   const liquidateSidebar = () => (
     <HoneySider>
-      <LiquidateSidebar
-        collectionId="0"
-        biddingArray={biddingArray}
-        userBalance={userBalance}
-        highestBiddingValue={highestBiddingValue}
-        currentUserBid={currentUserBid}
-        handleRevokeBid={handleRevokeBid}
-        handleIncreaseBid={handleIncreaseBid}
-        handlePlaceBid={handlePlaceBid}
-      />
+      <HoneySider>
+        <LiquidateSidebar
+          collectionId="0"
+          biddingArray={biddingArray}
+          userBalance={userBalance}
+          highestBiddingValue={highestBiddingValue}
+          currentUserBid={currentUserBid}
+          handleRevokeBid={handleRevokeBid}
+          handleIncreaseBid={handleIncreaseBid}
+          handlePlaceBid={handlePlaceBid}
+          fetchedSolPrice={fetchedSolPrice}
+        />
+      </HoneySider>
     </HoneySider>
   );
 
@@ -617,19 +620,19 @@ const Liquidate: NextPage = () => {
             </div>
           ))}
       </HoneyContent>
-      <HoneySider>
-        <LiquidateSidebar
-          collectionId="0"
-          biddingArray={biddingArray}
-          userBalance={userBalance}
-          highestBiddingValue={highestBiddingValue}
-          currentUserBid={currentUserBid}
-          handleRevokeBid={handleRevokeBid}
-          handleIncreaseBid={handleIncreaseBid}
-          handlePlaceBid={handlePlaceBid}
-          fetchedSolPrice={fetchedSolPrice}
-        />
-      </HoneySider>
+      {/*<HoneySider>*/}
+      {/*  <LiquidateSidebar*/}
+      {/*    collectionId="0"*/}
+      {/*    biddingArray={biddingArray}*/}
+      {/*    userBalance={userBalance}*/}
+      {/*    highestBiddingValue={highestBiddingValue}*/}
+      {/*    currentUserBid={currentUserBid}*/}
+      {/*    handleRevokeBid={handleRevokeBid}*/}
+      {/*    handleIncreaseBid={handleIncreaseBid}*/}
+      {/*    handlePlaceBid={handlePlaceBid}*/}
+      {/*    fetchedSolPrice={fetchedSolPrice}*/}
+      {/*  />*/}
+      {/*</HoneySider>*/}
     </LayoutRedesign>
   );
 };

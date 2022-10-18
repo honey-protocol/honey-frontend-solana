@@ -575,6 +575,7 @@ const Lend: NextPage = () => {
         available={totalMarketDeposits}
         value={totalMarketDeposits + totalMarketDebt}
         userWalletBalance={userWalletBalance}
+        fetchedSolPrice={fetchedSolPrice}
       />
     </HoneySider>
   );
@@ -620,18 +621,6 @@ const Lend: NextPage = () => {
           // }}
         />
       </HoneyContent>
-      <HoneySider>
-        <LendSidebar
-          collectionId="s"
-          executeDeposit={executeDeposit}
-          executeWithdraw={executeWithdraw}
-          userTotalDeposits={userTotalDeposits}
-          available={totalMarketDeposits}
-          value={totalMarketDeposits + totalMarketDebt}
-          userWalletBalance={userWalletBalance}
-          fetchedSolPrice={fetchedSolPrice}
-        />
-      </HoneySider>
     </LayoutRedesign>
   );
 };

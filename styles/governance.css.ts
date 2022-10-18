@@ -2,18 +2,18 @@ import { globalStyle, style } from '@vanilla-extract/css';
 import { breakpoints, typography, vars } from './theme.css';
 import { honeyTableExpandedRow } from '../components/HoneyTable/HoneyTable.css';
 import {
-  pageTitle as pageTitleCommon,
-  pageDescription as pageDescriptionCommon
+  pageDescription as pageDescriptionCommon,
+  pageTitle as pageTitleCommon
 } from './common.css';
 
 import {
   arrowRightIcon,
-  canceledIcon,
-  draftIcon,
-  executedIcon,
-  failedIcon,
+  checkIcon,
+  clockIcon,
+  errorBlackIcon,
+  errorRedIcon,
   lampIcon,
-  progressIcon
+  penIcon
 } from './icons.css';
 
 export const draftToggle = style({
@@ -59,11 +59,11 @@ export const statusIcon = style({
   backgroundPosition: 'center'
 });
 
-export const statusExecutedIcon = style([executedIcon]);
-export const statusProgressIcon = style([progressIcon]);
-export const statusDraftIcon = style([draftIcon]);
-export const statusCanceledIcon = style([canceledIcon]);
-export const statusFailedIcon = style([failedIcon]);
+export const statusCheckIcon = style([checkIcon]);
+export const statusWaitIcon = style([clockIcon]);
+export const statusDraftIcon = style([penIcon]);
+export const statusErrorBlackIcon = style([errorBlackIcon]);
+export const statusErrorRedIcon = style([errorRedIcon]);
 
 export const lampIconStyle = style([
   lampIcon,
@@ -79,7 +79,7 @@ export const collectionName = style([
   {
     whiteSpace: 'nowrap',
     overflow: 'hidden',
-    textOverflow: 'ellipsis',
+    textOverflow: 'ellipsis'
   }
 ]);
 
@@ -89,7 +89,7 @@ export const collectionNameCreate = style([
     '@media': {
       [`screen and (max-width: ${breakpoints.mobile}px)`]: {
         fontSize: 12
-      },
+      }
     }
   }
 ]);
@@ -178,7 +178,7 @@ export const mobileTableHeader = style({
   width: '100%',
   display: 'flex',
   alignItems: 'flex-start',
-  justifyContent: 'space-between',
+  justifyContent: 'space-between'
 });
 
 export const governanceTableMobile = style({});
@@ -196,15 +196,21 @@ globalStyle(`${governanceTableMobile} tr:first-child .tableRow > div`, {
   paddingBottom: 14
 });
 
-globalStyle(`${governanceTableMobile} tr:first-child ${governanceTable} .tableTitle:after`, {
-  bottom: 'initial',
-  top: 0
-});
+globalStyle(
+  `${governanceTableMobile} tr:first-child ${governanceTable} .tableTitle:after`,
+  {
+    bottom: 'initial',
+    top: 0
+  }
+);
 
-globalStyle(`${governanceTableMobile} tr:first-child ${governanceTable} .tableTitle`, {
-  paddingBottom: 0,
-  paddingTop: 11
-});
+globalStyle(
+  `${governanceTableMobile} tr:first-child ${governanceTable} .tableTitle`,
+  {
+    paddingBottom: 0,
+    paddingTop: 11
+  }
+);
 
 export const tableCell = style([
   typography.button,

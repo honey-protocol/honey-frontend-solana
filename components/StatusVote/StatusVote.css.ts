@@ -1,6 +1,10 @@
 import { style } from '@vanilla-extract/css';
 import { typography, vars } from '../../styles/theme.css';
-import { canceledIcon, executedIcon, failedIcon } from '../../styles/icons.css';
+import {
+  checkIcon,
+  errorBlackIcon,
+  errorRedIcon
+} from '../../styles/icons.css';
 
 export const infoBlockContainer = style({
   display: 'flex',
@@ -22,15 +26,15 @@ export const status = style([
 ]);
 
 export const executed = style({
-  color: vars.colors.green,
+  color: vars.colors.green
 });
 
 export const failed = style({
-  color: vars.colors.red,
+  color: vars.colors.red
 });
 
 export const canceled = style({
-  color: vars.colors.black,
+  color: vars.colors.black
 });
 
 export const statusIcon = style({
@@ -40,9 +44,9 @@ export const statusIcon = style({
   marginLeft: 4
 });
 
-export const statusExecutedIcon = style([executedIcon]);
-export const statusCanceledIcon = style([canceledIcon]);
-export const statusFailedIcon = style([failedIcon]);
+export const statusExecutedIcon = style([checkIcon]);
+export const statusCanceledIcon = style([errorBlackIcon]);
+export const statusFailedIcon = style([errorRedIcon]);
 
 export const label = style([
   typography.caption,

@@ -509,7 +509,9 @@ const Markets: NextPage = () => {
           sorter: (a: MarketTableRow, b: MarketTableRow) => a.rate - b.rate,
           render: (rate: number) => {
             return (
-              <div className={c(style.rateCell, style.borrowRate)}>{fp(calculatedInterestRate)}</div>
+              <div className={c(style.rateCell, style.borrowRate)}>
+                {fp(calculatedInterestRate)}
+              </div>
             );
           }
         },
@@ -951,7 +953,7 @@ const Markets: NextPage = () => {
   }
 
   const borrowSidebar = () => (
-    <HoneySider>
+    <HoneySider isMobileSidebarVisible={isMobileSidebarVisible}>
       {/* borrow repay module */}
       <MarketsSidebar
         collectionId="s"
@@ -967,6 +969,8 @@ const Markets: NextPage = () => {
         userUSDCBalance={userUSDCBalance}
         loanToValue={loanToValue}
         hideMobileSidebar={hideMobileSidebar}
+        fetchedSolPrice={fetchedSolPrice}
+        calculatedInterestRate={calculatedInterestRate}
       />
     </HoneySider>
   );
@@ -1101,26 +1105,6 @@ const Markets: NextPage = () => {
             </div>
           ))}
       </HoneyContent>
-      <HoneySider isMobileSidebarVisible={isMobileSidebarVisible}>
-        {/* borrow repay module */}
-        <MarketsSidebar
-          collectionId="s"
-          availableNFTs={userAvailableNFTs}
-          openPositions={userOpenPositions}
-          nftPrice={nftPrice}
-          executeDepositNFT={executeDepositNFT}
-          executeWithdrawNFT={executeWithdrawNFT}
-          executeBorrow={executeBorrow}
-          executeRepay={executeRepay}
-          userDebt={userDebt}
-          userAllowance={userAllowance}
-          userUSDCBalance={userUSDCBalance}
-          loanToValue={loanToValue}
-          hideMobileSidebar={hideMobileSidebar}
-          fetchedSolPrice={fetchedSolPrice}
-          calculatedInterestRate={calculatedInterestRate}
-        />
-      </HoneySider>
     </LayoutRedesign>
   );
 };
