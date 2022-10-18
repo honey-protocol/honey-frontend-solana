@@ -15,6 +15,7 @@ import { HONEY_DECIMALS } from 'helpers/sdk';
 import * as anchor from '@project-serum/anchor';
 import { useGovernance } from 'contexts/GovernanceProvider';
 import useToast from 'hooks/useToast';
+import { hAlign } from 'styles/common.css';
 
 const { format: f, formatPercent: fp, formatUsd: fu, parse: p } = formatNumber;
 
@@ -142,9 +143,14 @@ const LockHoneyForm: FC = () => {
         <div className={styles.row}>
           <div className={styles.col}>
             <HoneyWarning
-              message="Instruction: Bla-bla when depositing USDC to the dYdX Layer 2 exchange, the funds are held in a bridge contract"
-              link="https://google.com"
+              message="Vote escrowed HONEY (or veHONEY) represents governance in the Honey DAO. Learn more about the details in our docs."
+              link="https://docs.honey.finance/tokenomics/vehoney"
             />
+          </div>
+        </div>
+        <div className={styles.row}>
+          <div className={styles.col}>
+            <InfoBlock title="$HONEY balance" value={lockedAmount.toString()} />
           </div>
         </div>
         <div className={styles.row}>
@@ -155,7 +161,7 @@ const LockHoneyForm: FC = () => {
         <div className={styles.row}>
           <div className={styles.col}>
             <InfoBlock
-              title="veHONEY locked"
+              title="veHONEY balance"
               value={veHoneyAmount.toString()}
             />
           </div>
