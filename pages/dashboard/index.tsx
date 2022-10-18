@@ -1,7 +1,7 @@
 import type { NextPage } from 'next';
 import HoneyContent from '../../components/HoneyContent/HoneyContent';
 import LayoutRedesign from '../../components/LayoutRedesign/LayoutRedesign';
-import React, { useEffect, useState, useMemo } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import * as styles from '../../styles/dashboard.css';
 import { HoneyPositionsSlider } from '../../components/HoneyPositionsSlider/HoneyPositionsSlider';
 import { NotificationCardProps } from '../../components/NotificationCard/types';
@@ -33,17 +33,20 @@ import BN from 'bn.js';
 import { RoundHalfDown } from '../../helpers/utils';
 import {
   calcNFT,
-  calculateCollectionwideAllowance
+  calculateCollectionwideAllowance,
+  fetchSolPrice,
+  getInterestRate
 } from '../../helpers/loanHelpers/userCollection';
 import { ToastProps } from '../../hooks/useToast';
 import { Metadata } from '@metaplex-foundation/mpl-token-metadata';
 import { generateMockHistoryData } from '../../helpers/chartUtils';
 import { HoneyProfileChart } from '../../components/HoneyProfileChart/HoneyProfileChart';
-import {MAX_LTV} from "../../constants/loan";
+import { MAX_LTV } from '../../constants/loan';
 import useWindowSize from '../../hooks/useWindowSize';
 import { TABLET_BP } from '../../constants/breakpoints';
-import LendSidebar from "../../components/LendSidebar/LendSidebar";
-import { PositionType } from "../../types/dashboard";
+import LendSidebar from '../../components/LendSidebar/LendSidebar';
+import { PositionType } from '../../types/dashboard';
+import { formatNumber } from '../../helpers/format';
 
 const network = 'devnet'; // change to dynamic value
 
@@ -92,14 +95,38 @@ const data: NotificationCardProps[] = [
   }
 ];
 
+const { format: f } = formatNumber;
+
 const Dashboard: NextPage = () => {
+  const sdkConfig = ConfigureSDK();
+  const wallet = useConnectedWallet();
+
+  /**
+   * @description calls upon markets which
+   * @params none
+   * @returns market | market reserve information | parsed reserves |
+   */
+  const { market, marketReserveInfo, parsedReserves, fetchMarket } = useHoney();
+  /**
+   * @description calls upon the honey sdk
+   * @params  useConnection func. | useConnectedWallet func. | honeyID | marketID
+   * @returns honeyUser | honeyReserves - used for interaction regarding the SDK
+   */
+  const { honeyClient, honeyUser, honeyReserves, honeyMarket } = useMarket(
+    sdkConfig.saberHqConnection,
+    sdkConfig.sdkWallet!,
+    sdkConfig.honeyId,
+    sdkConfig.marketId
+  );
+
   const [selected, setSelected] = useState<string | undefined>();
   const isMock = true;
   const userExposure = 4129.1;
   const { width } = useWindowSize();
-  const [ dataArray, setDataArray ] = useState<NotificationCardProps[]>([]);
-  const sdkConfig = ConfigureSDK();
+  const [dataArray, setDataArray] = useState<NotificationCardProps[]>([]);
+
   const userWalletBalance = 50;
+  const [fetchedSolPrice, setFetchedSolPrice] = useState(0);
 
   useEffect(() => {
     if (width >= TABLET_BP) {
@@ -108,6 +135,31 @@ const Dashboard: NextPage = () => {
       setDataArray(data.slice(0, 1));
     }
   }, [width, data]);
+
+  async function fetchSolValue(reserves: any, connection: any) {
+    const slPrice = await fetchSolPrice(reserves, connection);
+    setFetchedSolPrice(slPrice);
+  }
+
+  /**
+   * @description sets state of marketValue by parsing lamports outstanding debt amount to SOL
+   * @params none, requires parsedReserves
+   * @returns updates marketValue
+   */
+  useEffect(() => {
+    if (parsedReserves && parsedReserves[0].reserveState.totalDeposits) {
+      let totalMarketDeposits = BnToDecimal(
+        parsedReserves[0].reserveState.totalDeposits,
+        9,
+        2
+      );
+      setTotalMarketDeposits(totalMarketDeposits);
+      // setTotalMarketDeposits(parsedReserves[0].reserveState.totalDeposits.div(new BN(10 ** 9)).toNumber());
+      if (parsedReserves && sdkConfig.saberHqConnection) {
+        fetchSolValue(parsedReserves, sdkConfig.saberHqConnection);
+      }
+    }
+  }, [parsedReserves]);
 
   const getUserExposureData = () => {
     if (isMock) {
@@ -123,10 +175,10 @@ const Dashboard: NextPage = () => {
   const userExposureData = useMemo(() => getUserExposureData(), []);
 
   const getMockPriceDebtValue = () => {
-    const price = Math.floor(Math.random() * 1000)
-    const debt = Math.floor(Math.random() * (price - ((price / 100) * MAX_LTV)))
-    return {price, debt}
-  }
+    const price = Math.floor(Math.random() * 1000);
+    const debt = Math.floor(Math.random() * (price - (price / 100) * MAX_LTV));
+    return { price, debt };
+  };
 
   const getBorrowUserPositionsMock = () => {
     const preparedPositions: BorrowUserPosition[] = [];
@@ -180,26 +232,6 @@ const Dashboard: NextPage = () => {
 
   const mockLendUserPositions = useMemo(() => getLendUserPositionsMock(), []);
 
-  const wallet = useConnectedWallet();
-
-  /**
-   * @description calls upon markets which
-   * @params none
-   * @returns market | market reserve information | parsed reserves |
-   */
-  const { market, marketReserveInfo, parsedReserves, fetchMarket } = useHoney();
-  /**
-   * @description calls upon the honey sdk
-   * @params  useConnection func. | useConnectedWallet func. | honeyID | marketID
-   * @returns honeyUser | honeyReserves - used for interaction regarding the SDK
-   */
-  const { honeyClient, honeyUser, honeyReserves, honeyMarket } = useMarket(
-    sdkConfig.saberHqConnection,
-    sdkConfig.sdkWallet!,
-    sdkConfig.honeyId,
-    sdkConfig.marketId
-  );
-
   /**
    * @description fetches open positions and the amount regarding loan positions / token account
    * @params none
@@ -221,8 +253,7 @@ const Dashboard: NextPage = () => {
 
   const [totalMarketDeposits, setTotalMarketDeposits] = useState(0);
   const [totalMarketDebt, setTotalMarketDebt] = useState(0);
-  const [positionType, setPositionType] =
-    useState<PositionType>('borrow');
+  const [positionType, setPositionType] = useState<PositionType>('borrow');
   const [nftPrice, setNftPrice] = useState(0);
   const [calculatedNftPrice, setCalculatedNftPrice] = useState(false);
   const [marketPositions, setMarketPositions] = useState(0);
@@ -243,6 +274,10 @@ const Dashboard: NextPage = () => {
   const [userUSDCBalance, setUserUSDCBalance] = useState(0);
   const [userTotalDeposits, setUserTotalDeposits] = useState(0);
   const [sumOfTotalValue, setSumOfTotalValue] = useState(0);
+  const [calculatedInterestRate, setCalculatedInterestRate] =
+    useState<number>(0);
+  const [utilizationRate, setUtilizationRate] = useState(0);
+  const [isMobileSidebarVisible, setShowMobileSidebar] = useState(false);
 
   const availableNFTs: any = useFetchNFTByUser(wallet);
   let reFetchNFTs = availableNFTs[2];
@@ -425,6 +460,31 @@ const Dashboard: NextPage = () => {
       setUserOpenPositions(collateralNFTPositions);
     }
   }, [collateralNFTPositions]);
+
+  useEffect(() => {
+    if (totalMarketDeposits && totalMarketDebt && totalMarketDeposits) {
+      setUtilizationRate(
+        Number(
+          f(
+            (totalMarketDeposits + totalMarketDebt - totalMarketDeposits) /
+              (totalMarketDeposits + totalMarketDebt)
+          )
+        )
+      );
+    }
+  }, [totalMarketDeposits, totalMarketDebt, totalMarketDeposits]);
+
+  async function calculateInterestRate(utilizationRate: number) {
+    let interestRate = await getInterestRate(utilizationRate);
+    if (interestRate) setCalculatedInterestRate(interestRate);
+  }
+
+  useEffect(() => {
+    console.log('Runnig');
+    if (utilizationRate) {
+      calculateInterestRate(utilizationRate);
+    }
+  }, [utilizationRate]);
 
   /**
    * @description executes the deposit NFT func. from SDK
@@ -616,33 +676,48 @@ const Dashboard: NextPage = () => {
     return mockData;
   };
 
+  const hideMobileSidebar = () => {
+    debugger;
+    setShowMobileSidebar(false);
+    document.body.classList.remove('disable-scroll');
+  };
+
   const dashboardSidebar = () => (
-    <HoneySider>
+    <HoneySider isMobileSidebarVisible={isMobileSidebarVisible}>
       {positionType === 'borrow' ? (
         <MarketsSidebar
-        collectionId="s"
-        availableNFTs={userAvailableNFTs}
-        openPositions={userOpenPositions}
-        nftPrice={nftPrice}
-        executeDepositNFT={executeDepositNFT}
-        executeWithdrawNFT={executeWithdrawNFT}
-        executeBorrow={executeBorrow}
-        executeRepay={executeRepay}
-        userDebt={userDebt}
-        userAllowance={userAllowance}
-        userUSDCBalance={userUSDCBalance}
-        loanToValue={loanToValue}
-      />
-        ) : (
-          <LendSidebar
-        collectionId="s"
-        executeDeposit={() => {console.log('deposit pressed')}}
-        executeWithdraw={() => {console.log('widthdraw pressed')}}
-        userTotalDeposits={userTotalDeposits}
-        available={totalMarketDeposits}
-        value={totalMarketDeposits + totalMarketDebt}
-        userWalletBalance={userWalletBalance}
-        />)}
+          collectionId="s"
+          availableNFTs={userAvailableNFTs}
+          openPositions={userOpenPositions}
+          nftPrice={nftPrice}
+          executeDepositNFT={executeDepositNFT}
+          executeWithdrawNFT={executeWithdrawNFT}
+          executeBorrow={executeBorrow}
+          executeRepay={executeRepay}
+          userDebt={userDebt}
+          userAllowance={userAllowance}
+          userUSDCBalance={userUSDCBalance}
+          loanToValue={loanToValue}
+          hideMobileSidebar={hideMobileSidebar}
+          fetchedSolPrice={fetchedSolPrice}
+          calculatedInterestRate={calculatedInterestRate}
+        />
+      ) : (
+        <LendSidebar
+          collectionId="s"
+          executeDeposit={() => {
+            console.log('deposit pressed');
+          }}
+          executeWithdraw={() => {
+            console.log('widthdraw pressed');
+          }}
+          userTotalDeposits={userTotalDeposits}
+          available={totalMarketDeposits}
+          value={totalMarketDeposits + totalMarketDebt}
+          userWalletBalance={userWalletBalance}
+          fetchedSolPrice={fetchedSolPrice}
+        />
+      )}
     </HoneySider>
   );
 
