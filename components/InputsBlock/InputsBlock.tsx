@@ -41,9 +41,9 @@ export const InputsBlock: FC<InputsBlockProps> = ({
 }) => {
   const handleFirstInputChange = (value: ValueType) => {
     if (isNil(value)) {
-      onChangeFirstInput(Number(value) < maxValue ? Number(value) : maxValue);
-    } else {
       onChangeFirstInput(undefined);
+    } else {
+      onChangeFirstInput(Number(value) < maxValue ? Number(value) : maxValue);
     }
   };
 
