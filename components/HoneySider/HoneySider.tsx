@@ -3,11 +3,7 @@ import * as styles from './HoneySider.css';
 import c from 'classnames';
 import { HoneySiderProps } from './types';
 
-const HoneySider = ({
-  isMobileSidebarVisible,
-  children
-}: HoneySiderProps) => {
-
+const HoneySider = ({ isMobileSidebarVisible, children }: HoneySiderProps) => {
   useEffect(() => {
     window.addEventListener('scroll', isSticky);
     return () => {
@@ -22,20 +18,23 @@ const HoneySider = ({
 
     if (height != null) {
       if (sidebar != null) {
-        scrollTop >= (height.clientHeight + 12) ? sidebar.classList.add('is-sticky') : sidebar.classList.remove('is-sticky');
+        scrollTop >= height.clientHeight + 12
+          ? sidebar.classList.add('is-sticky')
+          : sidebar.classList.remove('is-sticky');
       }
     } else {
       if (sidebar != null) {
-        scrollTop >= 12 ? sidebar.classList.add('is-sticky') : sidebar.classList.remove('is-sticky');
+        scrollTop >= 12
+          ? sidebar.classList.add('is-sticky')
+          : sidebar.classList.remove('is-sticky');
       }
     }
-
   };
 
   return (
     <div
       className={c(styles.honeySider, 'sidebar', {
-        [styles.honeySiderShow]: isMobileSidebarVisible
+        [styles.isVisible]: isMobileSidebarVisible
       })}
     >
       {children}

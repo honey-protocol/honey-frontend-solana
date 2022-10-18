@@ -29,7 +29,7 @@ export const honeySider = style({
   }
 });
 
-export const honeySiderShow = style({
+export const isVisible = style({
   display: 'block'
 });
 
