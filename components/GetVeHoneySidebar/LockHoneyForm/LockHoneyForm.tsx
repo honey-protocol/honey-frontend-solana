@@ -152,7 +152,7 @@ const LockHoneyForm: FC = () => {
         <div className={styles.row}>
           <div className={styles.col}>
             <InfoBlock
-              value={honeyAmount.toString()}
+              value={f(honeyAmount)}
               title={
                 <span className={hAlign}>
                   $HONEY balance <div className={questionIcon} />
@@ -187,7 +187,7 @@ const LockHoneyForm: FC = () => {
           </div>
           <div className={styles.col}>
             <InfoBlock
-              value={lockedAmount.toString()}
+              value={lockedPeriodEnd.toString()}
               title={
                 <span className={hAlign}>
                   Lock period ends <div className={questionIcon} />
