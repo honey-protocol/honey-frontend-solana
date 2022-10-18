@@ -404,11 +404,12 @@ const Liquidate: NextPage = () => {
     debouncedSearch(searchQuery);
   }, [tableData]);
 
-  const columnsWidth: Array<number | string> = [250, 120, 150, 150, 170];
+  const columnsWidth: Array<number | string> = [200, 100, 150, 150, 100, 70];
 
   const columns: ColumnType<LiquidateTableRow>[] = useMemo(
     () => [
       {
+        width: columnsWidth[0],
         title: (
           <SearchInput
             onChange={handleSearchInputChange}
@@ -480,6 +481,7 @@ const Liquidate: NextPage = () => {
         }
       },
       {
+        width: columnsWidth[3],
         title: ({ sortColumns }) => {
           const sortOrder = getColumnSortStatus(sortColumns, 'totalDebt');
           return (
@@ -502,7 +504,7 @@ const Liquidate: NextPage = () => {
         }
       },
       {
-        width: columnsWidth[3],
+        width: columnsWidth[4],
         title: ({ sortColumns }) => {
           const sortOrder = getColumnSortStatus(sortColumns, 'tvl');
           return (
@@ -525,6 +527,7 @@ const Liquidate: NextPage = () => {
         }
       },
       {
+        width: columnsWidth[5],
         // TODO: add toggle back when its functional
         // title: (
         //   // <div className={style.toggle}>
