@@ -8,6 +8,7 @@ import { governanceSidebar } from './GovernanceSidebar.css';
 import { useConnectedWallet, useSolana } from '@saberhq/use-solana';
 import { ProposalInfo, useProposal } from 'hooks/tribeca/useProposals';
 import { useWalletKit } from '@gokiprotocol/walletkit';
+import { mobileReturnButton } from 'styles/common.css';
 
 type GovernanceSidebarProps = {
   selectedProposalId?: number;
@@ -51,8 +52,19 @@ const GovernanceSidebar = ({
             icon={<div className={styles.lightIcon} />}
             title="You didn’t connect any wallet yet"
             description="First, choose a proposal"
-            btnTitle="CONNECT WALLET"
-            onBtnClick={connect}
+            buttons={[
+              {
+                title: 'CONNECT WALLET',
+                onClick: connect,
+                variant: 'primary'
+              },
+              {
+                title: 'RETURN',
+                onClick: () => hideMobileSidebar(),
+                variant: 'secondary',
+                className: mobileReturnButton
+              }
+            ]}
           />
         ) : !selectedProposalId?.toString() ? (
           <EmptyStateDetails

@@ -1,14 +1,19 @@
-import HoneyButton from 'components/HoneyButton/HoneyButton';
+import HoneyButton, {
+  HoneyButtonProps
+} from 'components/HoneyButton/HoneyButton';
 import React, { ReactNode } from 'react';
 import * as styles from './EmptyStateDetails.css';
 import { Typography } from 'antd';
+import cs from 'classnames';
 
+interface button extends HoneyButtonProps {
+  title: string;
+}
 interface EmptyStateDetailsProps {
   icon: ReactNode;
   title: string;
   description: string;
-  btnTitle?: string;
-  onBtnClick?: () => void;
+  buttons?: button[];
 }
 
 const { Text } = Typography;
@@ -20,15 +25,17 @@ const EmptyStateDetails = (props: EmptyStateDetailsProps) => {
       <Text type="secondary" className={styles.emptyStateDescription}>
         {props.description}
       </Text>
-      {props.btnTitle && (
-        <HoneyButton
-          onClick={props.onBtnClick || (() => {})}
-          type="primary"
-          className={styles.emptyStateWalletBtn}
-        >
-          {props.btnTitle}
-        </HoneyButton>
-      )}
+      {props.buttons &&
+        props.buttons.map((button, i) => (
+          <HoneyButton
+            {...button}
+            key={i}
+            type="primary"
+            className={cs(styles.emptyStateWalletBtn, button.className)}
+          >
+            {button.title}
+          </HoneyButton>
+        ))}
     </div>
   );
 };

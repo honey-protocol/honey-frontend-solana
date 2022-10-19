@@ -6,6 +6,7 @@ import CreateProposalTab from './CreateProposalTab/CreateProposalTab';
 import HowItWorksTab from './HowItWorksTab/HowItWorksTab';
 import { useConnectedWallet } from '@saberhq/use-solana';
 import { useWalletKit } from '@gokiprotocol/walletkit';
+import { mobileReturnButton } from 'styles/common.css';
 
 const items: [HoneyTabItem, HoneyTabItem] = [
   { label: 'How it works', key: 'how_it_works' },
@@ -51,8 +52,19 @@ const NewProposalSidebar = (props: { hideMobileSidebar: Function }) => {
             icon={<div className={styles.lightIcon} />}
             title="You didn’t connect any wallet yet"
             description="First, choose a proposal"
-            btnTitle="CONNECT WALLET"
-            onBtnClick={connect}
+            buttons={[
+              {
+                title: 'CONNECT WALLET',
+                onClick: connect,
+                variant: 'primary'
+              },
+              {
+                title: 'RETURN',
+                onClick: () => props.hideMobileSidebar(),
+                variant: 'secondary',
+                className: mobileReturnButton
+              }
+            ]}
           />
         ) : (
           <>
