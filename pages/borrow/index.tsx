@@ -64,8 +64,16 @@ import { pageDescription, pageTitle } from 'styles/common.css';
 import HoneyTableRow from 'components/HoneyTable/HoneyTableRow/HoneyTableRow';
 import HoneyTableNameCell from '../../components/HoneyTable/HoneyTableNameCell/HoneyTableNameCell';
 import { marketCollections, OpenPositions } from 'constants/borrowLendMarkets';
-import { HONEY_GENESIS_BEE, LIFINITY_FLARES, OG_ATADIANS, PESKY_PENGUINS } from '../../constants/borrowLendMarkets';
-import { HONEY_GENESIS_MARKET_ID, PESKY_PENGUINS_MARKET_ID } from '../../constants/loan';
+import {
+  HONEY_GENESIS_BEE,
+  LIFINITY_FLARES,
+  OG_ATADIANS,
+  PESKY_PENGUINS
+} from '../../constants/borrowLendMarkets';
+import {
+  HONEY_GENESIS_MARKET_ID,
+  PESKY_PENGUINS_MARKET_ID
+} from '../../constants/loan';
 import { collectionCard } from 'styles/liquidation.css';
 
 const network = 'mainnet-beta'; // change to dynamic value
@@ -74,9 +82,14 @@ const { format: f, formatPercent: fp, formatSol: fs } = formatNumber;
 
 const Markets: NextPage = () => {
   // TODO: write dynamic currentMarketId based on user interaction
-  const [currentMarketId, setCurrentMarketId] = useState(HONEY_GENESIS_MARKET_ID);
+  const [currentMarketId, setCurrentMarketId] = useState(
+    HONEY_GENESIS_MARKET_ID
+  );
   // setUserOpenPositions(collateralNFTPositions);
-  const [honeyMarketCollateralNftPositions, setHoneyMarketCollateralNftPositions] = useState<Array<OpenPositions>>([]);
+  const [
+    honeyMarketCollateralNftPositions,
+    setHoneyMarketCollateralNftPositions
+  ] = useState<Array<OpenPositions>>([]);
 
   const wallet = useConnectedWallet();
   const sdkConfig = ConfigureSDK();
@@ -120,7 +133,7 @@ const Markets: NextPage = () => {
    * @returns market | market reserve information | parsed reserves |
    */
   const { market, marketReserveInfo, parsedReserves, fetchMarket } = useHoney();
-  
+
   const { width: windowWidth } = useWindowSize();
 
   const [tableData, setTableData] = useState<MarketTableRow[]>([]);
@@ -243,7 +256,7 @@ const Markets: NextPage = () => {
         9,
         2
       );
-      console.log('@@--debt', totalMarketDeposits)
+      console.log('@@--debt', totalMarketDeposits);
       setTotalMarketDeposits(totalMarketDeposits);
       // setTotalMarketDeposits(parsedReserves[0].reserveState.totalDeposits.div(new BN(10 ** 9)).toNumber());
       if (parsedReserves && sdkConfig.saberHqConnection) {
@@ -321,8 +334,8 @@ const Markets: NextPage = () => {
    * @returns honeyUser | marketReserveInfo |
    */
   useEffect(() => {
-    console.log('@@-- market', market)
-    console.log('collateral', collateralNFTPositions)
+    console.log('@@-- market', market);
+    console.log('collateral', collateralNFTPositions);
     if (marketReserveInfo && parsedReserves) {
       setDepositNoteExchangeRate(
         BnToDecimal(marketReserveInfo[0].depositNoteExchangeRate, 15, 5)
@@ -376,7 +389,7 @@ const Markets: NextPage = () => {
   }
 
   useEffect(() => {
-    console.log('util@@', utilizationRate)
+    console.log('util@@', utilizationRate);
     if (utilizationRate) {
       calculateInterestRate(utilizationRate);
     }
@@ -385,14 +398,22 @@ const Markets: NextPage = () => {
   // PUT YOUR DATA SOURCE HERE
   // MOCK DATA FOR NOW
   useEffect(() => {
-    console.log('connection', sdkConfig.saberHqConnection, sdkConfig.sdkWallet, calculatedInterestRate);
+    console.log(
+      'connection',
+      sdkConfig.saberHqConnection,
+      sdkConfig.sdkWallet,
+      calculatedInterestRate
+    );
     // console.log('user open pos', marketCollections)
     if (sdkConfig.saberHqConnection && sdkConfig.sdkWallet) {
-      marketCollections.map(async (collection) => 
-      {
-        if(collection.id == '') return;
+      marketCollections.map(async collection => {
+        if (collection.id == '') return;
         collection.rate = calculatedInterestRate || 0;
-        await populateMarketData(collection, sdkConfig.saberHqConnection, sdkConfig.sdkWallet!);
+        await populateMarketData(
+          collection,
+          sdkConfig.saberHqConnection,
+          sdkConfig.sdkWallet!
+        );
         // collection.available = collection.id != 'HNYG' ? totalMarketDeposits : 0,
         // collection.value = collection.key == 'HNYG' ? sumOfTotalValue : 0,
         // collection.allowance = collection.key == 'HNYG' ? userAllowance : 0,
@@ -402,26 +423,24 @@ const Markets: NextPage = () => {
         setUtilizationRate(collection.utilizationRate);
         // setHoneyMarketCollateralNftPositions(collection.positions);
         // console.log('open - pos', collection.positions);
-      }
-    );
-    setTableData(marketCollections);
-    setTableDataFiltered(marketCollections);
+      });
+      setTableData(marketCollections);
+      setTableDataFiltered(marketCollections);
     }
   }, [
-      totalMarketDeposits,
-      totalMarketDebt,
-      nftPrice,
-      userOpenPositions,
-      userAllowance,
-      userDebt,
-      loanToValue,
-      calculatedInterestRate,
-      honeyReserves,
-      parsedReserves,
-      sdkConfig.saberHqConnection,
-      sdkConfig.sdkWallet
-    ]
-  );
+    totalMarketDeposits,
+    totalMarketDebt,
+    nftPrice,
+    userOpenPositions,
+    userAllowance,
+    userDebt,
+    loanToValue,
+    calculatedInterestRate,
+    honeyReserves,
+    parsedReserves,
+    sdkConfig.saberHqConnection,
+    sdkConfig.sdkWallet
+  ]);
 
   const showMobileSidebar = () => {
     setShowMobileSidebar(true);
@@ -450,19 +469,49 @@ const Markets: NextPage = () => {
 
   const renderImage = (name: string) => {
     if (name == HONEY_GENESIS_BEE) {
-      return <Image src={'https://img-cdn.magiceden.dev/rs:fill:400:400:0:0/plain/https://dl.airtable.com/.attachmentThumbnails/6b6c8954aed777a74de52fd70f8751ab/46b325db'} layout="fill" alt="honey" />
+      return (
+        <Image
+          src={
+            'https://img-cdn.magiceden.dev/rs:fill:400:400:0:0/plain/https://dl.airtable.com/.attachmentThumbnails/6b6c8954aed777a74de52fd70f8751ab/46b325db'
+          }
+          layout="fill"
+          alt="honey"
+        />
+      );
     } else if (name == LIFINITY_FLARES) {
-      return <Image src={'https://img-cdn.magiceden.dev/rs:fill:400:400:0:0/plain/https://dl.airtable.com/.attachmentThumbnails/6972d5c2efb77d49be97b07ccf4fbc69/e9572fb8'} layout="fill"  alt="Lifinity" />
+      return (
+        <Image
+          src={
+            'https://img-cdn.magiceden.dev/rs:fill:400:400:0:0/plain/https://dl.airtable.com/.attachmentThumbnails/6972d5c2efb77d49be97b07ccf4fbc69/e9572fb8'
+          }
+          layout="fill"
+          alt="Lifinity"
+        />
+      );
     } else if (name == OG_ATADIANS) {
-      return <Image src={'https://img-cdn.magiceden.dev/rs:fill:400:400:0:0/plain/https://creator-hub-prod.s3.us-east-2.amazonaws.com/atadians_pfp_1646721263627.gif'} layout="fill" alt="OG Atadians" />
+      return (
+        <Image
+          src={
+            'https://img-cdn.magiceden.dev/rs:fill:400:400:0:0/plain/https://creator-hub-prod.s3.us-east-2.amazonaws.com/atadians_pfp_1646721263627.gif'
+          }
+          layout="fill"
+          alt="OG Atadians"
+        />
+      );
     } else {
-      return <Image src={'https://img-cdn.magiceden.dev/rs:fill:400:400:0:0/plain/https://i.imgur.com/37nsjBZ.png'} layout="fill" alt="Pesky Penguins" />
+      return (
+        <Image
+          src={
+            'https://img-cdn.magiceden.dev/rs:fill:400:400:0:0/plain/https://i.imgur.com/37nsjBZ.png'
+          }
+          layout="fill"
+          alt="Pesky Penguins"
+        />
+      );
     }
-  }
+  };
 
-  const renderInterest = (name: string) => {
-
-  }
+  const renderInterest = (name: string) => {};
 
   const onSearch = (searchTerm: string): MarketTableRow[] => {
     if (!searchTerm) {
@@ -519,11 +568,7 @@ const Markets: NextPage = () => {
               <div className={style.nameCell}>
                 <div className={style.logoWrapper}>
                   <div className={style.collectionLogo}>
-                    <HexaBoxContainer>
-                      {
-                        renderImage(name)
-                      }
-                    </HexaBoxContainer>
+                    <HexaBoxContainer>{renderImage(name)}</HexaBoxContainer>
                   </div>
                 </div>
                 <div className={style.collectionName}>{name}</div>
@@ -552,7 +597,7 @@ const Markets: NextPage = () => {
           hidden: windowWidth < TABLET_BP,
           sorter: (a: MarketTableRow, b: MarketTableRow) => a.rate - b.rate,
           render: (rate: number, market: any) => {
-            return ( <div className={style.rateCell}>{fp(market.rate)}</div> )
+            return <div className={style.rateCell}>{fp(market.rate)}</div>;
           }
         },
         {
@@ -636,7 +681,10 @@ const Markets: NextPage = () => {
                     <div className={style.logoWrapper}>
                       <div className={style.collectionLogo}>
                         <HexaBoxContainer>
-                          <Image src={honeyGenesisBee} alt="Honey Genesis Bee" />
+                          <Image
+                            src={honeyGenesisBee}
+                            alt="Honey Genesis Bee"
+                          />
                         </HexaBoxContainer>
                       </div>
                     </div>
@@ -816,19 +864,22 @@ const Markets: NextPage = () => {
    * @params mint of the NFT
    * @returns succes | failure
    */
-  async function executeDepositNFT(mintID: any, toast: ToastProps['toast'], name: string) {
+  async function executeDepositNFT(
+    mintID: any,
+    toast: ToastProps['toast'],
+    name: string
+  ) {
     try {
       if (!mintID) return;
       console.log('mint id', mintID);
       // toast.processing();
 
-      marketCollections.map(async (collection) => {
-        console.log('collection::', collection)
-        console.log('name', name)
+      marketCollections.map(async collection => {
+        console.log('collection::', collection);
+        console.log('name', name);
         if (name.includes(collection.name)) {
-          
-          console.log('~~collection', collection)
-          console.log('~~collection name', name)
+          console.log('~~collection', collection);
+          console.log('~~collection name', name);
 
           const metadata = await Metadata.findByMint(
             // sdkConfig.saberHqConnection,
@@ -837,30 +888,39 @@ const Markets: NextPage = () => {
           );
 
           console.log('market.address', honeyUser.market.address.toString());
-          console.log('market.authority', honeyUser.market.marketAuthority.toString());
-          console.log('market.nftSwitchBoardPriceAggre', honeyUser.market.address.toString());
+          console.log(
+            'market.authority',
+            honeyUser.market.marketAuthority.toString()
+          );
+          console.log(
+            'market.nftSwitchBoardPriceAggre',
+            honeyUser.market.address.toString()
+          );
           console.log('market.owner', honeyUser.market.owner.toString());
-          console.log('market.quoteTOkenMint', honeyUser.market.quoteTokenMint.toString());
-          
+          console.log(
+            'market.quoteTOkenMint',
+            honeyUser.market.quoteTokenMint.toString()
+          );
+
           const tx = await depositNFT(
             collection.connection,
             // collection.user, - TODO: this user is created in the helper and fails
-            honeyUser,
+            collection.user,
             metadata.pubkey
           );
-          
+
           if (tx[0] == 'SUCCESS') {
             toast.success(
               'Deposit success',
               `https://solscan.io/tx/${tx[1][0]}?cluster=${network}`
             );
             console.log('is there a success?');
-    
+
             await refreshPositions();
             await reFetchNFTs({});
           }
         }
-      })
+      });
     } catch (error) {
       return toast.error(
         'Error depositing NFT'
@@ -952,7 +1012,6 @@ const Markets: NextPage = () => {
           'Borrow success',
           `https://solscan.io/tx/${tx[1][0]}?cluster=${network}`
         );
-
       } else {
         return toast.error('Borrow failed');
       }
@@ -1007,7 +1066,6 @@ const Markets: NextPage = () => {
           'Repay success',
           `https://solscan.io/tx/${tx[1][0]}?cluster=${network}`
         );
-
       } else {
         return toast.error('Repay failed');
       }
@@ -1171,10 +1229,6 @@ const Markets: NextPage = () => {
 };
 
 export default Markets;
-
-
-
-
 
 // market.address 6FcJaAzQnuoA6o3sVw1GD6Ba69XuL5jinZpQTzJhd2R3
 // market.authority Ed3HoRyQ5oBMiV7QUi1tBNzNcgN4qNHyKEmKrcd8Fv7A
