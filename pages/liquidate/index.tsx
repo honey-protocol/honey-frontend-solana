@@ -13,7 +13,6 @@ import React, {
   useState
 } from 'react';
 import { Key } from 'antd/lib/table/interface';
-import Sider from 'antd/lib/layout/Sider';
 import HoneyToggle from '../../components/HoneyToggle/HoneyToggle';
 import debounce from 'lodash/debounce';
 import SearchInput from '../../components/SearchInput/SearchInput';
@@ -40,7 +39,6 @@ import { calcNFT, fetchSolPrice } from 'helpers/loanHelpers/userCollection';
 import { LiquidateTablePosition } from '../../types/liquidate';
 import { HONEY_MARKET_ID, HONEY_PROGRAM_ID } from 'constants/loan';
 import { NATIVE_MINT } from '@solana/spl-token';
-import { Content } from 'antd/lib/layout/layout';
 import HoneySider from 'components/HoneySider/HoneySider';
 import HoneyContent from 'components/HoneyContent/HoneyContent';
 import { pageDescription, pageTitle } from 'styles/common.css';
@@ -229,14 +227,14 @@ const Liquidate: NextPage = () => {
 
   async function fetchSolValue(reserves: any, connection: any) {
     const slPrice = await fetchSolPrice(reserves, connection);
-    setFetchedSolPrice(slPrice)
+    setFetchedSolPrice(slPrice);
   }
 
   useEffect(() => {
     if (parsedReserves && sdkConfig.saberHqConnection) {
       fetchSolValue(parsedReserves, sdkConfig.saberHqConnection);
     }
-  }, [parsedReserves])
+  }, [parsedReserves]);
 
   useEffect(() => {
     calculateNFTPrice();
@@ -406,11 +404,12 @@ const Liquidate: NextPage = () => {
     debouncedSearch(searchQuery);
   }, [tableData]);
 
-  const columnsWidth: Array<number | string> = [250, 120, 150, 150, 170];
+  const columnsWidth: Array<number | string> = [200, 100, 150, 150, 100, 70];
 
   const columns: ColumnType<LiquidateTableRow>[] = useMemo(
     () => [
       {
+        width: columnsWidth[0],
         title: (
           <SearchInput
             onChange={handleSearchInputChange}
@@ -482,6 +481,7 @@ const Liquidate: NextPage = () => {
         }
       },
       {
+        width: columnsWidth[3],
         title: ({ sortColumns }) => {
           const sortOrder = getColumnSortStatus(sortColumns, 'totalDebt');
           return (
@@ -504,7 +504,7 @@ const Liquidate: NextPage = () => {
         }
       },
       {
-        width: columnsWidth[3],
+        width: columnsWidth[4],
         title: ({ sortColumns }) => {
           const sortOrder = getColumnSortStatus(sortColumns, 'tvl');
           return (
@@ -527,6 +527,7 @@ const Liquidate: NextPage = () => {
         }
       },
       {
+        width: columnsWidth[5],
         // TODO: add toggle back when its functional
         // title: (
         //   // <div className={style.toggle}>
@@ -551,15 +552,33 @@ const Liquidate: NextPage = () => {
     [isMyBidsFilterEnabled, tableData, searchQuery]
   );
 
+  const liquidateSidebar = () => (
+    <HoneySider>
+      <HoneySider>
+        <LiquidateSidebar
+          collectionId="0"
+          biddingArray={biddingArray}
+          userBalance={userBalance}
+          highestBiddingValue={highestBiddingValue}
+          currentUserBid={currentUserBid}
+          handleRevokeBid={handleRevokeBid}
+          handleIncreaseBid={handleIncreaseBid}
+          handlePlaceBid={handlePlaceBid}
+          fetchedSolPrice={fetchedSolPrice}
+        />
+      </HoneySider>
+    </HoneySider>
+  );
+
   return (
     <LayoutRedesign>
-      <div>
-        <Typography.Title className={pageTitle}>Liquidation</Typography.Title>
-        <Typography.Text className={pageDescription}>
-          Bid on discounted NFTs from borrowers{' '}
-        </Typography.Text>
-      </div>
-      <HoneyContent>
+      <HoneyContent sidebar={liquidateSidebar()}>
+        <div>
+          <Typography.Title className={pageTitle}>Liquidation</Typography.Title>
+          <Typography.Text className={pageDescription}>
+            Bid on discounted NFTs from borrowers{' '}
+          </Typography.Text>
+        </div>
         <HoneyTable
           hasRowsShadow={true}
           tableLayout="fixed"
@@ -604,19 +623,19 @@ const Liquidate: NextPage = () => {
             </div>
           ))}
       </HoneyContent>
-      <HoneySider>
-        <LiquidateSidebar
-          collectionId="0"
-          biddingArray={biddingArray}
-          userBalance={userBalance}
-          highestBiddingValue={highestBiddingValue}
-          currentUserBid={currentUserBid}
-          handleRevokeBid={handleRevokeBid}
-          handleIncreaseBid={handleIncreaseBid}
-          handlePlaceBid={handlePlaceBid}
-          fetchedSolPrice={fetchedSolPrice}
-        />
-      </HoneySider>
+      {/*<HoneySider>*/}
+      {/*  <LiquidateSidebar*/}
+      {/*    collectionId="0"*/}
+      {/*    biddingArray={biddingArray}*/}
+      {/*    userBalance={userBalance}*/}
+      {/*    highestBiddingValue={highestBiddingValue}*/}
+      {/*    currentUserBid={currentUserBid}*/}
+      {/*    handleRevokeBid={handleRevokeBid}*/}
+      {/*    handleIncreaseBid={handleIncreaseBid}*/}
+      {/*    handlePlaceBid={handlePlaceBid}*/}
+      {/*    fetchedSolPrice={fetchedSolPrice}*/}
+      {/*  />*/}
+      {/*</HoneySider>*/}
     </LayoutRedesign>
   );
 };

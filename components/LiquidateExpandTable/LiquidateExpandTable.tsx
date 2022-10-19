@@ -9,7 +9,9 @@ import HexaBoxContainer from '../HexaBoxContainer/HexaBoxContainer';
 import Image from 'next/image';
 import honeyGenesisBee from '/public/images/imagePlaceholder.png';
 import { InfoBlock } from '../InfoBlock/InfoBlock';
-import { formatNumber } from '../../helpers/format';
+import { formatNumber, formatNFTName } from '../../helpers/format';
+import RiskLvl from '../RiskLvl/RiskLvl';
+import HoneyTooltip from '../HoneyTooltip/HoneyTooltip';
 
 const { formatPercent: fp, formatSol: fs } = formatNumber;
 
@@ -36,13 +38,12 @@ export const LiquidateExpandTable: FC<{ data: LiquidateTablePosition[] }> = ({
               </HexaBoxContainer>
             </div>
             <div className={sharedStyles.nameCellText}>
-              <div className={sharedStyles.collectionName}>{name}</div>
-              <div className={sharedStyles.risk.safe}>
-                <span className={sharedStyles.valueCell}>
-                  {fp(record.riskLvl)}
-                </span>{' '}
-                <span className={sharedStyles.riskText}>Risk lvl</span>
-              </div>
+              <HoneyTooltip label={name}>
+                <div className={sharedStyles.collectionName}>
+                  {formatNFTName(name)}
+                </div>
+              </HoneyTooltip>
+              <RiskLvl riskLvl={record.riskLvl} />
             </div>
           </div>
         )

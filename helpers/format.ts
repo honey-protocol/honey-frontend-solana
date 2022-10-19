@@ -148,7 +148,39 @@ export const formatNumber = {
         .replace(new RegExp('\\' + thousandSeparator, 'g'), '')
         .replace(new RegExp('\\' + decimalSeparator), '.')
     );
+  },
+
+  formatTokenInput: (input: string, decimals: number | undefined) => {
+    const [integersValue, decimalsValue] = input.split('.');
+
+    if (!decimalsValue || decimalsValue.length === 0) {
+      return input;
+    }
+
+    return `${integersValue}.${decimalsValue.slice(0, decimals)}`;
   }
+};
+
+/**
+ * Convert long NFT name into short.
+ * @param {string} nftName - full NFT name, consist of collection name + NFT number
+ * @param {number} maxLength - max formatted name length, 10 by default
+ */
+export const formatNFTName = (nftName: string, maxLength = 10) => {
+  if (nftName.length <= maxLength) {
+    return nftName;
+  }
+
+  const nftNumber = nftName.match(/#\d+$/)?.[0] || '';
+  const collectionName = nftNumber.length
+    ? nftName.split(nftNumber)[0]
+    : nftName;
+
+  const splicedCollectionName = collectionName.slice(
+    0,
+    maxLength - nftNumber.length
+  );
+  return `${splicedCollectionName}...${nftNumber}`;
 };
 
 export const dateFromTimestamp = (timestamp: number | string) => {

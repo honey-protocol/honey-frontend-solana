@@ -1,5 +1,6 @@
-import { style } from '@vanilla-extract/css';
+import { globalStyle, style } from '@vanilla-extract/css';
 import { typography, vars } from '../../styles/theme.css';
+import { honeyFormattedInput } from '../HoneyFormattedNumericInput/HoneyFormattedNumericInput.css';
 
 export const inputsBlockContainer = style({
   display: 'flex',
@@ -52,6 +53,11 @@ export const input = style([
     }
   }
 ]);
+
+globalStyle(`${input} .ant-input-number-input`, {
+  height: 'auto',
+  padding: '0'
+});
 
 export const inputAddon = style([
   typography.body,

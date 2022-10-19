@@ -16,6 +16,7 @@ import { TokenAmount } from '@saberhq/token-utils';
 import { useGovernance } from 'contexts/GovernanceProvider';
 import { useTokenMint } from '@saberhq/sail';
 import { useGovernor } from 'hooks/tribeca/useGovernor';
+import {HoneyLockedStatus} from "../HoneyLockedStatus/HoneyLockedStatus";
 
 const { format: f, formatPercent: fp, formatShortName: fsn } = formatNumber;
 
@@ -168,20 +169,11 @@ export const GovernanceStats: FC<GoveranceStatsProps> = ({
           </div>
         </div>
         <div className={styles.sliderWrapper}>
-          <div className={c(styles.title, styles.yellow)}>
-            {fp((lockedHoney / totalSupply) * 100)}
-          </div>
-          <HoneyTooltip label={`Total Honey supply: 1 billion`}>
-            <HoneySlider
-              minAvailableValue={lockedHoney}
-              currentValue={0}
-              maxValue={totalSupply}
-              isReadonly
-              minAvailableSliderClassName={styles.minAvailableSlider}
-              currentValueSliderClassName={styles.currentValueSlider}
-              maxUnavailableSliderClassName={styles.maxUnavailableSlider}
-            />
-          </HoneyTooltip>
+          <HoneyLockedStatus
+            circulatingHoneyTokens={0}
+            lockedHoneyTokens={lockedHoney}
+            totalHoneyTokens={totalSupply}
+          />
         </div>
       </div>
     </div>

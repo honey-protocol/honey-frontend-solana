@@ -75,8 +75,8 @@ const LockHoneyForm: FC = () => {
       return;
     }
 
-    setValueHONEY(veHoneyPrice / veHoneyPrice);
-    setValueVeHONEY(veHoneyPrice);
+    setValueHONEY(veHoneyValue / veHoneyPrice);
+    setValueVeHONEY(veHoneyValue);
   };
 
   // console.log({
@@ -187,8 +187,8 @@ const LockHoneyForm: FC = () => {
         </div>
 
         <InputsBlock
-          firstInputValue={p(f(valueHONEY))}
-          secondInputValue={p(f(valueVeHONEY))}
+          firstInputValue={valueHONEY}
+          secondInputValue={valueVeHONEY}
           onChangeFirstInput={handleHoneyInputChange}
           onChangeSecondInput={handleVeHoneyInputChange}
           maxValue={maxValue}

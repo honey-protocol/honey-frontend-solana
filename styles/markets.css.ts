@@ -61,6 +61,9 @@ export const rateCellMobile = style([
   }
 ]);
 
+export const borrowRate = style({ color: vars.colors.red });
+export const lendRate = style({ color: vars.colors.green });
+
 export const buttonsCell = style({
   display: 'flex',
   justifyContent: 'center',
@@ -304,28 +307,6 @@ export const expandedRowNameCell = style([
   {
     display: 'flex',
     alignItems: 'center'
-  }
-]);
-export const risk = styleVariants({
-  safe: {
-    color: vars.colors.green
-  },
-  warning: {
-    color: vars.colors.brownLight
-  },
-  danger: {
-    color: vars.colors.red
-  }
-});
-export const riskText = style([
-  typography.caption,
-  {
-    display: 'none',
-    '@media': {
-      [`screen and (min-width: ${breakpoints.tablet}px)`]: {
-        display: 'initial'
-      }
-    }
   }
 ]);
 export const expandedRowIcon = style({

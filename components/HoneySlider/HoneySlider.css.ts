@@ -9,6 +9,7 @@ export const sliderWrapper = style({
   position: 'relative',
   display: 'flex',
   flexDirection: 'column',
+  width: '100%',
 
   selectors: {
     '&:not(:last-child)': {
@@ -67,15 +68,18 @@ globalStyle(`${enabledBackgroundSlider} > .ant-slider-track`, {
 });
 
 export const sliderHeader = styleVariants({
-  primary: [typography.numbersRegular, {
-    whiteSpace: 'nowrap'
-  }],
+  primary: [
+    typography.numbersRegular,
+    {
+      whiteSpace: 'nowrap'
+    }
+  ],
   secondary: [
-  typography.numbersRegular,
-  {
-    color: vars.colors.grayTransparent,
-    textAlign: 'right',
-    whiteSpace: 'nowrap'
-  }
-]
+    typography.numbersRegular,
+    {
+      color: vars.colors.grayTransparent,
+      textAlign: 'right',
+      whiteSpace: 'nowrap'
+    }
+  ]
 });

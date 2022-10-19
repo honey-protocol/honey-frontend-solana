@@ -37,7 +37,7 @@ interface HoneySliderProps {
   maxUnavailableSliderClassName?: string;
 }
 
-const { formatPercent: fp, formatSol: fs } = formatNumber;
+const { formatSol: fs } = formatNumber;
 
 export const HoneySlider: FC<HoneySliderProps> = ({
   maxValue,

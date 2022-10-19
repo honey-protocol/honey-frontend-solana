@@ -1,24 +1,12 @@
 import React, { FC } from 'react';
 import * as style from './HoneyButtonTabs.css';
 import c from 'classnames'
-
-export interface HoneyButtonTabsProps {
-  items: HoneyButtonTabsItem[];
-  activeItemSlug: string;
-  isFullWidth?: boolean;
-  onClick: (itemSlug: string) => void;
-}
-
-type HoneyButtonTabsItem = {
-  name: string;
-  nameMobile?: string;
-  slug: string;
-};
+import { HoneyButtonTabsProps } from './types';
 
 export const HoneyButtonTabs: FC<HoneyButtonTabsProps> = ({
   items,
   activeItemSlug,
-                                                            isFullWidth,
+  isFullWidth,
   onClick,
 }) => (
   <div className={c(style.periodSelector, {[style.fullWidthSelector]: isFullWidth})}>
@@ -33,17 +21,31 @@ export const HoneyButtonTabs: FC<HoneyButtonTabsProps> = ({
             className={style.periodSelectorItem[itemStatus]}
             onClick={() => onClick(item.slug)}
           >
-
-            {item.nameMobile ?
+            {(item.nameMobile || item.nameTablet) ?
               <>
-                <div className={style.hideNameMobile}>
-                  {item.name}
-                </div>
-                <div className={style.showNameMobile}>
-                  {item.nameMobile}
-                </div>
+                {item.nameMobile &&
+                  <>
+                    <div className={style.hideNameMobile}>
+                      {item.name}
+                    </div>
+                    <div className={style.showNameMobile}>
+                      {item.nameMobile}
+                    </div>
+                  </>
+                }
+
+                {item.nameTablet &&
+                  <>
+                    <div className={style.hideNameTablet}>
+                      {item.name}
+                    </div>
+                    <div className={style.showNameTablet}>
+                      {item.nameTablet}
+                    </div>
+                  </>
+                }
               </>
-             :
+              :
               <>
                 {item.name}
               </>

@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
 import { InfoBlock } from '../InfoBlock/InfoBlock';
 import { InputsBlock } from '../InputsBlock/InputsBlock';
@@ -8,9 +8,7 @@ import { formatNumber } from '../../helpers/format';
 import HoneyButton from 'components/HoneyButton/HoneyButton';
 import HexaBoxContainer from 'components/HexaBoxContainer/HexaBoxContainer';
 import NftList from '../NftList/NftList';
-import { NftCardProps } from '../NftCard/types';
 import { MAX_LTV } from '../../constants/loan';
-import { usdcAmount } from '../HoneyButton/HoneyButton.css';
 import { BorrowProps } from './types';
 import { toastResponse } from 'helpers/loanHelpers';
 import SidebarScroll from '../SidebarScroll/SidebarScroll';
@@ -21,9 +19,8 @@ import { questionIcon } from 'styles/icons.css';
 import useToast from 'hooks/useToast';
 import { useSolBalance } from 'hooks/useSolBalance';
 import cs from 'classnames';
-import Nft from 'pages/farm/[name]';
 
-const { format: f, formatPercent: fp, formatSol: fs, parse: p } = formatNumber;
+const { formatPercent: fp, formatSol: fs } = formatNumber;
 
 interface NFT {
   name: string;
@@ -82,6 +79,7 @@ const BorrowForm = (props: BorrowProps) => {
   };
 
   const handleUsdInputChange = (usdValue: number | undefined) => {
+    console.log('usdValue', usdValue);
     if (userAllowance == 0) return;
     if (!usdValue) {
       setValueUSD(0);
@@ -439,10 +437,10 @@ const BorrowForm = (props: BorrowProps) => {
             </div>
           </div>
           <InputsBlock
-            firstInputValue={p(f(valueUSD))}
-            secondInputValue={p(f(valueSOL))}
-            onChangeFirstInput={handleUsdInputChange}
-            onChangeSecondInput={handleSolInputChange}
+            firstInputValue={valueSOL}
+            secondInputValue={valueUSD}
+            onChangeFirstInput={handleSolInputChange}
+            onChangeSecondInput={handleUsdInputChange}
             maxValue={maxValue}
           />
         </div>

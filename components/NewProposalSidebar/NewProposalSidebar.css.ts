@@ -7,7 +7,6 @@ export const newProposalSidebar = style([
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'stretch',
-    height: `calc(100vh - ${156 + 160 + 16}px)`
   },
   sidebar
 ]);

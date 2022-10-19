@@ -2,9 +2,16 @@ import type { NextPage } from 'next';
 import LayoutRedesign from '../../components/LayoutRedesign/LayoutRedesign';
 import LendSidebar from '../../components/LendSidebar/LendSidebar';
 import { LendTableRow } from '../../types/lend';
-import { ChangeEvent, useCallback, useEffect, useMemo, useState } from 'react';
+import React, {
+  ChangeEvent,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState
+} from 'react';
 import HoneyTable from '../../components/HoneyTable/HoneyTable';
 import * as style from '../../styles/markets.css';
+import c from 'classnames';
 import { ColumnType } from 'antd/lib/table';
 import HexaBoxContainer from '../../components/HexaBoxContainer/HexaBoxContainer';
 import Image from 'next/image';
@@ -558,9 +565,25 @@ const Lend: NextPage = () => {
     [tableData, isMyCollectionsFilterEnabled, searchQuery]
   );
 
+  const lendSidebar = () => (
+    <HoneySider>
+      <LendSidebar
+        collectionId="s"
+        executeDeposit={executeDeposit}
+        executeWithdraw={executeWithdraw}
+        userTotalDeposits={userTotalDeposits}
+        available={totalMarketDeposits}
+        value={totalMarketDeposits + totalMarketDebt}
+        userWalletBalance={userWalletBalance}
+        fetchedSolPrice={fetchedSolPrice}
+      />
+    </HoneySider>
+  );
+
   return (
     <LayoutRedesign>
-      <div>
+      <HoneyContent sidebar={lendSidebar()}>
+        <div>
         <Typography.Title className={pageTitle}>Lend</Typography.Title>
         <Typography.Text className={pageDescription}>
           Earn yield by depositing crypto into NFT markets.{' '}
@@ -572,8 +595,7 @@ const Lend: NextPage = () => {
             </a>
           </span>
         </Typography.Text>
-      </div>
-      <HoneyContent>
+        </div>
         <HoneyTable
           hasRowsShadow={true}
           tableLayout="fixed"
@@ -599,18 +621,6 @@ const Lend: NextPage = () => {
           // }}
         />
       </HoneyContent>
-      <HoneySider>
-        <LendSidebar
-          collectionId="s"
-          executeDeposit={executeDeposit}
-          executeWithdraw={executeWithdraw}
-          userTotalDeposits={userTotalDeposits}
-          available={totalMarketDeposits}
-          value={totalMarketDeposits + totalMarketDebt}
-          userWalletBalance={userWalletBalance}
-          fetchedSolPrice={fetchedSolPrice}
-        />
-      </HoneySider>
     </LayoutRedesign>
   );
 };

@@ -189,10 +189,10 @@ const BidForm = (props: BidFormProps) => {
 
         <div className={styles.inputs}>
           <InputsBlock
-            firstInputValue={p(f(valueUSD))}
-            secondInputValue={p(f(valueSOL))}
-            onChangeFirstInput={handleUsdInputChange}
-            onChangeSecondInput={handleSolInputChange}
+            firstInputValue={valueSOL}
+            secondInputValue={valueUSD}
+            onChangeFirstInput={handleSolInputChange}
+            onChangeSecondInput={handleUsdInputChange}
             maxValue={maxValue}
           />
         </div>

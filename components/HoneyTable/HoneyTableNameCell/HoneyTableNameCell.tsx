@@ -10,7 +10,7 @@ const HoneyTableNameCell = (props: HoneyTableMobileProps) => {
   const { leftSide, rightSide } = props;
 
   return (
-    <div className={style.tableTitle}>
+    <div className='tableTitle'>
       <div className={style.tableTitleLeft}>
         {leftSide}
       </div>

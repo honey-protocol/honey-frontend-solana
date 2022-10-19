@@ -56,7 +56,7 @@ const WithdrawForm = (props: WithdrawFormProps) => {
 
     setValueUSD(usdValue);
     setValueSOL(usdValue / solPrice);
-    setSliderValue(usdValue);
+    setSliderValue(usdValue / solPrice);
   };
 
   const handleSolInputChange = (solValue: number | undefined) => {
@@ -69,7 +69,7 @@ const WithdrawForm = (props: WithdrawFormProps) => {
 
     setValueUSD(solValue * solPrice);
     setValueSOL(solValue);
-    setSliderValue(solValue * solPrice);
+    setSliderValue(solValue);
   };
 
   const handleWithdraw = async () => {
@@ -150,10 +150,10 @@ const WithdrawForm = (props: WithdrawFormProps) => {
 
         <div className={styles.inputs}>
           <InputsBlock
-            firstInputValue={p(f(valueUSD))}
-            secondInputValue={p(f(valueSOL))}
-            onChangeFirstInput={handleUsdInputChange}
-            onChangeSecondInput={handleSolInputChange}
+            firstInputValue={valueSOL}
+            secondInputValue={valueUSD}
+            onChangeFirstInput={handleSolInputChange}
+            onChangeSecondInput={handleUsdInputChange}
             maxValue={maxValue}
           />
         </div>

@@ -4,6 +4,7 @@ import MarketsSidebar from '../../components/MarketsSidebar/MarketsSidebar';
 import HoneyTable from '../../components/HoneyTable/HoneyTable';
 import { ColumnType } from 'antd/lib/table';
 import * as style from '../../styles/markets.css';
+import c from 'classnames';
 import {
   HoneyTableColumnType,
   MarketTablePosition,
@@ -18,7 +19,7 @@ import React, {
   useMemo,
   useState
 } from 'react';
-import { formatNumber } from '../../helpers/format';
+import { formatNumber, formatNFTName } from '../../helpers/format';
 import Image from 'next/image';
 import honeyGenesisBee from '/public/images/imagePlaceholder.png';
 import { ColumnTitleProps, Key } from 'antd/lib/table/interface';
@@ -63,6 +64,8 @@ import { Typography } from 'antd';
 import { pageDescription, pageTitle } from 'styles/common.css';
 import HoneyTableRow from 'components/HoneyTable/HoneyTableRow/HoneyTableRow';
 import HoneyTableNameCell from '../../components/HoneyTable/HoneyTableNameCell/HoneyTableNameCell';
+import RiskLvl from '../../components/RiskLvl/RiskLvl';
+import HoneyTooltip from '../../components/HoneyTooltip/HoneyTooltip';
 // import { network } from 'pages/_app';
 
 const network = 'mainnet-beta'; // change to dynamic value
@@ -506,7 +509,9 @@ const Markets: NextPage = () => {
           sorter: (a: MarketTableRow, b: MarketTableRow) => a.rate - b.rate,
           render: (rate: number) => {
             return (
-              <div className={style.rateCell}>{fp(calculatedInterestRate)}</div>
+              <div className={c(style.rateCell, style.borrowRate)}>
+                {fp(calculatedInterestRate)}
+              </div>
             );
           }
         },
@@ -596,7 +601,9 @@ const Markets: NextPage = () => {
                       </div>
                     </div>
                     <div className={style.nameCellMobile}>
-                      <div className={style.collectionName}>{name}</div>
+                      <div className={style.collectionName}>
+                        {formatNFTName(name)}
+                      </div>
                       <div className={style.rateCellMobile}>
                         {fp(row.rate * 100)}
                       </div>
@@ -637,11 +644,10 @@ const Markets: NextPage = () => {
             </HexaBoxContainer>
           </div>
           <div className={style.nameCellText}>
-            <div className={style.collectionName}>{name}</div>
-            <div className={style.risk.safe}>
-              <span className={style.valueCell}>{fp(loanToValue * 100)}</span>{' '}
-              <span className={style.riskText}>Risk lvl</span>
-            </div>
+            <HoneyTooltip label={name}>
+              <div className={style.collectionName}>{formatNFTName(name)}</div>
+            </HoneyTooltip>
+            <RiskLvl riskLvl={loanToValue} />
           </div>
         </div>
       )
@@ -699,9 +705,7 @@ const Markets: NextPage = () => {
           </div>
           <div className={style.nameCellText}>
             <div className={style.collectionNameMobile}>{name}</div>
-            <div className={style.risk.safe}>
-              <span className={style.valueCell}>{fp(loanToValue)}</span>
-            </div>
+            <RiskLvl riskLvl={loanToValue} />
           </div>
         </div>
       )
@@ -948,15 +952,38 @@ const Markets: NextPage = () => {
     }
   }
 
+  const borrowSidebar = () => (
+    <HoneySider isMobileSidebarVisible={isMobileSidebarVisible}>
+      {/* borrow repay module */}
+      <MarketsSidebar
+        collectionId="s"
+        availableNFTs={userAvailableNFTs}
+        openPositions={userOpenPositions}
+        nftPrice={nftPrice}
+        executeDepositNFT={executeDepositNFT}
+        executeWithdrawNFT={executeWithdrawNFT}
+        executeBorrow={executeBorrow}
+        executeRepay={executeRepay}
+        userDebt={userDebt}
+        userAllowance={userAllowance}
+        userUSDCBalance={userUSDCBalance}
+        loanToValue={loanToValue}
+        hideMobileSidebar={hideMobileSidebar}
+        fetchedSolPrice={fetchedSolPrice}
+        calculatedInterestRate={calculatedInterestRate}
+      />
+    </HoneySider>
+  );
+
   return (
     <LayoutRedesign>
-      <div>
-        <Typography.Title className={pageTitle}>Borrow</Typography.Title>
-        <Typography.Text className={pageDescription}>
-          Get instant liquidity using your NFTs as collateral{' '}
-        </Typography.Text>
-      </div>
-      <HoneyContent>
+      <HoneyContent sidebar={borrowSidebar()}>
+        <div>
+          <Typography.Title className={pageTitle}>Borrow</Typography.Title>
+          <Typography.Text className={pageDescription}>
+            Get instant liquidity using your NFTs as collateral{' '}
+          </Typography.Text>
+        </div>
         <div className={style.mobileTableHeader}>
           <div className={style.mobileRow}>
             <SearchForm />
@@ -1078,26 +1105,6 @@ const Markets: NextPage = () => {
             </div>
           ))}
       </HoneyContent>
-      <HoneySider isMobileSidebarVisible={isMobileSidebarVisible}>
-        {/* borrow repay module */}
-        <MarketsSidebar
-          collectionId="s"
-          availableNFTs={userAvailableNFTs}
-          openPositions={userOpenPositions}
-          nftPrice={nftPrice}
-          executeDepositNFT={executeDepositNFT}
-          executeWithdrawNFT={executeWithdrawNFT}
-          executeBorrow={executeBorrow}
-          executeRepay={executeRepay}
-          userDebt={userDebt}
-          userAllowance={userAllowance}
-          userUSDCBalance={userUSDCBalance}
-          loanToValue={loanToValue}
-          hideMobileSidebar={hideMobileSidebar}
-          fetchedSolPrice={fetchedSolPrice}
-          calculatedInterestRate={calculatedInterestRate}
-        />
-      </HoneySider>
     </LayoutRedesign>
   );
 };

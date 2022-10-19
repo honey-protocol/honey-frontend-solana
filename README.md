@@ -45,5 +45,5 @@ Your feedback and contributions are welcome! Feel free to reach out through <a h
 
 
 ##  <span style="color: rgb(235, 85, 69); font-weight: 900">Deploy on Vercel</span>
-The easiest way to deploy your Next.JS app is by using the <a href="https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme" target="blank">Vercel Platform</a> from the creators of Next.JS. Check out the <a href="https://nextjs.org/docs/deployment" target="blank">Next.JS Deployment Documentation</a> for more details. <a href="https://nextjs.org/learn/foundations/about-nextjs" target="blank">Learn Next.JS</a> - an interactive Next.JS tutorial.  
+The easiest way to deploy your Next.JS app is by using the <a href="https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme" target="blank">Vercel Platform</a> from the creators of Next.JS. Check out the <a href="https://nextjs.org/docs/deployment" target="blank">Next.JS Deployment Documentation</a> for more details. <a href="https://nextjs.org/learn/foundations/about-nextjs" target="blank">Learn Next.JS</a> - an interactive Next.JS tutorial.
 

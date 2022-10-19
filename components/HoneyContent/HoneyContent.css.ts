@@ -1,16 +1,19 @@
-import { style } from '@vanilla-extract/css';
+import { globalStyle, style } from '@vanilla-extract/css';
 import { breakpoints } from '../../styles/theme.css';
 
 export const honeyContent = style({
   width: '100%',
+  minHeight: 'calc(100vh - 102px)',
+  position: 'relative',
   '@media': {
     [`screen and (min-width: ${breakpoints.desktop}px)`]: {
-      paddingRight: 374
+      paddingRight: 384
     }
   }
 });
 
-export const hasNoSider = style({
+globalStyle(`.hasNoSider`, {
+  minHeight: '0',
   '@media': {
     [`screen and (min-width: ${breakpoints.desktop}px)`]: {
       paddingRight: 0
