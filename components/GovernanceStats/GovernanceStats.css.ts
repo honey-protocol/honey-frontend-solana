@@ -12,13 +12,13 @@ export const governanceGraphs = style({
       display: 'none'
     }
   },
-  "@media": {
+  '@media': {
     [`screen and (max-width: ${breakpoints.mobile}px)`]: {
       margin: '0 -12px 24px',
       width: 'calc(100% + 24px)',
       padding: '0 12px'
-    },
-  },
+    }
+  }
 });
 
 export const statBlock = style({
@@ -36,12 +36,12 @@ export const statBlock = style({
       marginRight: 16
     }
   },
-  "@media": {
+  '@media': {
     [`screen and (max-width: ${breakpoints.mobile}px)`]: {
       width: 327,
       flexShrink: 0
-    },
-  },
+    }
+  }
 });
 
 export const buttonWrapper = style({
@@ -71,6 +71,7 @@ export const getIcon = style({
 });
 
 export const lockPeriodBlock = style({
+  flex: '0 0 auto',
   width: 'auto'
 });
 
