@@ -498,7 +498,9 @@ const Lend: NextPage = () => {
         sorter: (a, b) => a.interest - b.interest,
         render: (rate: number) => {
           return (
-            <div className={style.lendRate}>{fp(calculatedInterestRate)}</div>
+            <div className={c(style.rateCell, style.lendRate)}>
+              {fp(calculatedInterestRate)}
+            </div>
           );
         }
       },
