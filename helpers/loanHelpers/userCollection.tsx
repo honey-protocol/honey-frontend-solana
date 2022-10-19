@@ -128,16 +128,13 @@ export async function getInterestRate(utilizationRate: number) {
   try {
     if (utilizationRate < OPTIMAL_RATIO_ONE) {
       interestRate = BASE_BORROW_RATE + (utilizationRate / OPTIMAL_RATIO_ONE) * (BORROW_RATE_ONE - BASE_BORROW_RATE);
-      console.log('@@-- interest rate 1', interestRate * 100)
       return (interestRate * 100);
     } else if (utilizationRate > OPTIMAL_RATIO_ONE) {
         if (utilizationRate < OPTIMAL_RATIO_TWO) {
           interestRate = BASE_BORROW_RATE + BORROW_RATE_ONE + ((utilizationRate - OPTIMAL_RATIO_ONE) / (1 - OPTIMAL_RATIO_ONE)) * (BORROW_RATE_TWO - BASE_BORROW_RATE);
-          console.log('@@-- interest rate 2', (interestRate * 100))
           return (interestRate * 100);
         } else {
           interestRate = BASE_BORROW_RATE + BORROW_RATE_TWO + ((utilizationRate - OPTIMAL_RATIO_TWO) / (1 - OPTIMAL_RATIO_TWO)) * (BORROW_RATE_THREE - BASE_BORROW_RATE);
-          console.log('@@-- interest rate 3', (interestRate * 100))
           return (interestRate * 100);
       }
     } 
@@ -196,7 +193,6 @@ export async function populateMarketData(collection: Market, connection: Connect
     //   }
 
     // }
-    console.log('////', collection.utilizationRate, collection.value, collection.available, totalMarketDebt, totalMarketDeposits)
   }
 }
 

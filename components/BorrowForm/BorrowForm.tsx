@@ -43,6 +43,7 @@ const BorrowForm = (props: BorrowProps) => {
     userDebt,
     loanToValue,
     hideMobileSidebar,
+    handleMarketId,
     fetchedSolPrice,
     calculatedInterestRate
   } = props;
@@ -158,6 +159,7 @@ const BorrowForm = (props: BorrowProps) => {
             selectNFT={selectNFT}
             nftPrice={nftPrice}
             selectedNFTMint={selectedNft?.mint}
+            handleMarketId={handleMarketId}
           />
         </>
       );

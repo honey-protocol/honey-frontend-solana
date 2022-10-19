@@ -67,6 +67,7 @@ import { marketCollections, OpenPositions } from 'constants/borrowLendMarkets';
 import { HONEY_GENESIS_BEE, LIFINITY_FLARES, OG_ATADIANS, PESKY_PENGUINS } from '../../constants/borrowLendMarkets';
 import { HONEY_GENESIS_MARKET_ID, PESKY_PENGUINS_MARKET_ID } from '../../constants/loan';
 import { collectionCard } from 'styles/liquidation.css';
+import { setMarketId } from 'pages/_app';
 
 const network = 'mainnet-beta'; // change to dynamic value
 
@@ -74,12 +75,17 @@ const { format: f, formatPercent: fp, formatSol: fs } = formatNumber;
 
 const Markets: NextPage = () => {
   // TODO: write dynamic currentMarketId based on user interaction
-  const [currentMarketId, setCurrentMarketId] = useState(HONEY_GENESIS_MARKET_ID);
+  const [currentMarketId, setCurrentMarketId] = useState<string>(HONEY_GENESIS_MARKET_ID);
   // setUserOpenPositions(collateralNFTPositions);
   const [honeyMarketCollateralNftPositions, setHoneyMarketCollateralNftPositions] = useState<Array<OpenPositions>>([]);
 
   const wallet = useConnectedWallet();
   const sdkConfig = ConfigureSDK();
+  
+  function handleMarketId(market: any) {
+    market == '0' ? setCurrentMarketId(HONEY_GENESIS_MARKET_ID) : setCurrentMarketId(PESKY_PENGUINS_MARKET_ID)
+    market == '0' ? setMarketId(HONEY_GENESIS_MARKET_ID) : setMarketId(PESKY_PENGUINS_MARKET_ID)
+  }
 
   /**
    * @description calls upon the honey sdk
@@ -112,8 +118,14 @@ const Markets: NextPage = () => {
     currentMarketId
   );
 
-  if (honeyUser) console.log('@@--honey user', honeyUser);
 
+  const [updatedUser, setUpdatedUser] = useState(honeyUser);
+
+  useEffect(() => {
+    setUpdatedUser(honeyUser);
+  }, [honeyUser, currentMarketId]);
+  
+  if (updatedUser) console.log('@@--honey user', updatedUser.market.address.toString());
   /**
    * @description calls upon markets which
    * @params none
@@ -1151,7 +1163,7 @@ const Markets: NextPage = () => {
         <MarketsSidebar
           collectionId="s"
           availableNFTs={userAvailableNFTs}
-          openPositions={honeyMarketCollateralNftPositions}
+          openPositions={userOpenPositions}
           nftPrice={nftPrice}
           executeDepositNFT={executeDepositNFT}
           executeWithdrawNFT={executeWithdrawNFT}
@@ -1164,6 +1176,7 @@ const Markets: NextPage = () => {
           hideMobileSidebar={hideMobileSidebar}
           fetchedSolPrice={fetchedSolPrice}
           calculatedInterestRate={calculatedInterestRate}
+          handleMarketId={handleMarketId}
         />
       </HoneySider>
     </LayoutRedesign>
