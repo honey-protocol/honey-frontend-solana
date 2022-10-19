@@ -394,7 +394,7 @@ const BorrowForm = (props: BorrowProps) => {
         </div>
         <div className={styles.inputs}>
           <div className={styles.row}>
-            <div className={cs(stylesRepay.balance, style.borrowRate)}>
+            <div className={cs(stylesRepay.balance, styles.col)}>
               <InfoBlock
                 title={
                   <span className={hAlign}>
