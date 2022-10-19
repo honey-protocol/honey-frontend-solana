@@ -582,7 +582,8 @@ const Lend: NextPage = () => {
 
   return (
     <LayoutRedesign>
-      <HoneyContent>
+      <HoneyContent sidebar={lendSidebar()}>
+        <div>
         <Typography.Title className={pageTitle}>Lend</Typography.Title>
         <Typography.Text className={pageDescription}>
           Earn yield by depositing crypto into NFT markets.{' '}
@@ -594,8 +595,7 @@ const Lend: NextPage = () => {
             </a>
           </span>
         </Typography.Text>
-      </HoneyContent>
-      <HoneyContent sidebar={lendSidebar()}>
+        </div>
         <HoneyTable
           hasRowsShadow={true}
           tableLayout="fixed"

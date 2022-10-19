@@ -3,7 +3,7 @@ import { breakpoints, vars } from '../../styles/theme.css';
 
 export const honeySider = style({
   width: '100%',
-  minHeight: '100vh',
+  minHeight: 'calc(100vh - 102px)',
   height: 'auto',
   maxWidth: 550,
   position: 'absolute',

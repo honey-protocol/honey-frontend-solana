@@ -572,13 +572,13 @@ const Liquidate: NextPage = () => {
 
   return (
     <LayoutRedesign>
-      <HoneyContent>
-        <Typography.Title className={pageTitle}>Liquidation</Typography.Title>
-        <Typography.Text className={pageDescription}>
-          Bid on discounted NFTs from borrowers{' '}
-        </Typography.Text>
-      </HoneyContent>
       <HoneyContent sidebar={liquidateSidebar()}>
+        <div>
+          <Typography.Title className={pageTitle}>Liquidation</Typography.Title>
+          <Typography.Text className={pageDescription}>
+            Bid on discounted NFTs from borrowers{' '}
+          </Typography.Text>
+        </div>
         <HoneyTable
           hasRowsShadow={true}
           tableLayout="fixed"

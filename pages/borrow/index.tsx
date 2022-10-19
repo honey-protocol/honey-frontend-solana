@@ -977,13 +977,13 @@ const Markets: NextPage = () => {
 
   return (
     <LayoutRedesign>
-      <HoneyContent>
-        <Typography.Title className={pageTitle}>Borrow</Typography.Title>
-        <Typography.Text className={pageDescription}>
-          Get instant liquidity using your NFTs as collateral{' '}
-        </Typography.Text>
-      </HoneyContent>
       <HoneyContent sidebar={borrowSidebar()}>
+        <div>
+          <Typography.Title className={pageTitle}>Borrow</Typography.Title>
+          <Typography.Text className={pageDescription}>
+            Get instant liquidity using your NFTs as collateral{' '}
+          </Typography.Text>
+        </div>
         <div className={style.mobileTableHeader}>
           <div className={style.mobileRow}>
             <SearchForm />
