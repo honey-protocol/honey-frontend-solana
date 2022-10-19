@@ -654,7 +654,7 @@ const Markets: NextPage = () => {
             <HoneyTooltip label={name}>
               <div className={style.collectionName}>{formatNFTName(name)}</div>
             </HoneyTooltip>
-            <HealthLvl healthLvl={Number(healthPercent.toFixed())} />
+            <HealthLvl healthLvl={Number(healthPercent.toFixed(0))} />
           </div>
         </div>
       )
@@ -712,7 +712,7 @@ const Markets: NextPage = () => {
           </div>
           <div className={style.nameCellText}>
             <div className={style.collectionNameMobile}>{name}</div>
-            <HealthLvl healthLvl={Number(healthPercent.toFixed())} />
+            <HealthLvl healthLvl={Number(healthPercent.toFixed(0))} />
           </div>
         </div>
       )
