@@ -45,6 +45,17 @@ const Governance: NextPage = () => {
     useState<GovernanceSidebarForm>('get_vehoney');
   const { veToken } = useGovernor();
   const proposals = useProposals();
+  const [isMobileSidebarVisible, setShowMobileSidebar] = useState(false);
+
+  const showMobileSidebar = () => {
+    setShowMobileSidebar(true);
+    document.body.classList.add('disable-scroll');
+  };
+
+  const hideMobileSidebar = () => {
+    setShowMobileSidebar(false);
+    document.body.classList.remove('disable-scroll');
+  };
 
   const allProposals = [
     ...proposals,
@@ -297,14 +308,15 @@ const Governance: NextPage = () => {
       case 'vote':
         return (
           <GovernanceSidebar
+            hideMobileSidebar={hideMobileSidebar}
             selectedProposalId={selectedProposalId}
             setSidebarMode={setSidebarMode}
           />
         );
       case 'new_proposal':
-        return <NewProposalSidebar />;
+        return <NewProposalSidebar hideMobileSidebar={hideMobileSidebar} />;
       case 'get_vehoney':
-        return <GetVeHoneySidebar />;
+        return <GetVeHoneySidebar hideMobileSidebar={hideMobileSidebar} />;
       default:
         return null;
     }
@@ -316,10 +328,12 @@ const Governance: NextPage = () => {
   ) => {
     setSelectedProposalId(record.id);
     setSidebarMode('vote');
+    showMobileSidebar();
   };
 
   const handleGetVeHoneyClick = () => {
     setSidebarMode('get_vehoney');
+    showMobileSidebar();
   };
 
   const getRowClassName = (record: GovernanceTableRow) => {
@@ -331,6 +345,7 @@ const Governance: NextPage = () => {
 
   const handleCreateProposal = () => {
     setSidebarMode('new_proposal');
+    showMobileSidebar();
   };
 
   return (
@@ -338,7 +353,13 @@ const Governance: NextPage = () => {
       <HoneyContent>
         <GovernanceStats onGetVeHoneyClick={handleGetVeHoneyClick} />
       </HoneyContent>
-      <HoneyContent sidebar={<HoneySider>{renderSidebar()}</HoneySider>}>
+      <HoneyContent
+        sidebar={
+          <HoneySider isMobileSidebarVisible={isMobileSidebarVisible}>
+            {renderSidebar()}
+          </HoneySider>
+        }
+      >
         <div className={hideTablet}>
           <HoneyTable
             tableLayout={'fixed'}
@@ -378,6 +399,11 @@ const Governance: NextPage = () => {
             pagination={false}
             showHeader={false}
             className={c(table, style.governanceTableMobile)}
+            onRow={(record, rowIndex) => {
+              return {
+                onClick: event => handleRowClick(event, record)
+              };
+            }}
           />
         </div>
 

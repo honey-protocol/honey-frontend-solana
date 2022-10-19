@@ -29,6 +29,7 @@ interface HowItWorksTabProps {
   setActiveTab: Function;
   setHasReadHowItWorks: Function;
   hasReadHowItWorks: boolean;
+  hideMobileSidebar: Function;
 }
 
 const HowItWorksTab = (props: HowItWorksTabProps) => {
@@ -53,7 +54,12 @@ const HowItWorksTab = (props: HowItWorksTabProps) => {
           </div>
           <div className={styles.buttons}>
             <div className={styles.smallCol}>
-              <HoneyButton variant="secondary">Cancel</HoneyButton>
+              <HoneyButton
+                variant="secondary"
+                onClick={() => props.hideMobileSidebar()}
+              >
+                Cancel
+              </HoneyButton>
             </div>
             <div className={styles.bigCol}>
               <HoneyButton

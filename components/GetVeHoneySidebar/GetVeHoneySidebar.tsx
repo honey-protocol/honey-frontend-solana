@@ -14,7 +14,7 @@ const items: [HoneyTabItem, HoneyTabItem] = [
 
 type Tab = 'lock_honey' | 'burn_nfts';
 
-const GetVeHoneySidebar = () => {
+const GetVeHoneySidebar = (props: { hideMobileSidebar: Function }) => {
   const wallet = useConnectedWallet();
   const { connect } = useWalletKit();
   const [activeTab, setActiveTab] = useState<Tab>('lock_honey');
@@ -41,8 +41,12 @@ const GetVeHoneySidebar = () => {
           />
         ) : (
           <>
-            {activeTab === 'lock_honey' && <LockHoneyForm />}
-            {activeTab === 'burn_nfts' && <BurnNftsForm />}
+            {activeTab === 'lock_honey' && (
+              <LockHoneyForm hideMobileSidebar={props.hideMobileSidebar} />
+            )}
+            {activeTab === 'burn_nfts' && (
+              <BurnNftsForm hideMobileSidebar={props.hideMobileSidebar} />
+            )}
           </>
         )}
       </HoneyTabs>

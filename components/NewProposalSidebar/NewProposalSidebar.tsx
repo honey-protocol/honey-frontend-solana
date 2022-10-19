@@ -14,7 +14,7 @@ const items: [HoneyTabItem, HoneyTabItem] = [
 
 type Tab = 'how_it_works' | 'create';
 
-const NewProposalSidebar = () => {
+const NewProposalSidebar = (props: { hideMobileSidebar: Function }) => {
   const [hasReadHowItWorks, setHasReadHowItWorks] = useState(false);
   const [activeTab, setActiveTab] = useState<Tab>();
   const wallet = useConnectedWallet();
@@ -61,9 +61,12 @@ const NewProposalSidebar = () => {
                 hasReadHowItWorks={hasReadHowItWorks}
                 setHasReadHowItWorks={setHasReadHowItWorks}
                 setActiveTab={setActiveTab}
+                hideMobileSidebar={props.hideMobileSidebar}
               />
             )}
-            {activeTab === 'create' && <CreateProposalTab />}
+            {activeTab === 'create' && (
+              <CreateProposalTab hideMobileSidebar={props.hideMobileSidebar} />
+            )}
           </>
         )}
       </HoneyTabs>

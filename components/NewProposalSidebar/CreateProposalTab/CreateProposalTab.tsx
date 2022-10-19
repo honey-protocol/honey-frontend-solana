@@ -21,7 +21,7 @@ import cs from 'classnames';
 
 const { format: f, formatPercent: fp, formatUsd: fu } = formatNumber;
 
-const CreateProposalTab: FC = () => {
+const CreateProposalTab = (props: { hideMobileSidebar: Function }) => {
   const [titleValue, setTitleValue] = useState('');
   const [descriptionValue, setDescriptionValue] = useState('');
   const [discussionLinkValue, setDiscussionLinkValue] = useState('');
@@ -111,7 +111,12 @@ const CreateProposalTab: FC = () => {
         ) : (
           <div className={styles.buttons}>
             <div className={styles.smallCol}>
-              <HoneyButton variant="secondary">Cancel</HoneyButton>
+              <HoneyButton
+                variant="secondary"
+                onClick={() => props.hideMobileSidebar()}
+              >
+                Cancel
+              </HoneyButton>
             </div>
             <div className={styles.bigCol}>
               <HoneyButton
