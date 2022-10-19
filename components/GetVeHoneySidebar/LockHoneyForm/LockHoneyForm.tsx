@@ -15,6 +15,8 @@ import { HONEY_DECIMALS } from 'helpers/sdk';
 import * as anchor from '@project-serum/anchor';
 import { useGovernance } from 'contexts/GovernanceProvider';
 import useToast from 'hooks/useToast';
+import { hAlign } from 'styles/common.css';
+import { questionIcon } from 'styles/icons.css';
 
 const { format: f, formatPercent: fp, formatUsd: fu, parse: p } = formatNumber;
 
@@ -142,29 +144,56 @@ const LockHoneyForm: FC = () => {
         <div className={styles.row}>
           <div className={styles.col}>
             <HoneyWarning
-              message="Instruction: Bla-bla when depositing USDC to the dYdX Layer 2 exchange, the funds are held in a bridge contract"
-              link="https://google.com"
+              message="Vote escrowed HONEY (or veHONEY) represents governance in the Honey DAO. Learn more about the details in our docs."
+              link="https://docs.honey.finance/tokenomics/vehoney"
             />
           </div>
         </div>
         <div className={styles.row}>
           <div className={styles.col}>
-            <InfoBlock title="$HONEY locked" value={lockedAmount.toString()} />
+            <InfoBlock
+              value={f(honeyAmount)}
+              title={
+                <span className={hAlign}>
+                  $HONEY balance <div className={questionIcon} />
+                </span>
+              }
+              // toolTipLabel={<span>place holder</span>}
+            />
           </div>
-        </div>
-        <div className={styles.row}>
           <div className={styles.col}>
             <InfoBlock
-              title="veHONEY locked"
               value={veHoneyAmount.toString()}
+              title={
+                <span className={hAlign}>
+                  veHONEY balance <div className={questionIcon} />
+                </span>
+              }
+              // toolTipLabel={<span>place holder</span>}
             />
           </div>
         </div>
         <div className={styles.row}>
           <div className={styles.col}>
             <InfoBlock
-              title="Lock period ends"
+              value={lockedAmount.toString()}
+              title={
+                <span className={hAlign}>
+                  $HONEY locked <div className={questionIcon} />
+                </span>
+              }
+              // toolTipLabel={<span>place holder</span>}
+            />
+          </div>
+          <div className={styles.col}>
+            <InfoBlock
               value={lockedPeriodEnd.toString()}
+              title={
+                <span className={hAlign}>
+                  Lock period ends <div className={questionIcon} />
+                </span>
+              }
+              // toolTipLabel={<span>place holder</span>}
             />
           </div>
         </div>
