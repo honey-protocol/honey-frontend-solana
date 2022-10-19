@@ -233,20 +233,20 @@ const BorrowForm = (props: BorrowProps) => {
               value={fp(loanToValue * 100)}
               toolTipLabel={
                 <span>
-                  Risk level is measured using the{' '}
                   <a
                     className={styles.extLink}
                     target="blank"
                     href="https://docs.honey.finance/learn/defi-lending#loan-to-value-ratio"
                   >
-                    loan-to-value ratio
+                    Loan-to-value ratio{' '}
                   </a>
-                  , and determines how close a position is to being liquidated.
+                  measures the ratio of the debt, compared to the value of the
+                  collateral.
                 </span>
               }
               title={
                 <span className={hAlign}>
-                  Risk level <div className={questionIcon} />
+                  Loan-to-Value %<div className={questionIcon} />
                 </span>
               }
             />
@@ -264,18 +264,19 @@ const BorrowForm = (props: BorrowProps) => {
             <InfoBlock
               title={
                 <span className={hAlign}>
-                  New risk level <div className={questionIcon} />
+                  New LTV %
+                  <div className={questionIcon} />
                 </span>
               }
               toolTipLabel={
                 <span>
-                  Estimated{' '}
+                  New{' '}
                   <a
                     className={styles.extLink}
                     target="blank"
-                    href=" https://docs.honey.finance/lending-protocol/borrowing#risk-level"
+                    href="https://docs.honey.finance/learn/defi-lending#loan-to-value-ratio"
                   >
-                    risk level{' '}
+                    Loan-to-value ratio{' '}
                   </a>
                   after the requested changes to the loan are approved.
                 </span>

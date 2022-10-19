@@ -65,12 +65,15 @@ import { pageDescription, pageTitle } from 'styles/common.css';
 import HoneyTableRow from 'components/HoneyTable/HoneyTableRow/HoneyTableRow';
 import HoneyTableNameCell from '../../components/HoneyTable/HoneyTableNameCell/HoneyTableNameCell';
 import RiskLvl from '../../components/RiskLvl/RiskLvl';
+import HealthLvl from '../../components/HealthLvl/HealthLvl';
 import HoneyTooltip from '../../components/HoneyTooltip/HoneyTooltip';
 // import { network } from 'pages/_app';
 
 const network = 'mainnet-beta'; // change to dynamic value
 
 const { format: f, formatPercent: fp, formatSol: fs } = formatNumber;
+
+const liquidationThreshold = 0.65; // TODO: change where relevant, currently set to 65% on mainnet
 
 const Markets: NextPage = () => {
   const wallet = useConnectedWallet();
@@ -356,13 +359,17 @@ const Markets: NextPage = () => {
     }
   }, [collateralNFTPositions]);
 
+  useEffect(() => {}, [collateralNFTPositions]);
+  const healthPercent =
+    ((nftPrice - userDebt / liquidationThreshold) / nftPrice) * 100;
+
   async function calculateInterestRate(utilizationRate: number) {
     let interestRate = await getInterestRate(utilizationRate);
     if (interestRate) setCalculatedInterestRate(interestRate);
   }
 
   useEffect(() => {
-    console.log('Runnig');
+    console.log('Running');
     if (utilizationRate) {
       calculateInterestRate(utilizationRate);
     }
@@ -647,7 +654,7 @@ const Markets: NextPage = () => {
             <HoneyTooltip label={name}>
               <div className={style.collectionName}>{formatNFTName(name)}</div>
             </HoneyTooltip>
-            <RiskLvl riskLvl={loanToValue} />
+            <HealthLvl healthLvl={healthPercent} />
           </div>
         </div>
       )
@@ -705,7 +712,7 @@ const Markets: NextPage = () => {
           </div>
           <div className={style.nameCellText}>
             <div className={style.collectionNameMobile}>{name}</div>
-            <RiskLvl riskLvl={loanToValue} />
+            <HealthLvl healthLvl={healthPercent} />
           </div>
         </div>
       )
