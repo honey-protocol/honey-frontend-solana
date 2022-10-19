@@ -287,8 +287,12 @@ const Governance: NextPage = () => {
               />
 
               <HoneyTableRow>
-                <div className={style.textTablet}>{fsn(row.votes)}</div>
-                <div className={style.textTablet}>{fsn(row.against)}</div>
+                <div className={style.textTablet}>
+                  {veToken ? fsn(getVoteCountFmt(row.votes, veToken)) : 0}
+                </div>
+                <div className={style.textTablet}>
+                  {veToken ? fsn(getVoteCountFmt(row.against, veToken)) : 0}
+                </div>
                 <div>
                   <ProgressStatus
                     percent={(row.votes / row.votesRequired) * 100}
