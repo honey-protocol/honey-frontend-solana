@@ -15,7 +15,7 @@ const HealthLvl: FC<HealthLvlProps> = props => {
     ) {
       return (
         <div className={style.health.safe}>
-          <span className={style.valueCell}>{`${healthLvl.toFixed()} %`}</span>{' '}
+          <span className={style.valueCell}>{`${healthLvl.toFixed()}%`}</span>{' '}
           <span className={style.healthText}>Health</span>
         </div>
       );
@@ -26,7 +26,7 @@ const HealthLvl: FC<HealthLvlProps> = props => {
     ) {
       return (
         <div className={style.health.warning}>
-          <span className={style.valueCell}>{`${healthLvl.toFixed()} %`}</span>{' '}
+          <span className={style.valueCell}>{`${healthLvl.toFixed()}%`}</span>{' '}
           <span className={style.healthText}>Health</span>
         </div>
       );
@@ -34,7 +34,7 @@ const HealthLvl: FC<HealthLvlProps> = props => {
     if (healthLvl <= HealthLvlPoint.Danger && healthLvl > HealthLvlPoint.Min) {
       return (
         <div className={style.health.danger}>
-          <span className={style.valueCell}>{`${healthLvl.toFixed()} %`}</span>{' '}
+          <span className={style.valueCell}>{`${healthLvl.toFixed()}%`}</span>{' '}
           <span className={style.healthText}>Health</span>
         </div>
       );
