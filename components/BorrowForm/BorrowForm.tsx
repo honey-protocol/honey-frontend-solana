@@ -19,6 +19,7 @@ import { questionIcon } from 'styles/icons.css';
 import useToast from 'hooks/useToast';
 import { useSolBalance } from 'hooks/useSolBalance';
 import cs from 'classnames';
+import * as style from '../../styles/markets.css';
 
 const { formatPercent: fp, formatSol: fs } = formatNumber;
 
@@ -393,7 +394,7 @@ const BorrowForm = (props: BorrowProps) => {
         </div>
         <div className={styles.inputs}>
           <div className={styles.row}>
-            <div className={cs(stylesRepay.balance, styles.col)}>
+            <div className={cs(stylesRepay.balance, style.borrowRate)}>
               <InfoBlock
                 title={
                   <span className={hAlign}>
