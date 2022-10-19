@@ -1,6 +1,6 @@
 import React, { FC } from 'react';
 import * as style from './HealthLvl.css';
-import { HealthLvlProps, HealthLvlPoint } from './Types';
+import { HealthLvlProps, HealthLvlPoint } from './types';
 import { formatNumber } from '../../helpers/format';
 
 const { formatPercent: fp } = formatNumber;
