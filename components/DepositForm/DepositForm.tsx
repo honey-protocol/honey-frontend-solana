@@ -100,7 +100,7 @@ const DepositForm = (props: DepositFormProps) => {
         ) : (
           <div className={styles.buttons}>
             <div className={styles.smallCol}>
-              <HoneyButton variant="tertiary" onClick={() => onCancel()}>
+              <HoneyButton variant="secondary" onClick={() => onCancel()}>
                 Cancel
               </HoneyButton>
             </div>
