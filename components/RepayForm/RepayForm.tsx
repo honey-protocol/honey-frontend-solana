@@ -353,7 +353,7 @@ const RepayForm = (props: RepayProps) => {
                   <div className={questionIcon} />
                 </span>
               }
-              value={fs(userAllowance + 0.9 * (valueSOL ?? 0))}
+              value={fs(userAllowance + (valueSOL ?? 0))}
               toolTipLabel={
                 <span>
                   Estimated{' '}
