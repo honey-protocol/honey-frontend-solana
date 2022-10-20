@@ -716,6 +716,7 @@ const Dashboard: NextPage = () => {
           value={totalMarketDeposits + totalMarketDebt}
           userWalletBalance={userWalletBalance}
           fetchedSolPrice={fetchedSolPrice}
+          onCancel={hideMobileSidebar}
         />
       )}
     </HoneySider>

@@ -454,3 +454,20 @@ export const docIcon = style({
   height: 52,
   background: 'url("/images/docIcon.svg") center center no-repeat'
 });
+
+export const tableCell = style([
+  typography.button,
+  {
+    width: '33.3%',
+    textAlign: 'center',
+    color: vars.colors.grayTransparent
+  }
+]);
+
+export const mobileSearchAndToggleContainer = style({
+  marginBottom: vars.space.medium,
+  borderRadius: '12px',
+  minHeight: '40px',
+  background: vars.colors.grayMiddle,
+  paddingRight: '10px'
+});

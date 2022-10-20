@@ -990,14 +990,6 @@ const Markets: NextPage = () => {
             Get instant liquidity using your NFTs as collateral{' '}
           </Typography.Text>
         </div>
-        <div className={style.mobileTableHeader}>
-          <div className={style.mobileRow}>
-            <SearchForm />
-          </div>
-          <div className={style.mobileRow}>
-            <MyCollectionsToggle />
-          </div>
-        </div>
 
         <div className={style.hideTablet}>
           <HoneyTable
@@ -1047,6 +1039,24 @@ const Markets: NextPage = () => {
         </div>
 
         <div className={style.showTablet}>
+          <div
+            className={c(
+              style.mobileTableHeader,
+              style.mobileSearchAndToggleContainer
+            )}
+          >
+            <div className={style.mobileRow}>
+              <SearchForm />
+            </div>
+            <div className={style.mobileRow}>
+              <MyCollectionsToggle />
+            </div>
+          </div>
+          <div className={c(style.mobileTableHeader)}>
+            <div className={style.tableCell}>Risk</div>
+            <div className={style.tableCell}>Available</div>
+            <div className={style.tableCell}>Value</div>
+          </div>
           <HoneyTable
             hasRowsShadow={true}
             tableLayout="fixed"
