@@ -67,13 +67,12 @@ import HoneyTableNameCell from '../../components/HoneyTable/HoneyTableNameCell/H
 import RiskLvl from '../../components/RiskLvl/RiskLvl';
 import HealthLvl from '../../components/HealthLvl/HealthLvl';
 import HoneyTooltip from '../../components/HoneyTooltip/HoneyTooltip';
+import { LIQUIDATION_THRESHOLD } from '../../constants/loan';
 // import { network } from 'pages/_app';
 
 const network = 'mainnet-beta'; // change to dynamic value
 
 const { format: f, formatPercent: fp, formatSol: fs } = formatNumber;
-
-const liquidationThreshold = 0.65; // TODO: change where relevant, currently set to 65% on mainnet
 
 const Markets: NextPage = () => {
   const wallet = useConnectedWallet();
@@ -361,7 +360,7 @@ const Markets: NextPage = () => {
 
   useEffect(() => {}, [collateralNFTPositions]);
   const healthPercent =
-    ((nftPrice - userDebt / liquidationThreshold) / nftPrice) * 100;
+    ((nftPrice - userDebt / LIQUIDATION_THRESHOLD) / nftPrice) * 100;
 
   async function calculateInterestRate(utilizationRate: number) {
     let interestRate = await getInterestRate(utilizationRate);
