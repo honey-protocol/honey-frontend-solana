@@ -712,7 +712,7 @@ const Markets: NextPage = () => {
           </div>
           <div className={style.nameCellText}>
             <div className={style.collectionNameMobile}>{name}</div>
-            <HealthLvl healthLvl={healthPercent} />
+            <HealthLvl healthLvl={healthPercent} /> Health
           </div>
         </div>
       )
@@ -739,7 +739,7 @@ const Markets: NextPage = () => {
       render: () => (
         <div className={style.buttonsCell}>
           <HoneyButton variant="text">
-            <div className={style.arrowRightIcon} />
+            Manage <div className={style.arrowRightIcon} />
           </HoneyButton>
         </div>
       )
