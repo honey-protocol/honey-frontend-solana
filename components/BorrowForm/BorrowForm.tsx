@@ -9,7 +9,7 @@ import HoneyButton from 'components/HoneyButton/HoneyButton';
 import HexaBoxContainer from 'components/HexaBoxContainer/HexaBoxContainer';
 import NftList from '../NftList/NftList';
 import { NftCardProps } from '../NftCard/types';
-import { MAX_LTV } from '../../constants/loan';
+import { HONEY_GENESIS_MARKET_ID, MAX_LTV } from '../../constants/loan';
 import { usdcAmount } from '../HoneyButton/HoneyButton.css';
 import { BorrowProps } from './types';
 import { toastResponse } from 'helpers/loanHelpers';
@@ -43,7 +43,6 @@ const BorrowForm = (props: BorrowProps) => {
     userDebt,
     loanToValue,
     hideMobileSidebar,
-    handleMarketId,
     fetchedSolPrice,
     calculatedInterestRate
   } = props;
@@ -115,8 +114,8 @@ const BorrowForm = (props: BorrowProps) => {
     if (hasOpenPosition == false) {
       setSelectedNft({ name, img, mint });
     } else {
-      setIsNftSelected(true);
       setSelectedNft({ name, img, mint });
+      setIsNftSelected(true);
     }
   };
 
@@ -129,6 +128,10 @@ const BorrowForm = (props: BorrowProps) => {
       setSelectedNft({ name, img: image, mint });
       setIsNftSelected(true);
       setHasOpenPosition(true);
+    } else if (openPositions.length == 0) {
+      setIsNftSelected(false);
+      setHasOpenPosition(false);
+      setSelectedNft({ name: '', img: '', mint: ''});
     }
   }, [openPositions, availableNFTs]);
 
@@ -141,7 +144,7 @@ const BorrowForm = (props: BorrowProps) => {
   };
 
   const handleBorrow = async () => {
-    await executeBorrow(valueSOL, toast);
+    executeBorrow(valueSOL, toast);
     handleSliderChange(0);
   };
 
@@ -159,7 +162,6 @@ const BorrowForm = (props: BorrowProps) => {
             selectNFT={selectNFT}
             nftPrice={nftPrice}
             selectedNFTMint={selectedNft?.mint}
-            handleMarketId={handleMarketId}
           />
         </>
       );

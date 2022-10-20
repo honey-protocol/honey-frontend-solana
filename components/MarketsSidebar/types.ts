@@ -7,11 +7,9 @@ export type MarketsSidebarProps = {
   nftPrice: number;
   userAllowance: number;
   userDebt: number;
-  userUSDCBalance: number;
   loanToValue: number;
   fetchedSolPrice: number;
   calculatedInterestRate: number;
-  handleMarketId: (market: any) => void;
   executeDepositNFT: (mint: any, toast: any, name: string) => void;
   executeWithdrawNFT: (mint: any, toast: any) => void;
   executeBorrow: (val: any, toast: any) => void;

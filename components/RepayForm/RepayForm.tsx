@@ -29,7 +29,6 @@ const RepayForm = (props: RepayProps) => {
     executeWithdrawNFT,
     userAllowance,
     userDebt,
-    userUSDCBalance,
     loanToValue,
     availableNFTs,
     fetchedSolPrice,
@@ -107,7 +106,6 @@ const RepayForm = (props: RepayProps) => {
     userAllowance,
     nftPrice,
     loanToValue,
-    userUSDCBalance,
     availableNFTs
   ]);
 

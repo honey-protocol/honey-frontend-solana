@@ -36,6 +36,7 @@ import { Typography } from 'antd';
 import { pageDescription, pageTitle } from 'styles/common.css';
 import { HONEY_GENESIS_BEE, LIFINITY_FLARES, OG_ATADIANS, PESKY_PENGUINS } from '../../constants/borrowLendMarkets';
 import { HONEY_GENESIS_MARKET_ID, PESKY_PENGUINS_MARKET_ID } from '../../constants/loan';
+import { setMarketId } from 'pages/_app';
 
 const network = 'mainnet-beta';
 
@@ -44,7 +45,7 @@ const { format: f, formatPercent: fp, formatSol: fs } = formatNumber;
 const Lend: NextPage = () => {
   // Start: SDK integration
   // TODO: write dynamic currentMarketId based on user interaction
-  const [currentMarketId, setCurrentMarketId] = useState(HONEY_GENESIS_MARKET_ID);
+  const [currentMarketId, setCurrentMarketId] = useState(PESKY_PENGUINS_MARKET_ID);
   const sdkConfig = ConfigureSDK();
   let walletPK = sdkConfig.sdkWallet?.publicKey;
 
@@ -245,6 +246,9 @@ const Lend: NextPage = () => {
       const depositTokenMint = new PublicKey(
         'So11111111111111111111111111111111111111112'
       );
+
+      console.log('this is honey user', honeyUser.market.address.toString());
+      
       const tx = await deposit(
         honeyUser,
         tokenAmount,
@@ -351,6 +355,8 @@ const Lend: NextPage = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [isMyCollectionsFilterEnabled, setIsMyCollectionsFilterEnabled] =
     useState(false);
+
+  if (honeyUser) console.log('honey user', honeyUser.market.address.toString());
 
   const getPositionData = () => {
     if (isMock) {

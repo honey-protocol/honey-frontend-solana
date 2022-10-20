@@ -22,11 +22,9 @@ const MarketsSidebar = (props: MarketsSidebarProps) => {
     nftPrice,
     userAllowance,
     userDebt,
-    userUSDCBalance,
     loanToValue,
     fetchedSolPrice,
     calculatedInterestRate,
-    handleMarketId,
     hideMobileSidebar,
     executeDepositNFT, executeWithdrawNFT, executeBorrow, executeRepay,
   } = props;
@@ -38,7 +36,9 @@ const MarketsSidebar = (props: MarketsSidebarProps) => {
     setActiveTab(tabKey as Tab);
   };
 
-  useEffect(() => {}, [openPositions, availableNFTs]);
+  useEffect(() => {
+    console.log('B -- from marketSidebar', openPositions);
+  }, [openPositions, availableNFTs]);
 
   const items: [HoneyTabItem, HoneyTabItem] = [
     { label: 'Borrow', key: 'borrow' },
@@ -82,7 +82,6 @@ const MarketsSidebar = (props: MarketsSidebarProps) => {
                   hideMobileSidebar={hideMobileSidebar}
                   fetchedSolPrice={fetchedSolPrice}
                   calculatedInterestRate={calculatedInterestRate}
-                  handleMarketId={handleMarketId}
                 />
             )}
             {activeTab === 'repay' && Boolean(openPositions.length) && (
@@ -94,7 +93,6 @@ const MarketsSidebar = (props: MarketsSidebarProps) => {
                   executeWithdrawNFT={executeWithdrawNFT}
                   userDebt={userDebt}
                   userAllowance={userAllowance}
-                  userUSDCBalance={userUSDCBalance}
                   loanToValue={loanToValue}
                   hideMobileSidebar={hideMobileSidebar}
                   changeTab={handleTabChange}

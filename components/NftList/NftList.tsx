@@ -12,17 +12,14 @@ type NftListProps = {
   selectNFT: (name: string, img: string, mint: any) => void;
   nftPrice: any;
   selectedNFTMint: string | undefined;
-  handleMarketId: (market: any) => void;
 };
 
 const NftList = (props: NftListProps) => {
-  const { data, selectNFT, nftPrice, selectedNFTMint, handleMarketId } = props;
+  const { data, selectNFT, nftPrice, selectedNFTMint } = props;
 
   function handleClick(item: any) {
     console.log('item--', item);
     selectNFT(item.name, item.image, item.mint);
-
-    item.name.includes('Pesky') ? handleMarketId(1) : handleMarketId(0);
   }
 
   return (

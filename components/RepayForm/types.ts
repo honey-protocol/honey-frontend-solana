@@ -4,7 +4,6 @@ export type RepayProps = {
   nftPrice?: number;
   userAllowance: number;
   userDebt: number;
-  userUSDCBalance: number;
   loanToValue: number;
   availableNFTs: any;
   fetchedSolPrice: number; 

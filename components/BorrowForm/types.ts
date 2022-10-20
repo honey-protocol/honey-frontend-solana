@@ -8,7 +8,6 @@ export type BorrowProps = {
   loanToValue: number;
   fetchedSolPrice: number;
   calculatedInterestRate: number;
-  handleMarketId: (market: any) => void;
   executeDepositNFT: (mint: string, toast: any, name: string) => void;
   executeBorrow: (val: number, toast: any) => void;
   hideMobileSidebar?: () => void;

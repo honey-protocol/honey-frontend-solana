@@ -20,6 +20,83 @@ import { CollateralNFTPosition, getHealthStatus, getNFTAssociatedMetadata, Honey
 import { Metadata } from '@metaplex-foundation/mpl-token-metadata';
 
 /**
+ * @description calculates the users total deposits
+ * @params  marketReserveInfo and honeyUser
+ * @returns users total deposits in market
+*/
+// TODO: create types for marketReserve and honeyUser
+export async function calculateUserDeposits(marketReserveInfo: any, honeyUser: any) {
+  try {
+    let depositNoteExchangeRate = 0,
+    loanNoteExchangeRate = 0,
+    nftPrice = 0,
+    cRatio = 1;
+
+  if (marketReserveInfo) {
+    nftPrice = 2;
+    depositNoteExchangeRate = BnToDecimal(
+      marketReserveInfo[0].depositNoteExchangeRate,
+      15,
+      5
+    );
+  }
+
+  if (honeyUser?.deposits().length > 0) {
+    // let totalDeposit = BnDivided(honeyUser.deposits()[0].amount, 10, 5) * depositNoteExchangeRate / (10 ** 4)
+    let totalDeposit =
+      (honeyUser
+        .deposits()[0]
+        .amount.div(new BN(10 ** 5))
+        .toNumber() *
+        depositNoteExchangeRate) /
+      10 ** 4;
+    return totalDeposit;
+  } else {
+      return 0;
+    } 
+  } catch (error) {
+    throw error;
+  }
+}
+
+/**
+ * @description calculates the market debt 
+ * @params honey reserves
+ * @returns market debt
+*/
+// TODO: create types for honeyReserves
+export async function calculateMarketDebt(honeyReserves: any) {
+  try {
+    const depositTokenMint = new PublicKey(
+      'So11111111111111111111111111111111111111112'
+    );
+  
+    if (honeyReserves) {
+      const depositReserve = honeyReserves.filter((reserve: any) =>
+        reserve?.data?.tokenMint?.equals(depositTokenMint)
+      )[0];
+  
+      const reserveState = depositReserve.data?.reserveState;
+  
+      if (reserveState?.outstandingDebt) {
+        let marketDebt = reserveState?.outstandingDebt
+          .div(new BN(10 ** 15))
+          .toNumber();
+        if (marketDebt) {
+          let sum = Number(marketDebt / LAMPORTS_PER_SOL);
+          return marketDebt = (RoundHalfDown(sum));
+        }
+        return marketDebt
+      }
+    } else {
+      return 0;
+    } 
+  } catch (error) {
+    throw error;
+  }
+}
+
+/**
  * @description calculates the total user debt, ltv and allowance over all collections
  * @params nftprice | collateralnftpositions | honeyuser (connected via wallet) | marketreserveinfo
  * @returns sum of allowance | sum of ltv | sum of debt
@@ -30,44 +107,46 @@ export async function calculateCollectionwideAllowance(
   honeyUser: any,
   marketReserveInfo: any
 ) {
-  let totalDebt = 0;
-  let userLoans = 0;
-  let nftCollateralValue = nftPrice * (collateralNFTPositions?.length || 0);
-
-  if (honeyUser?.loans().length > 0) {
-    if (honeyUser?.loans().length > 0 && marketReserveInfo) {
-      userLoans =
-        (marketReserveInfo[0].loanNoteExchangeRate
-          .mul(honeyUser?.loans()[0]?.amount)
-          .div(new BN(10 ** 15))
-          .toNumber() *
-          1.002) /
-        LAMPORTS_PER_SOL;
-      totalDebt =
-        marketReserveInfo[0].loanNoteExchangeRate
-          .mul(honeyUser?.loans()[0]?.amount)
-          .div(new BN(10 ** 15))
-          .toNumber() / LAMPORTS_PER_SOL;
+  try {
+    let totalDebt = 0;
+    let userLoans = 0;
+    let nftCollateralValue = nftPrice * (collateralNFTPositions?.length || 0);
+  
+    if (honeyUser?.loans().length > 0) {
+      if (honeyUser?.loans().length > 0 && marketReserveInfo) {
+        userLoans =
+          (marketReserveInfo[0].loanNoteExchangeRate
+            .mul(honeyUser?.loans()[0]?.amount)
+            .div(new BN(10 ** 15))
+            .toNumber() *
+            1.002) /
+          LAMPORTS_PER_SOL;
+        totalDebt =
+          marketReserveInfo[0].loanNoteExchangeRate
+            .mul(honeyUser?.loans()[0]?.amount)
+            .div(new BN(10 ** 15))
+            .toNumber() / LAMPORTS_PER_SOL;
+      }
     }
+  
+    const ltv = totalDebt / nftPrice;
+  
+    let sumOfAllowance = RoundHalfDown(
+      nftCollateralValue * MAX_LTV - userLoans,
+      4
+    );
+  
+    let sumOfLtv = RoundHalfDown(ltv);
+    let sumOfTotalDebt = RoundHalfUp(totalDebt);
+  
+    return {
+      sumOfAllowance,
+      sumOfLtv,
+      sumOfTotalDebt
+    }; 
+  } catch (error) {
+    throw error;
   }
-
-  const ltv = totalDebt / nftPrice;
-
-  let sumOfAllowance = RoundHalfDown(
-    nftCollateralValue * MAX_LTV - userLoans,
-    4
-  );
-
-  let sumOfLtv = RoundHalfDown(ltv);
-  let sumOfTotalDebt = RoundHalfUp(totalDebt);
-
-
-
-  return {
-    sumOfAllowance,
-    sumOfLtv,
-    sumOfTotalDebt
-  };
 }
 /**
  * @description calculates the nft price based on switchboard
@@ -80,22 +159,25 @@ export async function calcNFT(
   honeyMarket: any,
   connection: any
 ) {
-  if (marketReserveInfo && parsedReserves && honeyMarket) {
-    let solPrice = await getOraclePrice(
-      'mainnet-beta',
-      connection,
-      parsedReserves[0].switchboardPriceAggregator
-    ); //in sol
-    let nftPrice = await getOraclePrice(
-      'mainnet-beta',
-      connection,
-      honeyMarket.nftSwitchboardPriceAggregator
-    ); //in usd
-
-    return nftPrice / solPrice;
+  try {
+    if (marketReserveInfo && parsedReserves && honeyMarket) {
+      let solPrice = await getOraclePrice(
+        'mainnet-beta',
+        connection,
+        parsedReserves[0].switchboardPriceAggregator
+      ); //in sol
+      let nftPrice = await getOraclePrice(
+        'mainnet-beta',
+        connection,
+        honeyMarket.nftSwitchboardPriceAggregator
+      ); //in usd
+  
+      return nftPrice / solPrice;
+    }
+  } catch (error) {
+   throw error; 
   }
 }
-
 /**
  * @description fetches the sol price from switchboard
  * @params marketreserve | parsedreserve | honeymarket | connection
@@ -117,11 +199,15 @@ export async function calcNFT(
       console.log(`Solprice: ${solPrice}`)
       return solPrice; 
     } catch (error) {
-      return `An error occurred: ${error}`
+      throw error;
     }
   }
 }
-
+/**
+ * @description sets the interest rate based on Honey formula
+ * @params utilization ratio
+ * @returns interest rate for market
+ */
 export async function getInterestRate(utilizationRate: number) {
   let interestRate = 0;
 
@@ -139,7 +225,7 @@ export async function getInterestRate(utilizationRate: number) {
       }
     } 
   } catch (error) {
-    console.log('Error:', error)
+    throw error;
   }
 }
 
