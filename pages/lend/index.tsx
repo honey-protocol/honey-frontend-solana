@@ -498,7 +498,9 @@ const Lend: NextPage = () => {
         sorter: (a, b) => a.interest - b.interest,
         render: (rate: number) => {
           return (
-            <div className={style.rateCell}>{fp(calculatedInterestRate)}</div>
+            <div className={c(style.rateCell, style.lendRate)}>
+              {fp(calculatedInterestRate)}
+            </div>
           );
         }
       },
@@ -584,17 +586,21 @@ const Lend: NextPage = () => {
     <LayoutRedesign>
       <HoneyContent sidebar={lendSidebar()}>
         <div>
-        <Typography.Title className={pageTitle}>Lend</Typography.Title>
-        <Typography.Text className={pageDescription}>
-          Earn yield by depositing crypto into NFT markets.{' '}
-          <span>
-            <a target="_blank" href="https://buy.moonpay.com" rel="noreferrer">
-              <HoneyButton style={{ display: 'inline' }} variant="text">
-                Need crypto?
-              </HoneyButton>
-            </a>
-          </span>
-        </Typography.Text>
+          <Typography.Title className={pageTitle}>Lend</Typography.Title>
+          <Typography.Text className={pageDescription}>
+            Earn yield by depositing crypto into NFT markets.{' '}
+            <span>
+              <a
+                target="_blank"
+                href="https://buy.moonpay.com"
+                rel="noreferrer"
+              >
+                <HoneyButton style={{ display: 'inline' }} variant="text">
+                  Need crypto?
+                </HoneyButton>
+              </a>
+            </span>
+          </Typography.Text>
         </div>
         <HoneyTable
           hasRowsShadow={true}
