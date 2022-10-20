@@ -7,4 +7,5 @@ export type LendSidebarProps = {
   fetchedSolPrice: number;
   executeDeposit: (val: number) => void;
   executeWithdraw: (val: number) => void;
+  onCancel: Function;
 };

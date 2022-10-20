@@ -7,6 +7,7 @@ import HoneyTabs, { HoneyTabItem } from '../HoneyTabs/HoneyTabs';
 import EmptyStateDetails from '../EmptyStateDetails/EmptyStateDetails';
 import { useConnectedWallet } from '@saberhq/use-solana';
 import { useWalletKit } from '@gokiprotocol/walletkit';
+import { mobileReturnButton } from 'styles/common.css';
 
 const items: [HoneyTabItem, HoneyTabItem] = [
   { label: 'Deposit', key: 'deposit' },
@@ -24,7 +25,8 @@ const LendSidebar = (props: LendSidebarProps) => {
     available,
     value,
     userWalletBalance,
-    fetchedSolPrice
+    fetchedSolPrice,
+    onCancel
   } = props;
   const wallet = useConnectedWallet();
   const { connect } = useWalletKit();
@@ -51,6 +53,12 @@ const LendSidebar = (props: LendSidebarProps) => {
                 title: 'CONNECT WALLET',
                 onClick: connect,
                 variant: 'primary'
+              },
+              {
+                title: 'RETURN',
+                onClick: () => onCancel(),
+                variant: 'secondary',
+                className: mobileReturnButton
               }
             ]}
           />
@@ -70,6 +78,7 @@ const LendSidebar = (props: LendSidebarProps) => {
                 value={value}
                 userWalletBalance={userWalletBalance}
                 fetchedSolPrice={fetchedSolPrice}
+                onCancel={onCancel}
               />
             )}
             {activeTab === 'withdraw' && (
@@ -79,6 +88,7 @@ const LendSidebar = (props: LendSidebarProps) => {
                 available={available}
                 value={value}
                 fetchedSolPrice={fetchedSolPrice}
+                onCancel={onCancel}
               />
             )}
           </>
