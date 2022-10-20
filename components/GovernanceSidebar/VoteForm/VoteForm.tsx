@@ -32,7 +32,7 @@ const { formatShortName: fsn } = formatNumber;
 
 const VoteForm: FC<VoteFormProps> = (props: VoteFormProps) => {
   const [voteType, setVoteType] = useState<VoteType>('vote_for');
-  const { proposalInfo, setSidebarMode, hideMobileSidebar } = props;
+  const { proposalInfo, setSidebarMode, onCancel } = props;
   const { veToken, governorData, minActivationThreshold, governorW } =
     useGovernor();
   const { data: escrow, veBalance, refetch } = useUserEscrow();
@@ -259,10 +259,7 @@ const VoteForm: FC<VoteFormProps> = (props: VoteFormProps) => {
               )}
             <div className={styles.buttons}>
               <div className={styles.smallCol}>
-                <HoneyButton
-                  onClick={() => hideMobileSidebar()}
-                  variant="secondary"
-                >
+                <HoneyButton onClick={() => onCancel()} variant="secondary">
                   Close
                 </HoneyButton>
               </div>

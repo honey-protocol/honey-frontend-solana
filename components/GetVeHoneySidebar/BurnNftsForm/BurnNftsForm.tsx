@@ -78,7 +78,7 @@ const ListItem: FC<ListItemProps> = ({
   );
 };
 
-const BurnNftsForm = (props: { hideMobileSidebar: Function }) => {
+const BurnNftsForm = (props: { onCancel: Function }) => {
   const [selected, setSelected] = useState<string[]>([]);
 
   const onItemSelect = (e: CheckboxChangeEvent, id: string) => {
@@ -98,10 +98,7 @@ const BurnNftsForm = (props: { hideMobileSidebar: Function }) => {
       footer={
         <div className={styles.buttons}>
           <div className={styles.smallCol}>
-            <HoneyButton
-              onClick={() => props.hideMobileSidebar()}
-              variant="secondary"
-            >
+            <HoneyButton onClick={() => props.onCancel()} variant="secondary">
               Close
             </HoneyButton>
           </div>

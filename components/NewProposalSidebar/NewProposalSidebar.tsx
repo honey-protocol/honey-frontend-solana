@@ -15,7 +15,7 @@ const items: [HoneyTabItem, HoneyTabItem] = [
 
 type Tab = 'how_it_works' | 'create';
 
-const NewProposalSidebar = (props: { hideMobileSidebar: Function }) => {
+const NewProposalSidebar = (props: { onCancel: Function }) => {
   const [hasReadHowItWorks, setHasReadHowItWorks] = useState(false);
   const [activeTab, setActiveTab] = useState<Tab>();
   const wallet = useConnectedWallet();
@@ -60,7 +60,7 @@ const NewProposalSidebar = (props: { hideMobileSidebar: Function }) => {
               },
               {
                 title: 'RETURN',
-                onClick: () => props.hideMobileSidebar(),
+                onClick: () => props.onCancel(),
                 variant: 'secondary',
                 className: mobileReturnButton
               }
@@ -73,11 +73,11 @@ const NewProposalSidebar = (props: { hideMobileSidebar: Function }) => {
                 hasReadHowItWorks={hasReadHowItWorks}
                 setHasReadHowItWorks={setHasReadHowItWorks}
                 setActiveTab={setActiveTab}
-                hideMobileSidebar={props.hideMobileSidebar}
+                onCancel={props.onCancel}
               />
             )}
             {activeTab === 'create' && (
-              <CreateProposalTab hideMobileSidebar={props.hideMobileSidebar} />
+              <CreateProposalTab onCancel={props.onCancel} />
             )}
           </>
         )}

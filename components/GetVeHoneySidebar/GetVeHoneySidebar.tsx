@@ -15,7 +15,7 @@ const items: [HoneyTabItem, HoneyTabItem] = [
 
 type Tab = 'lock_honey' | 'burn_nfts';
 
-const GetVeHoneySidebar = (props: { hideMobileSidebar: Function }) => {
+const GetVeHoneySidebar = (props: { onCancel: Function }) => {
   const wallet = useConnectedWallet();
   const { connect } = useWalletKit();
   const [activeTab, setActiveTab] = useState<Tab>('lock_honey');
@@ -45,7 +45,7 @@ const GetVeHoneySidebar = (props: { hideMobileSidebar: Function }) => {
               },
               {
                 title: 'RETURN',
-                onClick: () => props.hideMobileSidebar(),
+                onClick: () => props.onCancel(),
                 variant: 'secondary',
                 className: mobileReturnButton
               }
@@ -54,10 +54,10 @@ const GetVeHoneySidebar = (props: { hideMobileSidebar: Function }) => {
         ) : (
           <>
             {activeTab === 'lock_honey' && (
-              <LockHoneyForm hideMobileSidebar={props.hideMobileSidebar} />
+              <LockHoneyForm onCancel={props.onCancel} />
             )}
             {activeTab === 'burn_nfts' && (
-              <BurnNftsForm hideMobileSidebar={props.hideMobileSidebar} />
+              <BurnNftsForm onCancel={props.onCancel} />
             )}
           </>
         )}

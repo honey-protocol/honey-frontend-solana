@@ -21,7 +21,7 @@ import cs from 'classnames';
 
 const { format: f, formatPercent: fp, formatUsd: fu } = formatNumber;
 
-const CreateProposalTab = (props: { hideMobileSidebar: Function }) => {
+const CreateProposalTab = (props: { onCancel: Function }) => {
   const [titleValue, setTitleValue] = useState('');
   const [descriptionValue, setDescriptionValue] = useState('');
   const [discussionLinkValue, setDiscussionLinkValue] = useState('');
@@ -111,10 +111,7 @@ const CreateProposalTab = (props: { hideMobileSidebar: Function }) => {
         ) : (
           <div className={styles.buttons}>
             <div className={styles.smallCol}>
-              <HoneyButton
-                variant="secondary"
-                onClick={() => props.hideMobileSidebar()}
-              >
+              <HoneyButton variant="secondary" onClick={() => props.onCancel()}>
                 Cancel
               </HoneyButton>
             </div>

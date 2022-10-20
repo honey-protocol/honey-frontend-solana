@@ -30,7 +30,7 @@ const PERIODS = [
 
 type LockPeriod = typeof PERIODS[number]['slug'];
 
-const LockHoneyForm = (props: { hideMobileSidebar: Function }) => {
+const LockHoneyForm = (props: { onCancel: Function }) => {
   const [lockPeriod, setLockPeriod] = useState<LockPeriod>('1');
   const [valueHONEY, setValueHONEY] = useState<number>(0);
   const [valueVeHONEY, setValueVeHONEY] = useState<number>(0);
@@ -123,10 +123,7 @@ const LockHoneyForm = (props: { hideMobileSidebar: Function }) => {
         ) : (
           <div className={styles.buttons}>
             <div className={styles.smallCol}>
-              <HoneyButton
-                onClick={() => props.hideMobileSidebar()}
-                variant="secondary"
-              >
+              <HoneyButton onClick={() => props.onCancel()} variant="secondary">
                 Close
               </HoneyButton>
             </div>

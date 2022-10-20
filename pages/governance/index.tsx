@@ -312,15 +312,15 @@ const Governance: NextPage = () => {
       case 'vote':
         return (
           <GovernanceSidebar
-            hideMobileSidebar={hideMobileSidebar}
+            onCancel={hideMobileSidebar}
             selectedProposalId={selectedProposalId}
             setSidebarMode={setSidebarMode}
           />
         );
       case 'new_proposal':
-        return <NewProposalSidebar hideMobileSidebar={hideMobileSidebar} />;
+        return <NewProposalSidebar onCancel={hideMobileSidebar} />;
       case 'get_vehoney':
-        return <GetVeHoneySidebar hideMobileSidebar={hideMobileSidebar} />;
+        return <GetVeHoneySidebar onCancel={hideMobileSidebar} />;
       default:
         return null;
     }
