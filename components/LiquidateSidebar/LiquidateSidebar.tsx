@@ -47,8 +47,12 @@ const LiquidateSidebar = (props: LendSidebarProps) => {
             icon={<div className={styles.lightIcon} />}
             title="You didn’t connect any wallet yet"
             description="First, choose a NFT collection"
-            btnTitle="CONNECT WALLET"
-            onBtnClick={connect}
+            buttons={[
+              {
+                title: 'CONNECT WALLET',
+                onClick: connect
+              }
+            ]}
           />
         ) : !collectionId ? (
           <EmptyStateDetails

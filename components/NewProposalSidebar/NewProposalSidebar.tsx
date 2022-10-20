@@ -6,6 +6,7 @@ import CreateProposalTab from './CreateProposalTab/CreateProposalTab';
 import HowItWorksTab from './HowItWorksTab/HowItWorksTab';
 import { useConnectedWallet } from '@saberhq/use-solana';
 import { useWalletKit } from '@gokiprotocol/walletkit';
+import { mobileReturnButton } from 'styles/common.css';
 
 const items: [HoneyTabItem, HoneyTabItem] = [
   { label: 'How it works', key: 'how_it_works' },
@@ -14,7 +15,7 @@ const items: [HoneyTabItem, HoneyTabItem] = [
 
 type Tab = 'how_it_works' | 'create';
 
-const NewProposalSidebar = () => {
+const NewProposalSidebar = (props: { onCancel: Function }) => {
   const [hasReadHowItWorks, setHasReadHowItWorks] = useState(false);
   const [activeTab, setActiveTab] = useState<Tab>();
   const wallet = useConnectedWallet();
@@ -51,8 +52,19 @@ const NewProposalSidebar = () => {
             icon={<div className={styles.lightIcon} />}
             title="You didn’t connect any wallet yet"
             description="First, choose a proposal"
-            btnTitle="CONNECT WALLET"
-            onBtnClick={connect}
+            buttons={[
+              {
+                title: 'CONNECT WALLET',
+                onClick: connect,
+                variant: 'primary'
+              },
+              {
+                title: 'RETURN',
+                onClick: () => props.onCancel(),
+                variant: 'secondary',
+                className: mobileReturnButton
+              }
+            ]}
           />
         ) : (
           <>
@@ -61,9 +73,12 @@ const NewProposalSidebar = () => {
                 hasReadHowItWorks={hasReadHowItWorks}
                 setHasReadHowItWorks={setHasReadHowItWorks}
                 setActiveTab={setActiveTab}
+                onCancel={props.onCancel}
               />
             )}
-            {activeTab === 'create' && <CreateProposalTab />}
+            {activeTab === 'create' && (
+              <CreateProposalTab onCancel={props.onCancel} />
+            )}
           </>
         )}
       </HoneyTabs>

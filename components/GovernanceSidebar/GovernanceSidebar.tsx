@@ -8,10 +8,12 @@ import { governanceSidebar } from './GovernanceSidebar.css';
 import { useConnectedWallet, useSolana } from '@saberhq/use-solana';
 import { ProposalInfo, useProposal } from 'hooks/tribeca/useProposals';
 import { useWalletKit } from '@gokiprotocol/walletkit';
+import { mobileReturnButton } from 'styles/common.css';
 
 type GovernanceSidebarProps = {
   selectedProposalId?: number;
   setSidebarMode: Function;
+  onCancel: Function;
 };
 
 const items: [HoneyTabItem, HoneyTabItem] = [
@@ -23,7 +25,8 @@ type Tab = 'vote' | 'description';
 
 const GovernanceSidebar = ({
   selectedProposalId,
-  setSidebarMode
+  setSidebarMode,
+  onCancel
 }: GovernanceSidebarProps) => {
   const wallet = useConnectedWallet();
   const { connect } = useWalletKit();
@@ -48,8 +51,19 @@ const GovernanceSidebar = ({
             icon={<div className={styles.lightIcon} />}
             title="You didn’t connect any wallet yet"
             description="First, choose a proposal"
-            btnTitle="CONNECT WALLET"
-            onBtnClick={connect}
+            buttons={[
+              {
+                title: 'CONNECT WALLET',
+                onClick: connect,
+                variant: 'primary'
+              },
+              {
+                title: 'RETURN',
+                onClick: () => onCancel(),
+                variant: 'secondary',
+                className: mobileReturnButton
+              }
+            ]}
           />
         ) : !selectedProposalId?.toString() ? (
           <EmptyStateDetails
@@ -63,6 +77,7 @@ const GovernanceSidebar = ({
               <VoteForm
                 setSidebarMode={setSidebarMode}
                 proposalInfo={proposalInfo}
+                onCancel={onCancel}
               />
             )}
             {activeTab === 'description' && (
@@ -70,6 +85,7 @@ const GovernanceSidebar = ({
                 description={
                   proposalInfo?.proposalMetaData?.descriptionLink || ''
                 }
+                setActiveTab={setActiveTab}
               />
             )}
           </>

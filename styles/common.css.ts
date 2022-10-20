@@ -41,3 +41,12 @@ export const pageDescription = style([
   typography.description,
   { marginBottom: '20px', display: 'block' }
 ]);
+
+export const mobileReturnButton = style({
+  '@media': {
+    [`screen and (min-width: ${breakpoints.desktop}px)`]: {
+      maxWidth: 360,
+      display: 'none'
+    }
+  }
+});

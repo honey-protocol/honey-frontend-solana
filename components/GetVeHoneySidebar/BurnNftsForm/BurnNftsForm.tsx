@@ -78,7 +78,7 @@ const ListItem: FC<ListItemProps> = ({
   );
 };
 
-const BurnNftsForm: FC = () => {
+const BurnNftsForm = (props: { onCancel: Function }) => {
   const [selected, setSelected] = useState<string[]>([]);
 
   const onItemSelect = (e: CheckboxChangeEvent, id: string) => {
@@ -98,7 +98,9 @@ const BurnNftsForm: FC = () => {
       footer={
         <div className={styles.buttons}>
           <div className={styles.smallCol}>
-            <HoneyButton variant="secondary">Close</HoneyButton>
+            <HoneyButton onClick={() => props.onCancel()} variant="secondary">
+              Close
+            </HoneyButton>
           </div>
           <div className={styles.bigCol}>
             <HoneyButton

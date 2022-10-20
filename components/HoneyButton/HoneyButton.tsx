@@ -5,7 +5,7 @@ import c from 'classnames';
 import { isNil } from '../../helpers/utils';
 import { formatNumber } from '../../helpers/format';
 
-interface HoneyButtonProps extends ButtonProps {
+export interface HoneyButtonProps extends ButtonProps {
   variant?: 'primary' | 'secondary' | 'tertiary' | 'text' | 'textSecondary';
   isFluid?: boolean;
   solAmount?: number;

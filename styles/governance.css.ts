@@ -184,33 +184,33 @@ export const mobileTableHeader = style({
 export const governanceTableMobile = style({});
 export const governanceTable = style({});
 
-globalStyle(`${governanceTableMobile} tr:first-child ${governanceTable}`, {
-  display: 'flex',
-  flexWrap: 'wrap',
-  width: '100%',
-  flexDirection: 'column-reverse'
-});
+// globalStyle(`${governanceTableMobile} tr:first-child ${governanceTable}`, {
+//   display: 'flex',
+//   flexWrap: 'wrap',
+//   width: '100%',
+//   flexDirection: 'column-reverse'
+// });
 
-globalStyle(`${governanceTableMobile} tr:first-child .tableRow > div`, {
-  paddingTop: 8,
-  paddingBottom: 14
-});
+// globalStyle(`${governanceTableMobile} tr:first-child .tableRow > div`, {
+//   paddingTop: 8,
+//   paddingBottom: 14
+// });
 
-globalStyle(
-  `${governanceTableMobile} tr:first-child ${governanceTable} .tableTitle:after`,
-  {
-    bottom: 'initial',
-    top: 0
-  }
-);
+// globalStyle(
+//   `${governanceTableMobile} tr:first-child ${governanceTable} .tableTitle:after`,
+//   {
+//     bottom: 'initial',
+//     top: 0
+//   }
+// );
 
-globalStyle(
-  `${governanceTableMobile} tr:first-child ${governanceTable} .tableTitle`,
-  {
-    paddingBottom: 0,
-    paddingTop: 11
-  }
-);
+// globalStyle(
+//   `${governanceTableMobile} tr:first-child ${governanceTable} .tableTitle`,
+//   {
+//     paddingBottom: 0,
+//     paddingTop: 11
+//   }
+// );
 
 export const tableCell = style([
   typography.button,
