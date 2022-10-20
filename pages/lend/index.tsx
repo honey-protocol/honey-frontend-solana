@@ -613,26 +613,24 @@ const Lend: NextPage = () => {
                       </div>
                     </div>
                     <div className={style.nameCellMobile}>
-                      <div className={style.collectionName}>
-                        {formatNFTName(name)}
-                      </div>
-                      <div className={style.rateCellMobile}>
-                        {fp(row.interest * 100)}
-                      </div>
+                      <div className={style.collectionName}>{name}</div>
                     </div>
                   </>
                 }
                 rightSide={
                   <div className={style.buttonsCell}>
                     <HoneyButton variant="text">
-                      View <div className={style.arrowIcon} />
+                      Manage <div className={style.arrowRightIcon} />
                     </HoneyButton>
                   </div>
                 }
               />
 
               <HoneyTableRow>
-                <div className={style.rateCell}>{fp(row.interest * 100)}</div>
+                <div className={c(style.rateCell, style.lendRate)}>
+                  {fp(calculatedInterestRate)}
+                </div>
+                <div className={style.valueCell}>{fs(row.value)}</div>
                 <div className={style.availableCell}>{fs(row.available)}</div>
               </HoneyTableRow>
             </>
