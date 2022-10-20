@@ -77,7 +77,7 @@ const GovernanceSidebar = ({
               <VoteForm
                 setSidebarMode={setSidebarMode}
                 proposalInfo={proposalInfo}
-                hideMobileSidebar={onCancel}
+                onCancel={onCancel}
               />
             )}
             {activeTab === 'description' && (
