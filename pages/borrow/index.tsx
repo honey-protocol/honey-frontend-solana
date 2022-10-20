@@ -82,9 +82,9 @@ const Markets: NextPage = () => {
   const wallet = useConnectedWallet();
   const sdkConfig = ConfigureSDK();
   
-  function handleMarketId(market: any) {
-    market == '0' ? setCurrentMarketId(HONEY_GENESIS_MARKET_ID) : setCurrentMarketId(PESKY_PENGUINS_MARKET_ID)
-    market == '0' ? setMarketId(HONEY_GENESIS_MARKET_ID) : setMarketId(PESKY_PENGUINS_MARKET_ID)
+  function handleMarketId(event: any, record: any) {
+    record.id == HONEY_GENESIS_MARKET_ID ? setCurrentMarketId(HONEY_GENESIS_MARKET_ID) : setCurrentMarketId(PESKY_PENGUINS_MARKET_ID)
+    record.id == HONEY_GENESIS_MARKET_ID ? setMarketId(HONEY_GENESIS_MARKET_ID) : setMarketId(PESKY_PENGUINS_MARKET_ID)
   }
 
   /**
@@ -119,13 +119,13 @@ const Markets: NextPage = () => {
   );
 
 
-  const [updatedUser, setUpdatedUser] = useState(honeyUser);
+  // const [updatedUser, setUpdatedUser] = useState(honeyUser);
 
-  useEffect(() => {
-    setUpdatedUser(honeyUser);
-  }, [honeyUser, currentMarketId]);
+  // useEffect(() => {
+  //   setUpdatedUser(honeyUser);
+  // }, [honeyUser, currentMarketId]);
   
-  if (updatedUser) console.log('@@--honey user', updatedUser.market.address.toString());
+
   /**
    * @description calls upon markets which
    * @params none
@@ -333,8 +333,8 @@ const Markets: NextPage = () => {
    * @returns honeyUser | marketReserveInfo |
    */
   useEffect(() => {
-    console.log('@@-- market', market)
-    console.log('collateral', collateralNFTPositions)
+    console.log('collateral', collateralNFTPositions);
+
     if (marketReserveInfo && parsedReserves) {
       setDepositNoteExchangeRate(
         BnToDecimal(marketReserveInfo[0].depositNoteExchangeRate, 15, 5)
@@ -377,6 +377,7 @@ const Markets: NextPage = () => {
 
   useEffect(() => {
     if (collateralNFTPositions) {
+      console.log(' -- B: ', collateralNFTPositions)
       setUserOpenPositions(collateralNFTPositions);
     }
   }, [collateralNFTPositions]);
@@ -388,7 +389,6 @@ const Markets: NextPage = () => {
   }
 
   useEffect(() => {
-    console.log('util@@', utilizationRate)
     if (utilizationRate) {
       calculateInterestRate(utilizationRate);
     }
@@ -397,7 +397,6 @@ const Markets: NextPage = () => {
   // PUT YOUR DATA SOURCE HERE
   // MOCK DATA FOR NOW
   useEffect(() => {
-    console.log('connection', sdkConfig.saberHqConnection, sdkConfig.sdkWallet, calculatedInterestRate);
     // console.log('user open pos', marketCollections)
     if (sdkConfig.saberHqConnection && sdkConfig.sdkWallet) {
       marketCollections.map(async (collection) => 
@@ -1053,6 +1052,11 @@ const Markets: NextPage = () => {
             columns={columns}
             dataSource={tableDataFiltered}
             pagination={false}
+            onRow={(record, rowIndex) => {
+              return {
+                onClick: event => handleMarketId(event, record)
+              }
+            }}
             className={classNames(style.table, {
               [style.emptyTable]: !tableDataFiltered.length
             })}
