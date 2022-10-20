@@ -724,9 +724,9 @@ const Lend: NextPage = () => {
             </div>
           </div>
           <div className={c(style.mobileTableHeader)}>
-            <div className={style.tableCell}>Risk</div>
+            <div className={style.tableCell}>Interest</div>
+            <div className={style.tableCell}>Supplied</div>
             <div className={style.tableCell}>Available</div>
-            <div className={style.tableCell}>Value</div>
           </div>
           <HoneyTable
             hasRowsShadow={true}

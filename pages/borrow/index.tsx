@@ -607,12 +607,10 @@ const Markets: NextPage = () => {
                       </div>
                     </div>
                     <div className={style.nameCellMobile}>
-                      <div className={style.collectionName}>
-                        {formatNFTName(name)}
-                      </div>
-                      <div className={style.rateCellMobile}>
+                      <div className={style.collectionName}>{name}</div>
+                      {/* <div className={style.rateCellMobile}>
                         {fp(row.rate * 100)}
-                      </div>
+                      </div> */}
                     </div>
                   </>
                 }
@@ -626,7 +624,10 @@ const Markets: NextPage = () => {
               />
 
               <HoneyTableRow>
-                <div className={style.rateCell}>{fp(row.rate * 100)}</div>
+                <div className={c(style.rateCell, style.borrowRate)}>
+                  {fp(calculatedInterestRate)}
+                </div>
+                <div className={style.valueCell}>{fs(row.value)}</div>
                 <div className={style.availableCell}>{fs(row.available)}</div>
               </HoneyTableRow>
             </>
@@ -716,22 +717,22 @@ const Markets: NextPage = () => {
         </div>
       )
     },
-    {
-      dataIndex: 'debt',
-      render: debt => (
-        <div className={style.expandedRowCell}>
-          <InfoBlock title={'Debt:'} value={fs(userDebt)} />
-        </div>
-      )
-    },
-    {
-      dataIndex: 'available',
-      render: available => (
-        <div className={style.expandedRowCell}>
-          <InfoBlock title={'Allowance:'} value={fs(nftPrice * MAX_LTV)} />
-        </div>
-      )
-    },
+    // {
+    //   dataIndex: 'debt',
+    //   render: debt => (
+    //     <div className={style.expandedRowCell}>
+    //       <InfoBlock title={'Debt:'} value={fs(userDebt)} />
+    //     </div>
+    //   )
+    // },
+    // {
+    //   dataIndex: 'available',
+    //   render: available => (
+    //     <div className={style.expandedRowCell}>
+    //       <InfoBlock title={'Allowance:'} value={fs(nftPrice * MAX_LTV)} />
+    //     </div>
+    //   )
+    // },
     {
       title: '',
       width: '50px',
@@ -1053,9 +1054,9 @@ const Markets: NextPage = () => {
             </div>
           </div>
           <div className={c(style.mobileTableHeader)}>
-            <div className={style.tableCell}>Risk</div>
+            <div className={style.tableCell}>Interest</div>
+            <div className={style.tableCell}>Supplied</div>
             <div className={style.tableCell}>Available</div>
-            <div className={style.tableCell}>Value</div>
           </div>
           <HoneyTable
             hasRowsShadow={true}
