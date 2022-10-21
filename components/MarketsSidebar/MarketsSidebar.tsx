@@ -8,6 +8,7 @@ import HoneyTabs, { HoneyTabItem } from 'components/HoneyTabs/HoneyTabs';
 import EmptyStateDetails from 'components/EmptyStateDetails/EmptyStateDetails';
 import { useConnectedWallet } from '@saberhq/use-solana';
 import { useWalletKit } from '@gokiprotocol/walletkit';
+import { mobileReturnButton } from 'styles/common.css';
 
 const { Text } = Typography;
 
@@ -65,6 +66,12 @@ const MarketsSidebar = (props: MarketsSidebarProps) => {
                 title: 'CONNECT WALLET',
                 onClick: connect,
                 variant: 'primary'
+              },
+              {
+                title: 'RETURN',
+                onClick: hideMobileSidebar,
+                variant: 'secondary',
+                className: mobileReturnButton
               }
             ]}
           />

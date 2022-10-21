@@ -409,7 +409,6 @@ const Markets: NextPage = () => {
   };
 
   const hideMobileSidebar = () => {
-    debugger;
     setShowMobileSidebar(false);
     document.body.classList.remove('disable-scroll');
   };
