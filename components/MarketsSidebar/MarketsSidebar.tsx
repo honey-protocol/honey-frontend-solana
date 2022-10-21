@@ -25,6 +25,7 @@ const MarketsSidebar = (props: MarketsSidebarProps) => {
     loanToValue,
     fetchedSolPrice,
     calculatedInterestRate,
+    currentMarketId,
     hideMobileSidebar,
     executeDepositNFT, executeWithdrawNFT, executeBorrow, executeRepay,
   } = props;
@@ -37,8 +38,6 @@ const MarketsSidebar = (props: MarketsSidebarProps) => {
   };
 
   useEffect(() => {
-    console.log('B -- from marketSidebar open pos', openPositions);
-    console.log('B -- from marketSidebar available nfts', availableNFTs);
   }, [openPositions, availableNFTs]);
 
   const items: [HoneyTabItem, HoneyTabItem] = [
@@ -83,6 +82,7 @@ const MarketsSidebar = (props: MarketsSidebarProps) => {
                   hideMobileSidebar={hideMobileSidebar}
                   fetchedSolPrice={fetchedSolPrice}
                   calculatedInterestRate={calculatedInterestRate}
+                  currentMarketId={currentMarketId}
                 />
             )}
             {activeTab === 'repay' && Boolean(openPositions.length) && (

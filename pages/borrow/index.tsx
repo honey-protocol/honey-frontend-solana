@@ -66,7 +66,7 @@ import HoneyTableRow from 'components/HoneyTable/HoneyTableRow/HoneyTableRow';
 import HoneyTableNameCell from '../../components/HoneyTable/HoneyTableNameCell/HoneyTableNameCell';
 import { marketCollections, OpenPositions } from 'constants/borrowLendMarkets';
 import { HONEY_GENESIS_BEE, LIFINITY_FLARES, OG_ATADIANS, PESKY_PENGUINS } from '../../constants/borrowLendMarkets';
-import { HONEY_GENESIS_MARKET_ID, PESKY_PENGUINS_MARKET_ID } from '../../constants/loan';
+import { HONEY_GENESIS_MARKET_ID, PESKY_PENGUINS_MARKET_ID, OG_ATADIANS_MARKET_ID, LIFINITY_FLARES_MARKET_ID } from '../../constants/loan';
 import { setMarketId } from 'pages/_app';
 
 // TODO: fetch based on config
@@ -159,6 +159,7 @@ const Markets: NextPage = () => {
   const [isMyCollectionsFilterEnabled, setIsMyCollectionsFilterEnabled] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [isMobileSidebarVisible, setShowMobileSidebar] = useState(false);
+
   /**
    * @description fetches all nfts in users wallet
    * @params wallet
@@ -169,9 +170,28 @@ const Markets: NextPage = () => {
   */
   const availableNFTs = useFetchNFTByUser(wallet);
   const reFetchNFTs = availableNFTs[2];
-  // sets the users available nfts 
+  
+  // sets the users available nfts for current active market
+  async function filterNftsForMarket(nftArray: NFT[]) {
+    // let activeMarket: string;
+    // if (currentMarketId == HONEY_GENESIS_MARKET_ID) activeMarket = 'Honey'
+      // return nft.name.includes('Honey');
+    // if (currentMarketId == PESKY_PENGUINS_MARKET_ID) activeMarket = 'Pesky'
+      // return nft.name.includes('Pesky');
+    // if (currentMarketId == OG_ATADIANS_MARKET_ID) activeMarket = 'OG'
+      // return nft.name.includes('OG');
+    // if (currentMarketId == LIFINITY_FLARES_MARKET_ID) activeMarket = 'Lifinity'
+    // return nft.name.includes('Lifinity');
+
+    // const filteredNftArray = nftArray.filter((nft) => nft.name.includes(activeMarket));
+    // console.log('this is filterednftarr')
+    // setUserAvailableNFTs(filteredNftArray);
+    return;
+  }
+
+  // calls upon setting the user nft list per market
   useEffect(() => {
-    setUserAvailableNFTs(availableNFTs[0]);
+    if (availableNFTs) setUserAvailableNFTs(availableNFTs[0]);
   }, [availableNFTs]);
 
   // function for fetching the total market debt
@@ -475,7 +495,7 @@ const Markets: NextPage = () => {
           hidden: windowWidth < TABLET_BP,
           sorter: (a: MarketTableRow, b: MarketTableRow) => a.rate - b.rate,
           render: (rate: number, market: any) => {
-            return ( <div className={style.rateCell}>{fp(market.rate)}</div> )
+            return ( <div className={style.rateCell}>{fp(calculatedInterestRate)}</div> )
           }
         },
         {
@@ -1076,6 +1096,7 @@ const Markets: NextPage = () => {
           hideMobileSidebar={hideMobileSidebar}
           fetchedSolPrice={fetchedSolPrice}
           calculatedInterestRate={calculatedInterestRate}
+          currentMarketId={currentMarketId}
         />
       </HoneySider>
     </LayoutRedesign>

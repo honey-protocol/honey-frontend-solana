@@ -44,7 +44,8 @@ const BorrowForm = (props: BorrowProps) => {
     loanToValue,
     hideMobileSidebar,
     fetchedSolPrice,
-    calculatedInterestRate
+    calculatedInterestRate,
+    currentMarketId,
   } = props;
 
   const [valueUSD, setValueUSD] = useState<number>(0);
@@ -156,6 +157,7 @@ const BorrowForm = (props: BorrowProps) => {
             selectNFT={selectNFT}
             nftPrice={nftPrice}
             selectedNFTMint={selectedNft?.mint}
+            currentMarketId={currentMarketId}
           />
         </>
       );

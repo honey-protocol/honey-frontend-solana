@@ -1,4 +1,4 @@
-import { MAX_LTV } from 'constants/loan';
+import { HONEY_GENESIS_MARKET_ID, MAX_LTV, PESKY_PENGUINS_MARKET_ID } from 'constants/loan';
 import { RoundHalfDown } from 'helpers/utils';
 import React from 'react';
 import NftCard from '../NftCard/NftCard';
@@ -12,20 +12,30 @@ type NftListProps = {
   selectNFT: (name: string, img: string, mint: any) => void;
   nftPrice: any;
   selectedNFTMint: string | undefined;
+  currentMarketId: string;
 };
 
 const NftList = (props: NftListProps) => {
-  const { data, selectNFT, nftPrice, selectedNFTMint } = props;
+  const { data, selectNFT, nftPrice, selectedNFTMint, currentMarketId } = props;
 
   function handleClick(item: any) {
-    console.log('item--', item);
     selectNFT(item.name, item.image, item.mint);
+  }
+
+  const renderNftList = () => {
+    if (currentMarketId == HONEY_GENESIS_MARKET_ID) {
+      return data.filter((nft) => nft.name.includes('Honey'))
+    } else if (currentMarketId == PESKY_PENGUINS_MARKET_ID) {
+      return data.filter((nft) => nft.name.includes('Pesky'))
+    } else {
+      return []
+    }
   }
 
   return (
     <div className={style.nftsListContainer}>
       {data &&
-        data.map(
+        renderNftList().map(
           (item, index) => {
             if (
               item.name.includes(PESKY_PENGUINS) || 
