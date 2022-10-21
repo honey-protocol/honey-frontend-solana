@@ -64,7 +64,6 @@ import { Typography } from 'antd';
 import { pageDescription, pageTitle } from 'styles/common.css';
 import HoneyTableRow from 'components/HoneyTable/HoneyTableRow/HoneyTableRow';
 import HoneyTableNameCell from '../../components/HoneyTable/HoneyTableNameCell/HoneyTableNameCell';
-import RiskLvl from '../../components/RiskLvl/RiskLvl';
 import HealthLvl from '../../components/HealthLvl/HealthLvl';
 import HoneyTooltip from '../../components/HoneyTooltip/HoneyTooltip';
 import { LIQUIDATION_THRESHOLD } from '../../constants/loan';
@@ -711,7 +710,7 @@ const Markets: NextPage = () => {
           </div>
           <div className={style.nameCellText}>
             <div className={style.collectionNameMobile}>{name}</div>
-            <HealthLvl healthLvl={healthPercent} /> Health
+            <HealthLvl healthLvl={healthPercent} />
           </div>
         </div>
       )
