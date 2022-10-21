@@ -1090,7 +1090,12 @@ const Markets: NextPage = () => {
                           footer={
                             record.positions.length
                               ? ExpandedTableFooter
-                              : undefined
+                              : () => (
+                                  <HoneyButton variant="secondary" isFluid>
+                                    Deposit{' '}
+                                    <div className={style.arrowRightIcon} />
+                                  </HoneyButton>
+                                )
                           }
                         />
                       </div>
