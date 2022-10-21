@@ -592,9 +592,6 @@ const Liquidate: NextPage = () => {
                     </div>
                     <div className={style.nameCellMobile}>
                       <div className={style.collectionName}>{name}</div>
-                      <div className={style.rateCellMobile}>
-                        {fp(row.risk * 100)}
-                      </div>
                     </div>
                   </>
                 }
@@ -609,8 +606,8 @@ const Liquidate: NextPage = () => {
 
               <HoneyTableRow>
                 <div className={style.rateCell}>{fp(row.risk * 100)}</div>
-                <div className={style.rateCell}>{fs(row.tvl)}</div>
-                <div className={style.availableCell}>{fs(row.totalDebt)}</div>
+                <div className={style.rateCell}>{fs(row.totalDebt)}</div>
+                <div className={style.availableCell}>{fs(row.tvl)}</div>
               </HoneyTableRow>
             </>
           );
@@ -681,9 +678,9 @@ const Liquidate: NextPage = () => {
           </div>
 
           <div className={style.mobileTableHeader}>
-            <div className={style.tableCell}>Voted For</div>
-            <div className={style.tableCell}>Against</div>
-            <div className={style.tableCell}>Status</div>
+            <div className={style.tableCell}>Health</div>
+            <div className={style.tableCell}>Debt</div>
+            <div className={style.tableCell}>TVL</div>
           </div>
           <HoneyTable
             hasRowsShadow={true}
