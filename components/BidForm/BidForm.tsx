@@ -32,7 +32,8 @@ const BidForm = (props: BidFormProps) => {
     fetchedSolPrice,
     handleRevokeBid,
     handleIncreaseBid,
-    handlePlaceBid
+    handlePlaceBid,
+    onCancel
   } = props;
   const [valueUSD, setValueUSD] = useState<number>(0);
   const [valueSOL, setValueSOL] = useState<number>(0);
@@ -98,11 +99,16 @@ const BidForm = (props: BidFormProps) => {
         ) : (
           <div className={styles.buttons}>
             <div className={styles.smallCol}>
+              <HoneyButton variant="secondary" onClick={() => onCancel()}>
+                Cancel
+              </HoneyButton>
+            </div>
+            <div className={styles.smallCol}>
               <HoneyButton
                 variant="secondary"
                 onClick={() => handleRevokeBid('revoke_bid', toast)}
               >
-                Cancel
+                REVOKE
               </HoneyButton>
             </div>
             <div className={styles.bigCol}>

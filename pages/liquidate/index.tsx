@@ -41,9 +41,13 @@ import { HONEY_MARKET_ID, HONEY_PROGRAM_ID } from 'constants/loan';
 import { NATIVE_MINT } from '@solana/spl-token';
 import HoneySider from 'components/HoneySider/HoneySider';
 import HoneyContent from 'components/HoneyContent/HoneyContent';
+import { hideTablet, showTablet, table } from 'styles/markets.css';
 import { pageDescription, pageTitle } from 'styles/common.css';
 import { Typography } from 'antd';
 import { ToastProps } from 'hooks/useToast';
+import HoneyTableRow from 'components/HoneyTable/HoneyTableRow/HoneyTableRow';
+import HoneyTableNameCell from 'components/HoneyTable/HoneyTableNameCell/HoneyTableNameCell';
+import LiquidateExpandTableMobile from 'components/LiquidateExpandTable/LiquidateExpandTableMobile';
 
 const { formatPercent: fp, formatSol: fs, formatRoundDown: fd } = formatNumber;
 const Liquidate: NextPage = () => {
@@ -112,6 +116,17 @@ const Liquidate: NextPage = () => {
   const [userBalance, setUserBalance] = useState(0);
   const [loanToValue, setLoanToValue] = useState<number>(0);
   const [fetchedSolPrice, setFetchedSolPrice] = useState(0);
+  const [isMobileSidebarVisible, setShowMobileSidebar] = useState(false);
+
+  const showMobileSidebar = () => {
+    setShowMobileSidebar(true);
+    document.body.classList.add('disable-scroll');
+  };
+
+  const hideMobileSidebar = () => {
+    setShowMobileSidebar(false);
+    document.body.classList.remove('disable-scroll');
+  };
 
   // create stringyfied instance of walletPK
   let stringyfiedWalletPK = sdkConfig.sdkWallet?.publicKey.toString();
@@ -552,21 +567,69 @@ const Liquidate: NextPage = () => {
     [isMyBidsFilterEnabled, tableData, searchQuery]
   );
 
+  const columnsMobile: ColumnType<LiquidateTableRow>[] = useMemo(
+    () => [
+      {
+        width: columnsWidth[0],
+        dataIndex: 'name',
+        key: 'name',
+        render: (name: string, row: LiquidateTableRow) => {
+          return (
+            <>
+              <HoneyTableNameCell
+                leftSide={
+                  <>
+                    <div className={style.logoWrapper}>
+                      <div className={style.collectionLogo}>
+                        <HexaBoxContainer>
+                          <Image src={honeyGenesisBee} />
+                        </HexaBoxContainer>
+                      </div>
+                    </div>
+                    <div className={style.nameCellMobile}>
+                      <div className={style.collectionName}>{name}</div>
+                      <div className={style.rateCellMobile}>
+                        {fp(row.risk * 100)}
+                      </div>
+                    </div>
+                  </>
+                }
+                rightSide={
+                  <div className={style.buttonsCell}>
+                    <HoneyButton variant="text">
+                      View <div className={style.arrowIcon} />
+                    </HoneyButton>
+                  </div>
+                }
+              />
+
+              <HoneyTableRow>
+                <div className={style.rateCell}>{fp(row.risk * 100)}</div>
+                <div className={style.rateCell}>{fs(row.tvl)}</div>
+                <div className={style.availableCell}>{fs(row.totalDebt)}</div>
+              </HoneyTableRow>
+            </>
+          );
+        }
+      }
+    ],
+    [isMyBidsFilterEnabled, tableData, searchQuery]
+  );
+
   const liquidateSidebar = () => (
-    <HoneySider>
-      <HoneySider>
-        <LiquidateSidebar
-          collectionId="0"
-          biddingArray={biddingArray}
-          userBalance={userBalance}
-          highestBiddingValue={highestBiddingValue}
-          currentUserBid={currentUserBid}
-          handleRevokeBid={handleRevokeBid}
-          handleIncreaseBid={handleIncreaseBid}
-          handlePlaceBid={handlePlaceBid}
-          fetchedSolPrice={fetchedSolPrice}
-        />
-      </HoneySider>
+    <HoneySider isMobileSidebarVisible={isMobileSidebarVisible}>
+      <LiquidateSidebar
+        collectionId="0"
+        biddingArray={biddingArray}
+        userBalance={userBalance}
+        highestBiddingValue={highestBiddingValue}
+        currentUserBid={currentUserBid}
+        handleRevokeBid={handleRevokeBid}
+        handleIncreaseBid={handleIncreaseBid}
+        handlePlaceBid={handlePlaceBid}
+        fetchedSolPrice={fetchedSolPrice}
+        onCancel={hideMobileSidebar}
+      />
     </HoneySider>
   );
 
@@ -579,31 +642,72 @@ const Liquidate: NextPage = () => {
             Bid on discounted NFTs from borrowers{' '}
           </Typography.Text>
         </div>
-        <HoneyTable
-          hasRowsShadow={true}
-          tableLayout="fixed"
-          columns={columns}
-          dataSource={tableDataFiltered}
-          pagination={false}
-          className={classNames(style.table, {
-            [style.emptyTable]: !tableDataFiltered.length
-          })}
-          expandable={{
-            // we use our own custom expand column
-            showExpandColumn: false,
-            onExpand: (expanded, row) =>
-              setExpandedRowKeys(expanded ? [row.key] : []),
-            expandedRowKeys,
-            expandedRowRender: record => {
-              return (
-                <div className={style.expandSection}>
-                  <div className={style.dashedDivider} />
-                  <LiquidateExpandTable data={record.positions} />
-                </div>
-              );
-            }
-          }}
-        />
+        <div className={hideTablet}>
+          <HoneyTable
+            hasRowsShadow={true}
+            tableLayout="fixed"
+            columns={columns}
+            dataSource={tableDataFiltered}
+            pagination={false}
+            className={classNames(style.table, {
+              [style.emptyTable]: !tableDataFiltered.length
+            })}
+            expandable={{
+              // we use our own custom expand column
+              showExpandColumn: false,
+              onExpand: (expanded, row) =>
+                setExpandedRowKeys(expanded ? [row.key] : []),
+              expandedRowKeys,
+              expandedRowRender: record => {
+                return (
+                  <div className={style.expandSection}>
+                    <div className={style.dashedDivider} />
+                    <LiquidateExpandTable data={record.positions} />
+                  </div>
+                );
+              }
+            }}
+          />
+        </div>
+        <div className={showTablet}>
+          <div className={style.mobileTableHeader}>
+            <div className={style.tableCell}>Voted For</div>
+            <div className={style.tableCell}>Against</div>
+            <div className={style.tableCell}>Status</div>
+          </div>
+
+          <HoneyTable
+            hasRowsShadow={true}
+            tableLayout="fixed"
+            columns={columnsMobile}
+            dataSource={tableDataFiltered}
+            pagination={false}
+            className={classNames(style.table, {
+              [style.emptyTable]: !tableDataFiltered.length
+            })}
+            expandable={{
+              // we use our own custom expand column
+              showExpandColumn: false,
+              onExpand: (expanded, row) =>
+                setExpandedRowKeys(expanded ? [row.key] : []),
+              expandedRowKeys,
+              expandedRowRender: record => {
+                return (
+                  <div
+                    className={style.expandSection}
+                    onClick={showMobileSidebar}
+                  >
+                    <div className={style.dashedDivider} />
+                    <LiquidateExpandTableMobile
+                      data={record.positions}
+                      onPlaceBid={showMobileSidebar}
+                    />
+                  </div>
+                );
+              }
+            }}
+          />
+        </div>
         {!tableDataFiltered.length &&
           (isMyBidsFilterEnabled ? (
             <div className={style.emptyStateContainer}>

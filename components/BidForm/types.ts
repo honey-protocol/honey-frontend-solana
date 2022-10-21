@@ -16,4 +16,5 @@ export type BidFormProps = {
     userBid: number,
     toast: ToastProps['toast']
   ) => void;
+  onCancel: Function;
 };
