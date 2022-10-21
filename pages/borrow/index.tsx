@@ -68,6 +68,7 @@ import { marketCollections, OpenPositions } from 'constants/borrowLendMarkets';
 import { HONEY_GENESIS_BEE, LIFINITY_FLARES, OG_ATADIANS, PESKY_PENGUINS } from '../../constants/borrowLendMarkets';
 import { HONEY_GENESIS_MARKET_ID, PESKY_PENGUINS_MARKET_ID, OG_ATADIANS_MARKET_ID, LIFINITY_FLARES_MARKET_ID } from '../../constants/loan';
 import { setMarketId } from 'pages/_app';
+import { render } from 'react-dom';
 
 // TODO: fetch based on config
 const network = 'mainnet-beta';
@@ -306,29 +307,28 @@ const Markets: NextPage = () => {
   // MOCK DATA FOR NOW
   useEffect(() => {
     if (sdkConfig.saberHqConnection && sdkConfig.sdkWallet) {
+
       marketCollections.map(async (collection) => 
-      {
-        if(collection.id == '') return;
+        {
+          if(collection.id == '') return;
 
-        await populateMarketData(collection, sdkConfig.saberHqConnection, sdkConfig.sdkWallet!, currentMarketId);
+          await populateMarketData(collection, sdkConfig.saberHqConnection, sdkConfig.sdkWallet!, currentMarketId);
+          collection.positions = userOpenPositions;
+          collection.rate = await getInterestRate(collection.utilizationRate) || 0
+          collection.id == HONEY_GENESIS_MARKET_ID ? setHoneyInterestRate(collection.rate) : setPeskyInterestRate(collection.rate);
+        }
+      );
 
-        collection.positions = userOpenPositions.filter((position: any) => position.symbol == collection.key)
-        collection.rate = await getInterestRate(collection.utilizationRate) || 0
-        collection.id == HONEY_GENESIS_MARKET_ID ? setHoneyInterestRate(collection.rate) : setPeskyInterestRate(collection.rate);
-      }
-    );
-
-    setTimeout(() => {
-      setTableData(marketCollections);
-      setTableDataFiltered(marketCollections);
-    }, 3000)
+      setTimeout(() => {
+        setTableData(marketCollections);
+        setTableDataFiltered(marketCollections);
+      }, 3000)
 
     }
   }, [
       totalMarketDeposits,
       totalMarketDebt,
       nftPrice,
-      userOpenPositions,
       userAllowance,
       userDebt,
       loanToValue,
@@ -336,10 +336,10 @@ const Markets: NextPage = () => {
       parsedReserves,
       sdkConfig.saberHqConnection,
       sdkConfig.sdkWallet,
-      collateralNFTPositions,
       currentMarketId,
       peskyInterestRate,
-      honeyInterestRate
+      honeyInterestRate,
+      userOpenPositions
     ]
   );
 
@@ -579,7 +579,7 @@ const Markets: NextPage = () => {
     ],
     [isMyCollectionsFilterEnabled, tableData, searchQuery]
   );
-
+  // position in each market
   const expandColumns: ColumnType<MarketTablePosition>[] = [
     {
       dataIndex: 'name',
@@ -589,11 +589,17 @@ const Markets: NextPage = () => {
           <div className={style.expandedRowIcon} />
           <div className={style.collectionLogo}>
             <HexaBoxContainer>
-              <Image src={honeyGenesisBee} alt="Honey Genesis Bee" />
+              {
+                currentMarketId == HONEY_GENESIS_MARKET_ID 
+                ?
+                renderImage(HONEY_GENESIS_BEE)
+                :
+                renderImage(PESKY_PENGUINS)
+              }
             </HexaBoxContainer>
           </div>
           <div className={style.nameCellText}>
-            <div className={style.collectionName}>{name}</div>
+            <div className={style.collectionName}>{currentMarketId == HONEY_GENESIS_MARKET_ID ? 'Honey Genesis Bee' : 'Pesky Penguin'}</div>
             <div className={style.risk.safe}>
               <span className={style.valueCell}>{fp(loanToValue * 100)}</span>{' '}
               <span className={style.riskText}>Risk lvl</span>

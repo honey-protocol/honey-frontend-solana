@@ -218,11 +218,10 @@ export async function calcNFT(
  */
 export async function getInterestRate(utilizationRate: number) {
   let interestRate = 0;
-  console.log('@@--', utilizationRate);
+
   try {
     if (utilizationRate < OPTIMAL_RATIO_ONE) {
       interestRate = BASE_BORROW_RATE + (utilizationRate / OPTIMAL_RATIO_ONE) * (BORROW_RATE_ONE - BASE_BORROW_RATE);
-      console.log('BB interest rate', interestRate * 100)
       return (interestRate * 100);
     } else if (utilizationRate > OPTIMAL_RATIO_ONE) {
         if (utilizationRate < OPTIMAL_RATIO_TWO) {
@@ -278,7 +277,7 @@ export async function populateMarketData(collection: Market, connection: Connect
     collection.available = totalMarketDeposits;
     collection.value = sumOfTotalValue;
     collection.connection = connection;
-    collection.utilizationRate = Number(f((totalMarketDebt) / (totalMarketDeposits + totalMarketDebt)))
+    collection.utilizationRate = Number(f((totalMarketDebt) / (totalMarketDeposits + totalMarketDebt)));
     collection.user = honeyUser;
 
     return collection;
