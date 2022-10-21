@@ -25,6 +25,8 @@ export const LiquidateExpandTableMobile: FC<{
   const expandColumnsMobile: ColumnType<LiquidateTablePosition>[] = [
     {
       dataIndex: 'name',
+      sortOrder: 'descend',
+      sorter: (a, b) => a.riskLvl - b.riskLvl,
       render: (name, record) => (
         <div className={sharedStyles.expandedRowNameCell}>
           <div className={sharedStyles.expandedRowIcon} />
