@@ -472,5 +472,7 @@ export const mobileSearchAndToggleContainer = style({
   borderRadius: '12px',
   minHeight: '40px',
   background: vars.colors.grayMiddle,
-  paddingRight: '10px'
+  paddingRight: '10px',
+  display: 'flex',
+  alignItems: 'center'
 });

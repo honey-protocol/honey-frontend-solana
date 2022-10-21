@@ -419,19 +419,23 @@ const Liquidate: NextPage = () => {
     debouncedSearch(searchQuery);
   }, [tableData]);
 
+  const SearchForm = () => {
+    return (
+      <SearchInput
+        onChange={handleSearchInputChange}
+        placeholder="Search by name"
+        value={searchQuery}
+      />
+    );
+  };
+
   const columnsWidth: Array<number | string> = [200, 100, 150, 150, 100, 70];
 
   const columns: ColumnType<LiquidateTableRow>[] = useMemo(
     () => [
       {
         width: columnsWidth[0],
-        title: (
-          <SearchInput
-            onChange={handleSearchInputChange}
-            placeholder="Search by name"
-            value={searchQuery}
-          />
-        ),
+        title: SearchForm,
         dataIndex: 'name',
         key: 'name',
         render: (name: string) => {
@@ -670,18 +674,24 @@ const Liquidate: NextPage = () => {
           />
         </div>
         <div className={showTablet}>
+          <div className={classNames(style.mobileSearchAndToggleContainer)}>
+            <div className={style.mobileRow}>
+              <SearchForm />
+            </div>
+          </div>
+
           <div className={style.mobileTableHeader}>
             <div className={style.tableCell}>Voted For</div>
             <div className={style.tableCell}>Against</div>
             <div className={style.tableCell}>Status</div>
           </div>
-
           <HoneyTable
             hasRowsShadow={true}
             tableLayout="fixed"
             columns={columnsMobile}
             dataSource={tableDataFiltered}
             pagination={false}
+            showHeader={false}
             className={classNames(style.table, {
               [style.emptyTable]: !tableDataFiltered.length
             })}
