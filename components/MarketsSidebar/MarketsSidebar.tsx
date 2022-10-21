@@ -37,7 +37,8 @@ const MarketsSidebar = (props: MarketsSidebarProps) => {
   };
 
   useEffect(() => {
-    console.log('B -- from marketSidebar', openPositions);
+    console.log('B -- from marketSidebar open pos', openPositions);
+    console.log('B -- from marketSidebar available nfts', availableNFTs);
   }, [openPositions, availableNFTs]);
 
   const items: [HoneyTabItem, HoneyTabItem] = [

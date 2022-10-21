@@ -138,7 +138,7 @@ const Markets: NextPage = () => {
   const [nftPrice, setNftPrice] = useState(0);
   const [calculatedNftPrice, setCalculatedNftPrice] = useState(false);
   const [marketPositions, setMarketPositions] = useState(0);
-  const [userAvailableNFTs, setUserAvailableNFTs] = useState<Array<UserNFTs>>([]);
+  const [userAvailableNFTs, setUserAvailableNFTs] = useState<Array<NFT>>([]);
   const [userOpenPositions, setUserOpenPositions] = useState<Array<OpenPositions>>([]);
   const [userAllowance, setUserAllowance] = useState(0);
   const [loanToValue, setLoanToValue] = useState(0);
@@ -178,7 +178,6 @@ const Markets: NextPage = () => {
   async function fetchTotalMarketDebt(honeyReserves: any) {
     const marketDebt = await calculateMarketDebt(honeyReserves);
     setTotalMarketDebt(marketDebt);
-    console.log('market debt', marketDebt);
   }
   // if honey reserves -> call fetchTotalMarketDebt
   useEffect(() => {
@@ -307,8 +306,6 @@ const Markets: NextPage = () => {
     if (collateralNFTPositions) setUserOpenPositions(collateralNFTPositions)
   }, [collateralNFTPositions, currentMarketId]);
 
-  if (userOpenPositions) console.log('B---', userOpenPositions)
-
   // calculates the current interest rate - utilization rate is required param
   async function calculateInterestRate(utilizationRate: number) {
     let interestRate = await getInterestRate(utilizationRate);
@@ -322,22 +319,12 @@ const Markets: NextPage = () => {
   // PUT YOUR DATA SOURCE HERE
   // MOCK DATA FOR NOW
   useEffect(() => {
-    // console.log('user open pos', marketCollections)
     if (sdkConfig.saberHqConnection && sdkConfig.sdkWallet) {
       marketCollections.map(async (collection) => 
       {
         if(collection.id == '') return;
-        collection.rate = calculatedInterestRate || 0;
         await populateMarketData(collection, sdkConfig.saberHqConnection, sdkConfig.sdkWallet!);
-        // collection.available = collection.id != 'HNYG' ? totalMarketDeposits : 0,
-        // collection.value = collection.key == 'HNYG' ? sumOfTotalValue : 0,
-        // collection.allowance = collection.key == 'HNYG' ? userAllowance : 0,
-        // collection.rate = collection.key == 'HNYG' ? calculatedInterestRate : 0,
-        collection.positions = userOpenPositions.filter((position: any) => position.symbol == collection.key),
-        // collection.debt = collection.key == 'HNYG' ? userDebt : 0
-        setUtilizationRate(collection.utilizationRate);
-        // setHoneyMarketCollateralNftPositions(collection.positions);
-        // console.log('open - pos', collection.positions);
+        collection.positions = userOpenPositions.filter((position: any) => position.symbol == collection.key)
       }
     );
     setTableData(marketCollections);
@@ -758,28 +745,14 @@ const Markets: NextPage = () => {
       toast.processing();
 
       marketCollections.map(async (collection) => {
-        console.log('collection::', collection)
-        console.log('name', name)
         if (name.includes(collection.name)) {
-          
-          console.log('~~collection', collection)
-          console.log('~~collection name', name)
-
           const metadata = await Metadata.findByMint(
-            // sdkConfig.saberHqConnection,
             collection.connection,
             mintID
           );
 
-          console.log('market.address', honeyUser.market.address.toString());
-          console.log('market.authority', honeyUser.market.marketAuthority.toString());
-          console.log('market.nftSwitchBoardPriceAggre', honeyUser.market.address.toString());
-          console.log('market.owner', honeyUser.market.owner.toString());
-          console.log('market.quoteTOkenMint', honeyUser.market.quoteTokenMint.toString());
-          
           const tx = await depositNFT(
             collection.connection,
-            // collection.user, - TODO: this user is created in the helper and fails
             honeyUser,
             metadata.pubkey
           );
@@ -789,7 +762,6 @@ const Markets: NextPage = () => {
               'Deposit success',
               `https://solscan.io/tx/${tx[1][0]}?cluster=${network}`
             );
-            console.log('is there a success?');
     
             await refreshPositions();
             reFetchNFTs({});
@@ -825,9 +797,9 @@ const Markets: NextPage = () => {
       );
 
       if (tx[0] == 'SUCCESS') {
-        console.log('is there a success');
-        await reFetchNFTs({});
         await refreshPositions();
+        reFetchNFTs({});
+
         toast.success(
           'Withdraw success',
           `https://solscan.io/tx/${tx[1][0]}?cluster=${network}`

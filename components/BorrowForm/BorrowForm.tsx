@@ -56,9 +56,6 @@ const BorrowForm = (props: BorrowProps) => {
   const { toast, ToastComponent } = useToast();
   const SOLBalance = useSolBalance();
 
-  // Only for test purposes
-  // const isNftSelected = true;
-
   const borrowedValue = userDebt;
   const maxValue = userAllowance;
   const solPrice = fetchedSolPrice;
@@ -119,8 +116,6 @@ const BorrowForm = (props: BorrowProps) => {
     }
   };
 
-  useEffect(() => {}, [userAllowance]);
-
   // if user has an open position, we need to be able to click on the position and borrow against it
   useEffect(() => {
     if (openPositions?.length) {
@@ -131,7 +126,6 @@ const BorrowForm = (props: BorrowProps) => {
     } else if (openPositions.length == 0) {
       setIsNftSelected(false);
       setHasOpenPosition(false);
-      setSelectedNft({ name: '', img: '', mint: ''});
     }
   }, [openPositions, availableNFTs]);
 
