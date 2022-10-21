@@ -678,7 +678,7 @@ const Liquidate: NextPage = () => {
           </div>
 
           <div className={style.mobileTableHeader}>
-            <div className={style.tableCell}>Health</div>
+            <div className={style.tableCell}>Risk</div>
             <div className={style.tableCell}>Debt</div>
             <div className={style.tableCell}>TVL</div>
           </div>
