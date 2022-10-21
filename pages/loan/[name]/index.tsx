@@ -18,9 +18,9 @@ import {
   toastResponse
 } from '../../../helpers/loanHelpers/index';
 import {
-  borrow,
+  borrowAndRefresh,
   depositNFT,
-  repay,
+  repayAndRefresh,
   useBorrowPositions,
   useHoney,
   useMarket,
@@ -243,7 +243,6 @@ const Loan: NextPage = () => {
     if (collateralNFTPositions) {
       setUserCollateralPositions(collateralNFTPositions);
     }
-    
   }, [
     collateralNFTPositions,
     loanPositions,
@@ -350,7 +349,7 @@ const Loan: NextPage = () => {
       const borrowTokenMint = new PublicKey(
         'So11111111111111111111111111111111111111112'
       );
-      const tx = await borrow(
+      const tx = await borrowAndRefresh(
         honeyUser,
         val * LAMPORTS_PER_SOL,
         borrowTokenMint,
@@ -359,19 +358,6 @@ const Loan: NextPage = () => {
 
       if (tx[0] == 'SUCCESS') {
         toastResponse('SUCCESS', 'Borrow success', 'SUCCESS', 'BORROW');
-
-        let refreshedHoneyReserves = await honeyReserves[0].sendRefreshTx();
-        const latestBlockHash =
-          await sdkConfig.saberHqConnection.getLatestBlockhash();
-
-        await sdkConfig.saberHqConnection.confirmTransaction(
-          {
-            blockhash: latestBlockHash.blockhash,
-            lastValidBlockHeight: latestBlockHash.lastValidBlockHeight,
-            signature: refreshedHoneyReserves
-          },
-          'processed'
-        );
 
         await fetchMarket();
         await honeyUser.refresh().then((val: any) => {
@@ -401,7 +387,7 @@ const Loan: NextPage = () => {
       const repayTokenMint = new PublicKey(
         'So11111111111111111111111111111111111111112'
       );
-      const tx = await repay(
+      const tx = await repayAndRefresh(
         honeyUser,
         val * LAMPORTS_PER_SOL,
         repayTokenMint,
@@ -410,19 +396,6 @@ const Loan: NextPage = () => {
 
       if (tx[0] == 'SUCCESS') {
         toastResponse('SUCCESS', 'Repay success', 'SUCCESS', 'REPAY');
-        let refreshedHoneyReserves = await honeyReserves[0].sendRefreshTx();
-        const latestBlockHash =
-          await sdkConfig.saberHqConnection.getLatestBlockhash();
-
-        await sdkConfig.saberHqConnection.confirmTransaction(
-          {
-            blockhash: latestBlockHash.blockhash,
-            lastValidBlockHeight: latestBlockHash.lastValidBlockHeight,
-            signature: refreshedHoneyReserves
-          },
-          'processed'
-        );
-
         await fetchMarket();
         await honeyUser.refresh().then((val: any) => {
           reserveHoneyState == 0
