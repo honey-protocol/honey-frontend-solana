@@ -50,23 +50,6 @@ export const LiquidateExpandTableMobile: FC<{
           />
         </div>
       )
-    },
-    {
-      dataIndex: 'debt',
-      render: debt => (
-        <div className={sharedStyles.expandedRowCell}>
-          <InfoBlock title={'Debt:'} value={fs(debt)} />
-        </div>
-      )
-    },
-    {
-      dataIndex: 'estimatedValue',
-      sorter: (a, b) => a.estimatedValue - b.estimatedValue,
-      render: estimatedValue => (
-        <div className={sharedStyles.expandedRowCell}>
-          <InfoBlock title={'Estimated value:'} value={fs(estimatedValue)} />
-        </div>
-      )
     }
   ];
   return (
