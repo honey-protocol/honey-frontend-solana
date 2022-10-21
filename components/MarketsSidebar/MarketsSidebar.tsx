@@ -38,6 +38,7 @@ const MarketsSidebar = (props: MarketsSidebarProps) => {
   };
 
   useEffect(() => {
+    if (openPositions.length == 0) handleTabChange('borrow')
   }, [openPositions, availableNFTs]);
 
   const items: [HoneyTabItem, HoneyTabItem] = [
