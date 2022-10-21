@@ -13,17 +13,7 @@ export const health = styleVariants({
   }
 });
 
-export const healthText = style([
-  typography.caption,
-  {
-    display: 'none',
-    '@media': {
-      [`screen and (min-width: ${breakpoints.tablet}px)`]: {
-        display: 'initial'
-      }
-    }
-  }
-]);
+export const healthText = style([typography.caption]);
 
 export const valueCell = style([typography.numbersRegular, {}]);
 export const d = style({ background: 'red' });
