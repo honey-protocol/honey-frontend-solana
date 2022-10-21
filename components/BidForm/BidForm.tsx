@@ -103,14 +103,6 @@ const BidForm = (props: BidFormProps) => {
                 Cancel
               </HoneyButton>
             </div>
-            <div className={styles.smallCol}>
-              <HoneyButton
-                variant="secondary"
-                onClick={() => handleRevokeBid('revoke_bid', toast)}
-              >
-                REVOKE
-              </HoneyButton>
-            </div>
             <div className={styles.bigCol}>
               <HoneyButton
                 variant="primary"
