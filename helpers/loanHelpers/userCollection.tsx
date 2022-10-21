@@ -1,5 +1,5 @@
 import { RoundHalfDown, RoundHalfUp } from 'helpers/utils';
-import { MAX_LTV } from '../../constants/loan';
+import { HONEY_GENESIS_MARKET_ID, MAX_LTV } from '../../constants/loan';
 import BN from 'bn.js';
 import { Connection, LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js';
 import { BnToDecimal, getOraclePrice } from '../../helpers/loanHelpers/index';
@@ -18,6 +18,14 @@ import { ConnectedWallet } from '@saberhq/use-solana';
 import * as anchor from "@project-serum/anchor";
 import { CollateralNFTPosition, getHealthStatus, getNFTAssociatedMetadata, HoneyClient, HoneyMarket, HoneyMarketReserveInfo, HoneyReserve, HoneyUser, LoanPosition, METADATA_PROGRAM_ID, NftPosition, ObligationAccount, ObligationPositionStruct, PositionInfoList, TReserve } from '@honey-finance/sdk';
 import { Metadata } from '@metaplex-foundation/mpl-token-metadata';
+import { formatNumber } from '../../helpers/format';
+
+/**
+ * @description formatting functions to format with perfect / format in SOL with icon or just a regular 2 decimal format
+ * @params value to be formatted
+ * @returns requested format 
+*/
+const { format: f, formatPercent: fp, formatSol: fs } = formatNumber;
 
 /**
  * @description calculates the users total deposits
@@ -210,10 +218,11 @@ export async function calcNFT(
  */
 export async function getInterestRate(utilizationRate: number) {
   let interestRate = 0;
-
+  console.log('@@--', utilizationRate);
   try {
     if (utilizationRate < OPTIMAL_RATIO_ONE) {
       interestRate = BASE_BORROW_RATE + (utilizationRate / OPTIMAL_RATIO_ONE) * (BORROW_RATE_ONE - BASE_BORROW_RATE);
+      console.log('BB interest rate', interestRate * 100)
       return (interestRate * 100);
     } else if (utilizationRate > OPTIMAL_RATIO_ONE) {
         if (utilizationRate < OPTIMAL_RATIO_TWO) {
@@ -229,7 +238,7 @@ export async function getInterestRate(utilizationRate: number) {
   }
 }
 
-export async function populateMarketData(collection: Market, connection: Connection, wallet: ConnectedWallet) {
+export async function populateMarketData(collection: Market, connection: Connection, wallet: ConnectedWallet, currentMarketId: string) {
   if(wallet == null)
     return;
   
@@ -269,16 +278,10 @@ export async function populateMarketData(collection: Market, connection: Connect
     collection.available = totalMarketDeposits;
     collection.value = sumOfTotalValue;
     collection.connection = connection;
+    collection.utilizationRate = Number(f((totalMarketDebt) / (totalMarketDeposits + totalMarketDebt)))
     collection.user = honeyUser;
-    collection.utilizationRate = (totalMarketDeposits + totalMarketDebt - totalMarketDeposits) / (totalMarketDeposits + totalMarketDebt)
-    // if (connection && honeyUser) {
-    //   let val = await fetchBorrowPositions(connection, honeyUser);
-    //   console.log('this is val', val);
-    //   if (val) {
-    //     console.log('@@@@---', val)
-    //   }
 
-    // }
+    return collection;
   }
 }
 
@@ -359,7 +362,6 @@ export const fetchPositionBids = async (devnet:boolean, connection: Connection, 
 
 
 };
-
 
 export const fetchBorrowPositions = async (connection: Connection, honeyUser: HoneyUser) => {
 

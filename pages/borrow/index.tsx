@@ -149,8 +149,10 @@ const Markets: NextPage = () => {
   const [reserveHoneyState, setReserveHoneyState] = useState(0);
   const [userTotalDeposits, setUserTotalDeposits] = useState(0);
   const [fetchedSolPrice, setFetchedSolPrice] = useState(0);
-  const [calculatedInterestRate, setCalculatedInterestRate] = useState<number>(0);
-  const [utilizationRate, setUtilizationRate] = useState(0);
+  const [honeyUtilizationRate, setHoneyUtilizationRate] = useState(0);
+  const [peskyUtilizationRate, setPeskyUtilizationRate] = useState(0);
+  const [honeyInterestRate, setHoneyInterestRate] = useState(0);
+  const [peskyInterestRate, setPeskyInterestRate] = useState(0);
   // interface related constants
   const { width: windowWidth } = useWindowSize();
   const [tableData, setTableData] = useState<MarketTableRow[]>([]);
@@ -170,24 +172,6 @@ const Markets: NextPage = () => {
   */
   const availableNFTs = useFetchNFTByUser(wallet);
   const reFetchNFTs = availableNFTs[2];
-  
-  // sets the users available nfts for current active market
-  async function filterNftsForMarket(nftArray: NFT[]) {
-    // let activeMarket: string;
-    // if (currentMarketId == HONEY_GENESIS_MARKET_ID) activeMarket = 'Honey'
-      // return nft.name.includes('Honey');
-    // if (currentMarketId == PESKY_PENGUINS_MARKET_ID) activeMarket = 'Pesky'
-      // return nft.name.includes('Pesky');
-    // if (currentMarketId == OG_ATADIANS_MARKET_ID) activeMarket = 'OG'
-      // return nft.name.includes('OG');
-    // if (currentMarketId == LIFINITY_FLARES_MARKET_ID) activeMarket = 'Lifinity'
-    // return nft.name.includes('Lifinity');
-
-    // const filteredNftArray = nftArray.filter((nft) => nft.name.includes(activeMarket));
-    // console.log('this is filterednftarr')
-    // setUserAvailableNFTs(filteredNftArray);
-    return;
-  }
 
   // calls upon setting the user nft list per market
   useEffect(() => {
@@ -242,15 +226,6 @@ const Markets: NextPage = () => {
       }
     }
   }, [parsedReserves]);
-
-  // sets the utilization rate based on totalMarketDeposits and totalMarketDebt  
-  useEffect(() => {
-    if (totalMarketDeposits && totalMarketDebt) {
-      setUtilizationRate(
-        Number( f((totalMarketDeposits + totalMarketDebt - totalMarketDeposits) / (totalMarketDeposits + totalMarketDebt)))
-      );
-    }
-  }, [totalMarketDeposits, totalMarketDebt]);
 
   // fetches total market positions aka. obligations
   async function fetchObligations() {
@@ -326,15 +301,6 @@ const Markets: NextPage = () => {
     if (collateralNFTPositions) setUserOpenPositions(collateralNFTPositions)
   }, [collateralNFTPositions, currentMarketId]);
 
-  // calculates the current interest rate - utilization rate is required param
-  async function calculateInterestRate(utilizationRate: number) {
-    let interestRate = await getInterestRate(utilizationRate);
-    if (interestRate) setCalculatedInterestRate(interestRate);
-  }
-  // calls upon calculate interest rate  
-  useEffect(() => {
-    if (utilizationRate) calculateInterestRate(utilizationRate)
-  }, [utilizationRate]);
 
   // PUT YOUR DATA SOURCE HERE
   // MOCK DATA FOR NOW
@@ -343,12 +309,20 @@ const Markets: NextPage = () => {
       marketCollections.map(async (collection) => 
       {
         if(collection.id == '') return;
-        await populateMarketData(collection, sdkConfig.saberHqConnection, sdkConfig.sdkWallet!);
+
+        await populateMarketData(collection, sdkConfig.saberHqConnection, sdkConfig.sdkWallet!, currentMarketId);
+
         collection.positions = userOpenPositions.filter((position: any) => position.symbol == collection.key)
+        collection.rate = await getInterestRate(collection.utilizationRate) || 0
+        collection.id == HONEY_GENESIS_MARKET_ID ? setHoneyInterestRate(collection.rate) : setPeskyInterestRate(collection.rate);
       }
     );
-    setTableData(marketCollections);
-    setTableDataFiltered(marketCollections);
+
+    setTimeout(() => {
+      setTableData(marketCollections);
+      setTableDataFiltered(marketCollections);
+    }, 3000)
+
     }
   }, [
       totalMarketDeposits,
@@ -358,12 +332,14 @@ const Markets: NextPage = () => {
       userAllowance,
       userDebt,
       loanToValue,
-      calculatedInterestRate,
       honeyReserves,
       parsedReserves,
       sdkConfig.saberHqConnection,
       sdkConfig.sdkWallet,
-      collateralNFTPositions
+      collateralNFTPositions,
+      currentMarketId,
+      peskyInterestRate,
+      honeyInterestRate
     ]
   );
 
@@ -381,15 +357,7 @@ const Markets: NextPage = () => {
     setIsMyCollectionsFilterEnabled(checked);
   };
 
-  const MyCollectionsToggle = () =>
-    // <div className={style.toggle}>
-    //   <HoneyToggle
-    //     checked={isMyCollectionsFilterEnabled}
-    //     onChange={handleToggle}
-    //   />
-    //   <span className={style.toggleText}>my collections</span>
-    // </div>
-    null;
+  const MyCollectionsToggle = () => null;
 
   const renderImage = (name: string) => {
     if (name == HONEY_GENESIS_BEE) {
@@ -401,10 +369,6 @@ const Markets: NextPage = () => {
     } else {
       return <Image src={'https://img-cdn.magiceden.dev/rs:fill:400:400:0:0/plain/https://i.imgur.com/37nsjBZ.png'} layout="fill" alt="Pesky Penguins" />
     }
-  }
-
-  const renderInterest = (name: string) => {
-
   }
 
   const onSearch = (searchTerm: string): MarketTableRow[] => {
@@ -495,7 +459,11 @@ const Markets: NextPage = () => {
           hidden: windowWidth < TABLET_BP,
           sorter: (a: MarketTableRow, b: MarketTableRow) => a.rate - b.rate,
           render: (rate: number, market: any) => {
-            return ( <div className={style.rateCell}>{fp(calculatedInterestRate)}</div> )
+            return ( 
+              <div className={style.rateCell}>
+                {fp(rate)}
+              </div> 
+            )
           }
         },
         {
@@ -1095,7 +1063,7 @@ const Markets: NextPage = () => {
           loanToValue={loanToValue}
           hideMobileSidebar={hideMobileSidebar}
           fetchedSolPrice={fetchedSolPrice}
-          calculatedInterestRate={calculatedInterestRate}
+          calculatedInterestRate={currentMarketId == HONEY_GENESIS_MARKET_ID ? honeyInterestRate : peskyInterestRate}
           currentMarketId={currentMarketId}
         />
       </HoneySider>
