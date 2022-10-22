@@ -267,19 +267,6 @@ const Lend: NextPage = () => {
       );
 
       if (tx[0] == 'SUCCESS') {
-        let refreshedHoneyReserves = await honeyReserves[0].sendRefreshTx();
-        const latestBlockHash =
-          await sdkConfig.saberHqConnection.getLatestBlockhash();
-
-        await sdkConfig.saberHqConnection.confirmTransaction(
-          {
-            blockhash: latestBlockHash.blockhash,
-            lastValidBlockHeight: latestBlockHash.lastValidBlockHeight,
-            signature: refreshedHoneyReserves
-          },
-          'processed'
-        );
-
         await fetchMarket();
         await honeyUser.refresh().then((val: any) => {
           reserveHoneyState == 0
@@ -326,19 +313,6 @@ const Lend: NextPage = () => {
       );
 
       if (tx[0] == 'SUCCESS') {
-        let refreshedHoneyReserves = await honeyReserves[0].sendRefreshTx();
-        const latestBlockHash =
-          await sdkConfig.saberHqConnection.getLatestBlockhash();
-
-        await sdkConfig.saberHqConnection.confirmTransaction(
-          {
-            blockhash: latestBlockHash.blockhash,
-            lastValidBlockHeight: latestBlockHash.lastValidBlockHeight,
-            signature: refreshedHoneyReserves
-          },
-          'processed'
-        );
-
         await fetchMarket();
         await honeyUser.refresh().then((val: any) => {
           reserveHoneyState == 0

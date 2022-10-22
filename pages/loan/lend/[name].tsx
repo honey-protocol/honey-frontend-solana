@@ -151,18 +151,6 @@ const sdkConfig = ConfigureSDK();
       
       if (tx[0] == 'SUCCESS') {
         toastResponse('SUCCESS', 'Deposit success', 'SUCCESS', 'DEPOSIT');
-        
-        let refreshedHoneyReserves = await honeyReserves[0].sendRefreshTx();
-        const latestBlockHash = await sdkConfig.saberHqConnection.getLatestBlockhash()
-
-        await sdkConfig.saberHqConnection.confirmTransaction(
-          {
-            blockhash: latestBlockHash.blockhash,
-            lastValidBlockHeight: latestBlockHash.lastValidBlockHeight,
-            signature: refreshedHoneyReserves
-          },
-          'processed'
-        );
 
         await fetchMarket()
         await honeyUser.refresh().then((val: any) => {
@@ -193,19 +181,7 @@ const sdkConfig = ConfigureSDK();
       
       if (tx[0] == 'SUCCESS') {
         toastResponse('SUCCESS', 'Withdraw success', 'SUCCESS', 'WITHDRAW');
-        let refreshedHoneyReserves = await honeyReserves[0].sendRefreshTx();
-        const latestBlockHash = await sdkConfig.saberHqConnection.getLatestBlockhash()
-
-        await sdkConfig.saberHqConnection.confirmTransaction(
-          {
-            blockhash: latestBlockHash.blockhash,
-            lastValidBlockHeight: latestBlockHash.lastValidBlockHeight,
-            signature: refreshedHoneyReserves
-          },
-          'processed'
-        );
-
-        await fetchMarket()
+        await fetchMarket();
         await honeyUser.refresh().then((val: any) => {
           reserveHoneyState ==  0 ? setReserveHoneyState(1) : setReserveHoneyState(0);
         });
