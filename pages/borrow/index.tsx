@@ -312,7 +312,8 @@ const Markets: NextPage = () => {
         {
           if(collection.id == '') return;
 
-          await populateMarketData(collection, sdkConfig.saberHqConnection, sdkConfig.sdkWallet!, currentMarketId);
+          await populateMarketData(collection, sdkConfig.saberHqConnection, sdkConfig.sdkWallet!, currentMarketId, false);
+          
           collection.positions = userOpenPositions;
           collection.rate = await getInterestRate(collection.utilizationRate) || 0
           collection.id == HONEY_GENESIS_MARKET_ID ? setHoneyInterestRate(collection.rate) : setPeskyInterestRate(collection.rate);

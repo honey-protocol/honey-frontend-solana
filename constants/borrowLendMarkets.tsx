@@ -23,6 +23,7 @@ export type Market = {
     user?: any;
     debt: number;
     utilizationRate: number;
+    stats?: any;
   };
   
   export const marketCollections: Market[] = [

@@ -15,7 +15,6 @@ import { formatNumber } from '../../helpers/format';
 import SearchInput from '../../components/SearchInput/SearchInput';
 import debounce from 'lodash/debounce';
 import { getColumnSortStatus } from '../../helpers/tableUtils';
-import { generateMockHistoryData } from '../../helpers/chartUtils';
 import { HoneyChart } from '../../components/HoneyChart/HoneyChart';
 import HoneySider from '../../components/HoneySider/HoneySider';
 import HoneyContent from '../../components/HoneyContent/HoneyContent';
@@ -29,7 +28,7 @@ import {
 import { LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js';
 import BN from 'bn.js';
 import HoneyToggle from 'components/HoneyToggle/HoneyToggle';
-import { calcNFT, getInterestRate, fetchSolPrice } from 'helpers/loanHelpers/userCollection';
+import { calcNFT, getInterestRate, fetchSolPrice, populateMarketData } from 'helpers/loanHelpers/userCollection';
 import { ToastProps } from 'hooks/useToast';
 import { RoundHalfDown } from 'helpers/utils';
 import { Typography } from 'antd';
@@ -37,6 +36,8 @@ import { pageDescription, pageTitle } from 'styles/common.css';
 import { HONEY_GENESIS_BEE, LIFINITY_FLARES, OG_ATADIANS, PESKY_PENGUINS } from '../../constants/borrowLendMarkets';
 import { HONEY_GENESIS_MARKET_ID, PESKY_PENGUINS_MARKET_ID } from '../../constants/loan';
 import { setMarketId } from 'pages/_app';
+import { marketCollections } from '../../constants/borrowLendMarkets';
+import { generateMockHistoryData } from '../../helpers/chartUtils';
 
 const network = 'mainnet-beta';
 
@@ -401,51 +402,61 @@ const Lend: NextPage = () => {
   }, [tableData]);
 
   useEffect(() => {
-    console.log('calculated interest rate', calculatedInterestRate)
-    const mockData: LendTableRow[] = [
-      {
-        key: 'HNYG',
-        name: HONEY_GENESIS_BEE,
-        interest: calculatedInterestRate,
-        // validated available to be totalMarketDeposits
-        available: totalMarketDeposits,
-        // validated value to be totalMarkDeposits + totalMarketDebt
-        value: totalMarketDeposits + totalMarketDebt,
-        stats: getPositionData()
-      },
-      {
-        key: 'LIFINITY',
-        name: LIFINITY_FLARES,
-        interest: 0,
-        // validated available to be totalMarketDeposits
-        available: 0,
-        // validated value to be totalMarkDeposits + totalMarketDebt
-        value: 0,
-        stats: getPositionData()
-      },
-      {
-        key: 'ATD',
-        name: OG_ATADIANS,
-        interest: 0,
-        // validated available to be totalMarketDeposits
-        available: 0,
-        // validated value to be totalMarkDeposits + totalMarketDebt
-        value: 0,
-        stats: getPositionData()
-      },
-      {
-        key: 'NOOT',
-        name: PESKY_PENGUINS,
-        interest: 0,
-        // validated available to be totalMarketDeposits
-        available: 0,
-        // validated value to be totalMarkDeposits + totalMarketDebt
-        value: 0,
-        stats: getPositionData()
-      }
-    ];
-    setTableData(mockData);
-    setTableDataFiltered(mockData);
+    console.log('calculated interest rate', calculatedInterestRate);
+
+    const mockData = marketCollections.map(async (collection) => {
+      if (!collection.id) return;
+      await populateMarketData(collection, sdkConfig.saberHqConnection, sdkConfig.sdkWallet!, currentMarketId, true);
+      // collection.stats = getPositionData()
+      // console.log("this is collection.stats", collection.stats);
+    })
+
+    // const mockData: LendTableRow[] = [
+    //   {
+    //     key: 'HNYG',
+    //     name: HONEY_GENESIS_BEE,
+    //     interest: calculatedInterestRate,
+    //     // validated available to be totalMarketDeposits
+    //     available: totalMarketDeposits,
+    //     // validated value to be totalMarkDeposits + totalMarketDebt
+    //     value: totalMarketDeposits + totalMarketDebt,
+    //     stats: getPositionData()
+    //   },
+    //   {
+    //     key: 'LIFINITY',
+    //     name: LIFINITY_FLARES,
+    //     interest: 0,
+    //     // validated available to be totalMarketDeposits
+    //     available: 0,
+    //     // validated value to be totalMarkDeposits + totalMarketDebt
+    //     value: 0,
+    //     stats: getPositionData()
+    //   },
+    //   {
+    //     key: 'ATD',
+    //     name: OG_ATADIANS,
+    //     interest: 0,
+    //     // validated available to be totalMarketDeposits
+    //     available: 0,
+    //     // validated value to be totalMarkDeposits + totalMarketDebt
+    //     value: 0,
+    //     stats: getPositionData()
+    //   },
+    //   {
+    //     key: 'NOOT',
+    //     name: PESKY_PENGUINS,
+    //     interest: 0,
+    //     // validated available to be totalMarketDeposits
+    //     available: 0,
+    //     // validated value to be totalMarkDeposits + totalMarketDebt
+    //     value: 0,
+    //     stats: getPositionData()
+    //   }
+    // ];
+    setTimeout(() => {
+      setTableData(mockData);
+      setTableDataFiltered(mockData);
+    }, 3000)
   }, [totalMarketDeposits, totalMarketDebt, marketPositions, nftPrice, calculatedInterestRate]);
 
   const handleToggle = (checked: boolean) => {
@@ -611,14 +622,14 @@ const Lend: NextPage = () => {
             onExpand: (expanded, row) =>
               setExpandedRowKeys(expanded ? [row.key] : []),
             expandedRowKeys,
-            expandedRowRender: record => {
-              return (
-                <div className={style.expandSection}>
-                  <div className={style.dashedDivider} />
-                  <HoneyChart title="Interest rate" data={record.stats} />
-                </div>
-              );
-            }
+            // expandedRowRender: record => {
+            //   return (
+            //     <div className={style.expandSection}>
+            //       <div className={style.dashedDivider} />
+            //       <HoneyChart title="Interest rate" data={record.stats} />
+            //     </div>
+            //   );
+            // }
           }}
         />
       </HoneyContent>

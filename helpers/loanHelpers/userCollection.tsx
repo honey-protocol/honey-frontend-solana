@@ -19,6 +19,7 @@ import * as anchor from "@project-serum/anchor";
 import { CollateralNFTPosition, getHealthStatus, getNFTAssociatedMetadata, HoneyClient, HoneyMarket, HoneyMarketReserveInfo, HoneyReserve, HoneyUser, LoanPosition, METADATA_PROGRAM_ID, NftPosition, ObligationAccount, ObligationPositionStruct, PositionInfoList, TReserve } from '@honey-finance/sdk';
 import { Metadata } from '@metaplex-foundation/mpl-token-metadata';
 import { formatNumber } from '../../helpers/format';
+import { generateMockHistoryData } from 'helpers/chartUtils';
 
 /**
  * @description formatting functions to format with perfect / format in SOL with icon or just a regular 2 decimal format
@@ -237,7 +238,20 @@ export async function getInterestRate(utilizationRate: number) {
   }
 }
 
-export async function populateMarketData(collection: Market, connection: Connection, wallet: ConnectedWallet, currentMarketId: string) {
+const getPositionData = () => {
+  const isMock = true;
+
+  if (isMock) {
+    const from = new Date()
+      .setFullYear(new Date().getFullYear() - 1)
+      .valueOf();
+    const to = new Date().valueOf();
+    return generateMockHistoryData(from, to);
+  }
+  return [];
+};
+
+export async function populateMarketData(collection: Market, connection: Connection, wallet: ConnectedWallet, currentMarketId: string, lend: boolean) {
   if(wallet == null)
     return;
   
@@ -279,6 +293,7 @@ export async function populateMarketData(collection: Market, connection: Connect
     collection.connection = connection;
     collection.utilizationRate = Number(f((totalMarketDebt) / (totalMarketDeposits + totalMarketDebt)));
     collection.user = honeyUser;
+    collection.name;
 
     return collection;
   }
