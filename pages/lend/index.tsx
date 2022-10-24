@@ -54,7 +54,6 @@ const Lend: NextPage = () => {
   // init wallet and sdkConfiguration file
   const sdkConfig = ConfigureSDK();
   let walletPK = sdkConfig.sdkWallet?.publicKey;
-
   /**
    * @description sets the market ID based on market click
    * @params Honey table record - contains all info about a table (aka market)
@@ -64,24 +63,23 @@ const Lend: NextPage = () => {
     record.id == HONEY_GENESIS_MARKET_ID ? setCurrentMarketId(HONEY_GENESIS_MARKET_ID) : setCurrentMarketId(PESKY_PENGUINS_MARKET_ID)
     record.id == HONEY_GENESIS_MARKET_ID ? setMarketId(HONEY_GENESIS_MARKET_ID) : setMarketId(PESKY_PENGUINS_MARKET_ID)
   }
-
-/**
+  /**
    * @description calls upon markets which
    * @params none
    * @returns market | market reserve information | parsed reserves |
    */
- const { market, marketReserveInfo, parsedReserves, fetchMarket } = useHoney();
- /**
-  * @description calls upon the honey sdk
-  * @params  useConnection func. | useConnectedWallet func. | honeyID | marketID
-  * @returns honeyUser | honeyReserves - used for interaction regarding the SDK
+  const { market, marketReserveInfo, parsedReserves, fetchMarket } = useHoney();
+  /**
+   * @description calls upon the honey sdk
+   * @params  useConnection func. | useConnectedWallet func. | honeyID | marketID
+   * @returns honeyUser | honeyReserves - used for interaction regarding the SDK
   */
- const { honeyClient, honeyUser, honeyReserves, honeyMarket } = useMarket(
+  const { honeyClient, honeyUser, honeyReserves, honeyMarket } = useMarket(
    sdkConfig.saberHqConnection,
    sdkConfig.sdkWallet!,
    sdkConfig.honeyId,
    currentMarketId
- );
+  );
   // market specific constants - calculations / ratios / debt / allowance etc.
   const [totalMarketDeposits, setTotalMarketDeposits] = useState(0);
   const [userTotalDeposits, setUserTotalDeposits] = useState(0);
@@ -90,12 +88,10 @@ const Lend: NextPage = () => {
   const [totalMarketDebt, setTotalMarketDebt] = useState(0);
   const [nftPrice, setNftPrice] = useState(0);
   const [userWalletBalance, setUserWalletBalance] = useState<number>(0);
-  const [utilizationRate, setUtilizationRate] = useState(0);
-  const [calculatedInterestRate, setCalculatedInterestRate] = useState<number>(0);
   const [fetchedSolPrice, setFetchedSolPrice] = useState(0);
   const [honeyInterestRate, setHoneyInterestRate] = useState(0);
   const [peskyInterestRate, setPeskyInterestRate] = useState(0);
-
+  const [userDepositWithdraw, setUserDepositWithdraw] = useState(0);
   // fetches the users balance
   async function fetchWalletBalance(key: PublicKey) {
     try {
@@ -179,7 +175,7 @@ const Lend: NextPage = () => {
     console.log('obligations:', obligations);
     setMarketPositions(obligations.length);
   }
-
+  // on honeyMarket change call upon fetch obligations
   useEffect(() => {
     if (honeyMarket) {
       fetchObligations();
@@ -224,7 +220,7 @@ const Lend: NextPage = () => {
       setNftPrice(Number(nftPrice));
     }
   }
-
+  // upon marketreserve or parsed reserve change call upon calculateNFTPrice
   useEffect(() => {
     calculateNFTPrice();
   }, [marketReserveInfo, parsedReserves]);
@@ -277,6 +273,11 @@ const Lend: NextPage = () => {
         });
 
         if (walletPK) await fetchWalletBalance(walletPK);
+        
+        setTimeout(() => {
+          userDepositWithdraw  == 0 ? setUserDepositWithdraw(1) : setUserDepositWithdraw(0);
+        }, 2500)
+
         toast.success(
           'Deposit success',
           `https://solscan.io/tx/${tx[1][0]}?cluster=${network}`
@@ -332,6 +333,11 @@ const Lend: NextPage = () => {
             ? setReserveHoneyState(1)
             : setReserveHoneyState(0);
         });
+        if (walletPK) await fetchWalletBalance(walletPK);
+        setTimeout(() => {
+          userDepositWithdraw  == 0 ? setUserDepositWithdraw(1) : setUserDepositWithdraw(0);
+        }, 2500)
+
         toast.success(
           'Withdraw success',
           `https://solscan.io/tx/${tx[1][0]}?cluster=${network}`
@@ -424,6 +430,7 @@ const Lend: NextPage = () => {
     currentMarketId,
     peskyInterestRate,
     honeyInterestRate,
+    userDepositWithdraw
   ]);
 
   const handleToggle = (checked: boolean) => {
