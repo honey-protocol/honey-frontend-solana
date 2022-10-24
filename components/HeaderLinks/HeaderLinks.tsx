@@ -11,7 +11,7 @@ export const links = [
   {
     title: 'DASHBOARD',
     href: '/dashboard',
-    disabled: false
+    disabled: true
   },
   {
     title: 'BORROW',
