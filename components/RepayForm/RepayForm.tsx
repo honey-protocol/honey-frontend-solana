@@ -192,7 +192,7 @@ const RepayForm = (props: RepayProps) => {
           </div>
           <div className={styles.col}>
             <InfoBlock
-              value={fs(Number(frd(userAllowance, 2)))}
+              value={fs(Number(frd(userAllowance)))}
               title={
                 <span className={hAlign}>
                   Allowance <div className={questionIcon} />
@@ -389,14 +389,14 @@ const RepayForm = (props: RepayProps) => {
             <div className={cs(styles.balance, styles.col)}>
               <InfoBlock
                 title={'Your SOL balance'}
-                value={fs(SOLBalance)}
+                value={fs(Number(frd(SOLBalance, 3)))}
               ></InfoBlock>
             </div>
             <div className={cs(styles.balance, styles.col)}>
               <InfoBlock
                 isDisabled={userDebt == 0 ? true : false}
                 title={'NEW SOL balance'}
-                value={fs(SOLBalance - (valueSOL || 0))}
+                value={fs(Number(frd(SOLBalance - (valueSOL || 0), 3)))}
               ></InfoBlock>
             </div>
           </div>
