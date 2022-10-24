@@ -31,7 +31,8 @@ export const links = [
   },
   {
     title: 'GOVERNANCE',
-    href: '/governance'
+    href: '/governance',
+    disabled: true
   },
   {
     title: 'DOCUMENTATION',
