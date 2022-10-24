@@ -196,7 +196,12 @@ const Liquidate: NextPage = () => {
       setHighestBiddingValue(highestBid[0].bidLimit / LAMPORTS_PER_SOL);
     }
 
-    setFetchedPositions(sorted);
+    //filter out postitions with zero debt
+    const debtedPostitons = sorted.filter((position: any) =>
+      Boolean(position.debt)
+    );
+
+    setFetchedPositions(debtedPostitons);
   }
 
   const [statusState, setStatusState] = useState(false);
