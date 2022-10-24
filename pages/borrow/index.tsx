@@ -64,7 +64,6 @@ import { Typography } from 'antd';
 import { pageDescription, pageTitle } from 'styles/common.css';
 import HoneyTableRow from 'components/HoneyTable/HoneyTableRow/HoneyTableRow';
 import HoneyTableNameCell from '../../components/HoneyTable/HoneyTableNameCell/HoneyTableNameCell';
-import RiskLvl from '../../components/RiskLvl/RiskLvl';
 import HealthLvl from '../../components/HealthLvl/HealthLvl';
 import HoneyTooltip from '../../components/HoneyTooltip/HoneyTooltip';
 import { LIQUIDATION_THRESHOLD } from '../../constants/loan';
@@ -409,7 +408,6 @@ const Markets: NextPage = () => {
   };
 
   const hideMobileSidebar = () => {
-    debugger;
     setShowMobileSidebar(false);
     document.body.classList.remove('disable-scroll');
   };
@@ -608,11 +606,11 @@ const Markets: NextPage = () => {
                     </div>
                     <div className={style.nameCellMobile}>
                       <div className={style.collectionName}>
-                        {formatNFTName(name)}
+                        {formatNFTName(name, 20)}
                       </div>
-                      <div className={style.rateCellMobile}>
+                      {/* <div className={style.rateCellMobile}>
                         {fp(row.rate * 100)}
-                      </div>
+                      </div> */}
                     </div>
                   </>
                 }
@@ -626,7 +624,10 @@ const Markets: NextPage = () => {
               />
 
               <HoneyTableRow>
-                <div className={style.rateCell}>{fp(row.rate * 100)}</div>
+                <div className={c(style.rateCell, style.borrowRate)}>
+                  {fp(calculatedInterestRate)}
+                </div>
+                <div className={style.valueCell}>{fs(row.value)}</div>
                 <div className={style.availableCell}>{fs(row.available)}</div>
               </HoneyTableRow>
             </>
@@ -716,29 +717,29 @@ const Markets: NextPage = () => {
         </div>
       )
     },
-    {
-      dataIndex: 'debt',
-      render: debt => (
-        <div className={style.expandedRowCell}>
-          <InfoBlock title={'Debt:'} value={fs(userDebt)} />
-        </div>
-      )
-    },
-    {
-      dataIndex: 'available',
-      render: available => (
-        <div className={style.expandedRowCell}>
-          <InfoBlock title={'Allowance:'} value={fs(nftPrice * MAX_LTV)} />
-        </div>
-      )
-    },
+    // {
+    //   dataIndex: 'debt',
+    //   render: debt => (
+    //     <div className={style.expandedRowCell}>
+    //       <InfoBlock title={'Debt:'} value={fs(userDebt)} />
+    //     </div>
+    //   )
+    // },
+    // {
+    //   dataIndex: 'available',
+    //   render: available => (
+    //     <div className={style.expandedRowCell}>
+    //       <InfoBlock title={'Allowance:'} value={fs(nftPrice * MAX_LTV)} />
+    //     </div>
+    //   )
+    // },
     {
       title: '',
       width: '50px',
       render: () => (
         <div className={style.buttonsCell}>
           <HoneyButton variant="text">
-            <div className={style.arrowRightIcon} />
+            Manage <div className={style.arrowRightIcon} />
           </HoneyButton>
         </div>
       )
@@ -990,14 +991,6 @@ const Markets: NextPage = () => {
             Get instant liquidity using your NFTs as collateral{' '}
           </Typography.Text>
         </div>
-        <div className={style.mobileTableHeader}>
-          <div className={style.mobileRow}>
-            <SearchForm />
-          </div>
-          <div className={style.mobileRow}>
-            <MyCollectionsToggle />
-          </div>
-        </div>
 
         <div className={style.hideTablet}>
           <HoneyTable
@@ -1047,6 +1040,24 @@ const Markets: NextPage = () => {
         </div>
 
         <div className={style.showTablet}>
+          <div
+            className={c(
+              style.mobileTableHeader,
+              style.mobileSearchAndToggleContainer
+            )}
+          >
+            <div className={style.mobileRow}>
+              <SearchForm />
+            </div>
+            <div className={style.mobileRow}>
+              <MyCollectionsToggle />
+            </div>
+          </div>
+          <div className={c(style.mobileTableHeader)}>
+            <div className={style.tableCell}>Interest</div>
+            <div className={style.tableCell}>Supplied</div>
+            <div className={style.tableCell}>Available</div>
+          </div>
           <HoneyTable
             hasRowsShadow={true}
             tableLayout="fixed"
@@ -1081,7 +1092,12 @@ const Markets: NextPage = () => {
                           footer={
                             record.positions.length
                               ? ExpandedTableFooter
-                              : undefined
+                              : () => (
+                                  <HoneyButton variant="secondary" isFluid>
+                                    Deposit{' '}
+                                    <div className={style.arrowRightIcon} />
+                                  </HoneyButton>
+                                )
                           }
                         />
                       </div>

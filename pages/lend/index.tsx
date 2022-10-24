@@ -18,7 +18,7 @@ import Image from 'next/image';
 import honeyGenesisBee from '/public/images/imagePlaceholder.png';
 import HoneyButton from '../../components/HoneyButton/HoneyButton';
 import { Key } from 'antd/lib/table/interface';
-import { formatNumber } from '../../helpers/format';
+import { formatNFTName, formatNumber } from '../../helpers/format';
 import SearchInput from '../../components/SearchInput/SearchInput';
 import debounce from 'lodash/debounce';
 import { getColumnSortStatus } from '../../helpers/tableUtils';
@@ -45,6 +45,8 @@ import { ToastProps } from 'hooks/useToast';
 import { RoundHalfDown } from 'helpers/utils';
 import { Typography } from 'antd';
 import { pageDescription, pageTitle } from 'styles/common.css';
+import HoneyTableNameCell from 'components/HoneyTable/HoneyTableNameCell/HoneyTableNameCell';
+import HoneyTableRow from 'components/HoneyTable/HoneyTableRow/HoneyTableRow';
 // import { network } from 'pages/_app';
 // import { network } from 'pages/_app';
 
@@ -375,6 +377,18 @@ const Lend: NextPage = () => {
   const [isMyCollectionsFilterEnabled, setIsMyCollectionsFilterEnabled] =
     useState(false);
 
+  const [isMobileSidebarVisible, setShowMobileSidebar] = useState(false);
+
+  const showMobileSidebar = () => {
+    setShowMobileSidebar(true);
+    document.body.classList.add('disable-scroll');
+  };
+
+  const hideMobileSidebar = () => {
+    setShowMobileSidebar(false);
+    document.body.classList.remove('disable-scroll');
+  };
+
   const getPositionData = () => {
     if (isMock) {
       const from = new Date()
@@ -433,6 +447,14 @@ const Lend: NextPage = () => {
     setTableDataFiltered(mockData);
   }, [totalMarketDeposits, totalMarketDebt, marketPositions, nftPrice]);
 
+  const handleRowClick = (
+    event: React.MouseEvent<Element, MouseEvent>,
+    record: LendTableRow
+  ) => {
+    // setSelectedMarketId(record.id);
+    showMobileSidebar();
+  };
+
   const handleToggle = (checked: boolean) => {
     setIsMyCollectionsFilterEnabled(checked);
   };
@@ -447,19 +469,23 @@ const Lend: NextPage = () => {
     // </div>
     null;
 
+  const SearchForm = () => {
+    return (
+      <SearchInput
+        onChange={handleSearchInputChange}
+        placeholder="Search by name"
+        value={searchQuery}
+      />
+    );
+  };
+
   const columnsWidth: Array<number | string> = [240, 150, 150, 150, 150];
 
   const columns: ColumnType<LendTableRow>[] = useMemo(
     () => [
       {
         width: columnsWidth[0],
-        title: (
-          <SearchInput
-            onChange={handleSearchInputChange}
-            placeholder="Search by name"
-            value={searchQuery}
-          />
-        ),
+        title: SearchForm,
         dataIndex: 'name',
         key: 'name',
         render: (name: string) => {
@@ -567,8 +593,56 @@ const Lend: NextPage = () => {
     [tableData, isMyCollectionsFilterEnabled, searchQuery]
   );
 
+  const columnsMobile: ColumnType<LendTableRow>[] = useMemo(
+    () => [
+      {
+        width: columnsWidth[0],
+        dataIndex: 'name',
+        key: 'name',
+        render: (name: string, row: LendTableRow) => {
+          return (
+            <>
+              <HoneyTableNameCell
+                leftSide={
+                  <>
+                    <div className={style.logoWrapper}>
+                      <div className={style.collectionLogo}>
+                        <HexaBoxContainer>
+                          <Image src={honeyGenesisBee} />
+                        </HexaBoxContainer>
+                      </div>
+                    </div>
+                    <div className={style.nameCellMobile}>
+                      <div className={style.collectionName}>{name}</div>
+                    </div>
+                  </>
+                }
+                rightSide={
+                  <div className={style.buttonsCell}>
+                    <HoneyButton variant="text">
+                      Manage <div className={style.arrowRightIcon} />
+                    </HoneyButton>
+                  </div>
+                }
+              />
+
+              <HoneyTableRow>
+                <div className={c(style.rateCell, style.lendRate)}>
+                  {fp(calculatedInterestRate)}
+                </div>
+                <div className={style.valueCell}>{fs(row.value)}</div>
+                <div className={style.availableCell}>{fs(row.available)}</div>
+              </HoneyTableRow>
+            </>
+          );
+        }
+      }
+    ],
+    [isMyCollectionsFilterEnabled, tableData, searchQuery]
+  );
+
   const lendSidebar = () => (
-    <HoneySider>
+    <HoneySider isMobileSidebarVisible={isMobileSidebarVisible}>
       <LendSidebar
         collectionId="s"
         executeDeposit={executeDeposit}
@@ -578,6 +652,7 @@ const Lend: NextPage = () => {
         value={totalMarketDeposits + totalMarketDebt}
         userWalletBalance={userWalletBalance}
         fetchedSolPrice={fetchedSolPrice}
+        onCancel={hideMobileSidebar}
       />
     </HoneySider>
   );
@@ -602,30 +677,72 @@ const Lend: NextPage = () => {
             </span>
           </Typography.Text>
         </div>
-        <HoneyTable
-          hasRowsShadow={true}
-          tableLayout="fixed"
-          columns={columns}
-          dataSource={tableDataFiltered}
-          pagination={false}
-          className={style.table}
-          // TODO: uncomment when the chart has been replaced and implemented
-          // expandable={{
-          //   // we use our own custom expand column
-          //   showExpandColumn: false,
-          //   onExpand: (expanded, row) =>
-          //     setExpandedRowKeys(expanded ? [row.key] : []),
-          //   expandedRowKeys,
-          //   expandedRowRender: record => {
-          //     return (
-          //       <div className={style.expandSection}>
-          //         <div className={style.dashedDivider} />
-          //         <HoneyChart title="Interest rate" data={record.stats} />
-          //       </div>
-          //   );
-          // }
-          // }}
-        />
+
+        <div className={style.hideTablet}>
+          <HoneyTable
+            hasRowsShadow={true}
+            tableLayout="fixed"
+            columns={columns}
+            dataSource={tableDataFiltered}
+            pagination={false}
+            className={style.table}
+            onRow={(record, rowIndex) => {
+              return {
+                onClick: event => handleRowClick(event, record)
+              };
+            }}
+            // TODO: uncomment when the chart has been replaced and implemented
+            // expandable={{
+            //   // we use our own custom expand column
+            //   showExpandColumn: false,
+            //   onExpand: (expanded, row) =>
+            //     setExpandedRowKeys(expanded ? [row.key] : []),
+            //   expandedRowKeys,
+            //   expandedRowRender: record => {
+            //     return (
+            //       <div className={style.expandSection}>
+            //         <div className={style.dashedDivider} />
+            //         <HoneyChart title="Interest rate" data={record.stats} />
+            //       </div>
+            //   );
+            // }
+            // }}
+          />
+        </div>
+        <div className={style.showTablet}>
+          <div
+            className={c(
+              style.mobileTableHeader,
+              style.mobileSearchAndToggleContainer
+            )}
+          >
+            <div className={style.mobileRow}>
+              <SearchForm />
+            </div>
+            <div className={style.mobileRow}>
+              <MyCollectionsToggle />
+            </div>
+          </div>
+          <div className={c(style.mobileTableHeader)}>
+            <div className={style.tableCell}>Interest</div>
+            <div className={style.tableCell}>Supplied</div>
+            <div className={style.tableCell}>Available</div>
+          </div>
+          <HoneyTable
+            hasRowsShadow={true}
+            tableLayout="fixed"
+            columns={columnsMobile}
+            dataSource={tableDataFiltered}
+            pagination={false}
+            showHeader={false}
+            className={style.table}
+            onRow={(record, rowIndex) => {
+              return {
+                onClick: event => handleRowClick(event, record)
+              };
+            }}
+          />
+        </div>
       </HoneyContent>
     </LayoutRedesign>
   );

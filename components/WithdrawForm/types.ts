@@ -4,4 +4,5 @@ export type WithdrawFormProps = {
   available: number;
   fetchedSolPrice: number;
   executeWithdraw: (val: number, toast: any) => void;
+  onCancel: Function;
 };

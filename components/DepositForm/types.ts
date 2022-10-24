@@ -5,4 +5,5 @@ export type DepositFormProps = {
   userWalletBalance: number;
   fetchedSolPrice: number;
   executeDeposit: (val: number, toast: any) => void;
+  onCancel: Function;
 };

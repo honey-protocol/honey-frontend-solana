@@ -25,7 +25,8 @@ const DepositForm = (props: DepositFormProps) => {
     value,
     available,
     userWalletBalance,
-    fetchedSolPrice
+    fetchedSolPrice,
+    onCancel
   } = props;
 
   const [valueUSD, setValueUSD] = useState<number>(0);
@@ -99,7 +100,9 @@ const DepositForm = (props: DepositFormProps) => {
         ) : (
           <div className={styles.buttons}>
             <div className={styles.smallCol}>
-              <HoneyButton variant="tertiary">Cancel</HoneyButton>
+              <HoneyButton variant="secondary" onClick={() => onCancel()}>
+                Cancel
+              </HoneyButton>
             </div>
             <div className={styles.bigCol}>
               <HoneyButton
