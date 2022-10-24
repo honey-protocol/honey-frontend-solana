@@ -70,7 +70,9 @@ const BorrowForm = (props: BorrowProps) => {
   const liquidationPrice = userDebt / liquidationThreshold;
   const liqPercent = ((nftPrice - liquidationPrice) / nftPrice) * 100;
   const newLiquidationPrice = newTotalDebt / liquidationThreshold;
-  const newLiqPercent = nftPrice;
+  const newLiqPercent = nftPrice
+    ? ((nftPrice - newLiquidationPrice) / nftPrice) * 100
+    : 0;
 
   // Put your validators here
   const isBorrowButtonDisabled = () => {

@@ -112,10 +112,12 @@ const RepayForm = (props: RepayProps) => {
 
   const liquidationPrice = userDebt / liquidationThreshold;
   const newLiquidationPrice = newDebt / liquidationThreshold;
-  const newLiqPercent = nftPrice;
 
   const liqPercent = nftPrice
     ? ((nftPrice - liquidationPrice) / nftPrice) * 100
+    : 0;
+  const newLiqPercent = nftPrice
+    ? ((nftPrice - newLiquidationPrice) / nftPrice) * 100
     : 0;
 
   return (
