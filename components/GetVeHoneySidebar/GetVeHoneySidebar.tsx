@@ -21,7 +21,7 @@ const GetVeHoneySidebar = (props: { onCancel: Function }) => {
   const [activeTab, setActiveTab] = useState<Tab>('lock_honey');
 
   const handleTabChange = (tabKey: string) => {
-    if (tabKey === 'burn_nfts') return;
+    // if (tabKey === 'burn_nfts') return;
     setActiveTab(tabKey as Tab);
   };
   return (
