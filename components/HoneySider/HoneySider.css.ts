@@ -18,7 +18,8 @@ export const honeySider = style({
   boxShadow: `4px 0px 0px 0px ${vars.colors.grayLight}`,
   '@media': {
     [`screen and (min-width: ${breakpoints.tablet}px)`]: {
-      maxWidth: 850
+      maxWidth: 850,
+      minHeight: 'calc(100vh - 90px)'
     },
     [`screen and (min-width: ${breakpoints.desktop}px)`]: {
       maxWidth: 1216,

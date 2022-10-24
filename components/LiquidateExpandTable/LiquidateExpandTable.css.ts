@@ -5,24 +5,20 @@ export const expandTableHeader = style({
   paddingLeft: 16,
   paddingRight: 24,
   marginTop: 12,
-  "@media": {
-    [`screen and (min-width: ${breakpoints.tablet}px)`]: {
-      display: "flex",
-      justifyContent: "space-between",
-      alignItems: "center",
-    },
-  },
+  display: 'flex',
+  justifyContent: 'space-between',
+  alignItems: 'center'
 });
 
 export const positionsCounterContainer = style({
   display: 'flex',
   alignItems: 'center',
   marginBottom: 4,
-  "@media": {
+  '@media': {
     [`screen and (min-width: ${breakpoints.tablet}px)`]: {
-      marginBottom: 0,
-    },
-  },
+      marginBottom: 0
+    }
+  }
 });
 
 export const positionsCounterTitle = style([typography.title]);
@@ -35,4 +31,9 @@ export const positionsCount = style([
     background: vars.colors.grayMiddle,
     marginLeft: 8
   }
+]);
+
+export const positionsCounterTitleMobile = style([
+  typography.title,
+  { fontSize: '15px' }
 ]);

@@ -34,7 +34,7 @@ export const collectionName = style([
   {
     whiteSpace: 'nowrap',
     overflow: 'hidden',
-    textOverflow: 'ellipsis',
+    textOverflow: 'ellipsis'
   }
 ]);
 export const collectionNameMobile = style([
@@ -283,7 +283,7 @@ globalStyle(ectcs(`.ant-table-cell`), {
     [`screen and (min-width: ${breakpoints.tablet}px)`]: {
       padding: 15
     }
-  },
+  }
 });
 globalStyle(ectcs(`.ant-table-row`), {
   borderSpacing: 0
@@ -396,13 +396,16 @@ export const footerText = style({
   flexDirection: 'column',
   marginLeft: 15
 });
-export const footerTitle = style([typography.body, {
-  '@media': {
-    [`screen and (max-width: ${breakpoints.mobile}px)`]: {
-      fontSize: 12
+export const footerTitle = style([
+  typography.body,
+  {
+    '@media': {
+      [`screen and (max-width: ${breakpoints.mobile}px)`]: {
+        fontSize: 12
+      }
     }
   }
-}]);
+]);
 export const footerDescription = style([
   typography.description,
   {
@@ -427,7 +430,7 @@ export const dashedDivider = style({
     [`screen and (min-width: ${breakpoints.tablet}px)`]: {
       left: 70,
       backgroundImage: `linear-gradient(to right, ${vars.colors.lightGrayTransparent} 50%, transparent 50%)`,
-      backgroundSize: '20px 2px, 20px 2px, 2px 20px, 2px 20px',
+      backgroundSize: '20px 2px, 20px 2px, 2px 20px, 2px 20px'
     }
   }
 });
@@ -469,5 +472,7 @@ export const mobileSearchAndToggleContainer = style({
   borderRadius: '12px',
   minHeight: '40px',
   background: vars.colors.grayMiddle,
-  paddingRight: '10px'
+  paddingRight: '10px',
+  display: 'flex',
+  alignItems: 'center'
 });

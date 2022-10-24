@@ -25,7 +25,8 @@ const LiquidateSidebar = (props: LendSidebarProps) => {
     fetchedSolPrice,
     handleRevokeBid,
     handleIncreaseBid,
-    handlePlaceBid
+    handlePlaceBid,
+    onCancel
   } = props;
   const wallet = useConnectedWallet();
   const { connect } = useWalletKit();
@@ -51,6 +52,11 @@ const LiquidateSidebar = (props: LendSidebarProps) => {
               {
                 title: 'CONNECT WALLET',
                 onClick: connect
+              },
+              {
+                title: 'RETURN',
+                onClick: () => onCancel(),
+                variant: 'secondary'
               }
             ]}
           />
@@ -71,10 +77,14 @@ const LiquidateSidebar = (props: LendSidebarProps) => {
                 handleIncreaseBid={handleIncreaseBid}
                 handlePlaceBid={handlePlaceBid}
                 fetchedSolPrice={fetchedSolPrice}
+                onCancel={onCancel}
               />
             )}
             {activeTab === 'current' && (
-              <BidsList biddingArray={biddingArray} fetchedSolPrice={fetchedSolPrice} />
+              <BidsList
+                biddingArray={biddingArray}
+                fetchedSolPrice={fetchedSolPrice}
+              />
             )}
           </>
         )}

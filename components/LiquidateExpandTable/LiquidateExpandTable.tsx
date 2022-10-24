@@ -12,6 +12,7 @@ import { InfoBlock } from '../InfoBlock/InfoBlock';
 import { formatNumber, formatNFTName } from '../../helpers/format';
 import RiskLvl from '../RiskLvl/RiskLvl';
 import HoneyTooltip from '../HoneyTooltip/HoneyTooltip';
+import HealthLvl from 'components/HealthLvl/HealthLvl';
 
 const { formatPercent: fp, formatSol: fs } = formatNumber;
 
@@ -28,7 +29,7 @@ export const LiquidateExpandTable: FC<{ data: LiquidateTablePosition[] }> = ({
         width: 250,
         dataIndex: 'name',
         sortOrder: filter === 'most_critical' ? 'descend' : undefined,
-        sorter: (a, b) => a.riskLvl - b.riskLvl,
+        sorter: (a, b) => b.healthLvl - a.healthLvl,
         render: (name, record) => (
           <div className={sharedStyles.expandedRowNameCell}>
             <div className={sharedStyles.expandedRowIcon} />
@@ -43,7 +44,7 @@ export const LiquidateExpandTable: FC<{ data: LiquidateTablePosition[] }> = ({
                   {formatNFTName(name)}
                 </div>
               </HoneyTooltip>
-              <RiskLvl riskLvl={record.riskLvl} />
+              <HealthLvl healthLvl={record.healthLvl} />
             </div>
           </div>
         )

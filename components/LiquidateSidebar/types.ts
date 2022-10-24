@@ -19,4 +19,5 @@ export type LendSidebarProps = {
     userBid: number,
     toast: ToastProps['toast']
   ) => void;
+  onCancel: Function;
 };

@@ -5,6 +5,6 @@ export interface HealthLvlProps {
 export enum HealthLvlPoint {
   Safe = 100,
   Warning = 70,
-  Danger = 50,
+  Danger = 40,
   Min = 0
 }
