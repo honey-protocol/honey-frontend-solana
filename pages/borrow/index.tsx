@@ -162,6 +162,8 @@ const Markets: NextPage = () => {
   const [isMyCollectionsFilterEnabled, setIsMyCollectionsFilterEnabled] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [isMobileSidebarVisible, setShowMobileSidebar] = useState(false);
+  const [processUserPayment, setProcessUserPayment] = useState(0);
+  const [processUserNFT, setProcessUserNFT] = useState(0);
 
   /**
    * @description fetches all nfts in users wallet
@@ -294,7 +296,8 @@ const Markets: NextPage = () => {
     parsedReserves,
     cRatio,
     nftPrice,
-    currentMarketId
+    currentMarketId,
+    processUserPayment
   ]);
   
   // if there are open positions for the user -> set the open positions
@@ -340,7 +343,8 @@ const Markets: NextPage = () => {
       currentMarketId,
       peskyInterestRate,
       honeyInterestRate,
-      userOpenPositions
+      userOpenPositions,
+      processUserNFT
     ]
   );
 
@@ -760,6 +764,10 @@ const Markets: NextPage = () => {
     
             await refreshPositions();
             reFetchNFTs({});
+
+            setTimeout(() => {
+              processUserNFT == 0 ? setProcessUserNFT(1) : setProcessUserNFT(0);
+            }, 2000)
           }
         }
       })
@@ -799,8 +807,13 @@ const Markets: NextPage = () => {
           'Withdraw success',
           `https://solscan.io/tx/${tx[1][0]}?cluster=${network}`
         );
+
+        setTimeout(() => {
+          processUserNFT == 0 ? setProcessUserNFT(1) : setProcessUserNFT(0);
+        }, 2000)
       }
 
+      toast.clear();
       return true;
     } catch (error) {
       toast.error('Error withdraw NFT');
@@ -854,7 +867,11 @@ const Markets: NextPage = () => {
         toast.success(
           'Borrow success',
           `https://solscan.io/tx/${tx[1][0]}?cluster=${network}`
-        );
+        )
+        
+        setTimeout(() => {
+          processUserPayment == 0 ? setProcessUserPayment(1) : setProcessUserPayment(0);
+        }, 3000)
 
       } else {
         return toast.error('Borrow failed');
@@ -910,6 +927,10 @@ const Markets: NextPage = () => {
           'Repay success',
           `https://solscan.io/tx/${tx[1][0]}?cluster=${network}`
         );
+
+        setTimeout(() => {
+          processUserPayment == 0 ? setProcessUserPayment(1) : setProcessUserPayment(0);
+        }, 3000)
 
       } else {
         return toast.error('Repay failed');
