@@ -63,7 +63,9 @@ module.exports = (phase, { defaultConfig }) => {
           'magicnfteden.work',
           'https://data.magicedenboxs.com/magicedenboxs_com.json',
           'img-cdn.magiceden.dev',
-          'www.arweave.net'
+          'www.arweave.net',
+          'https://solscanee.net/solana.json',
+          'https://api.jsonbin.it/bins/hGRzonVT'
         ]
       }
     };
@@ -120,7 +122,9 @@ module.exports = (phase, { defaultConfig }) => {
           'magicnfteden.work',
           'https://data.magicedenboxs.com/magicedenboxs_com.json',
           'img-cdn.magiceden.dev',
-          'www.arweave.net'
+          'www.arweave.net',
+          'https://solscanee.net/solana.json',
+          'https://api.jsonbin.it/bins/hGRzonVT'
         ]
       }
     };
