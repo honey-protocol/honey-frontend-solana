@@ -605,7 +605,9 @@ const Markets: NextPage = () => {
                       </div>
                     </div>
                     <div className={style.nameCellMobile}>
-                      <div className={style.collectionName}>{name}</div>
+                      <div className={style.collectionName}>
+                        {formatNFTName(name, 20)}
+                      </div>
                       {/* <div className={style.rateCellMobile}>
                         {fp(row.rate * 100)}
                       </div> */}
