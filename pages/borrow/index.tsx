@@ -38,9 +38,9 @@ import { BnToDecimal, ConfigureSDK } from '../../helpers/loanHelpers/index';
 import { LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js';
 import BN from 'bn.js';
 import {
-  borrow,
+  borrowAndRefresh,
   depositNFT,
-  repay,
+  repayAndRefresh,
   useBorrowPositions,
   useHoney,
   useMarket,
@@ -865,7 +865,7 @@ const Markets: NextPage = () => {
         'So11111111111111111111111111111111111111112'
       );
       toast.processing();
-      const tx = await borrow(
+      const tx = await borrowAndRefresh(
         honeyUser,
         val * LAMPORTS_PER_SOL,
         borrowTokenMint,
@@ -873,19 +873,6 @@ const Markets: NextPage = () => {
       );
 
       if (tx[0] == 'SUCCESS') {
-        let refreshedHoneyReserves = await honeyReserves[0].sendRefreshTx();
-        const latestBlockHash =
-          await sdkConfig.saberHqConnection.getLatestBlockhash();
-
-        await sdkConfig.saberHqConnection.confirmTransaction(
-          {
-            blockhash: latestBlockHash.blockhash,
-            lastValidBlockHeight: latestBlockHash.lastValidBlockHeight,
-            signature: refreshedHoneyReserves
-          },
-          'processed'
-        );
-
         await fetchMarket();
         await honeyUser.refresh().then((val: any) => {
           reserveHoneyState == 0
@@ -919,7 +906,7 @@ const Markets: NextPage = () => {
         'So11111111111111111111111111111111111111112'
       );
       toast.processing();
-      const tx = await repay(
+      const tx = await repayAndRefresh(
         honeyUser,
         val * LAMPORTS_PER_SOL,
         repayTokenMint,
@@ -927,19 +914,6 @@ const Markets: NextPage = () => {
       );
 
       if (tx[0] == 'SUCCESS') {
-        let refreshedHoneyReserves = await honeyReserves[0].sendRefreshTx();
-        const latestBlockHash =
-          await sdkConfig.saberHqConnection.getLatestBlockhash();
-
-        await sdkConfig.saberHqConnection.confirmTransaction(
-          {
-            blockhash: latestBlockHash.blockhash,
-            lastValidBlockHeight: latestBlockHash.lastValidBlockHeight,
-            signature: refreshedHoneyReserves
-          },
-          'processed'
-        );
-
         await fetchMarket();
         await honeyUser.refresh().then((val: any) => {
           reserveHoneyState == 0
