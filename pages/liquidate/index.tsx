@@ -37,7 +37,11 @@ import { useConnectedWallet } from '@saberhq/use-solana';
 import { LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js';
 import { calcNFT, fetchSolPrice } from 'helpers/loanHelpers/userCollection';
 import { LiquidateTablePosition } from '../../types/liquidate';
-import { HONEY_MARKET_ID, HONEY_PROGRAM_ID } from 'constants/loan';
+import {
+  HONEY_MARKET_ID,
+  HONEY_PROGRAM_ID,
+  LIQUIDATION_THRESHOLD
+} from 'constants/loan';
 import { NATIVE_MINT } from '@solana/spl-token';
 import HoneySider from 'components/HoneySider/HoneySider';
 import HoneyContent from 'components/HoneyContent/HoneyContent';
@@ -166,6 +170,9 @@ const Liquidate: NextPage = () => {
       return {
         name: 'Honey Genesis Bee',
         riskLvl: (obligation.debt / nftPrice) * 100,
+        healthLvl:
+          ((nftPrice - obligation.debt / LIQUIDATION_THRESHOLD) / nftPrice) *
+          100,
         untilLiquidation:
           obligation.debt !== 0
             ? nftPrice - obligation.debt / liquidationThreshold

@@ -12,7 +12,7 @@ export type LiquidateTableRow = {
 
 export type LiquidateTablePosition = {
   name: string;
-  riskLvl: number;
+  healthLvl: number;
   untilLiquidation: number;
   debt: number;
   estimatedValue: number;

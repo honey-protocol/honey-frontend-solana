@@ -26,7 +26,7 @@ export const LiquidateExpandTableMobile: FC<{
     {
       dataIndex: 'name',
       sortOrder: 'descend',
-      sorter: (a, b) => a.riskLvl - b.riskLvl,
+      sorter: (a, b) => b.healthLvl - a.healthLvl,
       render: (name, record) => (
         <div className={sharedStyles.expandedRowNameCell}>
           <div className={sharedStyles.expandedRowIcon} />
@@ -37,7 +37,7 @@ export const LiquidateExpandTableMobile: FC<{
           </div>
           <div className={sharedStyles.nameCellText}>
             <div className={sharedStyles.collectionNameMobile}>{name}</div>
-            <RiskLvl riskLvl={record.riskLvl} />
+            <HealthLvl healthLvl={record.healthLvl} />
           </div>
         </div>
       )
