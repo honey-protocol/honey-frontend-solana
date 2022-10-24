@@ -18,7 +18,13 @@ import useToast from 'hooks/useToast';
 import { useSolBalance } from 'hooks/useSolBalance';
 import { MAX_LTV } from 'constants/loan';
 
-const { format: f, formatPercent: fp, formatSol: fs, parse: p } = formatNumber;
+const {
+  format: f,
+  formatPercent: fp,
+  formatSol: fs,
+  parse: p,
+  formatRoundDown: frd
+} = formatNumber;
 
 const RepayForm = (props: RepayProps) => {
   const {
@@ -186,7 +192,7 @@ const RepayForm = (props: RepayProps) => {
           </div>
           <div className={styles.col}>
             <InfoBlock
-              value={fs(userAllowance)}
+              value={fs(Number(frd(userAllowance, 2)))}
               title={
                 <span className={hAlign}>
                   Allowance <div className={questionIcon} />

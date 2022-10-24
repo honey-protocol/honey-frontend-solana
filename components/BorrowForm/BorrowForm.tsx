@@ -21,7 +21,7 @@ import { useSolBalance } from 'hooks/useSolBalance';
 import cs from 'classnames';
 import * as style from '../../styles/markets.css';
 
-const { formatPercent: fp, formatSol: fs } = formatNumber;
+const { formatPercent: fp, formatSol: fs, formatRoundDown: frd } = formatNumber;
 
 interface NFT {
   name: string;
@@ -205,7 +205,7 @@ const BorrowForm = (props: BorrowProps) => {
           </div>
           <div className={styles.col}>
             <InfoBlock
-              value={fs(userAllowance)}
+              value={fs(Number(frd(userAllowance, 2)))}
               title={
                 <span className={hAlign}>
                   Allowance <div className={questionIcon} />
