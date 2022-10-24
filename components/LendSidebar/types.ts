@@ -5,6 +5,8 @@ export type LendSidebarProps = {
   value: number;
   userWalletBalance: number;
   fetchedSolPrice: number;
+  marketImage: any;
+  currentMarketId: string;
   executeDeposit: (val: number) => void;
   executeWithdraw: (val: number) => void;
 };

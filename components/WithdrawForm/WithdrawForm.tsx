@@ -8,7 +8,7 @@ import { formatNumber } from '../../helpers/format';
 import honeyGenesisBee from '/public/images/imagePlaceholder.png';
 import HoneyButton from 'components/HoneyButton/HoneyButton';
 import HexaBoxContainer from '../HexaBoxContainer/HexaBoxContainer';
-import { MAX_LTV } from '../../constants/loan';
+import { HONEY_GENESIS_MARKET_ID, PESKY_PENGUINS_MARKET_ID} from '../../constants/loan';
 import SidebarScroll from '../SidebarScroll/SidebarScroll';
 import { WithdrawFormProps } from './types';
 import { questionIcon } from 'styles/icons.css';
@@ -23,7 +23,9 @@ const WithdrawForm = (props: WithdrawFormProps) => {
     userTotalDeposits,
     value,
     available,
-    fetchedSolPrice
+    fetchedSolPrice,
+    marketImage,
+    currentMarketId,
   } = props;
   const [valueUSD, setValueUSD] = useState<number>(0);
   const [valueSOL, setValueSOL] = useState<number>(0);
@@ -109,10 +111,12 @@ const WithdrawForm = (props: WithdrawFormProps) => {
         <div className={styles.nftInfo}>
           <div className={styles.nftImage}>
             <HexaBoxContainer>
-              <Image src={honeyGenesisBee} />
+              {marketImage}
             </HexaBoxContainer>
           </div>
-          <div className={styles.nftName}>Honey Genesis Bee</div>
+          <div className={styles.nftName}>
+            {currentMarketId == HONEY_GENESIS_MARKET_ID ? 'Honey Genesis Bee' : 'Pesky Penguins'}
+          </div>
         </div>
         <div className={styles.row}>
           <div className={styles.col}>

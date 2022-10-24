@@ -150,8 +150,6 @@ const Markets: NextPage = () => {
   const [reserveHoneyState, setReserveHoneyState] = useState(0);
   const [userTotalDeposits, setUserTotalDeposits] = useState(0);
   const [fetchedSolPrice, setFetchedSolPrice] = useState(0);
-  const [honeyUtilizationRate, setHoneyUtilizationRate] = useState(0);
-  const [peskyUtilizationRate, setPeskyUtilizationRate] = useState(0);
   const [honeyInterestRate, setHoneyInterestRate] = useState(0);
   const [peskyInterestRate, setPeskyInterestRate] = useState(0);
   // interface related constants

@@ -1,13 +1,14 @@
 import { TimestampPoint } from "../components/HoneyChart/types";
 
 export type LendTableRow = {
-  key?: string;
+  key: string;
   name: string;
-  interest: number;
+  interest?: number;
+  rate?: number;
   available: number;
   value: number;
-  stats: Array<TimestampPoint>;
+  stats?: Array<TimestampPoint>;
   connection?: any;
-  utilizationRate?: any;
+  utilizationRate: any;
   user?: any;
 };

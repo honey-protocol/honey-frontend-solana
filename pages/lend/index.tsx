@@ -38,37 +38,51 @@ import { HONEY_GENESIS_MARKET_ID, PESKY_PENGUINS_MARKET_ID } from '../../constan
 import { setMarketId } from 'pages/_app';
 import { marketCollections } from '../../constants/borrowLendMarkets';
 import { generateMockHistoryData } from '../../helpers/chartUtils';
-
+// TODO: fetch based on config
 const network = 'mainnet-beta';
 
-const { format: f, formatPercent: fp, formatSol: fs } = formatNumber;
-
 const Lend: NextPage = () => {
-  // Start: SDK integration
-  // TODO: write dynamic currentMarketId based on user interaction
-  const [currentMarketId, setCurrentMarketId] = useState(PESKY_PENGUINS_MARKET_ID);
+  /**
+   * @description formatting functions to format with perfect / format in SOL with icon or just a regular 2 decimal format
+   * @params value to be formatted
+   * @returns requested format 
+  */
+  const { format: f, formatPercent: fp, formatSol: fs } = formatNumber;
+  // Sets market ID which is used for fetching market specific data
+  // each market currently is a different call and re-renders the page
+  const [currentMarketId, setCurrentMarketId] = useState(HONEY_GENESIS_MARKET_ID);
+  // init wallet and sdkConfiguration file
   const sdkConfig = ConfigureSDK();
   let walletPK = sdkConfig.sdkWallet?.publicKey;
 
   /**
+   * @description sets the market ID based on market click
+   * @params Honey table record - contains all info about a table (aka market)
+   * @returns sets the market ID which re-renders page state and fetches market specific data
+  */
+  function handleMarketId(record: any) {
+    record.id == HONEY_GENESIS_MARKET_ID ? setCurrentMarketId(HONEY_GENESIS_MARKET_ID) : setCurrentMarketId(PESKY_PENGUINS_MARKET_ID)
+    record.id == HONEY_GENESIS_MARKET_ID ? setMarketId(HONEY_GENESIS_MARKET_ID) : setMarketId(PESKY_PENGUINS_MARKET_ID)
+  }
+
+/**
    * @description calls upon markets which
    * @params none
    * @returns market | market reserve information | parsed reserves |
    */
-  const { market, marketReserveInfo, parsedReserves, fetchMarket } = useHoney();
-
-  /**
-   * @description calls upon the honey sdk - market
-   * @params solanas useConnection func. && useConnectedWallet func. && JET ID
-   * @returns honeyUser which is the main object - honeyMarket, honeyReserves are for testing purposes
-   */
-  const { honeyUser, honeyReserves, honeyMarket } = useMarket(
-    sdkConfig.saberHqConnection,
-    sdkConfig.sdkWallet!,
-    sdkConfig.honeyId,
-    currentMarketId
-  );
-
+ const { market, marketReserveInfo, parsedReserves, fetchMarket } = useHoney();
+ /**
+  * @description calls upon the honey sdk
+  * @params  useConnection func. | useConnectedWallet func. | honeyID | marketID
+  * @returns honeyUser | honeyReserves - used for interaction regarding the SDK
+  */
+ const { honeyClient, honeyUser, honeyReserves, honeyMarket } = useMarket(
+   sdkConfig.saberHqConnection,
+   sdkConfig.sdkWallet!,
+   sdkConfig.honeyId,
+   currentMarketId
+ );
+  // market specific constants - calculations / ratios / debt / allowance etc.
   const [totalMarketDeposits, setTotalMarketDeposits] = useState(0);
   const [userTotalDeposits, setUserTotalDeposits] = useState(0);
   const [reserveHoneyState, setReserveHoneyState] = useState(0);
@@ -79,24 +93,10 @@ const Lend: NextPage = () => {
   const [utilizationRate, setUtilizationRate] = useState(0);
   const [calculatedInterestRate, setCalculatedInterestRate] = useState<number>(0);
   const [fetchedSolPrice, setFetchedSolPrice] = useState(0);
+  const [honeyInterestRate, setHoneyInterestRate] = useState(0);
+  const [peskyInterestRate, setPeskyInterestRate] = useState(0);
 
-  useEffect(() => {
-    if (totalMarketDeposits && totalMarketDebt && totalMarketDeposits) {
-      setUtilizationRate(Number(f((((totalMarketDeposits + totalMarketDebt) - totalMarketDeposits) / (totalMarketDeposits + totalMarketDebt)))))
-    }
-  }, [totalMarketDeposits, totalMarketDebt, totalMarketDeposits]);
-
-  async function calculateInterestRate(utilizationRate: number) {
-    let interestRate = await getInterestRate(utilizationRate);
-    if (interestRate) setCalculatedInterestRate(interestRate * utilizationRate);
-  }
-
-  useEffect(() => {
-    if (utilizationRate) {
-      calculateInterestRate(utilizationRate)
-    }
-  }, [utilizationRate]);
-
+  // fetches the users balance
   async function fetchWalletBalance(key: PublicKey) {
     try {
       const userBalance =
@@ -106,7 +106,7 @@ const Lend: NextPage = () => {
       console.log('Error', error);
     }
   }
-
+  // if there is a wallet - we fetch the users wallet balance
   useEffect(() => {
     if (walletPK) {
       fetchWalletBalance(walletPK);
@@ -135,7 +135,6 @@ const Lend: NextPage = () => {
       }
 
       if (honeyUser?.deposits().length > 0) {
-        // let totalDeposit = BnDivided(honeyUser.deposits()[0].amount, 10, 5) * depositNoteExchangeRate / (10 ** 4)
         let totalDeposit =
           (honeyUser
             .deposits()[0]
@@ -147,7 +146,8 @@ const Lend: NextPage = () => {
       }
     }, 3000);
   }, [marketReserveInfo, honeyUser]);
-
+  
+  // fetches the current sol price
   async function fetchSolValue(reserves: any, connection: any) {
     const slPrice = await fetchSolPrice(reserves, connection);
     setFetchedSolPrice(slPrice)
@@ -172,8 +172,6 @@ const Lend: NextPage = () => {
       }
     }
   }, [parsedReserves]);
-
-  useEffect(() => {}, [reserveHoneyState]);
 
   // fetches total market positions
   async function fetchObligations() {
@@ -349,9 +347,8 @@ const Lend: NextPage = () => {
 
   const isMock = true;
   const [tableData, setTableData] = useState<LendTableRow[]>([]);
-  const [tableDataFiltered, setTableDataFiltered] = useState<LendTableRow[]>(
-    []
-  );
+  const [tableDataFiltered, setTableDataFiltered] = useState<LendTableRow[]>([]);
+
   const [expandedRowKeys, setExpandedRowKeys] = useState<readonly Key[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [isMyCollectionsFilterEnabled, setIsMyCollectionsFilterEnabled] =
@@ -402,62 +399,32 @@ const Lend: NextPage = () => {
   }, [tableData]);
 
   useEffect(() => {
-    console.log('calculated interest rate', calculatedInterestRate);
-
-    const mockData = marketCollections.map(async (collection) => {
+    marketCollections.map(async (collection) => {
       if (!collection.id) return;
       await populateMarketData(collection, sdkConfig.saberHqConnection, sdkConfig.sdkWallet!, currentMarketId, true);
-      // collection.stats = getPositionData()
-      // console.log("this is collection.stats", collection.stats);
+      collection.rate = await getInterestRate(collection.utilizationRate) || 0;
+      collection.id == HONEY_GENESIS_MARKET_ID ? setHoneyInterestRate(collection.rate) : setPeskyInterestRate(collection.rate);
+      collection.stats = getPositionData();
+      console.log('B:: collection', collection)
     })
 
-    // const mockData: LendTableRow[] = [
-    //   {
-    //     key: 'HNYG',
-    //     name: HONEY_GENESIS_BEE,
-    //     interest: calculatedInterestRate,
-    //     // validated available to be totalMarketDeposits
-    //     available: totalMarketDeposits,
-    //     // validated value to be totalMarkDeposits + totalMarketDebt
-    //     value: totalMarketDeposits + totalMarketDebt,
-    //     stats: getPositionData()
-    //   },
-    //   {
-    //     key: 'LIFINITY',
-    //     name: LIFINITY_FLARES,
-    //     interest: 0,
-    //     // validated available to be totalMarketDeposits
-    //     available: 0,
-    //     // validated value to be totalMarkDeposits + totalMarketDebt
-    //     value: 0,
-    //     stats: getPositionData()
-    //   },
-    //   {
-    //     key: 'ATD',
-    //     name: OG_ATADIANS,
-    //     interest: 0,
-    //     // validated available to be totalMarketDeposits
-    //     available: 0,
-    //     // validated value to be totalMarkDeposits + totalMarketDebt
-    //     value: 0,
-    //     stats: getPositionData()
-    //   },
-    //   {
-    //     key: 'NOOT',
-    //     name: PESKY_PENGUINS,
-    //     interest: 0,
-    //     // validated available to be totalMarketDeposits
-    //     available: 0,
-    //     // validated value to be totalMarkDeposits + totalMarketDebt
-    //     value: 0,
-    //     stats: getPositionData()
-    //   }
-    // ];
     setTimeout(() => {
-      setTableData(mockData);
-      setTableDataFiltered(mockData);
+      setTableData(marketCollections);
+      setTableDataFiltered(marketCollections);
     }, 3000)
-  }, [totalMarketDeposits, totalMarketDebt, marketPositions, nftPrice, calculatedInterestRate]);
+
+  }, [
+    totalMarketDeposits,
+    totalMarketDebt,
+    nftPrice,
+    honeyReserves,
+    parsedReserves,
+    sdkConfig.saberHqConnection,
+    sdkConfig.sdkWallet,
+    currentMarketId,
+    peskyInterestRate,
+    honeyInterestRate,
+  ]);
 
   const handleToggle = (checked: boolean) => {
     setIsMyCollectionsFilterEnabled(checked);
@@ -493,6 +460,7 @@ const Lend: NextPage = () => {
         dataIndex: 'name',
         key: 'name',
         render: (name: string) => {
+          console.log('B:: name', name)
           return (
             <div className={style.nameCell}>
               <div className={style.logoWrapper}>
@@ -525,10 +493,11 @@ const Lend: NextPage = () => {
           );
         },
         dataIndex: 'rate',
-        sorter: (a, b) => a.interest - b.interest,
+        sorter: (a: any = 0, b: any = 0) => a.rate - b.rate,
         render: (rate: number, market: any) => {
-          console.log('rate', market);
-          return <div className={style.rateCell}>{fp(market.interest)}</div>;
+          console.log('B:: rate', rate);
+          console.log('B:: market', market);
+          return <div className={style.rateCell}>{fp(market.rate)}</div>;
         }
       },
       {
@@ -615,6 +584,11 @@ const Lend: NextPage = () => {
           columns={columns}
           dataSource={tableDataFiltered}
           pagination={false}
+          onRow={(record, rowIndex) => {
+            return {
+              onClick: event => handleMarketId(record)
+            }
+          }}
           className={style.table}
           expandable={{
             // we use our own custom expand column
@@ -622,14 +596,14 @@ const Lend: NextPage = () => {
             onExpand: (expanded, row) =>
               setExpandedRowKeys(expanded ? [row.key] : []),
             expandedRowKeys,
-            // expandedRowRender: record => {
-            //   return (
-            //     <div className={style.expandSection}>
-            //       <div className={style.dashedDivider} />
-            //       <HoneyChart title="Interest rate" data={record.stats} />
-            //     </div>
-            //   );
-            // }
+            expandedRowRender: record => {
+              return (
+                <div className={style.expandSection}>
+                  <div className={style.dashedDivider} />
+                  <HoneyChart title="Interest rate" data={record.stats} />
+                </div>
+              );
+            }
           }}
         />
       </HoneyContent>
@@ -643,6 +617,8 @@ const Lend: NextPage = () => {
           value={totalMarketDeposits + totalMarketDebt}
           userWalletBalance={userWalletBalance}
           fetchedSolPrice={fetchedSolPrice}
+          marketImage={renderImage(currentMarketId == HONEY_GENESIS_MARKET_ID ? HONEY_GENESIS_BEE : PESKY_PENGUINS)}
+          currentMarketId={currentMarketId}
         />
       </HoneySider>
     </LayoutRedesign>
