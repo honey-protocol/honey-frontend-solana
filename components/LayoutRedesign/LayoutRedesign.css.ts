@@ -13,11 +13,11 @@ globalStyle(`body ${layout} .ant-layout-sider`, {
 
 globalStyle(`.disable-scroll`, {
   overflow: 'hidden',
-  "@media": {
+  '@media': {
     [`screen and (min-width: ${breakpoints.desktop}px)`]: {
-      overflow: 'initial',
-    },
-  },
+      overflow: 'initial'
+    }
+  }
 });
 
 globalStyle(`body`, {
@@ -32,17 +32,17 @@ export const layoutHeader = style({
   zIndex: '2',
   position: 'fixed',
   top: 0,
-  left: 0,
+  left: 0
 });
 
 export const contentContainer = style({
   background: vars.colors.grayLight,
-  paddingTop: 102
+  paddingTop: 90
 });
 
 export const contentCenter = style([container]);
 
 globalStyle(`body ${contentContainer} > .ant-layout-content`, {
   backgroundColor: 'transparent',
-  display: 'flex',
+  display: 'flex'
 });
