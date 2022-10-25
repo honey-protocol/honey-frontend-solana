@@ -6,18 +6,6 @@ import * as styles from './AddOracleStep.css';
 
 export const AddOracleStep = () => {
   const [value, setValue] = useState<string>('');
-  const mockCollectionData = {
-    title: value
-  };
-
-  useCallback(() => {
-    if (value.length) {
-      mockCollectionData.title = value;
-    } else {
-      return;
-    }
-  }, [value]);
-
   return (
     <>
       <div className={styles.tabTitle}>
