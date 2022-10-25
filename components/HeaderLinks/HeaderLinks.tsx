@@ -32,7 +32,7 @@ export const links = [
   {
     title: 'GOVERNANCE',
     href: '/governance',
-    disabled: true
+    disabled: false
   },
   {
     title: 'DOCUMENTATION',
