@@ -1,10 +1,15 @@
-import { Connection, PublicKey } from '@solana/web3.js';
+import { AccountMeta, Connection, PublicKey } from '@solana/web3.js';
 import * as anchor from '@project-serum/anchor';
 import {
   ASSOCIATED_TOKEN_PROGRAM_ID,
   Token,
   TOKEN_PROGRAM_ID
 } from '@solana/spl-token';
+import {
+  Metadata,
+  Edition,
+  MetadataProgram
+} from '@metaplex-foundation/mpl-token-metadata';
 
 import { ClientBase } from './base';
 import { HONEY_MINT } from './constant';
@@ -16,6 +21,7 @@ export const VE_HONEY_PROGRAM_ID = new PublicKey(
 );
 export const ESCROW_SEED = 'Escrow';
 export const WHITELIST_ENTRY_SEED = 'LockerWhitelistEntry';
+export const PROOF_SEED = 'Proof';
 
 export class VeHoneyClient extends ClientBase<VeHoney> {
   constructor(connection: Connection, wallet: anchor.Wallet) {
@@ -101,7 +107,7 @@ export class VeHoneyClient extends ClientBase<VeHoney> {
     const lockedTokens = await this.getEscrowLockedTokenPDA(escrow);
 
     const txSig = await this.program.methods
-      .exit()
+      .unlock()
       .accounts({
         payer: this.wallet.publicKey,
         locker,
@@ -162,7 +168,53 @@ export class VeHoneyClient extends ClientBase<VeHoney> {
     return { txSig, escrow };
   }
 
+  async lockNft(
+    locker: PublicKey,
+    nftMint: PublicKey,
+    creator: PublicKey,
+    duration: anchor.BN,
+    hasEscrow?: boolean
+  ) {
+    const preInstructions = [];
+    if (!hasEscrow) {
+      preInstructions.push(await this.createInitializeEscrowIx(locker));
+    }
 
+    const [proof] = await this.getProofPDA(locker, creator);
+    const nftMetadata = await Metadata.getPDA(nftMint);
+    const nftEdition = await Edition.getPDA(nftMint);
+
+    const remainingAccounts: AccountMeta[] = [
+      {
+        pubkey: proof,
+        isSigner: false,
+        isWritable: false
+      },
+      {
+        pubkey: MetadataProgram.PUBKEY,
+        isSigner: false,
+        isWritable: false
+      },
+      {
+        pubkey: nftMetadata,
+        isSigner: false,
+        isWritable: true
+      },
+      {
+        pubkey: nftMint,
+        isSigner: false,
+        isWritable: false
+      },
+      {
+        pubkey: nftEdition,
+        isSigner: false,
+        isWritable: false
+      }
+    ];
+
+    const [escrow] = await this.getEscrowPDA(locker);
+    const lockedTokens = await this.getEscrowLockedTokenPDA(escrow);
+  }
 
   async getEscrowPDA(locker: PublicKey) {
     return anchor.web3.PublicKey.findProgramAddress(
@@ -190,7 +242,7 @@ export class VeHoneyClient extends ClientBase<VeHoney> {
     executableId: PublicKey,
     whitelistedOwner: PublicKey
   ) {
-    return anchor.web3.PublicKey.findProgramAddress(
+    return PublicKey.findProgramAddress(
       [
         Buffer.from(WHITELIST_ENTRY_SEED),
         locker.toBuffer(),
@@ -200,7 +252,14 @@ export class VeHoneyClient extends ClientBase<VeHoney> {
       this.program.programId
     );
   }
-  
+
+  async getProofPDA(locker: PublicKey, proofAddress: PublicKey) {
+    return PublicKey.findProgramAddress(
+      [Buffer.from(PROOF_SEED), locker.toBuffer(), proofAddress.toBuffer()],
+      this.program.programId
+    );
+  }
+
   async getAllEscrowAccounts() {
     return this.program.account.escrow.all();
   }
