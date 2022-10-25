@@ -1,6 +1,6 @@
 import { globalStyle, style, styleVariants } from '@vanilla-extract/css';
 import { breakpoints, typography, vars } from './theme.css';
-import { lampIcon } from './icons.css';
+import { createMarketIcon, lampIcon } from './icons.css';
 import { container } from './common.css';
 import { honeyTableExpandedRow } from '../components/HoneyTable/HoneyTable.css';
 
@@ -22,6 +22,14 @@ export const nameCellMobile = style({
 export const logoWrapper = style({
   marginRight: 12
 });
+
+export const createMarketLogo = style({
+  width: '36px',
+  height: '36px',
+  minWidth: '36px',
+  flexShrink: 0
+});
+
 export const collectionLogo = style({
   width: '34px',
   height: '34px',
@@ -126,6 +134,10 @@ export const arrowIcon = style({
   }
 });
 
+export const createMarketHover = style({
+  transform: `translate(4px, 0)`
+});
+
 export const mobileTableHeader = style({
   display: 'flex',
   alignItems: 'center',
@@ -162,9 +174,14 @@ export const mobileRow = style({
 
 export const table = style({});
 const tableChildSelector = (selector: string) => {
-  return `${table} ${selector}`;
+  return `${hideTablet} ${table} ${selector}`;
 };
 const tcs = tableChildSelector;
+
+globalStyle(tcs(`.ant-table-thead > tr:last-child > th`), {
+  padding: 0
+});
+
 globalStyle(tcs(`.ant-table-cell`), {
   borderSpacing: '0 !important',
   padding: 8,
@@ -177,13 +194,6 @@ globalStyle(tcs(`.ant-table-cell`), {
 globalStyle(tcs(`.ant-table-expanded-row > .ant-table-cell`), {
   paddingBottom: 0,
   boxShadow: '4px 4px 0px 0px rgb(231 180 0)'
-});
-globalStyle(tcs(`.ant-table-row-level-0::before`), {
-  position: 'absolute',
-  top: 20,
-  width: 100,
-  height: 100,
-  background: 'black'
 });
 globalStyle(tcs(`tr.ant-table-expanded-row > .ant-table-cell`), {
   paddingTop: '0 !important'
@@ -226,6 +236,17 @@ export const headerCell = styleVariants({
       color: vars.colors.black
     }
   ]
+});
+
+export const createMarketLauncherCell = style({
+  position: 'relative',
+  padding: 0,
+  zIndex: 10,
+  cursor: 'pointer'
+});
+
+globalStyle(`.ant-table-cell > ${createMarketLauncherCell}`, {
+  padding: 0
 });
 
 const sortIconBasic = style({
@@ -322,6 +343,17 @@ export const expandedRowIcon = style({
     }
   }
 });
+export const createMarketIconStyle = style([
+  createMarketIcon,
+  {
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 1,
+    marginLeft: -1,
+    backgroundColor: vars.colors.white
+  }
+]);
 export const lampIconStyle = style([
   lampIcon,
   {
@@ -340,6 +372,7 @@ export const arrowRightIcon = style({
   width: 20,
   height: 20
 });
+
 export const nameCellText = style({
   display: 'flex',
   flexDirection: 'column',
@@ -475,4 +508,30 @@ export const mobileSearchAndToggleContainer = style({
   paddingRight: '10px',
   display: 'flex',
   alignItems: 'center'
+});
+
+export const createMarketTitle = style([
+  typography.body,
+  {
+    '@media': {
+      [`screen and (max-width: ${breakpoints.mobile}px)`]: {
+        fontSize: 12
+      }
+    }
+  }
+]);
+
+export const createMarket = style({
+  width: '100%',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'space-between',
+  padding: 16,
+  borderRadius: 12,
+  backgroundPosition: '0 0, 0 0, 100% 0, 0 100%',
+  backgroundSize: '2px 100%, 100% 2px, 2px 100%, 100% 2px',
+  backgroundRepeat: 'no-repeat',
+  backgroundImage: `repeating-linear-gradient(0deg, ${vars.colors.grayDark}, ${vars.colors.grayDark} 10px, transparent 10px, transparent 20px), repeating-linear-gradient(90deg, ${vars.colors.grayDark}, ${vars.colors.grayDark} 10px, transparent 10px, transparent 20px), repeating-linear-gradient(180deg, ${vars.colors.grayDark}, ${vars.colors.grayDark} 10px, transparent 10px, transparent 20px), repeating-linear-gradient(270deg, ${vars.colors.grayDark}, ${vars.colors.grayDark} 10px, transparent 10px, transparent 20px)`,
+  borderImage: `repeating-linear-gradient(0deg, ${vars.colors.grayDark}, ${vars.colors.grayDark} 10px, transparent 10px, transparent 20px)`,
+  cursor: 'pointer'
 });

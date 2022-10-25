@@ -106,7 +106,7 @@ const BurnNftsForm = (props: { onCancel: Function }) => {
             <HoneyButton
               variant="primary"
               disabled={false}
-              isFluid={true}
+              block
               onClick={setSelectAll}
             >
               {selected.length ? 'Burn selected' : 'Select All'}

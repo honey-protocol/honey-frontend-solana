@@ -5,7 +5,9 @@ import HoneyTable from '../../components/HoneyTable/HoneyTable';
 import { ColumnType } from 'antd/lib/table';
 import * as style from '../../styles/markets.css';
 import c from 'classnames';
+import classNames from 'classnames';
 import {
+  BorrowSidebarMode,
   HoneyTableColumnType,
   MarketTablePosition,
   MarketTableRow,
@@ -19,18 +21,16 @@ import React, {
   useMemo,
   useState
 } from 'react';
-import { formatNumber, formatNFTName } from '../../helpers/format';
+import { formatNFTName, formatNumber } from '../../helpers/format';
 import Image from 'next/image';
 import honeyGenesisBee from '/public/images/imagePlaceholder.png';
 import { ColumnTitleProps, Key } from 'antd/lib/table/interface';
-import HoneyToggle from '../../components/HoneyToggle/HoneyToggle';
 import debounce from 'lodash/debounce';
 import SearchInput from '../../components/SearchInput/SearchInput';
 import HexaBoxContainer from 'components/HexaBoxContainer/HexaBoxContainer';
 import { InfoBlock } from 'components/InfoBlock/InfoBlock';
 import HoneyButton from '../../components/HoneyButton/HoneyButton';
 import EmptyStateDetails from 'components/EmptyStateDetails/EmptyStateDetails';
-import classNames from 'classnames';
 import { getColumnSortStatus } from '../../helpers/tableUtils';
 import { useConnectedWallet } from '@saberhq/use-solana';
 import useFetchNFTByUser from '../../hooks/useNFTV2';
@@ -66,7 +66,9 @@ import HoneyTableRow from 'components/HoneyTable/HoneyTableRow/HoneyTableRow';
 import HoneyTableNameCell from '../../components/HoneyTable/HoneyTableNameCell/HoneyTableNameCell';
 import HealthLvl from '../../components/HealthLvl/HealthLvl';
 import HoneyTooltip from '../../components/HoneyTooltip/HoneyTooltip';
+import CreateMarketSidebar from '../../components/CreateMarketSidebar/CreateMarketSidebar';
 import { LIQUIDATION_THRESHOLD } from '../../constants/loan';
+import { SizeMe } from 'react-sizeme';
 // import { network } from 'pages/_app';
 
 const network = 'mainnet-beta'; // change to dynamic value
@@ -76,6 +78,9 @@ const { format: f, formatPercent: fp, formatSol: fs } = formatNumber;
 const Markets: NextPage = () => {
   const wallet = useConnectedWallet();
   const sdkConfig = ConfigureSDK();
+  const [sidebarMode, setSidebarMode] = useState<BorrowSidebarMode>(
+    BorrowSidebarMode.MARKET
+  );
 
   /**
    * @description calls upon markets which
@@ -147,12 +152,16 @@ const Markets: NextPage = () => {
   const [userUSDCBalance, setUserUSDCBalance] = useState(0);
   const [userTotalDeposits, setUserTotalDeposits] = useState(0);
   const [sumOfTotalValue, setSumOfTotalValue] = useState(0);
+  const [launchAreaWidth, setLaunchAreaWidth] = useState<number>(840);
   const [fetchedSolPrice, setFetchedSolPrice] = useState(0);
   const [calculatedInterestRate, setCalculatedInterestRate] =
     useState<number>(0);
   const [utilizationRate, setUtilizationRate] = useState(0);
 
   const [isMobileSidebarVisible, setShowMobileSidebar] = useState(false);
+
+  const [isCreateMarketAreaOnHover, setIsCreateMarketAreaOnHover] =
+    useState<boolean>(false);
 
   const availableNFTs: any = useFetchNFTByUser(wallet);
   let reFetchNFTs = availableNFTs[2];
@@ -390,7 +399,6 @@ const Markets: NextPage = () => {
         debt: userDebt
       }
     ];
-
     setTableData(mockData);
     setTableDataFiltered(mockData);
   }, [
@@ -468,6 +476,7 @@ const Markets: NextPage = () => {
   };
   const columnsWidth: Array<number | string> = [240, 150, 150, 150, 150];
 
+  // @ts-ignore
   const columns: HoneyTableColumnType<MarketTableRow>[] = useMemo(
     () =>
       [
@@ -476,20 +485,64 @@ const Markets: NextPage = () => {
           title: SearchForm,
           dataIndex: 'name',
           key: 'name',
-          render: (name: string) => {
-            return (
-              <div className={style.nameCell}>
-                <div className={style.logoWrapper}>
-                  <div className={style.collectionLogo}>
-                    <HexaBoxContainer>
-                      <Image src={honeyGenesisBee} />
-                    </HexaBoxContainer>
+          children: [
+            {
+              title: () => {
+                return (
+                  <div
+                    className={style.createMarketLauncherCell}
+                    style={{ width: launchAreaWidth }}
+                    onClick={() =>
+                      setSidebarMode(BorrowSidebarMode.CREATE_MARKET)
+                    }
+                  >
+                    <div className={style.createMarket}>
+                      <div className={style.nameCell}>
+                        <div className={style.logoWrapper}>
+                          <div className={style.createMarketLogo}>
+                            <HexaBoxContainer borderColor="gray">
+                              <div className={style.createMarketIconStyle} />
+                            </HexaBoxContainer>
+                          </div>
+                        </div>
+                        <div className={style.createMarketTitle}>
+                          Do you want to create a new one?
+                        </div>
+                      </div>
+                      <div className={style.buttonsCell}>
+                        <HoneyButton variant="text">
+                          Create{' '}
+                          <div
+                            className={c(style.arrowRightIcon, {
+                              [style.createMarketHover]:
+                                isCreateMarketAreaOnHover
+                            })}
+                          />
+                        </HoneyButton>
+                      </div>
+                    </div>
                   </div>
-                </div>
-                <div className={style.collectionName}>{name}</div>
-              </div>
-            );
-          }
+                );
+              },
+              dataIndex: 'name',
+              width: columnsWidth[0],
+              key: 'name',
+              render: (name: string, data: MarketTableRow, index: number) => {
+                return (
+                  <div className={style.nameCell}>
+                    <div className={style.logoWrapper}>
+                      <div className={style.collectionLogo}>
+                        <HexaBoxContainer>
+                          <Image src={honeyGenesisBee} />
+                        </HexaBoxContainer>
+                      </div>
+                    </div>
+                    <div className={style.collectionName}>{name}</div>
+                  </div>
+                );
+              }
+            }
+          ]
         },
         {
           width: columnsWidth[1],
@@ -503,44 +556,28 @@ const Markets: NextPage = () => {
                   ]
                 }
               >
-                <span>Interest rate</span>
+                <span>Rate</span>
                 <div className={style.sortIcon[sortOrder]} />
               </div>
             );
           },
           dataIndex: 'rate',
-          hidden: windowWidth < TABLET_BP,
-          sorter: (a: MarketTableRow, b: MarketTableRow) => a.rate - b.rate,
-          render: (rate: number) => {
-            return (
-              <div className={c(style.rateCell, style.borrowRate)}>
-                {fp(calculatedInterestRate)}
-              </div>
-            );
-          }
-        },
-        {
-          width: columnsWidth[3],
-          title: ({ sortColumns }: ColumnTitleProps<MarketTableRow>) => {
-            const sortOrder = getColumnSortStatus(sortColumns, 'value');
-            return (
-              <div
-                className={
-                  style.headerCell[
-                    sortOrder === 'disabled' ? 'disabled' : 'active'
-                  ]
-                }
-              >
-                <span>Supplied</span>
-                <div className={style.sortIcon[sortOrder]} />
-              </div>
-            );
-          },
-          dataIndex: 'value',
-          sorter: (a: MarketTableRow, b: MarketTableRow) => a.value - b.value,
-          render: (value: number) => {
-            return <div className={style.valueCell}>{fs(value)}</div>;
-          }
+          children: [
+            {
+              dataIndex: 'rate',
+              key: 'rate',
+              hidden: windowWidth < TABLET_BP,
+              ellipsis: true,
+              render: (rate: number) => {
+                return (
+                  <div className={c(style.rateCell, style.borrowRate)}>
+                    {fp(rate * 100)}
+                  </div>
+                );
+              }
+            }
+          ],
+          sorter: (a: MarketTableRow, b: MarketTableRow) => a.rate - b.rate
         },
         {
           width: columnsWidth[2],
@@ -560,11 +597,51 @@ const Markets: NextPage = () => {
             );
           },
           dataIndex: 'available',
-          hidden: windowWidth < TABLET_BP,
+          children: [
+            {
+              dataIndex: 'available',
+              key: 'available',
+              hidden: windowWidth < TABLET_BP,
+              render: (available: number) => {
+                return (
+                  <div className={style.availableCell}>{fs(available)}</div>
+                );
+              }
+            }
+          ],
           sorter: (a: MarketTableRow, b: MarketTableRow) =>
-            a.available - b.available,
-          render: (available: number) => {
-            return <div className={style.availableCell}>{fs(available)}</div>;
+            a.available - b.available
+        },
+        {
+          width: columnsWidth[3],
+          title: ({ sortColumns }: ColumnTitleProps<MarketTableRow>) => {
+            const sortOrder = getColumnSortStatus(sortColumns, 'value');
+            return (
+              <div
+                className={
+                  style.headerCell[
+                    sortOrder === 'disabled' ? 'disabled' : 'active'
+                  ]
+                }
+              >
+                <span>TVL</span>
+                <div className={style.sortIcon[sortOrder]} />
+              </div>
+            );
+          },
+          dataIndex: 'value',
+          children: [
+            {
+              dataIndex: 'value',
+              key: 'value',
+              render: (value: number, data: MarketTableRow) => {
+                return <div className={style.valueCell}>{fs(value)}</div>;
+              }
+            }
+          ],
+          sorter: (a: MarketTableRow, b: MarketTableRow) => a.value - b.value,
+          render: (value: number, data: MarketTableRow) => {
+            return <div className={style.valueCell}>{fs(value)}</div>;
           }
         },
 
@@ -581,7 +658,14 @@ const Markets: NextPage = () => {
             );
           }
         }
-      ].filter(column => !column.hidden),
+      ].filter((column: HoneyTableColumnType<MarketTableRow>) => {
+        // @ts-ignore
+        if (column.children) {
+          // @ts-ignore
+          return !column?.children[0].hidden;
+        }
+        return !column.hidden;
+      }),
     [isMyCollectionsFilterEnabled, tableData, searchQuery, windowWidth]
   );
 
@@ -637,7 +721,6 @@ const Markets: NextPage = () => {
     ],
     [isMyCollectionsFilterEnabled, tableData, searchQuery]
   );
-
   const expandColumns: ColumnType<MarketTablePosition>[] = [
     {
       dataIndex: 'name',
@@ -760,7 +843,7 @@ const Markets: NextPage = () => {
             You can not add any more NFTs to this market{' '}
           </span>
           <span className={style.footerDescription}>
-            Current risk parameters limit to 1 loan per wallet{' '}
+            Choose another market or connect a different wallet{' '}
           </span>
         </div>
       </div>
@@ -768,7 +851,7 @@ const Markets: NextPage = () => {
         <HoneyButton
           className={style.mobileConnectButton}
           variant="secondary"
-          isFluid={windowWidth < TABLET_BP}
+          block={windowWidth < TABLET_BP}
         >
           <div className={style.swapWalletIcon} />
           Change active wallet{' '}
@@ -959,32 +1042,49 @@ const Markets: NextPage = () => {
     }
   }
 
-  const borrowSidebar = () => (
-    <HoneySider isMobileSidebarVisible={isMobileSidebarVisible}>
-      {/* borrow repay module */}
-      <MarketsSidebar
-        collectionId="s"
-        availableNFTs={userAvailableNFTs}
-        openPositions={userOpenPositions}
-        nftPrice={nftPrice}
-        executeDepositNFT={executeDepositNFT}
-        executeWithdrawNFT={executeWithdrawNFT}
-        executeBorrow={executeBorrow}
-        executeRepay={executeRepay}
-        userDebt={userDebt}
-        userAllowance={userAllowance}
-        userUSDCBalance={userUSDCBalance}
-        loanToValue={loanToValue}
-        hideMobileSidebar={hideMobileSidebar}
-        fetchedSolPrice={fetchedSolPrice}
-        calculatedInterestRate={calculatedInterestRate}
-      />
-    </HoneySider>
-  );
+  const borrowSidebar = (sidebarMode: BorrowSidebarMode) => {
+    switch (sidebarMode) {
+      case BorrowSidebarMode.MARKET:
+        return (
+          <HoneySider isMobileSidebarVisible={isMobileSidebarVisible}>
+            {/* borrow repay module */}
+            <MarketsSidebar
+              collectionId="s"
+              availableNFTs={userAvailableNFTs}
+              openPositions={userOpenPositions}
+              nftPrice={nftPrice}
+              executeDepositNFT={executeDepositNFT}
+              executeWithdrawNFT={executeWithdrawNFT}
+              executeBorrow={executeBorrow}
+              executeRepay={executeRepay}
+              userDebt={userDebt}
+              userAllowance={userAllowance}
+              userUSDCBalance={userUSDCBalance}
+              loanToValue={loanToValue}
+              hideMobileSidebar={hideMobileSidebar}
+              fetchedSolPrice={fetchedSolPrice}
+              calculatedInterestRate={calculatedInterestRate}
+            />
+          </HoneySider>
+        );
+      case BorrowSidebarMode.CREATE_MARKET:
+        return (
+          <HoneySider isMobileSidebarVisible={isMobileSidebarVisible}>
+            <CreateMarketSidebar
+              onCancel={() => {
+                setSidebarMode(BorrowSidebarMode.MARKET);
+              }}
+            />
+          </HoneySider>
+        );
+      default:
+        return null;
+    }
+  };
 
   return (
     <LayoutRedesign>
-      <HoneyContent sidebar={borrowSidebar()}>
+      <HoneyContent sidebar={borrowSidebar(sidebarMode)}>
         <div>
           <Typography.Title className={pageTitle}>Borrow</Typography.Title>
           <Typography.Text className={pageDescription}>

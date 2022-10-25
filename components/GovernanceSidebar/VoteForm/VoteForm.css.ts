@@ -55,14 +55,6 @@ export const gridCell = style({
   marginBottom: 24
 });
 
-export const tabTitle = style([
-  typography.title,
-  {
-    color: vars.colors.black,
-    marginBottom: 12
-  }
-]);
-
 export const buttons = style([
   {
     display: 'flex'

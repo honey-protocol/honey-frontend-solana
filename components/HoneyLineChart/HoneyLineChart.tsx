@@ -1,12 +1,13 @@
-import React, { FC, useEffect, useMemo, useState } from 'react';
-import { VictoryAxis, VictoryChart, VictoryArea, VictoryLine } from 'victory';
-import { SizeMeProps, withSize } from 'react-sizeme';
+import React, { FC, useMemo, useState } from 'react';
+import { VictoryArea, VictoryAxis, VictoryChart } from 'victory';
+import { withSize } from 'react-sizeme';
 import { HoneyLineChartProps, TimestampPoint } from './types';
-import { typography, vars } from '../../styles/theme.css';
+import { vars } from '../../styles/theme.css';
 import * as style from './HoneyLineChart.css';
 import { PERIOD, PeriodName } from '../../constants/periods';
 import { getFormattedDate, getStartDate } from './utlis';
 import { formatNumber } from '../../helpers/format';
+
 const { formatToThousands: ftt } = formatNumber;
 
 const LineChart: FC<HoneyLineChartProps> = ({
@@ -14,6 +15,7 @@ const LineChart: FC<HoneyLineChartProps> = ({
   size,
   color = vars.colors.brownMiddle
 }) => {
+  console.log('size', size);
   const [period, setPeriod] = useState<PeriodName>(PERIOD.one_month);
 
   const dataByPeriod = useMemo(() => {
@@ -108,4 +110,4 @@ const LineChart: FC<HoneyLineChartProps> = ({
   );
 };
 
-export const HoneyLineChart = withSize()(LineChart);
+export const HoneyLineChart = withSize({ monitorHeight: true })(LineChart);

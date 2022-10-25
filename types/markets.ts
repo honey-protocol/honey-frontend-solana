@@ -50,3 +50,10 @@ export interface HoneyTableColumnType<RecordType>
   extends ColumnType<RecordType> {
   hidden?: boolean;
 }
+
+// export type BorrowSidebarMode = 'market' | 'new_market';
+
+export enum BorrowSidebarMode {
+  MARKET = 'market',
+  CREATE_MARKET = 'create_market'
+}

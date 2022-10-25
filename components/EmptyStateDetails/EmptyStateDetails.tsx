@@ -14,6 +14,7 @@ interface EmptyStateDetailsProps {
   title: string;
   description: string;
   buttons?: button[];
+  btnTitle?: string;
 }
 
 const { Text } = Typography;
