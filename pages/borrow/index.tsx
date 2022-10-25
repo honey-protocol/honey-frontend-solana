@@ -300,8 +300,19 @@ const Markets: NextPage = () => {
   
   // if there are open positions for the user -> set the open positions
   useEffect(() => {
-    if (collateralNFTPositions) setUserOpenPositions(collateralNFTPositions)
+    console.log('B:: collateral pos.', collateralNFTPositions)
+    if (collateralNFTPositions) setUserOpenPositions(collateralNFTPositions);
   }, [collateralNFTPositions, currentMarketId]);
+
+  async function handlePositions(id: string) {
+    if (currentMarketId == HONEY_GENESIS_MARKET_ID && id == HONEY_GENESIS_MARKET_ID) {
+      return userOpenPositions.filter((pos) => pos.name.includes('Honey'))
+    } else if (currentMarketId == PESKY_PENGUINS_MARKET_ID && id == PESKY_PENGUINS_MARKET_ID) {
+      return userOpenPositions.filter((pos) => pos.name.includes('Pesky'))
+    } else {
+      return [];
+    }
+  }
 
 
   // PUT YOUR DATA SOURCE HERE
@@ -309,23 +320,24 @@ const Markets: NextPage = () => {
   useEffect(() => {
     if (sdkConfig.saberHqConnection && sdkConfig.sdkWallet) {
 
-      marketCollections.map(async (collection) => 
+      const p = new Promise((resolve, reject) => {
+        marketCollections.map(async (collection) => 
         {
           if(collection.id == '') return;
-
-          await populateMarketData(collection, sdkConfig.saberHqConnection, sdkConfig.sdkWallet!, currentMarketId, false);
-          
-          collection.positions = userOpenPositions;
-          collection.rate = await getInterestRate(collection.utilizationRate) || 0
           collection.id == HONEY_GENESIS_MARKET_ID ? setHoneyInterestRate(collection.rate) : setPeskyInterestRate(collection.rate);
+          await populateMarketData(collection, sdkConfig.saberHqConnection, sdkConfig.sdkWallet!, currentMarketId, false);
+          collection.positions = await handlePositions(collection.id);
+          collection.rate = await getInterestRate(collection.utilizationRate) || 0
         }
       );
+        resolve(marketCollections);
+      
+      })
 
-      setTimeout(() => {
-        setTableData(marketCollections);
-        setTableDataFiltered(marketCollections);
-      }, 3000)
-
+      p.then((result) => {
+        console.log('this is the result', result);
+        setTableData(result);
+      });
     }
   }, [
       totalMarketDeposits,
@@ -341,10 +353,13 @@ const Markets: NextPage = () => {
       currentMarketId,
       peskyInterestRate,
       honeyInterestRate,
-      userOpenPositions,
-      processUserNFT
+      userOpenPositions
     ]
   );
+
+  useEffect(() => {
+    console.log('@@--table data', tableData);
+  }, [tableData])
 
   const showMobileSidebar = () => {
     setShowMobileSidebar(true);
@@ -582,23 +597,21 @@ const Markets: NextPage = () => {
     ],
     [isMyCollectionsFilterEnabled, tableData, searchQuery]
   );
+  
   // position in each market
   const expandColumns: ColumnType<MarketTablePosition>[] = [
     {
       dataIndex: 'name',
       width: columnsWidth[0],
-      render: (name, record) => (
+      render: (name, record) => {
+        console.log('@@record', record);
+        console.log('@@record - the name var', name)
+        return (
         <div className={style.expandedRowNameCell}>
           <div className={style.expandedRowIcon} />
           <div className={style.collectionLogo}>
             <HexaBoxContainer>
-              {
-                currentMarketId == HONEY_GENESIS_MARKET_ID 
-                ?
-                renderImage(HONEY_GENESIS_BEE)
-                :
-                renderImage(PESKY_PENGUINS)
-              }
+              { <Image src={record.image ? record.image : ''} alt="" layout="fill" /> }
             </HexaBoxContainer>
           </div>
           <div className={style.nameCellText}>
@@ -609,7 +622,7 @@ const Markets: NextPage = () => {
             </div>
           </div>
         </div>
-      )
+      )}
     },
     {
       dataIndex: 'debt',
@@ -762,10 +775,6 @@ const Markets: NextPage = () => {
     
             await refreshPositions();
             reFetchNFTs({});
-
-            setTimeout(() => {
-              processUserNFT == 0 ? setProcessUserNFT(1) : setProcessUserNFT(0);
-            }, 2000)
           }
         }
       })
@@ -805,13 +814,8 @@ const Markets: NextPage = () => {
           'Withdraw success',
           `https://solscan.io/tx/${tx[1][0]}?cluster=${network}`
         );
-
-        setTimeout(() => {
-          processUserNFT == 0 ? setProcessUserNFT(1) : setProcessUserNFT(0);
-        }, 2000)
       }
 
-      toast.clear();
       return true;
     } catch (error) {
       toast.error('Error withdraw NFT');
@@ -865,11 +869,7 @@ const Markets: NextPage = () => {
         toast.success(
           'Borrow success',
           `https://solscan.io/tx/${tx[1][0]}?cluster=${network}`
-        )
-        
-        setTimeout(() => {
-          processUserPayment == 0 ? setProcessUserPayment(1) : setProcessUserPayment(0);
-        }, 3000)
+        );
 
       } else {
         return toast.error('Borrow failed');
@@ -926,10 +926,6 @@ const Markets: NextPage = () => {
           `https://solscan.io/tx/${tx[1][0]}?cluster=${network}`
         );
 
-        setTimeout(() => {
-          processUserPayment == 0 ? setProcessUserPayment(1) : setProcessUserPayment(0);
-        }, 3000)
-
       } else {
         return toast.error('Repay failed');
       }
@@ -961,7 +957,7 @@ const Markets: NextPage = () => {
             hasRowsShadow={true}
             tableLayout="fixed"
             columns={columns}
-            dataSource={tableDataFiltered}
+            dataSource={tableData}
             pagination={false}
             onRow={(record, rowIndex) => {
               return {

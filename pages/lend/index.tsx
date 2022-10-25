@@ -54,6 +54,7 @@ const Lend: NextPage = () => {
   // init wallet and sdkConfiguration file
   const sdkConfig = ConfigureSDK();
   let walletPK = sdkConfig.sdkWallet?.publicKey;
+
   /**
    * @description sets the market ID based on market click
    * @params Honey table record - contains all info about a table (aka market)
@@ -94,6 +95,7 @@ const Lend: NextPage = () => {
   const [userDepositWithdraw, setUserDepositWithdraw] = useState(0);
   const [activeMarketSupplied, setActiveMarketSupplied] = useState(0);
   const [activeMarketAvailable, setActiveMarketAvailable] = useState(0);
+  const [totalMarketDeposits, setTotalMarketDeposits] = useState(0);
   // fetches the users balance
   async function fetchWalletBalance(key: PublicKey) {
     try {
@@ -157,18 +159,18 @@ const Lend: NextPage = () => {
    * @returns updates marketValue
    */
   useEffect(() => {
-    // if (parsedReserves && parsedReserves[0].reserveState.totalDeposits) {
-    //   let totalMarketDeposits = BnToDecimal(
-    //     parsedReserves[0].reserveState.totalDeposits,
-    //     9,
-    //     2
-    //   );
-      // setTotalMarketDeposits(totalMarketDeposits);
-      // setTotalMarketDeposits(parsedReserves[0].reserveState.totalDeposits.div(new BN(10 ** 9)).toNumber());
+    if (parsedReserves && parsedReserves[0].reserveState.totalDeposits) {
+      let totalMarketDeposits = BnToDecimal(
+        parsedReserves[0].reserveState.totalDeposits,
+        9,
+        2
+      );
+      setTotalMarketDeposits(totalMarketDeposits);
+      setTotalMarketDeposits(parsedReserves[0].reserveState.totalDeposits.div(new BN(10 ** 9)).toNumber());
       if (parsedReserves && sdkConfig.saberHqConnection) {
         fetchSolValue(parsedReserves, sdkConfig.saberHqConnection);
       }
-    // }
+     }
   }, [parsedReserves]);
 
   // fetches total market positions
@@ -374,7 +376,6 @@ const Lend: NextPage = () => {
   
   const [tableData, setTableData] = useState<LendTableRow[]>([]);
   const [tableDataFiltered, setTableDataFiltered] = useState<LendTableRow[]>([]);
-
   const [expandedRowKeys, setExpandedRowKeys] = useState<readonly Key[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [isMyCollectionsFilterEnabled, setIsMyCollectionsFilterEnabled] = useState(false);
@@ -414,6 +415,7 @@ const Lend: NextPage = () => {
     marketReserveInfo,
     honeyUser,
     honeyReserves,
+    totalMarketDeposits
   ]);
 
   const onSearch = (searchTerm: string): LendTableRow[] => {
