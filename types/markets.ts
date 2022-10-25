@@ -1,23 +1,28 @@
 import { ColumnType } from 'antd/lib/table';
+import { PublicKey } from '@solana/web3.js';
 
 export type MarketTableRow = {
+  allowance: number;
+  available: number;
+  connection: any;
+  debt: number;
+  id: string;
   key: string;
   name: string;
   rate: number;
-  debt: number;
-  allowance: number;
-  available: number;
+  user: any;
+  utilizationRate: number;
   value: number;
-  positions: Array<MarketTablePosition>;
+  positions?: Array<MarketTablePosition>;
 };
 
 export type MarketTablePosition = {
-  name: string;
   image?: string;
-  riskLvl?: number;
-  debt?: number;
-  available?: number;
-  value?: number;
+  mint?: PublicKey;
+  name?: string;
+  symbol?: string;
+  updateAuthority?: PublicKey;
+  uri?: string;
 };
 
 export type UserNFTs = {

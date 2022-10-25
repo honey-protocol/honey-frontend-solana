@@ -176,6 +176,7 @@ const Markets: NextPage = () => {
 
   // calls upon setting the user nft list per market
   useEffect(() => {
+    console.log('available nfts', availableNFTs)
     if (availableNFTs) setUserAvailableNFTs(availableNFTs[0]);
   }, [availableNFTs]);
 
@@ -319,25 +320,22 @@ const Markets: NextPage = () => {
   // MOCK DATA FOR NOW
   useEffect(() => {
     if (sdkConfig.saberHqConnection && sdkConfig.sdkWallet) {
+      function getData() {
+        return Promise.all(
+          marketCollections.map(async (collection) => {
+            if(collection.id == '') return;
+            collection.id == HONEY_GENESIS_MARKET_ID ? setHoneyInterestRate(collection.rate) : setPeskyInterestRate(collection.rate);
+            await populateMarketData(collection, sdkConfig.saberHqConnection, sdkConfig.sdkWallet!, currentMarketId, false);
+            collection.positions = await handlePositions(collection.id);
+            collection.rate = await getInterestRate(collection.utilizationRate) || 0;
+            return collection;
+          })
+        )
+      }
 
-      const p = new Promise((resolve, reject) => {
-        marketCollections.map(async (collection) => 
-        {
-          if(collection.id == '') return;
-          collection.id == HONEY_GENESIS_MARKET_ID ? setHoneyInterestRate(collection.rate) : setPeskyInterestRate(collection.rate);
-          await populateMarketData(collection, sdkConfig.saberHqConnection, sdkConfig.sdkWallet!, currentMarketId, false);
-          collection.positions = await handlePositions(collection.id);
-          collection.rate = await getInterestRate(collection.utilizationRate) || 0
-        }
-      );
-        resolve(marketCollections);
-      
-      })
-
-      p.then((result) => {
-        console.log('this is the result', result);
+      getData().then((result) => {
         setTableData(result);
-      });
+      })
     }
   }, [
       totalMarketDeposits,
@@ -597,7 +595,7 @@ const Markets: NextPage = () => {
     ],
     [isMyCollectionsFilterEnabled, tableData, searchQuery]
   );
-  
+
   // position in each market
   const expandColumns: ColumnType<MarketTablePosition>[] = [
     {
