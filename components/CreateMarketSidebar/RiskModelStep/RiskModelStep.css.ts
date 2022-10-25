@@ -16,6 +16,10 @@ export const tabsContainer = style({
   marginBottom: '12px'
 });
 
+export const tabTitle = style({
+  marginBottom: '16px'
+});
+
 export const graphContainer = style({
   display: 'flex',
   flexDirection: 'column',

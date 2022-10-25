@@ -77,16 +77,18 @@ export const RiskModelStep = () => {
 
   return (
     <div className={styles.riskModelStep}>
-      <TabTitle
-        title="Select your asset risk model"
-        tooltip={
-          <HoneyTooltip
-            tooltipIcon
-            placement="top"
-            label={'TODO: add tooltip'}
-          />
-        }
-      />
+      <div className={styles.tabTitle}>
+        <TabTitle
+          title="Select your asset risk model"
+          tooltip={
+            <HoneyTooltip
+              tooltipIcon
+              placement="top"
+              label={'TODO: add tooltip'}
+            />
+          }
+        />
+      </div>
 
       <div className={styles.tabsContainer}>
         <HoneyButtonTabs
