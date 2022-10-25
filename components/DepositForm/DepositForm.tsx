@@ -16,7 +16,13 @@ import { questionIcon } from 'styles/icons.css';
 import { hAlign } from 'styles/common.css';
 import useToast from 'hooks/useToast';
 
-const { format: f, formatPercent: fp, formatSol: fs, parse: p } = formatNumber;
+const {
+  format: f,
+  formatPercent: fp,
+  formatSol: fs,
+  parse: p,
+  formatRoundDown: frd
+} = formatNumber;
 
 const DepositForm = (props: DepositFormProps) => {
   const {
@@ -173,7 +179,7 @@ const DepositForm = (props: DepositFormProps) => {
 
         <HoneySlider
           currentValue={sliderValue}
-          maxValue={maxValue}
+          maxValue={Number(frd(maxValue))}
           minAvailableValue={0}
           onChange={handleSliderChange}
         />

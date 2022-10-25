@@ -18,7 +18,13 @@ import useToast from 'hooks/useToast';
 import { useSolBalance } from 'hooks/useSolBalance';
 import { MAX_LTV } from 'constants/loan';
 
-const { format: f, formatPercent: fp, formatSol: fs, parse: p } = formatNumber;
+const {
+  format: f,
+  formatPercent: fp,
+  formatSol: fs,
+  parse: p,
+  formatRoundDown: frd
+} = formatNumber;
 
 const RepayForm = (props: RepayProps) => {
   const {
@@ -110,8 +116,14 @@ const RepayForm = (props: RepayProps) => {
     availableNFTs
   ]);
 
+  const liquidationPrice = userDebt / liquidationThreshold;
+  const newLiquidationPrice = newDebt / liquidationThreshold;
+
   const liqPercent = nftPrice
-    ? ((nftPrice - userDebt / liquidationThreshold) / nftPrice) * 100
+    ? ((nftPrice - liquidationPrice) / nftPrice) * 100
+    : 0;
+  const newLiqPercent = nftPrice
+    ? ((nftPrice - newLiquidationPrice) / nftPrice) * 100
     : 0;
 
   return (
@@ -180,29 +192,15 @@ const RepayForm = (props: RepayProps) => {
           </div>
           <div className={styles.col}>
             <InfoBlock
-              value={`${fs(userDebt / liquidationThreshold)} ${
-                userDebt ? `(-${liqPercent.toFixed(0)}%)` : ''
-              }`}
-              valueSize="normal"
-              isDisabled={userDebt == 0 ? true : false}
+              value={fs(Number(frd(userAllowance)))}
               title={
                 <span className={hAlign}>
-                  Liquidation price
-                  <div className={questionIcon} />
+                  Allowance <div className={questionIcon} />
                 </span>
               }
-              toolTipLabel={
-                <span>
-                  Price at which the position (NFT) will be liquidated.{' '}
-                  <a
-                    className={styles.extLink}
-                    target="blank"
-                    href=" " //TODO: add link to docs
-                  >
-                    Learn more.
-                  </a>
-                </span>
-              }
+              toolTipLabel={`Allowance determines how much debt is available to a borrower. This market supports no more than ${fp(
+                60
+              )}`}
             />
           </div>
         </div>
@@ -333,15 +331,28 @@ const RepayForm = (props: RepayProps) => {
         <div className={styles.row}>
           <div className={styles.col}>
             <InfoBlock
-              value={fs(userAllowance)}
+              value={`${fs(liquidationPrice)} ${
+                userDebt ? `(-${liqPercent.toFixed(0)}%)` : ''
+              }`}
+              valueSize="normal"
+              isDisabled={userDebt == 0 ? true : false}
               title={
                 <span className={hAlign}>
-                  Allowance <div className={questionIcon} />
+                  Liquidation price <div className={questionIcon} />
                 </span>
               }
-              toolTipLabel={`Allowance determines how much debt is available to a borrower. This market supports no more than ${fp(
-                60
-              )}`}
+              toolTipLabel={
+                <span>
+                  Price at which the position (NFT) will be liquidated.{' '}
+                  <a
+                    className={styles.extLink}
+                    target="blank"
+                    href=" " //TODO: add link to docs
+                  >
+                    Learn more.
+                  </a>
+                </span>
+              }
             />
           </div>
           <div className={styles.col}>
@@ -349,24 +360,26 @@ const RepayForm = (props: RepayProps) => {
               isDisabled={userDebt == 0 ? true : false}
               title={
                 <span className={hAlign}>
-                  New allowance
-                  <div className={questionIcon} />
+                  New Liquidation price <div className={questionIcon} />
                 </span>
               }
-              value={fs(userAllowance + (valueSOL ?? 0))}
               toolTipLabel={
                 <span>
                   Estimated{' '}
                   <a
                     className={styles.extLink}
                     target="blank"
-                    href="https://docs.honey.finance/learn/defi-lending#allowance"
+                    href=" " //TODO: add link to docs
                   >
-                    allowance{' '}
-                  </a>
+                    liquidation Price
+                  </a>{' '}
                   after the requested changes to the loan are approved.
                 </span>
               }
+              value={`${fs(newLiquidationPrice)} ${
+                userDebt ? `(-${newLiqPercent?.toFixed(0)}%)` : ''
+              }`}
+              valueSize="normal"
             />
           </div>
         </div>
@@ -376,14 +389,14 @@ const RepayForm = (props: RepayProps) => {
             <div className={cs(styles.balance, styles.col)}>
               <InfoBlock
                 title={'Your SOL balance'}
-                value={fs(SOLBalance)}
+                value={fs(Number(frd(SOLBalance, 3)))}
               ></InfoBlock>
             </div>
             <div className={cs(styles.balance, styles.col)}>
               <InfoBlock
                 isDisabled={userDebt == 0 ? true : false}
                 title={'NEW SOL balance'}
-                value={fs(SOLBalance - (valueSOL || 0))}
+                value={fs(Number(frd(SOLBalance - (valueSOL || 0), 3)))}
               ></InfoBlock>
             </div>
           </div>
