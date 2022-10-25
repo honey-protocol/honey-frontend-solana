@@ -28,13 +28,26 @@ import {
 import { LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js';
 import BN from 'bn.js';
 import HoneyToggle from 'components/HoneyToggle/HoneyToggle';
-import { calcNFT, getInterestRate, fetchSolPrice, populateMarketData } from 'helpers/loanHelpers/userCollection';
+import {
+  calcNFT,
+  getInterestRate,
+  fetchSolPrice,
+  populateMarketData
+} from 'helpers/loanHelpers/userCollection';
 import { ToastProps } from 'hooks/useToast';
 import { RoundHalfDown } from 'helpers/utils';
 import { Typography } from 'antd';
 import { pageDescription, pageTitle } from 'styles/common.css';
-import { HONEY_GENESIS_BEE, LIFINITY_FLARES, OG_ATADIANS, PESKY_PENGUINS } from '../../constants/borrowLendMarkets';
-import { HONEY_GENESIS_MARKET_ID, PESKY_PENGUINS_MARKET_ID } from '../../constants/loan';
+import {
+  HONEY_GENESIS_BEE,
+  LIFINITY_FLARES,
+  OG_ATADIANS,
+  PESKY_PENGUINS
+} from '../../constants/borrowLendMarkets';
+import {
+  HONEY_GENESIS_MARKET_ID,
+  PESKY_PENGUINS_MARKET_ID
+} from '../../constants/loan';
 import { setMarketId } from 'pages/_app';
 import { marketCollections } from '../../constants/borrowLendMarkets';
 import { generateMockHistoryData } from '../../helpers/chartUtils';
@@ -45,12 +58,14 @@ const Lend: NextPage = () => {
   /**
    * @description formatting functions to format with perfect / format in SOL with icon or just a regular 2 decimal format
    * @params value to be formatted
-   * @returns requested format 
-  */
+   * @returns requested format
+   */
   const { format: f, formatPercent: fp, formatSol: fs } = formatNumber;
   // Sets market ID which is used for fetching market specific data
   // each market currently is a different call and re-renders the page
-  const [currentMarketId, setCurrentMarketId] = useState(HONEY_GENESIS_MARKET_ID);
+  const [currentMarketId, setCurrentMarketId] = useState(
+    HONEY_GENESIS_MARKET_ID
+  );
   // init wallet and sdkConfiguration file
   const sdkConfig = ConfigureSDK();
   let walletPK = sdkConfig.sdkWallet?.publicKey;
@@ -59,10 +74,14 @@ const Lend: NextPage = () => {
    * @description sets the market ID based on market click
    * @params Honey table record - contains all info about a table (aka market)
    * @returns sets the market ID which re-renders page state and fetches market specific data
-  */
+   */
   function handleMarketId(record: any) {
-    record.id == HONEY_GENESIS_MARKET_ID ? setCurrentMarketId(HONEY_GENESIS_MARKET_ID) : setCurrentMarketId(PESKY_PENGUINS_MARKET_ID)
-    record.id == HONEY_GENESIS_MARKET_ID ? setMarketId(HONEY_GENESIS_MARKET_ID) : setMarketId(PESKY_PENGUINS_MARKET_ID)
+    record.id == HONEY_GENESIS_MARKET_ID
+      ? setCurrentMarketId(HONEY_GENESIS_MARKET_ID)
+      : setCurrentMarketId(PESKY_PENGUINS_MARKET_ID);
+    record.id == HONEY_GENESIS_MARKET_ID
+      ? setMarketId(HONEY_GENESIS_MARKET_ID)
+      : setMarketId(PESKY_PENGUINS_MARKET_ID);
   }
   /**
    * @description calls upon markets which
@@ -74,12 +93,12 @@ const Lend: NextPage = () => {
    * @description calls upon the honey sdk
    * @params  useConnection func. | useConnectedWallet func. | honeyID | marketID
    * @returns honeyUser | honeyReserves - used for interaction regarding the SDK
-  */
+   */
   const { honeyClient, honeyUser, honeyReserves, honeyMarket } = useMarket(
-   sdkConfig.saberHqConnection,
-   sdkConfig.sdkWallet!,
-   sdkConfig.honeyId,
-   currentMarketId
+    sdkConfig.saberHqConnection,
+    sdkConfig.sdkWallet!,
+    sdkConfig.honeyId,
+    currentMarketId
   );
   // market specific constants - calculations / ratios / debt / allowance etc.
   const [userTotalDeposits, setUserTotalDeposits] = useState(0);
@@ -144,11 +163,11 @@ const Lend: NextPage = () => {
       }
     }, 3000);
   }, [marketReserveInfo, honeyUser]);
-  
+
   // fetches the current sol price
   async function fetchSolValue(reserves: any, connection: any) {
     const slPrice = await fetchSolPrice(reserves, connection);
-    setFetchedSolPrice(slPrice)
+    setFetchedSolPrice(slPrice);
   }
 
   /**
@@ -164,11 +183,15 @@ const Lend: NextPage = () => {
         2
       );
       setTotalMarketDeposits(totalMarketDeposits);
-      setTotalMarketDeposits(parsedReserves[0].reserveState.totalDeposits.div(new BN(10 ** 9)).toNumber());
+      setTotalMarketDeposits(
+        parsedReserves[0].reserveState.totalDeposits
+          .div(new BN(10 ** 9))
+          .toNumber()
+      );
       if (parsedReserves && sdkConfig.saberHqConnection) {
         fetchSolValue(parsedReserves, sdkConfig.saberHqConnection);
       }
-     }
+    }
   }, [parsedReserves]);
 
   // fetches total market positions
@@ -205,7 +228,7 @@ const Lend: NextPage = () => {
    * @description deposits 1 sol
    * @params optional value from user input; amount of SOL
    * @returns succes | failure
-  */
+   */
   async function executeDeposit(value?: number, toast?: ToastProps['toast']) {
     if (!toast) return;
     try {
@@ -217,7 +240,7 @@ const Lend: NextPage = () => {
       const depositTokenMint = new PublicKey(
         'So11111111111111111111111111111111111111112'
       );
-      
+
       const tx = await deposit(
         honeyUser,
         tokenAmount,
@@ -235,13 +258,14 @@ const Lend: NextPage = () => {
 
         if (walletPK) await fetchWalletBalance(walletPK);
 
-        userDepositWithdraw == 0 ? setUserDepositWithdraw(1) : setUserDepositWithdraw(0);
+        userDepositWithdraw == 0
+          ? setUserDepositWithdraw(1)
+          : setUserDepositWithdraw(0);
 
         toast.success(
           'Deposit success',
           `https://solscan.io/tx/${tx[1][0]}?cluster=${network}`
         );
-
       } else {
         return toast.error('Deposit failed');
       }
@@ -249,7 +273,7 @@ const Lend: NextPage = () => {
       return toast.error('Deposit failed', error);
     }
   }
-  
+
   /**
    * @description withdraws 1 sol
    * @params optional value from user input; amount of SOL
@@ -282,13 +306,14 @@ const Lend: NextPage = () => {
         });
         if (walletPK) await fetchWalletBalance(walletPK);
 
-        userDepositWithdraw == 0 ? setUserDepositWithdraw(1) : setUserDepositWithdraw(0);
+        userDepositWithdraw == 0
+          ? setUserDepositWithdraw(1)
+          : setUserDepositWithdraw(0);
 
         toast.success(
           'Withdraw success',
           `https://solscan.io/tx/${tx[1][0]}?cluster=${network}`
         );
-        
       } else {
         return toast.error('Withdraw failed ');
       }
@@ -308,39 +333,50 @@ const Lend: NextPage = () => {
     }
     return [];
   };
-  
+
   const [tableData, setTableData] = useState<LendTableRow[]>([]);
-  const [tableDataFiltered, setTableDataFiltered] = useState<LendTableRow[]>([]);
+  const [tableDataFiltered, setTableDataFiltered] = useState<LendTableRow[]>(
+    []
+  );
   const [expandedRowKeys, setExpandedRowKeys] = useState<readonly Key[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
-  const [isMyCollectionsFilterEnabled, setIsMyCollectionsFilterEnabled] = useState(false);
+  const [isMyCollectionsFilterEnabled, setIsMyCollectionsFilterEnabled] =
+    useState(false);
 
   useEffect(() => {
     if (sdkConfig.saberHqConnection && sdkConfig.sdkWallet) {
+      function getData() {
+        return Promise.all(
+          marketCollections.map(async collection => {
+            if (!collection.id) return collection;
+            collection.id == HONEY_GENESIS_MARKET_ID
+              ? setHoneyInterestRate(collection.rate)
+              : setPeskyInterestRate(collection.rate);
+            await populateMarketData(
+              collection,
+              sdkConfig.saberHqConnection,
+              sdkConfig.sdkWallet!,
+              currentMarketId,
+              true
+            );
+            collection.rate =
+              (await getInterestRate(collection.utilizationRate)) || 0;
+            collection.stats = getPositionData();
 
-    function getData() {
-      return Promise.all(
-        marketCollections.map(async (collection) => {
-          collection.id == HONEY_GENESIS_MARKET_ID ? setHoneyInterestRate(collection.rate) : setPeskyInterestRate(collection.rate);
-          await populateMarketData(collection, sdkConfig.saberHqConnection, sdkConfig.sdkWallet!, currentMarketId, true);
-          collection.rate = await getInterestRate(collection.utilizationRate) || 0;
-          collection.stats = getPositionData();
+            if (currentMarketId == collection.id) {
+              setActiveMarketSupplied(collection.value);
+              setActiveMarketAvailable(collection.available);
+            }
 
-          if (currentMarketId == collection.id) {
-            setActiveMarketSupplied(collection.value);
-            setActiveMarketAvailable(collection.available);
-          }
-          
-          return collection;
-        })
-      )
+            return collection;
+          })
+        );
+      }
+
+      getData().then(result => {
+        setTableData(result);
+      });
     }
-
-    getData().then((result) => {
-      setTableData(result);
-    })
-  }
-
   }, [
     // totalMarketDebt,
     nftPrice,
@@ -397,15 +433,43 @@ const Lend: NextPage = () => {
 
   const renderImage = (name: string) => {
     if (name == 'Honey Genesis Bee') {
-      return <Image src={'https://img-cdn.magiceden.dev/rs:fill:400:400:0:0/plain/https://dl.airtable.com/.attachmentThumbnails/6b6c8954aed777a74de52fd70f8751ab/46b325db'} layout="fill" />
+      return (
+        <Image
+          src={
+            'https://img-cdn.magiceden.dev/rs:fill:400:400:0:0/plain/https://dl.airtable.com/.attachmentThumbnails/6b6c8954aed777a74de52fd70f8751ab/46b325db'
+          }
+          layout="fill"
+        />
+      );
     } else if (name == 'Lifinity Flares') {
-      return <Image src={'https://img-cdn.magiceden.dev/rs:fill:400:400:0:0/plain/https://dl.airtable.com/.attachmentThumbnails/6972d5c2efb77d49be97b07ccf4fbc69/e9572fb8'} layout="fill" />
+      return (
+        <Image
+          src={
+            'https://img-cdn.magiceden.dev/rs:fill:400:400:0:0/plain/https://dl.airtable.com/.attachmentThumbnails/6972d5c2efb77d49be97b07ccf4fbc69/e9572fb8'
+          }
+          layout="fill"
+        />
+      );
     } else if (name == 'OG Atadians') {
-      return <Image src={'https://img-cdn.magiceden.dev/rs:fill:400:400:0:0/plain/https://creator-hub-prod.s3.us-east-2.amazonaws.com/atadians_pfp_1646721263627.gif'} layout="fill" />
+      return (
+        <Image
+          src={
+            'https://img-cdn.magiceden.dev/rs:fill:400:400:0:0/plain/https://creator-hub-prod.s3.us-east-2.amazonaws.com/atadians_pfp_1646721263627.gif'
+          }
+          layout="fill"
+        />
+      );
     } else {
-      return <Image src={'https://img-cdn.magiceden.dev/rs:fill:400:400:0:0/plain/https://i.imgur.com/37nsjBZ.png'} layout="fill" />
+      return (
+        <Image
+          src={
+            'https://img-cdn.magiceden.dev/rs:fill:400:400:0:0/plain/https://i.imgur.com/37nsjBZ.png'
+          }
+          layout="fill"
+        />
+      );
     }
-  }
+  };
 
   const columnsWidth: Array<number | string> = [240, 150, 150, 150, 150];
 
@@ -427,9 +491,7 @@ const Lend: NextPage = () => {
             <div className={style.nameCell}>
               <div className={style.logoWrapper}>
                 <div className={style.collectionLogo}>
-                  <HexaBoxContainer>
-                    {renderImage(name)}
-                  </HexaBoxContainer>
+                  <HexaBoxContainer>{renderImage(name)}</HexaBoxContainer>
                 </div>
               </div>
               <div className={style.collectionName}>{name}</div>
@@ -457,7 +519,7 @@ const Lend: NextPage = () => {
         dataIndex: 'rate',
         sorter: (a: any = 0, b: any = 0) => a.rate - b.rate,
         render: (rate: number, market: any) => {
-          console.log('B:: this is rate', rate)
+          console.log('B:: this is rate', rate);
           // console.log('B:: this is market', market)
           return <div className={style.rateCell}>{fp(rate)}</div>;
         }
@@ -474,14 +536,15 @@ const Lend: NextPage = () => {
                 ]
               }
             >
-              <span>Supplied</span> <div className={style.sortIcon[sortOrder]} />
+              <span>Supplied</span>{' '}
+              <div className={style.sortIcon[sortOrder]} />
             </div>
           );
         },
         dataIndex: 'value',
         sorter: (a, b) => a.value - b.value,
         render: (value: number, market: any) => {
-          console.log('B:: this is value', value)
+          console.log('B:: this is value', value);
           // console.log('B:: this is market', market)
           return <div className={style.valueCell}>{fs(value)}</div>;
         }
@@ -506,8 +569,8 @@ const Lend: NextPage = () => {
         dataIndex: 'available',
         sorter: (a, b) => a.available - b.available,
         render: (available: number, market: any) => {
-          console.log('B:: this is available', available)
-          console.log('B:: this is market', market)
+          console.log('B:: this is available', available);
+          console.log('B:: this is market', market);
           return <div className={style.availableCell}>{fs(available)}</div>;
         }
       },
@@ -553,7 +616,7 @@ const Lend: NextPage = () => {
           onRow={(record, rowIndex) => {
             return {
               onClick: event => handleMarketId(record)
-            }
+            };
           }}
           className={style.table}
           expandable={{
@@ -583,7 +646,11 @@ const Lend: NextPage = () => {
           value={activeMarketSupplied}
           userWalletBalance={userWalletBalance}
           fetchedSolPrice={fetchedSolPrice}
-          marketImage={renderImage(currentMarketId == HONEY_GENESIS_MARKET_ID ? HONEY_GENESIS_BEE : PESKY_PENGUINS)}
+          marketImage={renderImage(
+            currentMarketId == HONEY_GENESIS_MARKET_ID
+              ? HONEY_GENESIS_BEE
+              : PESKY_PENGUINS
+          )}
           currentMarketId={currentMarketId}
         />
       </HoneySider>
