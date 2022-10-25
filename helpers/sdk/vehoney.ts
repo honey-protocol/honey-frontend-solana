@@ -1,4 +1,11 @@
-import { AccountMeta, Connection, PublicKey } from '@solana/web3.js';
+import {
+  AccountMeta,
+  Connection,
+  PublicKey,
+  Transaction,
+  SystemProgram,
+  SYSVAR_INSTRUCTIONS_PUBKEY
+} from '@solana/web3.js';
 import * as anchor from '@project-serum/anchor';
 import {
   ASSOCIATED_TOKEN_PROGRAM_ID,
@@ -10,178 +17,131 @@ import {
   Edition,
   MetadataProgram
 } from '@metaplex-foundation/mpl-token-metadata';
+import { programs as MetaplexPrograms } from '@metaplex/js';
+import {
+  VoteSide,
+  TRIBECA_ADDRESSES,
+  getVoteAddress
+} from '@tribecahq/tribeca-sdk';
 
 import { ClientBase } from './base';
-import { HONEY_MINT } from './constant';
-import veHoneyIdl from '../idl/ve_honey.json';
-import { VeHoney } from '../types/ve_honey';
+import { HONEY_MINT, WL_TOKEN_MINT, VOTER_PROGRAM_ID } from './constant';
+import { VeHoney, IDL } from '../types/ve_honey';
 
-export const VE_HONEY_PROGRAM_ID = new PublicKey(
-  'CKQapf8pWoMddT15grV8UCPjiLCTHa12NRgkKV63Lc7q'
-);
-export const ESCROW_SEED = 'Escrow';
-export const WHITELIST_ENTRY_SEED = 'LockerWhitelistEntry';
-export const PROOF_SEED = 'Proof';
+const ESCROW_SEED = 'Escrow';
+const WHITELIST_ENTRY_SEED = 'LockerWhitelistEntry';
+const PROOF_SEED = 'Proof';
+const TREASURY_SEED = 'Treasury';
+const NFT_RECEIPT_SEED = 'Receipt';
+const SYSTEM_PROGRAM_ID = SystemProgram.programId;
 
 export class VeHoneyClient extends ClientBase<VeHoney> {
   constructor(connection: Connection, wallet: anchor.Wallet) {
-    super(connection, wallet, veHoneyIdl, VE_HONEY_PROGRAM_ID);
+    super(connection, wallet, IDL, VOTER_PROGRAM_ID);
   }
 
-  getProgramId() {
+  get programId(): PublicKey {
+    if (!this.program) {
+      throw new Error('veHoney program undefined');
+    }
     return this.program.programId;
   }
 
-  async fetchLocker(locker: PublicKey) {
-    try {
-      return await this.program.account.locker.fetch(locker);
-    } catch (e) {
-      console.log(e);
+  get walletKey(): PublicKey {
+    if (!this.wallet) {
+      throw new Error('wallet undefined');
     }
+    return this.wallet.publicKey;
   }
 
-  async fetchEscrow(escrow: PublicKey) {
-    try {
-      return await this.program.account.escrow.fetch(escrow);
-    } catch (e) {
-      console.log(e);
-    }
-  }
-
-  async createInitializeEscrowIx(locker: PublicKey) {
+  private async initEscrowTx(locker: PublicKey, tx: Transaction) {
     const [escrow] = await this.getEscrowPDA(locker);
     const lockedTokens = await this.getEscrowLockedTokenPDA(escrow);
 
-    return [
+    tx.add(
       Token.createAssociatedTokenAccountInstruction(
         ASSOCIATED_TOKEN_PROGRAM_ID,
         TOKEN_PROGRAM_ID,
         HONEY_MINT,
         lockedTokens,
         escrow,
-        this.wallet.publicKey
-      ),
+        this.walletKey
+      )
+    ).add(
       await this.program.methods
         .initEscrow()
         .accounts({
-          payer: this.wallet.publicKey,
+          payer: this.walletKey,
           locker,
           escrow,
-          escrowOwner: this.wallet.publicKey,
-          systemProgram: anchor.web3.SystemProgram.programId
+          escrowOwner: this.walletKey,
+          systemProgram: SYSTEM_PROGRAM_ID
         })
         .instruction()
-    ];
+    );
   }
 
-  async unlockEscrow(
+  private async lockTx(
     locker: PublicKey,
-    escrow?: PublicKey,
-    destination?: PublicKey
-  ) {
-    if (!escrow) {
-      [escrow] = await this.getEscrowPDA(locker);
-    }
-
-    let preInstructions: anchor.web3.TransactionInstruction[] = [];
-    if (!destination) {
-      destination = await Token.getAssociatedTokenAddress(
-        ASSOCIATED_TOKEN_PROGRAM_ID,
-        TOKEN_PROGRAM_ID,
-        HONEY_MINT,
-        this.wallet.publicKey
-      );
-
-      preInstructions.push(
-        Token.createAssociatedTokenAccountInstruction(
-          ASSOCIATED_TOKEN_PROGRAM_ID,
-          TOKEN_PROGRAM_ID,
-          HONEY_MINT,
-          destination,
-          this.wallet.publicKey,
-          this.wallet.publicKey
-        )
-      );
-    }
-
-    const lockedTokens = await this.getEscrowLockedTokenPDA(escrow);
-
-    const txSig = await this.program.methods
-      .unlock()
-      .accounts({
-        payer: this.wallet.publicKey,
-        locker,
-        escrow,
-        escrowOwner: this.wallet.publicKey,
-        lockedTokens,
-        destinationTokens: destination,
-        tokenProgram: TOKEN_PROGRAM_ID
-      })
-      .preInstructions(preInstructions)
-      .rpc();
-
-    return { txSig, destination };
-  }
-
-  async lock(
-    locker: PublicKey,
+    escrow: PublicKey,
     source: PublicKey,
     amount: anchor.BN,
     duration: anchor.BN,
-    hasEscrow?: boolean
+    tx: Transaction
   ) {
-    const preInstructions = [];
-    if (!hasEscrow) {
-      preInstructions.push(...(await this.createInitializeEscrowIx(locker)));
-    }
-
-    const remainingAccounts = [
-      {
-        pubkey: anchor.web3.SYSVAR_INSTRUCTIONS_PUBKEY,
-        isSigner: false,
-        isWritable: false
-      },
-      {
-        pubkey: this.program.programId,
-        isSigner: false,
-        isWritable: false
-      }
-    ];
-
-    const [escrow] = await this.getEscrowPDA(locker);
     const lockedTokens = await this.getEscrowLockedTokenPDA(escrow);
 
-    const txSig = await this.program.methods
+    const ix = await this.program.methods
       .lock(new anchor.BN(amount), new anchor.BN(duration))
       .accounts({
         locker,
         escrow,
         lockedTokens,
-        escrowOwner: this.wallet.publicKey,
+        escrowOwner: this.walletKey,
         sourceTokens: source,
-        sourceTokensAuthority: this.wallet.publicKey,
+        sourceTokensAuthority: this.walletKey,
         tokenProgram: TOKEN_PROGRAM_ID
       })
-      .remainingAccounts(remainingAccounts)
-      .preInstructions(preInstructions)
-      .rpc();
-    return { txSig, escrow };
+      .remainingAccounts([
+        {
+          pubkey: SYSVAR_INSTRUCTIONS_PUBKEY,
+          isSigner: false,
+          isWritable: false
+        },
+        {
+          pubkey: this.programId,
+          isSigner: false,
+          isWritable: false
+        }
+      ])
+      .instruction();
+
+    tx.add(ix);
   }
 
-  async lockNft(
+  private async lockNftTx(
     locker: PublicKey,
+    escrow: PublicKey,
+    nftSource: PublicKey,
     nftMint: PublicKey,
-    creator: PublicKey,
+    nftCreator: PublicKey,
+    wlDestination: PublicKey,
+    receiptId: number,
     duration: anchor.BN,
-    hasEscrow?: boolean
+    tx: Transaction
   ) {
-    const preInstructions = [];
-    if (!hasEscrow) {
-      preInstructions.push(await this.createInitializeEscrowIx(locker));
-    }
-
-    const [proof] = await this.getProofPDA(locker, creator);
+    const lockedTokens = await this.getEscrowLockedTokenPDA(escrow);
+    const [receipt] = await this.getReceiptPDA(
+      locker,
+      new anchor.BN(receiptId)
+    );
+    const [treasury] = await this.getTreasuryPDA(locker);
+    const [proof] = await this.getProofPDA(locker, nftCreator);
     const nftMetadata = await Metadata.getPDA(nftMint);
+    const metadata = await MetaplexPrograms.metadata.Metadata.load(
+      this.provider.connection,
+      nftMetadata
+    );
     const nftEdition = await Edition.getPDA(nftMint);
 
     const remainingAccounts: AccountMeta[] = [
@@ -212,8 +172,347 @@ export class VeHoneyClient extends ClientBase<VeHoney> {
       }
     ];
 
+    if (metadata.data.collection && metadata.data.collection.verified) {
+      remainingAccounts.push({
+        pubkey: new PublicKey(metadata.data.collection.key),
+        isSigner: false,
+        isWritable: true
+      });
+    }
+
+    const ix = await this.program.methods
+      .lockNft(duration)
+      .accounts({
+        payer: this.walletKey,
+        locker,
+        escrow,
+        receipt,
+        escrowOwner: this.walletKey,
+        lockedTokens,
+        lockerTreasury: treasury,
+        nftSource,
+        nftSourceAuthority: this.walletKey,
+        wlTokenMint: WL_TOKEN_MINT,
+        wlDestination,
+        systemProgram: SYSTEM_PROGRAM_ID,
+        tokenProgram: TOKEN_PROGRAM_ID
+      })
+      .remainingAccounts(remainingAccounts)
+      .instruction();
+
+    tx.add(ix);
+  }
+
+  private async unlockTx(
+    locker: PublicKey,
+    escrow: PublicKey,
+    destination: PublicKey,
+    tx: Transaction
+  ) {
+    const lockedTokens = await this.getEscrowLockedTokenPDA(escrow);
+
+    const ix = await this.program.methods
+      .unlock()
+      .accounts({
+        payer: this.walletKey,
+        locker,
+        escrow,
+        escrowOwner: this.walletKey,
+        lockedTokens,
+        destinationTokens: destination,
+        tokenProgram: TOKEN_PROGRAM_ID
+      })
+      .instruction();
+
+    tx.add(ix);
+  }
+
+  private async claimNftRewardsTx(
+    locker: PublicKey,
+    escrow: PublicKey,
+    destination: PublicKey,
+    receiptId: number,
+    tx: Transaction
+  ) {
+    const lockedTokens = await this.getEscrowLockedTokenPDA(escrow);
+    const [receipt] = await this.getReceiptPDA(
+      locker,
+      new anchor.BN(receiptId)
+    );
+
+    const ix = await this.program.methods
+      .claim()
+      .accounts({
+        locker,
+        escrow,
+        escrowOwner: this.walletKey,
+        lockedTokens,
+        destinationTokens: destination,
+        nftReceipt: receipt,
+        tokenProgram: TOKEN_PROGRAM_ID
+      })
+      .instruction();
+
+    tx.add(ix);
+  }
+
+  private async closeNftReceiptTx(
+    locker: PublicKey,
+    escrow: PublicKey,
+    receiptId: number,
+    tx: Transaction
+  ) {
+    const [receipt] = await this.getReceiptPDA(
+      locker,
+      new anchor.BN(receiptId)
+    );
+
+    const ix = await this.program.methods
+      .closeReceipt()
+      .accounts({
+        locker,
+        escrow,
+        nftReceipt: receipt,
+        escrowOwner: this.walletKey,
+        fundsReceiver: this.walletKey
+      })
+      .instruction();
+
+    tx.add(ix);
+  }
+
+  private async closeEscrowTx(
+    locker: PublicKey,
+    escrow: PublicKey,
+    tx: Transaction
+  ) {
+    const lockedTokens = await this.getEscrowLockedTokenPDA(escrow);
+
+    const ix = await this.program.methods
+      .closeEscrow()
+      .accounts({
+        locker,
+        escrow,
+        lockedTokens,
+        escrowOwner: this.walletKey,
+        fundsReceiver: this.walletKey,
+        tokenProgram: TOKEN_PROGRAM_ID
+      })
+      .instruction();
+
+    tx.add(ix);
+  }
+
+  private async activateProposalTx(
+    locker: PublicKey,
+    escrow: PublicKey,
+    governor: PublicKey,
+    proposal: PublicKey,
+    tx: Transaction
+  ) {
+    const ix = await this.program.methods
+      .activateProposal()
+      .accounts({
+        locker,
+        escrow,
+        governor,
+        proposal,
+        escrowOwner: this.walletKey,
+        governProgram: TRIBECA_ADDRESSES.Govern
+      })
+      .instruction();
+
+    tx.add(ix);
+  }
+
+  private async castVoteTx(
+    locker: PublicKey,
+    escrow: PublicKey,
+    governor: PublicKey,
+    proposal: PublicKey,
+    vote: PublicKey,
+    voteSide: VoteSide,
+    tx: Transaction
+  ) {
+    const ix = await this.program.methods
+      .castVote(voteSide)
+      .accounts({
+        locker,
+        escrow,
+        voteDelegate: this.walletKey,
+        proposal,
+        vote,
+        governor,
+        governProgram: TRIBECA_ADDRESSES.Govern
+      })
+      .instruction();
+
+    tx.add(ix);
+  }
+
+  async createInitializeEscrowIx(locker: PublicKey) {
     const [escrow] = await this.getEscrowPDA(locker);
     const lockedTokens = await this.getEscrowLockedTokenPDA(escrow);
+
+    return [
+      Token.createAssociatedTokenAccountInstruction(
+        ASSOCIATED_TOKEN_PROGRAM_ID,
+        TOKEN_PROGRAM_ID,
+        HONEY_MINT,
+        lockedTokens,
+        escrow,
+        this.wallet.publicKey
+      ),
+      await this.program.methods
+        .initEscrow()
+        .accounts({
+          payer: this.wallet.publicKey,
+          locker,
+          escrow,
+          escrowOwner: this.wallet.publicKey,
+          systemProgram: anchor.web3.SystemProgram.programId
+        })
+        .instruction()
+    ];
+  }
+
+  async lock(
+    locker: PublicKey,
+    source: PublicKey,
+    amount: anchor.BN,
+    duration: anchor.BN
+  ) {
+    const transaction = new Transaction();
+    const [escrowKey] = await this.getEscrowPDA(locker);
+    const escrow = await this.getAccountInfo(escrowKey);
+    if (!escrow) {
+      await this.initEscrowTx(locker, transaction);
+    }
+    await this.lockTx(locker, escrowKey, source, amount, duration, transaction);
+
+    return this.sendAndConfirm(transaction);
+  }
+
+  async lockNft(
+    locker: PublicKey,
+    nftSource: PublicKey,
+    nftMint: PublicKey,
+    nftCreator: PublicKey,
+    duration: anchor.BN,
+    receiptId?: number
+  ) {
+    const transaction = new Transaction();
+    const [escrowKey] = await this.getEscrowPDA(locker);
+    const escrow = await this.getAccountInfo(escrowKey);
+    if (!escrow) {
+      await this.initEscrowTx(locker, transaction);
+    }
+    const { ata: wlDestination, instruction: createATAIx } =
+      await this.getOrCreateATA(WL_TOKEN_MINT);
+
+    if (createATAIx) {
+      transaction.add(createATAIx);
+    }
+
+    await this.lockNftTx(
+      locker,
+      escrowKey,
+      nftSource,
+      nftMint,
+      nftCreator,
+      wlDestination,
+      receiptId ?? 0,
+      duration,
+      transaction
+    );
+
+    return this.sendAndConfirm(transaction);
+  }
+
+  async claimNFTRewards(locker: PublicKey, receiptId: number) {
+    const transaction = new Transaction();
+    const [escrow] = await this.getEscrowPDA(locker);
+    const { ata: destination, instruction: createATAIx } =
+      await this.getOrCreateATA(HONEY_MINT);
+
+    if (createATAIx) {
+      transaction.add(createATAIx);
+    }
+    await this.claimNftRewardsTx(
+      locker,
+      escrow,
+      destination,
+      receiptId,
+      transaction
+    );
+
+    return this.sendAndConfirm(transaction);
+  }
+
+  async unlock(locker: PublicKey) {
+    const transaction = new Transaction();
+    const [escrow] = await this.getEscrowPDA(locker);
+    const { ata: destination, instruction: createATAIx } =
+      await this.getOrCreateATA(HONEY_MINT);
+
+    if (createATAIx) {
+      transaction.add(createATAIx);
+    }
+    await this.unlockTx(locker, escrow, destination, transaction);
+
+    return this.sendAndConfirm(transaction);
+  }
+
+  async closeNFTReceipt(locker: PublicKey, receiptId: number) {
+    const transaction = new Transaction();
+    const [escrow] = await this.getEscrowPDA(locker);
+    await this.closeNftReceiptTx(locker, escrow, receiptId, transaction);
+    return this.sendAndConfirm(transaction);
+  }
+
+  async closeEscrow(locker: PublicKey) {
+    const transaction = new Transaction();
+    const [escrow] = await this.getEscrowPDA(locker);
+    await this.closeEscrowTx(locker, escrow, transaction);
+    return this.sendAndConfirm(transaction);
+  }
+
+  async activateProposal(locker: PublicKey, proposal: PublicKey) {
+    const transaction = new Transaction();
+    const [escrow] = await this.getEscrowPDA(locker);
+    const lockerAccount = await this.fetchLocker(locker);
+    if (!lockerAccount) {
+      throw new Error('locker uninitialized');
+    }
+
+    await this.activateProposalTx(
+      locker,
+      escrow,
+      lockerAccount.governor,
+      proposal,
+      transaction
+    );
+    return this.sendAndConfirm(transaction);
+  }
+
+  async castVote(locker: PublicKey, proposal: PublicKey, voteSide: VoteSide) {
+    const transaction = new Transaction();
+    const [escrow] = await this.getEscrowPDA(locker);
+    const lockerAccount = await this.fetchLocker(locker);
+    if (!lockerAccount) {
+      throw new Error('locker uninitialized');
+    }
+    const vote = getVoteAddress(proposal, this.walletKey);
+    await this.castVoteTx(
+      locker,
+      escrow,
+      lockerAccount.governor,
+      proposal,
+      vote,
+      voteSide,
+      transaction
+    );
+    return this.sendAndConfirm(transaction);
   }
 
   async getEscrowPDA(locker: PublicKey) {
@@ -223,7 +522,7 @@ export class VeHoneyClient extends ClientBase<VeHoney> {
         locker.toBuffer(),
         this.wallet.publicKey.toBuffer()
       ],
-      this.program.programId
+      this.programId
     );
   }
 
@@ -249,14 +548,33 @@ export class VeHoneyClient extends ClientBase<VeHoney> {
         executableId.toBuffer(),
         whitelistedOwner.toBuffer()
       ],
-      this.program.programId
+      this.programId
     );
   }
 
   async getProofPDA(locker: PublicKey, proofAddress: PublicKey) {
     return PublicKey.findProgramAddress(
       [Buffer.from(PROOF_SEED), locker.toBuffer(), proofAddress.toBuffer()],
-      this.program.programId
+      this.programId
+    );
+  }
+
+  async getTreasuryPDA(locker: PublicKey) {
+    return await PublicKey.findProgramAddress(
+      [Buffer.from(TREASURY_SEED), locker.toBuffer(), HONEY_MINT.toBuffer()],
+      this.programId
+    );
+  }
+
+  async getReceiptPDA(locker: PublicKey, receiptId: anchor.BN) {
+    return await PublicKey.findProgramAddress(
+      [
+        Buffer.from(NFT_RECEIPT_SEED),
+        locker.toBuffer(),
+        this.wallet.publicKey.toBuffer(),
+        receiptId.toBuffer('le', 8)
+      ],
+      this.programId
     );
   }
 
@@ -266,5 +584,17 @@ export class VeHoneyClient extends ClientBase<VeHoney> {
 
   async getAllLockerAccounts() {
     return this.program.account.locker.all();
+  }
+
+  async getAllNFTReceiptAccounts() {
+    return this.program.account.nftReceipt.all();
+  }
+
+  async fetchLocker(locker: PublicKey) {
+    return this.program.account.locker.fetchNullable(locker);
+  }
+
+  async fetchEscrow(escrow: PublicKey) {
+    return this.program.account.escrow.fetchNullable(escrow);
   }
 }

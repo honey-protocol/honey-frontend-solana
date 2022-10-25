@@ -184,7 +184,7 @@ export class StakeClient extends ClientBase<Stake> {
     const [authority] = await this.getPoolAuthorityPDA(pool);
     const [escrow] = await veHoneyClient.getEscrowPDA(locker);
     const lockedTokens = await veHoneyClient.getEscrowLockedTokenPDA(escrow);
-    const lockerProgram = veHoneyClient.getProgramId();
+    const lockerProgram = veHoneyClient.programId;
 
     const txSig = await this.program.rpc.stake(
       new anchor.BN(amount),

@@ -1,8 +1,13 @@
-import { Connection, PublicKey } from '@solana/web3.js';
+import { Connection, PublicKey, Transaction } from '@solana/web3.js';
 import * as anchor from '@project-serum/anchor';
+import {
+  Token,
+  TOKEN_PROGRAM_ID,
+  ASSOCIATED_TOKEN_PROGRAM_ID
+} from '@solana/spl-token';
 
 export class ClientBase<T extends anchor.Idl> {
-  private provider!: anchor.Provider;
+  provider!: anchor.Provider;
   program!: anchor.Program<T>;
 
   constructor(
@@ -35,5 +40,42 @@ export class ClientBase<T extends anchor.Idl> {
       new PublicKey(programId),
       this.provider
     );
+  }
+
+  async getAccountInfo(address: PublicKey) {
+    return this.connection.getAccountInfo(address);
+  }
+
+  async sendAndConfirm(tx: Transaction, signers?: []) {
+    const sig = await this.provider.sendAndConfirm?.(tx, signers);
+    if (sig === undefined) {
+      throw new Error('provider error!');
+    }
+    return sig;
+  }
+
+  async getOrCreateATA(mint: PublicKey) {
+    const ata = await Token.getAssociatedTokenAddress(
+      ASSOCIATED_TOKEN_PROGRAM_ID,
+      TOKEN_PROGRAM_ID,
+      mint,
+      this.wallet.publicKey
+    );
+    const ataAcc = await this.getAccountInfo(ata);
+    if (ataAcc) {
+      return { ata, instruction: null };
+    } else {
+      return {
+        ata,
+        instruction: Token.createAssociatedTokenAccountInstruction(
+          ASSOCIATED_TOKEN_PROGRAM_ID,
+          TOKEN_PROGRAM_ID,
+          mint,
+          ata,
+          this.wallet.publicKey,
+          this.wallet.publicKey
+        )
+      };
+    }
   }
 }
