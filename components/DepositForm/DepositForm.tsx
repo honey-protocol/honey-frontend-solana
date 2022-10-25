@@ -39,10 +39,6 @@ const DepositForm = (props: DepositFormProps) => {
 
   const { toast, ToastComponent } = useToast();
 
-  const sdkConfig = ConfigureSDK();
-  let walletPK = sdkConfig.sdkWallet?.publicKey;
-  console.log('B:: current market id ', currentMarketId)
-
   useEffect(() => {
     if (value && available) {
       setUtilizationRate(Number(f(((value - available) / value) * 100)));

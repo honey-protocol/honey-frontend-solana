@@ -82,11 +82,9 @@ const Lend: NextPage = () => {
    currentMarketId
   );
   // market specific constants - calculations / ratios / debt / allowance etc.
-  // const [totalMarketDeposits, setTotalMarketDeposits] = useState(0);
   const [userTotalDeposits, setUserTotalDeposits] = useState(0);
   const [reserveHoneyState, setReserveHoneyState] = useState(0);
   const [marketPositions, setMarketPositions] = useState(0);
-  // const [totalMarketDebt, setTotalMarketDebt] = useState(0);
   const [nftPrice, setNftPrice] = useState(0);
   const [userWalletBalance, setUserWalletBalance] = useState<number>(0);
   const [fetchedSolPrice, setFetchedSolPrice] = useState(0);
@@ -186,32 +184,6 @@ const Lend: NextPage = () => {
     }
   }, [honeyMarket]);
 
-  // sets the market debt
-  // useEffect(() => {
-  //   const depositTokenMint = new PublicKey(
-  //     'So11111111111111111111111111111111111111112'
-  //   );
-
-  //   if (honeyReserves) {
-  //     const depositReserve = honeyReserves.filter(reserve =>
-  //       reserve?.data?.tokenMint?.equals(depositTokenMint)
-  //     )[0];
-
-  //     const reserveState = depositReserve.data?.reserveState;
-
-  //     if (reserveState?.outstandingDebt) {
-  //       // let marketDebt = BnDivided(reserveState?.outstandingDebt, 10, 15);
-  //       let marketDebt = reserveState?.outstandingDebt
-  //         .div(new BN(10 ** 15))
-  //         .toNumber();
-  //       if (marketDebt) {
-  //         let sum = Number(marketDebt / LAMPORTS_PER_SOL);
-  //         setTotalMarketDebt(RoundHalfDown(sum));
-  //       }
-  //     }
-  //   }
-  // }, [honeyReserves]);
-
   // calculates nft price
   async function calculateNFTPrice() {
     if (marketReserveInfo && parsedReserves && honeyMarket) {
@@ -263,24 +235,18 @@ const Lend: NextPage = () => {
 
         if (walletPK) await fetchWalletBalance(walletPK);
 
-        // userDepositWithdraw == 0 ? setUserDepositWithdraw(1) : setUserDepositWithdraw(0);
+        userDepositWithdraw == 0 ? setUserDepositWithdraw(1) : setUserDepositWithdraw(0);
 
         toast.success(
           'Deposit success',
           `https://solscan.io/tx/${tx[1][0]}?cluster=${network}`
         );
 
-        console.log('12345')
-
-        setTimeout(() => {
-          userDepositWithdraw == 0 ? setUserDepositWithdraw(1) : setUserDepositWithdraw(0)
-        }, 2000)
-
       } else {
         return toast.error('Deposit failed');
       }
     } catch (error) {
-      return toast.error('Deposit failed');
+      return toast.error('Deposit failed', error);
     }
   }
   
@@ -316,23 +282,18 @@ const Lend: NextPage = () => {
         });
         if (walletPK) await fetchWalletBalance(walletPK);
 
-        // userDepositWithdraw == 0 ? setUserDepositWithdraw(1) : setUserDepositWithdraw(0);
+        userDepositWithdraw == 0 ? setUserDepositWithdraw(1) : setUserDepositWithdraw(0);
 
         toast.success(
           'Withdraw success',
           `https://solscan.io/tx/${tx[1][0]}?cluster=${network}`
         );
         
-        setTimeout(() => {
-          userDepositWithdraw == 0 ? setUserDepositWithdraw(1) : setUserDepositWithdraw(0)
-        }, 2000)
-
-        console.log('12345')
       } else {
         return toast.error('Withdraw failed ');
       }
     } catch (error) {
-      return toast.error('Withdraw failed ');
+      return toast.error('Withdraw failed ', error);
     }
   }
 
@@ -355,25 +316,31 @@ const Lend: NextPage = () => {
   const [isMyCollectionsFilterEnabled, setIsMyCollectionsFilterEnabled] = useState(false);
 
   useEffect(() => {
-    console.log('running--')
-    marketCollections.map(async (collection) => {
-      if (!collection.id) return;
-      await populateMarketData(collection, sdkConfig.saberHqConnection, sdkConfig.sdkWallet!, currentMarketId, true);
-      collection.rate = await getInterestRate(collection.utilizationRate) || 0;
-      collection.id == HONEY_GENESIS_MARKET_ID ? setHoneyInterestRate(collection.rate) : setPeskyInterestRate(collection.rate);
-      collection.stats = getPositionData();
+    if (sdkConfig.saberHqConnection && sdkConfig.sdkWallet) {
 
-      if (currentMarketId == collection.id) {
-        setActiveMarketSupplied(collection.value);
-        setActiveMarketAvailable(collection.available);
-      }
-    });
+    function getData() {
+      return Promise.all(
+        marketCollections.map(async (collection) => {
+          if (!collection.id) return;
+          collection.id == HONEY_GENESIS_MARKET_ID ? setHoneyInterestRate(collection.rate) : setPeskyInterestRate(collection.rate);
+          await populateMarketData(collection, sdkConfig.saberHqConnection, sdkConfig.sdkWallet!, currentMarketId, true);
+          collection.rate = await getInterestRate(collection.utilizationRate) || 0;
+          collection.stats = getPositionData();
 
-    setTimeout(() => {
-      console.log('B:: running set data', marketCollections)
-      setTableData(marketCollections);
-      setTableDataFiltered(marketCollections);
-    }, 2000)
+          if (currentMarketId == collection.id) {
+            setActiveMarketSupplied(collection.value);
+            setActiveMarketAvailable(collection.available);
+          }
+          
+          return collection;
+        })
+      )
+    }
+
+    getData().then((result) => {
+      setTableData(result);
+    })
+  }
 
   }, [
     // totalMarketDebt,
@@ -383,8 +350,8 @@ const Lend: NextPage = () => {
     sdkConfig.saberHqConnection,
     sdkConfig.sdkWallet,
     currentMarketId,
-    peskyInterestRate,
-    honeyInterestRate,
+    // peskyInterestRate,
+    // honeyInterestRate,
     userDepositWithdraw,
     marketReserveInfo,
     honeyUser,
@@ -492,6 +459,7 @@ const Lend: NextPage = () => {
         sorter: (a: any = 0, b: any = 0) => a.rate - b.rate,
         render: (rate: number, market: any) => {
           console.log('B:: this is rate', rate)
+          // console.log('B:: this is market', market)
           return <div className={style.rateCell}>{fp(rate)}</div>;
         }
       },
@@ -515,6 +483,7 @@ const Lend: NextPage = () => {
         sorter: (a, b) => a.value - b.value,
         render: (value: number, market: any) => {
           console.log('B:: this is value', value)
+          // console.log('B:: this is market', market)
           return <div className={style.valueCell}>{fs(value)}</div>;
         }
       },
@@ -539,6 +508,7 @@ const Lend: NextPage = () => {
         sorter: (a, b) => a.available - b.available,
         render: (available: number, market: any) => {
           console.log('B:: this is available', available)
+          console.log('B:: this is market', market)
           return <div className={style.availableCell}>{fs(available)}</div>;
         }
       },

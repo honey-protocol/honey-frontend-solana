@@ -11,8 +11,7 @@ import {
   BORROW_RATE_ONE,
   BORROW_RATE_TWO,
   BORROW_RATE_THREE
-} from '../../constants/interestRate'
-import { Market } from 'constants/borrowLendMarkets';
+} from '../../constants/interestRate';
 import { ConnectedWallet } from '@saberhq/use-solana';
 
 import * as anchor from "@project-serum/anchor";
@@ -20,6 +19,7 @@ import { CollateralNFTPosition, getHealthStatus, getNFTAssociatedMetadata, Honey
 import { Metadata } from '@metaplex-foundation/mpl-token-metadata';
 import { formatNumber } from '../../helpers/format';
 import { generateMockHistoryData } from 'helpers/chartUtils';
+import { MarketTableRow } from 'types/markets';
 
 /**
  * @description formatting functions to format with perfect / format in SOL with icon or just a regular 2 decimal format
@@ -251,7 +251,7 @@ const getPositionData = () => {
   return [];
 };
 
-export async function populateMarketData(collection: Market, connection: Connection, wallet: ConnectedWallet, currentMarketId: string, lend: boolean) {
+export async function populateMarketData(collection: MarketTableRow, connection: Connection, wallet: ConnectedWallet, currentMarketId: string, lend: boolean) {
   if(wallet == null)
     return;
   
