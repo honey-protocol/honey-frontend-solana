@@ -73,9 +73,9 @@ export const GovernanceStats: FC<GoveranceStatsProps> = ({
     <div className={styles.governanceGraphs}>
       <div className={styles.statBlock}>
         <div className={styles.blockTitle}>
-          <HoneyTooltip label="Placeholder tooltip lable">
+          <HoneyTooltip label="Honey tokens can be bought on the open market or earned by staking Honey Gensis Bees on the farm page.">
             <Space size="small" className={c(styles.title, styles.yellow)}>
-              Honey balance
+              HONEY balance
               <div className={questionIconYellow} />
             </Space>
           </HoneyTooltip>
@@ -94,7 +94,7 @@ export const GovernanceStats: FC<GoveranceStatsProps> = ({
           >
             <HoneyButton variant="text">
               <div className={styles.buttonContent}>
-                <span>Buy more</span>
+                <span>Buy</span>
                 <div className={styles.buyMoreIcon} />
               </div>
             </HoneyButton>
@@ -104,9 +104,9 @@ export const GovernanceStats: FC<GoveranceStatsProps> = ({
 
       <div className={styles.statBlock}>
         <div className={styles.blockTitle}>
-          <HoneyTooltip label="Placeholder tooltip label">
+          <HoneyTooltip label="veHONEY is the Governance token of the Honey Ecosystem. It is used to create and vote on DAO proposals.">
             <Space className={styles.title}>
-              veHoney || Voting power <div className={questionIcon} />
+              veHONEY || Voting power <div className={questionIcon} />
             </Space>
           </HoneyTooltip>
           <div className={styles.value}>{f(veHoneyAmount)}</div>
@@ -128,7 +128,7 @@ export const GovernanceStats: FC<GoveranceStatsProps> = ({
 
       <div className={c(styles.statBlock, styles.lockPeriodBlock)}>
         <div className={styles.blockTitle}>
-          <HoneyTooltip label="Placeholder tooltip label">
+          <HoneyTooltip label="A countdown until your veHONEY can be unlocked. When you unlock your veHONEY you will be able to claim your previously locked HONEY tokens. This countdown is pushed back each time more HONEY is vested.">
             <Space className={styles.title} size="small">
               Lock period <div className={questionIcon} />
             </Space>
@@ -160,11 +160,11 @@ export const GovernanceStats: FC<GoveranceStatsProps> = ({
       <div className={styles.statBlock}>
         <div className={styles.lockedHoneyTitle}>
           <div className={styles.lockedLeft}>
-            <div className={styles.title}>Total Locked Honey</div>
+            <div className={styles.title}>Total Locked HONEY</div>
             <div className={styles.value}>{fsn(lockedHoney)}</div>
           </div>
           <div className={styles.lockedRight}>
-            <div className={styles.title}>Total Circulating Honey</div>
+            <div className={styles.title}>Total Circulating HONEY</div>
             <div className={styles.value}>{fsn(totalSupply)}</div>
           </div>
         </div>
