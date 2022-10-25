@@ -34,14 +34,6 @@ export const AboutMarketStep = () => {
     }
   };
 
-  useCallback(() => {
-    if (collectionUrl.length) {
-      mockCollectionData.title = collectionUrl;
-    } else {
-      return;
-    }
-  }, [collectionUrl]);
-
   return (
     <div className={styles.aboutMarketStep}>
       <div className={styles.aboutMarketStepContainer}>
