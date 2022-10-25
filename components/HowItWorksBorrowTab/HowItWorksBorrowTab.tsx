@@ -47,7 +47,7 @@ const HowItWorksBorrowTab: FC<HowItWorksBorrowTabProps> = ({ onCancel }) => {
             </div>
             <span className={styles.listText}>
               Select an asset risk level. It regulates how much lenders gonna
-              earn depending on the market's assets. The higher risk — the
+              earn depending on the market&apos;s assets. The higher risk — the
               higher the rewards lenders will get.
             </span>
           </div>
