@@ -157,10 +157,16 @@ const LockHoneyForm = (props: { onCancel: Function }) => {
               value={f(honeyAmount)}
               title={
                 <span className={hAlign}>
-                  $HONEY balance <div className={questionIcon} />
+                  $HONEY balance
+                  {/* <div className={questionIcon} /> */}
                 </span>
               }
-              // toolTipLabel={<span>place holder</span>}
+              // toolTipLabel={
+              //   <span>
+              //     Honey tokens can be bought on the open market or by staking
+              //     Honey Gensis Bees on the farm page.
+              //   </span>
+              // }
             />
           </div>
           <div className={styles.col}>
@@ -168,7 +174,8 @@ const LockHoneyForm = (props: { onCancel: Function }) => {
               value={veHoneyAmount.toString()}
               title={
                 <span className={hAlign}>
-                  veHONEY balance <div className={questionIcon} />
+                  veHONEY balance
+                  {/* <div className={questionIcon} /> */}
                 </span>
               }
               // toolTipLabel={<span>place holder</span>}
@@ -181,7 +188,8 @@ const LockHoneyForm = (props: { onCancel: Function }) => {
               value={lockedAmount.toString()}
               title={
                 <span className={hAlign}>
-                  $HONEY locked <div className={questionIcon} />
+                  $HONEY locked
+                  {/* <div className={questionIcon} /> */}
                 </span>
               }
               // toolTipLabel={<span>place holder</span>}
@@ -192,7 +200,8 @@ const LockHoneyForm = (props: { onCancel: Function }) => {
               value={lockedPeriodEnd.toString()}
               title={
                 <span className={hAlign}>
-                  Lock period ends <div className={questionIcon} />
+                  Lock period ends
+                  {/* <div className={questionIcon} /> */}
                 </span>
               }
               // toolTipLabel={<span>place holder</span>}
