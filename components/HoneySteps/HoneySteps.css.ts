@@ -117,12 +117,6 @@ globalStyle(
 
 globalStyle(`${waitContainerStyle} > .ant-steps-item-icon`, {
   background: 'none',
-  borderRadius: 0,
-  border: 'none'
-});
-
-globalStyle(`${waitContainerStyle} > .ant-steps-item-icon`, {
-  background: 'none',
   ...antStepIcon
 });
 
@@ -143,5 +137,13 @@ globalStyle(
   `${waitContainerStyle} > .ant-steps-item-content > .ant-steps-item-title:after`,
   {
     ...antStepItemTitle
+  }
+);
+
+globalStyle(
+  `
+ ${steps} .ant-steps-item:last-child .ant-steps-item-icon`,
+  {
+    marginRight: 0
   }
 );
