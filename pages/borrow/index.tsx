@@ -323,7 +323,6 @@ const Markets: NextPage = () => {
       function getData() {
         return Promise.all(
           marketCollections.map(async (collection) => {
-            if(collection.id == '') return;
             collection.id == HONEY_GENESIS_MARKET_ID ? setHoneyInterestRate(collection.rate) : setPeskyInterestRate(collection.rate);
             await populateMarketData(collection, sdkConfig.saberHqConnection, sdkConfig.sdkWallet!, currentMarketId, false);
             collection.positions = await handlePositions(collection.id);
