@@ -13,7 +13,8 @@ export type MarketTableRow = {
   user: any;
   utilizationRate: number;
   value: number;
-  positions?: Array<MarketTablePosition>;
+  positions: Array<MarketTablePosition>;
+  stats?: any;
 };
 
 export type MarketTablePosition = {

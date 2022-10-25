@@ -1,4 +1,5 @@
 import { Connection, PublicKey } from '@solana/web3.js';
+import { MarketTableRow } from 'types/markets';
 
 export type OpenPositions = {
   image: string;
@@ -9,24 +10,24 @@ export type OpenPositions = {
   uri: string;
 };
 
-export type Market = {
-    id: string;
-    key: string;
-    // imageUrl: string;
-    name: string;
-    rate: number;
-    available: number;
-    value: number;
-    allowance: number;
-    positions: Array<OpenPositions>;
-    connection?: any;
-    user?: any;
-    debt: number;
-    utilizationRate: number;
-    stats?: any;
-  };
+// export type Market = {
+//     id: string;
+//     key: string;
+//     // imageUrl: string;
+//     name: string;
+//     rate: number;
+//     available: number;
+//     value: number;
+//     allowance: number;
+//     positions: Array<OpenPositions>;
+//     connection?: any;
+//     user?: any;
+//     debt: number;
+//     utilizationRate: number;
+//     stats?: any;
+//   };
   
-  export const marketCollections: Market[] = [
+  export const marketCollections: MarketTableRow[] = [
     {
       id: '6FcJaAzQnuoA6o3sVw1GD6Ba69XuL5jinZpQTzJhd2R3',
       key: 'HNYG',
