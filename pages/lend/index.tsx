@@ -353,6 +353,11 @@ const Lend: NextPage = () => {
     return [];
   };
 
+  const showMobileSidebar = () => {
+    setShowMobileSidebar(true);
+    document.body.classList.add('disable-scroll');
+  };
+
   const [tableData, setTableData] = useState<LendTableRow[]>([]);
   const [tableDataFiltered, setTableDataFiltered] = useState<LendTableRow[]>(
     []
@@ -420,6 +425,14 @@ const Lend: NextPage = () => {
     return [...tableData].filter(row => {
       return r.test(row.name);
     });
+  };
+
+  const handleRowClick = (
+    event: React.MouseEvent<Element, MouseEvent>,
+    record: LendTableRow
+  ) => {
+    // setSelectedMarketId(record.id);
+    showMobileSidebar();
   };
 
   const debouncedSearch = useCallback(
@@ -672,23 +685,24 @@ const Lend: NextPage = () => {
         executeDeposit={executeDeposit}
         executeWithdraw={executeWithdraw}
         userTotalDeposits={userTotalDeposits}
-        available={totalMarketDeposits}
+        available={activeMarketAvailable}
         value={activeMarketSupplied}
         userWalletBalance={userWalletBalance}
         fetchedSolPrice={fetchedSolPrice}
         onCancel={hideMobileSidebar}
-        currentMarketId={currentMarketId}
         marketImage={renderImage(
           currentMarketId == HONEY_GENESIS_MARKET_ID
             ? HONEY_GENESIS_BEE
             : PESKY_PENGUINS
         )}
-      />
+        currentMarketId={currentMarketId}
+        />
     </HoneySider>
   );
 
   return (
     <LayoutRedesign>
+      <HoneyContent sidebar={lendSidebar()}>
       <div>
         <Typography.Title className={pageTitle}>Lend</Typography.Title>
         <Typography.Text className={pageDescription}>
@@ -702,55 +716,72 @@ const Lend: NextPage = () => {
           </span>
         </Typography.Text>
       </div>
-      <HoneyContent>
+      <div className={style.hideTablet}>
         <HoneyTable
           hasRowsShadow={true}
           tableLayout="fixed"
           columns={columns}
           dataSource={tableDataFiltered}
           pagination={false}
+          className={style.table}
           onRow={(record, rowIndex) => {
             return {
-              onClick: event => handleMarketId(record)
+              onClick: event => handleRowClick(event, record)
             };
           }}
+          // TODO: uncomment when the chart has been replaced and implemented
+          // expandable={{
+          //   // we use our own custom expand column
+          //   showExpandColumn: false,
+          //   onExpand: (expanded, row) =>
+          //     setExpandedRowKeys(expanded ? [row.key] : []),
+          //   expandedRowKeys,
+          //   expandedRowRender: record => {
+          //     return (
+          //       <div className={style.expandSection}>
+          //         <div className={style.dashedDivider} />
+          //         <HoneyChart title="Interest rate" data={record.stats} />
+          //       </div>
+          //   );
+          // }
+          // }}
+        />
+      </div>
+      <div className={style.showTablet}>
+        <div
+          className={c(
+            style.mobileTableHeader,
+            style.mobileSearchAndToggleContainer
+          )}
+        >
+          <div className={style.mobileRow}>
+            <SearchForm />
+          </div>
+          <div className={style.mobileRow}>
+            <MyCollectionsToggle />
+          </div>
+        </div>
+        <div className={c(style.mobileTableHeader)}>
+          <div className={style.tableCell}>Interest</div>
+          <div className={style.tableCell}>Supplied</div>
+          <div className={style.tableCell}>Available</div>
+        </div>
+        <HoneyTable
+          hasRowsShadow={true}
+          tableLayout="fixed"
+          columns={columnsMobile}
+          dataSource={tableDataFiltered}
+          pagination={false}
+          showHeader={false}
           className={style.table}
-          expandable={{
-            // we use our own custom expand column
-            showExpandColumn: false,
-            onExpand: (expanded, row) =>
-              setExpandedRowKeys(expanded ? [row.key] : []),
-            expandedRowKeys,
-            expandedRowRender: record => {
-              return (
-                <div className={style.expandSection}>
-                  <div className={style.dashedDivider} />
-                  <HoneyChart title="Interest rate" data={record.stats} />
-                </div>
-              );
-            }
+          onRow={(record, rowIndex) => {
+            return {
+              onClick: event => handleRowClick(event, record)
+            };
           }}
         />
+        </div>
       </HoneyContent>
-      <HoneySider>
-        <LendSidebar
-          collectionId="s"
-          executeDeposit={executeDeposit}
-          executeWithdraw={executeWithdraw}
-          userTotalDeposits={userTotalDeposits}
-          available={activeMarketAvailable}
-          value={activeMarketSupplied}
-          userWalletBalance={userWalletBalance}
-          fetchedSolPrice={fetchedSolPrice}
-          onCancel={hideMobileSidebar}
-          marketImage={renderImage(
-            currentMarketId == HONEY_GENESIS_MARKET_ID
-              ? HONEY_GENESIS_BEE
-              : PESKY_PENGUINS
-          )}
-          currentMarketId={currentMarketId}
-        />
-      </HoneySider>
     </LayoutRedesign>
   );
 };

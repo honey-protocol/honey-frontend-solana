@@ -67,6 +67,7 @@ import { pageDescription, pageTitle } from 'styles/common.css';
 import HoneyTableRow from 'components/HoneyTable/HoneyTableRow/HoneyTableRow';
 import HoneyTableNameCell from '../../components/HoneyTable/HoneyTableNameCell/HoneyTableNameCell';
 import { marketCollections, OpenPositions } from 'constants/borrowLendMarkets';
+import HoneyTooltip from '../../components/HoneyTooltip/HoneyTooltip';
 import {
   HONEY_GENESIS_BEE,
   LIFINITY_FLARES,
@@ -706,15 +707,13 @@ const Markets: NextPage = () => {
               </HexaBoxContainer>
             </div>
             <div className={style.nameCellText}>
-              <div className={style.collectionName}>
+              <HoneyTooltip label={name}>
                 {currentMarketId == HONEY_GENESIS_MARKET_ID
-                  ? 'Honey Genesis Bee'
-                  : 'Pesky Penguin'}
-              </div>
-              <div className={style.risk.safe}>
-                <span className={style.valueCell}>{fp(loanToValue * 100)}</span>{' '}
-                <span className={style.riskText}>Risk lvl</span>
-              </div>
+                  ? formatNFTName('Honey Genesis Bee')
+                  : formatNFTName('Pesky Penguin')
+                  }
+              </HoneyTooltip>
+              <HealthLvl healthLvl={healthPercent} />
             </div>
           </div>
         );

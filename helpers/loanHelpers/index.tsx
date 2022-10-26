@@ -3,11 +3,7 @@ import {
   useConnectedWallet,
   ConnectedWallet
 } from '@saberhq/use-solana';
-<<<<<<< HEAD
-import { HONEY_PROGRAM_ID, HONEY_MARKET_ID } from 'constants/loan';
-=======
 import { HONEY_PROGRAM_ID, HONEY_GENESIS_MARKET_ID } from 'constants/loan';
->>>>>>> feature/refactor_mainnet_test
 import { toast } from 'react-toastify';
 import BN from 'bn.js';
 import { Big } from 'big.js';
@@ -27,12 +23,7 @@ export function ConfigureSDK() {
     saberHqConnection: useConnection(),
     // saberHqConnection: new Connection("https://explorer-api.devnet.solana.com/"),
     sdkWallet: useConnectedWallet(),
-<<<<<<< HEAD
-    honeyId: HONEY_PROGRAM_ID,
-    marketId: HONEY_MARKET_ID
-=======
     honeyId: HONEY_PROGRAM_ID
->>>>>>> feature/refactor_mainnet_test
   };
 }
 
@@ -144,17 +135,11 @@ export function BnDivided(val: BN, a: number, b: number) {
 export async function getOraclePrice(
   cluster: 'devnet' | 'mainnet-beta' = 'mainnet-beta',
   connection: Connection,
-<<<<<<< HEAD
-  aggregatorKey: PublicKey
-): Promise<any> {
-  // load the switchboard program
-=======
   aggregatorKey: PublicKey | undefined
 ): Promise<any> {
   // load the switchboard program
   if(!aggregatorKey)
     return 0;
->>>>>>> feature/refactor_mainnet_test
   console.log('@@@-- cluster', cluster);
   const program = await loadSwitchboardProgram(
     cluster,

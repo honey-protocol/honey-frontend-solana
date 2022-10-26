@@ -51,11 +51,7 @@ const RepayForm = (props: RepayProps) => {
 
   const maxValue = userDebt != 0 ? userDebt : userAllowance;
   const solPrice = fetchedSolPrice;
-<<<<<<< HEAD
-  const liquidationThreshold = 0.65;
-=======
   const liquidationThreshold = LIQUIDATION_FEE;
->>>>>>> feature/refactor_mainnet_test
   const SOLBalance = useSolBalance();
 
   const newDebt = userDebt - (valueSOL ? valueSOL : 0);

@@ -77,7 +77,6 @@ const LiquidateSidebar = (props: LendSidebarProps) => {
                 handleIncreaseBid={handleIncreaseBid}
                 handlePlaceBid={handlePlaceBid}
                 fetchedSolPrice={fetchedSolPrice}
-<<<<<<< HEAD
                 onCancel={onCancel}
               />
             )}
@@ -86,12 +85,6 @@ const LiquidateSidebar = (props: LendSidebarProps) => {
                 biddingArray={biddingArray}
                 fetchedSolPrice={fetchedSolPrice}
               />
-=======
-              />
-            )}
-            {activeTab === 'current' && (
-              <BidsList biddingArray={biddingArray} fetchedSolPrice={fetchedSolPrice} />
->>>>>>> feature/refactor_mainnet_test
             )}
           </>
         )}

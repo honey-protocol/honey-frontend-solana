@@ -11,11 +11,7 @@ export const links = [
   {
     title: 'DASHBOARD',
     href: '/dashboard',
-<<<<<<< HEAD
     disabled: false
-=======
-    disabled: true
->>>>>>> feature/refactor_mainnet_test
   },
   {
     title: 'BORROW',
