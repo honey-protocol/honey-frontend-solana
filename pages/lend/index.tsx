@@ -726,9 +726,10 @@ const Lend: NextPage = () => {
           className={style.table}
           onRow={(record, rowIndex) => {
             return {
-              onClick: event => handleRowClick(event, record)
+              onClick: event => handleMarketId(record)
             };
           }}
+          
           // TODO: uncomment when the chart has been replaced and implemented
           // expandable={{
           //   // we use our own custom expand column

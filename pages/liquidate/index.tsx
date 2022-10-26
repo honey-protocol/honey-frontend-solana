@@ -62,11 +62,13 @@ import {
 } from 'constants/borrowLendMarkets';
 import { marketCollections } from 'constants/borrowLendMarkets';
 import { populateMarketData } from 'helpers/loanHelpers/userCollection';
+import { setMarketId } from 'pages/_app';
 
 const { formatPercent: fp, formatSol: fs, formatRoundDown: fd } = formatNumber;
 const Liquidate: NextPage = () => {
   // TODO: write dynamic currentMarketId based on user interaction
   const [currentMarketId, setCurrentMarketId] = useState(HONEY_GENESIS_MARKET_ID);
+  console.log('current market', currentMarketId)
   // start sdk integration
   const liquidationThreshold = 0.65; // TODO: values like this should be imported from constants per collection
   // init anchor
@@ -90,6 +92,8 @@ const Liquidate: NextPage = () => {
     sdkConfig.honeyId,
     currentMarketId
   );
+
+  console.log('status...', status)
   /**
    * @description calls upon markets which
    * @params none
@@ -242,12 +246,13 @@ const Liquidate: NextPage = () => {
   // triggers if there are positions - inits fetch positions
   useEffect(() => {
     if (statusState == true && status.bids && status.positions) {
+      console.log('status.posisiotns', status.positions)
       handleBiddingState(status.bids, status.positions);
       setBiddingArray(status.bids);
     }
 
     return;
-  }, [statusState, nftPrice, loanToValue]);
+  }, [statusState, nftPrice, loanToValue, currentMarketId]);
 
   // calculates nft price
   async function calculateNFTPrice() {
@@ -438,7 +443,7 @@ const Liquidate: NextPage = () => {
       function getData() {
         return Promise.all(
           marketCollections.map(async collection => {
-            collection.openPositions = fetchedPositions.filter((position: any) => {
+            collection.positions = fetchedPositions.filter((position: any) => {
               if (currentMarketId == HONEY_GENESIS_MARKET_ID) {
                 return position.name.includes('Honey');
               } else if (currentMarketId == PESKY_PENGUINS_MARKET_ID) {
@@ -451,7 +456,11 @@ const Liquidate: NextPage = () => {
               sdkConfig.saberHqConnection,
               sdkConfig.sdkWallet!,
               currentMarketId,
-              true
+              true,
+              {
+                obligations: status.positions,
+                nftPrice
+              }
             );
 
             return collection;
@@ -470,7 +479,9 @@ const Liquidate: NextPage = () => {
     fetchedPositions,
     currentMarketId,
     sdkConfig.saberHqConnection,
-    sdkConfig.sdkWallet
+    sdkConfig.sdkWallet,
+    status.positions,
+    nftPrice
   ]);
 
   const handleToggle = (checked: boolean) => {
@@ -486,6 +497,20 @@ const Liquidate: NextPage = () => {
       return r.test(row.name);
     });
   };
+
+  /**
+   * @description sets the market ID based on market click
+   * @params Honey table record - contains all info about a table (aka market)
+   * @returns sets the market ID which re-renders page state and fetches market specific data
+  */
+     function handleMarketId(record: any) {
+      record.id == HONEY_GENESIS_MARKET_ID
+        ? setCurrentMarketId(HONEY_GENESIS_MARKET_ID)
+        : setCurrentMarketId(PESKY_PENGUINS_MARKET_ID);
+      record.id == HONEY_GENESIS_MARKET_ID
+        ? setMarketId(HONEY_GENESIS_MARKET_ID)
+        : setMarketId(PESKY_PENGUINS_MARKET_ID);
+    }
 
   const debouncedSearch = useCallback(
     debounce(searchQuery => {
@@ -572,8 +597,8 @@ const Liquidate: NextPage = () => {
         },
         dataIndex: 'risk',
         sorter: (a, b) => a.risk - b.risk,
-        render: (rate: number) => {
-          return <div className={style.rateCell}>{fp(rate * 100)}</div>;
+        render: (rate: number, market: any) => {
+          return <div className={style.rateCell}>{fp(market.risk * 100)}</div>;
         }
       },
       {
@@ -595,8 +620,10 @@ const Liquidate: NextPage = () => {
         },
         dataIndex: 'liqThreshold',
         sorter: (a, b) => a.liqThreshold - b.liqThreshold,
-        render: (rate: number) => {
-          return <div className={style.rateCell}>{fp(rate * 100)}</div>;
+        render: (liqThreshold: number) => {
+          console.log('this is rate', liqThreshold)
+          console.log('this is market', market)
+          return <div className={style.rateCell}>{fp(LIQUIDATION_THRESHOLD * 100)}</div>;
         }
       },
       {
@@ -641,7 +668,9 @@ const Liquidate: NextPage = () => {
         },
         dataIndex: 'tvl',
         sorter: (a, b) => a.tvl - b.tvl,
-        render: (value: number) => {
+        render: (value: number, market: any) => {
+          console.log('this is value;', value);
+          console.log('this is market', market);
           return <div className={style.valueCell}>{fs(value)}</div>;
         }
       },
@@ -753,6 +782,11 @@ const Liquidate: NextPage = () => {
             className={classNames(style.table, {
               [style.emptyTable]: !tableDataFiltered.length
             })}
+            onRow={(record, rowIndex) => {
+              return {
+                onClick: event => handleMarketId(record)
+              };
+            }}
             expandable={{
               // we use our own custom expand column
               showExpandColumn: false,

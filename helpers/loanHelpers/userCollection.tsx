@@ -1,5 +1,5 @@
 import { RoundHalfDown, RoundHalfUp } from 'helpers/utils';
-import { HONEY_GENESIS_MARKET_ID, MAX_LTV } from '../../constants/loan';
+import { HONEY_GENESIS_MARKET_ID, MAX_LTV, PESKY_PENGUINS_MARKET_ID } from '../../constants/loan';
 import BN from 'bn.js';
 import { Connection, LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js';
 import { BnToDecimal, getOraclePrice } from '../../helpers/loanHelpers/index';
@@ -19,6 +19,7 @@ import { Metadata } from '@metaplex-foundation/mpl-token-metadata';
 import { formatNumber } from '../../helpers/format';
 import { generateMockHistoryData } from 'helpers/chartUtils';
 import { MarketTableRow } from 'types/markets';
+import { LIQUIDATION_THRESHOLD } from '../../constants/loan';
 
 /**
  * @description formatting functions to format with perfect / format in SOL with icon or just a regular 2 decimal format
@@ -250,7 +251,71 @@ const getPositionData = () => {
   return [];
 };
 
-export async function populateMarketData(collection: MarketTableRow, connection: Connection, wallet: ConnectedWallet, currentMarketId: string, liquidations: boolean) {
+const setObligations = async (obligations: any, currentMarketId: string, nftPrice: number) => {
+  if (!obligations) return [];
+  return obligations.map((obligation: any) => {
+    return {
+      name: currentMarketId == HONEY_GENESIS_MARKET_ID ? 'Honey Genesis Bee' : 'Pesky Penguin',
+      riskLvl: (obligation.debt / nftPrice) * 100,
+      healthLvl: ((nftPrice - obligation.debt / LIQUIDATION_THRESHOLD) / nftPrice) * 100,
+      debt: obligation.debt,
+      estimatedValue: nftPrice,
+      nftMint: obligation.nft_mint,
+      owner: obligation.owner,
+      obligation: obligation.obligation,
+      highestBid: obligation.highest_bid
+    }
+  })
+}
+
+const calculateRisk = async (obligations: any, nftPrice: number, type: boolean, currentMarketId: string, collectionName: string) => {
+  if (!obligations) return 0;
+  if (currentMarketId == HONEY_GENESIS_MARKET_ID && collectionName == 'Honey Genesis Bee') {
+    let sumOfDebt = await obligations.reduce((acc: number, obligation: any) => {
+      return acc + obligation.debt;
+    }, 0);
+  
+    if (type == true) {
+      console.log('this is total debt', sumOfDebt);
+      return sumOfDebt;
+    } else {
+      return (sumOfDebt / obligations.length / nftPrice)
+    }
+  } else if (currentMarketId == PESKY_PENGUINS_MARKET_ID && collectionName == 'Pesky Penguin') {
+    let sumOfDebt = await obligations.reduce((acc: number, obligation: any) => {
+      return acc + obligation.debt;
+    }, 0);
+  
+    if (type == true) {
+      console.log('this is total debt', sumOfDebt);
+      return sumOfDebt;
+    } else {
+      return (sumOfDebt / obligations.length / nftPrice)
+    }
+  } else {
+    return 0;
+  }
+}
+
+const calculateTVL = async (obligations: any, nftPrice: number, currentMarketId: string, collectionName: string) => {
+  if (!obligations) return 0;
+
+  console.log('current market id', currentMarketId)
+  console.log('current collection name', collectionName)
+  
+  if (currentMarketId == HONEY_GENESIS_MARKET_ID && collectionName == 'Honey Genesis Bee') {
+    const filterNullState = await obligations.filter((obligation: any) => Boolean(obligation.debt) && obligation.name == collectionName);
+    console.log('outcome honey', nftPrice * filterNullState)
+    return nftPrice * filterNullState;
+  } else if (currentMarketId == PESKY_PENGUINS_MARKET_ID && collectionName == 'Pesky Penguin') {
+    console.log('active market pesky')
+    const filterNullState = await obligations.filter((obligation: any) => Boolean(obligation.debt) && obligation.name == collectionName);
+    console.log('outcome pesky', nftPrice * filterNullState)
+    return nftPrice * filterNullState;
+  }
+}
+
+export async function populateMarketData(collection: MarketTableRow, connection: Connection, wallet: ConnectedWallet, currentMarketId: string, liquidations: boolean, obligations?: any) {
   if(wallet == null)
     return;
   
@@ -287,12 +352,26 @@ export async function populateMarketData(collection: MarketTableRow, connection:
     const totalMarketDebt = RoundHalfDown(parsedReserve.reserveState.outstandingDebt.div(new BN(10 ** 15)).toNumber() / LAMPORTS_PER_SOL);
     const sumOfTotalValue = totalMarketDeposits + totalMarketDebt;
 
-    collection.available = totalMarketDeposits;
-    collection.value = sumOfTotalValue;
-    collection.connection = connection;
-    collection.utilizationRate = Number(f((totalMarketDebt) / (totalMarketDeposits + totalMarketDebt)));
-    collection.user = honeyUser;
-    collection.name;
+    if (liquidations) {
+      collection.name;
+      collection.available = totalMarketDeposits;
+      collection.value = sumOfTotalValue;
+      collection.connection = connection;
+      collection.utilizationRate = Number(f((totalMarketDebt) / (totalMarketDeposits + totalMarketDebt)));
+      collection.user = honeyUser;
+      collection.risk = obligations ? await calculateRisk(obligations.obligations, obligations.nftPrice, false, currentMarketId, collection.name) : 0;
+      collection.totalDebt = obligations ? await calculateRisk(obligations.obligations, obligations.nftPrice, true, currentMarketId, collection.name) : 0;
+      collection.openPositions = obligations ? await setObligations(obligations.obligations, currentMarketId, obligations.nftPrice) : [];
+      collection.tvl = obligations ? await calculateTVL(obligations.obligations, obligations.nftPrice, currentMarketId, collection.name) : 0;
+
+    } else {
+      collection.available = totalMarketDeposits;
+      collection.value = sumOfTotalValue;
+      collection.connection = connection;
+      collection.utilizationRate = Number(f((totalMarketDebt) / (totalMarketDeposits + totalMarketDebt)));
+      collection.user = honeyUser;
+      collection.name;
+    }
 
     return collection;
   }
