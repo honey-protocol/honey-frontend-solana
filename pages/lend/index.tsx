@@ -359,8 +359,7 @@ const Lend: NextPage = () => {
               currentMarketId,
               true
             );
-            collection.rate =
-              (await getInterestRate(collection.utilizationRate)) || 0;
+            collection.rate = (await getInterestRate(collection.utilizationRate) || 0) * collection.utilizationRate;
             collection.stats = getPositionData();
 
             if (currentMarketId == collection.id) {
