@@ -32,7 +32,7 @@ import HoneyButton from '../../components/HoneyButton/HoneyButton';
 import EmptyStateDetails from 'components/EmptyStateDetails/EmptyStateDetails';
 import classNames from 'classnames';
 import { getColumnSortStatus } from '../../helpers/tableUtils';
-import { useConnectedWallet } from '@saberhq/use-solana';
+import { useConnectedWallet, useSolana } from '@saberhq/use-solana';
 import useFetchNFTByUser from '../../hooks/useNFTV2';
 import { BnToDecimal, ConfigureSDK } from '../../helpers/loanHelpers/index';
 import { LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js';
@@ -76,6 +76,7 @@ const { format: f, formatPercent: fp, formatSol: fs } = formatNumber;
 const Markets: NextPage = () => {
   const wallet = useConnectedWallet();
   const sdkConfig = ConfigureSDK();
+  const { disconnect } = useSolana();
 
   /**
    * @description calls upon markets which
@@ -769,6 +770,7 @@ const Markets: NextPage = () => {
           className={style.mobileConnectButton}
           variant="secondary"
           isFluid={windowWidth < TABLET_BP}
+          onClick={disconnect}
         >
           <div className={style.swapWalletIcon} />
           Change active wallet{' '}
