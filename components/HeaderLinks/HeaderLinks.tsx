@@ -11,7 +11,7 @@ export const links = [
   {
     title: 'DASHBOARD',
     href: '/dashboard',
-    disabled: false
+    disabled: true
   },
   {
     title: 'BORROW',
@@ -31,7 +31,8 @@ export const links = [
   },
   {
     title: 'GOVERNANCE',
-    href: '/governance'
+    href: '/governance',
+    disabled: false
   },
   {
     title: 'DOCUMENTATION',
