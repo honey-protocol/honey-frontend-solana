@@ -464,11 +464,7 @@
   dependencies:
     "@hapi/hoek" "^9.0.0"
 
-<<<<<<< HEAD
-"@honey-finance/sdk@^1.0.135":
-=======
 "@honey-finance/sdk@1.0.135":
->>>>>>> feature/refactor_mainnet_test
   version "1.0.135"
   resolved "https://registry.yarnpkg.com/@honey-finance/sdk/-/sdk-1.0.135.tgz#e000970aaf6cb5af488aa41742f0214328f18acb"
   integrity sha512-Wf0hwdWDhedwjt7MD2nPJdTwfYPGrEUPAa9apOvthkljb1pMYsg10e3C3socSDgsLVghVXqB/GIdvwBSOMe4RQ==
