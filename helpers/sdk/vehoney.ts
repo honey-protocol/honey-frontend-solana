@@ -25,14 +25,18 @@ import {
 } from '@tribecahq/tribeca-sdk';
 
 import { ClientBase } from './base';
-import { HONEY_MINT, WL_TOKEN_MINT, VOTER_PROGRAM_ID } from './constant';
+import {
+  HONEY_MINT,
+  WL_TOKEN_MINT,
+  VOTER_PROGRAM_ID,
+  ESCROW_SEED,
+  WHITELIST_ENTRY_SEED,
+  PROOF_SEED,
+  TREASURY_SEED,
+  NFT_RECEIPT_SEED
+} from './constant';
 import { VeHoney, IDL } from '../types/ve_honey';
 
-const ESCROW_SEED = 'Escrow';
-const WHITELIST_ENTRY_SEED = 'LockerWhitelistEntry';
-const PROOF_SEED = 'Proof';
-const TREASURY_SEED = 'Treasury';
-const NFT_RECEIPT_SEED = 'Receipt';
 const SYSTEM_PROGRAM_ID = SystemProgram.programId;
 
 export class VeHoneyClient extends ClientBase<VeHoney> {
@@ -54,7 +58,7 @@ export class VeHoneyClient extends ClientBase<VeHoney> {
     return this.wallet.publicKey;
   }
 
-  private async initEscrowTx(locker: PublicKey, tx: Transaction) {
+  async initEscrowTx(locker: PublicKey, tx: Transaction) {
     const [escrow] = await this.getEscrowPDA(locker);
     const lockedTokens = await this.getEscrowLockedTokenPDA(escrow);
 
@@ -361,16 +365,16 @@ export class VeHoneyClient extends ClientBase<VeHoney> {
         HONEY_MINT,
         lockedTokens,
         escrow,
-        this.wallet.publicKey
+        this.walletKey
       ),
       await this.program.methods
         .initEscrow()
         .accounts({
-          payer: this.wallet.publicKey,
+          payer: this.walletKey,
           locker,
           escrow,
-          escrowOwner: this.wallet.publicKey,
-          systemProgram: anchor.web3.SystemProgram.programId
+          escrowOwner: this.walletKey,
+          systemProgram: SYSTEM_PROGRAM_ID
         })
         .instruction()
     ];
@@ -517,11 +521,7 @@ export class VeHoneyClient extends ClientBase<VeHoney> {
 
   async getEscrowPDA(locker: PublicKey) {
     return anchor.web3.PublicKey.findProgramAddress(
-      [
-        Buffer.from(ESCROW_SEED),
-        locker.toBuffer(),
-        this.wallet.publicKey.toBuffer()
-      ],
+      [Buffer.from(ESCROW_SEED), locker.toBuffer(), this.walletKey.toBuffer()],
       this.programId
     );
   }
@@ -571,7 +571,7 @@ export class VeHoneyClient extends ClientBase<VeHoney> {
       [
         Buffer.from(NFT_RECEIPT_SEED),
         locker.toBuffer(),
-        this.wallet.publicKey.toBuffer(),
+        this.walletKey.toBuffer(),
         receiptId.toBuffer('le', 8)
       ],
       this.programId

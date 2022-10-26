@@ -1,165 +1,127 @@
 import * as anchor from '@project-serum/anchor';
-import { Connection, PublicKey } from '@solana/web3.js';
 import {
-  ASSOCIATED_TOKEN_PROGRAM_ID,
-  Token,
-  TOKEN_PROGRAM_ID
-} from '@solana/spl-token';
+  Connection,
+  PublicKey,
+  SystemProgram,
+  Transaction
+} from '@solana/web3.js';
+import { TOKEN_PROGRAM_ID } from '@solana/spl-token';
 
 import { ClientBase } from './base';
-import { HONEY_MINT, PHONEY_MINT } from './constant';
-import stakeIdl from '../idl/stake.json';
-import { Stake } from '../types/stake';
+import {
+  HONEY_MINT,
+  PHONEY_MINT,
+  STAKE_PROGRAM_ID,
+  POOL_USER_SEED,
+  TOKEN_VAULT_SEED,
+  VAULT_AUTHORITY_SEED
+} from './constant';
+import { Stake, IDL as stakeIdl } from '../types/stake';
 import { VeHoneyClient } from './vehoney';
+import { PoolInfo, PoolUser } from './types';
 
-export const STAKE_PROGRAM_ID = new PublicKey(
-  '4V68qajTiVHm3Pm9fQoV8D4tEYBmq3a34R9NV5TymLr7'
-);
-export const POOL_USER_SEED = 'PoolUser';
-export const TOKEN_VAULT_SEED = 'TokenVault';
-export const VAULT_AUTHORITY_SEED = 'VaultAuthority';
-
-export interface PoolParams {
-  startsAt: anchor.BN;
-  claimPeriodUnit: anchor.BN;
-  maxClaimCount: number;
-}
+const SYSTEM_PROGRAM_ID = SystemProgram.programId;
 
 export class StakeClient extends ClientBase<Stake> {
   constructor(connection: Connection, wallet: anchor.Wallet) {
     super(connection, wallet, stakeIdl, STAKE_PROGRAM_ID);
   }
 
-  async fetchPoolInfo(pool: PublicKey) {
-    try {
-      return await this.program.account.poolInfo.fetch(pool);
-    } catch (e) {
-      console.log(e);
+  get walletKey(): PublicKey {
+    if (!this.wallet) {
+      throw new Error('wallet undefiend');
     }
+    return this.wallet.publicKey;
   }
 
-  async fetchPoolUser(user: PublicKey) {
-    try {
-      return await this.program.account.poolUser.fetch(user);
-    } catch (e) {
-      console.log(e);
+  get programId(): PublicKey {
+    if (!this.program) {
+      throw new Error('program undefined');
     }
+    return this.program.programId;
   }
 
-  async initializeUser(pool: PublicKey) {
-    const [user, userBump] = await this.getUserPDA(pool);
+  private async initUserTx(pool: PublicKey, tx: Transaction) {
+    const [user] = await this.getUserPDA(pool);
 
-    const txSig = await this.program.rpc.initializeUser({
-      accounts: {
-        payer: this.wallet.publicKey,
+    const ix = await this.program.methods
+      .initializeUser()
+      .accounts({
+        payer: this.walletKey,
         poolInfo: pool,
         userInfo: user,
-        userOwner: this.wallet.publicKey,
-        systemProgram: anchor.web3.SystemProgram.programId
-      }
-    });
+        userOwner: this.walletKey,
+        systemProgram: SYSTEM_PROGRAM_ID
+      })
+      .instruction();
 
-    return { user, userBump, txSig };
+    tx.add(ix);
   }
 
-  async deposit(
+  private async depositTx(
     pool: PublicKey,
     user: PublicKey,
     source: PublicKey,
     amount: anchor.BN,
-    hasUser: boolean
+    tx: Transaction
   ) {
-    const preInstructions = !hasUser
-      ? [
-          this.program.instruction.initializeUser({
-            accounts: {
-              payer: this.wallet.publicKey,
-              poolInfo: pool,
-              userInfo: user,
-              userOwner: this.wallet.publicKey,
-              systemProgram: anchor.web3.SystemProgram.programId
-            }
-          })
-        ]
-      : undefined;
-
-    const txSig = await this.program.rpc.deposit(new anchor.BN(amount), {
-      accounts: {
+    const ix = await this.program.methods
+      .deposit(amount)
+      .accounts({
         poolInfo: pool,
         userInfo: user,
-        userOwner: this.wallet.publicKey,
+        userOwner: this.walletKey,
         pTokenMint: PHONEY_MINT,
         source,
-        userAuthority: this.wallet.publicKey,
+        userAuthority: this.walletKey,
         tokenProgram: TOKEN_PROGRAM_ID
-      },
-      preInstructions
-    });
+      })
+      .instruction();
 
-    return { txSig, amount };
+    tx.add(ix);
   }
 
-  async claim(pool: PublicKey, user?: PublicKey, destination?: PublicKey) {
-    if (!user) {
-      [user] = await this.getUserPDA(pool);
-    }
-
-    let preInstructions: anchor.web3.TransactionInstruction[] | undefined =
-      undefined;
-    if (!destination) {
-      destination = await Token.getAssociatedTokenAddress(
-        ASSOCIATED_TOKEN_PROGRAM_ID,
-        TOKEN_PROGRAM_ID,
-        HONEY_MINT,
-        this.wallet.publicKey
-      );
-
-      preInstructions = [
-        Token.createAssociatedTokenAccountInstruction(
-          ASSOCIATED_TOKEN_PROGRAM_ID,
-          TOKEN_PROGRAM_ID,
-          HONEY_MINT,
-          destination,
-          this.wallet.publicKey,
-          this.wallet.publicKey
-        )
-      ];
-    }
-
+  private async claimTx(
+    pool: PublicKey,
+    user: PublicKey,
+    destination: PublicKey,
+    tx: Transaction
+  ) {
     const [authority] = await this.getPoolAuthorityPDA(pool);
 
-    const txSig = await this.program.rpc.claim({
-      accounts: {
-        payer: this.wallet.publicKey,
+    const ix = await this.program.methods
+      .claim()
+      .accounts({
+        payer: this.walletKey,
         poolInfo: pool,
         authority,
         tokenMint: HONEY_MINT,
         userInfo: user,
-        userOwner: this.wallet.publicKey,
+        userOwner: this.walletKey,
         destination,
         tokenProgram: TOKEN_PROGRAM_ID
-      },
-      preInstructions
-    });
+      })
+      .instruction();
 
-    return { destination, txSig };
+    tx.add(ix);
   }
 
-  async stake(
+  private async stakeTx(
     pool: PublicKey,
     locker: PublicKey,
+    escrow: PublicKey,
+    lockedTokens: PublicKey,
+    whitelist: PublicKey | undefined,
+    lockerProgramId: PublicKey,
     source: PublicKey,
-    veHoneyClient: VeHoneyClient,
     amount: anchor.BN,
     duration: anchor.BN,
-    whitelistEnabled?: boolean,
-    hasEscrow?: boolean
+    tx: Transaction
   ) {
-    const preInstructions = !hasEscrow
-      ? [...(await veHoneyClient.createInitializeEscrowIx(locker))]
-      : undefined;
+    const [authority] = await this.getPoolAuthorityPDA(pool);
+    const [tokenVault] = await this.getTokenVaultPDA();
 
-    const remainingAccounts = whitelistEnabled
+    const remainingAccounts = whitelist
       ? [
           {
             pubkey: anchor.web3.SYSVAR_INSTRUCTIONS_PUBKEY,
@@ -167,66 +129,117 @@ export class StakeClient extends ClientBase<Stake> {
             isWritable: false
           },
           {
-            pubkey: (
-              await veHoneyClient.getWhitelistEntryPDA(
-                locker,
-                this.program.programId,
-                anchor.web3.SystemProgram.programId
-              )
-            )[0],
+            pubkey: whitelist,
             isSigner: false,
             isWritable: false
           }
         ]
-      : undefined;
+      : [];
 
-    const [tokenVault] = await this.getTokenVaultPDA();
-    const [authority] = await this.getPoolAuthorityPDA(pool);
-    const [escrow] = await veHoneyClient.getEscrowPDA(locker);
-    const lockedTokens = await veHoneyClient.getEscrowLockedTokenPDA(escrow);
-    const lockerProgram = veHoneyClient.programId;
+    const ix = await this.program.methods
+      .vest(amount, duration)
+      .accounts({
+        poolInfo: pool,
+        tokenMint: HONEY_MINT,
+        pTokenMint: PHONEY_MINT,
+        pTokenFrom: source,
+        userAuthority: this.walletKey,
+        tokenVault,
+        authority,
+        locker,
+        escrow,
+        lockedTokens,
+        lockerProgram: lockerProgramId,
+        tokenProgram: TOKEN_PROGRAM_ID
+      })
+      .remainingAccounts(remainingAccounts)
+      .instruction();
 
-    const txSig = await this.program.rpc.stake(
-      new anchor.BN(amount),
-      new anchor.BN(duration),
-      {
-        accounts: {
-          poolInfo: pool,
-          tokenMint: HONEY_MINT,
-          pTokenMint: PHONEY_MINT,
-          pTokenFrom: source,
-          userAuthority: this.wallet.publicKey,
-          tokenVault,
-          authority,
-          locker,
-          escrow,
-          lockedTokens,
-          lockerProgram,
-          tokenProgram: TOKEN_PROGRAM_ID
-        },
-        remainingAccounts,
-        preInstructions
-      }
+    tx.add(ix);
+  }
+
+  async initUser(pool: PublicKey) {
+    const transaction = new Transaction();
+    await this.initUserTx(pool, transaction);
+    return this.sendAndConfirm(transaction);
+  }
+
+  async deposit(pool: PublicKey, source: PublicKey, amount: anchor.BN) {
+    const transaction = new Transaction();
+    const [userKey] = await this.getUserPDA(pool);
+    const user = await this.getAccountInfo(userKey);
+    if (!user) {
+      await this.initUserTx(pool, transaction);
+    }
+    await this.depositTx(pool, userKey, source, amount, transaction);
+    return this.sendAndConfirm(transaction);
+  }
+
+  async claim(pool: PublicKey) {
+    const transaction = new Transaction();
+    const [user] = await this.getUserPDA(pool);
+    const { ata: destination, instruction: createATAIx } =
+      await this.getOrCreateATA(HONEY_MINT);
+    if (createATAIx) {
+      transaction.add(createATAIx);
+    }
+    await this.claimTx(pool, user, destination, transaction);
+    return this.sendAndConfirm(transaction);
+  }
+
+  async stake(
+    pool: PublicKey,
+    locker: PublicKey,
+    source: PublicKey,
+    amount: anchor.BN,
+    duration: anchor.BN
+  ) {
+    const transaction = new Transaction();
+    const veHoneyClient = new VeHoneyClient(
+      this.provider.connection,
+      this.wallet
     );
-
-    return { txSig, escrow };
+    const [escrowKey] = await veHoneyClient.getEscrowPDA(locker);
+    const escrow = await this.getAccountInfo(escrowKey);
+    if (!escrow) {
+      await veHoneyClient.initEscrowTx(locker, transaction);
+    }
+    const lockerAcc = await veHoneyClient.fetchLocker(locker);
+    let whitelist: PublicKey | undefined = undefined;
+    if (lockerAcc?.params.whitelistEnabled) {
+      [whitelist] = await veHoneyClient.getWhitelistEntryPDA(
+        locker,
+        this.programId,
+        SYSTEM_PROGRAM_ID
+      );
+    }
+    const lockedTokens = await veHoneyClient.getEscrowLockedTokenPDA(escrowKey);
+    await this.stakeTx(
+      pool,
+      locker,
+      escrowKey,
+      lockedTokens,
+      whitelist,
+      veHoneyClient.programId,
+      source,
+      amount,
+      duration,
+      transaction
+    );
+    return this.sendAndConfirm(transaction);
   }
 
   async getUserPDA(pool: PublicKey) {
     return anchor.web3.PublicKey.findProgramAddress(
-      [
-        Buffer.from(POOL_USER_SEED),
-        pool.toBuffer(),
-        this.wallet.publicKey.toBuffer()
-      ],
-      this.program.programId
+      [Buffer.from(POOL_USER_SEED), pool.toBuffer(), this.walletKey.toBuffer()],
+      this.programId
     );
   }
 
   async getPoolAuthorityPDA(pool: PublicKey) {
     return anchor.web3.PublicKey.findProgramAddress(
       [Buffer.from(VAULT_AUTHORITY_SEED), pool.toBuffer()],
-      this.program.programId
+      this.programId
     );
   }
 
@@ -237,14 +250,15 @@ export class StakeClient extends ClientBase<Stake> {
         HONEY_MINT.toBuffer(),
         PHONEY_MINT.toBuffer()
       ],
-      this.program.programId
+      this.programId
     );
   }
 
-  async getVaultAuthority(pool: PublicKey) {
-    return anchor.web3.PublicKey.findProgramAddress(
-      [Buffer.from(VAULT_AUTHORITY_SEED), pool.toBuffer()],
-      this.program.programId
-    );
+  async fetchPoolInfo(pool: PublicKey): Promise<PoolInfo | null> {
+    return this.program.account.poolInfo.fetchNullable(pool);
+  }
+
+  async fetchPoolUser(user: PublicKey): Promise<PoolUser | null> {
+    return this.program.account.poolUser.fetchNullable(user);
   }
 }
