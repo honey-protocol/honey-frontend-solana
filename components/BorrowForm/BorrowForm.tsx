@@ -497,12 +497,7 @@ const BorrowForm = (props: BorrowProps) => {
           </HoneyButton>
         </div>
         <div className={styles.bigCol}>
-          <HoneyButton
-            disabled={isBorrowButtonDisabled()}
-            variant="primary"
-            block
-            onClick={handleDepositNFT}
-          >
+          <HoneyButton variant="primary" block onClick={handleDepositNFT}>
             Deposit NFT
           </HoneyButton>
         </div>
