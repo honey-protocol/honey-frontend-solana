@@ -32,14 +32,15 @@ export const main = style({
 });
 
 globalStyle(`${content}.open`, {
-  height: '100vh',
+  height: 'calc(100vh - 30px)',
   backgroundColor: vars.colors.white
 });
 
 export const logo = style({
   width: 120,
   height: 40,
-  background: 'url("/images/logo.svg") center center no-repeat'
+  background: 'url("/images/logo.svg") center center no-repeat',
+  cursor: 'pointer'
 });
 
 export const leftContainer = style({

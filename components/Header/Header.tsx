@@ -6,6 +6,7 @@ import WalletMenu from 'components/WalletMenu/WalletMenu';
 import HoneyCardYellowShadow from '../HoneyCardYellowShadow/HoneyCardYellowShadow';
 import cs from 'classnames';
 import MobileMenu from 'components/MobileMenu/MobileMenu';
+import Link from 'next/link';
 
 const Header: FC = () => {
   const [showMobileMenu, setShowMobileMenu] = useState(false);
@@ -24,7 +25,9 @@ const Header: FC = () => {
                 )}
               />
 
-              <div className={styles.logo} />
+              <Link href="/" passHref>
+                <div className={styles.logo} />
+              </Link>
             </Space>
             <HeaderLinks />
             <WalletMenu />
