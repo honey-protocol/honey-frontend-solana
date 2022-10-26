@@ -42,6 +42,15 @@ export type UserNFTs = {
   updateAuthority: string;
 };
 
+export type OpenPositions = {
+  image: string;
+  mint: PublicKey;
+  name: string;
+  symbol: string;
+  updateAuthority: PublicKey;
+  uri: string;
+};
+
 export interface HoneyTableColumnType<RecordType>
   extends ColumnType<RecordType> {
   hidden?: boolean;
