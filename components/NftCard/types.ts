@@ -1,5 +1,5 @@
 export type NftCardProps = {
-  id: string;
+  id?: string;
   onClick?: (name: string, img: string, mint?: any) => void;
   name: string;
   text: string;

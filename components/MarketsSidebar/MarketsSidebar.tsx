@@ -23,10 +23,10 @@ const MarketsSidebar = (props: MarketsSidebarProps) => {
     nftPrice,
     userAllowance,
     userDebt,
-    userUSDCBalance,
     loanToValue,
     fetchedSolPrice,
     calculatedInterestRate,
+    currentMarketId,
     hideMobileSidebar,
     executeDepositNFT,
     executeWithdrawNFT,
@@ -41,7 +41,9 @@ const MarketsSidebar = (props: MarketsSidebarProps) => {
     setActiveTab(tabKey as Tab);
   };
 
-  useEffect(() => {}, [openPositions, availableNFTs]);
+  useEffect(() => {
+    if (openPositions.length == 0) handleTabChange('borrow')
+  }, [openPositions, availableNFTs]);
 
   const items: [HoneyTabItem, HoneyTabItem] = [
     { label: 'Borrow', key: 'borrow' },
@@ -84,35 +86,35 @@ const MarketsSidebar = (props: MarketsSidebarProps) => {
         ) : (
           <>
             {activeTab === 'borrow' && (
-              <BorrowForm
-                userDebt={userDebt}
-                executeBorrow={executeBorrow}
-                availableNFTs={availableNFTs}
-                openPositions={openPositions}
-                nftPrice={nftPrice}
-                executeDepositNFT={executeDepositNFT}
-                userAllowance={userAllowance}
-                loanToValue={loanToValue}
-                hideMobileSidebar={hideMobileSidebar}
-                fetchedSolPrice={fetchedSolPrice}
-                calculatedInterestRate={calculatedInterestRate}
-              />
+                <BorrowForm
+                  userDebt={userDebt}
+                  executeBorrow={executeBorrow}
+                  availableNFTs={availableNFTs}
+                  openPositions={openPositions}
+                  nftPrice={nftPrice}
+                  executeDepositNFT={executeDepositNFT}
+                  userAllowance={userAllowance}
+                  loanToValue={loanToValue}
+                  hideMobileSidebar={hideMobileSidebar}
+                  fetchedSolPrice={fetchedSolPrice}
+                  calculatedInterestRate={calculatedInterestRate}
+                  currentMarketId={currentMarketId}
+                />
             )}
             {activeTab === 'repay' && Boolean(openPositions.length) && (
-              <RepayForm
-                executeRepay={executeRepay}
-                openPositions={openPositions}
-                availableNFTs={availableNFTs}
-                nftPrice={nftPrice}
-                executeWithdrawNFT={executeWithdrawNFT}
-                userDebt={userDebt}
-                userAllowance={userAllowance}
-                userUSDCBalance={userUSDCBalance}
-                loanToValue={loanToValue}
-                hideMobileSidebar={hideMobileSidebar}
-                changeTab={handleTabChange}
-                fetchedSolPrice={fetchedSolPrice}
-              />
+                <RepayForm
+                  executeRepay={executeRepay}
+                  openPositions={openPositions}
+                  availableNFTs={availableNFTs}
+                  nftPrice={nftPrice}
+                  executeWithdrawNFT={executeWithdrawNFT}
+                  userDebt={userDebt}
+                  userAllowance={userAllowance}
+                  loanToValue={loanToValue}
+                  hideMobileSidebar={hideMobileSidebar}
+                  changeTab={handleTabChange}
+                  fetchedSolPrice={fetchedSolPrice}
+                />
             )}
           </>
         )}

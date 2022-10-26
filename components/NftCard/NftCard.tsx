@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import * as styles from './NftCard.css';
 import HexaBoxContainer from '../HexaBoxContainer/HexaBoxContainer';
 import HoneyButton from '../HoneyButton/HoneyButton';
@@ -25,7 +25,11 @@ const NftCard = (props: NftCardProps) => {
       onClick(name, image, mint);
     }
   }, [mint]);
+  
+  useEffect(() => {
 
+  }, [image, name, mint, text, hint, buttonText,])
+  
   return (
     <div
       className={c(styles.nftCard, { [styles.hasBorder]: hasBorder })}
@@ -36,7 +40,7 @@ const NftCard = (props: NftCardProps) => {
           <Image 
             src={image} 
             alt={'user nft'} 
-            layout='fill'
+            layout={'fill'}
           />
         </HexaBoxContainer>
       </div>

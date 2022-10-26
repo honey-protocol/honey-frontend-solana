@@ -17,6 +17,7 @@ import cs from 'classnames';
 import useToast from 'hooks/useToast';
 import { useSolBalance } from 'hooks/useSolBalance';
 import { MAX_LTV } from 'constants/loan';
+import { LIQUIDATION_FEE } from 'constants/borrowLendMarkets';
 
 const {
   format: f,
@@ -34,7 +35,6 @@ const RepayForm = (props: RepayProps) => {
     executeWithdrawNFT,
     userAllowance,
     userDebt,
-    userUSDCBalance,
     loanToValue,
     availableNFTs,
     fetchedSolPrice,
@@ -51,7 +51,11 @@ const RepayForm = (props: RepayProps) => {
 
   const maxValue = userDebt != 0 ? userDebt : userAllowance;
   const solPrice = fetchedSolPrice;
+<<<<<<< HEAD
   const liquidationThreshold = 0.65;
+=======
+  const liquidationThreshold = LIQUIDATION_FEE;
+>>>>>>> feature/refactor_mainnet_test
   const SOLBalance = useSolBalance();
 
   const newDebt = userDebt - (valueSOL ? valueSOL : 0);
@@ -112,7 +116,6 @@ const RepayForm = (props: RepayProps) => {
     userAllowance,
     nftPrice,
     loanToValue,
-    userUSDCBalance,
     availableNFTs
   ]);
 

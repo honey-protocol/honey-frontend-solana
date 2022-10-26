@@ -2,6 +2,10 @@
 // export const HONEY_MARKET_ID = '5W8daSFdTEcAGiDyjHUi81QiNXLvkYbucaGBt9uiYxTN';
 export const HONEY_PROGRAM_ID = 'hNEYyRsRBVq2La65V1KjvdbTE39w36gwrdjkmcpvysk';
 export const HONEY_MARKET_ID = '6FcJaAzQnuoA6o3sVw1GD6Ba69XuL5jinZpQTzJhd2R3';
+export const HONEY_GENESIS_MARKET_ID = '6FcJaAzQnuoA6o3sVw1GD6Ba69XuL5jinZpQTzJhd2R3';
+export const PESKY_PENGUINS_MARKET_ID = 'Bw77MGpg189EaATjN67WXcnp3c4544LhKoV4Ftmdg4C';
+export const OG_ATADIANS_MARKET_ID = '';
+export const LIFINITY_FLARES_MARKET_ID = '';
 export const OPEN_POSITIONS = 'Open positions';
 export const NEW_POSITIONS = 'New position';
 export const TYPE_OPEN = 'open';

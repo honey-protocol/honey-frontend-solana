@@ -40,6 +40,7 @@ import { LiquidateTablePosition } from '../../types/liquidate';
 import {
   HONEY_MARKET_ID,
   HONEY_PROGRAM_ID,
+  HONEY_GENESIS_MARKET_ID,
   LIQUIDATION_THRESHOLD
 } from 'constants/loan';
 import { NATIVE_MINT } from '@solana/spl-token';
@@ -52,9 +53,17 @@ import { ToastProps } from 'hooks/useToast';
 import HoneyTableRow from 'components/HoneyTable/HoneyTableRow/HoneyTableRow';
 import HoneyTableNameCell from 'components/HoneyTable/HoneyTableNameCell/HoneyTableNameCell';
 import LiquidateExpandTableMobile from 'components/LiquidateExpandTable/LiquidateExpandTableMobile';
+import { 
+  HONEY_GENESIS_BEE,
+  LIFINITY_FLARES,
+  OG_ATADIANS,
+  PESKY_PENGUINS 
+} from 'constants/borrowLendMarkets';
 
 const { formatPercent: fp, formatSol: fs, formatRoundDown: fd } = formatNumber;
 const Liquidate: NextPage = () => {
+  // TODO: write dynamic currentMarketId based on user interaction
+  const [currentMarketId, setCurrentMarketId] = useState(HONEY_GENESIS_MARKET_ID);
   // start sdk integration
   const liquidationThreshold = 0.65; // TODO: values like this should be imported from constants per collection
   // init anchor
@@ -66,6 +75,7 @@ const Liquidate: NextPage = () => {
    * @params none
    * @returns connection with sdk
    */
+
   const sdkConfig = ConfigureSDK();
   /**
    * @description fetches open nft positions
@@ -76,7 +86,7 @@ const Liquidate: NextPage = () => {
     sdkConfig.saberHqConnection,
     sdkConfig.sdkWallet!,
     sdkConfig.honeyId,
-    sdkConfig.marketId
+    currentMarketId
   );
 
   /**
@@ -95,7 +105,7 @@ const Liquidate: NextPage = () => {
     sdkConfig.saberHqConnection,
     sdkConfig.sdkWallet!,
     sdkConfig.honeyId,
-    sdkConfig.marketId
+    currentMarketId
   );
 
   /**
@@ -289,7 +299,8 @@ const Liquidate: NextPage = () => {
 
           toast.processing();
           let transactionOutcome: any = await liquidatorClient.revokeBid({
-            market: new PublicKey(HONEY_MARKET_ID),
+            // TODO: pass market id for each call
+            market: new PublicKey(HONEY_GENESIS_MARKET_ID),
             bidder: wallet.publicKey,
             bid_mint: NATIVE_MINT,
             withdraw_destination: wallet.publicKey
@@ -310,7 +321,8 @@ const Liquidate: NextPage = () => {
           toast.processing();
           let transactionOutcome: any = await liquidatorClient.placeBid({
             bid_limit: userBid,
-            market: new PublicKey(HONEY_MARKET_ID),
+            // TODO: pass market id for each call
+            market: new PublicKey(HONEY_GENESIS_MARKET_ID),
             bidder: wallet.publicKey,
             bid_mint: NATIVE_MINT
           });
@@ -327,7 +339,8 @@ const Liquidate: NextPage = () => {
           toast.processing();
           let transactionOutcome: any = await liquidatorClient.increaseBid({
             bid_increase: userBid,
-            market: new PublicKey(HONEY_MARKET_ID),
+            // TODO: pass market id for each call
+            market: new PublicKey(HONEY_GENESIS_MARKET_ID),
             bidder: wallet.publicKey,
             bid_mint: NATIVE_MINT
           });
@@ -381,6 +394,7 @@ const Liquidate: NextPage = () => {
   // PUT YOUR DATA SOURCE HERE
   // MOCK DATA FOR NOW
   useEffect(() => {
+    console.log('this is fetched positions', fetchedPositions);
     const mockData: LiquidateTableRow[] = [
       {
         key: '0',
@@ -389,7 +403,34 @@ const Liquidate: NextPage = () => {
         liqThreshold: liquidationThreshold,
         totalDebt: totalDebt,
         tvl: nftPrice * fetchedPositions.length,
-        positions: fetchedPositions
+        positions: fetchedPositions.filter((position: any) => position.name == HONEY_GENESIS_BEE)
+      },
+      {
+        key: 'LIFINITY',
+        name: LIFINITY_FLARES,
+        risk: 0,
+        liqThreshold: 0,
+        totalDebt: 0,
+        tvl: 0,
+        positions: fetchedPositions.filter((position: any) => position.name == LIFINITY_FLARES)
+      },
+      {
+        key: 'ATD',
+        name: OG_ATADIANS,
+        risk: 0,
+        liqThreshold: 0,
+        totalDebt: 0,
+        tvl: 0,
+        positions: fetchedPositions.filter((position: any) => position.name == OG_ATADIANS)
+      },
+      {
+        key: 'NOOT',
+        name: PESKY_PENGUINS,
+        risk: 0,
+        liqThreshold: 0,
+        totalDebt: 0,
+        tvl: 0,
+        positions: fetchedPositions.filter((position: any) => position.name == PESKY_PENGUINS)
       }
     ];
 
@@ -442,6 +483,18 @@ const Liquidate: NextPage = () => {
   };
 
   const columnsWidth: Array<number | string> = [200, 100, 150, 150, 100, 70];
+
+  const renderImage = (name: string) => {
+    if (name == HONEY_GENESIS_BEE) {
+      return <Image src={'https://img-cdn.magiceden.dev/rs:fill:400:400:0:0/plain/https://dl.airtable.com/.attachmentThumbnails/6b6c8954aed777a74de52fd70f8751ab/46b325db'} layout="fill" />
+    } else if (name == LIFINITY_FLARES) {
+      return <Image src={'https://img-cdn.magiceden.dev/rs:fill:400:400:0:0/plain/https://dl.airtable.com/.attachmentThumbnails/6972d5c2efb77d49be97b07ccf4fbc69/e9572fb8'} layout="fill" />
+    } else if (name == OG_ATADIANS) {
+      return <Image src={'https://img-cdn.magiceden.dev/rs:fill:400:400:0:0/plain/https://creator-hub-prod.s3.us-east-2.amazonaws.com/atadians_pfp_1646721263627.gif'} layout="fill" />
+    } else {
+      return <Image src={'https://img-cdn.magiceden.dev/rs:fill:400:400:0:0/plain/https://i.imgur.com/37nsjBZ.png'} layout="fill" />
+    }
+  }
 
   const columns: ColumnType<LiquidateTableRow>[] = useMemo(
     () => [
