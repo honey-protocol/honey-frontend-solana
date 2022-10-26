@@ -86,7 +86,7 @@ const MarketsSidebar = (props: MarketsSidebarProps) => {
           <EmptyStateDetails
             icon={<div className={styles.boltIcon} />}
             title="No NFTs found"
-            description="You don't have any NFT in this collection in this wallet"
+            description="You don't have any NFTs of this collection in this wallet"
             buttons={[
               {
                 title: 'connect another wallet',
