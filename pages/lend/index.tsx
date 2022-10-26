@@ -381,7 +381,7 @@ const Lend: NextPage = () => {
               sdkConfig.saberHqConnection,
               sdkConfig.sdkWallet!,
               currentMarketId,
-              true
+              false
             );
             collection.rate = (await getInterestRate(collection.utilizationRate) || 0) * collection.utilizationRate;
             collection.stats = getPositionData();

@@ -41,7 +41,8 @@ import {
   HONEY_MARKET_ID,
   HONEY_PROGRAM_ID,
   HONEY_GENESIS_MARKET_ID,
-  LIQUIDATION_THRESHOLD
+  LIQUIDATION_THRESHOLD,
+  PESKY_PENGUINS_MARKET_ID
 } from 'constants/loan';
 import { NATIVE_MINT } from '@solana/spl-token';
 import HoneySider from 'components/HoneySider/HoneySider';
@@ -59,6 +60,8 @@ import {
   OG_ATADIANS,
   PESKY_PENGUINS 
 } from 'constants/borrowLendMarkets';
+import { marketCollections } from 'constants/borrowLendMarkets';
+import { populateMarketData } from 'helpers/loanHelpers/userCollection';
 
 const { formatPercent: fp, formatSol: fs, formatRoundDown: fd } = formatNumber;
 const Liquidate: NextPage = () => {
@@ -75,7 +78,6 @@ const Liquidate: NextPage = () => {
    * @params none
    * @returns connection with sdk
    */
-
   const sdkConfig = ConfigureSDK();
   /**
    * @description fetches open nft positions
@@ -88,14 +90,12 @@ const Liquidate: NextPage = () => {
     sdkConfig.honeyId,
     currentMarketId
   );
-
   /**
    * @description calls upon markets which
    * @params none
    * @returns market | market reserve information | parsed reserves |
    */
   const { market, marketReserveInfo, parsedReserves, fetchMarket } = useHoney();
-
   /**
    * @description calls upon the honey sdk
    * @params  useConnection func. | useConnectedWallet func. | honeyID | marketID
@@ -395,48 +395,83 @@ const Liquidate: NextPage = () => {
   // MOCK DATA FOR NOW
   useEffect(() => {
     console.log('this is fetched positions', fetchedPositions);
-    const mockData: LiquidateTableRow[] = [
-      {
-        key: '0',
-        name: 'Honey Genesis Bee',
-        risk: loanToValue,
-        liqThreshold: liquidationThreshold,
-        totalDebt: totalDebt,
-        tvl: nftPrice * fetchedPositions.length,
-        positions: fetchedPositions.filter((position: any) => position.name == HONEY_GENESIS_BEE)
-      },
-      {
-        key: 'LIFINITY',
-        name: LIFINITY_FLARES,
-        risk: 0,
-        liqThreshold: 0,
-        totalDebt: 0,
-        tvl: 0,
-        positions: fetchedPositions.filter((position: any) => position.name == LIFINITY_FLARES)
-      },
-      {
-        key: 'ATD',
-        name: OG_ATADIANS,
-        risk: 0,
-        liqThreshold: 0,
-        totalDebt: 0,
-        tvl: 0,
-        positions: fetchedPositions.filter((position: any) => position.name == OG_ATADIANS)
-      },
-      {
-        key: 'NOOT',
-        name: PESKY_PENGUINS,
-        risk: 0,
-        liqThreshold: 0,
-        totalDebt: 0,
-        tvl: 0,
-        positions: fetchedPositions.filter((position: any) => position.name == PESKY_PENGUINS)
-      }
-    ];
+    // const mockData: LiquidateTableRow[] = [
+    //   {
+    //     key: '0',
+    //     name: 'Honey Genesis Bee',
+    //     risk: loanToValue,
+    //     liqThreshold: liquidationThreshold,
+    //     totalDebt: totalDebt,
+    //     tvl: nftPrice * fetchedPositions.length,
+    //     positions: fetchedPositions.filter((position: any) => position.name == HONEY_GENESIS_BEE)
+    //   },
+    //   {
+    //     key: 'LIFINITY',
+    //     name: LIFINITY_FLARES,
+    //     risk: 0,
+    //     liqThreshold: 0,
+    //     totalDebt: 0,
+    //     tvl: 0,
+    //     positions: fetchedPositions.filter((position: any) => position.name == LIFINITY_FLARES)
+    //   },
+    //   {
+    //     key: 'ATD',
+    //     name: OG_ATADIANS,
+    //     risk: 0,
+    //     liqThreshold: 0,
+    //     totalDebt: 0,
+    //     tvl: 0,
+    //     positions: fetchedPositions.filter((position: any) => position.name == OG_ATADIANS)
+    //   },
+    //   {
+    //     key: 'NOOT',
+    //     name: PESKY_PENGUINS,
+    //     risk: 0,
+    //     liqThreshold: 0,
+    //     totalDebt: 0,
+    //     tvl: 0,
+    //     positions: fetchedPositions.filter((position: any) => position.name == PESKY_PENGUINS)
+    //   }
+    // ];
 
-    setTableData(mockData);
-    setTableDataFiltered(mockData);
-  }, [fetchedPositions]);
+    if (sdkConfig.saberHqConnection && sdkConfig.sdkWallet) {
+      function getData() {
+        return Promise.all(
+          marketCollections.map(async collection => {
+            collection.openPositions = fetchedPositions.filter((position: any) => {
+              if (currentMarketId == HONEY_GENESIS_MARKET_ID) {
+                return position.name.includes('Honey');
+              } else if (currentMarketId == PESKY_PENGUINS_MARKET_ID) {
+                return position.name.includes('Pesky');
+              }
+            });
+
+            await populateMarketData(
+              collection,
+              sdkConfig.saberHqConnection,
+              sdkConfig.sdkWallet!,
+              currentMarketId,
+              true
+            );
+
+            return collection;
+          })
+        );
+      }
+
+      getData().then(result => {
+        setTableData(result);
+      });
+    }
+
+    // setTableData(mockData);
+    // setTableDataFiltered(mockData);
+  }, [
+    fetchedPositions,
+    currentMarketId,
+    sdkConfig.saberHqConnection,
+    sdkConfig.sdkWallet
+  ]);
 
   const handleToggle = (checked: boolean) => {
     setIsMyBidsFilterEnabled(checked);
@@ -509,7 +544,7 @@ const Liquidate: NextPage = () => {
               <div className={style.logoWrapper}>
                 <div className={style.collectionLogo}>
                   <HexaBoxContainer>
-                    <Image src={honeyGenesisBee} />
+                    {renderImage(name)}
                   </HexaBoxContainer>
                 </div>
               </div>

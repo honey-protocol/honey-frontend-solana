@@ -15,6 +15,11 @@ export type MarketTableRow = {
   value: number;
   positions: Array<MarketTablePosition>;
   stats?: any;
+  risk?: number;
+  liquidationThreshold?: number;
+  totalDebt?: number;
+  tvl?: number;
+  openPositions?: any;
 };
 
 export type MarketTablePosition = {

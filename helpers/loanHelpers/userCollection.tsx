@@ -250,7 +250,7 @@ const getPositionData = () => {
   return [];
 };
 
-export async function populateMarketData(collection: MarketTableRow, connection: Connection, wallet: ConnectedWallet, currentMarketId: string, lend: boolean) {
+export async function populateMarketData(collection: MarketTableRow, connection: Connection, wallet: ConnectedWallet, currentMarketId: string, liquidations: boolean) {
   if(wallet == null)
     return;
   
