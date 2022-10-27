@@ -273,7 +273,7 @@ const BorrowForm = (props: BorrowProps) => {
                 </span>
               }
               value={fp((loanToValue + newAdditionalDebt / nftPrice) * 100)}
-              isDisabled={userDebt == 0 ? true : false}
+              isDisabled={newAdditionalDebt == 0 ? true : false}
             />
             <HoneySlider
               currentValue={sliderValue * 1.1}
@@ -332,7 +332,7 @@ const BorrowForm = (props: BorrowProps) => {
                 </span>
               }
               value={fs(newTotalDebt < 0 ? 0 : newTotalDebt)}
-              isDisabled={userDebt == 0 ? true : false}
+              isDisabled={newAdditionalDebt == 0 ? true : false}
             />
           </div>
         </div>
@@ -344,7 +344,7 @@ const BorrowForm = (props: BorrowProps) => {
                 userDebt ? `(-${liqPercent.toFixed(0)}%)` : ''
               }`}
               valueSize="normal"
-              isDisabled={userDebt == 0 ? true : false}
+              isDisabled={newAdditionalDebt == 0 ? true : false}
               title={
                 <span className={hAlign}>
                   Liquidation price <div className={questionIcon} />
@@ -366,7 +366,7 @@ const BorrowForm = (props: BorrowProps) => {
           </div>
           <div className={styles.col}>
             <InfoBlock
-              isDisabled={userDebt == 0 ? true : false}
+              isDisabled={newAdditionalDebt == 0 ? true : false}
               title={
                 <span className={hAlign}>
                   New Liquidation price <div className={questionIcon} />
@@ -418,7 +418,7 @@ const BorrowForm = (props: BorrowProps) => {
             </div>
             <div className={cs(stylesRepay.balance, styles.col)}>
               <InfoBlock
-                isDisabled={userDebt == 0 ? true : false}
+                isDisabled={newAdditionalDebt == 0 ? true : false}
                 title={
                   <span className={hAlign}>
                     Base Interest <div className={questionIcon} />
