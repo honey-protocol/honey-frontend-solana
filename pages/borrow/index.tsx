@@ -444,6 +444,8 @@ const Markets: NextPage = () => {
     });
   };
 
+  const isCreateMarketVisible = false;
+
   const debouncedSearch = useCallback(
     debounce(searchQuery => {
       setTableDataFiltered(onSearch(searchQuery));
@@ -1099,6 +1101,14 @@ const Markets: NextPage = () => {
             columns={columns}
             dataSource={tableDataFiltered}
             pagination={false}
+            onHeaderRow={(data, index) => {
+              if(index && !isCreateMarketVisible) {
+                return {
+                  hidden: true,
+                }
+              }
+              return {}
+            }}
             className={classNames(style.table, {
               [style.emptyTable]: !tableDataFiltered.length
             })}
