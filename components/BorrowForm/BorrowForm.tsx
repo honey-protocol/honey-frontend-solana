@@ -60,9 +60,9 @@ const BorrowForm = (props: BorrowProps) => {
   const maxValue = userAllowance;
   const solPrice = fetchedSolPrice;
   const liquidationThreshold = 0.65; // TODO: change where relevant, currently set to 65% on mainnet
-  const borrowFee = 0.0; // TODO: 1,5% later but 0% for now
+  const baseInterest = 0.015; // TODO: check / alter with the biz team.
 
-  const newAdditionalDebt = valueSOL * (1 + borrowFee);
+  const newAdditionalDebt = valueSOL * (1 + baseInterest);
   const newTotalDebt = newAdditionalDebt
     ? userDebt + newAdditionalDebt
     : userDebt;
@@ -421,18 +421,19 @@ const BorrowForm = (props: BorrowProps) => {
                 isDisabled={userDebt == 0 ? true : false}
                 title={
                   <span className={hAlign}>
-                    Borrow Fee <div className={questionIcon} />
+                    Base Interest <div className={questionIcon} />
                   </span>
                 }
-                value={fs(valueSOL * borrowFee)}
+                value={fs(valueSOL * baseInterest)}
                 //TODO: add link to docs
                 toolTipLabel={
                   <span>
-                    Borrow Fee is a{' '}
+                    Base Interest is a{' '}
                     <a className={styles.extLink} target="blank" href=" ">
-                      protocol fee{' '}
+                      minimum interest{' '}
                     </a>
-                    that is charged upon borrowing. For now it is set at 0,00%.
+                    that is added to the debt upon borrowing. For now it is set
+                    at 1.5% of the newly borrowed amount.
                   </span>
                 }
               ></InfoBlock>
