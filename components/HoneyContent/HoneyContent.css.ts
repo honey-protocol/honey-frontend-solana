@@ -4,6 +4,7 @@ import { breakpoints } from '../../styles/theme.css';
 export const honeyContent = style({
   width: '100%',
   minHeight: 'calc(100vh - 102px)',
+  paddingTop: 20,
   position: 'relative',
   '@media': {
     [`screen and (min-width: ${breakpoints.desktop}px)`]: {

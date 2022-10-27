@@ -21,7 +21,8 @@ const {
   formatPercent: fp,
   formatUsd: fu,
   formatSol: fs,
-  parse: p
+  parse: p,
+  formatRoundDown: frd
 } = formatNumber;
 
 const BidForm = (props: BidFormProps) => {
@@ -197,7 +198,7 @@ const BidForm = (props: BidFormProps) => {
 
         <HoneySlider
           currentValue={sliderValue}
-          maxValue={userBalance}
+          maxValue={Number(frd(userBalance))}
           minAvailableValue={0}
           onChange={handleSliderChange}
         />
