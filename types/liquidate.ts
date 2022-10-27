@@ -1,4 +1,5 @@
 import { PublicKey } from '@solana/web3.js';
+import { MarketTableRow } from './markets';
 
 export type LiquidateTableRow = {
   key: string;
@@ -8,6 +9,18 @@ export type LiquidateTableRow = {
   totalDebt: number;
   tvl: number;
   positions: Array<LiquidateTablePosition>;
+  stats?: any;
+  liquidationThreshold?: number;
+  allowance?: number;
+  available?: number;
+  connection?: any;
+  debt?: number;
+  id?: string;
+  rate?: number;
+  user?: any;
+  utilizationRate?: number;
+  value?: number;
+  openPositions: Array<MarketTableRow>;
 };
 
 export type LiquidateTablePosition = {

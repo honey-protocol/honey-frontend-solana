@@ -1,5 +1,5 @@
 import { RoundHalfDown, RoundHalfUp } from 'helpers/utils';
-import { HONEY_GENESIS_MARKET_ID, MAX_LTV, PESKY_PENGUINS_MARKET_ID } from '../../constants/loan';
+import { HONEY_GENESIS_MARKET_ID, HONEY_PROGRAM_ID, MAX_LTV, PESKY_PENGUINS_MARKET_ID } from '../../constants/loan';
 import BN from 'bn.js';
 import { Connection, LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js';
 import { BnToDecimal, getOraclePrice } from '../../helpers/loanHelpers/index';
@@ -358,6 +358,9 @@ export async function populateMarketData(collection: MarketTableRow, connection:
       collection.openPositions = obligations ? await setObligations(obligations.obligations, currentMarketId, obligations.nftPrice) : [];
       collection.tvl = obligations ? await calculateTVL(obligations.obligations, obligations.nftPrice, currentMarketId, collection.name) : 0;
 
+      const example = await fetchPositionBids(false, connection, wallet, HONEY_PROGRAM_ID, honeyReserves, honeyMarket, obligations.marketReserveInfo);
+      console.log('this is example..', example);
+
     } else {
       collection.available = totalMarketDeposits;
       collection.value = sumOfTotalValue;
@@ -372,7 +375,7 @@ export async function populateMarketData(collection: MarketTableRow, connection:
 }
 
 export const fetchPositionBids = async (devnet:boolean, connection: Connection, wallet: ConnectedWallet, honeyId: string, honeyReserves: HoneyReserve[], honeyMarket: HoneyMarket, marketReserveInfo: HoneyMarketReserveInfo[]) => {
-  console.log('fetching bids...');
+  console.log('fetching bids...', honeyId, honeyReserves, honeyMarket, marketReserveInfo);
   const resBids = await fetch(
     devnet?'https://honey-nft-api.herokuapp.com/bids': 'https://honey-mainnet-api.herokuapp.com/bids',
     // 'http://localhost:3001/bids',

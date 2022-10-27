@@ -20,6 +20,7 @@ export type MarketTableRow = {
   totalDebt?: number;
   tvl?: number;
   openPositions?: any;
+  liqThreshold?: any;
 };
 
 export type MarketTablePosition = {

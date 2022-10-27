@@ -30,7 +30,8 @@ import {
   LiquidatorClient,
   useAllPositions,
   useHoney,
-  useMarket
+  useMarket,
+  NftPosition
 } from '@honey-finance/sdk';
 import { ConfigureSDK } from 'helpers/loanHelpers';
 import { useConnectedWallet } from '@saberhq/use-solana';
@@ -63,6 +64,7 @@ import {
 import { marketCollections } from 'constants/borrowLendMarkets';
 import { populateMarketData } from 'helpers/loanHelpers/userCollection';
 import { setMarketId } from 'pages/_app';
+import { MarketTableRow } from 'types/markets';
 
 const { formatPercent: fp, formatSol: fs, formatRoundDown: fd } = formatNumber;
 const Liquidate: NextPage = () => {
@@ -130,14 +132,13 @@ const Liquidate: NextPage = () => {
   const [nftPrice, setNftPrice] = useState<number>(0);
   const [totalDebt, setTotalDebt] = useState<number>(0);
   const [tvl, setTvl] = useState<number>(0);
-  const [biddingArray, setBiddingArray] = useState({});
   const [userBalance, setUserBalance] = useState(0);
   const [loanToValue, setLoanToValue] = useState<number>(0);
   const [fetchedSolPrice, setFetchedSolPrice] = useState(0);
   const [isMobileSidebarVisible, setShowMobileSidebar] = useState(false);
   
-  const [positionsObject, setPositionsObject] = useState();
-  const [biddingObject, setBiddingObject] = useState();
+  const [positionsObject, setPositionsObject] = useState<Array<NftPosition>>([]);
+  const [biddingArray, setBiddingArray] = useState({});
   
   const showMobileSidebar = () => {
     setShowMobileSidebar(true);
@@ -400,9 +401,9 @@ const Liquidate: NextPage = () => {
 
   // end of sdk integration
 
-  const [tableData, setTableData] = useState<LiquidateTableRow[]>([]);
+  const [tableData, setTableData] = useState<MarketTableRow[]>([]);
   const [tableDataFiltered, setTableDataFiltered] = useState<
-    LiquidateTableRow[]
+  MarketTableRow[]
   >([]);
   const [expandedRowKeys, setExpandedRowKeys] = useState<readonly Key[]>([]);
   const [isMyBidsFilterEnabled, setIsMyBidsFilterEnabled] = useState(false);
@@ -451,7 +452,7 @@ const Liquidate: NextPage = () => {
     //   }
     // ];
 
-    if (sdkConfig.saberHqConnection && sdkConfig.sdkWallet) {
+    if (sdkConfig.saberHqConnection && sdkConfig.sdkWallet && marketReserveInfo) {
       function getData() {
         return Promise.all(
           marketCollections.map(async collection => {
@@ -471,7 +472,8 @@ const Liquidate: NextPage = () => {
               true,
               {
                 obligations: positionsObject,
-                nftPrice: nftPrice
+                nftPrice: nftPrice,
+                marketReserveInfo: marketReserveInfo
               }
             );
 
@@ -481,6 +483,7 @@ const Liquidate: NextPage = () => {
       }
 
       getData().then(result => {
+        console.log('B::::: ', result);
         setTableData(result);
       });
     }
@@ -490,14 +493,15 @@ const Liquidate: NextPage = () => {
     sdkConfig.saberHqConnection,
     sdkConfig.sdkWallet,
     nftPrice,
-    positionsObject
+    positionsObject,
+    marketReserveInfo
   ]);
 
   const handleToggle = (checked: boolean) => {
     setIsMyBidsFilterEnabled(checked);
   };
 
-  const onSearch = (searchTerm: string): LiquidateTableRow[] => {
+  const onSearch = (searchTerm: string): MarketTableRow[] => {
     if (!searchTerm) {
       return [...tableData];
     }
@@ -565,7 +569,7 @@ const Liquidate: NextPage = () => {
     }
   }
 
-  const columns: ColumnType<LiquidateTableRow>[] = useMemo(
+  const columns: ColumnType<MarketTableRow>[] = useMemo(
     () => [
       {
         width: columnsWidth[0],
@@ -605,7 +609,7 @@ const Liquidate: NextPage = () => {
           );
         },
         dataIndex: 'risk',
-        sorter: (a, b) => a.risk - b.risk,
+        sorter: (a, b) => a.risk! - b.risk!,
         render: (rate: number, market: any) => {
           return <div className={style.rateCell}>{fp(market.risk * 100)}</div>;
         }
@@ -653,7 +657,7 @@ const Liquidate: NextPage = () => {
           );
         },
         dataIndex: 'totalDebt',
-        sorter: (a, b) => a.totalDebt - b.totalDebt,
+        sorter: (a, b) => a.totalDebt! - b.totalDebt!,
         render: (available: number) => {
           return <div className={style.availableCell}>{fs(available)}</div>;
         }
@@ -676,7 +680,7 @@ const Liquidate: NextPage = () => {
           );
         },
         dataIndex: 'tvl',
-        sorter: (a, b) => a.tvl - b.tvl,
+        sorter: (a, b) => a.tvl! - b.tvl!,
         render: (value: number, market: any) => {
           console.log('this is value;', value);
           console.log('this is market', market);
@@ -695,7 +699,7 @@ const Liquidate: NextPage = () => {
         //   //   <span className={style.toggleText}>my bids</span>
         //   // </div>
         // ),
-        render: (_: null, row: LiquidateTableRow) => {
+        render: (_: null, row: MarketTableRow) => {
           return (
             <div className={style.buttonsCell}>
               <HoneyButton variant="text">
