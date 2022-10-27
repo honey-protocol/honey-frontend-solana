@@ -299,26 +299,20 @@ const calculateRisk = async (obligations: any, nftPrice: number, type: boolean, 
 
 const calculateTVL = async (obligations: any, nftPrice: number, currentMarketId: string, collectionName: string) => {
   if (!obligations) return 0;
-
-  console.log('current market id', currentMarketId)
-  console.log('current collection name', collectionName)
   
   if (currentMarketId == HONEY_GENESIS_MARKET_ID && collectionName == 'Honey Genesis Bee') {
-    const filterNullState = await obligations.filter((obligation: any) => Boolean(obligation.debt) && obligation.name == collectionName);
-    console.log('outcome honey', nftPrice * filterNullState)
-    return nftPrice * filterNullState;
+    const filterNullState = await obligations.filter((obligation: any) => Boolean(obligation.debt))
+    return nftPrice * filterNullState.length;
   } else if (currentMarketId == PESKY_PENGUINS_MARKET_ID && collectionName == 'Pesky Penguin') {
-    console.log('active market pesky')
-    const filterNullState = await obligations.filter((obligation: any) => Boolean(obligation.debt) && obligation.name == collectionName);
-    console.log('outcome pesky', nftPrice * filterNullState)
-    return nftPrice * filterNullState;
+    const filterNullState = await obligations.filter((obligation: any) => Boolean(obligation.debt));
+    return nftPrice * filterNullState.length;
   }
 }
 
 export async function populateMarketData(collection: MarketTableRow, connection: Connection, wallet: ConnectedWallet, currentMarketId: string, liquidations: boolean, obligations?: any) {
   if(wallet == null)
     return;
-  
+  console.log('positions and market id', obligations, currentMarketId)
   const provider = new anchor.AnchorProvider(connection, wallet, anchor.AnchorProvider.defaultOptions());
   const honeyClient = await HoneyClient.connect(provider, collection.id, false);
   const honeyMarket = await HoneyMarket.load(honeyClient, new PublicKey(collection.id));

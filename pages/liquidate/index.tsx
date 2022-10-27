@@ -135,7 +135,10 @@ const Liquidate: NextPage = () => {
   const [loanToValue, setLoanToValue] = useState<number>(0);
   const [fetchedSolPrice, setFetchedSolPrice] = useState(0);
   const [isMobileSidebarVisible, setShowMobileSidebar] = useState(false);
-
+  
+  const [positionsObject, setPositionsObject] = useState();
+  const [biddingObject, setBiddingObject] = useState();
+  
   const showMobileSidebar = () => {
     setShowMobileSidebar(true);
     document.body.classList.add('disable-scroll');
@@ -171,88 +174,88 @@ const Liquidate: NextPage = () => {
    * @params array of bids
    * @returns state change
    */
-  async function handleBiddingState(biddingArray: any, positions: any) {
-    biddingArray.map((obligation: any) => {
-      if (obligation.bidder == stringyfiedWalletPK) {
-        setHasPosition(true);
-        setCurrentUserBid(Number(obligation.bidLimit / LAMPORTS_PER_SOL));
-      }
-    });
+  // async function handleBiddingState(biddingArray: any, positions: any) {
+  //   biddingArray.map((obligation: any) => {
+  //     if (obligation.bidder == stringyfiedWalletPK) {
+  //       setHasPosition(true);
+  //       setCurrentUserBid(Number(obligation.bidLimit / LAMPORTS_PER_SOL));
+  //     }
+  //   });
 
-    // let sorted = await positions.sort((first: any,second: any) => first.is_healthy - second.is_healthy).reverse();
-    let sorted = await positions.map((obligation: any, index: number) => {
-      return {
-        name: 'Honey Genesis Bee',
-        riskLvl: (obligation.debt / nftPrice) * 100,
-        healthLvl:
-          ((nftPrice - obligation.debt / LIQUIDATION_THRESHOLD) / nftPrice) *
-          100,
-        untilLiquidation:
-          obligation.debt !== 0
-            ? nftPrice - obligation.debt / liquidationThreshold
-            : 0,
-        debt: obligation.debt,
-        estimatedValue: nftPrice,
-        nftMint: obligation.nft_mint,
-        owner: obligation.owner,
-        obligation: obligation.obligation,
-        highestBid: obligation.highest_bid
-      };
-    });
+  //   // let sorted = await positions.sort((first: any,second: any) => first.is_healthy - second.is_healthy).reverse();
+  //   let sorted = await positions.map((obligation: any, index: number) => {
+  //     return {
+  //       name: 'Honey Genesis Bee',
+  //       riskLvl: (obligation.debt / nftPrice) * 100,
+  //       healthLvl:
+  //         ((nftPrice - obligation.debt / LIQUIDATION_THRESHOLD) / nftPrice) *
+  //         100,
+  //       untilLiquidation:
+  //         obligation.debt !== 0
+  //           ? nftPrice - obligation.debt / liquidationThreshold
+  //           : 0,
+  //       debt: obligation.debt,
+  //       estimatedValue: nftPrice,
+  //       nftMint: obligation.nft_mint,
+  //       owner: obligation.owner,
+  //       obligation: obligation.obligation,
+  //       highestBid: obligation.highest_bid
+  //     };
+  //   });
 
-    let highestBid = await biddingArray
-      .sort((first: any, second: any) => first.bidLimit - second.bidLimit)
-      .reverse();
-    let sumOfDebt = await positions.reduce((acc: number, obligation: any) => {
-      return acc + obligation.debt;
-    }, 0);
+  //   let highestBid = await biddingArray
+  //     .sort((first: any, second: any) => first.bidLimit - second.bidLimit)
+  //     .reverse();
+  //   let sumOfDebt = await positions.reduce((acc: number, obligation: any) => {
+  //     return acc + obligation.debt;
+  //   }, 0);
 
-    setTotalDebt(sumOfDebt);
-    setLoanToValue(sumOfDebt / positions.length / nftPrice);
+  //   setTotalDebt(sumOfDebt);
+  //   setLoanToValue(sumOfDebt / positions.length / nftPrice);
 
-    if (nftPrice) setTvl(nftPrice * positions.length);
+  //   if (nftPrice) setTvl(nftPrice * positions.length);
 
-    if (highestBid[0]) {
-      setHighestBiddingAddress(highestBid[0].bidder);
-      setHighestBiddingValue(highestBid[0].bidLimit / LAMPORTS_PER_SOL);
-    }
+  //   if (highestBid[0]) {
+  //     setHighestBiddingAddress(highestBid[0].bidder);
+  //     setHighestBiddingValue(highestBid[0].bidLimit / LAMPORTS_PER_SOL);
+  //   }
 
-    //filter out postitions with zero debt
-    const debtedPostitons = sorted.filter((position: any) =>
-      Boolean(position.debt)
-    );
+  //   //filter out postitions with zero debt
+  //   const debtedPostitons = sorted.filter((position: any) =>
+  //     Boolean(position.debt)
+  //   );
 
-    setFetchedPositions(debtedPostitons);
-  }
+  //   setFetchedPositions(debtedPostitons);
+  // }
 
   const [statusState, setStatusState] = useState(false);
 
-  useEffect(() => {
-    console.log('this is has pos', hasPosition);
-  }, [hasPosition]);
+  // useEffect(() => {
+  //   console.log('this is has pos', hasPosition);
+  // }, [hasPosition]);
 
   /**
    * @description checks if there are positions, if so set state
    * @params none
    * @returns state positions && bids
    */
-  useEffect(() => {
-    if (status.positions) {
-      setStatusState(true);
-    }
-    return;
-  }, [status.positions]);
+  // useEffect(() => {
+  //   if (status.positions) {
+  //     setStatusState(true);
+  //   }
+  //   return;
+  // }, [status.positions]);
 
   // triggers if there are positions - inits fetch positions
-  useEffect(() => {
-    if (statusState == true && status.bids && status.positions) {
-      console.log('status.posisiotns', status.positions)
-      handleBiddingState(status.bids, status.positions);
-      setBiddingArray(status.bids);
-    }
+  // useEffect(() => {
+  //   if (statusState == true && status.bids && status.positions) {
+  //     console.log('status.posisiotns', status.positions)
+  //     handleBiddingState(status.bids, status.positions);
+  //     setBiddingArray(status.bids);
+  //   }
 
-    return;
-  }, [statusState, nftPrice, loanToValue, currentMarketId]);
+  //   return;
+  // }, [statusState, nftPrice, loanToValue, currentMarketId]);
 
   // calculates nft price
   async function calculateNFTPrice() {
@@ -263,6 +266,7 @@ const Liquidate: NextPage = () => {
         honeyMarket,
         sdkConfig.saberHqConnection
       );
+      console.log('positions and market id - nft price;', Number(nftPrice));
       setNftPrice(Number(nftPrice));
     }
   }
@@ -280,7 +284,7 @@ const Liquidate: NextPage = () => {
 
   useEffect(() => {
     calculateNFTPrice();
-  }, [marketReserveInfo, parsedReserves]);
+  }, [marketReserveInfo, parsedReserves, positionsObject]);
 
   /**
    * @description calls upon liquidator client for placebid | revokebid | increasebid
@@ -386,6 +390,14 @@ const Liquidate: NextPage = () => {
     fetchLiquidatorClient(type, userBid!, toast);
   }
 
+  useEffect(() => {
+    console.log('Status.positions', status.positions)
+    if (status.positions) setPositionsObject(status.positions);
+    if (status.bids) setBiddingArray(status.bids);
+  }, [status.positions]);
+
+
+
   // end of sdk integration
 
   const [tableData, setTableData] = useState<LiquidateTableRow[]>([]);
@@ -458,8 +470,8 @@ const Liquidate: NextPage = () => {
               currentMarketId,
               true,
               {
-                obligations: status.positions,
-                nftPrice
+                obligations: positionsObject,
+                nftPrice: nftPrice
               }
             );
 
@@ -472,16 +484,13 @@ const Liquidate: NextPage = () => {
         setTableData(result);
       });
     }
-
-    // setTableData(mockData);
-    // setTableDataFiltered(mockData);
   }, [
     fetchedPositions,
     currentMarketId,
     sdkConfig.saberHqConnection,
     sdkConfig.sdkWallet,
-    status.positions,
-    nftPrice
+    nftPrice,
+    positionsObject
   ]);
 
   const handleToggle = (checked: boolean) => {
