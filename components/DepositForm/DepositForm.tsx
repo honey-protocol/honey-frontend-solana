@@ -114,7 +114,7 @@ const DepositForm = (props: DepositFormProps) => {
               <HoneyButton
                 variant="primary"
                 disabled={isDepositButtonDisabled()}
-                isFluid={true}
+                block
                 onClick={handleDeposit}
               >
                 Deposit

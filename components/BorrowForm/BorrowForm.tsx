@@ -482,7 +482,7 @@ const BorrowForm = (props: BorrowProps) => {
             usdcValue={valueUSD || 0}
             variant="primary"
             disabled={isBorrowButtonDisabled()}
-            isFluid
+            block
             onClick={handleBorrow}
           >
             Borrow

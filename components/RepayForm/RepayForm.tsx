@@ -145,7 +145,7 @@ const RepayForm = (props: RepayProps) => {
                   solAmount={userDebt > 0 ? valueSOL || 0 : undefined}
                   usdcValue={userDebt > 0 ? valueUSD || 0 : undefined}
                   disabled={isRepayButtonDisabled()}
-                  isFluid={true}
+                  block
                   onClick={onRepay}
                 >
                   {userDebt > 0 ? 'Repay' : 'Claim NFT'}

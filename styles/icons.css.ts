@@ -10,6 +10,12 @@ export const lampIcon = style({
   width: '100%'
 });
 
+export const createMarketIcon = style({
+  width: 36,
+  height: 36,
+  background: 'url(/images/createMarketLogo.svg) center no-repeat'
+});
+
 export const questionIcon = style({
   width: 12,
   height: 12,
@@ -45,4 +51,16 @@ export const errorBlackIcon = style({
 
 export const errorRedIcon = style({
   background: 'url(/images/error-red.svg) center no-repeat'
+});
+
+export const executedIcon = style({
+  background: 'url(/images/Check.svg) center no-repeat',
+});
+
+export const trashIcon = style({
+  background: 'url(/images/Trash.svg) center no-repeat',
+});
+
+export const infoIcon = style({
+  background: 'url("/images/alternative-tooltip-icon.svg") center center no-repeat',
 });

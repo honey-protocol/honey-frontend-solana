@@ -30,14 +30,6 @@ export const col = style({
   flex: '100% 0 0'
 });
 
-export const tabTitle = style([
-  typography.title,
-  mb12,
-  {
-    color: vars.colors.black
-  }
-]);
-
 export const buttons = style([
   {
     display: 'flex'

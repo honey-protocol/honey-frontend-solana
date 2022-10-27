@@ -1,4 +1,4 @@
-import { FC, useMemo, useState } from 'react';
+import React, { FC, useMemo, useState } from 'react';
 import * as styles from './CreateProposalTab.css';
 import { formatNumber } from '../../../helpers/format';
 import HoneyButton from 'components/HoneyButton/HoneyButton';
@@ -18,6 +18,7 @@ import { useExecutiveCouncil } from 'hooks/tribeca/useExecutiveCouncil';
 import useToast from 'hooks/useToast';
 import HoneyWarning from 'components/HoneyWarning/HoneyWarning';
 import cs from 'classnames';
+import TabTitle from '../../HoneyTabs/TabTitle/TabTitle';
 
 const { format: f, formatPercent: fp, formatUsd: fu } = formatNumber;
 
@@ -119,7 +120,7 @@ const CreateProposalTab = (props: { onCancel: Function }) => {
               <HoneyButton
                 variant="primary"
                 disabled={isCreateProposalButtonDisabled()}
-                isFluid={true}
+                block
                 onClick={doProposeTransaction}
               >
                 Create proposal
@@ -130,7 +131,7 @@ const CreateProposalTab = (props: { onCancel: Function }) => {
       }
     >
       <div className={styles.createProposalTab}>
-        <div className={styles.tabTitle}>Create new proposal</div>
+        <TabTitle title='Create new proposal' />
 
         <div className={styles.titleInput}>
           <HoneyTextArea
@@ -163,7 +164,8 @@ const CreateProposalTab = (props: { onCancel: Function }) => {
           />
         </div>
 
-        <div className={styles.tabTitle}>Proposed Action</div>
+        <TabTitle title='Proposed Action' />
+
         <div className={cs(styles.row, styles.mb12)}>
           <CustomDropdown
             onChange={value => {

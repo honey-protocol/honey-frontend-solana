@@ -108,7 +108,7 @@ const BidForm = (props: BidFormProps) => {
               <HoneyButton
                 variant="primary"
                 disabled={isSubmitButtonDisabled()}
-                isFluid={true}
+                block
                 usdcValue={valueUSD || 0}
                 solAmount={valueSOL || 0}
                 onClick={triggerIndicator}

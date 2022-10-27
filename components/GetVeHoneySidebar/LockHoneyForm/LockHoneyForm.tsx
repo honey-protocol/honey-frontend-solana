@@ -17,6 +17,7 @@ import { useGovernance } from 'contexts/GovernanceProvider';
 import useToast from 'hooks/useToast';
 import { hAlign } from 'styles/common.css';
 import { questionIcon } from 'styles/icons.css';
+import TabTitle from '../../HoneyTabs/TabTitle/TabTitle';
 
 const { format: f, formatPercent: fp, formatUsd: fu, parse: p } = formatNumber;
 
@@ -131,7 +132,7 @@ const LockHoneyForm = (props: { onCancel: Function }) => {
               <HoneyButton
                 variant="primary"
                 disabled={isLockButtonDisabled()}
-                isFluid={true}
+                block
                 onClick={handleLock}
               >
                 Lock
@@ -142,7 +143,7 @@ const LockHoneyForm = (props: { onCancel: Function }) => {
       }
     >
       <div className={styles.depositForm}>
-        <div className={styles.tabTitle}>Deposit HONEY and receive veHONEY</div>
+        <TabTitle title='Deposit HONEY and receive veHONEY' />
         <div className={styles.row}>
           <div className={styles.col}>
             <HoneyWarning

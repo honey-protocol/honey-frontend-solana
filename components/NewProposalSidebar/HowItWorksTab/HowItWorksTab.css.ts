@@ -17,11 +17,6 @@ export const contentWrapper = style({
   marginBottom: 24
 })
 
-export const tabTitle = style([typography.title, {
-  color: vars.colors.black,
-  marginBottom: 12
-}])
-
 export const listItem = style([typography.description, {
   color: vars.colors.black,
   display: "flex",
@@ -85,3 +80,9 @@ export const toggleText = style([typography.button, {
   color: vars.colors.black,
   marginLeft: 8
 }])
+
+export const listLink = style([typography.description, {
+  color: `${vars.colors.brownMiddle}!important`,
+}]);
+
+export const listText = style([typography.description]);

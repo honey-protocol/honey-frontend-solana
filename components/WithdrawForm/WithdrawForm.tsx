@@ -98,7 +98,7 @@ const WithdrawForm = (props: WithdrawFormProps) => {
               <HoneyButton
                 variant="primary"
                 disabled={isWithdrawButtonDisabled()}
-                isFluid={true}
+                block
                 onClick={handleWithdraw}
               >
                 Withdraw

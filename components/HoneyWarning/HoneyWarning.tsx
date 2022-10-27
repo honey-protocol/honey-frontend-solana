@@ -1,5 +1,5 @@
 import Link from 'antd/lib/typography/Link';
-import React from 'react';
+import React, { ReactNode } from 'react';
 import * as styles from './HoneyWarning.css';
 import cs from 'classnames';
 
@@ -7,6 +7,7 @@ interface HoneyWarningProps {
   message: string;
   danger?: boolean;
   link?: string;
+  children?: ReactNode;
 }
 
 const HoneyWarning = (props: HoneyWarningProps) => {
@@ -26,13 +27,16 @@ const HoneyWarning = (props: HoneyWarningProps) => {
           <div className={styles.warningLinkIcon} />
         </Link>
       ) : (
-        <p
-          className={cs(styles.warningTitle, {
-            [styles.warningDangerTitle]: props.danger
-          })}
-        >
-          {props.message}
-        </p>
+        <>
+          <p
+            className={cs(styles.warningTitle, {
+              [styles.warningDangerTitle]: props.danger
+            })}
+          >
+            {props.message}
+          </p>
+          {props.children}
+        </>
       )}
     </div>
   );
