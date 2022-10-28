@@ -50,6 +50,7 @@ import HoneyTableRow from 'components/HoneyTable/HoneyTableRow/HoneyTableRow';
 
 const { format: f, formatPercent: fp, formatSol: fs } = formatNumber;
 import {
+  BURRITO_BOYZ,
   HONEY_GENESIS_BEE,
   LIFINITY_FLARES,
   OG_ATADIANS,
@@ -58,7 +59,10 @@ import {
 
 import {
   HONEY_GENESIS_MARKET_ID,
-  PESKY_PENGUINS_MARKET_ID
+  PESKY_PENGUINS_MARKET_ID,
+  OG_ATADIANS_MARKET_ID,
+  LIFINITY_FLARES_MARKET_ID,
+  BURRITO_BOYZ_MARKET_ID
 } from '../../constants/loan';
 import { setMarketId } from 'pages/_app';
 import { marketCollections } from '../../constants/borrowLendMarkets';
@@ -67,6 +71,7 @@ import { generateMockHistoryData } from '../../helpers/chartUtils';
 const network = 'mainnet-beta';
 
 const Lend: NextPage = () => {
+  const [currentMarketName, setCurrentMarketName] = useState(HONEY_GENESIS_BEE);
   /**
    * @description formatting functions to format with perfect / format in SOL with icon or just a regular 2 decimal format
    * @params value to be formatted
@@ -87,13 +92,28 @@ const Lend: NextPage = () => {
    * @params Honey table record - contains all info about a table (aka market)
    * @returns sets the market ID which re-renders page state and fetches market specific data
    */
-  function handleMarketId(record: any) {
-    record.id == HONEY_GENESIS_MARKET_ID
-      ? setCurrentMarketId(HONEY_GENESIS_MARKET_ID)
-      : setCurrentMarketId(PESKY_PENGUINS_MARKET_ID);
-    record.id == HONEY_GENESIS_MARKET_ID
-      ? setMarketId(HONEY_GENESIS_MARKET_ID)
-      : setMarketId(PESKY_PENGUINS_MARKET_ID);
+   function handleMarketId(record: any) {
+    if (record.id == HONEY_GENESIS_MARKET_ID) {
+      setCurrentMarketId(HONEY_GENESIS_MARKET_ID)
+      setMarketId(HONEY_GENESIS_MARKET_ID)
+      setCurrentMarketName(HONEY_GENESIS_BEE)
+    } else if (record.id == PESKY_PENGUINS_MARKET_ID) {
+      setCurrentMarketId(PESKY_PENGUINS_MARKET_ID)
+      setMarketId(PESKY_PENGUINS_MARKET_ID)
+      setCurrentMarketName(PESKY_PENGUINS)
+    } else if (record.id == OG_ATADIANS_MARKET_ID) {
+      setCurrentMarketId(OG_ATADIANS_MARKET_ID)
+      setMarketId(OG_ATADIANS_MARKET_ID)
+      setCurrentMarketName(OG_ATADIANS)
+    } else if (record.id == LIFINITY_FLARES_MARKET_ID) {
+      setCurrentMarketId(LIFINITY_FLARES_MARKET_ID)
+      setMarketId(LIFINITY_FLARES_MARKET_ID)
+      setCurrentMarketName(LIFINITY_FLARES)
+    } else if (record.id == BURRITO_BOYZ_MARKET_ID) {
+      setCurrentMarketId(BURRITO_BOYZ_MARKET_ID)
+      setMarketId(BURRITO_BOYZ_MARKET_ID)
+      setCurrentMarketName(BURRITO_BOYZ)
+    }
   }
   /**
    * @description calls upon markets which
@@ -125,6 +145,7 @@ const Lend: NextPage = () => {
   const [activeMarketSupplied, setActiveMarketSupplied] = useState(0);
   const [activeMarketAvailable, setActiveMarketAvailable] = useState(0);
   const [totalMarketDeposits, setTotalMarketDeposits] = useState(0);
+  
   // fetches the users balance
   async function fetchWalletBalance(key: PublicKey) {
     try {
@@ -463,7 +484,7 @@ const Lend: NextPage = () => {
   const MyCollectionsToggle = () => null;
 
   const renderImage = (name: string) => {
-    if (name == 'Honey Genesis Bee') {
+    if (name == HONEY_GENESIS_BEE) {
       return (
         <Image
           src={
@@ -473,7 +494,7 @@ const Lend: NextPage = () => {
           alt="NFT collection image"
         />
       );
-    } else if (name == 'Lifinity Flares') {
+    } else if (name == LIFINITY_FLARES) {
       return (
         <Image
           src={
@@ -483,7 +504,7 @@ const Lend: NextPage = () => {
           alt="NFT collection image"
         />
       );
-    } else if (name == 'OG Atadians') {
+    } else if (name == OG_ATADIANS) {
       return (
         <Image
           src={
@@ -493,7 +514,7 @@ const Lend: NextPage = () => {
           alt="NFT collection image"
         />
       );
-    } else {
+    } else if (name == PESKY_PENGUINS) {
       return (
         <Image
           src={
@@ -503,6 +524,14 @@ const Lend: NextPage = () => {
           alt="NFT collection image"
         />
       );
+    } else if (name == BURRITO_BOYZ) {
+      return (
+        <Image 
+          src={'https://img-cdn.magiceden.dev/rs:fill:400:400:0:0/plain/https://creator-hub-prod.s3.us-east-2.amazonaws.com/burrito_boyz_pfp_1653394754301.png'}
+          layout="fill"
+          alt="Burrito Boyz"
+        />
+      )
     }
   };
 
@@ -684,11 +713,7 @@ const Lend: NextPage = () => {
         userWalletBalance={userWalletBalance}
         fetchedSolPrice={fetchedSolPrice}
         onCancel={hideMobileSidebar}
-        marketImage={renderImage(
-          currentMarketId == HONEY_GENESIS_MARKET_ID
-            ? HONEY_GENESIS_BEE
-            : PESKY_PENGUINS
-        )}
+        marketImage={renderImage(currentMarketName)}
         currentMarketId={currentMarketId}
         />
     </HoneySider>

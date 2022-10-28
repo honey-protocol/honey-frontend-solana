@@ -39,11 +39,13 @@ import { LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js';
 import { calcNFT, fetchSolPrice } from 'helpers/loanHelpers/userCollection';
 import { LiquidateTablePosition } from '../../types/liquidate';
 import {
-  HONEY_MARKET_ID,
   HONEY_PROGRAM_ID,
   HONEY_GENESIS_MARKET_ID,
   LIQUIDATION_THRESHOLD,
-  PESKY_PENGUINS_MARKET_ID
+  PESKY_PENGUINS_MARKET_ID,
+  OG_ATADIANS_MARKET_ID,
+  LIFINITY_FLARES_MARKET_ID,
+  BURRITO_BOYZ_MARKET_ID
 } from 'constants/loan';
 import { NATIVE_MINT } from '@solana/spl-token';
 import HoneySider from 'components/HoneySider/HoneySider';
@@ -59,7 +61,8 @@ import {
   HONEY_GENESIS_BEE,
   LIFINITY_FLARES,
   OG_ATADIANS,
-  PESKY_PENGUINS 
+  PESKY_PENGUINS,
+  BURRITO_BOYZ
 } from 'constants/borrowLendMarkets';
 import { marketCollections } from 'constants/borrowLendMarkets';
 import { populateMarketData } from 'helpers/loanHelpers/userCollection';
@@ -347,6 +350,7 @@ const Liquidate: NextPage = () => {
   const [expandedRowKeys, setExpandedRowKeys] = useState<readonly Key[]>([]);
   const [isMyBidsFilterEnabled, setIsMyBidsFilterEnabled] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const [currentMarketName, setCurrentMarketName] = useState(HONEY_GENESIS_BEE);
 
   // PUT YOUR DATA SOURCE HERE
   // MOCK DATA FOR NOW
@@ -414,15 +418,30 @@ const Liquidate: NextPage = () => {
    * @description sets the market ID based on market click
    * @params Honey table record - contains all info about a table (aka market)
    * @returns sets the market ID which re-renders page state and fetches market specific data
-  */
-     function handleMarketId(record: any) {
-      record.id == HONEY_GENESIS_MARKET_ID
-        ? setCurrentMarketId(HONEY_GENESIS_MARKET_ID)
-        : setCurrentMarketId(PESKY_PENGUINS_MARKET_ID);
-      record.id == HONEY_GENESIS_MARKET_ID
-        ? setMarketId(HONEY_GENESIS_MARKET_ID)
-        : setMarketId(PESKY_PENGUINS_MARKET_ID);
+   */
+   function handleMarketId(record: any) {
+    if (record.id == HONEY_GENESIS_MARKET_ID) {
+      setCurrentMarketId(HONEY_GENESIS_MARKET_ID)
+      setMarketId(HONEY_GENESIS_MARKET_ID)
+      setCurrentMarketName(HONEY_GENESIS_BEE)
+    } else if (record.id == PESKY_PENGUINS_MARKET_ID) {
+      setCurrentMarketId(PESKY_PENGUINS_MARKET_ID)
+      setMarketId(PESKY_PENGUINS_MARKET_ID)
+      setCurrentMarketName(PESKY_PENGUINS)
+    } else if (record.id == OG_ATADIANS_MARKET_ID) {
+      setCurrentMarketId(OG_ATADIANS_MARKET_ID)
+      setMarketId(OG_ATADIANS_MARKET_ID)
+      setCurrentMarketName(OG_ATADIANS)
+    } else if (record.id == LIFINITY_FLARES_MARKET_ID) {
+      setCurrentMarketId(LIFINITY_FLARES_MARKET_ID)
+      setMarketId(LIFINITY_FLARES_MARKET_ID)
+      setCurrentMarketName(LIFINITY_FLARES)
+    } else if (record.id == BURRITO_BOYZ_MARKET_ID) {
+      setCurrentMarketId(BURRITO_BOYZ_MARKET_ID)
+      setMarketId(BURRITO_BOYZ_MARKET_ID)
+      setCurrentMarketName(BURRITO_BOYZ)
     }
+  }
 
   const debouncedSearch = useCallback(
     debounce(searchQuery => {
@@ -458,15 +477,55 @@ const Liquidate: NextPage = () => {
 
   const renderImage = (name: string) => {
     if (name == HONEY_GENESIS_BEE) {
-      return <Image src={'https://img-cdn.magiceden.dev/rs:fill:400:400:0:0/plain/https://dl.airtable.com/.attachmentThumbnails/6b6c8954aed777a74de52fd70f8751ab/46b325db'} layout="fill" />
+      return (
+        <Image
+          src={
+            'https://img-cdn.magiceden.dev/rs:fill:400:400:0:0/plain/https://dl.airtable.com/.attachmentThumbnails/6b6c8954aed777a74de52fd70f8751ab/46b325db'
+          }
+          layout="fill"
+          alt="NFT collection image"
+        />
+      );
     } else if (name == LIFINITY_FLARES) {
-      return <Image src={'https://img-cdn.magiceden.dev/rs:fill:400:400:0:0/plain/https://dl.airtable.com/.attachmentThumbnails/6972d5c2efb77d49be97b07ccf4fbc69/e9572fb8'} layout="fill" />
+      return (
+        <Image
+          src={
+            'https://img-cdn.magiceden.dev/rs:fill:400:400:0:0/plain/https://dl.airtable.com/.attachmentThumbnails/6972d5c2efb77d49be97b07ccf4fbc69/e9572fb8'
+          }
+          layout="fill"
+          alt="NFT collection image"
+        />
+      );
     } else if (name == OG_ATADIANS) {
-      return <Image src={'https://img-cdn.magiceden.dev/rs:fill:400:400:0:0/plain/https://creator-hub-prod.s3.us-east-2.amazonaws.com/atadians_pfp_1646721263627.gif'} layout="fill" />
-    } else {
-      return <Image src={'https://img-cdn.magiceden.dev/rs:fill:400:400:0:0/plain/https://i.imgur.com/37nsjBZ.png'} layout="fill" />
+      return (
+        <Image
+          src={
+            'https://img-cdn.magiceden.dev/rs:fill:400:400:0:0/plain/https://creator-hub-prod.s3.us-east-2.amazonaws.com/atadians_pfp_1646721263627.gif'
+          }
+          layout="fill"
+          alt="NFT collection image"
+        />
+      );
+    } else if (name == PESKY_PENGUINS) {
+      return (
+        <Image
+          src={
+            'https://img-cdn.magiceden.dev/rs:fill:400:400:0:0/plain/https://i.imgur.com/37nsjBZ.png'
+          }
+          layout="fill"
+          alt="NFT collection image"
+        />
+      );
+    } else if (name == BURRITO_BOYZ) {
+      return (
+        <Image 
+          src={'https://img-cdn.magiceden.dev/rs:fill:400:400:0:0/plain/https://creator-hub-prod.s3.us-east-2.amazonaws.com/burrito_boyz_pfp_1653394754301.png'}
+          layout="fill"
+          alt="Burrito Boyz"
+        />
+      )
     }
-  }
+  };
 
   const columns: ColumnType<MarketTableRow>[] = useMemo(
     () => [

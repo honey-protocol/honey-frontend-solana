@@ -9,7 +9,7 @@ import HoneyButton from 'components/HoneyButton/HoneyButton';
 import HexaBoxContainer from 'components/HexaBoxContainer/HexaBoxContainer';
 import NftList from '../NftList/NftList';
 import { NftCardProps } from '../NftCard/types';
-import { HONEY_GENESIS_MARKET_ID, MAX_LTV } from '../../constants/loan';
+import { BURRITO_BOYZ_MARKET_ID, HONEY_GENESIS_MARKET_ID, LIFINITY_FLARES_MARKET_ID, MAX_LTV, OG_ATADIANS_MARKET_ID, PESKY_PENGUINS_MARKET_ID } from '../../constants/loan';
 import { usdcAmount } from '../HoneyButton/HoneyButton.css';
 import { BorrowProps } from './types';
 import { toastResponse } from 'helpers/loanHelpers';
@@ -151,6 +151,20 @@ const BorrowForm = (props: BorrowProps) => {
     handleSliderChange(0);
   };
 
+  const renderImage = (marketID: string) => {
+    if (marketID == HONEY_GENESIS_MARKET_ID) {
+      return <Image src='https://img-cdn.magiceden.dev/rs:fill:400:400:0:0/plain/https://dl.airtable.com/.attachmentThumbnails/6b6c8954aed777a74de52fd70f8751ab/46b325db' alt='Honey Genesis Bee NFT' layout="fill" />
+    } else if (marketID == LIFINITY_FLARES_MARKET_ID) {
+      return <Image src='https://img-cdn.magiceden.dev/rs:fill:400:400:0:0/plain/https://dl.airtable.com/.attachmentThumbnails/6972d5c2efb77d49be97b07ccf4fbc69/e9572fb8' alt='Lifinity Flares NFT' layout="fill" />
+    } else if (marketID == OG_ATADIANS_MARKET_ID) {
+      return <Image src='https://img-cdn.magiceden.dev/rs:fill:400:400:0:0/plain/https://creator-hub-prod.s3.us-east-2.amazonaws.com/atadians_pfp_1646721263627.gif' alt='OG Atadians NFT' layout="fill" />
+    } else if (marketID == BURRITO_BOYZ_MARKET_ID) {
+      return <Image src='https://img-cdn.magiceden.dev/rs:fill:400:400:0:0/plain/https://creator-hub-prod.s3.us-east-2.amazonaws.com/burrito_boyz_pfp_1653394754301.png' alt='Burrito Boyz NFT' layout="fill" />
+    } else if (marketID == PESKY_PENGUINS_MARKET_ID) {
+      return <Image src='https://img-cdn.magiceden.dev/rs:fill:400:400:0:0/plain/https://i.imgur.com/37nsjBZ.png' alt='Pesky NFT' layout="fill" />
+    }
+  }
+
   const renderContent = () => {
     if (isNftSelected == false) {
       return (
@@ -172,11 +186,7 @@ const BorrowForm = (props: BorrowProps) => {
         <div className={styles.nftInfo}>
           <div className={styles.nftImage}>
             <HexaBoxContainer>
-              <Image
-                src={selectedNft?.img || imagePlaceholder}
-                alt={`${selectedNft?.name}`}
-                layout="fill"
-              />
+              {renderImage(currentMarketId)}
             </HexaBoxContainer>
           </div>
           <div className={styles.nftName}>{selectedNft?.name}</div>

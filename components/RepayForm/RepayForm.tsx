@@ -18,6 +18,7 @@ import useToast from 'hooks/useToast';
 import { useSolBalance } from 'hooks/useSolBalance';
 import { MAX_LTV } from 'constants/loan';
 import { LIQUIDATION_FEE } from 'constants/borrowLendMarkets';
+import { HONEY_GENESIS_MARKET_ID, LIFINITY_FLARES_MARKET_ID, OG_ATADIANS_MARKET_ID, PESKY_PENGUINS_MARKET_ID, BURRITO_BOYZ_MARKET_ID  } from 'constants/loan';
 
 const {
   format: f,
@@ -38,6 +39,7 @@ const RepayForm = (props: RepayProps) => {
     loanToValue,
     availableNFTs,
     fetchedSolPrice,
+    currentMarketId,
     hideMobileSidebar,
     changeTab
   } = props;
@@ -125,6 +127,20 @@ const RepayForm = (props: RepayProps) => {
     ? ((nftPrice - newLiquidationPrice) / nftPrice) * 100
     : 0;
 
+  const renderImage = (marketID: string) => {
+    if (marketID == HONEY_GENESIS_MARKET_ID) {
+      return <Image src='https://img-cdn.magiceden.dev/rs:fill:400:400:0:0/plain/https://dl.airtable.com/.attachmentThumbnails/6b6c8954aed777a74de52fd70f8751ab/46b325db' alt='Honey Genesis Bee NFT' layout="fill" />
+    } else if (marketID == LIFINITY_FLARES_MARKET_ID) {
+      return <Image src='https://img-cdn.magiceden.dev/rs:fill:400:400:0:0/plain/https://dl.airtable.com/.attachmentThumbnails/6972d5c2efb77d49be97b07ccf4fbc69/e9572fb8' alt='Lifinity Flares NFT' layout="fill" />
+    } else if (marketID == OG_ATADIANS_MARKET_ID) {
+      return <Image src='https://img-cdn.magiceden.dev/rs:fill:400:400:0:0/plain/https://creator-hub-prod.s3.us-east-2.amazonaws.com/atadians_pfp_1646721263627.gif' alt='OG Atadians NFT' layout="fill" />
+    } else if (marketID == BURRITO_BOYZ_MARKET_ID) {
+      return <Image src='https://img-cdn.magiceden.dev/rs:fill:400:400:0:0/plain/https://creator-hub-prod.s3.us-east-2.amazonaws.com/burrito_boyz_pfp_1653394754301.png' alt='Burrito Boyz NFT' layout="fill" />
+    } else if (marketID == PESKY_PENGUINS_MARKET_ID) {
+      return <Image src='https://img-cdn.magiceden.dev/rs:fill:400:400:0:0/plain/https://i.imgur.com/37nsjBZ.png' alt='Pesky NFT' layout="fill" />
+    }
+  }
+
   return (
     <SidebarScroll
       footer={
@@ -159,7 +175,7 @@ const RepayForm = (props: RepayProps) => {
         <div className={styles.nftInfo}>
           <div className={styles.nftImage}>
             <HexaBoxContainer>
-              <Image src={openPositions[0].image} layout="fill" />
+              {renderImage(currentMarketId)}
             </HexaBoxContainer>
           </div>
           <div className={styles.nftName}>{openPositions[0].name}</div>

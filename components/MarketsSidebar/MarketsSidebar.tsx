@@ -114,6 +114,7 @@ const MarketsSidebar = (props: MarketsSidebarProps) => {
                   hideMobileSidebar={hideMobileSidebar}
                   changeTab={handleTabChange}
                   fetchedSolPrice={fetchedSolPrice}
+                  currentMarketId={currentMarketId}
                 />
             )}
           </>

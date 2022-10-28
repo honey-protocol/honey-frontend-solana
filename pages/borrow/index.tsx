@@ -72,13 +72,15 @@ import {
   HONEY_GENESIS_BEE,
   LIFINITY_FLARES,
   OG_ATADIANS,
-  PESKY_PENGUINS
+  PESKY_PENGUINS,
+  BURRITO_BOYZ
 } from '../../constants/borrowLendMarkets';
 import {
   HONEY_GENESIS_MARKET_ID,
   PESKY_PENGUINS_MARKET_ID,
   OG_ATADIANS_MARKET_ID,
   LIFINITY_FLARES_MARKET_ID,
+  BURRITO_BOYZ_MARKET_ID,
   LIQUIDATION_THRESHOLD
 } from '../../constants/loan';
 import { setMarketId } from 'pages/_app';
@@ -95,6 +97,7 @@ const network = 'mainnet-beta';
 const { format: f, formatPercent: fp, formatSol: fs } = formatNumber;
 
 const Markets: NextPage = () => {
+  const [currentMarketName, setCurrentMarketName] = useState(HONEY_GENESIS_BEE);
   // Sets market ID which is used for fetching market specific data
   // each market currently is a different call and re-renders the page
   const [currentMarketId, setCurrentMarketId] = useState<string>(
@@ -109,14 +112,30 @@ const Markets: NextPage = () => {
    * @params Honey table record - contains all info about a table (aka market)
    * @returns sets the market ID which re-renders page state and fetches market specific data
    */
-  function handleMarketId(record: any) {
-    record.id == HONEY_GENESIS_MARKET_ID
-      ? setCurrentMarketId(HONEY_GENESIS_MARKET_ID)
-      : setCurrentMarketId(PESKY_PENGUINS_MARKET_ID);
-    record.id == HONEY_GENESIS_MARKET_ID
-      ? setMarketId(HONEY_GENESIS_MARKET_ID)
-      : setMarketId(PESKY_PENGUINS_MARKET_ID);
+   function handleMarketId(record: any) {
+    if (record.id == HONEY_GENESIS_MARKET_ID) {
+      setCurrentMarketId(HONEY_GENESIS_MARKET_ID)
+      setMarketId(HONEY_GENESIS_MARKET_ID)
+      setCurrentMarketName(HONEY_GENESIS_BEE)
+    } else if (record.id == PESKY_PENGUINS_MARKET_ID) {
+      setCurrentMarketId(PESKY_PENGUINS_MARKET_ID)
+      setMarketId(PESKY_PENGUINS_MARKET_ID)
+      setCurrentMarketName(PESKY_PENGUINS)
+    } else if (record.id == OG_ATADIANS_MARKET_ID) {
+      setCurrentMarketId(OG_ATADIANS_MARKET_ID)
+      setMarketId(OG_ATADIANS_MARKET_ID)
+      setCurrentMarketName(OG_ATADIANS)
+    } else if (record.id == LIFINITY_FLARES_MARKET_ID) {
+      setCurrentMarketId(LIFINITY_FLARES_MARKET_ID)
+      setMarketId(LIFINITY_FLARES_MARKET_ID)
+      setCurrentMarketName(LIFINITY_FLARES)
+    } else if (record.id == BURRITO_BOYZ_MARKET_ID) {
+      setCurrentMarketId(BURRITO_BOYZ_MARKET_ID)
+      setMarketId(BURRITO_BOYZ_MARKET_ID)
+      setCurrentMarketName(BURRITO_BOYZ)
+    }
   }
+
   /**
    * @description calls upon markets which
    * @params none
@@ -465,7 +484,7 @@ const Markets: NextPage = () => {
           alt="OG Atadians"
         />
       );
-    } else {
+    } else if (name == PESKY_PENGUINS) {
       return (
         <Image
           src={
@@ -475,6 +494,14 @@ const Markets: NextPage = () => {
           alt="Pesky Penguins"
         />
       );
+    } else if (name == BURRITO_BOYZ) {
+      return (
+        <Image 
+          src={'https://img-cdn.magiceden.dev/rs:fill:400:400:0:0/plain/https://creator-hub-prod.s3.us-east-2.amazonaws.com/burrito_boyz_pfp_1653394754301.png'}
+          layout="fill"
+          alt="Burrito Boyz"
+        />
+      )
     }
   };
 
@@ -1024,6 +1051,7 @@ const Markets: NextPage = () => {
       loanToValue={loanToValue}
       hideMobileSidebar={hideMobileSidebar}
       fetchedSolPrice={fetchedSolPrice}
+      // TODO: call helper function include all markets
       calculatedInterestRate={
         currentMarketId == HONEY_GENESIS_MARKET_ID
           ? honeyInterestRate

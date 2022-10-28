@@ -15,7 +15,7 @@ import { BidFormProps } from './types';
 import { hAlign } from 'styles/common.css';
 import { questionIcon } from 'styles/icons.css';
 import useToast from 'hooks/useToast';
-import { HONEY_GENESIS_MARKET_ID, PESKY_PENGUINS_MARKET_ID } from 'constants/loan';
+import { HONEY_GENESIS_MARKET_ID, PESKY_PENGUINS_MARKET_ID, LIFINITY_FLARES_MARKET_ID, BURRITO_BOYZ_MARKET_ID, OG_ATADIANS_MARKET_ID } from 'constants/loan';
 
 const {
   format: f,
@@ -38,10 +38,10 @@ const BidForm = (props: BidFormProps) => {
     handlePlaceBid,
     onCancel
   } = props;
-  const [valueUSD, setValueUSD] = useState<number>();
-  const [valueSOL, setValueSOL] = useState<number>();
+  const [valueUSD, setValueUSD] = useState<number>(0);
+  const [valueSOL, setValueSOL] = useState<number>(0);
   // const [valueUSDC, setValueUSDC] = useState<number>(0);
-  const [sliderValue, setSliderValue] = useState();
+  const [sliderValue, setSliderValue] = useState(0);
   const { toast, ToastComponent } = useToast();
 
   const maxValue = 1000;
@@ -94,17 +94,64 @@ const BidForm = (props: BidFormProps) => {
     console.log('@@--', currentUserBid);
   }, [currentUserBid]);
 
-  const renderImage = (id: string) => {
-    if (id == HONEY_GENESIS_MARKET_ID) {
-      return <Image src={'https://img-cdn.magiceden.dev/rs:fill:400:400:0:0/plain/https://dl.airtable.com/.attachmentThumbnails/6b6c8954aed777a74de52fd70f8751ab/46b325db'} layout="fill" />
-    } else if (id == PESKY_PENGUINS_MARKET_ID) {
-      return <Image src={'https://img-cdn.magiceden.dev/rs:fill:400:400:0:0/plain/https://i.imgur.com/37nsjBZ.png'} layout="fill" />
-    } 
-    // else if (id == OG_ATADIANS) {
-    //   return <Image src={'https://img-cdn.magiceden.dev/rs:fill:400:400:0:0/plain/https://creator-hub-prod.s3.us-east-2.amazonaws.com/atadians_pfp_1646721263627.gif'} layout="fill" />
-    // } else {
-    //   return <Image src={'https://img-cdn.magiceden.dev/rs:fill:400:400:0:0/plain/https://dl.airtable.com/.attachmentThumbnails/6972d5c2efb77d49be97b07ccf4fbc69/e9572fb8'} layout="fill" />
-    // }
+  const renderImage = (name: string) => {
+    if (name == HONEY_GENESIS_MARKET_ID) {
+      return (
+        <Image
+          src={
+            'https://img-cdn.magiceden.dev/rs:fill:400:400:0:0/plain/https://dl.airtable.com/.attachmentThumbnails/6b6c8954aed777a74de52fd70f8751ab/46b325db'
+          }
+          layout="fill"
+          alt="NFT collection image"
+        />
+      );
+    } else if (name == LIFINITY_FLARES_MARKET_ID) {
+      return (
+        <Image
+          src={
+            'https://img-cdn.magiceden.dev/rs:fill:400:400:0:0/plain/https://dl.airtable.com/.attachmentThumbnails/6972d5c2efb77d49be97b07ccf4fbc69/e9572fb8'
+          }
+          layout="fill"
+          alt="NFT collection image"
+        />
+      );
+    } else if (name == OG_ATADIANS_MARKET_ID) {
+      return (
+        <Image
+          src={
+            'https://img-cdn.magiceden.dev/rs:fill:400:400:0:0/plain/https://creator-hub-prod.s3.us-east-2.amazonaws.com/atadians_pfp_1646721263627.gif'
+          }
+          layout="fill"
+          alt="NFT collection image"
+        />
+      );
+    } else if (name == PESKY_PENGUINS_MARKET_ID) {
+      return (
+        <Image
+          src={
+            'https://img-cdn.magiceden.dev/rs:fill:400:400:0:0/plain/https://i.imgur.com/37nsjBZ.png'
+          }
+          layout="fill"
+          alt="NFT collection image"
+        />
+      );
+    } else if (name == BURRITO_BOYZ_MARKET_ID) {
+      return (
+        <Image 
+          src={'https://img-cdn.magiceden.dev/rs:fill:400:400:0:0/plain/https://creator-hub-prod.s3.us-east-2.amazonaws.com/burrito_boyz_pfp_1653394754301.png'}
+          layout="fill"
+          alt="Burrito Boyz"
+        />
+      )
+    }
+  };
+
+  function renderName(marketID: string) {
+    if (marketID == HONEY_GENESIS_MARKET_ID) return 'Honey Genesis Bee';
+    if (marketID == OG_ATADIANS_MARKET_ID) return 'OG Atadians';
+    if (marketID == PESKY_PENGUINS_MARKET_ID) return 'Pesky Penguins';
+    if (marketID == LIFINITY_FLARES_MARKET_ID) return 'Lifinity Flares';
+    if (marketID == BURRITO_BOYZ_MARKET_ID) return 'Burrito Boyz';
   }
 
   return (
@@ -142,7 +189,9 @@ const BidForm = (props: BidFormProps) => {
               {renderImage(currentMarketId)}
             </HexaBoxContainer>
           </div>
-          <div className={styles.nftName}>Honey Genesis Bee</div>
+          <div className={styles.nftName}>
+            {renderName(currentMarketId)}
+          </div>
         </div>
         <div className={styles.row}>
           <div className={styles.col}>
