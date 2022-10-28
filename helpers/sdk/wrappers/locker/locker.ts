@@ -10,11 +10,7 @@ import { GovernorWrapper, TribecaSDK } from '@tribecahq/tribeca-sdk';
 import { LockerData, LockerProgram } from '../../programs';
 import { VeHoneySDK } from '../../sdk';
 import { findEscrowAddress } from './pda';
-import {
-  getOrCreateATA,
-  TokenAmount,
-  TOKEN_PROGRAM_ID
-} from '@saberhq/token-utils';
+import { getOrCreateATA, TOKEN_PROGRAM_ID } from '@saberhq/token-utils';
 
 export class LockerWrapper {
   readonly program: LockerProgram;
@@ -94,7 +90,7 @@ export class LockerWrapper {
       authority
     );
     const { walletToken, lockedToken, instructions } =
-      await this._getOrCreateGovTokenATAInternal(authority, escrow);
+      await this.getOrCreateGovTokenATA(authority, escrow);
     if (initEscrowIx) {
       instructions.push(initEscrowIx);
     }
@@ -130,7 +126,7 @@ export class LockerWrapper {
     ]);
   }
 
-  private async _getOrCreateGovTokenATAInternal(
+  async getOrCreateGovTokenATA(
     authority: PublicKey,
     escrow: PublicKey
   ): Promise<{

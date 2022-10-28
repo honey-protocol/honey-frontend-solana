@@ -19,10 +19,13 @@ const HARD_CODE_WALLET = new Wallet(
   )
 );
 
-export function useGovernSDK({ governor }: { governor: PublicKey }) {
-  const connection = useConnection();
-  const wallet = useConnectedWallet();
-
+export function useGovernSDK({
+  provider,
+  governor
+}: {
+  provider: SolanaProvider;
+  governor: PublicKey;
+}) {
   return useMemo(() => {
     const provider = SolanaProvider.init({
       connection,
@@ -42,5 +45,5 @@ export function useGovernSDK({ governor }: { governor: PublicKey }) {
       ),
       governClient: new GovernorWrapper(tribecaSDK, governor)
     };
-  }, [connection, wallet]);
+  }, [provider]);
 }
