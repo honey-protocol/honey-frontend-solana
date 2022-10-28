@@ -82,7 +82,7 @@ const MarketsSidebar = (props: MarketsSidebarProps) => {
             title="Manage panel"
             description="First, choose a NFT collection"
           />
-        ) : (!availableNFTs || availableNFTs.length === 0) && openPositions ? (
+        ) : (!availableNFTs || availableNFTs.length === 0) && (!openPositions || openPositions.length === 0) ? (
           <EmptyStateDetails
             icon={<div className={styles.boltIcon} />}
             title="No NFTs found"
