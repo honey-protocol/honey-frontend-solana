@@ -1,6 +1,32 @@
 import { PublicKey } from '@solana/web3.js';
-import * as anchor from '@project-serum/anchor';
+import {
+  GovernProgram,
+  TRIBECA_ADDRESSES,
+  GovernJSON as GovernIDL
+} from '@tribecahq/tribeca-sdk';
+
 import config from '../../config';
+import { LockerProgram, StakeProgram } from './programs';
+import { IDL as StakeIDL } from '../types/stake';
+import { IDL as LockerIDL } from '../types/ve_honey';
+
+export interface VeHoneyPrograms {
+  Stake: StakeProgram;
+  Locker: LockerProgram;
+  Govern: GovernProgram;
+}
+
+export const VEHONEY_ADDRESSES = {
+  Stake: new PublicKey(config.NEXT_PUBLIC_STAKE_PROGRAM_ID),
+  Locker: new PublicKey(config.NEXT_PUBLIC_VOTER_PROGRAM_ID),
+  Govern: TRIBECA_ADDRESSES.Govern
+};
+
+export const VEHONEY_IDLS = {
+  Stake: StakeIDL,
+  Locker: LockerIDL,
+  Govern: GovernIDL
+};
 
 export const HONEY_WADS = 1000000;
 export const HONEY_DECIMALS = 6;

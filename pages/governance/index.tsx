@@ -1,36 +1,39 @@
-import type { NextPage } from 'next';
-import HoneyContent from '../../components/HoneyContent/HoneyContent';
-import LayoutRedesign from '../../components/LayoutRedesign/LayoutRedesign';
-import HoneySider from '../../components/HoneySider/HoneySider';
-import GovernanceSidebar from '../../components/GovernanceSidebar/GovernanceSidebar';
-import HoneyTable from '../../components/HoneyTable/HoneyTable';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import type { NextPage } from 'next';
+import { ColumnType } from 'antd/lib/table';
+import c from 'classnames';
+
+import HoneyContent from 'components/HoneyContent/HoneyContent';
+import LayoutRedesign from 'components/LayoutRedesign/LayoutRedesign';
+import HoneySider from 'components/HoneySider/HoneySider';
+import GovernanceSidebar from 'components/GovernanceSidebar/GovernanceSidebar';
+import HoneyTable from 'components/HoneyTable/HoneyTable';
+import HoneyButton from 'components/HoneyButton/HoneyButton';
+import HoneyToggle from 'components/HoneyToggle/HoneyToggle';
+import ProgressStatus from 'components/ProgressStatus/ProgressStatus';
+import HexaBoxContainer from 'components/HexaBoxContainer/HexaBoxContainer';
+import NewProposalSidebar from 'components/NewProposalSidebar/NewProposalSidebar';
+import GetVeHoneySidebar from 'components/GetVeHoneySidebar/GetVeHoneySidebar';
+import { GovernanceStats } from 'components/GovernanceStats/GovernanceStats';
+import HoneyTableNameCell from 'components/HoneyTable/HoneyTableNameCell/HoneyTableNameCell';
+import HoneyTableRow from 'components/HoneyTable/HoneyTableRow/HoneyTableRow';
+import HoneyTooltip from 'components/HoneyTooltip/HoneyTooltip';
+
 import {
   GovernanceSidebarForm,
   GovernanceTableRow,
   ProposalStatus
-} from '../../types/governance';
-import * as style from '../../styles/governance.css';
-import HexaBoxContainer from '../../components/HexaBoxContainer/HexaBoxContainer';
-import { ColumnType } from 'antd/lib/table';
-import HoneyButton from '../../components/HoneyButton/HoneyButton';
-import HoneyToggle from '../../components/HoneyToggle/HoneyToggle';
-import ProgressStatus from '../../components/ProgressStatus/ProgressStatus';
-import c from 'classnames';
-import NewProposalSidebar from '../../components/NewProposalSidebar/NewProposalSidebar';
-import GetVeHoneySidebar from '../../components/GetVeHoneySidebar/GetVeHoneySidebar';
-import { formatNumber } from '../../helpers/format';
-import { GovernanceStats } from '../../components/GovernanceStats/GovernanceStats';
+} from 'types/governance';
+
+import * as style from 'styles/governance.css';
+import { hideTablet, showTablet, table } from 'styles/markets.css';
+import { vars } from 'styles/theme.css';
+
+import { formatNumber } from 'helpers/format';
+import { ProposalState } from 'helpers/dao';
+import { getVoteCountFmt } from 'helpers/utils';
 import { useGovernor } from 'hooks/tribeca/useGovernor';
 import { useProposals } from 'hooks/tribeca/useProposals';
-import { ProposalState } from 'helpers/dao';
-import { vars } from 'styles/theme.css';
-import { getVoteCountFmt } from 'helpers/utils';
-import HoneyTooltip from 'components/HoneyTooltip/HoneyTooltip';
-import { hideTablet, showTablet, table } from 'styles/markets.css';
-import HoneyTableNameCell from '../../components/HoneyTable/HoneyTableNameCell/HoneyTableNameCell';
-import HoneyTableRow from '../../components/HoneyTable/HoneyTableRow/HoneyTableRow';
-import { statusCheckIcon } from '../../styles/governance.css';
 
 const { format: f, formatShortName: fsn } = formatNumber;
 const NUM_PLACEHOLDERS = 0;

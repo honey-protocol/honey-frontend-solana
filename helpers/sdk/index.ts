@@ -3,3 +3,4 @@ export * from './stake';
 export * from './vehoney';
 export * from './gov';
 export * from './pda';
+export * from './types';
