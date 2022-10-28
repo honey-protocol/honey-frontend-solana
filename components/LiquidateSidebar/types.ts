@@ -6,8 +6,9 @@ export type LendSidebarProps = {
   userBalance: number;
   biddingArray: any;
   highestBiddingValue: number;
-  currentUserBid: number;
+  currentUserBid?: number;
   fetchedSolPrice: number;
+  currentMarketId: string;
   handleRevokeBid: (type: string, toast: ToastProps['toast']) => void;
   handleIncreaseBid: (
     type: string,

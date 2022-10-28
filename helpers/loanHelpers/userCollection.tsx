@@ -358,8 +358,8 @@ export async function populateMarketData(collection: MarketTableRow, connection:
       collection.openPositions = obligations ? await setObligations(obligations.obligations, currentMarketId, obligations.nftPrice) : [];
       collection.tvl = obligations ? await calculateTVL(obligations.obligations, obligations.nftPrice, currentMarketId, collection.name) : 0;
 
-      const example = await fetchPositionBids(false, connection, wallet, HONEY_PROGRAM_ID, honeyReserves, honeyMarket, obligations.marketReserveInfo);
-      console.log('this is example..', example);
+      // const example = await fetchPositionBids(false, connection, wallet, HONEY_PROGRAM_ID, honeyReserves, honeyMarket, obligations.marketReserveInfo);
+      // console.log('this is example..', example);
 
     } else {
       collection.available = totalMarketDeposits;
