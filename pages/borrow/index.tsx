@@ -40,7 +40,9 @@ import BN from 'bn.js';
 import {
   borrowAndRefresh,
   depositNFT,
+  HoneyMarket,
   repayAndRefresh,
+  ReserveConfig,
   useBorrowPositions,
   useHoney,
   useMarket,
@@ -164,8 +166,67 @@ const Markets: NextPage = () => {
   const [isCreateMarketAreaOnHover, setIsCreateMarketAreaOnHover] =
     useState<boolean>(false);
 
+  const [createHoneyMarket, setCreateHoneyMarket] =
+    useState<HoneyMarket | null>(null);
+
   const availableNFTs: any = useFetchNFTByUser(wallet);
   let reFetchNFTs = availableNFTs[2];
+
+  const createMarket = async (nftOracle: string, verifiedCreatorPk: string) => {
+    const owner = wallet?.publicKey!;
+    const quoteCurrencyName = 'USDC';
+    const quoteCurrencyMint = new PublicKey(
+      'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v'
+    );
+    // might want to consider adding some kinda validation here that
+    // the verified creator actually points to the same nft
+    const nftCollectionCreator = new PublicKey(verifiedCreatorPk);
+    const nftOraclePrice = new PublicKey(nftOracle);
+    const market = await honeyClient.createMarket({
+      owner,
+      quoteCurrencyName,
+      quoteCurrencyMint,
+      nftCollectionCreator,
+      nftOraclePrice
+    });
+    // we need to tell the user somehow what their market id is, because if something gets messed up
+    // between this step and another they will need to know what market id to use to fix it
+    // + we might need to find a way to associate markets with PKs
+    // or at least cache market ids in local storage
+    setCreateHoneyMarket(market);
+  };
+
+  const initMarketReserve = async () => {
+    // default SOL + SOL/USDC switchboard
+    // like above we don't do any validation here,
+    // we just assume that the user knows what they are doing
+    const switchboardOracle = new PublicKey(
+      'GvDMxPzN1sCj7L26YDK2HnMRXEQmQ2aemov8YBtPS7vR'
+    );
+    const tokenMint = new PublicKey(
+      'So11111111111111111111111111111111111111112'
+    );
+
+    // we need to figure out how the user's changes in the creation page affect this
+    const reserveConfig = {
+      utilizationRate1: 4000,
+      utilizationRate2: 8000,
+      borrowRate0: 1000,
+      borrowRate1: 2500,
+      borrowRate2: 4000,
+      borrowRate3: 14000,
+      minCollateralRatio: 15384,
+      liquidationPremium: 100,
+      manageFeeRate: 50,
+      manageFeeCollectionThreshold: new BN(10),
+      loanOriginationFee: 0
+    } as ReserveConfig;
+    createHoneyMarket?.createReserve({
+      switchboardOracle,
+      tokenMint,
+      config: reserveConfig
+    });
+  };
 
   // sets the market debt
   useEffect(() => {
@@ -445,7 +506,7 @@ const Markets: NextPage = () => {
     });
   };
 
-  const isCreateMarketVisible = false;
+  const isCreateMarketVisible = true;
 
   const debouncedSearch = useCallback(
     debounce(searchQuery => {
@@ -1078,12 +1139,12 @@ const Markets: NextPage = () => {
             dataSource={tableDataFiltered}
             pagination={false}
             onHeaderRow={(data, index) => {
-              if(index && !isCreateMarketVisible) {
+              if (index && !isCreateMarketVisible) {
                 return {
-                  hidden: true,
-                }
+                  hidden: true
+                };
               }
-              return {}
+              return {};
             }}
             className={classNames(style.table, {
               [style.emptyTable]: !tableDataFiltered.length
