@@ -52,6 +52,9 @@ export const STAKE_PROGRAM_ID = new PublicKey(
 export const VOTER_PROGRAM_ID = new PublicKey(
   config.NEXT_PUBLIC_VOTER_PROGRAM_ID
 );
+export const NFT_PROOF_ADDRESS = new PublicKey(
+  config.NEXT_PUBLIC_NFT_PROOF_ADDRESS
+);
 
 export const POOL_USER_SEED = 'PoolUser';
 export const TOKEN_VAULT_SEED = 'TokenVault';

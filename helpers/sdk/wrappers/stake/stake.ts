@@ -14,13 +14,11 @@ import {
 import { PoolInfo, StakeProgram } from '../../programs';
 import { VeHoneySDK } from '../../sdk';
 import { findWhitelistEntryAddress, LockerWrapper } from '../locker';
-import { HONEY_DECIMALS } from '../../constant';
 import {
   findPoolUserAddress,
   findTokenVaultAddress,
   findVaultAuthorityAddress
 } from './pda';
-import { convert } from '../../../utils';
 
 export class StakeWrapper {
   readonly program: StakeProgram;

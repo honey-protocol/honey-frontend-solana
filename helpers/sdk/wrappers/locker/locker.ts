@@ -1,16 +1,32 @@
 import {
   SystemProgram,
   TransactionInstruction,
-  SYSVAR_INSTRUCTIONS_PUBKEY
+  SYSVAR_INSTRUCTIONS_PUBKEY,
+  AccountMeta
 } from '@solana/web3.js';
 import { BN } from '@project-serum/anchor';
 import { PublicKey, TransactionEnvelope } from '@saberhq/solana-contrib';
 import { GovernorWrapper, TribecaSDK } from '@tribecahq/tribeca-sdk';
+import {
+  Metadata,
+  Edition,
+  MetadataProgram
+} from '@metaplex-foundation/mpl-token-metadata';
+import { programs as MetaplexPrograms } from '@metaplex/js';
+import {
+  getATAAddressSync,
+  getOrCreateATA,
+  TOKEN_PROGRAM_ID
+} from '@saberhq/token-utils';
 
 import { LockerData, LockerProgram } from '../../programs';
 import { VeHoneySDK } from '../../sdk';
-import { findEscrowAddress } from './pda';
-import { getOrCreateATA, TOKEN_PROGRAM_ID } from '@saberhq/token-utils';
+import {
+  findEscrowAddress,
+  findNFTReceiptAddress,
+  findTreasuryAddress
+} from './pda';
+import { HONEY_DECIMALS, NFT_PROOF_ADDRESS } from '../../constant';
 
 export class LockerWrapper {
   readonly program: LockerProgram;
@@ -126,6 +142,256 @@ export class LockerWrapper {
     ]);
   }
 
+  async lockNFT(
+    nft: PublicKey,
+    authority: PublicKey = this.walletKey
+  ): Promise<TransactionEnvelope> {
+    const lockerData = await this.data();
+    const duration = lockerData.params.nftStakeDurationUnit.muln(
+      lockerData.params.nftStakeDurationCount
+    );
+    const receiptId = await this.newReceiptId();
+    const { escrow, instruction: initEscrowIx } = await this.getOrCreateEscrow(
+      authority
+    );
+    const { lockedToken, instructions } = await this.getOrCreateGovTokenATA(
+      authority,
+      escrow
+    );
+    if (initEscrowIx) {
+      instructions.push(initEscrowIx);
+    }
+    const { address: wlDestination, instruction: createWlATAIx } =
+      await getOrCreateATA({
+        provider: this.sdk.provider,
+        mint: lockerData.wlTokenMint,
+        owner: authority,
+        payer: this.walletKey
+      });
+    if (createWlATAIx) {
+      instructions.push(createWlATAIx);
+    }
+    const [receipt] = await findNFTReceiptAddress(
+      this.locker,
+      authority,
+      receiptId
+    );
+    const [treasury] = await findTreasuryAddress(
+      this.locker,
+      lockerData.tokenMint
+    );
+    const nftSource = getATAAddressSync({ mint: nft, owner: authority });
+    const nftMetadata = await Metadata.getPDA(nft);
+    const metadata = await MetaplexPrograms.metadata.Metadata.load(
+      this.sdk.provider.connection,
+      nftMetadata
+    );
+    const nftEdition = await Edition.getPDA(nft);
+
+    const remainingAccounts: AccountMeta[] = [
+      {
+        pubkey: NFT_PROOF_ADDRESS,
+        isSigner: false,
+        isWritable: false
+      },
+      {
+        pubkey: MetadataProgram.PUBKEY,
+        isSigner: false,
+        isWritable: false
+      },
+      {
+        pubkey: nftMetadata,
+        isSigner: false,
+        isWritable: true
+      },
+      {
+        pubkey: nft,
+        isSigner: false,
+        isWritable: false
+      },
+      {
+        pubkey: nftEdition,
+        isSigner: false,
+        isWritable: false
+      }
+    ];
+
+    if (metadata.data.collection && metadata.data.collection.verified) {
+      remainingAccounts.push({
+        pubkey: new PublicKey(metadata.data.collection.key),
+        isSigner: false,
+        isWritable: true
+      });
+    }
+
+    return this.sdk.provider.newTX([
+      ...instructions,
+      this.program.instruction.lockNft(duration, {
+        accounts: {
+          payer: this.walletKey,
+          locker: this.locker,
+          escrow,
+          receipt,
+          escrowOwner: authority,
+          lockedTokens: lockedToken,
+          lockerTreasury: treasury,
+          nftSource,
+          nftSourceAuthority: authority,
+          wlTokenMint: lockerData.wlTokenMint,
+          wlDestination,
+          systemProgram: SystemProgram.programId,
+          tokenProgram: TOKEN_PROGRAM_ID
+        },
+        remainingAccounts
+      })
+    ]);
+  }
+
+  async claim(
+    receiptId: BN,
+    authority: PublicKey = this.walletKey
+  ): Promise<TransactionEnvelope> {
+    const [receipt] = await findNFTReceiptAddress(
+      this.locker,
+      authority,
+      receiptId
+    );
+    const [escrow] = await findEscrowAddress(this.locker, authority);
+    const { walletToken, lockedToken, instructions } =
+      await this.getOrCreateGovTokenATA(authority, escrow);
+
+    return this.sdk.provider.newTX([
+      ...instructions,
+      this.program.instruction.claim({
+        accounts: {
+          locker: this.locker,
+          escrow,
+          escrowOwner: authority,
+          lockedTokens: lockedToken,
+          destinationTokens: walletToken,
+          nftReceipt: receipt,
+          tokenProgram: TOKEN_PROGRAM_ID
+        }
+      })
+    ]);
+  }
+
+  async unlock(
+    authority: PublicKey = this.walletKey
+  ): Promise<TransactionEnvelope> {
+    const [escrow] = await findEscrowAddress(this.locker, authority);
+    const { walletToken, lockedToken, instructions } =
+      await this.getOrCreateGovTokenATA(authority, escrow);
+
+    return this.sdk.provider.newTX([
+      ...instructions,
+      this.program.instruction.unlock({
+        accounts: {
+          payer: this.walletKey,
+          locker: this.locker,
+          escrow,
+          escrowOwner: authority,
+          lockedTokens: lockedToken,
+          destinationTokens: walletToken,
+          tokenProgram: TOKEN_PROGRAM_ID
+        }
+      })
+    ]);
+  }
+
+  async closeReceipt(
+    receiptId: BN,
+    authority: PublicKey = this.walletKey
+  ): Promise<TransactionEnvelope> {
+    const [escrow] = await findEscrowAddress(this.locker, authority);
+    const [nftReceipt] = await findNFTReceiptAddress(
+      this.locker,
+      authority,
+      receiptId
+    );
+
+    return this.sdk.provider.newTX([
+      this.program.instruction.closeReceipt({
+        accounts: {
+          locker: this.locker,
+          escrow,
+          nftReceipt,
+          escrowOwner: authority,
+          fundsReceiver: this.walletKey
+        }
+      })
+    ]);
+  }
+
+  async closeEscrow(
+    authority: PublicKey = this.walletKey
+  ): Promise<TransactionEnvelope> {
+    const lockerData = await this.data();
+    const [escrow] = await findEscrowAddress(this.locker, authority);
+    const lockedTokens = getATAAddressSync({
+      mint: lockerData.tokenMint,
+      owner: escrow
+    });
+
+    return this.sdk.provider.newTX([
+      this.program.instruction.closeEscrow({
+        accounts: {
+          locker: this.locker,
+          escrow,
+          escrowOwner: authority,
+          lockedTokens,
+          fundsReceiver: this.walletKey,
+          tokenProgram: TOKEN_PROGRAM_ID
+        }
+      })
+    ]);
+  }
+
+  async calculateVotingPower(): Promise<BN> {
+    const lockerData = await this.data();
+    const escrowData = await this.fetchEscrowData();
+    const duration = escrowData.escrowEndsAt.sub(escrowData.escrowStartedAt);
+    const votingPower = escrowData.amount
+      .mul(duration)
+      .muln(lockerData.params.multiplier)
+      .div(lockerData.params.maxStakeDuration)
+      .divn(10 ** HONEY_DECIMALS);
+    return votingPower;
+  }
+
+  async calculateClaimableAmount(
+    receiptId: BN,
+    now: number = Date.now(),
+    authority: PublicKey = this.walletKey
+  ): Promise<BN> {
+    const lockerData = await this.data();
+    const receipt = await this.fetchReceipt(receiptId, authority);
+    const nowBN = new BN(Math.floor(now / 1000));
+    const due = nowBN.lt(receipt.vestEndsAt) ? nowBN : receipt.vestEndsAt;
+    let duration = due.sub(receipt.vestStartedAt).toNumber();
+
+    if (duration < 0) {
+      return new BN(0);
+    }
+
+    let count = Math.floor(
+      duration / lockerData.params.nftStakeDurationUnit.toNumber()
+    );
+    let amountPerUnit = lockerData.params.nftStakeBaseReward;
+    let claimableAmount = new BN(0);
+
+    for (let i = 0; i < count; i++) {
+      if (i >= lockerData.params.nftRewardHalvingStartsAt) {
+        amountPerUnit = amountPerUnit.divn(2);
+      }
+      claimableAmount.add(amountPerUnit);
+    }
+
+    return claimableAmount.gt(receipt.claimedAmount)
+      ? claimableAmount.sub(receipt.claimedAmount)
+      : new BN(0);
+  }
+
   async getOrCreateGovTokenATA(
     authority: PublicKey,
     escrow: PublicKey
@@ -157,5 +423,35 @@ export class LockerWrapper {
         (ix): ix is TransactionInstruction => !!ix
       )
     };
+  }
+
+  async fetchEscrowData(authority: PublicKey = this.walletKey) {
+    const [escrow] = await findEscrowAddress(this.locker, authority);
+    return this.program.account.escrow.fetch(escrow);
+  }
+
+  async fetchReceipt(receiptId: BN, authority: PublicKey = this.walletKey) {
+    const [receipt] = await findNFTReceiptAddress(
+      this.locker,
+      authority,
+      receiptId
+    );
+    return this.program.account.receipt.fetch(receipt);
+  }
+
+  async fetchAllReceipts() {
+    return this.program.account.receipt.all();
+  }
+
+  async newReceiptId(): Promise<BN> {
+    const receipts = await this.fetchAllReceipts();
+    if (!receipts.length) {
+      return new BN(1);
+    }
+    const maxReceiptId = receipts.reduce(
+      (a, b) => (a.gt(b.account.receiptId) ? a : b.account.receiptId),
+      new BN(0)
+    );
+    return maxReceiptId.addn(1);
   }
 }

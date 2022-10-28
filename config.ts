@@ -7,6 +7,7 @@ interface ENV {
   NEXT_PUBLIC_RPC_NODE: string | undefined;
   NEXT_PUBLIC_GA: string | undefined;
   NEXT_PUBLIC_WHITELIST_ENTRY: string | undefined;
+  NEXT_PUBLIC_NFT_PROOF_ADDRESS: string | undefined;
   NEXT_PUBLIC_PHONEY_MINT: string | undefined;
   NEXT_PUBLIC_HONEY_MINT: string | undefined;
   NEXT_PUBLIC_WL_TOKEN_MINT: string | undefined;
@@ -23,6 +24,7 @@ interface Config {
   NEXT_PUBLIC_RPC_NODE: string;
   NEXT_PUBLIC_GA: string;
   NEXT_PUBLIC_WHITELIST_ENTRY: string;
+  NEXT_PUBLIC_NFT_PROOF_ADDRESS: string;
   NEXT_PUBLIC_PHONEY_MINT: string;
   NEXT_PUBLIC_HONEY_MINT: string;
   NEXT_PUBLIC_WL_TOKEN_MINT: string;
@@ -42,6 +44,7 @@ const getConfig = (): ENV => {
     NEXT_PUBLIC_RPC_NODE: process.env.NEXT_PUBLIC_RPC_NODE,
     NEXT_PUBLIC_GA: process.env.NEXT_PUBLIC_GA,
     NEXT_PUBLIC_WHITELIST_ENTRY: process.env.NEXT_PUBLIC_WHITELIST_ENTRY,
+    NEXT_PUBLIC_NFT_PROOF_ADDRESS: process.env.NEXT_PUBLIC_NFT_PROOF_ADDRESS,
     NEXT_PUBLIC_PHONEY_MINT: process.env.NEXT_PUBLIC_PHONEY_MINT,
     NEXT_PUBLIC_HONEY_MINT: process.env.NEXT_PUBLIC_HONEY_MINT,
     NEXT_PUBLIC_WL_TOKEN_MINT: process.env.NEXT_PUBLIC_WL_TOKEN_MINT,
