@@ -201,7 +201,6 @@ const Markets: NextPage = () => {
 
   // calls upon setting the user nft list per market
   useEffect(() => {
-    console.log('available nfts', availableNFTs);
     if (availableNFTs) setUserAvailableNFTs(availableNFTs[0]);
   }, [availableNFTs]);
 
@@ -309,6 +308,7 @@ const Markets: NextPage = () => {
     outcome.sumOfAllowance < 0
       ? setUserAllowance(0)
       : setUserAllowance(outcome.sumOfAllowance);
+
     setUserDebt(outcome.sumOfTotalDebt);
     setLoanToValue(outcome.sumOfLtv);
   }
@@ -343,7 +343,6 @@ const Markets: NextPage = () => {
 
   // if there are open positions for the user -> set the open positions
   useEffect(() => {
-    console.log('B:: collateral pos.', collateralNFTPositions);
     if (collateralNFTPositions) setUserOpenPositions(collateralNFTPositions);
   }, [collateralNFTPositions, currentMarketId]);
 
@@ -690,8 +689,6 @@ const Markets: NextPage = () => {
       dataIndex: 'name',
       width: columnsWidth[0],
       render: (name, record) => {
-        console.log('@@record', record);
-        console.log('@@record - the name var', name);
         return (
           <div className={style.expandedRowNameCell}>
             <div className={style.expandedRowIcon} />
@@ -954,6 +951,9 @@ const Markets: NextPage = () => {
           'Borrow success',
           `https://solscan.io/tx/${tx[1][0]}?cluster=${network}`
         );
+        setTimeout(() => {
+          processUserPayment == 0 ? setProcessUserPayment(1) : setProcessUserPayment(0);
+        }, 3500)
       } else {
         return toast.error('Borrow failed');
       }
@@ -995,6 +995,10 @@ const Markets: NextPage = () => {
           'Repay success',
           `https://solscan.io/tx/${tx[1][0]}?cluster=${network}`
         );
+
+        setTimeout(() => {
+          processUserPayment == 0 ? setProcessUserPayment(1) : setProcessUserPayment(0);
+        }, 3500)
       } else {
         return toast.error('Repay failed');
       }

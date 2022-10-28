@@ -558,8 +558,6 @@ const Lend: NextPage = () => {
         dataIndex: 'rate',
         sorter: (a: any = 0, b: any = 0) => a.rate - b.rate,
         render: (rate: number, market: any) => {
-          console.log('B:: this is rate', rate);
-          // console.log('B:: this is market', market)
           return <div className={style.rateCell}>{fp(rate)}</div>;
         }
       },
@@ -583,8 +581,6 @@ const Lend: NextPage = () => {
         dataIndex: 'value',
         sorter: (a, b) => a.value - b.value,
         render: (value: number, market: any) => {
-          console.log('B:: this is value', value);
-          // console.log('B:: this is market', market)
           return <div className={style.valueCell}>{fs(value)}</div>;
         }
       },
@@ -608,8 +604,6 @@ const Lend: NextPage = () => {
         dataIndex: 'available',
         sorter: (a, b) => a.available - b.available,
         render: (available: number, market: any) => {
-          console.log('B:: this is available', available);
-          console.log('B:: this is market', market);
           return <div className={style.availableCell}>{fs(available)}</div>;
         }
       },
