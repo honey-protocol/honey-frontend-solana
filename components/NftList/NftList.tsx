@@ -24,7 +24,7 @@ type NftListProps = {
 
 const NftList = (props: NftListProps) => {
   const { data, selectNFT, nftPrice, selectedNFTMint, currentMarketId } = props;
-  const [nftList, setNftList] = useState([]);
+  const [nftList, setNftList] = useState<Array<NFT>>([]);
 
   function handleClick(item: any) {
     selectNFT(item.name, item.image, item.mint);
@@ -44,7 +44,8 @@ const NftList = (props: NftListProps) => {
   return (
     <div className={style.nftsListContainer}>
       {nftList && nftList.map(
-          (item, index) => { {
+          (item, index) =>  {
+            console.log('ABC', item)
               return (
                 <div 
                   className={cs(style.listItem, {[style.selectedListItem]: item.mint === selectedNFTMint })}
@@ -62,7 +63,6 @@ const NftList = (props: NftListProps) => {
               </div>
               )
             }
-          }
         )
       }
     </div>
