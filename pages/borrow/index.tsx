@@ -69,12 +69,14 @@ import HoneyTableNameCell from '../../components/HoneyTable/HoneyTableNameCell/H
 import { marketCollections, OpenPositions } from 'constants/borrowLendMarkets';
 import HoneyTooltip from '../../components/HoneyTooltip/HoneyTooltip';
 import {
-  HONEY_GENESIS_BEE,
-  LIFINITY_FLARES,
-  OG_ATADIANS,
-  PESKY_PENGUINS,
-  BURRITO_BOYZ
-} from '../../constants/borrowLendMarkets';
+  HONEY_GENESIS_BEE_MARKET_NAME,
+  LIFINITY_FLARES_MARKET_NAME,
+  OG_ATADIANS_MARKET_NAME,
+  PESKY_PENGUINS_MARKET_NAME,
+  BURRITO_BOYZ_MARKET_NAME,
+  handleOpenPositions,
+  renderMarketName
+} from '../../helpers/marketHelpers';
 import {
   HONEY_GENESIS_MARKET_ID,
   PESKY_PENGUINS_MARKET_ID,
@@ -85,10 +87,10 @@ import {
 } from '../../constants/loan';
 import { setMarketId } from 'pages/_app';
 import { render } from 'react-dom';
+import { renderMarket, renderMarketImageByName } from 'helpers/marketHelpers';
 
 // TODO: fetch based on config
 const network = 'mainnet-beta';
-
 /**
  * @description formatting functions to format with perfect / format in SOL with icon or just a regular 2 decimal format
  * @params value to be formatted
@@ -97,7 +99,7 @@ const network = 'mainnet-beta';
 const { format: f, formatPercent: fp, formatSol: fs } = formatNumber;
 
 const Markets: NextPage = () => {
-  const [currentMarketName, setCurrentMarketName] = useState(HONEY_GENESIS_BEE);
+  const [currentMarketName, setCurrentMarketName] = useState(HONEY_GENESIS_BEE_MARKET_NAME);
   // Sets market ID which is used for fetching market specific data
   // each market currently is a different call and re-renders the page
   const [currentMarketId, setCurrentMarketId] = useState<string>(
@@ -112,28 +114,12 @@ const Markets: NextPage = () => {
    * @params Honey table record - contains all info about a table (aka market)
    * @returns sets the market ID which re-renders page state and fetches market specific data
    */
-   function handleMarketId(record: any) {
-    if (record.id == HONEY_GENESIS_MARKET_ID) {
-      setCurrentMarketId(HONEY_GENESIS_MARKET_ID)
-      setMarketId(HONEY_GENESIS_MARKET_ID)
-      setCurrentMarketName(HONEY_GENESIS_BEE)
-    } else if (record.id == PESKY_PENGUINS_MARKET_ID) {
-      setCurrentMarketId(PESKY_PENGUINS_MARKET_ID)
-      setMarketId(PESKY_PENGUINS_MARKET_ID)
-      setCurrentMarketName(PESKY_PENGUINS)
-    } else if (record.id == OG_ATADIANS_MARKET_ID) {
-      setCurrentMarketId(OG_ATADIANS_MARKET_ID)
-      setMarketId(OG_ATADIANS_MARKET_ID)
-      setCurrentMarketName(OG_ATADIANS)
-    } else if (record.id == LIFINITY_FLARES_MARKET_ID) {
-      setCurrentMarketId(LIFINITY_FLARES_MARKET_ID)
-      setMarketId(LIFINITY_FLARES_MARKET_ID)
-      setCurrentMarketName(LIFINITY_FLARES)
-    } else if (record.id == BURRITO_BOYZ_MARKET_ID) {
-      setCurrentMarketId(BURRITO_BOYZ_MARKET_ID)
-      setMarketId(BURRITO_BOYZ_MARKET_ID)
-      setCurrentMarketName(BURRITO_BOYZ)
-    }
+   async function handleMarketId(record: any) {
+    const marketData = renderMarket(record.id);
+    console.log('marketData', marketData);
+    setCurrentMarketId(marketData!.id);
+    setMarketId(marketData!.id);
+    setCurrentMarketName(marketData!.name);
   }
 
   /**
@@ -220,6 +206,7 @@ const Markets: NextPage = () => {
 
   // calls upon setting the user nft list per market
   useEffect(() => {
+    console.log('alpha:: nfts', availableNFTs)
     if (availableNFTs) setUserAvailableNFTs(availableNFTs[0]);
   }, [availableNFTs]);
 
@@ -365,23 +352,13 @@ const Markets: NextPage = () => {
     if (collateralNFTPositions) setUserOpenPositions(collateralNFTPositions);
   }, [collateralNFTPositions, currentMarketId]);
 
-  async function handlePositions(id: string) {
-    if (
-      currentMarketId == HONEY_GENESIS_MARKET_ID &&
-      id == HONEY_GENESIS_MARKET_ID
-    ) {
-      return userOpenPositions.filter(pos => pos.name.includes('Honey'));
-    } else if (
-      currentMarketId == PESKY_PENGUINS_MARKET_ID &&
-      id == PESKY_PENGUINS_MARKET_ID
-    ) {
-      return userOpenPositions.filter(pos => pos.name.includes('Pesky'));
-    } else {
-      return [];
-    }
+  async function handlePositions(currentCollectionID: string, activeMarketID: string, currentOpenPositions: any) {
+    return await handleOpenPositions(currentCollectionID, activeMarketID, currentOpenPositions);
   }
 
-  useEffect(() => {}, [collateralNFTPositions]);
+  useEffect(() => {
+    console.log('this is collateral', collateralNFTPositions);
+  }, [collateralNFTPositions]);
   const healthPercent =
     ((nftPrice - userDebt / LIQUIDATION_THRESHOLD) / nftPrice) * 100;
 
@@ -404,9 +381,10 @@ const Markets: NextPage = () => {
               currentMarketId,
               false
             );
-            collection.positions = await handlePositions(collection.id);
+            collection.positions = await handlePositions(collection.id, currentMarketId, userOpenPositions);
             collection.rate =
               (await getInterestRate(collection.utilizationRate)) || 0;
+              console.log('alpha:: collection', collection);
             return collection;
           })
         );
@@ -452,58 +430,6 @@ const Markets: NextPage = () => {
   };
 
   const MyCollectionsToggle = () => null;
-
-  const renderImage = (name: string) => {
-    if (name == HONEY_GENESIS_BEE) {
-      return (
-        <Image
-          src={
-            'https://img-cdn.magiceden.dev/rs:fill:400:400:0:0/plain/https://dl.airtable.com/.attachmentThumbnails/6b6c8954aed777a74de52fd70f8751ab/46b325db'
-          }
-          layout="fill"
-          alt="honey"
-        />
-      );
-    } else if (name == LIFINITY_FLARES) {
-      return (
-        <Image
-          src={
-            'https://img-cdn.magiceden.dev/rs:fill:400:400:0:0/plain/https://dl.airtable.com/.attachmentThumbnails/6972d5c2efb77d49be97b07ccf4fbc69/e9572fb8'
-          }
-          layout="fill"
-          alt="Lifinity"
-        />
-      );
-    } else if (name == OG_ATADIANS) {
-      return (
-        <Image
-          src={
-            'https://img-cdn.magiceden.dev/rs:fill:400:400:0:0/plain/https://creator-hub-prod.s3.us-east-2.amazonaws.com/atadians_pfp_1646721263627.gif'
-          }
-          layout="fill"
-          alt="OG Atadians"
-        />
-      );
-    } else if (name == PESKY_PENGUINS) {
-      return (
-        <Image
-          src={
-            'https://img-cdn.magiceden.dev/rs:fill:400:400:0:0/plain/https://i.imgur.com/37nsjBZ.png'
-          }
-          layout="fill"
-          alt="Pesky Penguins"
-        />
-      );
-    } else if (name == BURRITO_BOYZ) {
-      return (
-        <Image 
-          src={'https://img-cdn.magiceden.dev/rs:fill:400:400:0:0/plain/https://creator-hub-prod.s3.us-east-2.amazonaws.com/burrito_boyz_pfp_1653394754301.png'}
-          layout="fill"
-          alt="Burrito Boyz"
-        />
-      )
-    }
-  };
 
   const onSearch = (searchTerm: string): MarketTableRow[] => {
     if (!searchTerm) {
@@ -560,7 +486,9 @@ const Markets: NextPage = () => {
               <div className={style.nameCell}>
                 <div className={style.logoWrapper}>
                   <div className={style.collectionLogo}>
-                    <HexaBoxContainer>{renderImage(name)}</HexaBoxContainer>
+                    <HexaBoxContainer>
+                      {renderMarketImageByName(name)}
+                    </HexaBoxContainer>
                   </div>
                 </div>
                 <div className={style.collectionName}>{name}</div>
@@ -732,10 +660,7 @@ const Markets: NextPage = () => {
             </div>
             <div className={style.nameCellText}>
               <HoneyTooltip label={name}>
-                {currentMarketId == HONEY_GENESIS_MARKET_ID
-                  ? formatNFTName('Honey Genesis Bee')
-                  : formatNFTName('Pesky Penguin')
-                  }
+                {renderMarketName(currentMarketId)}
               </HoneyTooltip>
               <HealthLvl healthLvl={healthPercent} />
             </div>

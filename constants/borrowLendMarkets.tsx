@@ -59,7 +59,7 @@ export type OpenPositions = {
     {
       id: 'H2H2pJuccdvpET9A75ajB3GgdYdCUL4T3kiwUMA6DJ7q',
       key: 'LIFINITY',
-      name: 'Lifinity Flares',
+      name: 'LIFINITY Flares',
       rate: 0,
       available: 0,
       value: 0,
@@ -99,12 +99,6 @@ export type OpenPositions = {
       utilizationRate: 0,
     },
   ];
-  // market names
-  export const HONEY_GENESIS_BEE = 'Honey Genesis Bee';
-  export const LIFINITY_FLARES = 'Lifinity Flares';
-  export const OG_ATADIANS = 'OG Atadians';
-  export const PESKY_PENGUINS = 'Pesky Penguin';
-  export const BURRITO_BOYZ = 'Burrito Boyz';
 
   // fees
   export const LIQUIDATION_FEE = 0.65;

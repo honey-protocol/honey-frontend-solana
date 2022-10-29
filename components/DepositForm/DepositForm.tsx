@@ -16,6 +16,7 @@ import { questionIcon } from 'styles/icons.css';
 import { hAlign } from 'styles/common.css';
 import useToast from 'hooks/useToast';
 import { HONEY_GENESIS_MARKET_ID } from 'constants/loan';
+import { renderMarketName } from 'helpers/marketHelpers';
 
 const {
   format: f,
@@ -136,7 +137,7 @@ const DepositForm = (props: DepositFormProps) => {
             </HexaBoxContainer>
           </div>
           <div className={styles.nftName}>
-            { currentMarketId == HONEY_GENESIS_MARKET_ID ? 'Honey Genesis Bee' : 'Pesky Penguin'}
+            {renderMarketName(currentMarketId)}
           </div>
         </div>
         <div className={styles.row}>

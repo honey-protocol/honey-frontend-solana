@@ -23,6 +23,7 @@ import { useSolBalance } from 'hooks/useSolBalance';
 import cs from 'classnames';
 import Nft from 'pages/farm/[name]';
 import { BORROW_FEE, LIQUIDATION_FEE } from 'constants/borrowLendMarkets';
+import { renderMarketImageByID } from 'helpers/marketHelpers';
 
 const { formatPercent: fp, formatSol: fs, formatRoundDown: frd } = formatNumber;
 
@@ -129,10 +130,12 @@ const BorrowForm = (props: BorrowProps) => {
   useEffect(() => {
     if (openPositions?.length) {
       const { name, image, mint } = openPositions[0];
+      console.log('xyz open pos', openPositions)
       setSelectedNft({ name, img: image, mint });
       setIsNftSelected(true);
       setHasOpenPosition(true);
     } else if (openPositions.length == 0) {
+      console.log('xyz open pos nope')
       setIsNftSelected(false);
       setHasOpenPosition(false);
     }
@@ -150,20 +153,6 @@ const BorrowForm = (props: BorrowProps) => {
     executeBorrow(valueSOL, toast);
     handleSliderChange(0);
   };
-
-  const renderImage = (marketID: string) => {
-    if (marketID == HONEY_GENESIS_MARKET_ID) {
-      return <Image src='https://img-cdn.magiceden.dev/rs:fill:400:400:0:0/plain/https://dl.airtable.com/.attachmentThumbnails/6b6c8954aed777a74de52fd70f8751ab/46b325db' alt='Honey Genesis Bee NFT' layout="fill" />
-    } else if (marketID == LIFINITY_FLARES_MARKET_ID) {
-      return <Image src='https://img-cdn.magiceden.dev/rs:fill:400:400:0:0/plain/https://dl.airtable.com/.attachmentThumbnails/6972d5c2efb77d49be97b07ccf4fbc69/e9572fb8' alt='Lifinity Flares NFT' layout="fill" />
-    } else if (marketID == OG_ATADIANS_MARKET_ID) {
-      return <Image src='https://img-cdn.magiceden.dev/rs:fill:400:400:0:0/plain/https://creator-hub-prod.s3.us-east-2.amazonaws.com/atadians_pfp_1646721263627.gif' alt='OG Atadians NFT' layout="fill" />
-    } else if (marketID == BURRITO_BOYZ_MARKET_ID) {
-      return <Image src='https://img-cdn.magiceden.dev/rs:fill:400:400:0:0/plain/https://creator-hub-prod.s3.us-east-2.amazonaws.com/burrito_boyz_pfp_1653394754301.png' alt='Burrito Boyz NFT' layout="fill" />
-    } else if (marketID == PESKY_PENGUINS_MARKET_ID) {
-      return <Image src='https://img-cdn.magiceden.dev/rs:fill:400:400:0:0/plain/https://i.imgur.com/37nsjBZ.png' alt='Pesky NFT' layout="fill" />
-    }
-  }
 
   const renderContent = () => {
     if (isNftSelected == false) {
@@ -186,7 +175,7 @@ const BorrowForm = (props: BorrowProps) => {
         <div className={styles.nftInfo}>
           <div className={styles.nftImage}>
             <HexaBoxContainer>
-              {renderImage(currentMarketId)}
+              {renderMarketImageByID(currentMarketId)}
             </HexaBoxContainer>
           </div>
           <div className={styles.nftName}>{selectedNft?.name}</div>

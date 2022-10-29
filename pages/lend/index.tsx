@@ -50,12 +50,12 @@ import HoneyTableRow from 'components/HoneyTable/HoneyTableRow/HoneyTableRow';
 
 const { format: f, formatPercent: fp, formatSol: fs } = formatNumber;
 import {
-  BURRITO_BOYZ,
-  HONEY_GENESIS_BEE,
-  LIFINITY_FLARES,
-  OG_ATADIANS,
-  PESKY_PENGUINS
-} from '../../constants/borrowLendMarkets';
+  BURRITO_BOYZ_MARKET_NAME,
+  HONEY_GENESIS_BEE_MARKET_NAME,
+  LIFINITY_FLARES_MARKET_NAME,
+  OG_ATADIANS_MARKET_NAME,
+  PESKY_PENGUINS_MARKET_NAME
+} from '../../helpers/marketHelpers';
 
 import {
   HONEY_GENESIS_MARKET_ID,
@@ -67,11 +67,12 @@ import {
 import { setMarketId } from 'pages/_app';
 import { marketCollections } from '../../constants/borrowLendMarkets';
 import { generateMockHistoryData } from '../../helpers/chartUtils';
+import { renderMarket, renderMarketImageByName } from 'helpers/marketHelpers';
 // TODO: fetch based on config
 const network = 'mainnet-beta';
 
 const Lend: NextPage = () => {
-  const [currentMarketName, setCurrentMarketName] = useState(HONEY_GENESIS_BEE);
+  const [currentMarketName, setCurrentMarketName] = useState(HONEY_GENESIS_BEE_MARKET_NAME);
   /**
    * @description formatting functions to format with perfect / format in SOL with icon or just a regular 2 decimal format
    * @params value to be formatted
@@ -92,28 +93,12 @@ const Lend: NextPage = () => {
    * @params Honey table record - contains all info about a table (aka market)
    * @returns sets the market ID which re-renders page state and fetches market specific data
    */
-   function handleMarketId(record: any) {
-    if (record.id == HONEY_GENESIS_MARKET_ID) {
-      setCurrentMarketId(HONEY_GENESIS_MARKET_ID)
-      setMarketId(HONEY_GENESIS_MARKET_ID)
-      setCurrentMarketName(HONEY_GENESIS_BEE)
-    } else if (record.id == PESKY_PENGUINS_MARKET_ID) {
-      setCurrentMarketId(PESKY_PENGUINS_MARKET_ID)
-      setMarketId(PESKY_PENGUINS_MARKET_ID)
-      setCurrentMarketName(PESKY_PENGUINS)
-    } else if (record.id == OG_ATADIANS_MARKET_ID) {
-      setCurrentMarketId(OG_ATADIANS_MARKET_ID)
-      setMarketId(OG_ATADIANS_MARKET_ID)
-      setCurrentMarketName(OG_ATADIANS)
-    } else if (record.id == LIFINITY_FLARES_MARKET_ID) {
-      setCurrentMarketId(LIFINITY_FLARES_MARKET_ID)
-      setMarketId(LIFINITY_FLARES_MARKET_ID)
-      setCurrentMarketName(LIFINITY_FLARES)
-    } else if (record.id == BURRITO_BOYZ_MARKET_ID) {
-      setCurrentMarketId(BURRITO_BOYZ_MARKET_ID)
-      setMarketId(BURRITO_BOYZ_MARKET_ID)
-      setCurrentMarketName(BURRITO_BOYZ)
-    }
+   async function handleMarketId(record: any) {
+    const marketData = renderMarket(record.id);
+    console.log('marketData', marketData);
+    setCurrentMarketId(marketData!.id);
+    setMarketId(marketData!.id);
+    setCurrentMarketName(marketData!.name);
   }
   /**
    * @description calls upon markets which
@@ -483,58 +468,6 @@ const Lend: NextPage = () => {
 
   const MyCollectionsToggle = () => null;
 
-  const renderImage = (name: string) => {
-    if (name == HONEY_GENESIS_BEE) {
-      return (
-        <Image
-          src={
-            'https://img-cdn.magiceden.dev/rs:fill:400:400:0:0/plain/https://dl.airtable.com/.attachmentThumbnails/6b6c8954aed777a74de52fd70f8751ab/46b325db'
-          }
-          layout="fill"
-          alt="NFT collection image"
-        />
-      );
-    } else if (name == LIFINITY_FLARES) {
-      return (
-        <Image
-          src={
-            'https://img-cdn.magiceden.dev/rs:fill:400:400:0:0/plain/https://dl.airtable.com/.attachmentThumbnails/6972d5c2efb77d49be97b07ccf4fbc69/e9572fb8'
-          }
-          layout="fill"
-          alt="NFT collection image"
-        />
-      );
-    } else if (name == OG_ATADIANS) {
-      return (
-        <Image
-          src={
-            'https://img-cdn.magiceden.dev/rs:fill:400:400:0:0/plain/https://creator-hub-prod.s3.us-east-2.amazonaws.com/atadians_pfp_1646721263627.gif'
-          }
-          layout="fill"
-          alt="NFT collection image"
-        />
-      );
-    } else if (name == PESKY_PENGUINS) {
-      return (
-        <Image
-          src={
-            'https://img-cdn.magiceden.dev/rs:fill:400:400:0:0/plain/https://i.imgur.com/37nsjBZ.png'
-          }
-          layout="fill"
-          alt="NFT collection image"
-        />
-      );
-    } else if (name == BURRITO_BOYZ) {
-      return (
-        <Image 
-          src={'https://img-cdn.magiceden.dev/rs:fill:400:400:0:0/plain/https://creator-hub-prod.s3.us-east-2.amazonaws.com/burrito_boyz_pfp_1653394754301.png'}
-          layout="fill"
-          alt="Burrito Boyz"
-        />
-      )
-    }
-  };
-
   const SearchForm = () => {
     return (
       <SearchInput
@@ -559,7 +492,7 @@ const Lend: NextPage = () => {
             <div className={style.nameCell}>
               <div className={style.logoWrapper}>
                 <div className={style.collectionLogo}>
-                  <HexaBoxContainer>{renderImage(name)}</HexaBoxContainer>
+                  <HexaBoxContainer>{renderMarketImageByName(name)}</HexaBoxContainer>
                 </div>
               </div>
               <div className={style.collectionName}>{name}</div>
@@ -668,7 +601,7 @@ const Lend: NextPage = () => {
                     <div className={style.logoWrapper}>
                       <div className={style.collectionLogo}>
                         <HexaBoxContainer>
-                          {renderImage(name)}
+                          {renderMarketImageByName(name)}
                         </HexaBoxContainer>
                       </div>
                     </div>
@@ -713,7 +646,7 @@ const Lend: NextPage = () => {
         userWalletBalance={userWalletBalance}
         fetchedSolPrice={fetchedSolPrice}
         onCancel={hideMobileSidebar}
-        marketImage={renderImage(currentMarketName)}
+        marketImage={renderMarketImageByName(currentMarketName)}
         currentMarketId={currentMarketId}
         />
     </HoneySider>

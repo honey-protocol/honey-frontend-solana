@@ -58,16 +58,17 @@ import HoneyTableRow from 'components/HoneyTable/HoneyTableRow/HoneyTableRow';
 import HoneyTableNameCell from 'components/HoneyTable/HoneyTableNameCell/HoneyTableNameCell';
 import LiquidateExpandTableMobile from 'components/LiquidateExpandTable/LiquidateExpandTableMobile';
 import { 
-  HONEY_GENESIS_BEE,
-  LIFINITY_FLARES,
-  OG_ATADIANS,
-  PESKY_PENGUINS,
-  BURRITO_BOYZ
-} from 'constants/borrowLendMarkets';
+  HONEY_GENESIS_BEE_MARKET_NAME,
+  LIFINITY_FLARES_MARKET_NAME,
+  OG_ATADIANS_MARKET_NAME,
+  PESKY_PENGUINS_MARKET_NAME,
+  BURRITO_BOYZ_MARKET_NAME
+} from 'helpers/marketHelpers';
 import { marketCollections } from 'constants/borrowLendMarkets';
 import { populateMarketData } from 'helpers/loanHelpers/userCollection';
 import { setMarketId } from 'pages/_app';
 import { MarketTableRow } from 'types/markets';
+import { renderMarket, renderMarketImageByName } from 'helpers/marketHelpers';
 
 const { formatPercent: fp, formatSol: fs, formatRoundDown: fd } = formatNumber;
 const Liquidate: NextPage = () => {
@@ -183,6 +184,9 @@ const Liquidate: NextPage = () => {
       if (obligation.bidder == stringyfiedWalletPK) {
         setHasPosition(true);
         setCurrentUserBid(Number(obligation.bidLimit / LAMPORTS_PER_SOL));
+      } else {
+        setHasPosition(false);
+        setCurrentUserBid(0);
       }
     });
 
@@ -206,7 +210,6 @@ const Liquidate: NextPage = () => {
         honeyMarket,
         sdkConfig.saberHqConnection
       );
-      console.log('positions and market id - nft price;', Number(nftPrice));
       setNftPrice(Number(nftPrice));
     }
   }
@@ -331,10 +334,11 @@ const Liquidate: NextPage = () => {
   }
 
   useEffect(() => {
-    console.log('xyz Status.positions', status.positions)
-    console.log('xyz Status.bids', status.bids)
     if (status.positions) setPositionsObject(status.positions);
-    if (status.bids) setBiddingArray(status.bids);
+    if (status.bids) {
+      setBiddingArray(status.bids) 
+      handleBiddingState(status.bids)
+    };
   }, [status.positions, status.bids]);
 
   useEffect(() => {
@@ -350,7 +354,7 @@ const Liquidate: NextPage = () => {
   const [expandedRowKeys, setExpandedRowKeys] = useState<readonly Key[]>([]);
   const [isMyBidsFilterEnabled, setIsMyBidsFilterEnabled] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
-  const [currentMarketName, setCurrentMarketName] = useState(HONEY_GENESIS_BEE);
+  const [currentMarketName, setCurrentMarketName] = useState(HONEY_GENESIS_BEE_MARKET_NAME);
 
   // PUT YOUR DATA SOURCE HERE
   // MOCK DATA FOR NOW
@@ -419,28 +423,12 @@ const Liquidate: NextPage = () => {
    * @params Honey table record - contains all info about a table (aka market)
    * @returns sets the market ID which re-renders page state and fetches market specific data
    */
-   function handleMarketId(record: any) {
-    if (record.id == HONEY_GENESIS_MARKET_ID) {
-      setCurrentMarketId(HONEY_GENESIS_MARKET_ID)
-      setMarketId(HONEY_GENESIS_MARKET_ID)
-      setCurrentMarketName(HONEY_GENESIS_BEE)
-    } else if (record.id == PESKY_PENGUINS_MARKET_ID) {
-      setCurrentMarketId(PESKY_PENGUINS_MARKET_ID)
-      setMarketId(PESKY_PENGUINS_MARKET_ID)
-      setCurrentMarketName(PESKY_PENGUINS)
-    } else if (record.id == OG_ATADIANS_MARKET_ID) {
-      setCurrentMarketId(OG_ATADIANS_MARKET_ID)
-      setMarketId(OG_ATADIANS_MARKET_ID)
-      setCurrentMarketName(OG_ATADIANS)
-    } else if (record.id == LIFINITY_FLARES_MARKET_ID) {
-      setCurrentMarketId(LIFINITY_FLARES_MARKET_ID)
-      setMarketId(LIFINITY_FLARES_MARKET_ID)
-      setCurrentMarketName(LIFINITY_FLARES)
-    } else if (record.id == BURRITO_BOYZ_MARKET_ID) {
-      setCurrentMarketId(BURRITO_BOYZ_MARKET_ID)
-      setMarketId(BURRITO_BOYZ_MARKET_ID)
-      setCurrentMarketName(BURRITO_BOYZ)
-    }
+   async function handleMarketId(record: any) {
+    const marketData = renderMarket(record.id);
+    console.log('marketData', marketData);
+    setCurrentMarketId(marketData!.id);
+    setMarketId(marketData!.id);
+    setCurrentMarketName(marketData!.name);
   }
 
   const debouncedSearch = useCallback(
@@ -475,58 +463,6 @@ const Liquidate: NextPage = () => {
 
   const columnsWidth: Array<number | string> = [200, 100, 150, 150, 100, 70];
 
-  const renderImage = (name: string) => {
-    if (name == HONEY_GENESIS_BEE) {
-      return (
-        <Image
-          src={
-            'https://img-cdn.magiceden.dev/rs:fill:400:400:0:0/plain/https://dl.airtable.com/.attachmentThumbnails/6b6c8954aed777a74de52fd70f8751ab/46b325db'
-          }
-          layout="fill"
-          alt="NFT collection image"
-        />
-      );
-    } else if (name == LIFINITY_FLARES) {
-      return (
-        <Image
-          src={
-            'https://img-cdn.magiceden.dev/rs:fill:400:400:0:0/plain/https://dl.airtable.com/.attachmentThumbnails/6972d5c2efb77d49be97b07ccf4fbc69/e9572fb8'
-          }
-          layout="fill"
-          alt="NFT collection image"
-        />
-      );
-    } else if (name == OG_ATADIANS) {
-      return (
-        <Image
-          src={
-            'https://img-cdn.magiceden.dev/rs:fill:400:400:0:0/plain/https://creator-hub-prod.s3.us-east-2.amazonaws.com/atadians_pfp_1646721263627.gif'
-          }
-          layout="fill"
-          alt="NFT collection image"
-        />
-      );
-    } else if (name == PESKY_PENGUINS) {
-      return (
-        <Image
-          src={
-            'https://img-cdn.magiceden.dev/rs:fill:400:400:0:0/plain/https://i.imgur.com/37nsjBZ.png'
-          }
-          layout="fill"
-          alt="NFT collection image"
-        />
-      );
-    } else if (name == BURRITO_BOYZ) {
-      return (
-        <Image 
-          src={'https://img-cdn.magiceden.dev/rs:fill:400:400:0:0/plain/https://creator-hub-prod.s3.us-east-2.amazonaws.com/burrito_boyz_pfp_1653394754301.png'}
-          layout="fill"
-          alt="Burrito Boyz"
-        />
-      )
-    }
-  };
-
   const columns: ColumnType<MarketTableRow>[] = useMemo(
     () => [
       {
@@ -540,7 +476,7 @@ const Liquidate: NextPage = () => {
               <div className={style.logoWrapper}>
                 <div className={style.collectionLogo}>
                   <HexaBoxContainer>
-                    {renderImage(name)}
+                    {renderMarketImageByName(name)}
                   </HexaBoxContainer>
                 </div>
               </div>

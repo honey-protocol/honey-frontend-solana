@@ -1,11 +1,18 @@
 import { HONEY_GENESIS_MARKET_ID, MAX_LTV, PESKY_PENGUINS_MARKET_ID } from 'constants/loan';
 import { RoundHalfDown } from 'helpers/utils';
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import NftCard from '../NftCard/NftCard';
 import { NftCardProps } from '../NftCard/types';
 import * as style from './NftList.css';
 import cs from 'classnames';
-import { HONEY_GENESIS_BEE, LIFINITY_FLARES, OG_ATADIANS, PESKY_PENGUINS } from '../../constants/borrowLendMarkets';
+import { renderNftList } from 'helpers/marketHelpers';
+import { 
+  HONEY_GENESIS_BEE_MARKET_NAME, 
+  OG_ATADIANS_MARKET_NAME, 
+  PESKY_PENGUINS_MARKET_NAME, 
+  BURRITO_BOYZ_MARKET_NAME, 
+  LIFINITY_FLARES_MARKET_NAME 
+} from '../../helpers/marketHelpers';
 
 type NftListProps = {
   data: NftCardProps[];
@@ -17,32 +24,27 @@ type NftListProps = {
 
 const NftList = (props: NftListProps) => {
   const { data, selectNFT, nftPrice, selectedNFTMint, currentMarketId } = props;
+  const [nftList, setNftList] = useState([]);
 
   function handleClick(item: any) {
     selectNFT(item.name, item.image, item.mint);
   }
 
-  const renderNftList = () => {
-    if (currentMarketId == HONEY_GENESIS_MARKET_ID) {
-      return data.filter((nft) => nft.name.includes('Honey'))
-    } else if (currentMarketId == PESKY_PENGUINS_MARKET_ID) {
-      return data.filter((nft) => nft.name.includes('Pesky'))
-    } else {
-      return []
-    }
+  async function filterNfts(currentMarketId: string, data: any) {
+    const outcome = await renderNftList(currentMarketId, data);
+    console.log('xyzz: outcome', outcome);
+    setNftList(outcome);
   }
+
+  useEffect(() => {
+    if (currentMarketId && data) filterNfts(currentMarketId, data)
+  }, [currentMarketId, data]);
+
 
   return (
     <div className={style.nftsListContainer}>
-      {data &&
-        renderNftList().map(
-          (item, index) => {
-            if (
-              item.name.includes(PESKY_PENGUINS) || 
-              item.name.includes(HONEY_GENESIS_BEE) || 
-              item.name.includes(OG_ATADIANS) || 
-              item.name.includes(LIFINITY_FLARES)
-            ) {
+      {nftList && nftList.map(
+          (item, index) => { {
               return (
                 <div 
                   className={cs(style.listItem, {[style.selectedListItem]: item.mint === selectedNFTMint })}

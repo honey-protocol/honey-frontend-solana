@@ -20,6 +20,7 @@ import { formatNumber } from '../../helpers/format';
 import { generateMockHistoryData } from 'helpers/chartUtils';
 import { MarketTableRow } from 'types/markets';
 import { LIQUIDATION_THRESHOLD } from '../../constants/loan';
+import { renderMarket, renderMarketName } from 'helpers/marketHelpers';
 
 /**
  * @description formatting functions to format with perfect / format in SOL with icon or just a regular 2 decimal format
@@ -255,7 +256,7 @@ const setObligations = async (obligations: any, currentMarketId: string, nftPric
   if (!obligations) return [];
   return obligations.map((obligation: any) => {
     return {
-      name: currentMarketId == HONEY_GENESIS_MARKET_ID ? 'Honey Genesis Bee' : 'Pesky Penguin',
+      name: renderMarketName(currentMarketId),
       riskLvl: (obligation.debt / nftPrice) * 100,
       healthLvl: ((nftPrice - obligation.debt / LIQUIDATION_THRESHOLD) / nftPrice) * 100,
       debt: obligation.debt,
