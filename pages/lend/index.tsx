@@ -378,7 +378,7 @@ const Lend: NextPage = () => {
     if (!searchTerm) {
       return [...tableData];
     }
-    const r = new RegExp(searchTerm, 'gmi');
+    const r = new RegExp(searchTerm, 'mi');
     return [...tableData].filter(row => {
       return r.test(row.name);
     });

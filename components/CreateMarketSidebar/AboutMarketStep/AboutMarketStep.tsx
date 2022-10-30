@@ -4,7 +4,7 @@ import mockCollectionImage from '../../../public/images/mock-collection-image.sv
 import Image from 'next/image';
 import HoneyTooltip from '../../HoneyTooltip/HoneyTooltip';
 import { HoneyInputWithLabel } from '../../HoneyInputWithLabel/HoneyInputWithLabel';
-import TabTitle from '../../HoneyTabs/TabTitle/TabTitle';
+import SectionTitle from '../../SectionTitle/SectionTitle';
 
 export const AboutMarketStep = () => {
   const [collectionUrl, setCollectionUrl] = useState<string>('');
@@ -38,10 +38,10 @@ export const AboutMarketStep = () => {
     <div className={styles.aboutMarketStep}>
       <div className={styles.aboutMarketStepContainer}>
         <div className={styles.stepTitle}>
-          <TabTitle
+          <SectionTitle
             title="About Market"
             tooltip={
-              <HoneyTooltip tooltipIcon placement="top" label={'Mock'} />
+              <HoneyTooltip tooltipIcon placement="top" title={'Mock'} />
             }
           />
         </div>

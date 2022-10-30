@@ -18,7 +18,7 @@ import { useExecutiveCouncil } from 'hooks/tribeca/useExecutiveCouncil';
 import useToast from 'hooks/useToast';
 import HoneyWarning from 'components/HoneyWarning/HoneyWarning';
 import cs from 'classnames';
-import TabTitle from '../../HoneyTabs/TabTitle/TabTitle';
+import SectionTitle from '../../SectionTitle/SectionTitle';
 
 const { format: f, formatPercent: fp, formatUsd: fu } = formatNumber;
 
@@ -131,7 +131,7 @@ const CreateProposalTab = (props: { onCancel: Function }) => {
       }
     >
       <div className={styles.createProposalTab}>
-        <TabTitle title='Create new proposal' />
+        <SectionTitle title="Create new proposal" />
 
         <div className={styles.titleInput}>
           <HoneyTextArea
@@ -164,7 +164,7 @@ const CreateProposalTab = (props: { onCancel: Function }) => {
           />
         </div>
 
-        <TabTitle title='Proposed Action' />
+        <SectionTitle title="Proposed Action" />
 
         <div className={cs(styles.row, styles.mb12)}>
           <CustomDropdown

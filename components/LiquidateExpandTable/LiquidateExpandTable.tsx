@@ -39,7 +39,7 @@ export const LiquidateExpandTable: FC<{ data: LiquidateTablePosition[] }> = ({
               </HexaBoxContainer>
             </div>
             <div className={sharedStyles.nameCellText}>
-              <HoneyTooltip label={name}>
+              <HoneyTooltip title={name}>
                 <div className={sharedStyles.collectionName}>
                   {formatNFTName(name)}
                 </div>

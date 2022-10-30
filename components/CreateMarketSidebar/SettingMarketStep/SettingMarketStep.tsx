@@ -8,7 +8,7 @@ import { formatNumber } from '../../../helpers/format';
 import { isNil } from '../../../helpers/utils';
 import { vars } from '../../../styles/theme.css';
 import c from 'classnames';
-import TabTitle from '../../HoneyTabs/TabTitle/TabTitle';
+import SectionTitle from '../../SectionTitle/SectionTitle';
 
 const MIN_LUQUIDATION_VALUE = 15;
 
@@ -101,10 +101,10 @@ export const SettingMarketStep = () => {
     <div className={styles.settingMarketStep}>
       <div className={styles.liquidationFee}>
         <div className={styles.liquidationFeeTitle}>
-          <TabTitle
+          <SectionTitle
             title="Liquidation Fee"
             tooltip={
-              <HoneyTooltip tooltipIcon placement="top" label={'Mock'} />
+              <HoneyTooltip tooltipIcon placement="top" title={'Mock'} />
             }
           />
         </div>
@@ -138,10 +138,10 @@ export const SettingMarketStep = () => {
       </div>
       <div className={styles.adminFee}>
         <div className={styles.adminFeeTitle}>
-          <TabTitle
+          <SectionTitle
             title="Admin Fee"
             tooltip={
-              <HoneyTooltip tooltipIcon placement="top" label={'Mock'} />
+              <HoneyTooltip tooltipIcon placement="top" title={'Mock'} />
             }
           />
         </div>
@@ -174,10 +174,10 @@ export const SettingMarketStep = () => {
       </div>
       <div className={styles.maximumLtv}>
         <div className={styles.maximumLtvTitle}>
-          <TabTitle
+          <SectionTitle
             title="Maximum LTV"
             tooltip={
-              <HoneyTooltip tooltipIcon placement="top" label={'Mock'} />
+              <HoneyTooltip tooltipIcon placement="top" title={'Mock'} />
             }
           />
         </div>
@@ -190,10 +190,10 @@ export const SettingMarketStep = () => {
       </div>
       <div className={styles.liquidationThreshold}>
         <div className={styles.liquidationThresholdTitle}>
-          <TabTitle
+          <SectionTitle
             title=" Liquidation threshold"
             tooltip={
-              <HoneyTooltip tooltipIcon placement="top" label={'Mock'} />
+              <HoneyTooltip tooltipIcon placement="top" title={'Mock'} />
             }
           />
         </div>
