@@ -18,6 +18,10 @@ export const links = [
     href: '/borrow'
   },
   {
+    title: 'SWAP',
+    href: '/swap'
+  },
+  {
     title: 'LEND',
     href: '/lend'
   },

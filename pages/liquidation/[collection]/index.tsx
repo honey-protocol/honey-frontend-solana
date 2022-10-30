@@ -1,5 +1,5 @@
 import type { NextPage } from 'next';
-import Image from 'next/image'
+import Image from 'next/image';
 import Link from 'next/link';
 import React, { useState, useEffect } from 'react';
 import {
@@ -17,7 +17,12 @@ import * as styles from '../../../styles/liquidation.css';
 import { useConnectedWallet } from '@saberhq/use-solana';
 import LiquidationHeader from 'components/LiquidationHeader/LiquidationHeader';
 import LiquidationCard from 'components/LiquidationCard/LiquidationCard';
-import { useAnchor, LiquidatorClient, useAllPositions, NftPosition } from '@honey-finance/sdk';
+import {
+  useAnchor,
+  LiquidatorClient,
+  useAllPositions,
+  NftPosition
+} from '@honey-finance/sdk';
 import { ConfigureSDK, toastResponse } from 'helpers/loanHelpers';
 import { HONEY_PROGRAM_ID, HONEY_MARKET_ID } from '../../../constants/loan';
 import { LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js';
@@ -33,23 +38,29 @@ const LiquidationPool = () => {
   // create wallet instance for PK
   const wallet = useConnectedWallet();
   /**
-    * @description sets program | market | connection | wallet
-    * @params none
-    * @returns connection with sdk
-  */
+   * @description sets program | market | connection | wallet
+   * @params none
+   * @returns connection with sdk
+   */
   const sdkConfig = ConfigureSDK();
   /**
-    * @description fetches open nft positions
-    * @params connection | wallet | honeyprogramID | honeymarketID
-    * @returns loading | nft positions | error
-  */
-  const { ...status } = useAllPositions(sdkConfig.saberHqConnection, sdkConfig.sdkWallet!, sdkConfig.honeyId, sdkConfig.marketId);
-  /**
-    * @description the obligations that are being rendered
-    * @params none
-    * @returns obligations
+   * @description fetches open nft positions
+   * @params connection | wallet | honeyprogramID | honeymarketID
+   * @returns loading | nft positions | error
    */
-  const [fetchedPositions, setFetchedPositions] = useState<Array<NftPosition>>();
+  const { ...status } = useAllPositions(
+    sdkConfig.saberHqConnection,
+    sdkConfig.sdkWallet!,
+    sdkConfig.honeyId,
+    sdkConfig.marketId
+  );
+  /**
+   * @description the obligations that are being rendered
+   * @params none
+   * @returns obligations
+   */
+  const [fetchedPositions, setFetchedPositions] =
+    useState<Array<NftPosition>>();
   const [hasPosition, setHasPosition] = useState(false);
   const [highestBiddingAddress, setHighestBiddingAddress] = useState('');
   const [highestBiddingValue, setHighestBiddingValue] = useState(0);
@@ -66,7 +77,7 @@ const LiquidationPool = () => {
    * @description sets the state if user has open bid
    * @params array of bids
    * @returns state change
-  */
+   */
   async function handleBiddingState(biddingArray: any, positions: any) {
     biddingArray.map((obligation: any) => {
       if (obligation.bidder == stringyfiedWalletPK) {
@@ -75,8 +86,12 @@ const LiquidationPool = () => {
       }
     });
 
-    let sorted = await positions.sort((first: any,second: any) => first.is_healthy - second.is_healthy).reverse();
-    let highestBid = biddingArray.sort((first: any, second: any) => first.bidLimit - second.bidLimit).reverse();
+    let sorted = await positions
+      .sort((first: any, second: any) => first.is_healthy - second.is_healthy)
+      .reverse();
+    let highestBid = biddingArray
+      .sort((first: any, second: any) => first.bidLimit - second.bidLimit)
+      .reverse();
 
     if (highestBid[0]) {
       setHighestBiddingAddress(highestBid[0].bidder);
@@ -92,7 +107,7 @@ const LiquidationPool = () => {
    * @description checks if there are positions, if so set state
    * @params none
    * @returns state positions && bids
-  */
+   */
   useEffect(() => {
     if (status.positions) {
       setStatusState(true);
@@ -103,19 +118,20 @@ const LiquidationPool = () => {
   }, [status.positions]);
 
   useEffect(() => {
-    if (statusState == true) {      
-      status.positions?.map((position) => {
+    if (statusState == true) {
+      status.positions?.map(position => {
         if (position.is_healthy == 'MEDIUM') {
-          position.is_healthy = '0'
+          position.is_healthy = '0';
         } else if (position.is_healthy == 'LOW') {
-          position.is_healthy = '1'
+          position.is_healthy = '1';
         } else if (position.is_healthy == 'RISKY') {
-          position.is_healthy = '2'
+          position.is_healthy = '2';
         }
       });
 
       // handleBiddingState(status.bids, status.positions);
-      if (status.bids && status.positions) handleBiddingState(status.bids, status.positions);
+      if (status.bids && status.positions)
+        handleBiddingState(status.bids, status.positions);
     }
 
     return;
@@ -128,10 +144,14 @@ const LiquidationPool = () => {
    * @description calls upon liquidator client for placebid | revokebid | increasebid
    * @params tpye | userbid | nftmint
    * @returms toastresponse of executed call
-  */
+   */
   async function fetchLiquidatorClient(type: string, userBid?: number) {
     try {
-      const liquidatorClient = await LiquidatorClient.connect(program.provider, HONEY_PROGRAM_ID, false);
+      const liquidatorClient = await LiquidatorClient.connect(
+        program.provider,
+        HONEY_PROGRAM_ID,
+        false
+      );
       if (wallet) {
         if (type == 'revoke_bid') {
           if (!currentUserBid) return;
@@ -144,64 +164,79 @@ const LiquidationPool = () => {
           });
 
           if (transactionOutcome[0] == 'SUCCESS') {
-            return toastResponse('SUCCESS', 'Bid revoked, fetching chain data', 'SUCCESS');
+            return toastResponse(
+              'SUCCESS',
+              'Bid revoked, fetching chain data',
+              'SUCCESS'
+            );
           } else {
             return toastResponse('ERROR', 'Revoke bid failed', 'ERROR');
           }
         } else if (type == 'place_bid') {
-            // if no user bid terminate action
-            if (!userBid) return;
+          // if no user bid terminate action
+          if (!userBid) return;
 
-            let transactionOutcome: any = await liquidatorClient.placeBid({
-              bid_limit: userBid,
-              market: new PublicKey(HONEY_MARKET_ID),
-              bidder: wallet.publicKey,
-              bid_mint: NATIVE_MINT
-            });
+          let transactionOutcome: any = await liquidatorClient.placeBid({
+            bid_limit: userBid,
+            market: new PublicKey(HONEY_MARKET_ID),
+            bidder: wallet.publicKey,
+            bid_mint: NATIVE_MINT
+          });
 
-            // refreshDB();
-            if (transactionOutcome[0] == 'SUCCESS') {
-              return toastResponse('SUCCESS', 'Bid placed, fetching chain data', 'SUCCESS');
-            } else {
-              return toastResponse('ERROR', 'Bid failed', 'ERROR');
-            }
-
-        } else if (type == 'increase_bid') {
-            // if no user bid terminate action
-            if (!userBid) return;
-
-            let transactionOutcome: any = await liquidatorClient.increaseBid({
-              bid_increase: userBid,
-              market: new PublicKey(HONEY_MARKET_ID),
-              bidder: wallet.publicKey,
-              bid_mint: NATIVE_MINT,
-            });
-
-            if (transactionOutcome[0] == 'SUCCESS') {
-              return toastResponse('SUCCESS', 'Bid increased, fetching chain data', 'SUCCESS');
-            } else {
-              return toastResponse('ERROR', 'Bid increase failed', 'ERROR');
-            }
+          // refreshDB();
+          if (transactionOutcome[0] == 'SUCCESS') {
+            return toastResponse(
+              'SUCCESS',
+              'Bid placed, fetching chain data',
+              'SUCCESS'
+            );
+          } else {
+            return toastResponse('ERROR', 'Bid failed', 'ERROR');
           }
+        } else if (type == 'increase_bid') {
+          // if no user bid terminate action
+          if (!userBid) return;
+
+          let transactionOutcome: any = await liquidatorClient.increaseBid({
+            bid_increase: userBid,
+            market: new PublicKey(HONEY_MARKET_ID),
+            bidder: wallet.publicKey,
+            bid_mint: NATIVE_MINT
+          });
+
+          if (transactionOutcome[0] == 'SUCCESS') {
+            return toastResponse(
+              'SUCCESS',
+              'Bid increased, fetching chain data',
+              'SUCCESS'
+            );
+          } else {
+            return toastResponse('ERROR', 'Bid increase failed', 'ERROR');
+          }
+        }
       } else {
-          return;
-        }
-      } catch (error) {
-          console.log('The error:', error)
-          return toastResponse('ERROR', 'Bid failed', 'ERROR');
-        }
+        return;
+      }
+    } catch (error) {
+      console.log('The error:', error);
+      return toastResponse('ERROR', 'Bid failed', 'ERROR');
+    }
   }
   /**
    * @description changes state of bidding modal | inits fetchLiq. func
    * @params type, being type of bid | userbid being the amount, is optional |
    * @returns inits fetchLiq. func
-  */
+   */
   async function handleExecuteBid(type: string, userBid?: number) {
     if (!userBid && type != 'revoke_bid') return console.log('no user input');
 
     if (type == 'increase_bid' || type == 'place_bid') {
-      if (userBid && userBid < (highestBiddingValue * 1.1)) {
-        toastResponse('ERROR', `Min bid is ${((highestBiddingValue * 1.1) + .01).toFixed(2)}`, 'ERROR');
+      if (userBid && userBid < highestBiddingValue * 1.1) {
+        toastResponse(
+          'ERROR',
+          `Min bid is ${(highestBiddingValue * 1.1 + 0.01).toFixed(2)}`,
+          'ERROR'
+        );
       } else {
         handleRefetch();
         await fetchLiquidatorClient(type, userBid!);
@@ -210,8 +245,7 @@ const LiquidationPool = () => {
     }
   }
 
-  useEffect(() => {
-  }, [currentUserBid]);
+  useEffect(() => {}, [currentUserBid]);
 
   async function handleRefetch() {
     if (status) {
@@ -235,16 +269,16 @@ const LiquidationPool = () => {
       if (mounted && wallet != null) {
         handleRefetch();
       }
-    }, 60000)
+    }, 60000);
 
     return function cleanup() {
       mounted = false;
-    }
+    };
   }, [refetchState]);
 
   function handleUserInput(val: any) {
     if (val.target.value.includes(',')) {
-      let formatNumber = val.target.value.replace(',', '.') 
+      let formatNumber = val.target.value.replace(',', '.');
       setUserInput(formatNumber);
     } else {
       setUserInput(val.target.value);
@@ -254,28 +288,26 @@ const LiquidationPool = () => {
   return (
     <Layout>
       <Stack>
-          <Box className={styles.collectionLiqWrapper}>
-            <Link href="/liquidation" passHref>
-              <Button
-                size="small"
-                variant="transparent"
-                rel="noreferrer"
-                prefix={<IconChevronLeft />}
-              >
-                Liquidations
-              </Button>
-            </Link>
-            <Box>
-              {
-                loadingState && 
-
-                <Box className={styles.headWrapperSub}>
-                  <Text color="textPrimary">Chain Data Being Fetched</Text>
-                  <Spinner />
-                </Box>
-              }
-            </Box>
+        <Box className={styles.collectionLiqWrapper}>
+          <Link href="/liquidation" passHref>
+            <Button
+              size="small"
+              variant="transparent"
+              rel="noreferrer"
+              prefix={<IconChevronLeft />}
+            >
+              Liquidations
+            </Button>
+          </Link>
+          <Box>
+            {loadingState && (
+              <Box className={styles.headWrapperSub}>
+                <Text color="textPrimary">Chain Data Being Fetched</Text>
+                <Spinner />
+              </Box>
+            )}
           </Box>
+        </Box>
         {/* COLLECTION LIQUIDATION DETAILS */}
         <Box
           backgroundColor="background"
@@ -298,12 +330,12 @@ const LiquidationPool = () => {
               align="center"
             >
               <Box paddingX={{ xs: '10', md: 'none' }}>
-              <Avatar
-                size={{ xs: 'full', sm: '32' }}
-                label="Honey Genesis Bee"
-                shape="square"
-                src="/public/images/imagePlaceholder.png"
-              />
+                <Avatar
+                  size={{ xs: 'full', sm: '32' }}
+                  label="Honey Genesis Bee"
+                  shape="square"
+                  src="/public/images/imagePlaceholder.png"
+                />
               </Box>
               <Stack space="5">
                 <Stack direction="horizontal" align="center">
@@ -346,43 +378,52 @@ const LiquidationPool = () => {
                   </Stack>
                 </Stack>
               </Stack>
-          </Stack>
+            </Stack>
 
             <Stack>
               {hasPosition ? (
                 <Stack align="center">
                   <Stack direction="horizontal" space="2">
                     <Box className={styles.currentBidWrapper}>
-                      {
-                        currentUserBid &&
-                        <Text>Your current bid: {currentUserBid} <SolanaIcon /></Text>
-                      }
+                      {currentUserBid && (
+                        <Text>
+                          Your current bid: {currentUserBid} <SolanaIcon />
+                        </Text>
+                      )}
                     </Box>
                     <Text>
-                      Min bid: {((highestBiddingValue * 1.1) + .01).toFixed(2)}
+                      Min bid: {(highestBiddingValue * 1.1 + 0.01).toFixed(2)}
                     </Text>
                     <SolanaIcon />
                   </Stack>
                   <Stack direction="horizontal" align="center" space="2">
-                    <Input 
-                      onChange={(val) => handleUserInput(val)} 
-                      width="40" 
-                      label="new bid" 
-                      hideLabel 
+                    <Input
+                      onChange={val => handleUserInput(val)}
+                      width="40"
+                      label="new bid"
+                      hideLabel
                     />
-                    <Button onClick={() => handleExecuteBid('increase_bid', userInput)}>
+                    <Button
+                      onClick={() =>
+                        handleExecuteBid('increase_bid', userInput)
+                      }
+                    >
                       Increase Bid
                     </Button>
                   </Stack>
-                  <Button onClick={() => handleExecuteBid('revoke_bid')} width="full" variant="secondary">
+                  <Button
+                    onClick={() => handleExecuteBid('revoke_bid')}
+                    width="full"
+                    variant="secondary"
+                  >
                     Cancel current bid
-            </Button>
+                  </Button>
                 </Stack>
               ) : (
                 <Stack>
                   <Stack direction="horizontal" space="2">
                     <Text>
-                      Min bid: {((highestBiddingValue * 1.1) + .01).toFixed(2)}
+                      Min bid: {(highestBiddingValue * 1.1 + 0.01).toFixed(2)}
                     </Text>
                     <SolanaIcon />
                   </Stack>
@@ -391,7 +432,7 @@ const LiquidationPool = () => {
                       label="bid amount"
                       hideLabel
                       width={{ xs: 'full', sm: '44', md: '56' }}
-                      onChange={(val) => handleUserInput(val)}
+                      onChange={val => handleUserInput(val)}
                     />
                     <Button
                       variant="primary"
@@ -407,21 +448,21 @@ const LiquidationPool = () => {
           </Stack>
         </Box>
         <Box backgroundColor="background" padding="5" borderRadius="2xLarge">
-        <LiquidationHeader headerData={headerData} />
-        <Box>
-          {fetchedPositions &&
-            fetchedPositions.map((loan, i) => {
-              return (
-                <LiquidationCard
-                  index={i}
-                  key={i}
-                  loan={loan}
-                  liquidationType={true}
-                  handleExecuteBid={() => handleExecuteBid}
-              />
-              );
-            })}
-        </Box>
+          <LiquidationHeader headerData={headerData} />
+          <Box>
+            {fetchedPositions &&
+              fetchedPositions.map((loan, i) => {
+                return (
+                  <LiquidationCard
+                    index={i}
+                    key={i}
+                    loan={loan}
+                    liquidationType={true}
+                    handleExecuteBid={() => handleExecuteBid}
+                  />
+                );
+              })}
+          </Box>
         </Box>
       </Stack>
     </Layout>

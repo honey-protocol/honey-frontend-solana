@@ -5,7 +5,7 @@ import HexaBoxContainer from '../../HexaBoxContainer/HexaBoxContainer';
 import HoneyButton from '../../HoneyButton/HoneyButton';
 import HoneyToggle from '../../HoneyToggle/HoneyToggle';
 import Link from 'antd/lib/typography/Link';
-import TabTitle from '../../HoneyTabs/TabTitle/TabTitle';
+import SectionTitle from '../../SectionTitle/SectionTitle';
 
 interface HowItWorksTabProps {
   setActiveTab: Function;
@@ -55,7 +55,7 @@ const HowItWorksTab = (props: HowItWorksTabProps) => {
     >
       <div className={styles.howItWorksTab}>
         <div className={styles.contentWrapper}>
-          <TabTitle title='How to create new proposal' />
+          <SectionTitle title="How to create new proposal" />
           <div className={styles.listItem}>
             <div className={styles.listIcon}>
               <HexaBoxContainer>
@@ -63,8 +63,8 @@ const HowItWorksTab = (props: HowItWorksTabProps) => {
               </HexaBoxContainer>
             </div>
             <span className={styles.listText}>
-              Please make sure to start a discussion on the forum
-              to see if there is sufficient support for your proposal.
+              Please make sure to start a discussion on the forum to see if
+              there is sufficient support for your proposal.
             </span>
           </div>
 
@@ -75,9 +75,13 @@ const HowItWorksTab = (props: HowItWorksTabProps) => {
               </HexaBoxContainer>
             </div>
             <span className={styles.listText}>
-             Draft proposals can only be activated by a DAO
-              member with at least <Link href="#" className={styles.listLink}>10,000 $veHONEY</Link>. All members
-              of the DAO may vote to execute or reject the proposal.
+              Draft proposals can only be activated by a DAO member with at
+              least{' '}
+              <Link href="#" className={styles.listLink}>
+                10,000 $veHONEY
+              </Link>
+              . All members of the DAO may vote to execute or reject the
+              proposal.
             </span>
           </div>
 
@@ -88,9 +92,12 @@ const HowItWorksTab = (props: HowItWorksTabProps) => {
               </HexaBoxContainer>
             </div>
             <span className={styles.listText}>
-            For a proposal to be executed there should be a
-              minimum of <Link href="#" className={styles.listLink}>10,000,000 $veHONEY</Link> votes casted
-              resulting in at least 2/3 of the votes for one option.
+              For a proposal to be executed there should be a minimum of{' '}
+              <Link href="#" className={styles.listLink}>
+                10,000,000 $veHONEY
+              </Link>{' '}
+              votes casted resulting in at least 2/3 of the votes for one
+              option.
             </span>
           </div>
         </div>

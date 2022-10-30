@@ -68,7 +68,6 @@ import HealthLvl from '../../components/HealthLvl/HealthLvl';
 import HoneyTooltip from '../../components/HoneyTooltip/HoneyTooltip';
 import CreateMarketSidebar from '../../components/CreateMarketSidebar/CreateMarketSidebar';
 import { LIQUIDATION_THRESHOLD } from '../../constants/loan';
-import { SizeMe } from 'react-sizeme';
 // import { network } from 'pages/_app';
 
 const network = 'mainnet-beta'; // change to dynamic value
@@ -439,7 +438,7 @@ const Markets: NextPage = () => {
     if (!searchTerm) {
       return [...tableData];
     }
-    const r = new RegExp(searchTerm, 'gmi');
+    const r = new RegExp(searchTerm, 'mi');
     return [...tableData].filter(row => {
       return r.test(row.name);
     });
@@ -737,7 +736,7 @@ const Markets: NextPage = () => {
             </HexaBoxContainer>
           </div>
           <div className={style.nameCellText}>
-            <HoneyTooltip label={name}>
+            <HoneyTooltip title={name}>
               <div className={style.collectionName}>{formatNFTName(name)}</div>
             </HoneyTooltip>
             <HealthLvl healthLvl={healthPercent} />
@@ -1069,7 +1068,7 @@ const Markets: NextPage = () => {
             Get instant liquidity using your NFTs as collateral{' '}
           </Typography.Text>
         </div>
-
+        {/* TODO: mock modal run*/}
         <div className={style.hideTablet}>
           <HoneyTable
             hasRowsShadow={true}
@@ -1124,7 +1123,6 @@ const Markets: NextPage = () => {
             }}
           />
         </div>
-
         <div className={style.showTablet}>
           <div
             className={c(

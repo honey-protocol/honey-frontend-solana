@@ -15,7 +15,7 @@ import BN from 'bn.js';
 import { startCase } from 'lodash';
 import Link from 'next/link';
 import { useGokiTransactionData } from 'helpers/parser';
-import TabTitle from '../../../../HoneyTabs/TabTitle/TabTitle';
+import SectionTitle from '../../../../SectionTitle/SectionTitle';
 
 const ZERO = new BN(0);
 
@@ -100,7 +100,7 @@ const ProposalHistory: React.FC<Props> = ({
   console.log({ events });
   return (
     <div>
-      <TabTitle title='History' />
+      <SectionTitle title="History" />
       {events.map((event, i) => (
         <div className={styles.row} key={i}>
           <InfoBlock

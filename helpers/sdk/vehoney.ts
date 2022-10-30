@@ -162,8 +162,6 @@ export class VeHoneyClient extends ClientBase<VeHoney> {
     return { txSig, escrow };
   }
 
-
-
   async getEscrowPDA(locker: PublicKey) {
     return anchor.web3.PublicKey.findProgramAddress(
       [
@@ -200,7 +198,7 @@ export class VeHoneyClient extends ClientBase<VeHoney> {
       this.program.programId
     );
   }
-  
+
   async getAllEscrowAccounts() {
     return this.program.account.escrow.all();
   }

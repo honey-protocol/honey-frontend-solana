@@ -24,7 +24,7 @@ export const InfoBlock: FC<InfoBlockProps> = ({
 }) => {
   const Container = (a: { children: ReactNode }) =>
     toolTipLabel ? (
-      <HoneyTooltip label={toolTipLabel}>{a.children}</HoneyTooltip>
+      <HoneyTooltip title={toolTipLabel}>{a.children}</HoneyTooltip>
     ) : (
       <Fragment>{a.children}</Fragment>
     );

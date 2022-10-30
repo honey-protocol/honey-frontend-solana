@@ -28,6 +28,7 @@ import {
   SDKProvider
 } from 'helpers/sdk';
 import { QueryClient, QueryClientProvider } from 'react-query';
+import { JupiterProvider } from '@jup-ag/react-hook';
 export const network = (process.env.NETWORK as Network) || 'mainnet-beta';
 
 const networkConfiguration = () => {
@@ -70,6 +71,22 @@ const OnChainProvider: FC<{ children: ReactNode }> = ({ children }) => {
   );
 };
 
+const HoneyJupiterProvider: FC<{ children: ReactNode }> = ({ children }) => {
+  const wallet = useConnectedWallet();
+  const connection = useConnection();
+
+  return (
+    <JupiterProvider
+      connection={connection}
+      cluster="mainnet-beta"
+      userPublicKey={wallet?.publicKey || undefined}
+      onlyDirectRoutes={false}
+    >
+      {children}
+    </JupiterProvider>
+  );
+};
+
 function MyApp({ Component, pageProps }: AppProps) {
   const [showPopup, setShowPopup] = useState(true);
   const [shouldRender, setShouldRender] = useState(false);
@@ -106,7 +123,6 @@ function MyApp({ Component, pageProps }: AppProps) {
         strategy="lazyOnload"
         src={`https://www.googletagmanager.com/gtag/js?id=${process.env.NEXT_PUBLIC_GA}`}
       />
-
       <Script id="gtm-script" strategy="lazyOnload">
         {`
           window.dataLayer = window.dataLayer || [];
@@ -147,10 +163,15 @@ function MyApp({ Component, pageProps }: AppProps) {
                     <SecPopup setShowPopup={setShowPopup} />
                   ) : (
                     <>
-                      <OnChainProvider>
-                        <Component {...pageProps} />
-                        <ToastContainer theme="dark" position="bottom-right" />
-                      </OnChainProvider>
+                      <HoneyJupiterProvider>
+                        <OnChainProvider>
+                          <Component {...pageProps} />
+                          <ToastContainer
+                            theme="dark"
+                            position="bottom-right"
+                          />
+                        </OnChainProvider>
+                      </HoneyJupiterProvider>
                     </>
                   )}
                 </GovernorProvider>
