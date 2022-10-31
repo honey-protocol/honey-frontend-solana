@@ -13,6 +13,7 @@ import {
 
 import { PoolInfo, StakeProgram } from '../../programs';
 import { VeHoneySDK } from '../../sdk';
+import { calculateClaimableAmountFromStakePool } from '../../utils';
 import { findWhitelistEntryAddress, LockerWrapper } from '../locker';
 import {
   findPoolUserAddress,
@@ -217,30 +218,16 @@ export class StakeWrapper {
   }
 
   async calculateClaimableAmount(
-    now: number = Date.now(),
+    currentTimestamp: number = Math.floor(Date.now() / 1_000),
     authority: PublicKey = this.walletKey
   ): Promise<BN> {
-    const nowBN = new BN(Math.floor(now / 1000));
     const user = await this.fetchPoolUser(authority);
     const params = (await this.data()).params;
-    const claimStartsAt = user.depositedAt.gt(params.startsAt)
-      ? user.depositedAt
-      : params.startsAt;
-    const duration = nowBN.sub(claimStartsAt);
-    const maxClaimPeriod = params.claimPeriodUnit.muln(params.maxClaimCount);
-    let claimableAmount = new BN(0);
-    if (duration.gt(maxClaimPeriod)) {
-      claimableAmount = user.depositAmount.sub(user.claimedAmount);
-    } else {
-      const count = parseInt(duration.div(params.claimPeriodUnit).toString());
-      if (count > user.count) {
-        const delta = count - user.count;
-        claimableAmount = user.depositAmount
-          .muln(delta)
-          .divn(params.maxClaimCount);
-      }
-    }
 
-    return claimableAmount;
+    return calculateClaimableAmountFromStakePool(
+      user,
+      params,
+      currentTimestamp
+    );
   }
 }

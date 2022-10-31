@@ -19,6 +19,9 @@ const HARD_CODED_WALLET = Keypair.fromSecretKey(
 );
 
 export interface GovernanceContextValueProps {
+  locker: PublicKey;
+  stakePool: PublicKey;
+  governor: PublicKey;
   stakeWrapper?: StakeWrapper;
   lockerWrapper?: LockerWrapper;
   governorWrapper?: GovernorWrapper;
@@ -28,7 +31,15 @@ const STAKE_POOL_ADDR = new PublicKey(config.NEXT_PUBLIC_STAKE_POOL_ADDRESS);
 const LOCKER_ADDR = new PublicKey(config.NEXT_PUBLIC_LOCKER_ADDR);
 const GOVERNOR_ADDR = new PublicKey(config.NEXT_PUBLIC_GOVERNOR_ADDRESS);
 
-export const GovernanceContext = createContext<GovernanceContextValueProps>({});
+const defaultGovernanceContextValue = {
+  locker: LOCKER_ADDR,
+  stakePool: STAKE_POOL_ADDR,
+  governor: GOVERNOR_ADDR
+};
+
+export const GovernanceContext = createContext<GovernanceContextValueProps>(
+  defaultGovernanceContextValue
+);
 
 export const GovernanceProvider: React.FC<React.ReactNode> = ({ children }) => {
   const connection = useConnection();
@@ -75,7 +86,12 @@ export const GovernanceProvider: React.FC<React.ReactNode> = ({ children }) => {
 
   return (
     <GovernanceContext.Provider
-      value={{ stakeWrapper, lockerWrapper, governorWrapper }}
+      value={{
+        ...defaultGovernanceContextValue,
+        stakeWrapper,
+        lockerWrapper,
+        governorWrapper
+      }}
     >
       {children}
     </GovernanceContext.Provider>
