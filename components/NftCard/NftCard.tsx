@@ -51,7 +51,7 @@ const NftCard = (props: NftCardProps) => {
             {name}
           </div>
           <div className={styles.nftLabel}>
-            <a href="https://magiceden.io">{text}</a> {hint && <span className={styles.hint}>{hint}</span>}
+            {text} {hint && <span className={styles.hint}>{hint}</span>}
           </div>
         </div>
         {
