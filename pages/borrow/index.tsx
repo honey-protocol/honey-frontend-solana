@@ -75,7 +75,8 @@ import {
   PESKY_PENGUINS_MARKET_NAME,
   BURRITO_BOYZ_MARKET_NAME,
   handleOpenPositions,
-  renderMarketName
+  renderMarketName,
+  renderMarketImageByID
 } from '../../helpers/marketHelpers';
 import {
   HONEY_GENESIS_MARKET_ID,
@@ -720,7 +721,7 @@ const Markets: NextPage = () => {
           <div className={style.expandedRowIcon} />
           <div className={style.collectionLogo}>
             <HexaBoxContainer>
-              <Image src={honeyGenesisBee} alt="Honey Genesis Bee" />
+              {renderMarketImageByID(currentMarketId)}
             </HexaBoxContainer>
           </div>
           <div className={style.nameCellText}>
