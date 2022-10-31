@@ -82,7 +82,7 @@ export const GovernanceProvider: React.FC<React.ReactNode> = ({ children }) => {
   );
 };
 
-export const useGovernContext = () => {
+export const useGovernanceContext = () => {
   const context = useContext(GovernanceContext);
 
   if (!context) {
