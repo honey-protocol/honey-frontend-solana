@@ -6,7 +6,7 @@ import * as styles from './VeHoneyModal.css';
 import { useStake } from 'hooks/useStake';
 import { PHONEY_DECIMALS } from 'helpers/sdk/constant';
 import { convertToBN } from 'helpers/utils';
-import { useGovernance } from 'contexts/GovernanceProvider';
+import { useGovernance } from 'contexts/_GovernanceProvider';
 import config from '../../config';
 
 const VeHoneyModal = () => {

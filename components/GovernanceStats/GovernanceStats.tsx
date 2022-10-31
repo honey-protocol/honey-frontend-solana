@@ -13,7 +13,7 @@ import HoneyTooltip from 'components/HoneyTooltip/HoneyTooltip';
 import { questionIcon, questionIconYellow } from 'styles/icons.css';
 import { Space } from 'antd';
 import { TokenAmount } from '@saberhq/token-utils';
-import { useGovernance } from 'contexts/GovernanceProvider';
+import { useGovernance } from 'contexts/_GovernanceProvider';
 import { useTokenMint } from '@saberhq/sail';
 import { useGovernor } from 'hooks/tribeca/useGovernor';
 import { HoneyLockedStatus } from '../HoneyLockedStatus/HoneyLockedStatus';

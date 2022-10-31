@@ -13,7 +13,7 @@ import { useStake } from 'hooks/useStake';
 import { convertToBN } from 'helpers/utils';
 import { HONEY_DECIMALS } from 'helpers/sdk';
 import * as anchor from '@project-serum/anchor';
-import { useGovernance } from 'contexts/GovernanceProvider';
+import { useGovernance } from 'contexts/_GovernanceProvider';
 import useToast from 'hooks/useToast';
 import { hAlign } from 'styles/common.css';
 import { questionIcon } from 'styles/icons.css';

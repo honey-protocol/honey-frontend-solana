@@ -2,38 +2,37 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import type { NextPage } from 'next';
 import { ColumnType } from 'antd/lib/table';
 import c from 'classnames';
+import { ProposalState } from '@tribecahq/tribeca-sdk';
 
-import HoneyContent from 'components/HoneyContent/HoneyContent';
-import LayoutRedesign from 'components/LayoutRedesign/LayoutRedesign';
-import HoneySider from 'components/HoneySider/HoneySider';
-import GovernanceSidebar from 'components/GovernanceSidebar/GovernanceSidebar';
-import HoneyTable from 'components/HoneyTable/HoneyTable';
-import HoneyButton from 'components/HoneyButton/HoneyButton';
-import HoneyToggle from 'components/HoneyToggle/HoneyToggle';
-import ProgressStatus from 'components/ProgressStatus/ProgressStatus';
-import HexaBoxContainer from 'components/HexaBoxContainer/HexaBoxContainer';
-import NewProposalSidebar from 'components/NewProposalSidebar/NewProposalSidebar';
-import GetVeHoneySidebar from 'components/GetVeHoneySidebar/GetVeHoneySidebar';
-import { GovernanceStats } from 'components/GovernanceStats/GovernanceStats';
-import HoneyTableNameCell from 'components/HoneyTable/HoneyTableNameCell/HoneyTableNameCell';
-import HoneyTableRow from 'components/HoneyTable/HoneyTableRow/HoneyTableRow';
-import HoneyTooltip from 'components/HoneyTooltip/HoneyTooltip';
+import HoneyContent from '../../components/HoneyContent/HoneyContent';
+import LayoutRedesign from '../../components/LayoutRedesign/LayoutRedesign';
+import HoneySider from '../../components/HoneySider/HoneySider';
+import GovernanceSidebar from '../../components/GovernanceSidebar/GovernanceSidebar';
+import HoneyTable from '../../components/HoneyTable/HoneyTable';
+import HoneyButton from '../../components/HoneyButton/HoneyButton';
+import HoneyToggle from '../../components/HoneyToggle/HoneyToggle';
+import ProgressStatus from '../../components/ProgressStatus/ProgressStatus';
+import HexaBoxContainer from '../../components/HexaBoxContainer/HexaBoxContainer';
+import NewProposalSidebar from '../../components/NewProposalSidebar/NewProposalSidebar';
+import GetVeHoneySidebar from '../../components/GetVeHoneySidebar/GetVeHoneySidebar';
+import { GovernanceStats } from '../../components/GovernanceStats/GovernanceStats';
+import HoneyTableNameCell from '../../components/HoneyTable/HoneyTableNameCell/HoneyTableNameCell';
+import HoneyTableRow from '../../components/HoneyTable/HoneyTableRow/HoneyTableRow';
+import HoneyTooltip from '../../components/HoneyTooltip/HoneyTooltip';
 
 import {
   GovernanceSidebarForm,
   GovernanceTableRow,
   ProposalStatus
-} from 'types/governance';
+} from '../../types/governance';
 
-import * as style from 'styles/governance.css';
-import { hideTablet, showTablet, table } from 'styles/markets.css';
-import { vars } from 'styles/theme.css';
+import * as style from '../../styles/governance.css';
+import { hideTablet, showTablet, table } from '../../styles/markets.css';
+import { vars } from '../../styles/theme.css';
 
-import { formatNumber } from 'helpers/format';
-import { ProposalState } from 'helpers/dao';
-import { getVoteCountFmt } from 'helpers/utils';
-import { useGovernor } from 'hooks/tribeca/useGovernor';
-import { useProposals } from 'hooks/tribeca/useProposals';
+import { formatNumber } from '../../helpers/format';
+import { getVoteCountFmt } from '../../helpers/utils';
+import { GovernanceProvider } from '../../contexts/GovernanceProvider';
 
 const { format: f, formatShortName: fsn } = formatNumber;
 const NUM_PLACEHOLDERS = 0;
@@ -46,8 +45,7 @@ const Governance: NextPage = () => {
 
   const [sidebarMode, setSidebarMode] =
     useState<GovernanceSidebarForm>('get_vehoney');
-  const { veToken } = useGovernor();
-  const proposals = useProposals();
+
   const [isMobileSidebarVisible, setShowMobileSidebar] = useState(false);
 
   const showMobileSidebar = () => {
@@ -356,85 +354,87 @@ const Governance: NextPage = () => {
   };
 
   return (
-    <LayoutRedesign>
-      <HoneyContent>
-        <GovernanceStats onGetVeHoneyClick={handleGetVeHoneyClick} />
-      </HoneyContent>
-      <HoneyContent
-        sidebar={
-          <HoneySider isMobileSidebarVisible={isMobileSidebarVisible}>
-            {renderSidebar()}
-          </HoneySider>
-        }
-      >
-        <div className={hideTablet}>
-          <HoneyTable
-            tableLayout={'fixed'}
-            pagination={false}
-            hasRowsShadow={true}
-            rowKey={'id'}
-            columns={columns}
-            dataSource={tableData}
-            onRow={(record, rowIndex) => {
-              return {
-                onClick: event => handleRowClick(event, record)
-              };
-            }}
-            rowClassName={getRowClassName}
-            selectedRowsKeys={[selectedProposalId]}
-          />
-        </div>
-
-        <div className={showTablet}>
-          <div className={style.mobileTableTitle}>
-            <div>{MainTitleTable()}</div>
-
-            {DraftToggle()}
+    <GovernanceProvider>
+      <LayoutRedesign>
+        <HoneyContent>
+          <GovernanceStats onGetVeHoneyClick={handleGetVeHoneyClick} />
+        </HoneyContent>
+        <HoneyContent
+          sidebar={
+            <HoneySider isMobileSidebarVisible={isMobileSidebarVisible}>
+              {renderSidebar()}
+            </HoneySider>
+          }
+        >
+          <div className={hideTablet}>
+            <HoneyTable
+              tableLayout={'fixed'}
+              pagination={false}
+              hasRowsShadow={true}
+              rowKey={'id'}
+              columns={columns}
+              dataSource={tableData}
+              onRow={(record, rowIndex) => {
+                return {
+                  onClick: event => handleRowClick(event, record)
+                };
+              }}
+              rowClassName={getRowClassName}
+              selectedRowsKeys={[selectedProposalId]}
+            />
           </div>
 
-          <div className={style.mobileTableHeader}>
-            <div className={style.tableCell}>Voted For</div>
-            <div className={style.tableCell}>Against</div>
-            <div className={style.tableCell}>Status</div>
+          <div className={showTablet}>
+            <div className={style.mobileTableTitle}>
+              <div>{MainTitleTable()}</div>
+
+              {DraftToggle()}
+            </div>
+
+            <div className={style.mobileTableHeader}>
+              <div className={style.tableCell}>Voted For</div>
+              <div className={style.tableCell}>Against</div>
+              <div className={style.tableCell}>Status</div>
+            </div>
+
+            <HoneyTable
+              hasRowsShadow={true}
+              tableLayout="fixed"
+              columns={columnsMobile}
+              dataSource={tableData}
+              pagination={false}
+              showHeader={false}
+              className={c(table, style.governanceTableMobile)}
+              onRow={(record, rowIndex) => {
+                return {
+                  onClick: event => handleRowClick(event, record)
+                };
+              }}
+            />
           </div>
 
-          <HoneyTable
-            hasRowsShadow={true}
-            tableLayout="fixed"
-            columns={columnsMobile}
-            dataSource={tableData}
-            pagination={false}
-            showHeader={false}
-            className={c(table, style.governanceTableMobile)}
-            onRow={(record, rowIndex) => {
-              return {
-                onClick: event => handleRowClick(event, record)
-              };
-            }}
-          />
-        </div>
-
-        <div className={style.create}>
-          <div className={style.nameCell}>
-            <div className={style.logoWrapper}>
-              <div className={style.collectionLogo}>
-                <HexaBoxContainer borderColor="gray">
-                  <div className={style.lampIconStyle} />
-                </HexaBoxContainer>
+          <div className={style.create}>
+            <div className={style.nameCell}>
+              <div className={style.logoWrapper}>
+                <div className={style.collectionLogo}>
+                  <HexaBoxContainer borderColor="gray">
+                    <div className={style.lampIconStyle} />
+                  </HexaBoxContainer>
+                </div>
+              </div>
+              <div className={style.collectionNameCreate}>
+                Do you want to suggest a new one?
               </div>
             </div>
-            <div className={style.collectionNameCreate}>
-              Do you want to suggest a new one?
+            <div className={style.buttonsCell}>
+              <HoneyButton variant="text" onClick={handleCreateProposal}>
+                Create <div className={style.arrowIcon} />
+              </HoneyButton>
             </div>
           </div>
-          <div className={style.buttonsCell}>
-            <HoneyButton variant="text" onClick={handleCreateProposal}>
-              Create <div className={style.arrowIcon} />
-            </HoneyButton>
-          </div>
-        </div>
-      </HoneyContent>
-    </LayoutRedesign>
+        </HoneyContent>
+      </LayoutRedesign>
+    </GovernanceProvider>
   );
 };
 
