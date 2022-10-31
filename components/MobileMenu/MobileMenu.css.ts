@@ -5,12 +5,17 @@ export const mobileMenu = style({
   padding: '30px 35px',
   gap: '22px',
   display: 'flex',
-  flexDirection: 'column'
+  flexDirection: 'column',
+  width: '100%'
 });
 
-export const visible = style({});
+export const visible = style({
+  overflow: 'auto'
+});
 
-export const hidden = style({});
+export const hidden = style({
+  overflow: 'hidden'
+});
 
 export const animateIn = keyframes({
   '0%': {
