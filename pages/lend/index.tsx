@@ -374,6 +374,10 @@ const Lend: NextPage = () => {
     useState(false);
 
   useEffect(() => {
+    if (!walletPK) {
+      setTableData(marketCollections);
+    }
+
     if (sdkConfig.saberHqConnection && sdkConfig.sdkWallet) {
       function getData() {
         return Promise.all(

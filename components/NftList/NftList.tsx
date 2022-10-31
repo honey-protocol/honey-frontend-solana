@@ -5,7 +5,7 @@ import NftCard from '../NftCard/NftCard';
 import { NftCardProps } from '../NftCard/types';
 import * as style from './NftList.css';
 import cs from 'classnames';
-import { renderNftList } from 'helpers/marketHelpers';
+import { renderMarketName, renderNftList } from 'helpers/marketHelpers';
 import { 
   HONEY_GENESIS_BEE_MARKET_NAME, 
   OG_ATADIANS_MARKET_NAME, 
@@ -13,6 +13,9 @@ import {
   BURRITO_BOYZ_MARKET_NAME, 
   LIFINITY_FLARES_MARKET_NAME 
 } from '../../helpers/marketHelpers';
+import HoneyLogoIcon from '/public/images/HoneyLogoIcon.svg';
+import { string } from 'yup';
+import { LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js';
 
 type NftListProps = {
   data: NftCardProps[];
@@ -40,18 +43,30 @@ const NftList = (props: NftListProps) => {
     if (currentMarketId && data) filterNfts(currentMarketId, data)
   }, [currentMarketId, data]);
 
+  const defaultNFTObject = [{
+    image: HoneyLogoIcon,
+    name: 'No NFTs available',
+    text: 'Get your NFT here',
+    hasBorder: true,
+    mint: 'test mint',
+    img: 'test img',
+    id: 'test id'
+  }]
 
   return (
     <div className={style.nftsListContainer}>
-      {nftList && nftList.map(
+      {
+        nftList.length > 0
+        ?
+        nftList.map(
           (item, index) =>  {
-            console.log('ABC', item)
               return (
                 <div 
                   className={cs(style.listItem, {[style.selectedListItem]: item.mint === selectedNFTMint })}
                   key={item.name}
                 >
                 <NftCard
+                  currentMarketId={currentMarketId}
                   onClick={() => handleClick(item)}
                   {...item}
                   hasBorder={
@@ -64,6 +79,26 @@ const NftList = (props: NftListProps) => {
               )
             }
         )
+      :
+      defaultNFTObject.map(
+        (item, index) =>  {
+            return (
+              <div 
+                className={cs(style.listItem, {[style.selectedListItem]: item.mint === selectedNFTMint })}
+                key={item.name}
+              >
+              <NftCard
+                currentMarketId={currentMarketId}
+                onClick={() => handleClick(item)}
+                {...item}
+                hasBorder={
+                  index !== data.length - 1 || item.mint === selectedNFTMint
+                }
+              />
+            </div>
+            )
+          }
+      )
       }
     </div>
   );

@@ -359,6 +359,10 @@ const Liquidate: NextPage = () => {
   // PUT YOUR DATA SOURCE HERE
   // MOCK DATA FOR NOW
   useEffect(() => {
+    if (!wallet) {
+      setTableData(marketCollections);
+    }
+    
     if (sdkConfig.saberHqConnection && sdkConfig.sdkWallet && marketReserveInfo) {
       function getData() {
         return Promise.all(

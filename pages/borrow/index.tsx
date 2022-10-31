@@ -366,6 +366,10 @@ const Markets: NextPage = () => {
   // PUT YOUR DATA SOURCE HERE
   // MOCK DATA FOR NOW
   useEffect(() => {
+    if (!wallet) {
+      setTableData(marketCollections);
+    }
+
     if (sdkConfig.saberHqConnection && sdkConfig.sdkWallet) {
       function getData() {
         return Promise.all(
