@@ -1,6 +1,6 @@
 import { AnchorTypes } from '@saberhq/anchor-contrib';
 
-import { VeHoney as Locker } from '../../types/ve_honey';
+import { VeHoney as Locker } from '../idls/ve_honey';
 
 export type LockerTypes = AnchorTypes<
   Locker,

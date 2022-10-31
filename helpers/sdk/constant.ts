@@ -7,8 +7,8 @@ import {
 
 import config from '../../config';
 import { LockerProgram, StakeProgram } from './programs';
-import { IDL as StakeIDL } from '../types/stake';
-import { IDL as LockerIDL } from '../types/ve_honey';
+import { IDL as StakeIDL } from './idls/stake';
+import { IDL as LockerIDL } from './idls/ve_honey';
 
 export interface VeHoneyPrograms {
   Stake: StakeProgram;
@@ -28,9 +28,9 @@ export const VEHONEY_IDLS = {
   Govern: GovernIDL
 };
 
-export const HONEY_WADS = 1000000;
 export const HONEY_DECIMALS = 6;
 export const PHONEY_DECIMALS = 6;
+export const HONEY_WADS = 10 ** HONEY_DECIMALS;
 export const PROPOSAL_TITLE_MAX_LEN = 140;
 
 export const HONEY_MINT = new PublicKey(config.NEXT_PUBLIC_HONEY_MINT);

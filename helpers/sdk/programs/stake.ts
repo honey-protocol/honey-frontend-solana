@@ -1,6 +1,6 @@
 import { AnchorTypes } from '@saberhq/anchor-contrib';
 
-import { Stake } from '../../types/stake';
+import { Stake } from '../idls/stake';
 
 export type StakeTypes = AnchorTypes<
   Stake,
