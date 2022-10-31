@@ -1,6 +1,13 @@
 import { BN } from '@project-serum/anchor';
 
-import { PoolUser, PoolParams } from '.';
+import {
+  PoolUser,
+  PoolParams,
+  EscrowData,
+  LockerParams,
+  HONEY_WADS,
+  ReceiptData
+} from '.';
 
 export const calculateClaimableAmountFromStakePool = (
   user: PoolUser,
@@ -27,4 +34,45 @@ export const calculateClaimableAmountFromStakePool = (
   }
 
   return claimableAmount;
+};
+
+export const calculateVotingPower = (
+  escrow: EscrowData,
+  params: LockerParams
+): BN => {
+  const duration = escrow.escrowEndsAt.sub(escrow.escrowStartedAt);
+  return escrow.amount
+    .mul(duration)
+    .muln(params.multiplier)
+    .div(params.maxStakeDuration)
+    .divn(HONEY_WADS);
+};
+
+export const calculateNFTReceiptClaimableAmount = (
+  receipt: ReceiptData,
+  params: LockerParams,
+  currentTimestamp: number = Math.floor(Date.now() / 1_000)
+): BN => {
+  const nowBN = new BN(currentTimestamp);
+  const due = nowBN.lt(receipt.vestEndsAt) ? nowBN : receipt.vestEndsAt;
+  let duration = due.sub(receipt.vestStartedAt).toNumber();
+
+  if (duration < 0) {
+    return new BN(0);
+  }
+
+  let count = Math.floor(duration / params.nftStakeDurationUnit.toNumber());
+  let amountPerUnit = params.nftStakeBaseReward;
+  let claimableAmount = new BN(0);
+
+  for (let i = 0; i < count; i++) {
+    if (i >= params.nftRewardHalvingStartsAt) {
+      amountPerUnit = amountPerUnit.divn(2);
+    }
+    claimableAmount.add(amountPerUnit);
+  }
+
+  return claimableAmount.gt(receipt.claimedAmount)
+    ? claimableAmount.sub(receipt.claimedAmount)
+    : new BN(0);
 };

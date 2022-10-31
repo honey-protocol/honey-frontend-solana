@@ -52,8 +52,9 @@ export class StakeWrapper {
   }
 
   async fetchPoolUser(authority: PublicKey = this.walletKey) {
-    const [user] = await findPoolUserAddress(this.pool, authority);
-    return this.program.account.poolUser.fetch(user);
+    const [pubkey] = await findPoolUserAddress(this.pool, authority);
+    const data = await this.program.account.poolUser.fetch(pubkey);
+    return { pubkey, data };
   }
 
   async getOrCreatePoolUser(
@@ -225,7 +226,7 @@ export class StakeWrapper {
     const params = (await this.data()).params;
 
     return calculateClaimableAmountFromStakePool(
-      user,
+      user.data,
       params,
       currentTimestamp
     );

@@ -1,13 +1,37 @@
 import * as React from 'react';
-import { createContext, useMemo, useState, useEffect, useContext } from 'react';
+import {
+  createContext,
+  useMemo,
+  useState,
+  useEffect,
+  useContext,
+  Dispatch,
+  SetStateAction
+} from 'react';
 import { PublicKey, Keypair } from '@solana/web3.js';
 import { Wallet } from '@project-serum/anchor';
 import { useConnectedWallet, useConnection } from '@saberhq/use-solana';
 import { SolanaProvider } from '@saberhq/solana-contrib';
-import { GovernorWrapper, TribecaSDK } from '@tribecahq/tribeca-sdk';
+import {
+  GovernorWrapper,
+  TribecaSDK,
+  ProposalData,
+  ProposalMetaData,
+  ProposalState,
+  getProposalState
+} from '@tribecahq/tribeca-sdk';
 
 import config from '../config';
-import { VeHoneySDK, StakeWrapper, LockerWrapper } from '../helpers/sdk';
+import {
+  VeHoneySDK,
+  StakeWrapper,
+  LockerWrapper,
+  PoolUser,
+  PoolInfo,
+  LockerData,
+  EscrowData,
+  ReceiptData
+} from '../helpers/sdk';
 
 const HARD_CODED_WALLET = Keypair.fromSecretKey(
   Uint8Array.from([
@@ -18,13 +42,36 @@ const HARD_CODED_WALLET = Keypair.fromSecretKey(
   ])
 );
 
+export interface Proposal {
+  pubkey: PublicKey;
+  data: ProposalData;
+  status: ProposalState;
+  meta?: ProposalMetaData;
+}
+
+export interface StakePoolUser {
+  pubkey: PublicKey;
+  data: PoolUser;
+}
+
+export interface Escrow {
+  pubkey: PublicKey;
+  data: EscrowData;
+  receipts: Map<number, ReceiptData>;
+}
+
 export interface GovernanceContextValueProps {
-  locker: PublicKey;
-  stakePool: PublicKey;
-  governor: PublicKey;
   stakeWrapper?: StakeWrapper;
   lockerWrapper?: LockerWrapper;
   governorWrapper?: GovernorWrapper;
+  isLoading: boolean;
+  proposals?: Proposal[];
+  stakePoolInfo?: PoolInfo;
+  stakePoolUser?: StakePoolUser;
+  lockerInfo?: LockerData;
+  escrow?: Escrow;
+  isProcessing: boolean;
+  setIsProcessing?: Dispatch<SetStateAction<boolean>>;
 }
 
 const STAKE_POOL_ADDR = new PublicKey(config.NEXT_PUBLIC_STAKE_POOL_ADDRESS);
@@ -32,9 +79,8 @@ const LOCKER_ADDR = new PublicKey(config.NEXT_PUBLIC_LOCKER_ADDR);
 const GOVERNOR_ADDR = new PublicKey(config.NEXT_PUBLIC_GOVERNOR_ADDRESS);
 
 const defaultGovernanceContextValue = {
-  locker: LOCKER_ADDR,
-  stakePool: STAKE_POOL_ADDR,
-  governor: GOVERNOR_ADDR
+  isLoading: false,
+  isProcessing: false
 };
 
 export const GovernanceContext = createContext<GovernanceContextValueProps>(
@@ -45,6 +91,19 @@ export const GovernanceProvider: React.FC<React.ReactNode> = ({ children }) => {
   const connection = useConnection();
   const wallet = useConnectedWallet();
 
+  const [stakeWrapper, setStakeWrapper] = useState<StakeWrapper>();
+  const [lockerWrapper, setLockerWrapper] = useState<LockerWrapper>();
+  const [governorWrapper, setGovernorWrapper] = useState<GovernorWrapper>();
+
+  const [isLoading, setIsLoading] = useState(false);
+  const [isProcessing, setIsProcessing] = useState(false);
+
+  const [proposals, setProposals] = useState<Proposal[]>();
+  const [pool, setPool] = useState<PoolInfo>();
+  const [locker, setLocker] = useState<LockerData>();
+  const [user, setUser] = useState<StakePoolUser>();
+  const [escrow, setEscrow] = useState<Escrow>();
+
   const sdk = useMemo(() => {
     const provider = SolanaProvider.init({
       connection,
@@ -54,43 +113,107 @@ export const GovernanceProvider: React.FC<React.ReactNode> = ({ children }) => {
     return VeHoneySDK.load({ provider });
   }, [connection, wallet]);
 
-  const [stakeWrapper, setStakeWrapper] = useState<StakeWrapper>();
-  const [lockerWrapper, setLockerWrapper] = useState<LockerWrapper>();
-  const [governorWrapper, setGovernorWrapper] = useState<GovernorWrapper>();
+  async function load() {
+    if (sdk) {
+      setIsLoading(true);
 
-  async function loadWrappers(sdk: VeHoneySDK) {
-    const stakeWrapper = await StakeWrapper.load(sdk, STAKE_POOL_ADDR);
-    const lockerWrapper = await LockerWrapper.load(
-      sdk,
-      LOCKER_ADDR,
-      GOVERNOR_ADDR
-    );
-    const tribecaSDK = TribecaSDK.load({ provider: sdk.provider });
-    const governorWrapper = new GovernorWrapper(tribecaSDK, GOVERNOR_ADDR);
-    setStakeWrapper(stakeWrapper);
-    setLockerWrapper(lockerWrapper);
-    setGovernorWrapper(governorWrapper);
+      // Load wrappers
+      const stakeWrapper = await StakeWrapper.load(sdk, STAKE_POOL_ADDR);
+      const lockerWrapper = await LockerWrapper.load(
+        sdk,
+        LOCKER_ADDR,
+        GOVERNOR_ADDR
+      );
+      const tribecaSDK = TribecaSDK.load({ provider: sdk.provider });
+      const governorWrapper = new GovernorWrapper(tribecaSDK, GOVERNOR_ADDR);
+      setStakeWrapper(stakeWrapper);
+      setLockerWrapper(lockerWrapper);
+      setGovernorWrapper(governorWrapper);
+
+      // Load proposals
+      const proposalDatas = await governorWrapper.program.account.proposal.all([
+        {
+          memcmp: {
+            offset: 8,
+            bytes: governorWrapper.governorKey.toBase58()
+          }
+        }
+      ]);
+      const fetchProposalMetasPromise = proposalDatas.map(p =>
+        governorWrapper.fetchProposalMeta(p.publicKey)
+      );
+      const proposalMetas = await Promise.all(fetchProposalMetasPromise);
+
+      const proposals: Proposal[] = proposalDatas.map(p => {
+        const meta = proposalMetas.find(meta => meta.proposal === p.publicKey);
+        return {
+          pubkey: p.publicKey,
+          data: p.account,
+          status: getProposalState({ proposalData: p.account }),
+          meta
+        };
+      });
+      setProposals(proposals);
+
+      // Load stake pool and locker infos
+      const [pool, locker] = await Promise.all([
+        stakeWrapper.data(),
+        lockerWrapper.data()
+      ]);
+      setPool(pool);
+      setLocker(locker);
+
+      // Load stake pool user
+      try {
+        const user = await stakeWrapper.fetchPoolUser();
+        setUser(user);
+      } catch (e) {
+        setUser(undefined);
+      }
+
+      try {
+        const [escrow, receipts] = await Promise.all([
+          lockerWrapper.fetchEscrowData(),
+          lockerWrapper.fetchAllReceipts()
+        ]);
+        const receiptsMap = receipts.reduce((m, i) => {
+          return m.set(i.account.receiptId.toNumber(), i.account);
+        }, new Map<number, ReceiptData>());
+        setEscrow({ ...escrow, receipts: receiptsMap });
+      } catch (e) {
+        setEscrow(undefined);
+      }
+
+      setIsLoading(false);
+    }
   }
 
   useEffect(() => {
-    loadWrappers(sdk);
+    load();
 
     const timer = setInterval(() => {
-      loadWrappers;
+      load();
     }, 10000);
 
     return () => {
       clearInterval(timer);
     };
-  }, [sdk]);
+  }, []);
 
   return (
     <GovernanceContext.Provider
       value={{
-        ...defaultGovernanceContextValue,
         stakeWrapper,
         lockerWrapper,
-        governorWrapper
+        governorWrapper,
+        isLoading,
+        proposals,
+        stakePoolInfo: pool,
+        stakePoolUser: user,
+        lockerInfo: locker,
+        escrow,
+        isProcessing,
+        setIsProcessing
       }}
     >
       {children}

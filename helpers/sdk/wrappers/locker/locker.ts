@@ -27,6 +27,10 @@ import {
   findTreasuryAddress
 } from './pda';
 import { HONEY_DECIMALS, NFT_PROOF_ADDRESS } from '../../constant';
+import {
+  calculateVotingPower,
+  calculateNFTReceiptClaimableAmount
+} from '../../utils';
 
 export class LockerWrapper {
   readonly program: LockerProgram;
@@ -350,46 +354,21 @@ export class LockerWrapper {
   async calculateVotingPower(): Promise<BN> {
     const lockerData = await this.data();
     const escrowData = await this.fetchEscrowData();
-    const duration = escrowData.escrowEndsAt.sub(escrowData.escrowStartedAt);
-    const votingPower = escrowData.amount
-      .mul(duration)
-      .muln(lockerData.params.multiplier)
-      .div(lockerData.params.maxStakeDuration)
-      .divn(10 ** HONEY_DECIMALS);
-    return votingPower;
+    return calculateVotingPower(escrowData.data, lockerData.params);
   }
 
   async calculateClaimableAmount(
     receiptId: BN,
-    now: number = Date.now(),
+    currentTimestamp: number = Math.floor(Date.now() / 1_000),
     authority: PublicKey = this.walletKey
   ): Promise<BN> {
     const lockerData = await this.data();
     const receipt = await this.fetchReceipt(receiptId, authority);
-    const nowBN = new BN(Math.floor(now / 1000));
-    const due = nowBN.lt(receipt.vestEndsAt) ? nowBN : receipt.vestEndsAt;
-    let duration = due.sub(receipt.vestStartedAt).toNumber();
-
-    if (duration < 0) {
-      return new BN(0);
-    }
-
-    let count = Math.floor(
-      duration / lockerData.params.nftStakeDurationUnit.toNumber()
+    return calculateNFTReceiptClaimableAmount(
+      receipt,
+      lockerData.params,
+      currentTimestamp
     );
-    let amountPerUnit = lockerData.params.nftStakeBaseReward;
-    let claimableAmount = new BN(0);
-
-    for (let i = 0; i < count; i++) {
-      if (i >= lockerData.params.nftRewardHalvingStartsAt) {
-        amountPerUnit = amountPerUnit.divn(2);
-      }
-      claimableAmount.add(amountPerUnit);
-    }
-
-    return claimableAmount.gt(receipt.claimedAmount)
-      ? claimableAmount.sub(receipt.claimedAmount)
-      : new BN(0);
   }
 
   async getOrCreateGovTokenATA(
@@ -426,8 +405,9 @@ export class LockerWrapper {
   }
 
   async fetchEscrowData(authority: PublicKey = this.walletKey) {
-    const [escrow] = await findEscrowAddress(this.locker, authority);
-    return this.program.account.escrow.fetch(escrow);
+    const [pubkey] = await findEscrowAddress(this.locker, authority);
+    const data = await this.program.account.escrow.fetch(pubkey);
+    return { pubkey, data };
   }
 
   async fetchReceipt(receiptId: BN, authority: PublicKey = this.walletKey) {
@@ -439,8 +419,21 @@ export class LockerWrapper {
     return this.program.account.receipt.fetch(receipt);
   }
 
-  async fetchAllReceipts() {
-    return this.program.account.receipt.all();
+  async fetchAllReceipts(authority: PublicKey = this.walletKey) {
+    return this.program.account.receipt.all([
+      {
+        memcmp: {
+          offset: 16,
+          bytes: this.locker.toBase58()
+        }
+      },
+      {
+        memcmp: {
+          offset: 48,
+          bytes: authority.toBase58()
+        }
+      }
+    ]);
   }
 
   async newReceiptId(): Promise<BN> {
