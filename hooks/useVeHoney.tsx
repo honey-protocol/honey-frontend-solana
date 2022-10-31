@@ -8,7 +8,11 @@ import { PublicKey } from '@solana/web3.js';
 import { BN } from '@project-serum/anchor';
 
 import { useGovernanceContext } from '../contexts/GovernanceProvider';
-import { calculateClaimableAmountFromStakePool } from '../helpers/sdk';
+import {
+  calculateClaimableAmountFromStakePool,
+  calculateVotingPower,
+  calculateNFTReceiptClaimableAmount
+} from '../helpers/sdk';
 
 export const useProposals = () => {
   const { governorWrapper, setIsProcessing } = useGovernanceContext();
@@ -192,4 +196,158 @@ export const useStake = () => {
   };
 };
 
-export const useLocker = () => {};
+export const useLocker = () => {
+  const {
+    lockerWrapper,
+    governorWrapper,
+    lockerInfo,
+    escrow,
+    setIsProcessing
+  } = useGovernanceContext();
+
+  const lock = useCallback(
+    async (amount: BN, duration: BN) => {
+      if (lockerWrapper) {
+        const tx = await lockerWrapper.lock(amount, duration);
+        setIsProcessing?.(true);
+        const receipt = await tx.confirm();
+        setIsProcessing?.(false);
+
+        return { receipt };
+      }
+      return null;
+    },
+    [lockerWrapper, setIsProcessing]
+  );
+
+  const lockNft = useCallback(
+    async (nft: PublicKey) => {
+      if (lockerWrapper) {
+        const tx = await lockerWrapper.lockNFT(nft);
+        setIsProcessing?.(true);
+        const receipt = await tx.confirm();
+        setIsProcessing?.(false);
+
+        return { receipt };
+      }
+    },
+    [lockerWrapper, setIsProcessing]
+  );
+
+  const castVote = useCallback(
+    async (proposal: PublicKey, side: VoteSide) => {
+      if (lockerWrapper) {
+        const tx = await lockerWrapper.castVote(proposal, side);
+        setIsProcessing?.(true);
+        const receipt = await tx.confirm();
+        setIsProcessing?.(false);
+
+        return { receipt };
+      }
+      return null;
+    },
+    [lockerWrapper, setIsProcessing]
+  );
+
+  const activateProposal = useCallback(
+    async (proposal: PublicKey) => {
+      if (lockerWrapper) {
+        const tx = await lockerWrapper.activateProposal(proposal);
+        setIsProcessing?.(true);
+        const receipt = await tx.confirm();
+        setIsProcessing?.(false);
+
+        return { receipt };
+      }
+      return null;
+    },
+    [lockerWrapper, setIsProcessing]
+  );
+
+  const unlock = useCallback(async () => {
+    if (lockerWrapper) {
+      const tx = await lockerWrapper.unlock();
+      setIsProcessing?.(true);
+      const receipt = await tx.confirm();
+      setIsProcessing?.(false);
+
+      return { receipt };
+    }
+    return null;
+  }, [lockerWrapper, setIsProcessing]);
+
+  const claim = useCallback(
+    async (receiptId: BN) => {
+      if (lockerWrapper) {
+        const tx = await lockerWrapper.claim(receiptId);
+        setIsProcessing?.(true);
+        const receipt = await tx.confirm();
+        setIsProcessing?.(false);
+
+        return { receipt };
+      }
+      return null;
+    },
+    [lockerWrapper, setIsProcessing]
+  );
+
+  const closeReceipt = useCallback(
+    async (receiptId: BN) => {
+      if (lockerWrapper) {
+        const tx = await lockerWrapper.closeReceipt(receiptId);
+        setIsProcessing?.(true);
+        const receipt = await tx.confirm();
+        setIsProcessing?.(false);
+
+        return { receipt };
+      }
+      return null;
+    },
+    [lockerWrapper, setIsProcessing]
+  );
+
+  const closeEscrow = useCallback(async () => {
+    if (lockerWrapper) {
+      const tx = await lockerWrapper.closeEscrow();
+      setIsProcessing?.(true);
+      const receipt = await tx.confirm();
+      setIsProcessing?.(false);
+
+      return { receipt };
+    }
+    return null;
+  }, [lockerWrapper, setIsProcessing]);
+
+  const votingPower = useMemo(() => {
+    if (lockerInfo && escrow) {
+      return calculateVotingPower(escrow.data, lockerInfo.params);
+    }
+    return null;
+  }, [lockerInfo, escrow]);
+
+  const getClaimableAmount = useCallback(
+    (receiptId: number) => {
+      if (lockerInfo && escrow && escrow.receipts.has(receiptId)) {
+        const receipt = escrow.receipts.get(receiptId);
+        if (receipt) {
+          return calculateNFTReceiptClaimableAmount(receipt, lockerInfo.params);
+        }
+      }
+      return null;
+    },
+    [lockerInfo, escrow]
+  );
+
+  return {
+    votingPower,
+    getClaimableAmount,
+    lock,
+    lockNft,
+    claim,
+    unlock,
+    closeReceipt,
+    closeEscrow,
+    castVote,
+    activateProposal
+  };
+};

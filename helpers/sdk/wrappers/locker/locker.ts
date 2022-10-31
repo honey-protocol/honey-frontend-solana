@@ -6,7 +6,12 @@ import {
 } from '@solana/web3.js';
 import { BN } from '@project-serum/anchor';
 import { PublicKey, TransactionEnvelope } from '@saberhq/solana-contrib';
-import { GovernorWrapper, TribecaSDK } from '@tribecahq/tribeca-sdk';
+import {
+  findVoteAddress,
+  GovernorWrapper,
+  TribecaSDK,
+  VoteSide
+} from '@tribecahq/tribeca-sdk';
 import {
   Metadata,
   Edition,
@@ -26,7 +31,11 @@ import {
   findNFTReceiptAddress,
   findTreasuryAddress
 } from './pda';
-import { HONEY_DECIMALS, NFT_PROOF_ADDRESS } from '../../constant';
+import {
+  HONEY_DECIMALS,
+  NFT_PROOF_ADDRESS,
+  VEHONEY_ADDRESSES
+} from '../../constant';
 import {
   calculateVotingPower,
   calculateNFTReceiptClaimableAmount
@@ -346,6 +355,55 @@ export class LockerWrapper {
           lockedTokens,
           fundsReceiver: this.walletKey,
           tokenProgram: TOKEN_PROGRAM_ID
+        }
+      })
+    ]);
+  }
+
+  async castVote(
+    proposal: PublicKey,
+    side: VoteSide,
+    authority: PublicKey = this.walletKey
+  ): Promise<TransactionEnvelope> {
+    const [escrow] = await findEscrowAddress(this.locker, authority);
+    const { voteKey, instruction } = await this.governor.getOrCreateVote({
+      proposal,
+      voter: authority,
+      payer: this.walletKey
+    });
+    return this.sdk.provider.newTX(
+      [
+        instruction,
+        this.program.instruction.castVote(side, {
+          accounts: {
+            locker: this.locker,
+            escrow,
+            voteDelegate: authority,
+            proposal,
+            vote: voteKey,
+            governor: this.governorKey,
+            governProgram: VEHONEY_ADDRESSES.Govern
+          }
+        })
+      ].filter((ix): ix is TransactionInstruction => !!ix)
+    );
+  }
+
+  async activateProposal(
+    proposal: PublicKey,
+    authority: PublicKey = this.walletKey
+  ): Promise<TransactionEnvelope> {
+    const [escrow] = await findEscrowAddress(this.locker, authority);
+
+    return this.sdk.provider.newTX([
+      this.program.instruction.activateProposal({
+        accounts: {
+          locker: this.locker,
+          governor: this.governorKey,
+          proposal,
+          escrow,
+          escrowOwner: authority,
+          governProgram: VEHONEY_ADDRESSES.Govern
         }
       })
     ]);
