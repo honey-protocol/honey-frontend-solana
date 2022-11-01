@@ -112,5 +112,13 @@
     "os": false,
     "net": false,
     "tls": false
+  },
+  "overrides": {
+    "@jup-ag/goosefx-ssl-sdk": {
+      "@solana/spl-token": "0.2.0"
+    },
+    "goosefx-ssl-sdk": {
+      "@solana/spl-token": "0.2.0"
+    }
   }
 }
