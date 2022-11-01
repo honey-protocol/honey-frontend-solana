@@ -28,17 +28,20 @@ const {
 } = formatNumber;
 
 const BidForm = (props: BidFormProps) => {
-  const {
+  let {
     userBalance,
     highestBiddingValue,
+    highestBiddingAddress,
     currentUserBid,
     fetchedSolPrice,
     currentMarketId,
+    stringyfiedWalletPK,
     handleRevokeBid,
     handleIncreaseBid,
     handlePlaceBid,
     onCancel
   } = props;
+
   const [valueUSD, setValueUSD] = useState<number>(0);
   const [valueSOL, setValueSOL] = useState<number>(0);
   // const [valueUSDC, setValueUSDC] = useState<number>(0);
@@ -90,10 +93,6 @@ const BidForm = (props: BidFormProps) => {
       ? handlePlaceBid('increase_bid', valueSOL, toast)
       : handleIncreaseBid('place_bid', valueSOL, toast);
   }
-
-  useEffect(() => {
-    console.log('@@--cub', currentUserBid);
-  }, [currentUserBid]);
 
   return (
     <SidebarScroll
@@ -148,7 +147,7 @@ const BidForm = (props: BidFormProps) => {
               <CurrentBid
                 value={currentUserBid}
                 title={
-                  currentUserBid == highestBiddingValue
+                  stringyfiedWalletPK == highestBiddingAddress
                     ? 'Your bid is #1'
                     : 'Your bid is:'
                 }

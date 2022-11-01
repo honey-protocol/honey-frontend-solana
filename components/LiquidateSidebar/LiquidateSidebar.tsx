@@ -21,9 +21,11 @@ const LiquidateSidebar = (props: LendSidebarProps) => {
     userBalance,
     biddingArray,
     highestBiddingValue,
+    highestBiddingAddress,
     currentUserBid,
     fetchedSolPrice,
     currentMarketId,
+    stringyfiedWalletPK,
     handleRevokeBid,
     handleIncreaseBid,
     handlePlaceBid,
@@ -74,7 +76,9 @@ const LiquidateSidebar = (props: LendSidebarProps) => {
             {activeTab === 'bid' && (
               <BidForm
                 currentUserBid={currentUserBid}
+                highestBiddingAddress={highestBiddingAddress}
                 userBalance={userBalance}
+                stringyfiedWalletPK={stringyfiedWalletPK}
                 highestBiddingValue={highestBiddingValue}
                 handleRevokeBid={handleRevokeBid}
                 handleIncreaseBid={handleIncreaseBid}

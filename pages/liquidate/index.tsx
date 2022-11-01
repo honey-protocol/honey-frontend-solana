@@ -178,11 +178,11 @@ const Liquidate: NextPage = () => {
   async function handleBiddingState(biddingArray: any) {
     biddingArray.map((obligation: any) => {
       if (obligation.bidder == stringyfiedWalletPK) {
+        console.log('qrs true', obligation);
         setHasPosition(true);
         setCurrentUserBid(Number(obligation.bidLimit / LAMPORTS_PER_SOL));
       } else {
         setHasPosition(false);
-        setCurrentUserBid(0);
       }
     });
 
@@ -637,7 +637,9 @@ const Liquidate: NextPage = () => {
         collectionId="0"
         biddingArray={biddingArray}
         userBalance={userBalance}
+        stringyfiedWalletPK={stringyfiedWalletPK}
         highestBiddingValue={highestBiddingValue}
+        highestBiddingAddress={highestBiddingAddress}
         currentUserBid={currentUserBid}
         handleRevokeBid={handleRevokeBid}
         handleIncreaseBid={handleIncreaseBid}
