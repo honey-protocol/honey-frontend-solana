@@ -254,6 +254,7 @@ const Liquidate: NextPage = () => {
           });
 
           if (transactionOutcome[0] == 'SUCCESS') {
+            setCurrentUserBid(0);
             return toast.success('Bid revoked, fetching chain data');
           } else {
             return toast.error('Revoke bid failed');
@@ -327,6 +328,7 @@ const Liquidate: NextPage = () => {
   }
 
   useEffect(() => {
+    console.log('status changing', status);
     if (status.positions) setPositionsObject(status.positions);
     if (status.bids) {
       setBiddingArray(status.bids) 

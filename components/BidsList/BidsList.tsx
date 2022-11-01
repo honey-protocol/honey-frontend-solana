@@ -34,7 +34,11 @@ const BidsList = (props: BidListProps) => {
   }
 
   useEffect(() => {
-    if (biddingArray.length) handleConvertion(biddingArray);
+    if (biddingArray.length) {
+      handleConvertion(biddingArray)
+    } else {
+      handleConvertion([]);
+    };
   }, [biddingArray]);
 
   const currentBidCardData: CurrentBidCardProps[] = convertedBiddingArray;

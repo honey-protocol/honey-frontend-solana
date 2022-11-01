@@ -46,7 +46,7 @@ const NftList = (props: NftListProps) => {
   const defaultNFTObject = [{
     image: HoneyLogoIcon,
     name: 'No NFTs available',
-    text: 'Get your NFT here',
+    text: 'Select a market for your NFTs',
     hasBorder: true,
     mint: 'test mint',
     img: 'test img',

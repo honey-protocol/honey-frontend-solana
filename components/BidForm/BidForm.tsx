@@ -28,24 +28,23 @@ const {
 } = formatNumber;
 
 const BidForm = (props: BidFormProps) => {
-  let {
+  const {
     userBalance,
     highestBiddingValue,
-    highestBiddingAddress,
     currentUserBid,
     fetchedSolPrice,
     currentMarketId,
-    stringyfiedWalletPK,
     handleRevokeBid,
     handleIncreaseBid,
     handlePlaceBid,
     onCancel
   } = props;
-
   const [valueUSD, setValueUSD] = useState<number>(0);
   const [valueSOL, setValueSOL] = useState<number>(0);
   // const [valueUSDC, setValueUSDC] = useState<number>(0);
   const [sliderValue, setSliderValue] = useState(0);
+  const [userBidValue, setUserBidValue] = useState(0);
+
   const { toast, ToastComponent } = useToast();
 
   const maxValue = 1000;
@@ -89,10 +88,18 @@ const BidForm = (props: BidFormProps) => {
   };
 
   function triggerIndicator() {
-    currentUserBid != 0
+    userBidValue != 0
       ? handlePlaceBid('increase_bid', valueSOL, toast)
       : handleIncreaseBid('place_bid', valueSOL, toast);
   }
+
+  useEffect(() => {
+    if (currentUserBid) {
+      setUserBidValue(currentUserBid)
+    } else {
+      setUserBidValue(0);
+    }
+  }, [currentUserBid]);
 
   return (
     <SidebarScroll
@@ -110,12 +117,12 @@ const BidForm = (props: BidFormProps) => {
               <HoneyButton
                 variant="primary"
                 disabled={isSubmitButtonDisabled()}
-                isFluid={true}
+                block
                 usdcValue={valueUSD || 0}
                 solAmount={valueSOL || 0}
                 onClick={triggerIndicator}
               >
-                {currentUserBid != 0 ? 'Increase Bid' : 'Place Bid'}
+                {userBidValue != 0 ? 'Increase Bid' : 'Place Bid'}
               </HoneyButton>
             </div>
           </div>
@@ -141,13 +148,13 @@ const BidForm = (props: BidFormProps) => {
             ></HoneyWarning>
           </div>
         </div>
-        {currentUserBid && (
+        {userBidValue && (
           <div className={styles.row}>
             <div className={styles.col}>
               <CurrentBid
-                value={currentUserBid}
+                value={userBidValue}
                 title={
-                  stringyfiedWalletPK == highestBiddingAddress
+                  userBidValue == highestBiddingValue
                     ? 'Your bid is #1'
                     : 'Your bid is:'
                 }
