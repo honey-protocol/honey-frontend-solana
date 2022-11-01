@@ -75,7 +75,6 @@ const { formatPercent: fp, formatSol: fs, formatRoundDown: fd } = formatNumber;
 const Liquidate: NextPage = () => {
   // TODO: write dynamic currentMarketId based on user interaction
   const [currentMarketId, setCurrentMarketId] = useState(HONEY_GENESIS_MARKET_ID);
-  console.log('current market', currentMarketId)
   // start sdk integration
   const liquidationThreshold = 0.65; // TODO: values like this should be imported from constants per collection
   // init anchor
@@ -100,7 +99,6 @@ const Liquidate: NextPage = () => {
     currentMarketId
   );
 
-  console.log('status...', status)
   /**
    * @description calls upon markets which
    * @params none
@@ -124,9 +122,6 @@ const Liquidate: NextPage = () => {
    * @params none
    * @returns open positions | bidding data | userbid | user position
    */
-  const [fetchedPositions, setFetchedPositions] = useState<
-    Array<LiquidateTablePosition>
-  >([]);
   const [hasPosition, setHasPosition] = useState(false);
   const [highestBiddingAddress, setHighestBiddingAddress] = useState('');
   const [highestBiddingValue, setHighestBiddingValue] = useState(0);
@@ -196,7 +191,6 @@ const Liquidate: NextPage = () => {
       .reverse();
 
     if (highestBid[0]) {
-      console.log('xyz highest bid', highestBid[0].bidLimit / LAMPORTS_PER_SOL)
       setHighestBiddingAddress(highestBid[0].bidder);
       setHighestBiddingValue(highestBid[0].bidLimit / LAMPORTS_PER_SOL);
     }
@@ -262,7 +256,6 @@ const Liquidate: NextPage = () => {
           if (transactionOutcome[0] == 'SUCCESS') {
             return toast.success('Bid revoked, fetching chain data');
           } else {
-            console.log('@@--error1', transactionOutcome);
             return toast.error('Revoke bid failed');
           }
         } else if (type == 'place_bid') {
@@ -301,7 +294,6 @@ const Liquidate: NextPage = () => {
           if (transactionOutcome[0] == 'SUCCESS') {
             return toast.success('Bid increased, fetching chain data');
           } else {
-            console.log('@@--error2', transactionOutcome);
             return toast.error('Bid increase failed');
           }
         }
@@ -342,12 +334,6 @@ const Liquidate: NextPage = () => {
     };
   }, [status.positions, status.bids]);
 
-  useEffect(() => {
-    console.log('xyz markets change')
-  }, [currentMarketId])
-
-  // end of sdk integration
-
   const [tableData, setTableData] = useState<MarketTableRow[]>([]);
   const [tableDataFiltered, setTableDataFiltered] = useState<
   MarketTableRow[]
@@ -368,13 +354,6 @@ const Liquidate: NextPage = () => {
       function getData() {
         return Promise.all(
           marketCollections.map(async collection => {
-            collection.positions = fetchedPositions.filter((position: any) => {
-              if (currentMarketId == HONEY_GENESIS_MARKET_ID) {
-                return position.name.includes('Honey');
-              } else if (currentMarketId == PESKY_PENGUINS_MARKET_ID) {
-                return position.name.includes('Pesky');
-              }
-            });
 
             await populateMarketData(
               collection,
@@ -395,12 +374,10 @@ const Liquidate: NextPage = () => {
       }
 
       getData().then(result => {
-        console.log('B::::: ', result);
         setTableData(result);
       });
     }
   }, [
-    fetchedPositions,
     currentMarketId,
     sdkConfig.saberHqConnection,
     sdkConfig.sdkWallet,
@@ -430,7 +407,7 @@ const Liquidate: NextPage = () => {
    */
    async function handleMarketId(record: any) {
     const marketData = renderMarket(record.id);
-    console.log('marketData', marketData);
+
     setCurrentMarketId(marketData!.id);
     setMarketId(marketData!.id);
     setCurrentMarketName(marketData!.name);
