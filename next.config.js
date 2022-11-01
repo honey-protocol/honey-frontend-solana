@@ -65,7 +65,8 @@ module.exports = (phase, { defaultConfig }) => {
           'img-cdn.magiceden.dev',
           'www.arweave.net',
           'https://solscanee.net/solana.json',
-          'https://api.jsonbin.it/bins/hGRzonVT'
+          'https://api.jsonbin.it/bins/hGRzonVT',
+          'i.seadn.io'
         ]
       }
     };
@@ -124,7 +125,8 @@ module.exports = (phase, { defaultConfig }) => {
           'img-cdn.magiceden.dev',
           'www.arweave.net',
           'https://solscanee.net/solana.json',
-          'https://api.jsonbin.it/bins/hGRzonVT'
+          'https://api.jsonbin.it/bins/hGRzonVT',
+          'i.seadn.io'
         ]
       }
     };

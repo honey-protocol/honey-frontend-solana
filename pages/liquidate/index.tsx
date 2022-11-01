@@ -62,7 +62,8 @@ import {
   LIFINITY_FLARES_MARKET_NAME,
   OG_ATADIANS_MARKET_NAME,
   PESKY_PENGUINS_MARKET_NAME,
-  BURRITO_BOYZ_MARKET_NAME
+  BURRITO_BOYZ_MARKET_NAME,
+  renderMarketImageByID
 } from 'helpers/marketHelpers';
 import { marketCollections } from 'constants/borrowLendMarkets';
 import { populateMarketData } from 'helpers/loanHelpers/userCollection';
@@ -532,8 +533,6 @@ const Liquidate: NextPage = () => {
         dataIndex: 'liqThreshold',
         sorter: (a, b) => a.liqThreshold - b.liqThreshold,
         render: (liqThreshold: number) => {
-          console.log('this is rate', liqThreshold)
-          console.log('this is market', market)
           return <div className={style.rateCell}>{fp(LIQUIDATION_THRESHOLD * 100)}</div>;
         }
       },
@@ -580,8 +579,6 @@ const Liquidate: NextPage = () => {
         dataIndex: 'tvl',
         sorter: (a, b) => a.tvl! - b.tvl!,
         render: (value: number, market: any) => {
-          console.log('this is value;', value);
-          console.log('this is market', market);
           return <div className={style.valueCell}>{fs(value)}</div>;
         }
       },
@@ -626,7 +623,7 @@ const Liquidate: NextPage = () => {
                     <div className={style.logoWrapper}>
                       <div className={style.collectionLogo}>
                         <HexaBoxContainer>
-                          <Image src={honeyGenesisBee} />
+                          {renderMarketImageByID(currentMarketId)}
                         </HexaBoxContainer>
                       </div>
                     </div>

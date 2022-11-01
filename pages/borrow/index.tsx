@@ -290,7 +290,7 @@ const Markets: NextPage = () => {
         honeyMarket,
         sdkConfig.saberHqConnection
       );
-      setNftPrice(Number(nftPrice));
+      setNftPrice(RoundHalfDown(Number(nftPrice)));
       setCalculatedNftPrice(true);
     }
   }
