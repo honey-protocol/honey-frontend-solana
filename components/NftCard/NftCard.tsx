@@ -1,10 +1,11 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import * as styles from './NftCard.css';
 import HexaBoxContainer from '../HexaBoxContainer/HexaBoxContainer';
 import HoneyButton from '../HoneyButton/HoneyButton';
 import { NftCardProps } from './types';
 import c from 'classnames';
 import Image from 'next/image';
+import { renderMarketName } from 'helpers/marketHelpers';
 
 const NftCard = (props: NftCardProps) => {
   const {
@@ -17,6 +18,7 @@ const NftCard = (props: NftCardProps) => {
     img,
     image,
     mint,
+    currentMarketId,
     hasBorder = true
   } = props;
 
@@ -26,6 +28,9 @@ const NftCard = (props: NftCardProps) => {
     }
   }, [mint]);
 
+  console.log('name', name)
+  console.log('image', image)
+  
   return (
     <div
       className={c(styles.nftCard, { [styles.hasBorder]: hasBorder })}
@@ -33,24 +38,30 @@ const NftCard = (props: NftCardProps) => {
     >
       <div className={styles.nftImage}>
         <HexaBoxContainer>
-          <Image 
-            src={image} 
-            alt={'user nft'} 
-            layout='fill'
+          <Image
+            src={image}
+            layout={'fill'}
+            alt={'NFT Image'}
           />
         </HexaBoxContainer>
       </div>
       <div className={styles.nftRight}>
         <div className={styles.nftDescription}>
-          <div className={styles.nftName}>{name}</div>
+          <div className={styles.nftName}>
+            {name}
+          </div>
           <div className={styles.nftLabel}>
             {text} {hint && <span className={styles.hint}>{hint}</span>}
           </div>
         </div>
-        <HoneyButton variant="text">
-          Up to {buttonText}
-          <div className={styles.arrowRight} />
-        </HoneyButton>
+        {
+          text != 'Select a market for your NFTs' &&
+          
+          <HoneyButton variant="text">
+            Up to {buttonText}
+            <div className={styles.arrowRight} />
+          </HoneyButton>
+        }
       </div>
     </div>
   );

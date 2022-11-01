@@ -15,6 +15,8 @@ import { BidFormProps } from './types';
 import { hAlign } from 'styles/common.css';
 import { questionIcon } from 'styles/icons.css';
 import useToast from 'hooks/useToast';
+import { HONEY_GENESIS_MARKET_ID, PESKY_PENGUINS_MARKET_ID, LIFINITY_FLARES_MARKET_ID, BURRITO_BOYZ_MARKET_ID, OG_ATADIANS_MARKET_ID } from 'constants/loan';
+import { renderMarketImageByID, renderMarketImageByName, renderMarketName } from 'helpers/marketHelpers';
 
 const {
   format: f,
@@ -31,6 +33,7 @@ const BidForm = (props: BidFormProps) => {
     highestBiddingValue,
     currentUserBid,
     fetchedSolPrice,
+    currentMarketId,
     handleRevokeBid,
     handleIncreaseBid,
     handlePlaceBid,
@@ -89,7 +92,7 @@ const BidForm = (props: BidFormProps) => {
   }
 
   useEffect(() => {
-    console.log('@@--', currentUserBid);
+    console.log('@@--cub', currentUserBid);
   }, [currentUserBid]);
 
   return (
@@ -124,10 +127,12 @@ const BidForm = (props: BidFormProps) => {
         <div className={styles.nftInfo}>
           <div className={styles.nftImage}>
             <HexaBoxContainer>
-              <Image src={honeyGenesisBee} />
+              {renderMarketImageByID(currentMarketId)}
             </HexaBoxContainer>
           </div>
-          <div className={styles.nftName}>Honey Genesis Bee</div>
+          <div className={styles.nftName}>
+            {renderMarketName(currentMarketId)}
+          </div>
         </div>
         <div className={styles.row}>
           <div className={styles.col}>

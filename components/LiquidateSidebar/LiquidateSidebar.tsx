@@ -23,6 +23,7 @@ const LiquidateSidebar = (props: LendSidebarProps) => {
     highestBiddingValue,
     currentUserBid,
     fetchedSolPrice,
+    currentMarketId,
     handleRevokeBid,
     handleIncreaseBid,
     handlePlaceBid,
@@ -35,6 +36,8 @@ const LiquidateSidebar = (props: LendSidebarProps) => {
   const handleTabChange = (tabKey: string) => {
     setActiveTab(tabKey as Tab);
   };
+
+  console.log('xyz bidding in side bar', biddingArray)
   return (
     <div className={styles.liquidateSidebarContainer}>
       <HoneyTabs
@@ -78,6 +81,7 @@ const LiquidateSidebar = (props: LendSidebarProps) => {
                 handlePlaceBid={handlePlaceBid}
                 fetchedSolPrice={fetchedSolPrice}
                 onCancel={onCancel}
+                currentMarketId={currentMarketId}
               />
             )}
             {activeTab === 'current' && (

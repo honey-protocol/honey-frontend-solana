@@ -8,7 +8,9 @@ import { formatNumber } from '../../helpers/format';
 import HoneyButton from 'components/HoneyButton/HoneyButton';
 import HexaBoxContainer from 'components/HexaBoxContainer/HexaBoxContainer';
 import NftList from '../NftList/NftList';
-import { MAX_LTV } from '../../constants/loan';
+import { NftCardProps } from '../NftCard/types';
+import { BURRITO_BOYZ_MARKET_ID, HONEY_GENESIS_MARKET_ID, LIFINITY_FLARES_MARKET_ID, MAX_LTV, OG_ATADIANS_MARKET_ID, PESKY_PENGUINS_MARKET_ID } from '../../constants/loan';
+import { usdcAmount } from '../HoneyButton/HoneyButton.css';
 import { BorrowProps } from './types';
 import { toastResponse } from 'helpers/loanHelpers';
 import SidebarScroll from '../SidebarScroll/SidebarScroll';
@@ -19,7 +21,9 @@ import { questionIcon } from 'styles/icons.css';
 import useToast from 'hooks/useToast';
 import { useSolBalance } from 'hooks/useSolBalance';
 import cs from 'classnames';
-import * as style from '../../styles/markets.css';
+import Nft from 'pages/farm/[name]';
+import { BORROW_FEE, LIQUIDATION_FEE } from 'constants/borrowLendMarkets';
+import { renderMarketImageByID } from 'helpers/marketHelpers';
 
 const { formatPercent: fp, formatSol: fs, formatRoundDown: frd } = formatNumber;
 
@@ -30,7 +34,7 @@ interface NFT {
 }
 
 const BorrowForm = (props: BorrowProps) => {
-  const {
+  let {
     availableNFTs,
     openPositions,
     nftPrice,
@@ -41,7 +45,8 @@ const BorrowForm = (props: BorrowProps) => {
     loanToValue,
     hideMobileSidebar,
     fetchedSolPrice,
-    calculatedInterestRate
+    calculatedInterestRate,
+    currentMarketId,
   } = props;
 
   const [valueUSD, setValueUSD] = useState<number>(0);
@@ -53,14 +58,11 @@ const BorrowForm = (props: BorrowProps) => {
   const { toast, ToastComponent } = useToast();
   const SOLBalance = useSolBalance();
 
-  // Only for test purposes
-  // const isNftSelected = true;
-
   const borrowedValue = userDebt;
   const maxValue = userAllowance;
   const solPrice = fetchedSolPrice;
-  const liquidationThreshold = 0.65; // TODO: change where relevant, currently set to 65% on mainnet
-  const borrowFee = 0.0; // TODO: 1,5% later but 0% for now
+  const liquidationThreshold = LIQUIDATION_FEE; // TODO: change where relevant, currently set to 65% on mainnet
+  const borrowFee = BORROW_FEE; // TODO: 1,5% later but 0% for now
 
   const newAdditionalDebt = valueSOL * (1 + borrowFee);
   const newTotalDebt = newAdditionalDebt
@@ -119,20 +121,23 @@ const BorrowForm = (props: BorrowProps) => {
     if (hasOpenPosition == false) {
       setSelectedNft({ name, img, mint });
     } else {
-      setIsNftSelected(true);
       setSelectedNft({ name, img, mint });
+      setIsNftSelected(true);
     }
   };
-
-  useEffect(() => {}, [userAllowance]);
 
   // if user has an open position, we need to be able to click on the position and borrow against it
   useEffect(() => {
     if (openPositions?.length) {
       const { name, image, mint } = openPositions[0];
+      console.log('xyz open pos', openPositions)
       setSelectedNft({ name, img: image, mint });
       setIsNftSelected(true);
       setHasOpenPosition(true);
+    } else if (openPositions.length == 0) {
+      console.log('xyz open pos nope')
+      setIsNftSelected(false);
+      setHasOpenPosition(false);
     }
   }, [openPositions, availableNFTs]);
 
@@ -140,14 +145,26 @@ const BorrowForm = (props: BorrowProps) => {
     if (selectedNft && selectedNft.mint.length < 1)
       return toastResponse('ERROR', 'Please select an NFT', 'ERROR');
     if (selectedNft && selectedNft.mint.length > 1)
-      await executeDepositNFT(selectedNft.mint, toast);
+      executeDepositNFT(selectedNft.mint, toast, selectedNft.name);
     handleSliderChange(0);
   };
 
   const handleBorrow = async () => {
-    await executeBorrow(valueSOL, toast);
+    executeBorrow(valueSOL, toast);
     handleSliderChange(0);
   };
+  // add cleanup reset 
+  useEffect(() => {
+    let isActive = true;
+    if (!isActive) {
+      availableNFTs = [];
+      openPositions = [];
+    };
+
+    return () => {
+      isActive = false;
+    }
+  }, []);
 
   const renderContent = () => {
     if (isNftSelected == false) {
@@ -159,6 +176,7 @@ const BorrowForm = (props: BorrowProps) => {
             selectNFT={selectNFT}
             nftPrice={nftPrice}
             selectedNFTMint={selectedNft?.mint}
+            currentMarketId={currentMarketId}
           />
         </>
       );
@@ -169,11 +187,7 @@ const BorrowForm = (props: BorrowProps) => {
         <div className={styles.nftInfo}>
           <div className={styles.nftImage}>
             <HexaBoxContainer>
-              <Image
-                src={selectedNft?.img || imagePlaceholder}
-                alt={`${selectedNft?.name}`}
-                layout="fill"
-              />
+              {renderMarketImageByID(currentMarketId)}
             </HexaBoxContainer>
           </div>
           <div className={styles.nftName}>{selectedNft?.name}</div>

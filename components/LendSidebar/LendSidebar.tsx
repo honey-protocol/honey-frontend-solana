@@ -26,6 +26,8 @@ const LendSidebar = (props: LendSidebarProps) => {
     value,
     userWalletBalance,
     fetchedSolPrice,
+    marketImage,
+    currentMarketId,
     onCancel
   } = props;
   const wallet = useConnectedWallet();
@@ -78,6 +80,8 @@ const LendSidebar = (props: LendSidebarProps) => {
                 value={value}
                 userWalletBalance={userWalletBalance}
                 fetchedSolPrice={fetchedSolPrice}
+                marketImage={marketImage}
+                currentMarketId={currentMarketId}
                 onCancel={onCancel}
               />
             )}
@@ -88,6 +92,8 @@ const LendSidebar = (props: LendSidebarProps) => {
                 available={available}
                 value={value}
                 fetchedSolPrice={fetchedSolPrice}
+                marketImage={marketImage}
+                currentMarketId={currentMarketId}
                 onCancel={onCancel}
               />
             )}

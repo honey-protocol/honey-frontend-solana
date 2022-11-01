@@ -15,6 +15,8 @@ import { ConfigureSDK } from 'helpers/loanHelpers';
 import { questionIcon } from 'styles/icons.css';
 import { hAlign } from 'styles/common.css';
 import useToast from 'hooks/useToast';
+import { HONEY_GENESIS_MARKET_ID } from 'constants/loan';
+import { renderMarketName } from 'helpers/marketHelpers';
 
 const {
   format: f,
@@ -32,6 +34,8 @@ const DepositForm = (props: DepositFormProps) => {
     available,
     userWalletBalance,
     fetchedSolPrice,
+    marketImage,
+    currentMarketId,
     onCancel
   } = props;
 
@@ -43,10 +47,11 @@ const DepositForm = (props: DepositFormProps) => {
 
   const { toast, ToastComponent } = useToast();
 
-  const sdkConfig = ConfigureSDK();
-  let walletPK = sdkConfig.sdkWallet?.publicKey;
-
-  useEffect(() => {}, [userWalletBalance]);
+  useEffect(() => {
+    if (value && available) {
+      setUtilizationRate(Number(f(((value - available) / value) * 100)));
+    }
+  }, [value, available]);
 
   useEffect(() => {
     if (value && available) {
@@ -128,10 +133,12 @@ const DepositForm = (props: DepositFormProps) => {
         <div className={styles.nftInfo}>
           <div className={styles.nftImage}>
             <HexaBoxContainer>
-              <Image src={honeyGenesisBee} />
+              {marketImage}
             </HexaBoxContainer>
           </div>
-          <div className={styles.nftName}>Honey Genesis Bee</div>
+          <div className={styles.nftName}>
+            {renderMarketName(currentMarketId)}
+          </div>
         </div>
         <div className={styles.row}>
           <div className={styles.col}>

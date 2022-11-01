@@ -3,8 +3,9 @@ import { ToastProps } from 'hooks/useToast';
 export type BidFormProps = {
   highestBiddingValue: number;
   userBalance: number;
-  currentUserBid: number;
+  currentUserBid?: number;
   fetchedSolPrice: number;
+  currentMarketId: string;
   handleRevokeBid: (type: string, toast: ToastProps['toast']) => void;
   handleIncreaseBid: (
     type: string,
