@@ -19,7 +19,7 @@
     "@gokiprotocol/client": "^0.10.4",
     "@gokiprotocol/walletkit": "^1.6.5",
     "@honey-finance/sdk": "^1.0.135",
-    "@jup-ag/react-hook": "^3.0.0-beta.2",
+    "@jup-ag/react-hook": "^2.0.0-beta.2",
     "@metaplex-foundation/mpl-auction": "^0.0.2",
     "@metaplex-foundation/mpl-core": "^0.0.4",
     "@metaplex-foundation/mpl-metaplex": "^0.0.5",
@@ -112,13 +112,5 @@
     "os": false,
     "net": false,
     "tls": false
-  },
-  "overrides": {
-    "@jup-ag/goosefx-ssl-sdk": {
-      "@solana/spl-token": "0.2.0"
-    },
-    "goosefx-ssl-sdk": {
-      "@solana/spl-token": "0.2.0"
-    }
   }
 }
