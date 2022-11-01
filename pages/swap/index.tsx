@@ -31,8 +31,6 @@ import { ValueType } from 'rc-input-number/lib/utils/MiniDecimal';
 import BN from 'bn.js';
 import { useWalletKit } from '@gokiprotocol/walletkit';
 import { useSolBalance } from '../../hooks/useSolBalance';
-import Decimal from 'decimal.js';
-import { SOL_DECIMALS } from '@honey-finance/sdk';
 
 const { formatTokenAllDecimals: ftad } = formatNumber;
 
@@ -44,8 +42,7 @@ const Swap: NextPage = () => {
   const { connect } = useWalletKit();
   const connection = useConnection();
   const { balances: tokenBalancesMap, refreshBalances } =
-    useWalletTokensBalances();
-  const solBalance = useSolBalance();
+    useWalletTokensBalances({ mergeSolAndWsolBalance: true });
 
   const [tokensDetails, setTokensDetails] = useState<TokenInfo[]>([]);
   const [haveTokensDetailsLoaded, setHaveTokensDetailsLoaded] = useState(false);
@@ -228,36 +225,6 @@ const Swap: NextPage = () => {
     }
   }, [bestRoute, outputToken]);
 
-  // merge SOL and wSOL balances
-  useEffect(() => {
-    if (!tokenBalancesMap) {
-      return;
-    }
-
-    const wsolBalance =
-      tokenBalancesMap[WRAPPED_SOL_MINT.toString()]?.amount || new BN(0);
-
-    const solBalanceLamports = new Decimal(solBalance).mul(10 ** SOL_DECIMALS);
-    // leave some sol to pay transactions fees
-    const solSafeBufferLamports = new Decimal(0.15).mul(10 ** SOL_DECIMALS);
-
-    // wsol + sol - safeBuffer
-    const totalBalance = BN.max(
-      wsolBalance.add(
-        new BN(
-          solBalanceLamports.minus(solSafeBufferLamports).floor().toString()
-        )
-      ),
-      new BN(0)
-    );
-
-    tokenBalancesMap[WRAPPED_SOL_MINT.toString()] = {
-      amount: totalBalance,
-      decimals: SOL_DECIMALS
-    };
-    // if (so)
-  }, [solBalance, tokenBalancesMap]);
-
   const getSlippageTabs = () => {
     const tabs = [0.1, 0.5, 1.0].map(v => {
       return {
@@ -292,6 +259,7 @@ const Swap: NextPage = () => {
       });
 
       refreshBalances();
+      setSwapAmount(0);
     } catch (e) {
       console.error(e);
     } finally {
