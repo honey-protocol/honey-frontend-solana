@@ -5,7 +5,7 @@ import {
   AccountInfo as TokenAccountInfo,
   TOKEN_PROGRAM_ID,
   u64
-} from '@solana/spl-token';
+} from '@solana/spl-token-v-0.1.8';
 import { useConnectedWallet, useConnection } from '@saberhq/use-solana';
 
 export interface TokenAccount {

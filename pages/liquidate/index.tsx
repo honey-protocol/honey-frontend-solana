@@ -42,7 +42,7 @@ import {
   HONEY_PROGRAM_ID,
   LIQUIDATION_THRESHOLD
 } from 'constants/loan';
-import { NATIVE_MINT } from '@solana/spl-token';
+import { NATIVE_MINT } from '@solana/spl-token-v-0.1.8';
 import HoneySider from 'components/HoneySider/HoneySider';
 import HoneyContent from 'components/HoneyContent/HoneyContent';
 import { hideTablet, showTablet, table } from 'styles/markets.css';

@@ -26,7 +26,7 @@ import {
 import { ConfigureSDK, toastResponse } from 'helpers/loanHelpers';
 import { HONEY_PROGRAM_ID, HONEY_MARKET_ID } from '../../../constants/loan';
 import { LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js';
-import { NATIVE_MINT } from '@solana/spl-token';
+import { NATIVE_MINT } from '@solana/spl-token-v-0.1.8';
 import VerifiedIcon from 'icons/VerifiedIcon';
 import SolanaIcon from 'icons/SolanaIcon';
 import { formatAddress } from 'helpers/addressUtils';

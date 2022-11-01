@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { useConnectedWallet, useConnection } from '@saberhq/use-solana';
-import { TOKEN_PROGRAM_ID } from '@solana/spl-token';
+import { TOKEN_PROGRAM_ID } from '@solana/spl-token-v-0.1.8';
 import {
   AccountInfo,
   ParsedAccountData,

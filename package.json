@@ -38,6 +38,7 @@
     "@saberhq/token-utils": "^1.12.48",
     "@saberhq/use-solana": "1.14.9",
     "@solana/spl-token": "0.1.8",
+    "@solana/spl-token-v-0.1.8": "npm:@solana/spl-token@0.1.8",
     "@solana/web3.js": "^1.63.1",
     "@strata-foundation/spl-utils": "3.5.7",
     "@switchboard-xyz/switchboard-v2": "^0.0.127",
