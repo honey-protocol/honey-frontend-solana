@@ -25,6 +25,7 @@ import { useWalletTokensBalances } from '../../hooks/useBalances';
 import { formatNumber } from '../../helpers/format';
 import { ValueType } from 'rc-input-number/lib/utils/MiniDecimal';
 import BN from 'bn.js';
+import { useWalletKit } from '@gokiprotocol/walletkit';
 const { formatTokenAllDecimals: ftad } = formatNumber;
 
 const MAX_SLIPPAGE = 1;
@@ -32,7 +33,7 @@ const DEFAULT_SLIPPAGE = 0.5;
 
 const Swap: NextPage = () => {
   const wallet = useConnectedWallet();
-  // const { connect } = useWalletKit();
+  const { connect } = useWalletKit();
   const connection = useConnection();
   const { balances: tokenBalancesMap, refreshBalances } =
     useWalletTokensBalances();
@@ -456,7 +457,7 @@ const Swap: NextPage = () => {
 
               <div className={styles.buttons}>
                 {!wallet || !wallet.connected ? (
-                  <HoneyButton variant="primary" block>
+                  <HoneyButton variant="primary" block onClick={connect}>
                     Connect wallet
                   </HoneyButton>
                 ) : (
