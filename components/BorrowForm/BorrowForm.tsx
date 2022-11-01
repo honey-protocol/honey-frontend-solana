@@ -34,7 +34,7 @@ interface NFT {
 }
 
 const BorrowForm = (props: BorrowProps) => {
-  const {
+  let {
     availableNFTs,
     openPositions,
     nftPrice,
@@ -153,6 +153,18 @@ const BorrowForm = (props: BorrowProps) => {
     executeBorrow(valueSOL, toast);
     handleSliderChange(0);
   };
+  // add cleanup reset 
+  useEffect(() => {
+    let isActive = true;
+    if (!isActive) {
+      availableNFTs = [];
+      openPositions = [];
+    };
+
+    return () => {
+      isActive = false;
+    }
+  }, []);
 
   const renderContent = () => {
     if (isNftSelected == false) {
