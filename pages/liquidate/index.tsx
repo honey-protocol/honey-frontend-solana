@@ -23,7 +23,7 @@ import honeyGenesisBee from '/public/images/imagePlaceholder.png';
 import { getColumnSortStatus } from '../../helpers/tableUtils';
 import HoneyButton from '../../components/HoneyButton/HoneyButton';
 import { formatNumber } from '../../helpers/format';
-import { LiquidateTableRow } from '../../types/liquidate';
+import { BiddingPosition, LiquidateTableRow } from '../../types/liquidate';
 import { LiquidateExpandTable } from '../../components/LiquidateExpandTable/LiquidateExpandTable';
 import {
   useAnchor,
@@ -70,6 +70,7 @@ import { populateMarketData } from 'helpers/loanHelpers/userCollection';
 import { setMarketId } from 'pages/_app';
 import { MarketTableRow } from 'types/markets';
 import { renderMarket, renderMarketImageByName } from 'helpers/marketHelpers';
+import { Bid } from 'components/BidForm/types';
 
 const { formatPercent: fp, formatSol: fs, formatRoundDown: fd } = formatNumber;
 const Liquidate: NextPage = () => {
@@ -178,21 +179,28 @@ const Liquidate: NextPage = () => {
   async function handleBiddingState(biddingArray: any) {
     biddingArray.map((obligation: any) => {
       if (obligation.bidder == stringyfiedWalletPK) {
-        console.log('qrs true', obligation);
         setHasPosition(true);
         setCurrentUserBid(Number(obligation.bidLimit / LAMPORTS_PER_SOL));
       } else {
         setHasPosition(false);
+        setCurrentUserBid(0);
       }
     });
 
-    let highestBid = await biddingArray
+    if (!biddingArray.length) {
+      setHasPosition(false);
+      setCurrentUserBid(0);
+      setHighestBiddingValue(0);
+      setHighestBiddingAddress('');
+    } else {
+      let highestBid = await biddingArray
       .sort((first: any, second: any) => first.bidLimit - second.bidLimit)
       .reverse();
 
     if (highestBid[0]) {
       setHighestBiddingAddress(highestBid[0].bidder);
       setHighestBiddingValue(highestBid[0].bidLimit / LAMPORTS_PER_SOL);
+    }
     }
   }
 
@@ -232,7 +240,8 @@ const Liquidate: NextPage = () => {
   async function fetchLiquidatorClient(
     type: string,
     userBid: number | undefined,
-    toast: ToastProps['toast']
+    toast: ToastProps['toast'],
+    mrktID: string
   ) {
     try {
       const liquidatorClient = await LiquidatorClient.connect(
@@ -247,7 +256,7 @@ const Liquidate: NextPage = () => {
           toast.processing();
           let transactionOutcome: any = await liquidatorClient.revokeBid({
             // TODO: pass market id for each call
-            market: new PublicKey(currentMarketId),
+            market: new PublicKey(mrktID),
             bidder: wallet.publicKey,
             bid_mint: NATIVE_MINT,
             withdraw_destination: wallet.publicKey
@@ -269,7 +278,7 @@ const Liquidate: NextPage = () => {
           let transactionOutcome: any = await liquidatorClient.placeBid({
             bid_limit: userBid,
             // TODO: pass market id for each call
-            market: new PublicKey(currentMarketId),
+            market: new PublicKey(mrktID),
             bidder: wallet.publicKey,
             bid_mint: NATIVE_MINT
           });
@@ -287,7 +296,7 @@ const Liquidate: NextPage = () => {
           let transactionOutcome: any = await liquidatorClient.increaseBid({
             bid_increase: userBid,
             // TODO: pass market id for each call
-            market: new PublicKey(currentMarketId),
+            market: new PublicKey(mrktID),
             bidder: wallet.publicKey,
             bid_mint: NATIVE_MINT
           });
@@ -307,34 +316,49 @@ const Liquidate: NextPage = () => {
     }
   }
 
-  function handleRevokeBid(type: string, toast: ToastProps['toast']) {
-    fetchLiquidatorClient(type, undefined, toast);
+  function handleRevokeBid(type: string, toast: ToastProps['toast'], mID: string) {
+    fetchLiquidatorClient(type, undefined, toast, mID);
   }
 
   function handleIncreaseBid(
     type: string,
     userBid: number,
-    toast: ToastProps['toast']
+    toast: ToastProps['toast'],
+    mID: string
   ) {
-    fetchLiquidatorClient(type, userBid!, toast);
+    fetchLiquidatorClient(type, userBid!, toast, mID);
   }
 
   function handlePlaceBid(
     type: string,
     userBid: number,
-    toast: ToastProps['toast']
+    toast: ToastProps['toast'],
+    mID: string
   ) {
-    fetchLiquidatorClient(type, userBid!, toast);
+    fetchLiquidatorClient(type, userBid!, toast, mID);
   }
 
   useEffect(() => {
-    console.log('status changing', status);
-    if (status.positions) setPositionsObject(status.positions);
-    if (status.bids) {
-      setBiddingArray(status.bids) 
-      handleBiddingState(status.bids)
-    };
+      console.log('status changing', status);
+      if (status.positions) {
+        setPositionsObject(status.positions);
+      } else {
+        setPositionsObject([])
+      }
+
+      if (status.bids) {
+        setBiddingArray(status.bids) 
+        handleBiddingState(status.bids)
+      } else {
+        setBiddingArray([])
+        handleBiddingState([])
+      }
+
   }, [status.positions, status.bids]);
+
+  useEffect(() => {
+    if (status.bids) handleBiddingState(status.bids);
+  }, [currentMarketId, status])
 
   const [tableData, setTableData] = useState<MarketTableRow[]>([]);
   const [tableDataFiltered, setTableDataFiltered] = useState<
@@ -385,7 +409,7 @@ const Liquidate: NextPage = () => {
     sdkConfig.sdkWallet,
     nftPrice,
     positionsObject,
-    marketReserveInfo
+    marketReserveInfo,
   ]);
 
   const handleToggle = (checked: boolean) => {
@@ -409,10 +433,11 @@ const Liquidate: NextPage = () => {
    */
    async function handleMarketId(record: any) {
     const marketData = renderMarket(record.id);
-
+    console.log('this is marketdata', marketData)
     setCurrentMarketId(marketData!.id);
     setMarketId(marketData!.id);
     setCurrentMarketName(marketData!.name);
+    handleBiddingState(status.bids)
   }
 
   const debouncedSearch = useCallback(

@@ -89,11 +89,12 @@ const BidForm = (props: BidFormProps) => {
 
   function triggerIndicator() {
     userBidValue != 0
-      ? handlePlaceBid('increase_bid', valueSOL, toast)
-      : handleIncreaseBid('place_bid', valueSOL, toast);
+      ? handlePlaceBid('increase_bid', valueSOL, toast, currentMarketId)
+      : handleIncreaseBid('place_bid', valueSOL, toast, currentMarketId);
   }
 
   useEffect(() => {
+    console.log('this is current user bid on refresh', currentUserBid)
     if (currentUserBid) {
       setUserBidValue(currentUserBid)
     } else {
@@ -158,7 +159,7 @@ const BidForm = (props: BidFormProps) => {
                     ? 'Your bid is #1'
                     : 'Your bid is:'
                 }
-                handleRevokeBid={() => handleRevokeBid('revoke_bid', toast)}
+                handleRevokeBid={() => handleRevokeBid('revoke_bid', toast, currentMarketId)}
               />
             </div>
           </div>
