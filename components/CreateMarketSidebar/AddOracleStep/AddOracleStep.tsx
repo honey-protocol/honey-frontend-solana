@@ -4,7 +4,7 @@ import TabTitle from '../../HoneyTabs/TabTitle/TabTitle';
 import { HoneyInputWithLabel } from '../../HoneyInputWithLabel/HoneyInputWithLabel';
 import * as styles from './AddOracleStep.css';
 
-export const AddOracleStep = () => {
+export const AddOracleStep = (setNftOracle: any) => {
   const [value, setValue] = useState<string>('');
   return (
     <>
@@ -18,7 +18,7 @@ export const AddOracleStep = () => {
       <HoneyInputWithLabel
         label="Oracle"
         placeholder="Oracle"
-        onChange={e => setValue(e.target.value)}
+        onChange={e => setNftOracle(e.target.value)}
         allowClear
       />
     </>

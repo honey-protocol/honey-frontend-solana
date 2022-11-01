@@ -6,8 +6,9 @@ import HoneyTooltip from '../../HoneyTooltip/HoneyTooltip';
 import { HoneyInputWithLabel } from '../../HoneyInputWithLabel/HoneyInputWithLabel';
 import TabTitle from '../../HoneyTabs/TabTitle/TabTitle';
 
-export const AboutMarketStep = () => {
+export const AboutMarketStep = (setNftCollectionCreator: any) => {
   const [collectionUrl, setCollectionUrl] = useState<string>('');
+
   const mockCollectionData = {
     title: 'Mock collection title',
     description: 'mock data',
@@ -47,7 +48,7 @@ export const AboutMarketStep = () => {
         </div>
         <HoneyInputWithLabel
           placeholder="Collection URL"
-          onChange={e => setCollectionUrl(e.target.value)}
+          onChange={e => setNftCollectionCreator(e.target.value)}
           label="Collection URL"
         />
         {renderFoundCollectionInfo()}
