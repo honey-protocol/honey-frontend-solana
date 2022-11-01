@@ -55,7 +55,7 @@ const NftCard = (props: NftCardProps) => {
           </div>
         </div>
         {
-          text != 'Get your NFT here' &&
+          text != 'Select a market for your NFTs' &&
           
           <HoneyButton variant="text">
             Up to {buttonText}

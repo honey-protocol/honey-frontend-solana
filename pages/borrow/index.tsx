@@ -178,8 +178,7 @@ const Markets: NextPage = () => {
   const [reserveHoneyState, setReserveHoneyState] = useState(0);
   const [userTotalDeposits, setUserTotalDeposits] = useState(0);
   const [fetchedSolPrice, setFetchedSolPrice] = useState(0);
-  const [honeyInterestRate, setHoneyInterestRate] = useState(0);
-  const [peskyInterestRate, setPeskyInterestRate] = useState(0);
+  const [activeInterestRate, setActiveInterestRate] = useState(0);
   // interface related constants
   const { width: windowWidth } = useWindowSize();
   const [tableData, setTableData] = useState<MarketTableRow[]>([]);
@@ -376,9 +375,7 @@ const Markets: NextPage = () => {
         return Promise.all(
           marketCollections.map(async collection => {
             if (collection.id == '') return collection;
-            collection.id == HONEY_GENESIS_MARKET_ID
-              ? setHoneyInterestRate(collection.rate)
-              : setPeskyInterestRate(collection.rate);
+
             await populateMarketData(
               collection,
               sdkConfig.saberHqConnection,
@@ -387,9 +384,8 @@ const Markets: NextPage = () => {
               false
             );
             collection.positions = await handlePositions(collection.id, currentMarketId, userOpenPositions);
-            collection.rate =
-              (await getInterestRate(collection.utilizationRate)) || 0;
-              console.log('alpha:: collection', collection);
+            collection.rate = (await getInterestRate(collection.utilizationRate)) || 0;
+            if (currentMarketId === collection.id) setActiveInterestRate(collection.rate);
             return collection;
           })
         );
@@ -411,8 +407,6 @@ const Markets: NextPage = () => {
     sdkConfig.saberHqConnection,
     sdkConfig.sdkWallet,
     currentMarketId,
-    peskyInterestRate,
-    honeyInterestRate,
     userOpenPositions
   ]);
 
@@ -982,11 +976,7 @@ const Markets: NextPage = () => {
       hideMobileSidebar={hideMobileSidebar}
       fetchedSolPrice={fetchedSolPrice}
       // TODO: call helper function include all markets
-      calculatedInterestRate={
-        currentMarketId == HONEY_GENESIS_MARKET_ID
-          ? honeyInterestRate
-          : peskyInterestRate
-      }
+      calculatedInterestRate={activeInterestRate}
       currentMarketId={currentMarketId}
     />
   </HoneySider>
