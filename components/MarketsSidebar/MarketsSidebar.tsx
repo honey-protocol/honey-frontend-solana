@@ -15,7 +15,7 @@ const { Text } = Typography;
 type Tab = 'borrow' | 'repay';
 
 const MarketsSidebar = (props: MarketsSidebarProps) => {
-  const wallet = useConnectedWallet();
+  const wallet = useConnectedWallet() || null;
   const {
     collectionId,
     availableNFTs,

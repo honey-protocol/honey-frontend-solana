@@ -107,7 +107,7 @@ const Markets: NextPage = () => {
     HONEY_GENESIS_MARKET_ID
   );
   // init wallet and sdkConfiguration file
-  const wallet = useConnectedWallet();
+  const wallet = useConnectedWallet() || null;
   const sdkConfig = ConfigureSDK();
 
   /**
@@ -349,7 +349,11 @@ const Markets: NextPage = () => {
 
   // if there are open positions for the user -> set the open positions
   useEffect(() => {
-    if (collateralNFTPositions) setUserOpenPositions(collateralNFTPositions);
+    if (collateralNFTPositions) {
+      setUserOpenPositions(collateralNFTPositions)
+    } else if (!collateralNFTPositions) {
+      setUserOpenPositions([]);
+    }
   }, [collateralNFTPositions, currentMarketId]);
 
   async function handlePositions(currentCollectionID: string, activeMarketID: string, currentOpenPositions: any) {

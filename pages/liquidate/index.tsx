@@ -81,7 +81,7 @@ const Liquidate: NextPage = () => {
   // init anchor
   const { program } = useAnchor();
   // create wallet instance for PK
-  const wallet = useConnectedWallet();
+  const wallet = useConnectedWallet() || null;
   /**
    * @description sets program | market | connection | wallet
    * @params none
