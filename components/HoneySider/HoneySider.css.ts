@@ -3,7 +3,7 @@ import { breakpoints, vars } from '../../styles/theme.css';
 
 export const honeySider = style({
   width: '100%',
-  minHeight: 'calc(100vh - 102px)',
+  minHeight: 'calc(100vh - 80px)',
   height: 'auto',
   maxWidth: 550,
   position: 'absolute',
@@ -19,7 +19,6 @@ export const honeySider = style({
   '@media': {
     [`screen and (min-width: ${breakpoints.tablet}px)`]: {
       maxWidth: 850,
-      minHeight: 'calc(100vh - 90px)'
     },
     [`screen and (min-width: ${breakpoints.desktop}px)`]: {
       maxWidth: 1216,
@@ -36,5 +35,7 @@ export const isVisible = style({
 
 globalStyle(`.sidebar.is-sticky`, {
   position: 'fixed',
-  top: 90
+  top: 'initial',
+  bottom: '-10px',
+  padding: '12px 12px'
 });
