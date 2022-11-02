@@ -1,5 +1,6 @@
 import { globalStyle, style } from '@vanilla-extract/css';
 import { typography, vars } from '../../styles/theme.css';
+import { infoIcon } from '../../styles/icons.css';
 
 export const container = style({
   cursor: 'pointer'
@@ -31,5 +32,14 @@ export const label = style([
   {
     fontWeight: '500',
     color: vars.colors.black
+  }
+]);
+
+export const tooltipIcon = style([
+  infoIcon,
+  {
+    width: 18,
+    height: 18,
+    marginLeft: 8
   }
 ]);

@@ -25,10 +25,10 @@ export const warningDanger = style({
 });
 
 export const warningTitle = style([
-  typography.caption,
+  typography.description,
   {
     color: vars.colors.brownMiddle,
-    marginBottom: '0!important'
+    marginBottom: '8px!important'
   }
 ]);
 

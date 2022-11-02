@@ -6,7 +6,7 @@ import { Typography } from 'antd';
 import RepayForm from '../RepayForm/RepayForm';
 import HoneyTabs, { HoneyTabItem } from 'components/HoneyTabs/HoneyTabs';
 import EmptyStateDetails from 'components/EmptyStateDetails/EmptyStateDetails';
-import { useConnectedWallet } from '@saberhq/use-solana';
+import { useConnectedWallet, useSolana } from '@saberhq/use-solana';
 import { useWalletKit } from '@gokiprotocol/walletkit';
 import { mobileReturnButton } from 'styles/common.css';
 
@@ -16,6 +16,7 @@ type Tab = 'borrow' | 'repay';
 
 const MarketsSidebar = (props: MarketsSidebarProps) => {
   const wallet = useConnectedWallet() || null;
+  const { disconnect } = useSolana();
   const {
     collectionId,
     availableNFTs,
@@ -82,6 +83,25 @@ const MarketsSidebar = (props: MarketsSidebarProps) => {
             icon={<div className={styles.boltIcon} />}
             title="Manage panel"
             description="First, choose a NFT collection"
+          />
+        ) : (!availableNFTs || availableNFTs.length === 0) && openPositions ? (
+          <EmptyStateDetails
+            icon={<div className={styles.boltIcon} />}
+            title="No NFTs found"
+            description="You don't have any NFTs of this collection in this wallet"
+            buttons={[
+              {
+                title: 'connect another wallet',
+                onClick: disconnect,
+                variant: 'secondary'
+              },
+              {
+                title: 'RETURN',
+                onClick: hideMobileSidebar,
+                variant: 'secondary',
+                className: mobileReturnButton
+              }
+            ]}
           />
         ) : (
           <>

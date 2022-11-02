@@ -153,10 +153,6 @@ globalStyle(`${tertiary}.${disabled}`, {
   background: 'transparent !important'
 });
 
-export const fluid = style({
-  width: '100%'
-});
-
 export const rightBlock = style({
   textAlign: 'right'
 });

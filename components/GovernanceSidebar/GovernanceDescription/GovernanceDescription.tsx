@@ -18,7 +18,7 @@ const GovernanceDescription = (props: {
           <HoneyButton
             onClick={() => props.setActiveTab('vote')}
             variant="secondary"
-            isFluid
+            block
           >
             Return
           </HoneyButton>

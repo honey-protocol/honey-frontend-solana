@@ -3,7 +3,8 @@ import { breakpoints, typography, vars } from '../../styles/theme.css';
 
 export const honeyLineChart = style({
   display: 'flex',
-  position: 'relative'
+  position: 'relative',
+  height: `100%`
 });
 
 const axisYWidth = 35;

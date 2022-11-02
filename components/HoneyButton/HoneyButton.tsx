@@ -7,7 +7,6 @@ import { formatNumber } from '../../helpers/format';
 
 export interface HoneyButtonProps extends ButtonProps {
   variant?: 'primary' | 'secondary' | 'tertiary' | 'text' | 'textSecondary';
-  isFluid?: boolean;
   solAmount?: number;
   usdcValue?: number;
 }
@@ -21,7 +20,6 @@ const HoneyButton = (props: HoneyButtonProps) => {
     children,
     disabled,
     variant,
-    isFluid,
     ...rest
   } = props;
 
@@ -33,7 +31,7 @@ const HoneyButton = (props: HoneyButtonProps) => {
       className={c(
         styles.honeyButton,
         variant ? styles[variant] : styles['primary'],
-        { [styles.disabled]: disabled, [styles.fluid]: isFluid },
+        { [styles.disabled]: disabled },
         className
       )}
     >

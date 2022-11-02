@@ -1,4 +1,4 @@
-import { FC, useEffect, useMemo, useState } from 'react';
+import React, { FC, useEffect, useMemo, useState } from 'react';
 import { InfoBlock } from '../../InfoBlock/InfoBlock';
 import { HoneySlider } from '../../HoneySlider/HoneySlider';
 import * as styles from './VoteForm.css';
@@ -27,6 +27,7 @@ import ProposalActivate from './Proposals/ProposalActivate/ProposalActivate';
 import ProposalHistory from './Proposals/ProposalHistory/ProposalHistory';
 import cs from 'classnames';
 import { questionIcon } from 'styles/icons.css';
+import TabTitle from '../../HoneyTabs/TabTitle/TabTitle';
 
 const { formatShortName: fsn } = formatNumber;
 
@@ -267,7 +268,7 @@ const VoteForm: FC<VoteFormProps> = (props: VoteFormProps) => {
                 <HoneyButton
                   variant="primary"
                   disabled={getBtnDetails().disabled}
-                  isFluid={true}
+                  block
                   onClick={() => getBtnDetails().onClick()}
                 >
                   {getBtnDetails().title}
@@ -279,9 +280,7 @@ const VoteForm: FC<VoteFormProps> = (props: VoteFormProps) => {
       }
     >
       <div className={styles.depositForm}>
-        <div className={styles.tabTitle}>
-          {proposalInfo?.proposalMetaData?.title || '--'}
-        </div>
+        <TabTitle title={proposalInfo?.proposalMetaData?.title || '--'} />
         <div className={styles.row}>
           <HoneyWarning
             message="Discuss about this proposal on forum"

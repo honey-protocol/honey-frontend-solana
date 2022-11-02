@@ -100,7 +100,7 @@ const WithdrawForm = (props: WithdrawFormProps) => {
               <HoneyButton
                 variant="primary"
                 disabled={isWithdrawButtonDisabled()}
-                isFluid={true}
+                block
                 onClick={handleWithdraw}
               >
                 Withdraw
@@ -118,7 +118,7 @@ const WithdrawForm = (props: WithdrawFormProps) => {
             </HexaBoxContainer>
           </div>
           <div className={styles.nftName}>
-            {currentMarketId == HONEY_GENESIS_MARKET_ID ? 'Honey Genesis Bee' : 'Pesky Penguins'}
+            {renderMarketImageByID(currentMarketId)}
           </div>
         </div>
         <div className={styles.row}>

@@ -40,7 +40,7 @@ const WalletMenu = () => {
     <Dropdown overlay={menu}>
       <a onClick={e => e.preventDefault()}>
         <Space size="small" align="center">
-          <div className={styles.phantomIcon} />
+          <div className={styles.userIcon} />
           <Space size={0} direction="vertical">
             <Title level={4} className={styles.title}>
               {formatAddress(walletAddress)}
