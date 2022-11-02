@@ -584,7 +584,7 @@ const Markets: NextPage = () => {
               render: (rate: number) => {
                 return (
                   <div className={c(style.rateCell, style.borrowRate)}>
-                    {fp(rate * 100)}
+                    {fp(rate)}
                   </div>
                 );
               }
