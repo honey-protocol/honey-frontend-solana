@@ -32,7 +32,7 @@ export const main = style({
 });
 
 globalStyle(`${content}.open`, {
-  height: 'calc(100vh - 30px)',
+  height: `calc(100vh - 18px)`,
   backgroundColor: vars.colors.white
 });
 
