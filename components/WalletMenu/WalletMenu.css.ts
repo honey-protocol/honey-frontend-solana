@@ -7,8 +7,8 @@ export const title = style({
   fontSize: '16px !important'
 });
 
-export const phantomIcon = style({
-  width: 20,
-  height: 20,
-  background: 'url("/images/phantomIcon.svg") center center no-repeat'
+export const userIcon = style({
+  width: 24,
+  height: 24,
+  background: 'url("/images/userIcon.svg") center center no-repeat'
 });
