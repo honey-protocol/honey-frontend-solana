@@ -12,7 +12,12 @@ import TabTitle from '../../HoneyTabs/TabTitle/TabTitle';
 
 const MIN_LUQUIDATION_VALUE = 15;
 
-export const SettingMarketStep = (setMarketConfigOpts: any) => {
+interface SettingMarketStepProps {
+  setMarketConfigOpts: any;
+}
+
+export const SettingMarketStep = (props: SettingMarketStepProps) => {
+  const { setMarketConfigOpts } = props;
   const [liquidationFee, setLiquidationFee] = useState<ValueType | undefined>();
   const [adminFee, setAdminFee] = useState<ValueType | undefined>();
   const [maxLTV, setMaxLTV] = useState<number>(0);

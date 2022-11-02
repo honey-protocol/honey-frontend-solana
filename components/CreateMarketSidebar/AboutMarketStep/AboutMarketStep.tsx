@@ -6,7 +6,11 @@ import HoneyTooltip from '../../HoneyTooltip/HoneyTooltip';
 import { HoneyInputWithLabel } from '../../HoneyInputWithLabel/HoneyInputWithLabel';
 import TabTitle from '../../HoneyTabs/TabTitle/TabTitle';
 
-export const AboutMarketStep = (setNftCollectionCreator: any) => {
+interface AboutMarketStepProps {
+  setNftCollectionCreator: any;
+}
+export const AboutMarketStep = (props: AboutMarketStepProps) => {
+  const { setNftCollectionCreator } = props;
   const [collectionUrl, setCollectionUrl] = useState<string>('');
 
   const mockCollectionData = {

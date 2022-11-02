@@ -14,7 +14,12 @@ enum RiskModelTab {
   HIGH = 'high'
 }
 
-export const RiskModelStep = (setRiskModel: any) => {
+interface RiskModelStepProps {
+  setRiskModel: any;
+}
+
+export const RiskModelStep = (props: RiskModelStepProps) => {
+  const { setRiskModel } = props;
   const [activeTab, setActiveTab] = useState(RiskModelTab.DEFAULT);
   const isMock = true;
 

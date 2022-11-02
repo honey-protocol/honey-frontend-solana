@@ -17,7 +17,7 @@ import { buildReserveConfig } from './ReserveConfigs';
 const CreateMarketTab: FC = (wallet: any, honeyClient: any) => {
   const [currentStep, setCurrentStep] = useState<number>(0);
   const [createdMarket, setCreatedMarket] = useState<HoneyMarket | null>();
-  const [nftCollectionCreator, setNftCollectionCreator] = useState<PublicKey>();
+  const [nftCollectionCreator, setNftCollectionCreator] = useState();
   const [nftOracle, setNftOracle] = useState<PublicKey>();
   const [marketConfigOpts, setMarketConfigOpts] = useState<any>({});
   const [riskModel, setRiskModel] = useState<PublicKey>();
@@ -97,7 +97,7 @@ const CreateMarketTab: FC = (wallet: any, honeyClient: any) => {
     },
     {
       step: 3,
-      content: <AddOracleStep setNftOracle={setNftOracle} />
+      content: <AddOracleStep setOracle={setNftOracle} />
     },
     {
       step: 4,
