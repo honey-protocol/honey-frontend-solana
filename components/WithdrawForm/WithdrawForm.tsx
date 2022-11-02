@@ -14,6 +14,7 @@ import { WithdrawFormProps } from './types';
 import { questionIcon } from 'styles/icons.css';
 import { hAlign } from 'styles/common.css';
 import useToast from 'hooks/useToast';
+import { renderMarketName } from 'helpers/marketHelpers';
 
 const { format: f, formatPercent: fp, formatSol: fs, parse: p } = formatNumber;
 
@@ -118,7 +119,7 @@ const WithdrawForm = (props: WithdrawFormProps) => {
             </HexaBoxContainer>
           </div>
           <div className={styles.nftName}>
-            {renderMarketImageByID(currentMarketId)}
+            {renderMarketName(currentMarketId)}
           </div>
         </div>
         <div className={styles.row}>
