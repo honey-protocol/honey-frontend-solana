@@ -16,15 +16,18 @@ import HealthLvl from 'components/HealthLvl/HealthLvl';
 import { HONEY_GENESIS_MARKET_ID, PESKY_PENGUINS_MARKET_ID } from 'constants/loan';
 import { renderMarketImageByID } from 'helpers/marketHelpers';
 import { RoundHalfDown } from 'helpers/utils';
+import { LiquidateExpandTableProps } from './LiquidateExpandTableProps';
 
 const { formatPercent: fp, formatSol: fs } = formatNumber;
 
 type FilterType = 'most_critical' | 'max_debt' | 'most_valuable';
 
-export const LiquidateExpandTable: FC<{ data: LiquidateTablePosition[], currentMarketId: string }> = ({
-  data, currentMarketId
-}) => {
+
+export const LiquidateExpandTable = (props: LiquidateExpandTableProps) =>  {
+  const { data, currentMarketId} = props;
   const [filter, setFilter] = useState<FilterType>('most_critical');
+
+  console.log('current market id', currentMarketId)
 
   const expandColumns: ColumnType<LiquidateTablePosition>[] = useMemo(
     () => [
@@ -86,7 +89,7 @@ export const LiquidateExpandTable: FC<{ data: LiquidateTablePosition[], currentM
     ],
     [filter]
   );
-
+  
   return (
     <>
       <div className={styles.expandTableHeader}>

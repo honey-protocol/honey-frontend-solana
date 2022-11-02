@@ -26,6 +26,23 @@ export type OpenPositions = {
 //     utilizationRate: number;
 //     stats?: any;
 //   };
+
+export const liquidationCollections: MarketTableRow[] = [
+  {
+    id: '6FcJaAzQnuoA6o3sVw1GD6Ba69XuL5jinZpQTzJhd2R3',
+    key: 'HNYG',
+    name: 'Honey Genesis Bee',
+    rate: 0,
+    available: 0,
+    value: 0,
+    allowance: 0,
+    positions: [],
+    connection: undefined,
+    user: undefined,
+    debt: 0,
+    utilizationRate: 0,
+  }
+];
   
   export const marketCollections: MarketTableRow[] = [
     {

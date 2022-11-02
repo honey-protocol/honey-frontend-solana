@@ -35,7 +35,7 @@ import {
 } from '@honey-finance/sdk';
 import { ConfigureSDK } from 'helpers/loanHelpers';
 import { useConnectedWallet } from '@saberhq/use-solana';
-import { LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js';
+import { Connection, LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js';
 import { calcNFT, fetchSolPrice } from 'helpers/loanHelpers/userCollection';
 import { LiquidateTablePosition } from '../../types/liquidate';
 import {
@@ -65,12 +65,11 @@ import {
   BURRITO_BOYZ_MARKET_NAME,
   renderMarketImageByID
 } from 'helpers/marketHelpers';
-import { marketCollections } from 'constants/borrowLendMarkets';
+import { marketCollections, liquidationCollections } from 'constants/borrowLendMarkets';
 import { populateMarketData } from 'helpers/loanHelpers/userCollection';
 import { setMarketId } from 'pages/_app';
 import { MarketTableRow } from 'types/markets';
 import { renderMarket, renderMarketImageByName } from 'helpers/marketHelpers';
-import { Bid } from 'components/BidForm/types';
 
 const { formatPercent: fp, formatSol: fs, formatRoundDown: fd } = formatNumber;
 const Liquidate: NextPage = () => {
@@ -176,9 +175,9 @@ const Liquidate: NextPage = () => {
    * @params array of bids
    * @returns state change
    */
-  async function handleBiddingState(biddingArray: any) {
+   async function handleBiddingState(biddingArray: any) {
     biddingArray.map((obligation: any) => {
-      if (obligation.bidder == stringyfiedWalletPK) {
+      if (stringyfiedWalletPK && obligation.bidder == stringyfiedWalletPK) {
         setHasPosition(true);
         setCurrentUserBid(Number(obligation.bidLimit / LAMPORTS_PER_SOL));
       } else {
@@ -373,14 +372,13 @@ const Liquidate: NextPage = () => {
   // MOCK DATA FOR NOW
   useEffect(() => {
     if (!wallet) {
-      setTableData(marketCollections);
+      setTableData(liquidationCollections);
     }
     
     if (sdkConfig.saberHqConnection && sdkConfig.sdkWallet && marketReserveInfo) {
       function getData() {
         return Promise.all(
-          marketCollections.map(async collection => {
-
+          liquidationCollections.map(async collection => {
             await populateMarketData(
               collection,
               sdkConfig.saberHqConnection,
@@ -392,9 +390,10 @@ const Liquidate: NextPage = () => {
                 nftPrice: nftPrice,
                 marketReserveInfo: marketReserveInfo
               }
-            );
+            )
 
-            return collection;
+            return collection
+
           })
         );
       }
@@ -433,7 +432,6 @@ const Liquidate: NextPage = () => {
    */
    async function handleMarketId(record: any) {
     const marketData = renderMarket(record.id);
-    console.log('this is marketdata', marketData)
     setCurrentMarketId(marketData!.id);
     setMarketId(marketData!.id);
     setCurrentMarketName(marketData!.name);
@@ -698,9 +696,9 @@ const Liquidate: NextPage = () => {
               [style.emptyTable]: !tableDataFiltered.length
             })}
             onRow={(record, rowIndex) => {
-              return {
-                onClick: event => handleMarketId(record)
-              };
+                return {
+                  onClick: event => handleMarketId(record)
+                };
             }}
             expandable={{
               // we use our own custom expand column
@@ -709,12 +707,16 @@ const Liquidate: NextPage = () => {
                 setExpandedRowKeys(expanded ? [row.key] : []),
               expandedRowKeys,
               expandedRowRender: record => {
-                return (
-                  <div className={style.expandSection}>
-                    <div className={style.dashedDivider} />
-                    <LiquidateExpandTable data={record.openPositions} currentMarketId={currentMarketId} />
-                  </div>
-                );
+                if (wallet === null) {
+                  return;
+                } else {
+                  return (
+                    <div className={style.expandSection}>
+                      <div className={style.dashedDivider} />
+                      <LiquidateExpandTable data={record.openPositions} currentMarketId={currentMarketId} />
+                    </div>
+                  );
+                }
               }
             }}
           />

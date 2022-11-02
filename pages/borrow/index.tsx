@@ -604,20 +604,20 @@ const Markets: NextPage = () => {
                   ]
                 }
               >
-                <span>Available</span>{' '}
+                <span>Supplied</span>{' '}
                 <div className={style.sortIcon[sortOrder]} />
               </div>
             );
           },
-          dataIndex: 'available',
+          dataIndex: 'value',
           children: [
             {
-              dataIndex: 'available',
-              key: 'available',
+              dataIndex: 'value',
+              key: 'value',
               hidden: windowWidth < TABLET_BP,
-              render: (available: number) => {
+              render: (value: number) => {
                 return (
-                  <div className={style.availableCell}>{fs(available)}</div>
+                  <div className={style.valueCell}>{fs(value)}</div>
                 );
               }
             }
@@ -637,18 +637,18 @@ const Markets: NextPage = () => {
                   ]
                 }
               >
-                <span>TVL</span>
+                <span>Available</span>
                 <div className={style.sortIcon[sortOrder]} />
               </div>
             );
           },
-          dataIndex: 'value',
+          dataIndex: 'available',
           children: [
             {
-              dataIndex: 'value',
-              key: 'value',
-              render: (value: number, data: MarketTableRow) => {
-                return <div className={style.valueCell}>{fs(value)}</div>;
+              dataIndex: 'available',
+              key: 'available',
+              render: (available: number, data: MarketTableRow) => {
+                return <div className={style.availableCell}>{fs(available)}</div>;
               }
             }
           ],

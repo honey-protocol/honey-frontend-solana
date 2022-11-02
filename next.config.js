@@ -72,28 +72,6 @@ module.exports = (phase, { defaultConfig }) => {
       }
     };
     return withVanillaExtract(ProdNextConfig);
-    // const env = {
-    //   NETWORK: 'devnet',
-    //   NETWORK_CONFIGURATION: undefined,
-    //   async headers() {
-    //     return [
-    //       {
-    //         // Apply these headers to all routes in your application.
-    //         source: '/(.*)',
-    //         headers: securityHeaders
-    //       }
-    //     ];
-    //   }
-    // };
-
-    // const devNextConfig = {
-    //   reactStrictMode: true,
-    //   env: env,
-    //   images: {
-    //     domains: ['www.arweave.net']
-    //   }
-    // };
-    // return withVanillaExtract(devNextConfig);
   } else {
     const env = {
       NETWORK: 'mainnet-beta',

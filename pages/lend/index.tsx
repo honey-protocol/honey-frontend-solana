@@ -148,39 +148,41 @@ const Lend: NextPage = () => {
     }
   }, [walletPK]);
 
+  async function calculateTotalDeposits(marketReserveInfo: any, honeyUser: any) {
+    if (!marketReserveInfo || !honeyUser) {
+      return;
+    }
+    setTimeout(async () => {
+      let depositNoteExchangeRate = BnToDecimal(marketReserveInfo[0].depositNoteExchangeRate,15,5);
+      let loanNoteExchangeRate = 0;
+      let nftPrice = 2;
+      let cRatio = 1;
+
+      let depositValue = await honeyUser.deposits().length > 0;
+      if (depositValue == false) {
+        return;
+      } else {
+        let totalDeposits = (
+          honeyUser
+          .deposits()[0]
+          .amount.div(new BN(10 ** 5))
+          .toNumber() *
+          depositNoteExchangeRate
+        ) / 10 ** 4;
+
+        setUserTotalDeposits(totalDeposits);
+      }
+    }, 1500)
+  }
+
   /**
    * @description updates honeyUser | marketReserveInfo | - timeout required
    * @params none
    * @returns honeyUser | marketReserveInfo |
    */
   useEffect(() => {
-    setTimeout(() => {
-      let depositNoteExchangeRate = 0,
-        loanNoteExchangeRate = 0,
-        nftPrice = 0,
-        cRatio = 1;
-
-      if (marketReserveInfo) {
-        nftPrice = 2;
-        depositNoteExchangeRate = BnToDecimal(
-          marketReserveInfo[0].depositNoteExchangeRate,
-          15,
-          5
-        );
-      }
-
-      if (honeyUser?.deposits().length > 0) {
-        let totalDeposit =
-          (honeyUser
-            .deposits()[0]
-            .amount.div(new BN(10 ** 5))
-            .toNumber() *
-            depositNoteExchangeRate) /
-          10 ** 4;
-        setUserTotalDeposits(totalDeposit);
-      }
-    }, 3000);
-  }, [marketReserveInfo, honeyUser]);
+    if (marketReserveInfo && honeyUser) calculateTotalDeposits(marketReserveInfo, honeyUser);
+  });
 
   // fetches the current sol price
   async function fetchSolValue(reserves: any, connection: any) {
