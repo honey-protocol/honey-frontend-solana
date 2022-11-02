@@ -126,6 +126,8 @@ const BorrowForm = (props: BorrowProps) => {
     }
   };
 
+  console.log('open pos', openPositions)
+
   // if user has an open position, we need to be able to click on the position and borrow against it
   useEffect(() => {
     if (openPositions?.length) {
@@ -175,7 +177,12 @@ const BorrowForm = (props: BorrowProps) => {
         <div className={styles.nftInfo}>
           <div className={styles.nftImage}>
             <HexaBoxContainer>
-              {renderMarketImageByID(currentMarketId)}
+              {
+                openPositions.length ?
+                <Image src={openPositions[0].image} alt='Honey NFT image' layout='fill' />
+                :
+                renderMarketImageByID(currentMarketId)
+              }
             </HexaBoxContainer>
           </div>
           <div className={styles.nftName}>{selectedNft?.name}</div>

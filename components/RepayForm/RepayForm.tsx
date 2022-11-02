@@ -19,6 +19,7 @@ import { useSolBalance } from 'hooks/useSolBalance';
 import { MAX_LTV } from 'constants/loan';
 import { LIQUIDATION_FEE } from 'constants/borrowLendMarkets';
 import { HONEY_GENESIS_MARKET_ID, LIFINITY_FLARES_MARKET_ID, OG_ATADIANS_MARKET_ID, PESKY_PENGUINS_MARKET_ID, BURRITO_BOYZ_MARKET_ID  } from 'constants/loan';
+import { renderMarketImageByID } from 'helpers/marketHelpers';
 
 const {
   format: f,
@@ -175,7 +176,12 @@ const RepayForm = (props: RepayProps) => {
         <div className={styles.nftInfo}>
           <div className={styles.nftImage}>
             <HexaBoxContainer>
-              {renderImage(currentMarketId)}
+              {
+                openPositions.length ?
+                <Image src={openPositions[0].image} alt='Honey NFT image' layout='fill' />
+                :
+                renderMarketImageByID(currentMarketId)
+              }
             </HexaBoxContainer>
           </div>
           <div className={styles.nftName}>{openPositions[0].name}</div>
