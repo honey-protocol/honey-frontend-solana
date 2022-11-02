@@ -22,6 +22,14 @@ const CreateMarketTab: FC = (wallet: any, honeyClient: any) => {
   const [marketConfigOpts, setMarketConfigOpts] = useState<any>({});
   const [riskModel, setRiskModel] = useState<PublicKey>();
 
+  const logCurrent = () => {
+    console.log('currentStep', currentStep);
+    console.log('marketConfigOpts', marketConfigOpts);
+    console.log('nftCollectionCreator', nftCollectionCreator);
+    console.log('nftOracle', nftOracle);
+    console.log('riskModel', riskModel);
+  };
+
   const createMarket = async () => {
     const owner = wallet?.publicKey!;
     const quoteCurrencyName = 'USDC';
@@ -93,7 +101,7 @@ const CreateMarketTab: FC = (wallet: any, honeyClient: any) => {
     },
     {
       step: 4,
-      content: <SettingMarketStep setMarketConfigOps={setMarketConfigOpts} />
+      content: <SettingMarketStep setMarketConfigOpts={setMarketConfigOpts} />
     },
     {
       step: 5,
@@ -121,11 +129,7 @@ const CreateMarketTab: FC = (wallet: any, honeyClient: any) => {
               </HoneyButton>
             )}
             {currentStep === steps.length - 1 && (
-              <HoneyButton
-                variant="primary"
-                block
-                onClick={() => createMarket()}
-              >
+              <HoneyButton variant="primary" block onClick={() => logCurrent()}>
                 Create market
               </HoneyButton>
             )}

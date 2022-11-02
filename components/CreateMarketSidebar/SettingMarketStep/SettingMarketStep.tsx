@@ -1,6 +1,6 @@
 import * as styles from './SettingMarketStep.css';
 import HoneyTooltip from '../../HoneyTooltip/HoneyTooltip';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import HoneyFormattedNumericInput from '../../HoneyFormattedNumericInput/HoneyFormattedInput';
 import { ValueType } from 'rc-input-number/lib/utils/MiniDecimal';
 import { CreateMarketSlider } from '../CreateMarketSlider/CreateMarketSlider';
@@ -12,7 +12,7 @@ import TabTitle from '../../HoneyTabs/TabTitle/TabTitle';
 
 const MIN_LUQUIDATION_VALUE = 15;
 
-export const SettingMarketStep = (setMarketConfigOps: any) => {
+export const SettingMarketStep = (setMarketConfigOpts: any) => {
   const [liquidationFee, setLiquidationFee] = useState<ValueType | undefined>();
   const [adminFee, setAdminFee] = useState<ValueType | undefined>();
   const [maxLTV, setMaxLTV] = useState<number>(0);
@@ -21,6 +21,15 @@ export const SettingMarketStep = (setMarketConfigOps: any) => {
   );
   const maxLiquidationFee = 100;
   const maxAdminFee = 50;
+
+  useEffect(() => {
+    setMarketConfigOpts({
+      liquidationFee: liquidationFee,
+      adminFee: adminFee,
+      maxLTV: maxLTV,
+      liquidationThreshold: liquidationThreshold
+    });
+  }, [liquidationFee, adminFee, maxLTV, liquidationThreshold]);
 
   const handleLiquidationFeeChange = (value: ValueType) => {
     if (isNil(value)) {

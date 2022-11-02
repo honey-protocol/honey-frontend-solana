@@ -99,7 +99,10 @@ export const RiskModelStep = (setRiskModel: any) => {
           ]}
           isFullWidth
           activeItemSlug={activeTab}
-          onClick={slug => setActiveTab(slug as RiskModelTab)}
+          onClick={slug => {
+            setActiveTab(slug as RiskModelTab);
+            setRiskModel(slug);
+          }}
         />
       </div>
 
