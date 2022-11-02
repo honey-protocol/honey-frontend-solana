@@ -100,6 +100,10 @@ export const buttons = style({
   margin: `0 -12px`
 });
 
+globalStyle(`${buttons} .ant-tooltip-open`, {
+  display: 'block'
+});
+
 export const reloadIcon = style({
   background: 'url("/images/reload-icon.svg") center center no-repeat',
   width: 15,
@@ -108,15 +112,6 @@ export const reloadIcon = style({
   transform: 'translateY(-2px)',
   cursor: 'pointer'
 });
-
-// export const mockTooltipIcon = style([
-//   questionIcon,
-//   {
-//     width: 12,
-//     marginLeft: 4,
-//     transform: 'translateY(-1px)'
-//   }
-// ]);
 
 export const swapArrow = style({
   display: 'flex',
