@@ -1,4 +1,4 @@
-import React, { FC, useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useConnectedWallet, useConnection } from '@saberhq/use-solana';
 import { TOKEN_PROGRAM_ID } from '@solana/spl-token-v-0.1.8';
 import {
@@ -7,23 +7,22 @@ import {
   PublicKey,
   RpcResponseAndContext
 } from '@solana/web3.js';
-import BN from 'bn.js';
 import { useSolBalance } from './useSolBalance';
 import { WRAPPED_SOL_MINT } from '@jup-ag/react-hook';
 import Decimal from 'decimal.js';
 import { SOL_DECIMALS } from '@honey-finance/sdk';
 
 export type TokenBalance = {
-  amount: BN;
+  amount: string;
   decimals: number;
 };
 export type TokenBalances = Record<string, TokenBalance>;
 type WalletTokensBalancesOptions = {
-  mergeSolAndWsolBalance?: boolean;
+  areSolWsolBalancesMerged?: boolean;
 };
 
 export const useWalletTokensBalances = ({
-  mergeSolAndWsolBalance
+  areSolWsolBalancesMerged
 }: WalletTokensBalancesOptions = {}) => {
   const [tokensBalancesMap, setTokenBalancesMap] = useState<TokenBalances>({});
   const wallet = useConnectedWallet();
@@ -76,7 +75,7 @@ export const useWalletTokensBalances = ({
     } catch (e) {
       console.error(e);
     }
-  }, [connection, wallet, getUserTokenBalances, mergeSolAndWsolBalance]);
+  }, [connection, wallet, getUserTokenBalances, areSolWsolBalancesMerged]);
 
   useEffect(() => {
     refreshBalances();
@@ -90,24 +89,22 @@ export const useWalletTokensBalances = ({
     }
 
     const wsolBalance =
-      tokensBalances[WRAPPED_SOL_MINT.toString()]?.amount || new BN(0);
+      tokensBalances[WRAPPED_SOL_MINT.toString()]?.amount.toString() || '0';
 
     const solBalanceLamports = new Decimal(solBalance).mul(10 ** SOL_DECIMALS);
     // leave some sol to pay transactions fees
     const solSafeBufferLamports = new Decimal(0.15).mul(10 ** SOL_DECIMALS);
 
     // wsol + sol - safeBuffer
-    const totalBalance = BN.max(
-      wsolBalance.add(
-        new BN(
-          solBalanceLamports.minus(solSafeBufferLamports).floor().toString()
-        )
+    const totalBalance = Decimal.max(
+      new Decimal(wsolBalance).add(
+        new Decimal(solBalanceLamports.minus(solSafeBufferLamports).toString())
       ),
-      new BN(0)
+      new Decimal(0)
     );
 
     tokensBalances[WRAPPED_SOL_MINT.toString()] = {
-      amount: totalBalance,
+      amount: totalBalance.toString(),
       decimals: SOL_DECIMALS
     };
 
@@ -116,7 +113,7 @@ export const useWalletTokensBalances = ({
 
   return {
     refreshBalances,
-    balances: mergeSolAndWsolBalance
+    balances: areSolWsolBalancesMerged
       ? mergeSolAndWsolBalances({ ...tokensBalancesMap })
       : tokensBalancesMap
   };

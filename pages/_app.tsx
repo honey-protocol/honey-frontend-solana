@@ -47,7 +47,6 @@ const storedAccent =
     ? (localStorage.getItem('accent') as ThemeAccent)
     : undefined;
 
-console.log(networkConfiguration(), network);
 const OnChainProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const wallet = useConnectedWallet();
   const connection = useConnection();

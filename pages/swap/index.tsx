@@ -16,11 +16,7 @@ import {
   InfoBlockData,
   SwapInfoBlock
 } from '../../components/SwapInfoBlock/SwapInfoBlock';
-import {
-  TOKEN_LIST_URL,
-  useJupiter,
-  WRAPPED_SOL_MINT
-} from '@jup-ag/react-hook';
+import { TOKEN_LIST_URL, useJupiter } from '@jup-ag/react-hook';
 import { TokenInfo } from '@saberhq/token-utils';
 import { SwapFooter } from '../../components/SwapFooter/SwapFooter';
 import { HoneySearchTokenModal } from '../../components/HoneySearchTokenModal/HoneySearchTokenModal';
@@ -28,9 +24,8 @@ import { lamportsToNumber, numberToLamports } from '../../helpers/math/math';
 import { useWalletTokensBalances } from '../../hooks/useBalances';
 import { formatNumber } from '../../helpers/format';
 import { ValueType } from 'rc-input-number/lib/utils/MiniDecimal';
-import BN from 'bn.js';
 import { useWalletKit } from '@gokiprotocol/walletkit';
-import { useSolBalance } from '../../hooks/useSolBalance';
+import Decimal from 'decimal.js';
 
 const { formatTokenAllDecimals: ftad } = formatNumber;
 
@@ -42,7 +37,7 @@ const Swap: NextPage = () => {
   const { connect } = useWalletKit();
   const connection = useConnection();
   const { balances: tokenBalancesMap, refreshBalances } =
-    useWalletTokensBalances({ mergeSolAndWsolBalance: true });
+    useWalletTokensBalances({ areSolWsolBalancesMerged: true });
 
   const [tokensDetails, setTokensDetails] = useState<TokenInfo[]>([]);
   const [haveTokensDetailsLoaded, setHaveTokensDetailsLoaded] = useState(false);
@@ -125,10 +120,6 @@ const Swap: NextPage = () => {
   }, [bestRoute]);
 
   const swapStats: InfoBlockData[] = useMemo(() => {
-    // if (!bestRoute) {
-    //   return [];
-    // }
-
     const outDecimals = outputToken?.decimals || 1;
     const priceImpact = bestRoute ? bestRoute.priceImpactPct * 100 : 0;
     console.log('bestRoute', bestRoute);
@@ -290,7 +281,8 @@ const Swap: NextPage = () => {
   const handleHalf = () => {
     const tokenBalanceInfo = tokenBalancesMap[inputMint.toString()];
     const { amount, decimals } = tokenBalanceInfo;
-    setSwapAmount(lamportsToNumber(amount.div(new BN(2)).toString(), decimals));
+    const half = new Decimal(amount).div(2);
+    setSwapAmount(lamportsToNumber(half, decimals));
   };
 
   const reverseInputs = () => {
