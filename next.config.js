@@ -66,7 +66,8 @@ module.exports = (phase, { defaultConfig }) => {
           'www.arweave.net',
           'https://solscanee.net/solana.json',
           'https://api.jsonbin.it/bins/hGRzonVT',
-          'i.seadn.io'
+          'i.seadn.io',
+          'ipfs.vvdny.io'
         ]
       }
     };
@@ -126,7 +127,8 @@ module.exports = (phase, { defaultConfig }) => {
           'www.arweave.net',
           'https://solscanee.net/solana.json',
           'https://api.jsonbin.it/bins/hGRzonVT',
-          'i.seadn.io'
+          'i.seadn.io',
+          'ipfs.vvdny.io'
         ]
       }
     };
