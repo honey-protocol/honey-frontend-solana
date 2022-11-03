@@ -759,8 +759,9 @@ const Liquidate: NextPage = () => {
                   >
                     <div className={style.dashedDivider} />
                     <LiquidateExpandTableMobile
-                      data={record.positions}
+                      data={record.openPositions}
                       onPlaceBid={showMobileSidebar}
+                      currentMarketId={currentMarketId}
                     />
                   </div>
                 );

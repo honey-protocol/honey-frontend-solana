@@ -22,7 +22,6 @@ import React, {
 } from 'react';
 import { formatNFTName, formatNumber } from '../../helpers/format';
 import Image from 'next/image';
-import honeyGenesisBee from '/public/images/imagePlaceholder.png';
 import { ColumnTitleProps, Key } from 'antd/lib/table/interface';
 import debounce from 'lodash/debounce';
 import SearchInput from '../../components/SearchInput/SearchInput';
@@ -697,10 +696,7 @@ const Markets: NextPage = () => {
                     <div className={style.logoWrapper}>
                       <div className={style.collectionLogo}>
                         <HexaBoxContainer>
-                          <Image
-                            src={honeyGenesisBee}
-                            alt="Honey Genesis Bee"
-                          />
+                          {renderMarketImageByName(name)}
                         </HexaBoxContainer>
                       </div>
                     </div>
@@ -723,7 +719,7 @@ const Markets: NextPage = () => {
                 }
               />
               <HoneyTableRow>
-                <div className={style.rateCell}>{fp(row.rate * 100)}</div>
+                <div className={style.rateCell}>{fp(row.rate)}</div>
                 <div className={style.availableCell}>{fs(row.available)}</div>
               </HoneyTableRow>
             </>
