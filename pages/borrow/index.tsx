@@ -398,6 +398,7 @@ const Markets: NextPage = () => {
               false
             );
             collection.positions = await handlePositions(collection.id, currentMarketId, userOpenPositions);
+            console.log('@@mobile', collection.positions);
             collection.rate = (await getInterestRate(collection.utilizationRate)) || 0;
             if (currentMarketId === collection.id) setActiveInterestRate(collection.rate);
             return collection;
@@ -423,10 +424,6 @@ const Markets: NextPage = () => {
     currentMarketId,
     userOpenPositions
   ]);
-
-  useEffect(() => {
-    console.log('@@--table data', tableData);
-  }, [tableData]);
 
   const showMobileSidebar = () => {
     setShowMobileSidebar(true);
@@ -1187,11 +1184,16 @@ const Markets: NextPage = () => {
             hasRowsShadow={true}
             tableLayout="fixed"
             columns={columnsMobile}
-            dataSource={tableDataFiltered}
+            dataSource={tableData}
             pagination={false}
             showHeader={false}
+            onRow={(record, rowIndex) => {
+              return {
+                onClick: event => handleMarketId(record)
+              }
+            }}
             className={classNames(style.table, {
-              [style.emptyTable]: !tableDataFiltered.length
+              [style.emptyTable]: !tableData.length
             })}
             expandable={{
               // we use our own custom expand column
