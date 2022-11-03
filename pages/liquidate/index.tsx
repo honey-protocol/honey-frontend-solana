@@ -176,6 +176,8 @@ const Liquidate: NextPage = () => {
    * @returns state change
    */
    async function handleBiddingState(biddingArray: any) {
+    if (biddingArray === undefined) biddingArray = [{bid: '', bidder: '', bidLimit: '', }]; 
+
     biddingArray.map((obligation: any) => {
       if (stringyfiedWalletPK && obligation.bidder == stringyfiedWalletPK) {
         setHasPosition(true);
@@ -355,9 +357,9 @@ const Liquidate: NextPage = () => {
 
   }, [status.positions, status.bids]);
 
-  useEffect(() => {
-    if (status.bids) handleBiddingState(status.bids);
-  }, [currentMarketId, status])
+  // useEffect(() => {
+  //   if (status.bids) handleBiddingState(status.bids);
+  // }, [currentMarketId, status])
 
   const [tableData, setTableData] = useState<MarketTableRow[]>([]);
   const [tableDataFiltered, setTableDataFiltered] = useState<
