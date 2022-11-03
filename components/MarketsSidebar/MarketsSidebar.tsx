@@ -2,13 +2,16 @@ import React, { useEffect, useState } from 'react';
 import * as styles from './MarketsSidebar.css';
 import { MarketsSidebarProps } from './types';
 import BorrowForm from '../BorrowForm/BorrowForm';
-import { Typography } from 'antd';
+import { Spin, Typography } from 'antd';
 import RepayForm from '../RepayForm/RepayForm';
 import HoneyTabs, { HoneyTabItem } from 'components/HoneyTabs/HoneyTabs';
 import EmptyStateDetails from 'components/EmptyStateDetails/EmptyStateDetails';
 import { useConnectedWallet, useSolana } from '@saberhq/use-solana';
 import { useWalletKit } from '@gokiprotocol/walletkit';
 import { mobileReturnButton } from 'styles/common.css';
+import { renderNftList } from 'helpers/marketHelpers';
+import useFetchNFTByUser from 'hooks/useNFTV2';
+import { spinner } from 'styles/common.css';
 
 const { Text } = Typography;
 
@@ -17,9 +20,9 @@ type Tab = 'borrow' | 'repay';
 const MarketsSidebar = (props: MarketsSidebarProps) => {
   const wallet = useConnectedWallet() || null;
   const { disconnect } = useSolana();
+  const [NFTs, isLoadingNfts, refetchNfts] = useFetchNFTByUser(wallet);
+  const availableNFTs = NFTs;
   const {
-    collectionId,
-    availableNFTs,
     openPositions,
     nftPrice,
     userAllowance,
@@ -43,7 +46,7 @@ const MarketsSidebar = (props: MarketsSidebarProps) => {
   };
 
   useEffect(() => {
-    if (openPositions.length == 0) handleTabChange('borrow')
+    if (openPositions.length == 0) handleTabChange('borrow');
   }, [openPositions, availableNFTs]);
 
   const items: [HoneyTabItem, HoneyTabItem] = [
@@ -51,13 +54,18 @@ const MarketsSidebar = (props: MarketsSidebarProps) => {
     { label: 'Repay', key: 'repay', disabled: !Boolean(openPositions.length) }
   ];
 
+  const availableNFTsInSelectedMarket = renderNftList(
+    currentMarketId,
+    availableNFTs
+  );
+
   return (
     <div className={styles.marketsSidebarContainer}>
       <HoneyTabs
         activeKey={activeTab}
         onTabChange={handleTabChange}
         items={items}
-        active={Boolean(collectionId)}
+        active={Boolean(currentMarketId)}
       >
         {!wallet?.connected ? (
           <EmptyStateDetails
@@ -78,13 +86,21 @@ const MarketsSidebar = (props: MarketsSidebarProps) => {
               }
             ]}
           />
-        ) : !collectionId ? (
+        ) : !currentMarketId ? (
           <EmptyStateDetails
             icon={<div className={styles.boltIcon} />}
             title="Manage panel"
             description="First, choose a NFT collection"
           />
-        ) : (!availableNFTs || availableNFTs.length === 0) && openPositions ? (
+        ) : isLoadingNfts ? (
+          <EmptyStateDetails
+            icon={<Spin className={spinner} />}
+            title="Fetching your NFTs"
+            description=""
+          />
+        ) : (!availableNFTsInSelectedMarket ||
+            availableNFTsInSelectedMarket.length === 0) &&
+          openPositions.length === 0 ? (
           <EmptyStateDetails
             icon={<div className={styles.boltIcon} />}
             title="No NFTs found"
@@ -106,36 +122,36 @@ const MarketsSidebar = (props: MarketsSidebarProps) => {
         ) : (
           <>
             {activeTab === 'borrow' && (
-                <BorrowForm
-                  userDebt={userDebt}
-                  executeBorrow={executeBorrow}
-                  availableNFTs={availableNFTs}
-                  openPositions={openPositions}
-                  nftPrice={nftPrice}
-                  executeDepositNFT={executeDepositNFT}
-                  userAllowance={userAllowance}
-                  loanToValue={loanToValue}
-                  hideMobileSidebar={hideMobileSidebar}
-                  fetchedSolPrice={fetchedSolPrice}
-                  calculatedInterestRate={calculatedInterestRate}
-                  currentMarketId={currentMarketId}
-                />
+              <BorrowForm
+                userDebt={userDebt}
+                executeBorrow={executeBorrow}
+                availableNFTs={availableNFTs}
+                openPositions={openPositions}
+                nftPrice={nftPrice}
+                executeDepositNFT={executeDepositNFT}
+                userAllowance={userAllowance}
+                loanToValue={loanToValue}
+                hideMobileSidebar={hideMobileSidebar}
+                fetchedSolPrice={fetchedSolPrice}
+                calculatedInterestRate={calculatedInterestRate}
+                currentMarketId={currentMarketId}
+              />
             )}
             {activeTab === 'repay' && Boolean(openPositions.length) && (
-                <RepayForm
-                  executeRepay={executeRepay}
-                  openPositions={openPositions}
-                  availableNFTs={availableNFTs}
-                  nftPrice={nftPrice}
-                  executeWithdrawNFT={executeWithdrawNFT}
-                  userDebt={userDebt}
-                  userAllowance={userAllowance}
-                  loanToValue={loanToValue}
-                  hideMobileSidebar={hideMobileSidebar}
-                  changeTab={handleTabChange}
-                  fetchedSolPrice={fetchedSolPrice}
-                  currentMarketId={currentMarketId}
-                />
+              <RepayForm
+                executeRepay={executeRepay}
+                openPositions={openPositions}
+                availableNFTs={availableNFTs}
+                nftPrice={nftPrice}
+                executeWithdrawNFT={executeWithdrawNFT}
+                userDebt={userDebt}
+                userAllowance={userAllowance}
+                loanToValue={loanToValue}
+                hideMobileSidebar={hideMobileSidebar}
+                changeTab={handleTabChange}
+                fetchedSolPrice={fetchedSolPrice}
+                currentMarketId={currentMarketId}
+              />
             )}
           </>
         )}

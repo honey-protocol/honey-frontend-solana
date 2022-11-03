@@ -1,5 +1,5 @@
-import { style } from '@vanilla-extract/css';
-import { breakpoints, typography } from './theme.css';
+import { globalStyle, style } from '@vanilla-extract/css';
+import { breakpoints, typography, vars } from './theme.css';
 
 export const container = style({
   width: '100%',
@@ -49,4 +49,10 @@ export const mobileReturnButton = style({
       display: 'none'
     }
   }
+});
+
+export const spinner = style({});
+
+globalStyle(`${spinner} .ant-spin-dot-item`, {
+  background: vars.colors.brownDark
 });

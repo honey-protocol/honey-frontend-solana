@@ -1052,8 +1052,6 @@ const Markets: NextPage = () => {
           <HoneySider isMobileSidebarVisible={isMobileSidebarVisible}>
             {/* borrow repay module */}
             <MarketsSidebar
-              collectionId="s"
-              availableNFTs={userAvailableNFTs}
               openPositions={userOpenPositions}
               nftPrice={nftPrice}
               executeDepositNFT={executeDepositNFT}

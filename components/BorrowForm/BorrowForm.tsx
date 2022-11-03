@@ -23,7 +23,7 @@ import { useSolBalance } from 'hooks/useSolBalance';
 import cs from 'classnames';
 import Nft from 'pages/farm/[name]';
 import { BORROW_FEE, LIQUIDATION_FEE } from 'constants/borrowLendMarkets';
-import { renderMarketImageByID } from 'helpers/marketHelpers';
+import { renderMarketImageByID, renderNftList } from 'helpers/marketHelpers';
 
 const { formatPercent: fp, formatSol: fs, formatRoundDown: frd } = formatNumber;
 
@@ -156,17 +156,21 @@ const BorrowForm = (props: BorrowProps) => {
     handleSliderChange(0);
   };
 
+  const availableNFTsInSelectedMarket = renderNftList(
+    currentMarketId,
+    availableNFTs
+  );
+
   const renderContent = () => {
     if (isNftSelected == false) {
       return (
         <>
           <div className={styles.newBorrowingTitle}>Choose NFT</div>
           <NftList
-            data={availableNFTs}
+            data={availableNFTsInSelectedMarket}
             selectNFT={selectNFT}
             nftPrice={nftPrice}
             selectedNFTMint={selectedNft?.mint}
-            currentMarketId={currentMarketId}
           />
         </>
       );
