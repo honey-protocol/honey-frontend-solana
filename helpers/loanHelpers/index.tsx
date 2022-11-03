@@ -22,7 +22,7 @@ export function ConfigureSDK() {
   return {
     saberHqConnection: useConnection(),
     // saberHqConnection: new Connection("https://explorer-api.devnet.solana.com/"),
-    sdkWallet: useConnectedWallet(),
+    sdkWallet: useConnectedWallet() || null,
     honeyId: HONEY_PROGRAM_ID
   };
 }

@@ -1,7 +1,6 @@
 import { RoundHalfDown, RoundHalfUp } from 'helpers/utils';
 import { HONEY_GENESIS_MARKET_ID, HONEY_PROGRAM_ID, MAX_LTV, PESKY_PENGUINS_MARKET_ID } from '../../constants/loan';
 import BN from 'bn.js';
-import { Connection, LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js';
 import { BnToDecimal, getOraclePrice } from '../../helpers/loanHelpers/index';
 import {
   OPTIMAL_RATIO_ONE,
@@ -12,6 +11,7 @@ import {
   BORROW_RATE_THREE
 } from '../../constants/interestRate';
 import { ConnectedWallet } from '@saberhq/use-solana';
+import { Connection, Keypair, PublicKey, Transaction, LAMPORTS_PER_SOL } from '@solana/web3.js';
 
 import * as anchor from "@project-serum/anchor";
 import { CollateralNFTPosition, getHealthStatus, getNFTAssociatedMetadata, HoneyClient, HoneyMarket, HoneyMarketReserveInfo, HoneyReserve, HoneyUser, LoanPosition, METADATA_PROGRAM_ID, NftPosition, ObligationAccount, ObligationPositionStruct, PositionInfoList, TReserve } from '@honey-finance/sdk';
@@ -21,6 +21,7 @@ import { generateMockHistoryData } from 'helpers/chartUtils';
 import { MarketTableRow } from 'types/markets';
 import { LIQUIDATION_THRESHOLD } from '../../constants/loan';
 import { renderMarket, renderMarketName } from 'helpers/marketHelpers';
+import NodeWallet from '@project-serum/anchor/dist/cjs/nodewallet';
 
 /**
  * @description formatting functions to format with perfect / format in SOL with icon or just a regular 2 decimal format
@@ -307,19 +308,19 @@ const calculateTVL = async (obligations: any, nftPrice: number, currentMarketId:
   }
 }
 
-export async function populateMarketData(collection: MarketTableRow, connection: Connection, wallet: ConnectedWallet, currentMarketId: string, liquidations: boolean, obligations?: any) {
-  if(wallet == null)
-    return;
+export async function populateMarketData(collection: MarketTableRow, connection: Connection, wallet: ConnectedWallet | null, currentMarketId: string, liquidations: boolean, obligations?: any) {
+  let dummyWallet = wallet ? wallet : new NodeWallet(new Keypair())
 
-  const provider = new anchor.AnchorProvider(connection, wallet, anchor.AnchorProvider.defaultOptions());
+  const provider = new anchor.AnchorProvider(connection, dummyWallet, anchor.AnchorProvider.defaultOptions());
   const honeyClient = await HoneyClient.connect(provider, collection.id, false);
   const honeyMarket = await HoneyMarket.load(honeyClient, new PublicKey(collection.id));
 
   const honeyReserves: HoneyReserve[] = honeyMarket.reserves.map(
     (reserve) => new HoneyReserve(honeyClient, honeyMarket, reserve.reserve),
   );
-  
-  const honeyUser = await HoneyUser.load(honeyClient, honeyMarket, wallet.publicKey, honeyReserves);
+
+  //@ts-ignore
+  const honeyUser = await HoneyUser.load(honeyClient, honeyMarket, dummyWallet, honeyReserves);
   const reserveInfoList = honeyMarket.reserves;
 
   let parsedReserve:TReserve | undefined = undefined;
@@ -334,6 +335,7 @@ export async function populateMarketData(collection: MarketTableRow, connection:
     break;
   }
 
+  
   if(parsedReserve !== undefined) {
     let totalMarketDeposits = BnToDecimal(
       parsedReserve.reserveState.totalDeposits,
