@@ -24,7 +24,6 @@ export const LiquidateExpandTableMobile: FC<{
   onPlaceBid: Function;
   currentMarketId: string;
 }> = ({ data, onPlaceBid, currentMarketId }) => {
-
   const expandColumnsMobile: ColumnType<LiquidateTablePosition>[] = [
     {
       dataIndex: 'name',
@@ -34,7 +33,9 @@ export const LiquidateExpandTableMobile: FC<{
         <div className={sharedStyles.expandedRowNameCell}>
           <div className={sharedStyles.expandedRowIcon} />
           <div className={sharedStyles.collectionLogo}>
-            {renderMarketImageByID(currentMarketId)}
+            <HexaBoxContainer>
+              {renderMarketImageByID(currentMarketId)}
+            </HexaBoxContainer>
           </div>
           <div className={sharedStyles.nameCellText}>
             <div className={sharedStyles.collectionNameMobile}>{name}</div>
@@ -62,7 +63,9 @@ export const LiquidateExpandTableMobile: FC<{
           <span className={styles.positionsCounterTitleMobile}>
             Open positions
           </span>
-          <span className={styles.positionsCount}>{data && data.length ? data.length : 0}</span>
+          <span className={styles.positionsCount}>
+            {data && data.length ? data.length : 0}
+          </span>
         </div>
         <HoneyButton variant="text" onClick={() => onPlaceBid()}>
           Place bid <div className={sharedStyles.arrowRightIcon} />

@@ -504,6 +504,7 @@ const Liquidate: NextPage = () => {
                   sortOrder === 'disabled' ? 'disabled' : 'active'
                 ]
               }
+              style={{paddingLeft: 15}}
             >
               <span>Risk</span>
               <div className={style.sortIcon[sortOrder]} />
@@ -513,7 +514,7 @@ const Liquidate: NextPage = () => {
         dataIndex: 'risk',
         sorter: (a, b) => a.risk! - b.risk!,
         render: (rate: number, market: any) => {
-          return <div className={style.rateCell}>{fp(market.risk * 100)}</div>;
+          return <div className={style.rateCell} >{fp(market.risk * 100)}</div>;
         }
       },
       {
@@ -527,6 +528,7 @@ const Liquidate: NextPage = () => {
                   sortOrder === 'disabled' ? 'disabled' : 'active'
                 ]
               }
+              style={{paddingLeft: 15}}
             >
               <span>Liq %</span>
               <div className={style.sortIcon[sortOrder]} />
@@ -550,6 +552,7 @@ const Liquidate: NextPage = () => {
                   sortOrder === 'disabled' ? 'disabled' : 'active'
                 ]
               }
+              style={{paddingLeft: 15}}
             >
               <span>Total Debt</span>{' '}
               <div className={style.sortIcon[sortOrder]} />
@@ -573,6 +576,7 @@ const Liquidate: NextPage = () => {
                   sortOrder === 'disabled' ? 'disabled' : 'active'
                 ]
               }
+              style={{paddingLeft: 15}}
             >
               <span>TVL</span>
               <div className={style.sortIcon[sortOrder]} />
