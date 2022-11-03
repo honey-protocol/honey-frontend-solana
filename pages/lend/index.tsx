@@ -95,7 +95,6 @@ const Lend: NextPage = () => {
    */
    async function handleMarketId(record: any) {
     const marketData = renderMarket(record.id);
-    console.log('marketData', marketData);
     setCurrentMarketId(marketData!.id);
     setMarketId(marketData!.id);
     setCurrentMarketName(marketData!.name);
@@ -113,7 +112,7 @@ const Lend: NextPage = () => {
    */
   const { honeyClient, honeyUser, honeyReserves, honeyMarket } = useMarket(
     sdkConfig.saberHqConnection,
-    sdkConfig.sdkWallet!,
+    sdkConfig.sdkWallet,
     sdkConfig.honeyId,
     currentMarketId
   );
@@ -376,22 +375,18 @@ const Lend: NextPage = () => {
     useState(false);
 
   useEffect(() => {
-    if (!walletPK) {
-      setTableData(marketCollections);
-    }
+    // if (!walletPK) {
+    //   setTableData(marketCollections);
+    // }
 
-    if (sdkConfig.saberHqConnection && sdkConfig.sdkWallet) {
+    if (sdkConfig.saberHqConnection) {
       function getData() {
         return Promise.all(
           marketCollections.map(async collection => {
-            if (!collection.id) return collection;
-            collection.id == HONEY_GENESIS_MARKET_ID
-              ? setHoneyInterestRate(collection.rate)
-              : setPeskyInterestRate(collection.rate);
             await populateMarketData(
               collection,
               sdkConfig.saberHqConnection,
-              sdkConfig.sdkWallet!,
+              sdkConfig.sdkWallet,
               currentMarketId,
               false
             );

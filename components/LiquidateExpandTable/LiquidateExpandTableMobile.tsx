@@ -62,7 +62,7 @@ export const LiquidateExpandTableMobile: FC<{
           <span className={styles.positionsCounterTitleMobile}>
             Open positions
           </span>
-          <span className={styles.positionsCount}>{data.length}</span>
+          <span className={styles.positionsCount}>{data && data.length ? data.length : 0}</span>
         </div>
         <HoneyButton variant="text" onClick={() => onPlaceBid()}>
           Place bid <div className={sharedStyles.arrowRightIcon} />

@@ -21,6 +21,7 @@ export type MarketTableRow = {
   tvl?: number;
   openPositions?: any;
   liqThreshold?: any;
+  untilLiquidation?: number;
 };
 
 export type MarketTablePosition = {

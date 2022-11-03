@@ -124,7 +124,6 @@ const Markets: NextPage = () => {
    */
    async function handleMarketId(record: any) {
     const marketData = renderMarket(record.id);
-    console.log('marketData', marketData);
     setCurrentMarketId(marketData!.id);
     setMarketId(marketData!.id);
     setCurrentMarketName(marketData!.name);
@@ -143,7 +142,7 @@ const Markets: NextPage = () => {
    */
   const { honeyClient, honeyUser, honeyReserves, honeyMarket } = useMarket(
     sdkConfig.saberHqConnection,
-    sdkConfig.sdkWallet!,
+    sdkConfig.sdkWallet,
     sdkConfig.honeyId,
     currentMarketId
   );
@@ -216,7 +215,6 @@ const Markets: NextPage = () => {
 
   // calls upon setting the user nft list per market
   useEffect(() => {
-    console.log('alpha:: nfts', availableNFTs)
     if (availableNFTs) setUserAvailableNFTs(availableNFTs[0]);
   }, [availableNFTs]);
 
@@ -370,9 +368,6 @@ const Markets: NextPage = () => {
     return await handleOpenPositions(currentCollectionID, activeMarketID, currentOpenPositions);
   }
 
-  useEffect(() => {
-    console.log('this is collateral', collateralNFTPositions);
-  }, [collateralNFTPositions]);
   const healthPercent =
     ((nftPrice - userDebt / LIQUIDATION_THRESHOLD) / nftPrice) * 100;
 
@@ -393,12 +388,13 @@ const Markets: NextPage = () => {
             await populateMarketData(
               collection,
               sdkConfig.saberHqConnection,
-              sdkConfig.sdkWallet!,
+              sdkConfig.sdkWallet,
               currentMarketId,
               false
             );
             collection.positions = await handlePositions(collection.id, currentMarketId, userOpenPositions);
             collection.rate = (await getInterestRate(collection.utilizationRate)) || 0;
+            
             if (currentMarketId === collection.id) setActiveInterestRate(collection.rate);
             return collection;
           })
@@ -407,6 +403,7 @@ const Markets: NextPage = () => {
 
       getData().then(result => {
         setTableData(result);
+        setTableDataFiltered(result);
       });
     }
   }, [
@@ -423,10 +420,6 @@ const Markets: NextPage = () => {
     currentMarketId,
     userOpenPositions
   ]);
-
-  useEffect(() => {
-    console.log('@@--table data', tableData);
-  }, [tableData]);
 
   const showMobileSidebar = () => {
     setShowMobileSidebar(true);
@@ -720,6 +713,7 @@ const Markets: NextPage = () => {
               />
               <HoneyTableRow>
                 <div className={style.rateCell}>{fp(row.rate)}</div>
+                <div className={style.availableCell}>{fs(row.value)}</div>
                 <div className={style.availableCell}>{fs(row.available)}</div>
               </HoneyTableRow>
             </>
@@ -1108,7 +1102,7 @@ const Markets: NextPage = () => {
             hasRowsShadow={true}
             tableLayout="fixed"
             columns={columns}
-            dataSource={tableData}
+            dataSource={tableDataFiltered}
             pagination={false}
             onRow={(record, rowIndex) => {
               return {
@@ -1189,8 +1183,13 @@ const Markets: NextPage = () => {
             dataSource={tableDataFiltered}
             pagination={false}
             showHeader={false}
+            onRow={(record, rowIndex) => {
+              return {
+                onClick: event => handleMarketId(record)
+              }
+            }}
             className={classNames(style.table, {
-              [style.emptyTable]: !tableDataFiltered.length
+              [style.emptyTable]: !tableData.length
             })}
             expandable={{
               // we use our own custom expand column

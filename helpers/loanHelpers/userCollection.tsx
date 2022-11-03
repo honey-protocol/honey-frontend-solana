@@ -1,7 +1,6 @@
 import { RoundHalfDown, RoundHalfUp } from 'helpers/utils';
 import { HONEY_GENESIS_MARKET_ID, HONEY_PROGRAM_ID, MAX_LTV, PESKY_PENGUINS_MARKET_ID } from '../../constants/loan';
 import BN from 'bn.js';
-import { Connection, LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js';
 import { BnToDecimal, getOraclePrice } from '../../helpers/loanHelpers/index';
 import {
   OPTIMAL_RATIO_ONE,
@@ -12,6 +11,7 @@ import {
   BORROW_RATE_THREE
 } from '../../constants/interestRate';
 import { ConnectedWallet } from '@saberhq/use-solana';
+import { Connection, Keypair, PublicKey, Transaction, LAMPORTS_PER_SOL } from '@solana/web3.js';
 
 import * as anchor from "@project-serum/anchor";
 import { CollateralNFTPosition, getHealthStatus, getNFTAssociatedMetadata, HoneyClient, HoneyMarket, HoneyMarketReserveInfo, HoneyReserve, HoneyUser, LoanPosition, METADATA_PROGRAM_ID, NftPosition, ObligationAccount, ObligationPositionStruct, PositionInfoList, TReserve } from '@honey-finance/sdk';
@@ -21,6 +21,7 @@ import { generateMockHistoryData } from 'helpers/chartUtils';
 import { MarketTableRow } from 'types/markets';
 import { LIQUIDATION_THRESHOLD } from '../../constants/loan';
 import { renderMarket, renderMarketName } from 'helpers/marketHelpers';
+import NodeWallet from '@project-serum/anchor/dist/cjs/nodewallet';
 
 /**
  * @description formatting functions to format with perfect / format in SOL with icon or just a regular 2 decimal format
@@ -206,7 +207,6 @@ export async function calcNFT(
         connection,
         parsedReserves[0].switchboardPriceAggregator
       );
-      console.log(`Solprice: ${solPrice}`)
       return solPrice; 
     } catch (error) {
       throw error;
@@ -277,7 +277,6 @@ const calculateRisk = async (obligations: any, nftPrice: number, type: boolean, 
     }, 0);
   
     if (type == true) {
-      console.log('this is total debt', sumOfDebt);
       return sumOfDebt;
     } else {
       return (sumOfDebt / obligations.length / nftPrice)
@@ -288,7 +287,6 @@ const calculateRisk = async (obligations: any, nftPrice: number, type: boolean, 
     }, 0);
   
     if (type == true) {
-      console.log('this is total debt', sumOfDebt);
       return sumOfDebt;
     } else {
       return (sumOfDebt / obligations.length / nftPrice)
@@ -310,19 +308,19 @@ const calculateTVL = async (obligations: any, nftPrice: number, currentMarketId:
   }
 }
 
-export async function populateMarketData(collection: MarketTableRow, connection: Connection, wallet: ConnectedWallet, currentMarketId: string, liquidations: boolean, obligations?: any) {
-  if(wallet == null)
-    return;
-  console.log('positions and market id', obligations, currentMarketId)
-  const provider = new anchor.AnchorProvider(connection, wallet, anchor.AnchorProvider.defaultOptions());
+export async function populateMarketData(collection: MarketTableRow, connection: Connection, wallet: ConnectedWallet | null, currentMarketId: string, liquidations: boolean, obligations?: any) {
+  let dummyWallet = wallet ? wallet : new NodeWallet(new Keypair())
+
+  const provider = new anchor.AnchorProvider(connection, dummyWallet, anchor.AnchorProvider.defaultOptions());
   const honeyClient = await HoneyClient.connect(provider, collection.id, false);
   const honeyMarket = await HoneyMarket.load(honeyClient, new PublicKey(collection.id));
 
   const honeyReserves: HoneyReserve[] = honeyMarket.reserves.map(
     (reserve) => new HoneyReserve(honeyClient, honeyMarket, reserve.reserve),
   );
-  
-  const honeyUser = await HoneyUser.load(honeyClient, honeyMarket, wallet.publicKey, honeyReserves);
+
+  //@ts-ignore
+  const honeyUser = await HoneyUser.load(honeyClient, honeyMarket, dummyWallet, honeyReserves);
   const reserveInfoList = honeyMarket.reserves;
 
   let parsedReserve:TReserve | undefined = undefined;
@@ -337,6 +335,7 @@ export async function populateMarketData(collection: MarketTableRow, connection:
     break;
   }
 
+  
   if(parsedReserve !== undefined) {
     let totalMarketDeposits = BnToDecimal(
       parsedReserve.reserveState.totalDeposits,
@@ -358,8 +357,12 @@ export async function populateMarketData(collection: MarketTableRow, connection:
       collection.totalDebt = obligations ? await calculateRisk(obligations.obligations, obligations.nftPrice, true, currentMarketId, collection.name) : 0;
       collection.openPositions = obligations ? await setObligations(obligations.obligations, currentMarketId, obligations.nftPrice) : [];
       collection.tvl = obligations ? await calculateTVL(obligations.obligations, obligations.nftPrice, currentMarketId, collection.name) : 0;
-      // TODO: write untilLiquidation func.
-      // collection.untilLiquidation = 
+
+      if (collection.openPositions) {
+        collection.openPositions.map((openPos: any) => {
+          return openPos.untilLiquidation = openPos.estimatedValue - openPos.debt / LIQUIDATION_THRESHOLD;
+        })
+      }
 
     } else {
       collection.available = totalMarketDeposits;

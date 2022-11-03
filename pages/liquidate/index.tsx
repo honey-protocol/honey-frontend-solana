@@ -35,7 +35,7 @@ import {
 } from '@honey-finance/sdk';
 import { ConfigureSDK } from 'helpers/loanHelpers';
 import { useConnectedWallet } from '@saberhq/use-solana';
-import { Connection, LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js';
+import { Connection, Keypair, LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js';
 import { calcNFT, fetchSolPrice } from 'helpers/loanHelpers/userCollection';
 import { LiquidateTablePosition } from '../../types/liquidate';
 import {
@@ -94,7 +94,7 @@ const Liquidate: NextPage = () => {
    */
   const { ...status } = useAllPositions(
     sdkConfig.saberHqConnection,
-    sdkConfig.sdkWallet!,
+    sdkConfig.sdkWallet,
     sdkConfig.honeyId,
     currentMarketId
   );
@@ -112,7 +112,7 @@ const Liquidate: NextPage = () => {
    */
   const { honeyClient, honeyUser, honeyReserves, honeyMarket } = useMarket(
     sdkConfig.saberHqConnection,
-    sdkConfig.sdkWallet!,
+    sdkConfig.sdkWallet,
     sdkConfig.honeyId,
     currentMarketId
   );
@@ -340,7 +340,6 @@ const Liquidate: NextPage = () => {
   }
 
   useEffect(() => {
-      console.log('status changing', status);
       if (status.positions) {
         setPositionsObject(status.positions);
       } else {
@@ -373,18 +372,18 @@ const Liquidate: NextPage = () => {
   // PUT YOUR DATA SOURCE HERE
   // MOCK DATA FOR NOW
   useEffect(() => {
-    if (!wallet) {
-      setTableData(liquidationCollections);
-    }
+    // if (!wallet) {
+    //   setTableData(liquidationCollections);
+    // }
     
-    if (sdkConfig.saberHqConnection && sdkConfig.sdkWallet && marketReserveInfo) {
+    if (sdkConfig.saberHqConnection && marketReserveInfo) {
       function getData() {
         return Promise.all(
           liquidationCollections.map(async collection => {
             await populateMarketData(
               collection,
               sdkConfig.saberHqConnection,
-              sdkConfig.sdkWallet!,
+              sdkConfig.sdkWallet,
               currentMarketId,
               true,
               {
