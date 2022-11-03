@@ -720,6 +720,7 @@ const Markets: NextPage = () => {
               />
               <HoneyTableRow>
                 <div className={style.rateCell}>{fp(row.rate)}</div>
+                <div className={style.availableCell}>{fs(row.value)}</div>
                 <div className={style.availableCell}>{fs(row.available)}</div>
               </HoneyTableRow>
             </>
