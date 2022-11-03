@@ -39,7 +39,6 @@ const LiquidateSidebar = (props: LendSidebarProps) => {
     setActiveTab(tabKey as Tab);
   };
 
-  console.log('xyz bidding in side bar', biddingArray)
   return (
     <div className={styles.liquidateSidebarContainer}>
       <HoneyTabs

@@ -70,6 +70,7 @@ import { populateMarketData } from 'helpers/loanHelpers/userCollection';
 import { setMarketId } from 'pages/_app';
 import { MarketTableRow } from 'types/markets';
 import { renderMarket, renderMarketImageByName } from 'helpers/marketHelpers';
+import { network } from 'pages/_app';
 
 const { formatPercent: fp, formatSol: fs, formatRoundDown: fd } = formatNumber;
 const Liquidate: NextPage = () => {
@@ -96,7 +97,8 @@ const Liquidate: NextPage = () => {
     sdkConfig.saberHqConnection,
     sdkConfig.sdkWallet,
     sdkConfig.honeyId,
-    currentMarketId
+    currentMarketId,
+    network == 'devnet' ? true : false
   );
 
   /**
@@ -182,9 +184,6 @@ const Liquidate: NextPage = () => {
       if (stringyfiedWalletPK && obligation.bidder == stringyfiedWalletPK) {
         setHasPosition(true);
         setCurrentUserBid(Number(obligation.bidLimit / LAMPORTS_PER_SOL));
-      } else {
-        setHasPosition(false);
-        setCurrentUserBid(0);
       }
     });
 
@@ -205,6 +204,8 @@ const Liquidate: NextPage = () => {
     }
   }
 
+  console.log('user has pos', hasPosition)
+  console.log('user has bid', currentUserBid)
   // calculates nft price
   async function calculateNFTPrice() {
     if (marketReserveInfo && parsedReserves && honeyMarket) {

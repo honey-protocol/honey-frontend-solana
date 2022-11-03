@@ -375,11 +375,7 @@ const Markets: NextPage = () => {
   // PUT YOUR DATA SOURCE HERE
   // MOCK DATA FOR NOW
   useEffect(() => {
-    if (!wallet) {
-      setTableData(marketCollections);
-    }
-
-    if (sdkConfig.saberHqConnection && sdkConfig.sdkWallet) {
+    if (sdkConfig.saberHqConnection) {
       function getData() {
         return Promise.all(
           marketCollections.map(async collection => {
@@ -392,6 +388,7 @@ const Markets: NextPage = () => {
               currentMarketId,
               false
             );
+
             collection.positions = await handlePositions(collection.id, currentMarketId, userOpenPositions);
             collection.rate = (await getInterestRate(collection.utilizationRate)) || 0;
             

@@ -48,7 +48,6 @@ const BidForm = (props: BidFormProps) => {
   const { toast, ToastComponent } = useToast();
 
   const maxValue = 1000;
-
   // TODO: import SOL price via oracle
   const solPrice = fetchedSolPrice;
   // Put your validators here
@@ -94,7 +93,6 @@ const BidForm = (props: BidFormProps) => {
   }
 
   useEffect(() => {
-    console.log('this is current user bid on refresh', currentUserBid)
     if (currentUserBid) {
       setUserBidValue(currentUserBid)
     } else {
