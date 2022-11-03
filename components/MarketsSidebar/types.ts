@@ -1,8 +1,6 @@
 import { ReactNode } from 'react';
 
 export type MarketsSidebarProps = {
-  collectionId?: string;
-  availableNFTs?: any;
   openPositions?: any;
   nftPrice: number;
   userAllowance: number;

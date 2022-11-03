@@ -687,8 +687,6 @@ const Dashboard: NextPage = () => {
     <HoneySider isMobileSidebarVisible={isMobileSidebarVisible}>
       {positionType === 'borrow' ? (
         <MarketsSidebar
-          collectionId="s"
-          availableNFTs={userAvailableNFTs}
           openPositions={userOpenPositions}
           nftPrice={nftPrice}
           executeDepositNFT={executeDepositNFT}
