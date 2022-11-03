@@ -405,6 +405,7 @@ const Lend: NextPage = () => {
 
       getData().then(result => {
         setTableData(result);
+        setTableDataFiltered(result);
       });
     }
   }, [
@@ -438,7 +439,7 @@ const Lend: NextPage = () => {
     event: React.MouseEvent<Element, MouseEvent>,
     record: LendTableRow
   ) => {
-    // setSelectedMarketId(record.id);
+    setCurrentMarketId(record.id);
     showMobileSidebar();
   };
 
