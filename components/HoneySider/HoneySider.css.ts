@@ -19,13 +19,14 @@ export const honeySider = style({
   '@media': {
     [`screen and (min-width: ${breakpoints.tablet}px)`]: {
       maxWidth: 874,
+      minHeight: 'calc(100vh - 102px)'
     },
     [`screen and (min-width: ${breakpoints.desktop}px)`]: {
       maxWidth: 1216,
       display: 'flex',
       justifyContent: 'flex-end',
       background: 'transparent',
-      padding: '12px 0',
+      padding: '12px 0'
     }
   }
 });
@@ -41,7 +42,7 @@ globalStyle(`.sidebar.is-sticky`, {
   padding: '12px 12px',
   '@media': {
     [`screen and (min-width: ${breakpoints.desktop}px)`]: {
-      padding: '12px 0',
+      padding: '12px 0'
     }
   }
 });
