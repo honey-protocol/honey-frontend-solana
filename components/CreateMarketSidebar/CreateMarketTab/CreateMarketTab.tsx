@@ -14,21 +14,20 @@ import { PublicKey } from '@solana/web3.js';
 import { HoneyMarket } from '@honey-finance/sdk';
 import { buildReserveConfig } from './ReserveConfigs';
 
-const CreateMarketTab: FC = (wallet: any, honeyClient: any) => {
+interface CreateMarketTabProps {
+  wallet: any;
+  honeyClient: any;
+}
+const CreateMarketTab: FC<CreateMarketTabProps> = (
+  props: CreateMarketTabProps
+) => {
+  const { wallet, honeyClient } = props;
   const [currentStep, setCurrentStep] = useState<number>(0);
   const [createdMarket, setCreatedMarket] = useState<HoneyMarket | null>();
   const [nftCollectionCreator, setNftCollectionCreator] = useState();
   const [nftOracle, setNftOracle] = useState<PublicKey>();
   const [marketConfigOpts, setMarketConfigOpts] = useState<any>({});
   const [riskModel, setRiskModel] = useState<PublicKey>();
-
-  const logCurrent = () => {
-    console.log('currentStep', currentStep);
-    console.log('marketConfigOpts', marketConfigOpts);
-    console.log('nftCollectionCreator', nftCollectionCreator);
-    console.log('nftOracle', nftOracle);
-    console.log('riskModel', riskModel);
-  };
 
   const createMarket = async () => {
     const owner = wallet?.publicKey!;
@@ -68,7 +67,7 @@ const CreateMarketTab: FC = (wallet: any, honeyClient: any) => {
     );
 
     // we need to figure out how the user's changes in the creation page affect this
-    const reserveConfig = buildReserveConfig();
+    const reserveConfig = buildReserveConfig(riskModel, marketConfigOpts);
     createdMarket?.createReserve({
       switchboardOracle,
       tokenMint,
@@ -91,20 +90,20 @@ const CreateMarketTab: FC = (wallet: any, honeyClient: any) => {
         <AboutMarketStep setNftCollectionCreator={setNftCollectionCreator} />
       )
     },
+    // {
+    //   step: 2,
+    //   content: <LiquidationMarketsStep />
+    // },
     {
       step: 2,
-      content: <LiquidationMarketsStep />
-    },
-    {
-      step: 3,
       content: <AddOracleStep setOracle={setNftOracle} />
     },
     {
-      step: 4,
+      step: 3,
       content: <SettingMarketStep setMarketConfigOpts={setMarketConfigOpts} />
     },
     {
-      step: 5,
+      step: 4,
       content: <RiskModelStep setRiskModel={setRiskModel} />
     }
   ];
@@ -129,7 +128,11 @@ const CreateMarketTab: FC = (wallet: any, honeyClient: any) => {
               </HoneyButton>
             )}
             {currentStep === steps.length - 1 && (
-              <HoneyButton variant="primary" block onClick={() => logCurrent()}>
+              <HoneyButton
+                variant="primary"
+                block
+                onClick={() => createMarket()}
+              >
                 Create market
               </HoneyButton>
             )}

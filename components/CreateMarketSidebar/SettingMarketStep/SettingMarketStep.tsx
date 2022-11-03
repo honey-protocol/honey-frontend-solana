@@ -186,7 +186,7 @@ export const SettingMarketStep = (props: SettingMarketStepProps) => {
           Up to 50 %
         </div>
       </div>
-      <div className={styles.maximumLtv}>
+      {/* <div className={styles.maximumLtv}>
         <div className={styles.maximumLtvTitle}>
           <TabTitle
             title="Maximum LTV"
@@ -201,7 +201,7 @@ export const SettingMarketStep = (props: SettingMarketStepProps) => {
           minValue={10}
           maxValue={90}
         />
-      </div>
+      </div> */}
       <div className={styles.liquidationThreshold}>
         <div className={styles.liquidationThresholdTitle}>
           <TabTitle

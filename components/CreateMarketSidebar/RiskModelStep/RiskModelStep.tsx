@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import * as styles from './RiskModelStep.css';
 import HoneyTooltip from '../../HoneyTooltip/HoneyTooltip';
 import TabTitle from '../../HoneyTabs/TabTitle/TabTitle';
@@ -8,7 +8,7 @@ import HoneyLink from '../../HoneyLink/HoneyLink';
 import { HoneyLineChart } from '../../HoneyLineChart/HoneyLineChart';
 import { generateMockHistoryData } from '../../../helpers/chartUtils';
 
-enum RiskModelTab {
+export enum RiskModelTab {
   LOW = 'low',
   DEFAULT = 'default',
   HIGH = 'high'
@@ -22,6 +22,10 @@ export const RiskModelStep = (props: RiskModelStepProps) => {
   const { setRiskModel } = props;
   const [activeTab, setActiveTab] = useState(RiskModelTab.DEFAULT);
   const isMock = true;
+
+  useEffect(() => {
+    setRiskModel(RiskModelTab.DEFAULT);
+  }, []);
 
   const renderWarning = () => {
     if (activeTab === RiskModelTab.LOW) {

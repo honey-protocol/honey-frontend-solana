@@ -15,11 +15,11 @@ type Tab = 'how_it_works' | 'create';
 
 // I think it is a good place to send to collect data from all steps and send transactions
 // CreateMarketTab contains all steps and can pass all data in onSave prop
-const CreateMarketSidebar: FC<CreateMarketSidebarProps> = ({
-  onCancel = noop
-}) => {
+const CreateMarketSidebar: FC<CreateMarketSidebarProps> = (
+  props: CreateMarketSidebarProps
+) => {
+  const { onCancel, wallet, honeyClient } = props;
   const [activeTab, setActiveTab] = useState<Tab>('how_it_works');
-  const wallet = true;
 
   const handleTabChange = (tabKey: string) => {
     setActiveTab(tabKey as Tab);
@@ -44,7 +44,9 @@ const CreateMarketSidebar: FC<CreateMarketSidebarProps> = ({
             {activeTab === 'how_it_works' && (
               <HowItWorksBorrowTab onCancel={onCancel} />
             )}
-            {activeTab === 'create' && <CreateMarketTab />}
+            {activeTab === 'create' && (
+              <CreateMarketTab wallet={wallet} honeyClient={honeyClient} />
+            )}
           </>
         )}
       </HoneyTabs>

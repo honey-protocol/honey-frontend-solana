@@ -5,6 +5,7 @@ import Image from 'next/image';
 import HoneyTooltip from '../../HoneyTooltip/HoneyTooltip';
 import { HoneyInputWithLabel } from '../../HoneyInputWithLabel/HoneyInputWithLabel';
 import TabTitle from '../../HoneyTabs/TabTitle/TabTitle';
+import { PublicKey } from '@solana/web3.js';
 
 interface AboutMarketStepProps {
   setNftCollectionCreator: any;
@@ -17,6 +18,13 @@ export const AboutMarketStep = (props: AboutMarketStepProps) => {
     title: 'Mock collection title',
     description: 'mock data',
     image: <Image src={mockCollectionImage} className={styles.collectionLogo} />
+  };
+
+  const onChange = (value: string) => {
+    try {
+      const pk = new PublicKey(value);
+      setNftCollectionCreator(pk);
+    } catch (e) {}
   };
 
   const renderFoundCollectionInfo = () => {
@@ -52,7 +60,7 @@ export const AboutMarketStep = (props: AboutMarketStepProps) => {
         </div>
         <HoneyInputWithLabel
           placeholder="Collection URL"
-          onChange={e => setNftCollectionCreator(e.target.value)}
+          onChange={e => onChange(e.target.value)}
           label="Collection URL"
         />
         {renderFoundCollectionInfo()}
