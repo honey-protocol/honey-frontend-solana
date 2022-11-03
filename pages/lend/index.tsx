@@ -95,7 +95,6 @@ const Lend: NextPage = () => {
    */
    async function handleMarketId(record: any) {
     const marketData = renderMarket(record.id);
-    console.log('marketData', marketData);
     setCurrentMarketId(marketData!.id);
     setMarketId(marketData!.id);
     setCurrentMarketName(marketData!.name);

@@ -206,7 +206,6 @@ export async function calcNFT(
         connection,
         parsedReserves[0].switchboardPriceAggregator
       );
-      console.log(`Solprice: ${solPrice}`)
       return solPrice; 
     } catch (error) {
       throw error;
@@ -277,7 +276,6 @@ const calculateRisk = async (obligations: any, nftPrice: number, type: boolean, 
     }, 0);
   
     if (type == true) {
-      console.log('this is total debt', sumOfDebt);
       return sumOfDebt;
     } else {
       return (sumOfDebt / obligations.length / nftPrice)
@@ -288,7 +286,6 @@ const calculateRisk = async (obligations: any, nftPrice: number, type: boolean, 
     }, 0);
   
     if (type == true) {
-      console.log('this is total debt', sumOfDebt);
       return sumOfDebt;
     } else {
       return (sumOfDebt / obligations.length / nftPrice)
@@ -313,7 +310,7 @@ const calculateTVL = async (obligations: any, nftPrice: number, currentMarketId:
 export async function populateMarketData(collection: MarketTableRow, connection: Connection, wallet: ConnectedWallet, currentMarketId: string, liquidations: boolean, obligations?: any) {
   if(wallet == null)
     return;
-  console.log('positions and market id', obligations, currentMarketId)
+
   const provider = new anchor.AnchorProvider(connection, wallet, anchor.AnchorProvider.defaultOptions());
   const honeyClient = await HoneyClient.connect(provider, collection.id, false);
   const honeyMarket = await HoneyMarket.load(honeyClient, new PublicKey(collection.id));
@@ -364,7 +361,7 @@ export async function populateMarketData(collection: MarketTableRow, connection:
           return openPos.untilLiquidation = openPos.estimatedValue - openPos.debt / LIQUIDATION_THRESHOLD;
         })
       }
-      
+
     } else {
       collection.available = totalMarketDeposits;
       collection.value = sumOfTotalValue;

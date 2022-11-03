@@ -124,7 +124,6 @@ const Markets: NextPage = () => {
    */
    async function handleMarketId(record: any) {
     const marketData = renderMarket(record.id);
-    console.log('marketData', marketData);
     setCurrentMarketId(marketData!.id);
     setMarketId(marketData!.id);
     setCurrentMarketName(marketData!.name);
@@ -216,7 +215,6 @@ const Markets: NextPage = () => {
 
   // calls upon setting the user nft list per market
   useEffect(() => {
-    console.log('alpha:: nfts', availableNFTs)
     if (availableNFTs) setUserAvailableNFTs(availableNFTs[0]);
   }, [availableNFTs]);
 
@@ -370,9 +368,6 @@ const Markets: NextPage = () => {
     return await handleOpenPositions(currentCollectionID, activeMarketID, currentOpenPositions);
   }
 
-  useEffect(() => {
-    console.log('this is collateral', collateralNFTPositions);
-  }, [collateralNFTPositions]);
   const healthPercent =
     ((nftPrice - userDebt / LIQUIDATION_THRESHOLD) / nftPrice) * 100;
 
@@ -398,7 +393,6 @@ const Markets: NextPage = () => {
               false
             );
             collection.positions = await handlePositions(collection.id, currentMarketId, userOpenPositions);
-            console.log('@@mobile', collection.positions);
             collection.rate = (await getInterestRate(collection.utilizationRate)) || 0;
             if (currentMarketId === collection.id) setActiveInterestRate(collection.rate);
             return collection;
@@ -1106,7 +1100,7 @@ const Markets: NextPage = () => {
             hasRowsShadow={true}
             tableLayout="fixed"
             columns={columns}
-            dataSource={tableData}
+            dataSource={tableDataFiltered}
             pagination={false}
             onRow={(record, rowIndex) => {
               return {
@@ -1184,7 +1178,7 @@ const Markets: NextPage = () => {
             hasRowsShadow={true}
             tableLayout="fixed"
             columns={columnsMobile}
-            dataSource={tableData}
+            dataSource={tableDataFiltered}
             pagination={false}
             showHeader={false}
             onRow={(record, rowIndex) => {

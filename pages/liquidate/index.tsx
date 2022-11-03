@@ -340,7 +340,6 @@ const Liquidate: NextPage = () => {
   }
 
   useEffect(() => {
-      console.log('status changing', status);
       if (status.positions) {
         setPositionsObject(status.positions);
       } else {

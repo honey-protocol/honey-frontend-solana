@@ -27,8 +27,6 @@ export const LiquidateExpandTable = (props: LiquidateExpandTableProps) =>  {
   const { data, currentMarketId} = props;
   const [filter, setFilter] = useState<FilterType>('most_critical');
 
-  console.log('current market id', currentMarketId)
-
   const expandColumns: ColumnType<LiquidateTablePosition>[] = useMemo(
     () => [
       {
