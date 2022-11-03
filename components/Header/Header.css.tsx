@@ -1,6 +1,6 @@
 import { globalStyle, style } from '@vanilla-extract/css';
 import { container } from '../../styles/common.css';
-import { vars } from '../../styles/theme.css';
+import { breakpoints, vars } from '../../styles/theme.css';
 
 export const headerContainer = style([
   container,
@@ -53,7 +53,7 @@ export const menuToggle = style({
   width: 20,
   height: 20,
   '@media': {
-    'screen and (max-width: 768px)': {
+    [`screen and (max-width: ${breakpoints.tablet}px)`]: {
       display: 'block'
     }
   }

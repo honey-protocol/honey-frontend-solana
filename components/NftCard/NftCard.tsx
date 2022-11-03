@@ -27,9 +27,6 @@ const NftCard = (props: NftCardProps) => {
       onClick(name, image, mint);
     }
   }, [mint]);
-
-  console.log('name', name)
-  console.log('image', image)
   
   return (
     <div

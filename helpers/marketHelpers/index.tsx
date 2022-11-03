@@ -125,8 +125,7 @@ export const renderMarket = (record: string) => {
  * @params nft array market name
  * @returns filtered array of nfts scoped to specific market
 */
-async function filterNfts(nftArray: any, marketName: string) {
-  console.log('the nfts', nftArray);
+function filterNfts(nftArray: any, marketName: string) {
   return nftArray.filter((nft: any) => nft.name.includes(marketName))
 }
 /**
@@ -134,18 +133,18 @@ async function filterNfts(nftArray: any, marketName: string) {
  * @params see above
  * @returns see above
 */
-export const renderNftList = async (marketID: string, nftArray: any) => {
+export const renderNftList = (marketID: string, nftArray: any) => {
   switch(marketID) {
     case HONEY_GENESIS_MARKET_ID:
-      return await filterNfts(nftArray, HONEY_GENESIS_BEE_MARKET_NAME);
+      return filterNfts(nftArray, HONEY_GENESIS_BEE_MARKET_NAME);
     case LIFINITY_FLARES_MARKET_ID:
-      return await filterNfts(nftArray, LIFINITY_FLARES_MARKET_NAME);
+      return filterNfts(nftArray, LIFINITY_FLARES_MARKET_NAME);
     case OG_ATADIANS_MARKET_ID:
-      return await filterNfts(nftArray, OG_ATADIANS_MARKET_NAME);
+      return filterNfts(nftArray, OG_ATADIANS_MARKET_NAME);
     case PESKY_PENGUINS_MARKET_ID:
-      return await filterNfts(nftArray, PESKY_PENGUINS_MARKET_NAME);
+      return filterNfts(nftArray, PESKY_PENGUINS_MARKET_NAME);
     case BURRITO_BOYZ_MARKET_ID:
-      return await filterNfts(nftArray, BURRITO_BOYZ_MARKET_NAME);
+      return filterNfts(nftArray, BURRITO_BOYZ_MARKET_NAME);
   }
 }
 /**

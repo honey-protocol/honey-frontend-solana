@@ -67,13 +67,15 @@ const RepayForm = (props: RepayProps) => {
   };
 
   const handleSliderChange = (value: number) => {
+    if (userDebt <= 0) return;
+
     setSliderValue(value);
     setValueUSD(value * solPrice);
     setValueSOL(value);
   };
 
   const handleUsdInputChange = (usdValue: number | undefined) => {
-    if (!usdValue) {
+    if (!usdValue || userDebt <= 0) {
       setValueUSD(0);
       setValueSOL(0);
       setSliderValue(0);
@@ -85,7 +87,7 @@ const RepayForm = (props: RepayProps) => {
   };
 
   const handleSolInputChange = (solValue: number | undefined) => {
-    if (!solValue) {
+    if (!solValue || userDebt <= 0) {
       setValueUSD(0);
       setValueSOL(0);
       setSliderValue(0);

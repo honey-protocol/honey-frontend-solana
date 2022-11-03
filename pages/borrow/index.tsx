@@ -193,7 +193,9 @@ const Markets: NextPage = () => {
   const [tableDataFiltered, setTableDataFiltered] = useState<MarketTableRow[]>(
     []
   );
-  const [expandedRowKeys, setExpandedRowKeys] = useState<readonly Key[]>([]);
+  const [expandedRowKeys, setExpandedRowKeys] = useState<readonly Key[]>([
+    'HNYG'
+  ]);
   const [isMyCollectionsFilterEnabled, setIsMyCollectionsFilterEnabled] =
     useState(false);
   const [searchQuery, setSearchQuery] = useState('');
@@ -1120,8 +1122,9 @@ const Markets: NextPage = () => {
             expandable={{
               // we use our own custom expand column
               showExpandColumn: false,
-              onExpand: (expanded, row) =>
-                setExpandedRowKeys(expanded ? [row.key] : []),
+              onExpand: (expanded, row) => {
+                setExpandedRowKeys([row.key]);
+              },
               expandedRowKeys,
               expandedRowRender: record => {
                 return (
