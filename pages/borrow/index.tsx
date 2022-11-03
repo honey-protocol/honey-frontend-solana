@@ -193,9 +193,7 @@ const Markets: NextPage = () => {
   const [tableDataFiltered, setTableDataFiltered] = useState<MarketTableRow[]>(
     []
   );
-  const [expandedRowKeys, setExpandedRowKeys] = useState<readonly Key[]>([
-    'HNYG'
-  ]);
+  const [expandedRowKeys, setExpandedRowKeys] = useState<readonly Key[]>([]);
   const [isMyCollectionsFilterEnabled, setIsMyCollectionsFilterEnabled] =
     useState(false);
   const [searchQuery, setSearchQuery] = useState('');
