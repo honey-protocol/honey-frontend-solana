@@ -174,7 +174,7 @@ export const mobileRow = style({
 
 export const table = style({});
 const tableChildSelector = (selector: string) => {
-  return `${hideTablet} ${table} ${selector}`;
+  return `${table} ${selector}`;
 };
 const tcs = tableChildSelector;
 

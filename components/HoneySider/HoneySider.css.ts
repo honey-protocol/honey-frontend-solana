@@ -19,7 +19,7 @@ export const honeySider = style({
   '@media': {
     [`screen and (min-width: ${breakpoints.tablet}px)`]: {
       maxWidth: 874,
-      minHeight: 'calc(100vh - 102px)'
+      minHeight: 'calc(100vh - 90px)'
     },
     [`screen and (min-width: ${breakpoints.desktop}px)`]: {
       maxWidth: 1216,
@@ -42,7 +42,7 @@ export const isVisible = style({
       padding: '12px 0',
       position: 'absolute',
       bottom: 'initial',
-      top: 0,
+      top: 0
     }
   }
 });
