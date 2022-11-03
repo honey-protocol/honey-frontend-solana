@@ -15,13 +15,16 @@ import HoneyTooltip from '../HoneyTooltip/HoneyTooltip';
 import HealthLvl from 'components/HealthLvl/HealthLvl';
 import HoneyButton from 'components/HoneyButton/HoneyButton';
 import { MAX_LTV } from 'constants/loan';
+import { renderMarketImageByID } from 'helpers/marketHelpers';
 
 const { formatPercent: fp, formatSol: fs } = formatNumber;
 
 export const LiquidateExpandTableMobile: FC<{
   data: LiquidateTablePosition[];
   onPlaceBid: Function;
-}> = ({ data, onPlaceBid }) => {
+  currentMarketId: string;
+}> = ({ data, onPlaceBid, currentMarketId }) => {
+
   const expandColumnsMobile: ColumnType<LiquidateTablePosition>[] = [
     {
       dataIndex: 'name',
@@ -31,9 +34,7 @@ export const LiquidateExpandTableMobile: FC<{
         <div className={sharedStyles.expandedRowNameCell}>
           <div className={sharedStyles.expandedRowIcon} />
           <div className={sharedStyles.collectionLogo}>
-            <HexaBoxContainer>
-              <Image src={honeyGenesisBee} />
-            </HexaBoxContainer>
+            {renderMarketImageByID(currentMarketId)}
           </div>
           <div className={sharedStyles.nameCellText}>
             <div className={sharedStyles.collectionNameMobile}>{name}</div>
