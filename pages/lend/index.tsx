@@ -72,7 +72,9 @@ import { renderMarket, renderMarketImageByName } from 'helpers/marketHelpers';
 const network = 'mainnet-beta';
 
 const Lend: NextPage = () => {
-  const [currentMarketName, setCurrentMarketName] = useState(HONEY_GENESIS_BEE_MARKET_NAME);
+  const [currentMarketName, setCurrentMarketName] = useState(
+    HONEY_GENESIS_BEE_MARKET_NAME
+  );
   /**
    * @description formatting functions to format with perfect / format in SOL with icon or just a regular 2 decimal format
    * @params value to be formatted
@@ -93,7 +95,7 @@ const Lend: NextPage = () => {
    * @params Honey table record - contains all info about a table (aka market)
    * @returns sets the market ID which re-renders page state and fetches market specific data
    */
-   async function handleMarketId(record: any) {
+  async function handleMarketId(record: any) {
     const marketData = renderMarket(record.id);
     setCurrentMarketId(marketData!.id);
     setMarketId(marketData!.id);
@@ -129,7 +131,7 @@ const Lend: NextPage = () => {
   const [activeMarketSupplied, setActiveMarketSupplied] = useState(0);
   const [activeMarketAvailable, setActiveMarketAvailable] = useState(0);
   const [totalMarketDeposits, setTotalMarketDeposits] = useState(0);
-  
+
   // fetches the users balance
   async function fetchWalletBalance(key: PublicKey) {
     try {
@@ -147,31 +149,38 @@ const Lend: NextPage = () => {
     }
   }, [walletPK]);
 
-  async function calculateTotalDeposits(marketReserveInfo: any, honeyUser: any) {
+  async function calculateTotalDeposits(
+    marketReserveInfo: any,
+    honeyUser: any
+  ) {
     if (!marketReserveInfo || !honeyUser) {
       return;
     }
     setTimeout(async () => {
-      let depositNoteExchangeRate = BnToDecimal(marketReserveInfo[0].depositNoteExchangeRate,15,5);
+      let depositNoteExchangeRate = BnToDecimal(
+        marketReserveInfo[0].depositNoteExchangeRate,
+        15,
+        5
+      );
       let loanNoteExchangeRate = 0;
       let nftPrice = 2;
       let cRatio = 1;
 
-      let depositValue = await honeyUser.deposits().length > 0;
+      let depositValue = (await honeyUser.deposits().length) > 0;
       if (depositValue == false) {
         return;
       } else {
-        let totalDeposits = (
-          honeyUser
-          .deposits()[0]
-          .amount.div(new BN(10 ** 5))
-          .toNumber() *
-          depositNoteExchangeRate
-        ) / 10 ** 4;
+        let totalDeposits =
+          (honeyUser
+            .deposits()[0]
+            .amount.div(new BN(10 ** 5))
+            .toNumber() *
+            depositNoteExchangeRate) /
+          10 ** 4;
 
         setUserTotalDeposits(totalDeposits);
       }
-    }, 1500)
+    }, 1500);
   }
 
   /**
@@ -180,7 +189,8 @@ const Lend: NextPage = () => {
    * @returns honeyUser | marketReserveInfo |
    */
   useEffect(() => {
-    if (marketReserveInfo && honeyUser) calculateTotalDeposits(marketReserveInfo, honeyUser);
+    if (marketReserveInfo && honeyUser)
+      calculateTotalDeposits(marketReserveInfo, honeyUser);
   });
 
   // fetches the current sol price
@@ -342,7 +352,7 @@ const Lend: NextPage = () => {
   }
 
   const isMock = true;
-  
+
   const [isMobileSidebarVisible, setShowMobileSidebar] = useState(false);
   const hideMobileSidebar = () => {
     setShowMobileSidebar(false);
@@ -386,7 +396,9 @@ const Lend: NextPage = () => {
               currentMarketId,
               false
             );
-            collection.rate = (await getInterestRate(collection.utilizationRate) || 0) * collection.utilizationRate;
+            collection.rate =
+              ((await getInterestRate(collection.utilizationRate)) || 0) *
+              collection.utilizationRate;
             collection.stats = getPositionData();
 
             if (currentMarketId == collection.id) {
@@ -490,7 +502,9 @@ const Lend: NextPage = () => {
             <div className={style.nameCell}>
               <div className={style.logoWrapper}>
                 <div className={style.collectionLogo}>
-                  <HexaBoxContainer>{renderMarketImageByName(name)}</HexaBoxContainer>
+                  <HexaBoxContainer>
+                    {renderMarketImageByName(name)}
+                  </HexaBoxContainer>
                 </div>
               </div>
               <div className={style.collectionName}>{name}</div>
@@ -581,7 +595,13 @@ const Lend: NextPage = () => {
         }
       }
     ],
-    [tableData, isMyCollectionsFilterEnabled, searchQuery, tableDataFiltered]
+    [
+      tableData,
+      isMyCollectionsFilterEnabled,
+      searchQuery,
+      tableDataFiltered,
+      currentMarketId
+    ]
   );
 
   const columnsMobile: ColumnType<LendTableRow>[] = useMemo(
@@ -646,91 +666,95 @@ const Lend: NextPage = () => {
         onCancel={hideMobileSidebar}
         marketImage={renderMarketImageByName(currentMarketName)}
         currentMarketId={currentMarketId}
-        />
+      />
     </HoneySider>
   );
 
   return (
     <LayoutRedesign>
       <HoneyContent sidebar={lendSidebar()}>
-      <div>
-        <Typography.Title className={pageTitle}>Lend</Typography.Title>
-        <Typography.Text className={pageDescription}>
-          Earn yield by depositing crypto into NFT markets.{' '}
-          <span>
-            <a target="_blank" href="https://buy.moonpay.com" rel="noreferrer">
-              <HoneyButton style={{ display: 'inline' }} variant="text">
-                Need crypto?
-              </HoneyButton>
-            </a>
-          </span>
-        </Typography.Text>
-      </div>
-      <div className={style.hideTablet}>
-        <HoneyTable
-          hasRowsShadow={true}
-          tableLayout="fixed"
-          columns={columns}
-          dataSource={tableDataFiltered}
-          pagination={false}
-          className={style.table}
-          onRow={(record, rowIndex) => {
-            return {
-              onClick: event => handleMarketId(record)
-            };
-          }}
-          
-          // TODO: uncomment when the chart has been replaced and implemented
-          // expandable={{
-          //   // we use our own custom expand column
-          //   showExpandColumn: false,
-          //   onExpand: (expanded, row) =>
-          //     setExpandedRowKeys(expanded ? [row.key] : []),
-          //   expandedRowKeys,
-          //   expandedRowRender: record => {
-          //     return (
-          //       <div className={style.expandSection}>
-          //         <div className={style.dashedDivider} />
-          //         <HoneyChart title="Interest rate" data={record.stats} />
-          //       </div>
-          //   );
-          // }
-          // }}
-        />
-      </div>
-      <div className={style.showTablet}>
-        <div
-          className={c(
-            style.mobileTableHeader,
-            style.mobileSearchAndToggleContainer
-          )}
-        >
-          <div className={style.mobileRow}>
-            <SearchForm />
-          </div>
-          <div className={style.mobileRow}>
-            <MyCollectionsToggle />
-          </div>
+        <div>
+          <Typography.Title className={pageTitle}>Lend</Typography.Title>
+          <Typography.Text className={pageDescription}>
+            Earn yield by depositing crypto into NFT markets.{' '}
+            <span>
+              <a
+                target="_blank"
+                href="https://buy.moonpay.com"
+                rel="noreferrer"
+              >
+                <HoneyButton style={{ display: 'inline' }} variant="text">
+                  Need crypto?
+                </HoneyButton>
+              </a>
+            </span>
+          </Typography.Text>
         </div>
-        <div className={c(style.mobileTableHeader)}>
-          <div className={style.tableCell}>Interest</div>
-          <div className={style.tableCell}>Supplied</div>
-          <div className={style.tableCell}>Available</div>
+        <div className={style.hideTablet}>
+          <HoneyTable
+            hasRowsShadow={true}
+            tableLayout="fixed"
+            columns={columns}
+            dataSource={tableDataFiltered}
+            pagination={false}
+            className={style.table}
+            onRow={(record, rowIndex) => {
+              return {
+                onClick: event => handleMarketId(record)
+              };
+            }}
+
+            // TODO: uncomment when the chart has been replaced and implemented
+            // expandable={{
+            //   // we use our own custom expand column
+            //   showExpandColumn: false,
+            //   onExpand: (expanded, row) =>
+            //     setExpandedRowKeys(expanded ? [row.key] : []),
+            //   expandedRowKeys,
+            //   expandedRowRender: record => {
+            //     return (
+            //       <div className={style.expandSection}>
+            //         <div className={style.dashedDivider} />
+            //         <HoneyChart title="Interest rate" data={record.stats} />
+            //       </div>
+            //   );
+            // }
+            // }}
+          />
         </div>
-        <HoneyTable
-          hasRowsShadow={true}
-          tableLayout="fixed"
-          columns={columnsMobile}
-          dataSource={tableDataFiltered}
-          pagination={false}
-          showHeader={false}
-          className={style.table}
-          onRow={(record, rowIndex) => {
-            return {
-              onClick: event => handleRowClick(event, record)
-            };
-          }}
-        />
+        <div className={style.showTablet}>
+          <div
+            className={c(
+              style.mobileTableHeader,
+              style.mobileSearchAndToggleContainer
+            )}
+          >
+            <div className={style.mobileRow}>
+              <SearchForm />
+            </div>
+            <div className={style.mobileRow}>
+              <MyCollectionsToggle />
+            </div>
+          </div>
+          <div className={c(style.mobileTableHeader)}>
+            <div className={style.tableCell}>Interest</div>
+            <div className={style.tableCell}>Supplied</div>
+            <div className={style.tableCell}>Available</div>
+          </div>
+          <HoneyTable
+            hasRowsShadow={true}
+            tableLayout="fixed"
+            columns={columnsMobile}
+            dataSource={tableDataFiltered}
+            pagination={false}
+            showHeader={false}
+            className={style.table}
+            onRow={(record, rowIndex) => {
+              return {
+                onClick: event => handleRowClick(event, record)
+              };
+            }}
+          />
         </div>
       </HoneyContent>
     </LayoutRedesign>
