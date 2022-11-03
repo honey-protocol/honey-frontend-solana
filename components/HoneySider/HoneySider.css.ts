@@ -32,7 +32,19 @@ export const honeySider = style({
 });
 
 export const isVisible = style({
-  display: 'block'
+  display: 'block',
+  position: 'fixed',
+  bottom: '-10px',
+  top: 'initial',
+  padding: '12px 12px',
+  '@media': {
+    [`screen and (min-width: ${breakpoints.desktop}px)`]: {
+      padding: '12px 0',
+      position: 'absolute',
+      bottom: 'initial',
+      top: 0,
+    }
+  }
 });
 
 globalStyle(`.sidebar.is-sticky`, {
