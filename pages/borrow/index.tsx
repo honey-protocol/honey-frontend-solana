@@ -568,7 +568,7 @@ const Markets: NextPage = () => {
                   ]
                 }
               >
-                <span>Rate</span>
+                <span>Interest rate</span>
                 <div className={style.sortIcon[sortOrder]} />
               </div>
             );

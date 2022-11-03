@@ -220,6 +220,7 @@ const headerCellBasic = style([
     display: 'flex',
     alignItems: 'center',
     textTransform: 'uppercase',
+    whiteSpace: 'nowrap',
     color: vars.colors.black
   }
 ]);
