@@ -34,7 +34,11 @@ const BidsList = (props: BidListProps) => {
   }
 
   useEffect(() => {
-    if (biddingArray.length) handleConvertion(biddingArray);
+    if (biddingArray.length) {
+      handleConvertion(biddingArray)
+    } else {
+      handleConvertion([]);
+    };
   }, [biddingArray]);
 
   const currentBidCardData: CurrentBidCardProps[] = convertedBiddingArray;
@@ -42,7 +46,11 @@ const BidsList = (props: BidListProps) => {
   return (
     <SidebarScroll>
       <div className={styles.bidsList}>
-        <CurrentBidList data={currentBidCardData} fetchedSolPrice={fetchedSolPrice} />
+        {
+          currentBidCardData.length ?
+          <CurrentBidList data={currentBidCardData} fetchedSolPrice={fetchedSolPrice} />
+          : 'No open bids'
+        }
       </div>
     </SidebarScroll>
   );

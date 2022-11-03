@@ -43,3 +43,7 @@ export const graphTitle = style({});
 export const warningContainer = style({
   width: '100%'
 });
+
+export const marginTop = style({
+  marginTop: 8
+});

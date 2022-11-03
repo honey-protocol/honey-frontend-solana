@@ -74,7 +74,7 @@ const LiquidationMarketsStep = () => {
       )}
 
       <HoneyWarning message="Description about Liquidation markets.">
-        <HoneyLink link="#" target="_blank">
+        <HoneyLink link="#" target="_blank" className={styles.marginTop}>
           Learn More
         </HoneyLink>
       </HoneyWarning>
