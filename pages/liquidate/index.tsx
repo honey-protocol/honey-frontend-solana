@@ -52,6 +52,7 @@ import { ToastProps } from 'hooks/useToast';
 import HoneyTableRow from 'components/HoneyTable/HoneyTableRow/HoneyTableRow';
 import HoneyTableNameCell from 'components/HoneyTable/HoneyTableNameCell/HoneyTableNameCell';
 import LiquidateExpandTableMobile from 'components/LiquidateExpandTable/LiquidateExpandTableMobile';
+import { network } from 'pages/_app';
 
 const { formatPercent: fp, formatSol: fs, formatRoundDown: fd } = formatNumber;
 const Liquidate: NextPage = () => {
@@ -76,7 +77,8 @@ const Liquidate: NextPage = () => {
     sdkConfig.saberHqConnection,
     sdkConfig.sdkWallet!,
     sdkConfig.honeyId,
-    sdkConfig.marketId
+    sdkConfig.marketId,
+    network == 'devnet' ? true : false
   );
 
   /**

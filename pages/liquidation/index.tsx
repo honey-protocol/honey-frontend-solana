@@ -10,6 +10,7 @@ import LiquidationCollectionCard from '../../components/LiquidationCollectionCar
 import { useAllPositions, useHoney } from '@honey-finance/sdk';
 import { ConfigureSDK, toastResponse } from '../../helpers/loanHelpers';
 import { useConnectedWallet } from '@saberhq/use-solana';
+import { network } from 'pages/_app';
 /**
  * @description interface for NFT object
  * @params none
@@ -42,7 +43,8 @@ const Liquidation: NextPage = () => {
     sdkConfig.saberHqConnection,
     sdkConfig.sdkWallet!,
     sdkConfig.honeyId,
-    sdkConfig.marketId
+    sdkConfig.marketId,
+    network == 'devnet' ? true : false
   );
 
   /**
