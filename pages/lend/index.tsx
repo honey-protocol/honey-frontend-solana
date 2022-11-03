@@ -375,10 +375,6 @@ const Lend: NextPage = () => {
     useState(false);
 
   useEffect(() => {
-    // if (!walletPK) {
-    //   setTableData(marketCollections);
-    // }
-
     if (sdkConfig.saberHqConnection) {
       function getData() {
         return Promise.all(
@@ -633,7 +629,7 @@ const Lend: NextPage = () => {
         }
       }
     ],
-    [isMyCollectionsFilterEnabled, tableData, searchQuery]
+    [isMyCollectionsFilterEnabled, tableData, searchQuery, currentMarketId]
   );
 
   const lendSidebar = () => (
