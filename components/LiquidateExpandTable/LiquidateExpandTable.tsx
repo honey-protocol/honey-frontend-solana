@@ -95,7 +95,7 @@ export const LiquidateExpandTable = (props: LiquidateExpandTableProps) =>  {
       <div className={styles.expandTableHeader}>
         <div className={styles.positionsCounterContainer}>
           <span className={styles.positionsCounterTitle}>Open positions</span>
-          <span className={styles.positionsCount}>{data.length}</span>
+          <span className={styles.positionsCount}>{data && data.length ? data.length : 0}</span>
         </div>
         <HoneyButtonTabs
           items={[
