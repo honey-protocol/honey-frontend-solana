@@ -17,10 +17,10 @@ export const links = [
     title: 'BORROW',
     href: '/borrow'
   },
-  {
-    title: 'SWAP',
-    href: '/swap'
-  },
+  // {
+  //   title: 'SWAP',
+  //   href: '/swap'
+  // },
   {
     title: 'LEND',
     href: '/lend'
