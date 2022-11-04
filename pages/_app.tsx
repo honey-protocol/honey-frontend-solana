@@ -8,7 +8,7 @@ import { Network } from '@saberhq/solana-contrib';
 import { useConnectedWallet, useConnection } from '@saberhq/use-solana';
 import { SailProvider } from '@saberhq/sail';
 import { ThemeProvider } from 'degen';
-
+import { GovernanceProvider } from 'contexts/GovernanceProvider';
 import 'degen/styles';
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -102,6 +102,7 @@ function MyApp({ Component, pageProps }: AppProps) {
       </Script>
       <QueryClientProvider client={queryClient}>
         {/* <ReactQueryDevtools initialIsOpen={false} /> */}
+        <GovernanceProvider>
         <SailProvider
           initialState={{
             onSailError
@@ -119,6 +120,7 @@ function MyApp({ Component, pageProps }: AppProps) {
             </>
           )}
         </SailProvider>
+        </GovernanceProvider>
       </QueryClientProvider>
     </ThemeProvider>
   );

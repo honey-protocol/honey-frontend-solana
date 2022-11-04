@@ -3,11 +3,11 @@ import { Box, Button, Input, Stack, Text, Tag } from 'degen';
 import { PublicKey } from '@solana/web3.js';
 import * as anchor from '@project-serum/anchor';
 import * as styles from './HoneyModal.css';
-import { useStake } from 'hooks/useStake';
 import { HONEY_DECIMALS } from 'helpers/sdk/constant';
 import { convertToBN } from 'helpers/utils';
-import { useGovernance } from 'contexts/_GovernanceProvider';
+import { useGovernanceContext } from 'contexts/GovernanceProvider';
 import config from '../../config';
+import { useLocker , useStake} from 'hooks/useVeHoney';
 
 const HoneyModal = () => {
   const [amount, setAmount] = useState<number>(0);
@@ -19,7 +19,7 @@ const HoneyModal = () => {
     lockedPeriodEnd,
     honeyAmount,
     lockPeriodHasEnded
-  } = useGovernance();
+  } = useGovernanceContext();
 
   const handleOnChange = (event: any) => {
     setAmount(event.target.value);
@@ -37,12 +37,9 @@ const HoneyModal = () => {
     return 0;
   }, [vestingPeriod]);
 
-  const STAKE_POOL_ADDRESS = new PublicKey(
-    config.NEXT_PUBLIC_STAKE_POOL_ADDRESS
-  );
-  const LOCKER_ADDRESS = new PublicKey(config.NEXT_PUBLIC_LOCKER_ADDR);
 
-  const { lock, unlock, escrow } = useStake(STAKE_POOL_ADDRESS, LOCKER_ADDRESS);
+  const { lock, unlock } = useLocker();
+  const { escrow } = useGovernanceContext(); 
 
   const handleLock = useCallback(async () => {
     if (!amount || !vestingPeriodInSeconds) return;

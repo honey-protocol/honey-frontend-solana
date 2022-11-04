@@ -6,7 +6,7 @@ import SidebarScroll from '../../SidebarScroll/SidebarScroll';
 import { HoneyTextArea } from '../../HoneyTextArea/HoneyTextArea';
 import invariant from 'tiny-invariant';
 import { useSDK } from 'helpers/sdk';
-import { GovernorWrapper } from 'helpers/dao';
+import { GovernorWrapper } from '@tribecahq/tribeca-sdk';
 import { useGovernor, useGovernorParams } from 'hooks/tribeca/useGovernor';
 import { extractErrorMessage, useSail } from '@saberhq/sail';
 import { Transaction } from '@solana/web3.js';
@@ -194,7 +194,7 @@ const CreateProposalTab = (props: { onCancel: Function }) => {
             )}
             <currentAction.Renderer
               actor={actor}
-              payer={ownerInvokerKey}
+              // payer={ownerInvokerKey}
               ctx={ctx}
               txRaw={txRaw}
               setError={setError}

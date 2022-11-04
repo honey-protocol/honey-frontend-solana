@@ -7,7 +7,7 @@ import { ProposalInfo } from 'hooks/tribeca/useProposals';
 import { TokenAmount } from '@saberhq/token-utils';
 import { useGovernor } from 'hooks/tribeca/useGovernor';
 import { Spin } from 'antd';
-import { VoteSide } from 'helpers/dao';
+import { VoteSide } from '@tribecahq/tribeca-sdk';
 import { Fraction } from '@saberhq/token-utils';
 import BN from 'bn.js';
 

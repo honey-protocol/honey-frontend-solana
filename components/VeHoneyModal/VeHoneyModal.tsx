@@ -3,10 +3,10 @@ import { Box, Button, Input, Stack, Text, Tag } from 'degen';
 import { PublicKey } from '@solana/web3.js';
 import * as anchor from '@project-serum/anchor';
 import * as styles from './VeHoneyModal.css';
-import { useStake } from 'hooks/useStake';
+import { useLocker, useStake } from 'hooks/useVeHoney';
 import { PHONEY_DECIMALS } from 'helpers/sdk/constant';
 import { convertToBN } from 'helpers/utils';
-import { useGovernance } from 'contexts/_GovernanceProvider';
+import { useGovernanceContext } from 'contexts/GovernanceProvider';
 import config from '../../config';
 
 const VeHoneyModal = () => {
@@ -49,25 +49,19 @@ const VeHoneyModal = () => {
     return 0;
   }, [vestingPeriod]);
 
-  const STAKE_POOL_ADDRESS = new PublicKey(
-    config.NEXT_PUBLIC_STAKE_POOL_ADDRESS
-  );
-  const LOCKER_ADDRESS = new PublicKey(config.NEXT_PUBLIC_LOCKER_ADDR);
 
-  const { stake, unlock, escrow } = useStake(
-    STAKE_POOL_ADDRESS,
-    LOCKER_ADDRESS
-  );
+  const { lock, unlock } = useLocker();
+
+  const { escrow } = useGovernanceContext();
 
   const handleStake = useCallback(async () => {
     if (!amount || !vestingPeriodInSeconds) return;
 
-    await stake(
+    await lock(
       convertToBN(amount, PHONEY_DECIMALS),
       new anchor.BN(vestingPeriodInSeconds),
-      !!escrow
     );
-  }, [stake, escrow, amount, vestingPeriodInSeconds]);
+  }, [lock, escrow, amount, vestingPeriodInSeconds]);
 
   return (
     <Box width="96">

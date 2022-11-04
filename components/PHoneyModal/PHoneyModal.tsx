@@ -1,10 +1,11 @@
 import React, { useCallback, useMemo, useState, useEffect } from 'react';
 import { Box, Button, Input, Stack, Text, Tag } from 'degen';
 import { PublicKey } from '@solana/web3.js';
-import { useStake } from 'hooks/useStake';
+import { useStake , useLocker} from 'hooks/useVeHoney';
 import { useAccounts } from 'hooks/useAccounts';
 import { PHONEY_DECIMALS, PHONEY_MINT } from 'helpers/sdk/constant';
 import { convert, convertToBN } from 'helpers/utils';
+import { useGovernanceContext } from 'contexts/GovernanceProvider';
 
 // console.log("The stake pool address is : ", process.env.PUBLIC_NEXT_STAKE_POOL_ADDRESS)
 const PHoneyModal = () => {
@@ -21,20 +22,11 @@ const PHoneyModal = () => {
 
   // ======================== Should replace with configuration ================
   const pHoneyToken = tokenAccounts.find(t => t.info.mint.equals(PHONEY_MINT));
-  const STAKE_POOL_ADDRESS = new PublicKey(
-    process.env.NEXT_STAKE_POOL_ADDR ||
-      '4v62DWSwrUVEHe2g88MeyJ7g32vVzQsCnADZF8yUy8iU'
-  );
-  const LOCKER_ADDRESS = new PublicKey(
-    process.env.NEXT_LOCKER_ADDR ||
-      '5FnK8H9kDbmPNpBYMuvSkDevkMfnVPRrPNNqmTQyBBae'
-  );
   // ============================================================================
 
-  const { user, deposit, claim, claimableAmount } = useStake(
-    STAKE_POOL_ADDRESS,
-    LOCKER_ADDRESS
-  );
+  const { deposit, claim, claimableAmount } = useStake();
+
+  const {  } = useGovernanceContext();
 
   useEffect(() => {
     setIsClaimable(claimableAmount !== 0);
@@ -63,8 +55,8 @@ const PHoneyModal = () => {
     //   await createUser();
     // }
 
-    await deposit(convertToBN(amount, PHONEY_DECIMALS), !!user);
-  }, [deposit, user, amount]);
+    await deposit(convertToBN(amount, PHONEY_DECIMALS));
+  }, [deposit, amount]);
 
   return (
     <Box width="96">

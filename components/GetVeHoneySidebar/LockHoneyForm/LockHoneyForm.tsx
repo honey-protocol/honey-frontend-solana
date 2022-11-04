@@ -9,11 +9,11 @@ import HoneyWarning from '../../HoneyWarning/HoneyWarning';
 import { InputsBlock } from '../../InputsBlock/InputsBlock';
 import { PublicKey } from '@solana/web3.js';
 import config from '../../../config';
-import { useStake } from 'hooks/useStake';
+import { useStake, useLocker } from 'hooks/useVeHoney';
 import { convertToBN } from 'helpers/utils';
 import { HONEY_DECIMALS } from 'helpers/sdk';
 import * as anchor from '@project-serum/anchor';
-import { useGovernance } from 'contexts/_GovernanceProvider';
+import { useGovernanceContext } from 'contexts/GovernanceProvider';
 import useToast from 'hooks/useToast';
 import { hAlign } from 'styles/common.css';
 import { questionIcon } from 'styles/icons.css';
@@ -46,19 +46,17 @@ const LockHoneyForm = (props: { onCancel: Function }) => {
       : lockPeriod === '12'
       ? 25 / 100
       : 1;
-  const STAKE_POOL_ADDRESS = new PublicKey(
-    config.NEXT_PUBLIC_STAKE_POOL_ADDRESS
-  );
-  const LOCKER_ADDRESS = new PublicKey(config.NEXT_PUBLIC_LOCKER_ADDR);
 
-  const { lock, unlock, escrow } = useStake(STAKE_POOL_ADDRESS, LOCKER_ADDRESS);
+  const { lock, unlock } = useLocker();
+  const { escrow } = useGovernanceContext();
   const {
     veHoneyAmount,
     lockedAmount,
     lockedPeriodEnd,
     honeyAmount,
     lockPeriodHasEnded
-  } = useGovernance();
+  } = useGovernanceProvider();
+
   const maxValue = honeyAmount;
 
   const handleHoneyInputChange = (honeyValue: number | undefined) => {
@@ -111,8 +109,6 @@ const LockHoneyForm = (props: { onCancel: Function }) => {
     await lock(
       convertToBN(valueHONEY, HONEY_DECIMALS),
       new anchor.BN(vestingPeriodInSeconds),
-      !!escrow,
-      toast
     );
   }, [lock, escrow, valueHONEY, toast, vestingPeriodInSeconds]);
 

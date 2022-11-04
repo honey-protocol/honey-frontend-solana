@@ -5,12 +5,12 @@ import * as styles from '../../VoteForm.css';
 import { ProposalInfo } from 'hooks/tribeca/useProposals';
 import type { SmartWalletTransactionData } from '@gokiprotocol/client';
 import type { ProgramAccount } from '@saberhq/token-utils';
-import type { ProposalData } from 'helpers/dao';
+import type { ProposalData } from '@tribecahq/tribeca-sdk';
 import {
   getProposalState,
   PROPOSAL_STATE_LABELS,
   ProposalState
-} from 'helpers/dao';
+} from '@tribecahq/tribeca-sdk';
 import BN from 'bn.js';
 import { startCase } from 'lodash';
 import Link from 'next/link';
