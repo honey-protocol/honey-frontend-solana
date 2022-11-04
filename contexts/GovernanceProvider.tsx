@@ -12,6 +12,7 @@ import { PublicKey, Keypair } from '@solana/web3.js';
 import { Wallet } from '@project-serum/anchor';
 import { useConnectedWallet, useConnection } from '@saberhq/use-solana';
 import { SolanaProvider } from '@saberhq/solana-contrib';
+import { Token } from '@saberhq/token-utils';
 import {
   GovernorWrapper,
   TribecaSDK,
@@ -70,6 +71,7 @@ export interface GovernanceContextValueProps {
   stakePoolUser?: StakePoolUser;
   lockerInfo?: LockerData;
   escrow?: Escrow;
+  govToken?: Token;
   isProcessing: boolean;
   setIsProcessing?: Dispatch<SetStateAction<boolean>>;
 }
@@ -103,6 +105,7 @@ export const GovernanceProvider: React.FC<React.ReactNode> = ({ children }) => {
   const [locker, setLocker] = useState<LockerData>();
   const [user, setUser] = useState<StakePoolUser>();
   const [escrow, setEscrow] = useState<Escrow>();
+  const [govToken, setGovToken] = useState<Token>();
 
   const sdk = useMemo(() => {
     const provider = SolanaProvider.init({
@@ -184,6 +187,14 @@ export const GovernanceProvider: React.FC<React.ReactNode> = ({ children }) => {
         setEscrow(undefined);
       }
 
+      // Load gov token
+      try {
+        const token = await Token.load(connection, locker.tokenMint);
+        setGovToken(token ?? undefined);
+      } catch (e) {
+        setGovToken(undefined);
+      }
+
       setIsLoading(false);
     }
   }
@@ -212,6 +223,7 @@ export const GovernanceProvider: React.FC<React.ReactNode> = ({ children }) => {
         stakePoolUser: user,
         lockerInfo: locker,
         escrow,
+        govToken,
         isProcessing,
         setIsProcessing
       }}

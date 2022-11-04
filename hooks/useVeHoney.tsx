@@ -15,7 +15,7 @@ import {
 } from '../helpers/sdk';
 
 export const useProposals = () => {
-  const { governorWrapper, setIsProcessing } = useGovernanceContext();
+  const { governorWrapper, setIsProcessing, proposals } = useGovernanceContext();
 
   const createProposal = useCallback(
     async (instructions: ProposalInstruction[]) => {
@@ -69,6 +69,7 @@ export const useProposals = () => {
   );
 
   return {
+    proposals,
     createProposal,
     cancelProposal,
     createProposalMeta

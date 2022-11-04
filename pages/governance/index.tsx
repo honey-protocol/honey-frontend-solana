@@ -3,6 +3,7 @@ import type { NextPage } from 'next';
 import { ColumnType } from 'antd/lib/table';
 import c from 'classnames';
 import { ProposalState } from '@tribecahq/tribeca-sdk';
+import { Token } from '@saberhq/token-utils';
 
 import HoneyContent from '../../components/HoneyContent/HoneyContent';
 import LayoutRedesign from '../../components/LayoutRedesign/LayoutRedesign';
@@ -32,7 +33,8 @@ import { vars } from '../../styles/theme.css';
 
 import { formatNumber } from '../../helpers/format';
 import { getVoteCountFmt } from '../../helpers/utils';
-import { GovernanceProvider } from '../../contexts/GovernanceProvider';
+import { GovernanceProvider, useGovernanceContext } from '../../contexts/GovernanceProvider';
+import { useProposals } from '../../hooks/useVeHoney';
 
 const { format: f, formatShortName: fsn } = formatNumber;
 const NUM_PLACEHOLDERS = 0;
@@ -42,6 +44,8 @@ const Governance: NextPage = () => {
   const [isDraftFilterEnabled, setIsDraftFilterEnabled] = useState(false);
   const [selectedProposalId, setSelectedProposalId] = useState(10);
   const [tableData, setTableData] = useState<GovernanceTableRow[]>();
+
+  const { govToken, proposals } = useGovernanceContext();
 
   const [sidebarMode, setSidebarMode] =
     useState<GovernanceSidebarForm>('get_vehoney');
@@ -59,10 +63,10 @@ const Governance: NextPage = () => {
   };
 
   const allProposals = [
-    ...proposals,
+    ...(proposals ?? []),
     ...new Array<null>(NUM_PLACEHOLDERS).fill(null)
   ].filter(p => {
-    const proposalState = p?.data?.status.state;
+    const proposalState = p?.status;
     return isDraftFilterEnabled
       ? true
       : proposalState !== ProposalState.Draft &&
@@ -91,16 +95,12 @@ const Governance: NextPage = () => {
 
   const getTableData = useCallback(() => {
     const data = allProposals.map((proposal, i) => ({
-      id: proposal?.data?.index || 0,
-      name: proposal?.data?.proposalMetaData?.title || '',
-      votes: proposal?.data?.proposalData.forVotes.toNumber() || 0,
-      against: proposal?.data?.proposalData.againstVotes.toNumber() || 0,
+      id: proposal?.data?.index?.toNumber() ?? 0,
+      name: proposal?.meta?.title ?? '',
+      votes: proposal?.data?.forVotes.toNumber() ?? 0,
+      against: proposal?.data?.againstVotes.toNumber() ?? 0,
       votesRequired: 0,
-      status: proposal?.data?.status.executed
-        ? 'executed'
-        : proposal?.data?.status.state !== undefined
-        ? getStatus(proposal?.data?.status.state)
-        : 'draft'
+      status: getStatus(proposal?.status ?? ProposalState.Draft)
     }));
     if (!data || !data[0]?.id || data.length === tableData?.length) return;
     // console.log({ data });
@@ -194,7 +194,7 @@ const Governance: NextPage = () => {
         render: (votes: number) => {
           return (
             <div className={style.textTablet}>
-              {veToken ? fsn(getVoteCountFmt(votes, veToken)) : 0}
+              {govToken ? fsn(getVoteCountFmt(votes, govToken)) : 0}
             </div>
           );
         }
@@ -207,7 +207,7 @@ const Governance: NextPage = () => {
         render: (against: number) => {
           return (
             <div className={style.textTablet}>
-              {veToken ? fsn(getVoteCountFmt(against, veToken)) : 0}
+              {govToken ? fsn(getVoteCountFmt(against, govToken)) : 0}
             </div>
           );
         }
@@ -289,10 +289,10 @@ const Governance: NextPage = () => {
 
               <HoneyTableRow>
                 <div className={style.textTablet}>
-                  {veToken ? fsn(getVoteCountFmt(row.votes, veToken)) : 0}
+                  {govToken ? fsn(getVoteCountFmt(row.votes, govToken)) : 0}
                 </div>
                 <div className={style.textTablet}>
-                  {veToken ? fsn(getVoteCountFmt(row.against, veToken)) : 0}
+                  {govToken ? fsn(getVoteCountFmt(row.against, govToken)) : 0}
                 </div>
                 <div>
                   <ProgressStatus
