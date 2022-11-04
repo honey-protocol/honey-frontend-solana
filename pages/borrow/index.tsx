@@ -103,7 +103,9 @@ const network = 'mainnet-beta'; // change to dynamic value
 const { format: f, formatPercent: fp, formatSol: fs } = formatNumber;
 
 const Markets: NextPage = () => {
-  const [currentMarketName, setCurrentMarketName] = useState(HONEY_GENESIS_BEE_MARKET_NAME);
+  const [currentMarketName, setCurrentMarketName] = useState(
+    HONEY_GENESIS_BEE_MARKET_NAME
+  );
   // Sets market ID which is used for fetching market specific data
   // each market currently is a different call and re-renders the page
   const [currentMarketId, setCurrentMarketId] = useState<string>(
@@ -122,7 +124,7 @@ const Markets: NextPage = () => {
    * @params Honey table record - contains all info about a table (aka market)
    * @returns sets the market ID which re-renders page state and fetches market specific data
    */
-   async function handleMarketId(record: any) {
+  async function handleMarketId(record: any) {
     const marketData = renderMarket(record.id);
     setCurrentMarketId(marketData!.id);
     setMarketId(marketData!.id);
@@ -211,7 +213,8 @@ const Markets: NextPage = () => {
    */
   const availableNFTs = useFetchNFTByUser(wallet);
   const reFetchNFTs = availableNFTs[2];
-  const [isCreateMarketAreaOnHover, setIsCreateMarketAreaOnHover] = useState<boolean>(false);
+  const [isCreateMarketAreaOnHover, setIsCreateMarketAreaOnHover] =
+    useState<boolean>(false);
 
   // calls upon setting the user nft list per market
   useEffect(() => {
@@ -358,19 +361,26 @@ const Markets: NextPage = () => {
   // if there are open positions for the user -> set the open positions
   useEffect(() => {
     if (collateralNFTPositions) {
-      setUserOpenPositions(collateralNFTPositions)
+      setUserOpenPositions(collateralNFTPositions);
     } else if (!collateralNFTPositions) {
       setUserOpenPositions([]);
     }
   }, [collateralNFTPositions, currentMarketId]);
 
-  async function handlePositions(currentCollectionID: string, activeMarketID: string, currentOpenPositions: any) {
-    return await handleOpenPositions(currentCollectionID, activeMarketID, currentOpenPositions);
+  async function handlePositions(
+    currentCollectionID: string,
+    activeMarketID: string,
+    currentOpenPositions: any
+  ) {
+    return await handleOpenPositions(
+      currentCollectionID,
+      activeMarketID,
+      currentOpenPositions
+    );
   }
 
   const healthPercent =
     ((nftPrice - userDebt / LIQUIDATION_THRESHOLD) / nftPrice) * 100;
-
 
   // PUT YOUR DATA SOURCE HERE
   // MOCK DATA FOR NOW
@@ -389,10 +399,16 @@ const Markets: NextPage = () => {
               false
             );
 
-            collection.positions = await handlePositions(collection.id, currentMarketId, userOpenPositions);
-            collection.rate = (await getInterestRate(collection.utilizationRate)) || 0;
+            collection.positions = await handlePositions(
+              collection.id,
+              currentMarketId,
+              userOpenPositions
+            );
+            collection.rate =
+              (await getInterestRate(collection.utilizationRate)) || 0;
 
-            if (currentMarketId === collection.id) setActiveInterestRate(collection.rate);
+            if (currentMarketId === collection.id)
+              setActiveInterestRate(collection.rate);
             return collection;
           })
         );
@@ -535,7 +551,7 @@ const Markets: NextPage = () => {
                     <div className={style.logoWrapper}>
                       <div className={style.collectionLogo}>
                         <HexaBoxContainer>
-                        {renderMarketImageByName(name)}
+                          {renderMarketImageByName(name)}
                         </HexaBoxContainer>
                       </div>
                     </div>
@@ -605,9 +621,7 @@ const Markets: NextPage = () => {
               key: 'value',
               hidden: windowWidth < TABLET_BP,
               render: (value: number) => {
-                return (
-                  <div className={style.valueCell}>{fs(value)}</div>
-                );
+                return <div className={style.valueCell}>{fs(value)}</div>;
               }
             }
           ],
@@ -637,7 +651,9 @@ const Markets: NextPage = () => {
               dataIndex: 'available',
               key: 'available',
               render: (available: number, data: MarketTableRow) => {
-                return <div className={style.availableCell}>{fs(available)}</div>;
+                return (
+                  <div className={style.availableCell}>{fs(available)}</div>
+                );
               }
             }
           ],
@@ -742,7 +758,7 @@ const Markets: NextPage = () => {
               </HexaBoxContainer>
             </div>
             <div className={style.nameCellText}>
-              <HoneyTooltip label={name}>
+              <HoneyTooltip title={name}>
                 {renderMarketName(currentMarketId)}
               </HoneyTooltip>
               <HealthLvl healthLvl={healthPercent} />
@@ -988,8 +1004,10 @@ const Markets: NextPage = () => {
           `https://solscan.io/tx/${tx[1][0]}?cluster=${network}`
         );
         setTimeout(() => {
-          processUserPayment == 0 ? setProcessUserPayment(1) : setProcessUserPayment(0);
-        }, 3500)
+          processUserPayment == 0
+            ? setProcessUserPayment(1)
+            : setProcessUserPayment(0);
+        }, 3500);
       } else {
         return toast.error('Borrow failed');
       }
@@ -1033,8 +1051,10 @@ const Markets: NextPage = () => {
         );
 
         setTimeout(() => {
-          processUserPayment == 0 ? setProcessUserPayment(1) : setProcessUserPayment(0);
-        }, 3500)
+          processUserPayment == 0
+            ? setProcessUserPayment(1)
+            : setProcessUserPayment(0);
+        }, 3500);
       } else {
         return toast.error('Repay failed');
       }
@@ -1102,15 +1122,15 @@ const Markets: NextPage = () => {
             onRow={(record, rowIndex) => {
               return {
                 onClick: event => handleMarketId(record)
-              }
+              };
             }}
             onHeaderRow={(data, index) => {
-              if(index && !isCreateMarketVisible) {
+              if (index && !isCreateMarketVisible) {
                 return {
-                  hidden: true,
-                }
+                  hidden: true
+                };
               }
-              return {}
+              return {};
             }}
             className={classNames(style.table, {
               [style.emptyTable]: !tableDataFiltered.length
@@ -1181,7 +1201,7 @@ const Markets: NextPage = () => {
             onRow={(record, rowIndex) => {
               return {
                 onClick: event => handleMarketId(record)
-              }
+              };
             }}
             className={classNames(style.table, {
               [style.emptyTable]: !tableData.length
@@ -1245,8 +1265,6 @@ const Markets: NextPage = () => {
             </div>
           ))}
       </HoneyContent>
-
-
     </LayoutRedesign>
   );
 };
