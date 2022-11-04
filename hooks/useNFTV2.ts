@@ -41,6 +41,7 @@ export default function useFetchNFTByUser(
   useEffect(() => {
     let didCancel = false;
     const fetchNFTByUser = async () => {
+      setLoading(true);
       if (!didCancel) {
         // const connection = new Connection(
         //   clusterApiUrl('mainnet-beta'),

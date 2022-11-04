@@ -22,7 +22,7 @@ export const RiskModelStep = () => {
     if (activeTab === RiskModelTab.LOW) {
       return (
         <HoneyWarning message="LOW Risk Description">
-          <HoneyLink link="#" target="_blank">
+          <HoneyLink link="#" target="_blank" className={styles.marginTop}>
             Learn More
           </HoneyLink>
         </HoneyWarning>
@@ -32,7 +32,7 @@ export const RiskModelStep = () => {
     if (activeTab === RiskModelTab.DEFAULT) {
       return (
         <HoneyWarning message="The Default risk model establishes an average income for lenders with keeping good risk management.">
-          <HoneyLink link="#" target="_blank">
+          <HoneyLink link="#" target="_blank" className={styles.marginTop}>
             Learn More
           </HoneyLink>
         </HoneyWarning>
@@ -42,7 +42,7 @@ export const RiskModelStep = () => {
     if (activeTab === RiskModelTab.HIGH) {
       return (
         <HoneyWarning message="The High risk model establishes an average income for lenders with keeping good risk management.">
-          <HoneyLink link="#" target="_blank">
+          <HoneyLink link="#" target="_blank" className={styles.marginTop}>
             Learn More
           </HoneyLink>
         </HoneyWarning>

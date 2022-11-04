@@ -15,7 +15,7 @@ import React, { FC, ReactNode, useEffect, useState } from 'react';
 import { GovernorProvider } from 'hooks/tribeca/useGovernor';
 import { GovernanceProvider } from 'contexts/GovernanceProvider';
 import Script from 'next/script';
-import { HONEY_MARKET_ID, HONEY_PROGRAM_ID } from '../constants/loan';
+
 // import NoMobilePopup from 'components/NoMobilePopup/NoMobilePopup';
 import { SailProvider } from '@saberhq/sail';
 import { onSailError } from '../helpers/error';
@@ -30,6 +30,9 @@ import {
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { JupiterProvider } from '@jup-ag/react-hook';
 export const network = (process.env.NETWORK as Network) || 'mainnet-beta';
+import { HONEY_GENESIS_MARKET_ID, HONEY_PROGRAM_ID, PESKY_PENGUINS_MARKET_ID } from '../constants/loan';
+import NoMobilePopup from 'components/NoMobilePopup/NoMobilePopup';
+export const setMarketId = (marketID: string) => marketID;
 
 const networkConfiguration = () => {
   if (process.env.NETWORK_CONFIGURATION) {
@@ -50,6 +53,7 @@ const storedAccent =
 const OnChainProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const wallet = useConnectedWallet();
   const connection = useConnection();
+  const network = 'mainnet-beta';
 
   return (
     <AnchorProvider
@@ -62,7 +66,7 @@ const OnChainProvider: FC<{ children: ReactNode }> = ({ children }) => {
         wallet={wallet}
         connection={connection}
         honeyProgramId={HONEY_PROGRAM_ID}
-        honeyMarketId={HONEY_MARKET_ID}
+        honeyMarketId={setMarketId(HONEY_GENESIS_MARKET_ID)}
       >
         {children}
       </HoneyProvider>

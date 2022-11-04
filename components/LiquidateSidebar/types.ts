@@ -6,18 +6,23 @@ export type LendSidebarProps = {
   userBalance: number;
   biddingArray: any;
   highestBiddingValue: number;
-  currentUserBid: number;
+  currentUserBid?: number;
   fetchedSolPrice: number;
-  handleRevokeBid: (type: string, toast: ToastProps['toast']) => void;
+  currentMarketId: string;
+  highestBiddingAddress: string;
+  stringyfiedWalletPK?: string;
+  handleRevokeBid: (type: string, toast: ToastProps['toast'], mID: string) => void;
   handleIncreaseBid: (
     type: string,
     userBid: number,
-    toast: ToastProps['toast']
+    toast: ToastProps['toast'],
+    mID: string
   ) => void;
   handlePlaceBid: (
     type: string,
     userBid: number,
-    toast: ToastProps['toast']
+    toast: ToastProps['toast'],
+    mID: string
   ) => void;
   onCancel: Function;
 };

@@ -23,24 +23,29 @@ import honeyGenesisBee from '/public/images/imagePlaceholder.png';
 import { getColumnSortStatus } from '../../helpers/tableUtils';
 import HoneyButton from '../../components/HoneyButton/HoneyButton';
 import { formatNumber } from '../../helpers/format';
-import { LiquidateTableRow } from '../../types/liquidate';
+import { BiddingPosition, LiquidateTableRow } from '../../types/liquidate';
 import { LiquidateExpandTable } from '../../components/LiquidateExpandTable/LiquidateExpandTable';
 import {
   useAnchor,
   LiquidatorClient,
   useAllPositions,
   useHoney,
-  useMarket
+  useMarket,
+  NftPosition
 } from '@honey-finance/sdk';
 import { ConfigureSDK } from 'helpers/loanHelpers';
 import { useConnectedWallet } from '@saberhq/use-solana';
-import { LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js';
+import { Connection, Keypair, LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js';
 import { calcNFT, fetchSolPrice } from 'helpers/loanHelpers/userCollection';
 import { LiquidateTablePosition } from '../../types/liquidate';
 import {
-  HONEY_MARKET_ID,
   HONEY_PROGRAM_ID,
-  LIQUIDATION_THRESHOLD
+  HONEY_GENESIS_MARKET_ID,
+  LIQUIDATION_THRESHOLD,
+  PESKY_PENGUINS_MARKET_ID,
+  OG_ATADIANS_MARKET_ID,
+  LIFINITY_FLARES_MARKET_ID,
+  BURRITO_BOYZ_MARKET_ID
 } from 'constants/loan';
 import { NATIVE_MINT } from '@solana/spl-token-v-0.1.8';
 import HoneySider from 'components/HoneySider/HoneySider';
@@ -52,15 +57,31 @@ import { ToastProps } from 'hooks/useToast';
 import HoneyTableRow from 'components/HoneyTable/HoneyTableRow/HoneyTableRow';
 import HoneyTableNameCell from 'components/HoneyTable/HoneyTableNameCell/HoneyTableNameCell';
 import LiquidateExpandTableMobile from 'components/LiquidateExpandTable/LiquidateExpandTableMobile';
+import { 
+  HONEY_GENESIS_BEE_MARKET_NAME,
+  LIFINITY_FLARES_MARKET_NAME,
+  OG_ATADIANS_MARKET_NAME,
+  PESKY_PENGUINS_MARKET_NAME,
+  BURRITO_BOYZ_MARKET_NAME,
+  renderMarketImageByID
+} from 'helpers/marketHelpers';
+import { marketCollections, liquidationCollections } from 'constants/borrowLendMarkets';
+import { populateMarketData } from 'helpers/loanHelpers/userCollection';
+import { setMarketId } from 'pages/_app';
+import { MarketTableRow } from 'types/markets';
+import { renderMarket, renderMarketImageByName } from 'helpers/marketHelpers';
+import { network } from 'pages/_app';
 
 const { formatPercent: fp, formatSol: fs, formatRoundDown: fd } = formatNumber;
 const Liquidate: NextPage = () => {
+  // TODO: write dynamic currentMarketId based on user interaction
+  const [currentMarketId, setCurrentMarketId] = useState(HONEY_GENESIS_MARKET_ID);
   // start sdk integration
   const liquidationThreshold = 0.65; // TODO: values like this should be imported from constants per collection
   // init anchor
   const { program } = useAnchor();
   // create wallet instance for PK
-  const wallet = useConnectedWallet();
+  const wallet = useConnectedWallet() || null;
   /**
    * @description sets program | market | connection | wallet
    * @params none
@@ -74,9 +95,10 @@ const Liquidate: NextPage = () => {
    */
   const { ...status } = useAllPositions(
     sdkConfig.saberHqConnection,
-    sdkConfig.sdkWallet!,
+    sdkConfig.sdkWallet,
     sdkConfig.honeyId,
-    sdkConfig.marketId
+    currentMarketId,
+    network == 'devnet' ? true : false
   );
 
   /**
@@ -85,7 +107,6 @@ const Liquidate: NextPage = () => {
    * @returns market | market reserve information | parsed reserves |
    */
   const { market, marketReserveInfo, parsedReserves, fetchMarket } = useHoney();
-
   /**
    * @description calls upon the honey sdk
    * @params  useConnection func. | useConnectedWallet func. | honeyID | marketID
@@ -93,9 +114,9 @@ const Liquidate: NextPage = () => {
    */
   const { honeyClient, honeyUser, honeyReserves, honeyMarket } = useMarket(
     sdkConfig.saberHqConnection,
-    sdkConfig.sdkWallet!,
+    sdkConfig.sdkWallet,
     sdkConfig.honeyId,
-    sdkConfig.marketId
+    currentMarketId
   );
 
   /**
@@ -103,25 +124,24 @@ const Liquidate: NextPage = () => {
    * @params none
    * @returns open positions | bidding data | userbid | user position
    */
-  const [fetchedPositions, setFetchedPositions] = useState<
-    Array<LiquidateTablePosition>
-  >([]);
   const [hasPosition, setHasPosition] = useState(false);
   const [highestBiddingAddress, setHighestBiddingAddress] = useState('');
   const [highestBiddingValue, setHighestBiddingValue] = useState(0);
-  const [currentUserBid, setCurrentUserBid] = useState<number>(0);
+  const [currentUserBid, setCurrentUserBid] = useState<number>();
   const [userInput, setUserInput] = useState(0);
   const [loadingState, setLoadingState] = useState(false);
   const [refetchState, setRefetchState] = useState(false);
   const [nftPrice, setNftPrice] = useState<number>(0);
   const [totalDebt, setTotalDebt] = useState<number>(0);
   const [tvl, setTvl] = useState<number>(0);
-  const [biddingArray, setBiddingArray] = useState({});
   const [userBalance, setUserBalance] = useState(0);
   const [loanToValue, setLoanToValue] = useState<number>(0);
   const [fetchedSolPrice, setFetchedSolPrice] = useState(0);
   const [isMobileSidebarVisible, setShowMobileSidebar] = useState(false);
-
+  
+  const [positionsObject, setPositionsObject] = useState<Array<NftPosition>>([]);
+  const [biddingArray, setBiddingArray] = useState({});
+  
   const showMobileSidebar = () => {
     setShowMobileSidebar(true);
     document.body.classList.add('disable-scroll');
@@ -157,88 +177,35 @@ const Liquidate: NextPage = () => {
    * @params array of bids
    * @returns state change
    */
-  async function handleBiddingState(biddingArray: any, positions: any) {
+   async function handleBiddingState(biddingArray: any) {
+    if (biddingArray === undefined) biddingArray = [{bid: '', bidder: '', bidLimit: '', }]; 
+
     biddingArray.map((obligation: any) => {
-      if (obligation.bidder == stringyfiedWalletPK) {
+      if (stringyfiedWalletPK && obligation.bidder == stringyfiedWalletPK) {
         setHasPosition(true);
         setCurrentUserBid(Number(obligation.bidLimit / LAMPORTS_PER_SOL));
       }
     });
 
-    // let sorted = await positions.sort((first: any,second: any) => first.is_healthy - second.is_healthy).reverse();
-    let sorted = await positions.map((obligation: any, index: number) => {
-      return {
-        name: 'Honey Genesis Bee',
-        riskLvl: (obligation.debt / nftPrice) * 100,
-        healthLvl:
-          ((nftPrice - obligation.debt / LIQUIDATION_THRESHOLD) / nftPrice) *
-          100,
-        untilLiquidation:
-          obligation.debt !== 0
-            ? nftPrice - obligation.debt / liquidationThreshold
-            : 0,
-        debt: obligation.debt,
-        estimatedValue: nftPrice,
-        nftMint: obligation.nft_mint,
-        owner: obligation.owner,
-        obligation: obligation.obligation,
-        highestBid: obligation.highest_bid
-      };
-    });
-
-    let highestBid = await biddingArray
+    if (!biddingArray.length) {
+      setHasPosition(false);
+      setCurrentUserBid(0);
+      setHighestBiddingValue(0);
+      setHighestBiddingAddress('');
+    } else {
+      let highestBid = await biddingArray
       .sort((first: any, second: any) => first.bidLimit - second.bidLimit)
       .reverse();
-    let sumOfDebt = await positions.reduce((acc: number, obligation: any) => {
-      return acc + obligation.debt;
-    }, 0);
-
-    setTotalDebt(sumOfDebt);
-    setLoanToValue(sumOfDebt / positions.length / nftPrice);
-
-    if (nftPrice) setTvl(nftPrice * positions.length);
 
     if (highestBid[0]) {
       setHighestBiddingAddress(highestBid[0].bidder);
       setHighestBiddingValue(highestBid[0].bidLimit / LAMPORTS_PER_SOL);
     }
-
-    //filter out postitions with zero debt
-    const debtedPostitons = sorted.filter((position: any) =>
-      Boolean(position.debt)
-    );
-
-    setFetchedPositions(debtedPostitons);
+    }
   }
 
-  const [statusState, setStatusState] = useState(false);
-
-  useEffect(() => {
-    console.log('this is has pos', hasPosition);
-  }, [hasPosition]);
-
-  /**
-   * @description checks if there are positions, if so set state
-   * @params none
-   * @returns state positions && bids
-   */
-  useEffect(() => {
-    if (status.positions) {
-      setStatusState(true);
-    }
-    return;
-  }, [status.positions]);
-
-  // triggers if there are positions - inits fetch positions
-  useEffect(() => {
-    if (statusState == true && status.bids && status.positions) {
-      handleBiddingState(status.bids, status.positions);
-      setBiddingArray(status.bids);
-    }
-
-    return;
-  }, [statusState, nftPrice, loanToValue]);
-
+  console.log('user has pos', hasPosition)
+  console.log('user has bid', currentUserBid)
   // calculates nft price
   async function calculateNFTPrice() {
     if (marketReserveInfo && parsedReserves && honeyMarket) {
@@ -265,7 +232,7 @@ const Liquidate: NextPage = () => {
 
   useEffect(() => {
     calculateNFTPrice();
-  }, [marketReserveInfo, parsedReserves]);
+  }, [marketReserveInfo, parsedReserves, positionsObject]);
 
   /**
    * @description calls upon liquidator client for placebid | revokebid | increasebid
@@ -275,7 +242,8 @@ const Liquidate: NextPage = () => {
   async function fetchLiquidatorClient(
     type: string,
     userBid: number | undefined,
-    toast: ToastProps['toast']
+    toast: ToastProps['toast'],
+    mrktID: string
   ) {
     try {
       const liquidatorClient = await LiquidatorClient.connect(
@@ -289,16 +257,17 @@ const Liquidate: NextPage = () => {
 
           toast.processing();
           let transactionOutcome: any = await liquidatorClient.revokeBid({
-            market: new PublicKey(HONEY_MARKET_ID),
+            // TODO: pass market id for each call
+            market: new PublicKey(mrktID),
             bidder: wallet.publicKey,
             bid_mint: NATIVE_MINT,
             withdraw_destination: wallet.publicKey
           });
 
           if (transactionOutcome[0] == 'SUCCESS') {
+            setCurrentUserBid(0);
             return toast.success('Bid revoked, fetching chain data');
           } else {
-            console.log('@@--error1', transactionOutcome);
             return toast.error('Revoke bid failed');
           }
         } else if (type == 'place_bid') {
@@ -310,7 +279,8 @@ const Liquidate: NextPage = () => {
           toast.processing();
           let transactionOutcome: any = await liquidatorClient.placeBid({
             bid_limit: userBid,
-            market: new PublicKey(HONEY_MARKET_ID),
+            // TODO: pass market id for each call
+            market: new PublicKey(mrktID),
             bidder: wallet.publicKey,
             bid_mint: NATIVE_MINT
           });
@@ -327,7 +297,8 @@ const Liquidate: NextPage = () => {
           toast.processing();
           let transactionOutcome: any = await liquidatorClient.increaseBid({
             bid_increase: userBid,
-            market: new PublicKey(HONEY_MARKET_ID),
+            // TODO: pass market id for each call
+            market: new PublicKey(mrktID),
             bidder: wallet.publicKey,
             bid_mint: NATIVE_MINT
           });
@@ -335,7 +306,6 @@ const Liquidate: NextPage = () => {
           if (transactionOutcome[0] == 'SUCCESS') {
             return toast.success('Bid increased, fetching chain data');
           } else {
-            console.log('@@--error2', transactionOutcome);
             return toast.error('Bid increase failed');
           }
         }
@@ -348,60 +318,106 @@ const Liquidate: NextPage = () => {
     }
   }
 
-  function handleRevokeBid(type: string, toast: ToastProps['toast']) {
-    fetchLiquidatorClient(type, undefined, toast);
+  function handleRevokeBid(type: string, toast: ToastProps['toast'], mID: string) {
+    fetchLiquidatorClient(type, undefined, toast, mID);
   }
 
   function handleIncreaseBid(
     type: string,
     userBid: number,
-    toast: ToastProps['toast']
+    toast: ToastProps['toast'],
+    mID: string
   ) {
-    fetchLiquidatorClient(type, userBid!, toast);
+    fetchLiquidatorClient(type, userBid!, toast, mID);
   }
 
   function handlePlaceBid(
     type: string,
     userBid: number,
-    toast: ToastProps['toast']
+    toast: ToastProps['toast'],
+    mID: string
   ) {
-    fetchLiquidatorClient(type, userBid!, toast);
+    fetchLiquidatorClient(type, userBid!, toast, mID);
   }
 
-  // end of sdk integration
+  useEffect(() => {
+      if (status.positions) {
+        setPositionsObject(status.positions);
+      } else {
+        setPositionsObject([])
+      }
 
-  const [tableData, setTableData] = useState<LiquidateTableRow[]>([]);
+      if (status.bids) {
+        setBiddingArray(status.bids) 
+        handleBiddingState(status.bids)
+      } else {
+        setBiddingArray([])
+        handleBiddingState([])
+      }
+
+  }, [status.positions, status.bids]);
+
+  // useEffect(() => {
+  //   if (status.bids) handleBiddingState(status.bids);
+  // }, [currentMarketId, status])
+
+  const [tableData, setTableData] = useState<MarketTableRow[]>([]);
   const [tableDataFiltered, setTableDataFiltered] = useState<
-    LiquidateTableRow[]
+  MarketTableRow[]
   >([]);
   const [expandedRowKeys, setExpandedRowKeys] = useState<readonly Key[]>([]);
   const [isMyBidsFilterEnabled, setIsMyBidsFilterEnabled] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const [currentMarketName, setCurrentMarketName] = useState(HONEY_GENESIS_BEE_MARKET_NAME);
 
   // PUT YOUR DATA SOURCE HERE
   // MOCK DATA FOR NOW
   useEffect(() => {
-    const mockData: LiquidateTableRow[] = [
-      {
-        key: '0',
-        name: 'Honey Genesis Bee',
-        risk: loanToValue,
-        liqThreshold: liquidationThreshold,
-        totalDebt: totalDebt,
-        tvl: nftPrice * fetchedPositions.length,
-        positions: fetchedPositions
-      }
-    ];
+    // if (!wallet) {
+    //   setTableData(liquidationCollections);
+    // }
+    
+    if (sdkConfig.saberHqConnection && marketReserveInfo) {
+      function getData() {
+        return Promise.all(
+          liquidationCollections.map(async collection => {
+            await populateMarketData(
+              collection,
+              sdkConfig.saberHqConnection,
+              sdkConfig.sdkWallet,
+              currentMarketId,
+              true,
+              {
+                obligations: positionsObject,
+                nftPrice: nftPrice,
+                marketReserveInfo: marketReserveInfo
+              }
+            )
 
-    setTableData(mockData);
-    setTableDataFiltered(mockData);
-  }, [fetchedPositions]);
+            return collection
+
+          })
+        );
+      }
+
+      getData().then(result => {
+        setTableData(result);
+      });
+    }
+  }, [
+    currentMarketId,
+    sdkConfig.saberHqConnection,
+    sdkConfig.sdkWallet,
+    nftPrice,
+    positionsObject,
+    marketReserveInfo,
+  ]);
 
   const handleToggle = (checked: boolean) => {
     setIsMyBidsFilterEnabled(checked);
   };
 
-  const onSearch = (searchTerm: string): LiquidateTableRow[] => {
+  const onSearch = (searchTerm: string): MarketTableRow[] => {
     if (!searchTerm) {
       return [...tableData];
     }
@@ -410,6 +426,19 @@ const Liquidate: NextPage = () => {
       return r.test(row.name);
     });
   };
+
+  /**
+   * @description sets the market ID based on market click
+   * @params Honey table record - contains all info about a table (aka market)
+   * @returns sets the market ID which re-renders page state and fetches market specific data
+   */
+   async function handleMarketId(record: any) {
+    const marketData = renderMarket(record.id);
+    setCurrentMarketId(marketData!.id);
+    setMarketId(marketData!.id);
+    setCurrentMarketName(marketData!.name);
+    handleBiddingState(status.bids)
+  }
 
   const debouncedSearch = useCallback(
     debounce(searchQuery => {
@@ -443,7 +472,7 @@ const Liquidate: NextPage = () => {
 
   const columnsWidth: Array<number | string> = [200, 100, 150, 150, 100, 70];
 
-  const columns: ColumnType<LiquidateTableRow>[] = useMemo(
+  const columns: ColumnType<MarketTableRow>[] = useMemo(
     () => [
       {
         width: columnsWidth[0],
@@ -456,7 +485,7 @@ const Liquidate: NextPage = () => {
               <div className={style.logoWrapper}>
                 <div className={style.collectionLogo}>
                   <HexaBoxContainer>
-                    <Image src={honeyGenesisBee} />
+                    {renderMarketImageByName(name)}
                   </HexaBoxContainer>
                 </div>
               </div>
@@ -476,6 +505,7 @@ const Liquidate: NextPage = () => {
                   sortOrder === 'disabled' ? 'disabled' : 'active'
                 ]
               }
+              style={{paddingLeft: 15}}
             >
               <span>Risk</span>
               <div className={style.sortIcon[sortOrder]} />
@@ -483,9 +513,9 @@ const Liquidate: NextPage = () => {
           );
         },
         dataIndex: 'risk',
-        sorter: (a, b) => a.risk - b.risk,
-        render: (rate: number) => {
-          return <div className={style.rateCell}>{fp(rate * 100)}</div>;
+        sorter: (a, b) => a.risk! - b.risk!,
+        render: (rate: number, market: any) => {
+          return <div className={style.rateCell} >{fp(market.risk * 100)}</div>;
         }
       },
       {
@@ -499,6 +529,7 @@ const Liquidate: NextPage = () => {
                   sortOrder === 'disabled' ? 'disabled' : 'active'
                 ]
               }
+              style={{paddingLeft: 15}}
             >
               <span>Liq %</span>
               <div className={style.sortIcon[sortOrder]} />
@@ -507,8 +538,8 @@ const Liquidate: NextPage = () => {
         },
         dataIndex: 'liqThreshold',
         sorter: (a, b) => a.liqThreshold - b.liqThreshold,
-        render: (rate: number) => {
-          return <div className={style.rateCell}>{fp(rate * 100)}</div>;
+        render: (liqThreshold: number) => {
+          return <div className={style.rateCell}>{fp(LIQUIDATION_THRESHOLD * 100)}</div>;
         }
       },
       {
@@ -522,6 +553,7 @@ const Liquidate: NextPage = () => {
                   sortOrder === 'disabled' ? 'disabled' : 'active'
                 ]
               }
+              style={{paddingLeft: 15}}
             >
               <span>Total Debt</span>{' '}
               <div className={style.sortIcon[sortOrder]} />
@@ -529,7 +561,7 @@ const Liquidate: NextPage = () => {
           );
         },
         dataIndex: 'totalDebt',
-        sorter: (a, b) => a.totalDebt - b.totalDebt,
+        sorter: (a, b) => a.totalDebt! - b.totalDebt!,
         render: (available: number) => {
           return <div className={style.availableCell}>{fs(available)}</div>;
         }
@@ -545,6 +577,7 @@ const Liquidate: NextPage = () => {
                   sortOrder === 'disabled' ? 'disabled' : 'active'
                 ]
               }
+              style={{paddingLeft: 15}}
             >
               <span>TVL</span>
               <div className={style.sortIcon[sortOrder]} />
@@ -552,8 +585,8 @@ const Liquidate: NextPage = () => {
           );
         },
         dataIndex: 'tvl',
-        sorter: (a, b) => a.tvl - b.tvl,
-        render: (value: number) => {
+        sorter: (a, b) => a.tvl! - b.tvl!,
+        render: (value: number, market: any) => {
           return <div className={style.valueCell}>{fs(value)}</div>;
         }
       },
@@ -569,7 +602,7 @@ const Liquidate: NextPage = () => {
         //   //   <span className={style.toggleText}>my bids</span>
         //   // </div>
         // ),
-        render: (_: null, row: LiquidateTableRow) => {
+        render: (_: null, row: MarketTableRow) => {
           return (
             <div className={style.buttonsCell}>
               <HoneyButton variant="text">
@@ -598,7 +631,7 @@ const Liquidate: NextPage = () => {
                     <div className={style.logoWrapper}>
                       <div className={style.collectionLogo}>
                         <HexaBoxContainer>
-                          <Image src={honeyGenesisBee} />
+                          {renderMarketImageByID(currentMarketId)}
                         </HexaBoxContainer>
                       </div>
                     </div>
@@ -635,13 +668,16 @@ const Liquidate: NextPage = () => {
         collectionId="0"
         biddingArray={biddingArray}
         userBalance={userBalance}
+        stringyfiedWalletPK={stringyfiedWalletPK}
         highestBiddingValue={highestBiddingValue}
+        highestBiddingAddress={highestBiddingAddress}
         currentUserBid={currentUserBid}
         handleRevokeBid={handleRevokeBid}
         handleIncreaseBid={handleIncreaseBid}
         handlePlaceBid={handlePlaceBid}
         fetchedSolPrice={fetchedSolPrice}
         onCancel={hideMobileSidebar}
+        currentMarketId={currentMarketId}
       />
     </HoneySider>
   );
@@ -665,6 +701,11 @@ const Liquidate: NextPage = () => {
             className={classNames(style.table, {
               [style.emptyTable]: !tableDataFiltered.length
             })}
+            onRow={(record, rowIndex) => {
+                return {
+                  onClick: event => handleMarketId(record)
+                };
+            }}
             expandable={{
               // we use our own custom expand column
               showExpandColumn: false,
@@ -672,12 +713,16 @@ const Liquidate: NextPage = () => {
                 setExpandedRowKeys(expanded ? [row.key] : []),
               expandedRowKeys,
               expandedRowRender: record => {
-                return (
-                  <div className={style.expandSection}>
-                    <div className={style.dashedDivider} />
-                    <LiquidateExpandTable data={record.positions} />
-                  </div>
-                );
+                if (wallet === null) {
+                  return;
+                } else {
+                  return (
+                    <div className={style.expandSection}>
+                      <div className={style.dashedDivider} />
+                      <LiquidateExpandTable data={record.openPositions} currentMarketId={currentMarketId} />
+                    </div>
+                  );
+                }
               }
             }}
           />
@@ -718,8 +763,9 @@ const Liquidate: NextPage = () => {
                   >
                     <div className={style.dashedDivider} />
                     <LiquidateExpandTableMobile
-                      data={record.positions}
+                      data={record.openPositions}
                       onPlaceBid={showMobileSidebar}
+                      currentMarketId={currentMarketId}
                     />
                   </div>
                 );
