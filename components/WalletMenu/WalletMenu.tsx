@@ -7,6 +7,7 @@ import HoneyButton from 'components/HoneyButton/HoneyButton';
 import { WalletIcon } from 'icons/WalletIcon';
 import { useWalletKit } from '@gokiprotocol/walletkit';
 import { useConnectedWallet, useSolana } from '@saberhq/use-solana';
+import { DialectNotifications } from 'components/DialectNotifications/DialectNotifications';
 
 const { Title, Text } = Typography;
 
@@ -37,19 +38,22 @@ const WalletMenu = () => {
       CONNECT WALLET
     </HoneyButton>
   ) : (
-    <Dropdown overlay={menu}>
-      <a onClick={e => e.preventDefault()}>
-        <Space size="small" align="center">
-          <div className={styles.userIcon} />
-          <Space size={0} direction="vertical">
-            <Title level={4} className={styles.title}>
-              {formatAddress(walletAddress)}
-            </Title>
+    <>
+      <DialectNotifications />
+      <Dropdown overlay={menu}>
+        <a onClick={e => e.preventDefault()}>
+          <Space size="small" align="center">
+            <div className={styles.userIcon} />
+            <Space size={0} direction="vertical">
+              <Title level={4} className={styles.title}>
+                {formatAddress(walletAddress)}
+              </Title>
+            </Space>
+            <DownIcon />
           </Space>
-          <DownIcon />
-        </Space>
-      </a>
-    </Dropdown>
+        </a>
+      </Dropdown>
+    </>
   );
 };
 

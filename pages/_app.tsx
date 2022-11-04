@@ -1,6 +1,7 @@
 import type { AppProps } from 'next/app';
 import { ThemeProvider } from 'degen';
 import 'degen/styles';
+import '@dialectlabs/react-ui/index.css';
 import { WalletKitProvider } from '@gokiprotocol/walletkit';
 import '../styles/globals.css';
 import { Network } from '@saberhq/solana-contrib';
@@ -29,8 +30,13 @@ import {
 } from 'helpers/sdk';
 import { QueryClient, QueryClientProvider } from 'react-query';
 export const network = (process.env.NETWORK as Network) || 'mainnet-beta';
-import { HONEY_GENESIS_MARKET_ID, HONEY_PROGRAM_ID, PESKY_PENGUINS_MARKET_ID } from '../constants/loan';
+import {
+  HONEY_GENESIS_MARKET_ID,
+  HONEY_PROGRAM_ID,
+  PESKY_PENGUINS_MARKET_ID
+} from '../constants/loan';
 import NoMobilePopup from 'components/NoMobilePopup/NoMobilePopup';
+import { DialectProviders } from 'contexts/DialectProvider';
 export const setMarketId = (marketID: string) => marketID;
 
 const networkConfiguration = () => {
@@ -150,12 +156,12 @@ function MyApp({ Component, pageProps }: AppProps) {
                   {showPopup ? (
                     <SecPopup setShowPopup={setShowPopup} />
                   ) : (
-                    <>
+                    <DialectProviders>
                       <OnChainProvider>
                         <Component {...pageProps} />
                         <ToastContainer theme="dark" position="bottom-right" />
                       </OnChainProvider>
-                    </>
+                    </DialectProviders>
                   )}
                 </GovernorProvider>
               </SDKProvider>

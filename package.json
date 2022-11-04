@@ -11,6 +11,9 @@
     "prettier:fix": "prettier --trailing-comma es5 --write \"pages/**/*.{js,jsx,ts,tsx,css,less,json}\" \"components/**/*.{js,jsx,ts,tsx,css,less,json}\""
   },
   "dependencies": {
+    "@dialectlabs/identity-dialect-dapps": "^1.0.0",
+    "@dialectlabs/react-sdk-blockchain-solana": "^1.0.0-beta.3",
+    "@dialectlabs/react-ui": "^1.1.0-beta.6",
     "@emotion/react": "^11.8.1",
     "@emotion/styled": "^11.8.1",
     "@fontsource/ia-writer-mono": "^4.5.1",
