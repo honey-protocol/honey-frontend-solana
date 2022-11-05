@@ -610,13 +610,13 @@ const Liquidate: NextPage = () => {
     [isMyBidsFilterEnabled, tableData, searchQuery]
   );
 
-  const columnsMobile: ColumnType<MarketTableRow>[] = useMemo(
+  const columnsMobile: ColumnType<LiquidateTableRow>[] = useMemo(
     () => [
       {
         width: columnsWidth[0],
         dataIndex: 'name',
         key: 'name',
-        render: (name: string, market: MarketTableRow) => {
+        render: (name: string, market: LiquidateTableRow) => {
           console.log('mar', market)
           return (
             <>
