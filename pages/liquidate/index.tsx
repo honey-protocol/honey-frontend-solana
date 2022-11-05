@@ -616,8 +616,7 @@ const Liquidate: NextPage = () => {
         width: columnsWidth[0],
         dataIndex: 'name',
         key: 'name',
-        render: (name: string, market: LiquidateTableRow) => {
-          console.log('mar', market)
+        render: (name: string, row: LiquidateTableRow) => {
           return (
             <>
               <HoneyTableNameCell
@@ -626,7 +625,6 @@ const Liquidate: NextPage = () => {
                     <div className={style.logoWrapper}>
                       <div className={style.collectionLogo}>
                         <HexaBoxContainer>
-                          {/* changed */}
                           {renderMarketImageByName(name)}
                         </HexaBoxContainer>
                       </div>
@@ -639,81 +637,20 @@ const Liquidate: NextPage = () => {
                 rightSide={
                   <div className={style.buttonsCell}>
                     <HoneyButton variant="text">
-                      {/* View <div className={style.arrowIcon} /> */}
+                      View <div className={style.arrowIcon} />
                     </HoneyButton>
                   </div>
                 }
               />
 
               <HoneyTableRow>
-                {/* <div className={style.rateCell}>{fp(market.risk * 100)}</div> */}
-                {/* <div className={style.rateCell}>{fs(market.totalDebt)}</div> */}
-                {/* <div className={style.availableCell}>{fs(market.tvl)}</div> */}
+                {/* <div className={style.rateCell}>{fp(row.risk * 100)}</div> */}
+                <div className={style.rateCell}>{}</div>
+                <div className={style.rateCell}>{fs(row.available)}</div>
+                <div className={style.availableCell}>{fs(row.value)}</div>
               </HoneyTableRow>
             </>
           );
-        }
-      },
-      {
-        width: columnsWidth[4],
-        title: ({ sortColumns }) => {
-          const sortOrder = getColumnSortStatus(sortColumns, 'totalDebt');
-          return (
-            <div
-              className={
-                style.headerCell[
-                  sortOrder === 'disabled' ? 'disabled' : 'active'
-                ]
-              }
-              style={{paddingLeft: 15}}
-            >
-              <span>Total Debt</span>
-              <div className={style.sortIcon[sortOrder]} />
-            </div>
-          );
-        },
-        dataIndex: 'totalDebt',
-        sorter: (a, b) => a.totalDebt! - b.totalDebt!,
-        render: (value: number, market: any) => {
-          // return <div className={style.valueCell}>{fs(market.value)}</div>;
-          return <div className={style.rateCell}>{fs(market.available)}</div>
-        }
-      },
-      {
-        width: columnsWidth[4],
-        title: ({ sortColumns }) => {
-          const sortOrder = getColumnSortStatus(sortColumns, 'tvl');
-          return (
-            <div
-              className={
-                style.headerCell[
-                  sortOrder === 'disabled' ? 'disabled' : 'active'
-                ]
-              }
-              style={{paddingLeft: 15}}
-            >
-              <span>TVL</span>
-              <div className={style.sortIcon[sortOrder]} />
-            </div>
-          );
-        },
-        dataIndex: 'tvl',
-        sorter: (a, b) => a.tvl! - b.tvl!,
-        render: (value: number, market: any) => {
-          console.log('beta::', value);
-          // return <div className={style.valueCell}>{fs(market.value)}</div>;
-          return <div className={style.rateCell}>{fs(market.value)}</div>
-        }
-      },
-      {
-        width: columnsWidth[4],
-        render: () => {
-          // return <div className={style.valueCell}>{fs(market.value)}</div>;
-          <div className={style.buttonsCell}>
-          <HoneyButton variant="text">
-            View <div className={style.arrowIcon} />
-          </HoneyButton>
-        </div>
         }
       }
     ],
@@ -774,6 +711,7 @@ const Liquidate: NextPage = () => {
                 if (wallet === null) {
                   return;
                 } else {
+                  console.log('record.pos', record.openPositions)
                   return (
                     <div className={style.expandSection}>
                       <div className={style.dashedDivider} />
@@ -793,7 +731,7 @@ const Liquidate: NextPage = () => {
           </div>
 
           <div className={style.mobileTableHeader}>
-            <div className={style.tableCell}>Risk</div>
+            <div className={style.tableCell}></div>
             <div className={style.tableCell}>Debt</div>
             <div className={style.tableCell}>TVL</div>
           </div>
@@ -807,6 +745,11 @@ const Liquidate: NextPage = () => {
             className={classNames(style.table, {
               [style.emptyTable]: !tableDataFiltered.length
             })}
+            onRow={(record, rowIndex) => {
+              return {
+                onClick: event => handleMarketId(record)
+              };
+            }}
             expandable={{
               // we use our own custom expand column
               showExpandColumn: false,

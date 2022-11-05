@@ -254,6 +254,7 @@ const getPositionData = () => {
 
 const setObligations = async (obligations: any, currentMarketId: string, nftPrice: number) => {
   if (!obligations) return [];
+  console.log('this is obl.', obligations);
   return obligations.map((obligation: any) => {
     return {
       name: renderMarketName(currentMarketId),
