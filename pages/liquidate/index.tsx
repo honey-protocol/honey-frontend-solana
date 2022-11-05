@@ -711,7 +711,6 @@ const Liquidate: NextPage = () => {
                 if (wallet === null) {
                   return;
                 } else {
-                  console.log('record.pos', record.openPositions)
                   return (
                     <div className={style.expandSection}>
                       <div className={style.dashedDivider} />
