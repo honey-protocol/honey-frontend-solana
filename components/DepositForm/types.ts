@@ -4,6 +4,8 @@ export type DepositFormProps = {
   available: number;
   userWalletBalance: number;
   fetchedSolPrice: number;
+  marketImage: any;
+  currentMarketId: string;
   executeDeposit: (val: number, toast: any) => void;
   onCancel: Function;
 };

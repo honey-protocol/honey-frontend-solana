@@ -1,5 +1,5 @@
 import { globalStyle, style } from '@vanilla-extract/css';
-import { typography } from '../../styles/theme.css';
+import { breakpoints, typography } from '../../styles/theme.css';
 
 export const container = style({
   display: 'flex',
@@ -8,7 +8,7 @@ export const container = style({
   listStyle: 'none',
   gap: '24px',
   '@media': {
-    'screen and (max-width: 768px)': {
+    [`screen and (max-width: ${breakpoints.tablet}px)`]: {
       display: 'none'
     }
   }
