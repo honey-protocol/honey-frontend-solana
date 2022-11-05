@@ -270,7 +270,7 @@ const setObligations = async (obligations: any, currentMarketId: string, nftPric
 }
 
 const calculateRisk = async (obligations: any, nftPrice: number, type: boolean, currentMarketId: string, collectionName: string) => {
-  console.log('zita::', obligations)
+  console.log('zita::', obligations, collectionName)
   if (!obligations) return 0;
   if (currentMarketId == HONEY_GENESIS_MARKET_ID && collectionName == 'Honey Genesis Bee') {
     let sumOfDebt = await obligations.reduce((acc: number, obligation: any) => {
