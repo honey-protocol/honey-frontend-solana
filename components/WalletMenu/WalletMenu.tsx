@@ -11,6 +11,8 @@ import { DialectNotifications } from 'components/DialectNotifications/DialectNot
 
 const { Title, Text } = Typography;
 
+const isDialectNotificationsButtonEnabled = false;
+
 const WalletMenu = () => {
   const { disconnect } = useSolana();
   const wallet = useConnectedWallet();
@@ -39,7 +41,7 @@ const WalletMenu = () => {
     </HoneyButton>
   ) : (
     <>
-      <DialectNotifications />
+      {isDialectNotificationsButtonEnabled && <DialectNotifications />}
       <Dropdown overlay={menu}>
         <a onClick={e => e.preventDefault()}>
           <Space size="small" align="center">
