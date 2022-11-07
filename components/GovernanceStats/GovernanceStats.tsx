@@ -1,73 +1,94 @@
-import * as styles from './GovernanceStats.css';
+import { FC, useMemo } from 'react';
 import c from 'classnames';
-import { HoneySlider } from '../HoneySlider/HoneySlider';
+import { Space } from 'antd';
+import { useTokenMint } from '@saberhq/sail';
+import { TokenAmount } from '@saberhq/token-utils';
+
 import HoneyButton from '../HoneyButton/HoneyButton';
-import { FC } from 'react';
-import { generateMockHistoryData } from '../../helpers/chartUtils';
-import { HoneyLineChart } from '../HoneyLineChart/HoneyLineChart';
-import { vars } from 'styles/theme.css';
 import { formatNumber } from '../../helpers/format';
 import { GoveranceStatsProps } from './types';
 import HoneyPeriod from '../HoneyPeriod/HoneyPeriod';
 import HoneyTooltip from 'components/HoneyTooltip/HoneyTooltip';
-import { questionIcon, questionIconYellow } from 'styles/icons.css';
-import { Space } from 'antd';
-import { TokenAmount } from '@saberhq/token-utils';
-import { useGovernance } from 'contexts/_GovernanceProvider';
-import { useTokenMint } from '@saberhq/sail';
-import { useGovernor } from 'hooks/tribeca/useGovernor';
-import { HoneyLockedStatus } from '../HoneyLockedStatus/HoneyLockedStatus';
+import { useGovernanceContext } from 'contexts/GovernanceProvider';
+import { useLocker } from 'hooks/useVeHoney';
+// import { generateMockHistoryData } from 'helpers/chartUtils';
 
-const { format: f, formatPercent: fp, formatShortName: fsn } = formatNumber;
+import { questionIcon, questionIconYellow } from 'styles/icons.css';
+import * as styles from './GovernanceStats.css';
+
+const { format: f, formatShortName: fsn } = formatNumber;
 
 export const GovernanceStats: FC<GoveranceStatsProps> = ({
   onGetVeHoneyClick
 }) => {
-  const isMock = true;
-  const lockedPercent = 24;
+  // const isMock = true;
+  // const lockedPercent = 24;
 
-  const { govToken, lockedSupply } = useGovernor();
+  const { govToken, lockerInfo } = useGovernanceContext();
+  const { escrow, votingPower } = useLocker();
   const { data: govTokenData } = useTokenMint(govToken?.mintAccount);
-  const { honeyAmount, veHoneyAmount, lockedPeriodEnd } = useGovernance();
 
-  const lockTimeLeft =
-    new Date(lockedPeriodEnd.toString()).getTime() - new Date().getTime();
+  const lockEndsTime = useMemo(() => {
+    if (!escrow) return null;
 
-  const totalSupplyFmt =
-    govTokenData && govToken
-      ? new TokenAmount(govToken, govTokenData.account.supply).format({
-          numberFormatOptions: {
-            maximumFractionDigits: 0
-          }
-        })
-      : govTokenData;
+    return escrow.data.escrowEndsAt.toNumber() * 1000;
+  }, [escrow]);
 
-  const totalSupply = Number(totalSupplyFmt?.toString().replaceAll(',', ''));
-
-  const lockedSupplyFmt = lockedSupply
-    ? lockedSupply.format({
+  const totalSupplyFmt = useMemo(() => {
+    if (govToken && govTokenData) {
+      return new TokenAmount(govToken, govTokenData.account.supply).format({
         numberFormatOptions: {
           maximumFractionDigits: 0
         }
-      })
-    : lockedSupply;
-  const lockedHoney = Number(lockedSupplyFmt?.toString().replaceAll(',', ''));
-
-  console.log(Number(totalSupply), {
-    lockedHoney,
-    lockedSupplyFmt,
-    lockedPeriodEnd
-  });
-  const getChartData = () => {
-    if (isMock) {
-      const from = new Date()
-        .setFullYear(new Date().getFullYear() - 1)
-        .valueOf();
-      const to = new Date().valueOf();
-      return generateMockHistoryData(from, to, 10000);
+      });
     }
-    return [];
-  };
+    return null;
+  }, [govToken, govTokenData]);
+
+  const totalSupply = Number(
+    totalSupplyFmt?.toString().replaceAll(',', '') ?? 0
+  );
+
+  const lockedSupplyFmt = useMemo(() => {
+    if (govToken && lockerInfo) {
+      return new TokenAmount(govToken, lockerInfo.lockedSupply).format({
+        numberFormatOptions: {
+          maximumFractionDigits: 0
+        }
+      });
+    }
+    return null;
+  }, [lockerInfo, govToken]);
+
+  const lockedSupply = Number(
+    lockedSupplyFmt?.toString().replaceAll(',', '') ?? 0
+  );
+
+  const lockedAmountFmt = useMemo(() => {
+    if (escrow && govToken) {
+      return new TokenAmount(govToken, escrow.data.amount).format({
+        numberFormatOptions: {
+          maximumFractionDigits: 0
+        }
+      });
+    }
+    return null;
+  }, [govToken, escrow]);
+
+  const lockedAmount = Number(
+    lockedAmountFmt?.toString().replaceAll(',', '') ?? 0
+  );
+
+  // const getChartData = () => {
+  //   if (isMock) {
+  //     const from = new Date()
+  //       .setFullYear(new Date().getFullYear() - 1)
+  //       .valueOf();
+  //     const to = new Date().valueOf();
+  //     return generateMockHistoryData(from, to, 10000);
+  //   }
+  //   return [];
+  // };
 
   return (
     <div className={styles.governanceGraphs}>
@@ -79,7 +100,7 @@ export const GovernanceStats: FC<GoveranceStatsProps> = ({
               <div className={questionIconYellow} />
             </Space>
           </HoneyTooltip>
-          <div className={styles.value}>{f(honeyAmount)}</div>
+          <div className={styles.value}>{f(lockedAmount)}</div>
         </div>
 
         {/* <div className={styles.content}>
@@ -109,7 +130,7 @@ export const GovernanceStats: FC<GoveranceStatsProps> = ({
               veHONEY || Voting power <div className={questionIcon} />
             </Space>
           </HoneyTooltip>
-          <div className={styles.value}>{f(veHoneyAmount)}</div>
+          <div className={styles.value}>{f(votingPower?.asNumber ?? 0)}</div>
         </div>
 
         {/* <div className={styles.content}>
@@ -134,13 +155,10 @@ export const GovernanceStats: FC<GoveranceStatsProps> = ({
             </Space>
           </HoneyTooltip>
           <div className={c(styles.value, styles.lockPeriodValue)}>
-            {lockTimeLeft < 0 ? (
+            {lockEndsTime && lockEndsTime < Date.now() ? (
               '0'
             ) : (
-              <HoneyPeriod
-                from={new Date().getTime()}
-                to={new Date(lockedPeriodEnd.toString()).getTime()}
-              />
+              <HoneyPeriod from={Date.now()} to={lockEndsTime ?? 0} />
             )}
           </div>
         </div>
@@ -161,7 +179,7 @@ export const GovernanceStats: FC<GoveranceStatsProps> = ({
         <div className={styles.lockedHoneyTitle}>
           <div className={styles.lockedLeft}>
             <div className={styles.title}>Total Locked HONEY</div>
-            <div className={styles.value}>{fsn(lockedHoney)}</div>
+            <div className={styles.value}>{fsn(lockedSupply)}</div>
           </div>
           <div className={styles.lockedRight}>
             <div className={styles.title}>Total Circulating HONEY</div>

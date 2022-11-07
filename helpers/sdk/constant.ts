@@ -1,12 +1,19 @@
 import { PublicKey } from '@solana/web3.js';
+import { buildCoderMap } from '@saberhq/anchor-contrib';
 import {
   GovernProgram,
   TRIBECA_ADDRESSES,
-  GovernJSON as GovernIDL
+  GovernJSON as GovernIDL,
+  GovernTypes
 } from '@tribecahq/tribeca-sdk';
 
 import config from '../../config';
-import { LockerProgram, StakeProgram } from './programs';
+import {
+  LockerProgram,
+  LockerTypes,
+  StakeProgram,
+  StakeTypes
+} from './programs';
 import { IDL as StakeIDL } from './idls/stake';
 import { IDL as LockerIDL } from './idls/ve_honey';
 
@@ -27,6 +34,12 @@ export const VEHONEY_IDLS = {
   Locker: LockerIDL,
   Govern: GovernIDL
 };
+
+export const VEHONEY_CODERS = buildCoderMap<{
+  Stake: StakeTypes;
+  Locker: LockerTypes;
+  Govern: GovernTypes;
+}>(VEHONEY_IDLS, VEHONEY_ADDRESSES);
 
 export const HONEY_DECIMALS = 6;
 export const PHONEY_DECIMALS = 6;
