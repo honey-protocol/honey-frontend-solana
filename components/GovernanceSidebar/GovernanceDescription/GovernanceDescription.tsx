@@ -1,11 +1,12 @@
-import { FC, useState } from 'react';
-import * as styles from './GovernanceDescription.css';
-import { formatNumber } from '../../../helpers/format';
-import SidebarScroll from '../../SidebarScroll/SidebarScroll';
 import ReactMarkdown from 'react-markdown';
-import HoneyButton from 'components/HoneyButton/HoneyButton';
 
-const { format: f, formatPercent: fp, formatUsd: fu } = formatNumber;
+// import { formatNumber } from '../../../helpers/format';
+import HoneyButton from '../../../components/HoneyButton/HoneyButton';
+import SidebarScroll from '../../SidebarScroll/SidebarScroll';
+
+import * as styles from './GovernanceDescription.css';
+
+// const { format: f, formatPercent: fp, formatUsd: fu } = formatNumber;
 
 const GovernanceDescription = (props: {
   description: string;

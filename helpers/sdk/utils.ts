@@ -1,13 +1,6 @@
 import { BN } from '@project-serum/anchor';
 
-import {
-  PoolUser,
-  PoolParams,
-  EscrowData,
-  LockerParams,
-  HONEY_WADS,
-  ReceiptData
-} from '.';
+import { PoolUser, PoolParams, EscrowData, LockerParams, ReceiptData } from '.';
 
 export const calculateClaimableAmountFromStakePool = (
   user: PoolUser,
@@ -44,8 +37,7 @@ export const calculateVotingPower = (
   return escrow.amount
     .mul(duration)
     .muln(params.multiplier)
-    .div(params.maxStakeDuration)
-    .divn(HONEY_WADS);
+    .div(params.maxStakeDuration);
 };
 
 export const calculateNFTReceiptClaimableAmount = (

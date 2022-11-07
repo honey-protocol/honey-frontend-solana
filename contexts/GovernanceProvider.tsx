@@ -19,7 +19,8 @@ import {
   ProposalData,
   ProposalMetaData,
   ProposalState,
-  getProposalState
+  getProposalState,
+  GovernorData
 } from '@tribecahq/tribeca-sdk';
 
 import config from '../config';
@@ -70,10 +71,12 @@ export interface GovernanceContextValueProps {
   stakePoolInfo?: PoolInfo;
   stakePoolUser?: StakePoolUser;
   lockerInfo?: LockerData;
+  governorInfo?: GovernorData;
   escrow?: Escrow;
   govToken?: Token;
   isProcessing: boolean;
   setIsProcessing?: Dispatch<SetStateAction<boolean>>;
+  reload?: () => Promise<void>;
 }
 
 const STAKE_POOL_ADDR = new PublicKey(config.NEXT_PUBLIC_STAKE_POOL_ADDRESS);
@@ -103,6 +106,7 @@ export const GovernanceProvider: React.FC<React.ReactNode> = ({ children }) => {
   const [proposals, setProposals] = useState<Proposal[]>();
   const [pool, setPool] = useState<PoolInfo>();
   const [locker, setLocker] = useState<LockerData>();
+  const [governor, setGovernor] = useState<GovernorData>();
   const [user, setUser] = useState<StakePoolUser>();
   const [escrow, setEscrow] = useState<Escrow>();
   const [govToken, setGovToken] = useState<Token>();
@@ -159,12 +163,14 @@ export const GovernanceProvider: React.FC<React.ReactNode> = ({ children }) => {
       setProposals(proposals);
 
       // Load stake pool and locker infos
-      const [pool, locker] = await Promise.all([
+      const [pool, locker, governor] = await Promise.all([
         stakeWrapper.data(),
-        lockerWrapper.data()
+        lockerWrapper.data(),
+        governorWrapper.data()
       ]);
       setPool(pool);
       setLocker(locker);
+      setGovernor(governor);
 
       // Load stake pool user
       try {
@@ -222,10 +228,12 @@ export const GovernanceProvider: React.FC<React.ReactNode> = ({ children }) => {
         stakePoolInfo: pool,
         stakePoolUser: user,
         lockerInfo: locker,
+        governorInfo: governor,
         escrow,
         govToken,
         isProcessing,
-        setIsProcessing
+        setIsProcessing,
+        reload: load
       }}
     >
       {children}

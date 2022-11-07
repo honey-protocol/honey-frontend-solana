@@ -1,27 +1,27 @@
 import React from 'react';
-import { Typography } from 'antd';
-import { InfoBlock } from 'components/InfoBlock/InfoBlock';
-import * as styles from '../../VoteForm.css';
-import { ProposalInfo } from 'hooks/tribeca/useProposals';
-import type { SmartWalletTransactionData } from '@gokiprotocol/client';
+import { startCase } from 'lodash';
+import { BN } from '@project-serum/anchor';
 import type { ProgramAccount } from '@saberhq/token-utils';
-import type { ProposalData } from '@tribecahq/tribeca-sdk';
+import type { SmartWalletTransactionData } from '@gokiprotocol/client';
 import {
+  ProposalData,
   getProposalState,
   PROPOSAL_STATE_LABELS,
   ProposalState
 } from '@tribecahq/tribeca-sdk';
-import BN from 'bn.js';
-import { startCase } from 'lodash';
-import Link from 'next/link';
+
+import { InfoBlock } from 'components/InfoBlock/InfoBlock';
+import TabTitle from 'components/HoneyTabs/TabTitle/TabTitle';
+import { Proposal } from 'contexts/GovernanceProvider';
 import { useGokiTransactionData } from 'helpers/parser';
-import TabTitle from '../../../../HoneyTabs/TabTitle/TabTitle';
+
+import * as styles from '../../VoteForm.css';
 
 const ZERO = new BN(0);
 
 interface Props {
   className?: string;
-  proposalInfo?: ProposalInfo | null;
+  proposalInfo?: Proposal | null;
 }
 
 interface ProposalEvent {
@@ -85,22 +85,18 @@ const extractEvents = (
   return events.sort((a, b) => (a.date < b.date ? -1 : 1));
 };
 
-const ProposalHistory: React.FC<Props> = ({
-  className,
-  proposalInfo
-}: Props) => {
+const ProposalHistory: React.FC<Props> = ({ proposalInfo }: Props) => {
   const { data: tx } = useGokiTransactionData(
-    !proposalInfo?.proposalData.queuedAt.eq(ZERO)
-      ? proposalInfo?.proposalData.queuedTransaction
+    !proposalInfo?.data.queuedAt.eq(ZERO)
+      ? proposalInfo?.data.queuedTransaction
       : null
   );
-  const events =
-    proposalInfo && tx ? extractEvents(proposalInfo.proposalData, tx) : [];
+  const events = proposalInfo && tx ? extractEvents(proposalInfo.data, tx) : [];
 
   console.log({ events });
   return (
     <div>
-      <TabTitle title='History' />
+      <TabTitle title="History" />
       {events.map((event, i) => (
         <div className={styles.row} key={i}>
           <InfoBlock

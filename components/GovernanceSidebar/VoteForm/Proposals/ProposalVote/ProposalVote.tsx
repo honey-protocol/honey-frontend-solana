@@ -1,49 +1,26 @@
+import React from 'react';
+import { TokenAmount } from '@saberhq/token-utils';
+
 import { HoneyButtonTabs } from 'components/HoneyButtonTabs/HoneyButtonTabs';
 import { HoneySlider } from 'components/HoneySlider/HoneySlider';
 import { InfoBlock } from 'components/InfoBlock/InfoBlock';
+import { Proposal } from 'contexts/GovernanceProvider';
+
 import * as styles from '../../VoteForm.css';
-import React from 'react';
-import { ProposalInfo } from 'hooks/tribeca/useProposals';
-import { TokenAmount } from '@saberhq/token-utils';
-import { useGovernor } from 'hooks/tribeca/useGovernor';
-import { Spin } from 'antd';
-import { VoteSide } from '@tribecahq/tribeca-sdk';
-import { Fraction } from '@saberhq/token-utils';
-import BN from 'bn.js';
 
 export type VoteType = 'vote_for' | 'vote_against';
 interface ProposalVoteProps {
-  proposalInfo: ProposalInfo;
+  proposalInfo: Proposal;
   voteType: VoteType;
   setVoteType: Function;
-  vePower: TokenAmount | null;
+  votingPower: TokenAmount | null;
 }
 const ProposalVote = (props: ProposalVoteProps) => {
-  const { proposalInfo, voteType, setVoteType, vePower } = props;
-  const totalDeterminingVotes = proposalInfo?.proposalData.forVotes.add(
-    proposalInfo.proposalData.againstVotes
+  const { proposalInfo, voteType, setVoteType, votingPower } = props;
+  const totalDeterminingVotes = proposalInfo.data.forVotes.add(
+    proposalInfo.data.againstVotes
   );
-  const { veToken } = useGovernor();
 
-  const getVoteCountFmt = (side: VoteSide) => {
-    const voteCount =
-      side === VoteSide.For
-        ? proposalInfo.proposalData.forVotes
-        : side === VoteSide.Against
-        ? proposalInfo.proposalData.againstVotes
-        : new BN(0);
-
-    return veToken && voteCount !== null ? (
-      new Fraction(voteCount, 10 ** veToken.decimals).asNumber.toLocaleString(
-        undefined,
-        {
-          maximumFractionDigits: 0
-        }
-      )
-    ) : (
-      <Spin />
-    );
-  };
   return (
     <div style={{ width: '100%' }}>
       <div className={styles.row}>
@@ -61,11 +38,11 @@ const ProposalVote = (props: ProposalVoteProps) => {
       <div className={styles.grid}>
         <div className={styles.gridCell}>
           <InfoBlock
-            value={proposalInfo?.proposalData.forVotes.toString() || ''}
+            value={proposalInfo.data.forVotes.toString() || ''}
             footer={<span>Voted for</span>}
           />
           <HoneySlider
-            currentValue={proposalInfo?.proposalData.forVotes.toNumber() || 0}
+            currentValue={proposalInfo.data.forVotes.toNumber() || 0}
             maxValue={totalDeterminingVotes?.toNumber() || 1000}
             minAvailableValue={0}
             isReadonly
@@ -73,13 +50,11 @@ const ProposalVote = (props: ProposalVoteProps) => {
         </div>
         <div className={styles.gridCell}>
           <InfoBlock
-            value={proposalInfo?.proposalData.againstVotes.toString() || ''}
+            value={proposalInfo.data.againstVotes.toString() || ''}
             footer={<span>Voted against</span>}
           />
           <HoneySlider
-            currentValue={
-              proposalInfo?.proposalData.againstVotes.toNumber() || 0
-            }
+            currentValue={proposalInfo.data.againstVotes.toNumber() || 0}
             maxValue={totalDeterminingVotes?.toNumber() || 0}
             minAvailableValue={0}
             maxSafePosition={0}
@@ -89,7 +64,7 @@ const ProposalVote = (props: ProposalVoteProps) => {
         </div>
         <div className={styles.gridCell}>
           <InfoBlock
-            value={vePower?.asNumber.toString() || '--'}
+            value={votingPower?.asNumber.toString() ?? '--'}
             footer={<span>Your voting power</span>}
           />
         </div>

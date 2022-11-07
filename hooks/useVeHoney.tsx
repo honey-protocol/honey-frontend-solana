@@ -1,21 +1,25 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
+import { PublicKey } from '@solana/web3.js';
+import { TokenAmount } from '@saberhq/token-utils';
 import {
   VoteData,
   VoteSide,
   ProposalInstruction
 } from '@tribecahq/tribeca-sdk';
-import { PublicKey } from '@solana/web3.js';
 import { BN } from '@project-serum/anchor';
 
-import { useGovernanceContext } from '../contexts/GovernanceProvider';
+import { useGovernanceContext } from 'contexts/GovernanceProvider';
 import {
   calculateClaimableAmountFromStakePool,
   calculateVotingPower,
-  calculateNFTReceiptClaimableAmount
-} from '../helpers/sdk';
+  calculateNFTReceiptClaimableAmount,
+  HONEY_DECIMALS
+} from 'helpers/sdk';
+import { convert } from 'helpers/utils';
 
 export const useProposals = () => {
-  const { governorWrapper, setIsProcessing, proposals } = useGovernanceContext();
+  const { governorWrapper, setIsProcessing, proposals } =
+    useGovernanceContext();
 
   const createProposal = useCallback(
     async (instructions: ProposalInstruction[]) => {
@@ -73,6 +77,32 @@ export const useProposals = () => {
     createProposal,
     cancelProposal,
     createProposalMeta
+  };
+};
+
+export const useProposalWithKey = (pubkey: PublicKey) => {
+  const { proposals, governorInfo } = useGovernanceContext();
+
+  const proposal = useMemo(
+    () => proposals?.find(p => p.pubkey.equals(pubkey)),
+    [proposals]
+  );
+
+  const earliestActivationTime = useMemo(
+    () =>
+      governorInfo && proposal
+        ? new Date(
+            proposal.data.createdAt
+              .add(governorInfo.params.votingDelay)
+              .toNumber() * 1_000
+          )
+        : null,
+    [proposal, governorInfo]
+  );
+
+  return {
+    proposalInfo: proposal,
+    earliestActivationTime
   };
 };
 
@@ -198,13 +228,8 @@ export const useStake = () => {
 };
 
 export const useLocker = () => {
-  const {
-    lockerWrapper,
-    governorWrapper,
-    lockerInfo,
-    escrow,
-    setIsProcessing
-  } = useGovernanceContext();
+  const { lockerWrapper, lockerInfo, escrow, setIsProcessing, govToken } =
+    useGovernanceContext();
 
   const lock = useCallback(
     async (amount: BN, duration: BN) => {
@@ -319,28 +344,54 @@ export const useLocker = () => {
     return null;
   }, [lockerWrapper, setIsProcessing]);
 
-  const votingPower = useMemo(() => {
-    if (lockerInfo && escrow) {
-      return calculateVotingPower(escrow.data, lockerInfo.params);
+  const minActivationThreshold = useMemo(() => {
+    if (lockerInfo && govToken) {
+      return new TokenAmount(
+        govToken,
+        lockerInfo.params.proposalActivationMinVotes
+      );
     }
     return null;
-  }, [lockerInfo, escrow]);
+  }, [lockerInfo, govToken]);
+
+  const votingPower = useMemo(() => {
+    if (lockerInfo && escrow && govToken) {
+      return new TokenAmount(
+        govToken,
+        calculateVotingPower(escrow.data, lockerInfo.params)
+      );
+    }
+    return null;
+  }, [lockerInfo, escrow, govToken]);
+
+  const isActivatiable = useMemo(() => {
+    if (minActivationThreshold && votingPower) {
+      return votingPower.greaterThan(minActivationThreshold);
+    }
+    return false;
+  }, [votingPower, minActivationThreshold]);
 
   const getClaimableAmount = useCallback(
     (receiptId: number) => {
-      if (lockerInfo && escrow && escrow.receipts.has(receiptId)) {
+      if (lockerInfo && govToken && escrow?.receipts.has(receiptId)) {
         const receipt = escrow.receipts.get(receiptId);
         if (receipt) {
-          return calculateNFTReceiptClaimableAmount(receipt, lockerInfo.params);
+          return new TokenAmount(
+            govToken,
+            calculateNFTReceiptClaimableAmount(receipt, lockerInfo.params)
+          );
         }
       }
       return null;
     },
-    [lockerInfo, escrow]
+    [lockerInfo, escrow, govToken]
   );
 
   return {
+    escrow,
     votingPower,
+    minActivationThreshold,
+    isActivatiable,
     getClaimableAmount,
     lock,
     lockNft,

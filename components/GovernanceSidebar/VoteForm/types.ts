@@ -1,7 +1,7 @@
-import { ProposalInfo } from 'hooks/tribeca/useProposals';
+import { Proposal } from '../../../contexts/GovernanceProvider';
 
 export type VoteFormProps = {
-  proposalInfo: ProposalInfo | undefined | null;
+  proposalInfo: Proposal;
   setSidebarMode: Function;
   onCancel: Function;
 };

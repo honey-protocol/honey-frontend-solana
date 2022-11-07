@@ -1,17 +1,19 @@
 import React, { useState } from 'react';
-import * as styles from './GovernanceSidebar.css';
+import { PublicKey } from '@solana/web3.js';
+import { useConnectedWallet } from '@saberhq/use-solana';
+import { useWalletKit } from '@gokiprotocol/walletkit';
+
 import HoneyTabs, { HoneyTabItem } from '../HoneyTabs/HoneyTabs';
 import EmptyStateDetails from '../EmptyStateDetails/EmptyStateDetails';
 import VoteForm from './VoteForm/VoteForm';
 import GovernanceDescription from './GovernanceDescription/GovernanceDescription';
-import { governanceSidebar } from './GovernanceSidebar.css';
-import { useConnectedWallet, useSolana } from '@saberhq/use-solana';
-import { ProposalInfo, useProposal } from 'hooks/tribeca/useProposals';
-import { useWalletKit } from '@gokiprotocol/walletkit';
-import { mobileReturnButton } from 'styles/common.css';
+import { useProposalWithKey } from '../../hooks/useVeHoney';
+
+import * as styles from './GovernanceSidebar.css';
+import { mobileReturnButton } from '../../styles/common.css';
 
 type GovernanceSidebarProps = {
-  selectedProposalId?: number;
+  selectedProposalKey: PublicKey;
   setSidebarMode: Function;
   onCancel: Function;
 };
@@ -24,27 +26,26 @@ const items: [HoneyTabItem, HoneyTabItem] = [
 type Tab = 'vote' | 'description';
 
 const GovernanceSidebar = ({
-  selectedProposalId,
+  selectedProposalKey,
   setSidebarMode,
   onCancel
 }: GovernanceSidebarProps) => {
   const wallet = useConnectedWallet();
   const { connect } = useWalletKit();
   const [activeTab, setActiveTab] = useState<Tab>('vote');
-  const { info: proposalInfo } = useProposal(
-    parseInt(selectedProposalId?.toString() || '')
-  );
+  const { proposalInfo } = useProposalWithKey(selectedProposalKey);
 
   const handleTabChange = (tabKey: string) => {
     setActiveTab(tabKey as Tab);
   };
+
   return (
     <div className={styles.governanceSidebar}>
       <HoneyTabs
         activeKey={activeTab}
         onTabChange={handleTabChange}
         items={items}
-        active={Boolean(selectedProposalId?.toString())}
+        active={Boolean(proposalInfo?.data.index.toString())}
       >
         {!wallet?.connected ? (
           <EmptyStateDetails
@@ -65,7 +66,7 @@ const GovernanceSidebar = ({
               }
             ]}
           />
-        ) : !selectedProposalId?.toString() ? (
+        ) : !proposalInfo?.data.index.toString() ? (
           <EmptyStateDetails
             icon={<div className={styles.boltIcon} />}
             title="Manage panel"
@@ -82,9 +83,7 @@ const GovernanceSidebar = ({
             )}
             {activeTab === 'description' && (
               <GovernanceDescription
-                description={
-                  proposalInfo?.proposalMetaData?.descriptionLink || ''
-                }
+                description={proposalInfo?.meta?.descriptionLink || ''}
                 setActiveTab={setActiveTab}
               />
             )}

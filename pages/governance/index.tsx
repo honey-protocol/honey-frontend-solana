@@ -2,8 +2,8 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import type { NextPage } from 'next';
 import { ColumnType } from 'antd/lib/table';
 import c from 'classnames';
+import { PublicKey } from '@solana/web3.js';
 import { ProposalState } from '@tribecahq/tribeca-sdk';
-import { Token } from '@saberhq/token-utils';
 
 import HoneyContent from '../../components/HoneyContent/HoneyContent';
 import LayoutRedesign from '../../components/LayoutRedesign/LayoutRedesign';
@@ -33,16 +33,19 @@ import { vars } from '../../styles/theme.css';
 
 import { formatNumber } from '../../helpers/format';
 import { getVoteCountFmt } from '../../helpers/utils';
-import { GovernanceProvider, useGovernanceContext } from '../../contexts/GovernanceProvider';
-import { useProposals } from '../../hooks/useVeHoney';
+import {
+  GovernanceProvider,
+  useGovernanceContext
+} from '../../contexts/GovernanceProvider';
 
 const { format: f, formatShortName: fsn } = formatNumber;
 const NUM_PLACEHOLDERS = 0;
 
 const Governance: NextPage = () => {
-  // const [tableData, setTableData] = useState<GovernanceTableRow[]>([]);
   const [isDraftFilterEnabled, setIsDraftFilterEnabled] = useState(false);
-  const [selectedProposalId, setSelectedProposalId] = useState(10);
+  const [selectedProposalKey, setSelectedProposalKey] = useState<PublicKey>(
+    PublicKey.default
+  );
   const [tableData, setTableData] = useState<GovernanceTableRow[]>();
 
   const { govToken, proposals } = useGovernanceContext();
@@ -94,7 +97,8 @@ const Governance: NextPage = () => {
   };
 
   const getTableData = useCallback(() => {
-    const data = allProposals.map((proposal, i) => ({
+    const data = allProposals.map(proposal => ({
+      pubkey: proposal?.pubkey ?? PublicKey.default,
       id: proposal?.data?.index?.toNumber() ?? 0,
       name: proposal?.meta?.title ?? '',
       votes: proposal?.data?.forVotes.toNumber() ?? 0,
@@ -314,7 +318,7 @@ const Governance: NextPage = () => {
         return (
           <GovernanceSidebar
             onCancel={hideMobileSidebar}
-            selectedProposalId={selectedProposalId}
+            selectedProposalKey={selectedProposalKey}
             setSidebarMode={setSidebarMode}
           />
         );
@@ -328,10 +332,10 @@ const Governance: NextPage = () => {
   };
 
   const handleRowClick = (
-    event: React.MouseEvent<Element, MouseEvent>,
+    _event: React.MouseEvent<Element, MouseEvent>,
     record: GovernanceTableRow
   ) => {
-    setSelectedProposalId(record.id);
+    setSelectedProposalKey(record.pubkey);
     setSidebarMode('vote');
     showMobileSidebar();
   };
@@ -342,7 +346,7 @@ const Governance: NextPage = () => {
   };
 
   const getRowClassName = (record: GovernanceTableRow) => {
-    if (record.id === selectedProposalId) {
+    if (record.pubkey.equals(selectedProposalKey)) {
       return style.selectedProposal;
     }
     return '';
@@ -374,13 +378,13 @@ const Governance: NextPage = () => {
               rowKey={'id'}
               columns={columns}
               dataSource={tableData}
-              onRow={(record, rowIndex) => {
+              onRow={record => {
                 return {
                   onClick: event => handleRowClick(event, record)
                 };
               }}
               rowClassName={getRowClassName}
-              selectedRowsKeys={[selectedProposalId]}
+              selectedRowsKeys={[selectedProposalKey.toBase58()]}
             />
           </div>
 
