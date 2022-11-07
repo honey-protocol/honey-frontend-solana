@@ -1,4 +1,4 @@
-import React, { FC, useState } from 'react';
+import React, { FC, useEffect, useState } from 'react';
 import * as styles from './CreateMarketSidebar.css';
 import HoneyTabs, { HoneyTabItem } from '../HoneyTabs/HoneyTabs';
 import EmptyStateDetails from '../EmptyStateDetails/EmptyStateDetails';
@@ -25,6 +25,24 @@ const CreateMarketSidebar: FC<CreateMarketSidebarProps> = (
     setActiveTab(tabKey as Tab);
   };
 
+  const onClickUnderstand = () => {
+    setActiveTab('create');
+  };
+
+  const [hasReadHowItWorks, setHasReadHowItWorks] = useState<boolean>(false);
+
+  useEffect(() => {
+    const hasReadHowItWorks = window.localStorage.getItem(
+      'hasReadHowCreateMarketWorks'
+    );
+    if (hasReadHowItWorks === 'true') {
+      setHasReadHowItWorks(JSON.parse(hasReadHowItWorks));
+      setActiveTab('create');
+    } else {
+      setActiveTab('how_it_works');
+    }
+  }, []);
+
   return (
     <div className={styles.createMarketSidebar}>
       <HoneyTabs
@@ -42,7 +60,12 @@ const CreateMarketSidebar: FC<CreateMarketSidebarProps> = (
         ) : (
           <>
             {activeTab === 'how_it_works' && (
-              <HowItWorksBorrowTab onCancel={onCancel} />
+              <HowItWorksBorrowTab
+                onCancel={onCancel}
+                hasReadHowCreateMarketWorks={hasReadHowItWorks}
+                setHasReadHowCreateMarketWorks={setHasReadHowItWorks}
+                onClickUnderstand={onClickUnderstand}
+              />
             )}
             {activeTab === 'create' && (
               <CreateMarketTab wallet={wallet} honeyClient={honeyClient} />

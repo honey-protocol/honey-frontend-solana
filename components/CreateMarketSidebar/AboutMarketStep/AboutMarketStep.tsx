@@ -59,9 +59,9 @@ export const AboutMarketStep = (props: AboutMarketStepProps) => {
           />
         </div>
         <HoneyInputWithLabel
-          placeholder="Collection URL"
+          placeholder="Collection's Verified Creator"
           onChange={e => onChange(e.target.value)}
-          label="Collection URL"
+          label="Verified Creator"
         />
         {renderFoundCollectionInfo()}
       </div>

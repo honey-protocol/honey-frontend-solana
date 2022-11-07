@@ -1,4 +1,4 @@
-import React, { FC } from 'react';
+import React, { FC, useEffect, useState } from 'react';
 import * as styles from './HowItWorksBorrowTab.css';
 import SidebarScroll from '../SidebarScroll/SidebarScroll';
 import HoneyToggle from '../HoneyToggle/HoneyToggle';
@@ -8,7 +8,20 @@ import Link from 'antd/lib/typography/Link';
 import TabTitle from '../HoneyTabs/TabTitle/TabTitle';
 import { HowItWorksBorrowTabProps } from './types';
 
-const HowItWorksBorrowTab: FC<HowItWorksBorrowTabProps> = ({ onCancel }) => {
+const HowItWorksBorrowTab: FC<HowItWorksBorrowTabProps> = ({
+  onCancel,
+  hasReadHowCreateMarketWorks,
+  setHasReadHowCreateMarketWorks,
+  onClickUnderstand
+}) => {
+  const onDontShowAgainToggle = (checked: boolean) => {
+    window.localStorage.setItem(
+      'hasReadHowCreateMarketWorks',
+      JSON.stringify(checked)
+    );
+    setHasReadHowCreateMarketWorks(checked);
+  };
+
   return (
     <SidebarScroll
       footer={
@@ -16,7 +29,10 @@ const HowItWorksBorrowTab: FC<HowItWorksBorrowTabProps> = ({ onCancel }) => {
           <div className={styles.toggle}>
             <div className={styles.divider} />
             <div>
-              <HoneyToggle />
+              <HoneyToggle
+                checked={hasReadHowCreateMarketWorks}
+                onChange={onDontShowAgainToggle}
+              />
               <span className={styles.toggleText}>Don’t show it anymore</span>
             </div>
           </div>
@@ -27,7 +43,7 @@ const HowItWorksBorrowTab: FC<HowItWorksBorrowTabProps> = ({ onCancel }) => {
               </HoneyButton>
             </div>
             <div className={styles.bigCol}>
-              <HoneyButton variant="primary" block>
+              <HoneyButton onClick={onClickUnderstand} variant="primary" block>
                 I understand
               </HoneyButton>
             </div>

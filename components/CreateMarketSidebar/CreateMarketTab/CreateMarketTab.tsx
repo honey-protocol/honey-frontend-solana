@@ -12,7 +12,8 @@ import { SettingMarketStep } from '../SettingMarketStep/SettingMarketStep';
 import { RiskModelStep } from '../RiskModelStep/RiskModelStep';
 import { PublicKey } from '@solana/web3.js';
 import { HoneyMarket } from '@honey-finance/sdk';
-import { buildReserveConfig } from './ReserveConfigs';
+import { buildReserveConfig } from './reserveConfigs';
+import MarketDetailsStep from '../MarketDetailsStep/MarketDetailsStep';
 
 interface CreateMarketTabProps {
   wallet: any;
@@ -105,6 +106,12 @@ const CreateMarketTab: FC<CreateMarketTabProps> = (
     {
       step: 4,
       content: <RiskModelStep setRiskModel={setRiskModel} />
+    },
+    {
+      step: 5,
+      content: (
+        <MarketDetailsStep createdMarket={createdMarket}></MarketDetailsStep>
+      )
     }
   ];
 
@@ -122,12 +129,12 @@ const CreateMarketTab: FC<CreateMarketTabProps> = (
             </HoneyButton>
           </div>
           <div className={styles.bigCol}>
-            {currentStep < steps.length - 1 && (
+            {currentStep < steps.length - 2 && (
               <HoneyButton variant="primary" block onClick={() => next()}>
                 Next step
               </HoneyButton>
             )}
-            {currentStep === steps.length - 1 && (
+            {currentStep === steps.length - 2 && (
               <HoneyButton
                 variant="primary"
                 block
