@@ -364,6 +364,13 @@ export const useLocker = () => {
     return null;
   }, [lockerInfo, escrow, govToken]);
 
+  const lockedAmount = useMemo(() => {
+    if (escrow && govToken) {
+      return new TokenAmount(govToken, escrow.data.amount);
+    }
+    return null;
+  }, [escrow, govToken]);
+
   const isActivatiable = useMemo(() => {
     if (minActivationThreshold && votingPower) {
       return votingPower.greaterThan(minActivationThreshold);
@@ -390,6 +397,7 @@ export const useLocker = () => {
   return {
     escrow,
     votingPower,
+    lockedAmount,
     minActivationThreshold,
     isActivatiable,
     getClaimableAmount,
