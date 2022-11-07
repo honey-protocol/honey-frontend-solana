@@ -1,42 +1,36 @@
-import React, { FC, useMemo, useState } from 'react';
-import * as styles from './CreateProposalTab.css';
-import { formatNumber } from '../../../helpers/format';
-import HoneyButton from 'components/HoneyButton/HoneyButton';
-import SidebarScroll from '../../SidebarScroll/SidebarScroll';
-import { HoneyTextArea } from '../../HoneyTextArea/HoneyTextArea';
-import invariant from 'tiny-invariant';
-import { useSDK } from 'helpers/sdk';
-import { GovernorWrapper } from '@tribecahq/tribeca-sdk';
-import { useGovernor, useGovernorParams } from 'hooks/tribeca/useGovernor';
-import { extractErrorMessage, useSail } from '@saberhq/sail';
+import React, { useMemo, useState } from 'react';
+// import cs from 'classnames';
+// import invariant from 'tiny-invariant';
+// import { Spinner } from 'degen';
 import { Transaction } from '@solana/web3.js';
-import CustomDropdown from 'components/CustomDropdown/CustomDropdown';
-import { ACTIONS, ActionType } from 'actions/types';
-import { HelperCard } from 'components/common/HelperCard';
-import { Spinner, Text } from 'degen';
-import { useExecutiveCouncil } from 'hooks/tribeca/useExecutiveCouncil';
-import useToast from 'hooks/useToast';
-import HoneyWarning from 'components/HoneyWarning/HoneyWarning';
-import cs from 'classnames';
-import TabTitle from '../../HoneyTabs/TabTitle/TabTitle';
+import { extractErrorMessage } from '@saberhq/sail';
 
-const { format: f, formatPercent: fp, formatUsd: fu } = formatNumber;
+import HoneyButton from 'components/HoneyButton/HoneyButton';
+import SidebarScroll from 'components/SidebarScroll/SidebarScroll';
+import { HoneyTextArea } from 'components/HoneyTextArea/HoneyTextArea';
+// import CustomDropdown from 'components/CustomDropdown/CustomDropdown';
+import TabTitle from 'components/HoneyTabs/TabTitle/TabTitle';
+// import HoneyWarning from 'components/HoneyWarning/HoneyWarning';
+// import { ACTIONS, ActionType } from 'actions/types';
+import useToast from 'hooks/useToast';
+import { useProposals } from 'hooks/useVeHoney';
+
+import * as styles from './CreateProposalTab.css';
 
 const CreateProposalTab = (props: { onCancel: Function }) => {
+  const { toast, ToastComponent } = useToast();
+
   const [titleValue, setTitleValue] = useState('');
   const [descriptionValue, setDescriptionValue] = useState('');
   const [discussionLinkValue, setDiscussionLinkValue] = useState('');
 
-  const { tribecaMut } = useSDK();
-  const { handleTX } = useSail();
-  const [txRaw, setTxRaw] = useState<string>('');
-  const [actionType, setActionType] = useState<ActionType>('Memo');
-  const [theError, setError] = useState<string | null>(null);
-  const { smartWallet, lockerData, governor, minter } = useGovernor();
-  const { ownerInvokerKey } = useExecutiveCouncil();
-  const { toast, ToastComponent } = useToast();
+  const { createProposal, createProposalMeta } = useProposals();
 
-  const { tx, error: parseError } = useMemo(() => {
+  const [txRaw, _setTxRaw] = useState<string>('');
+  // const [actionType, setActionType] = useState<ActionType>('Memo');
+  // const [theError, setError] = useState<string | null>(null);
+
+  const { tx } = useMemo(() => {
     try {
       const buffer = Buffer.from(txRaw, 'base64');
       const tx = Transaction.from(buffer);
@@ -51,58 +45,40 @@ const CreateProposalTab = (props: { onCancel: Function }) => {
     }
   }, [txRaw]);
 
-  if (!smartWallet || !ownerInvokerKey) {
-    return <Spinner />;
-  }
+  // if (!smartWallet || !ownerInvokerKey) {
+  //   return <Spinner />;
+  // }
 
   // Put your validators here
   const isCreateProposalButtonDisabled = () => {
     return false;
   };
 
-  const ctx = { locker: lockerData?.publicKey, governor, minter };
-
-  const proposal = {
-    title: titleValue,
-    description: discussionLinkValue
-      ? `${descriptionValue}\n\n[View Discussion](${discussionLinkValue})`
-      : descriptionValue,
-    instructions: tx?.instructions ?? []
-  };
+  // const ctx = { locker: lockerData?.publicKey, governor, minter };
 
   const doProposeTransaction = async () => {
     try {
       toast.processing();
-      invariant(tribecaMut);
-      const gov = new GovernorWrapper(tribecaMut, governor!);
-      const createProposal = await gov.createProposal({
-        instructions: proposal.instructions
-      });
-      const createProposalMetaTX = await gov.createProposalMeta({
-        proposal: createProposal.proposal,
-        title: proposal.title,
-        descriptionLink: proposal.description
-      });
-      for (const txEnv of [createProposal.tx, createProposalMetaTX]) {
-        const { pending, success } = await handleTX(txEnv, 'Create Proposal');
-        if (!success || !pending) {
-          return;
-        }
-        await pending.wait();
-      }
+      // invariant(tribecaMut);
+      // const gov = new GovernorWrapper(tribecaMut, governor!);
+      const { proposal: proposalKey } = await createProposal(
+        tx?.instructions ?? []
+      );
+      await createProposalMeta(
+        proposalKey,
+        titleValue,
+        discussionLinkValue
+          ? `${descriptionValue}\n\n[View Discussion](${discussionLinkValue})`
+          : descriptionValue
+      );
       toast.success('New proposal created');
-      // notify({
-      //   message: `Proposal ${`000${createProposal.index.toString()}`.slice(
-      //     -4
-      //   )} created`
-      // // });
     } catch (error) {
       toast.error('Error creating new proposal');
     }
   };
 
-  const actor = smartWallet;
-  const currentAction = ACTIONS.find(action => action.title === actionType);
+  // const actor = smartWallet;
+  // const currentAction = ACTIONS.find(action => action.title === actionType);
 
   return (
     <SidebarScroll
@@ -131,7 +107,7 @@ const CreateProposalTab = (props: { onCancel: Function }) => {
       }
     >
       <div className={styles.createProposalTab}>
-        <TabTitle title='Create new proposal' />
+        <TabTitle title="Create new proposal" />
 
         <div className={styles.titleInput}>
           <HoneyTextArea
@@ -164,9 +140,9 @@ const CreateProposalTab = (props: { onCancel: Function }) => {
           />
         </div>
 
-        <TabTitle title='Proposed Action' />
+        <TabTitle title="Proposed Action" />
 
-        <div className={cs(styles.row, styles.mb12)}>
+        {/* <div className={cs(styles.row, styles.mb12)}>
           <CustomDropdown
             onChange={value => {
               setActionType(value as ActionType);
@@ -183,9 +159,9 @@ const CreateProposalTab = (props: { onCancel: Function }) => {
               };
             })}
           />
-        </div>
+        </div> */}
 
-        {currentAction && (
+        {/* {currentAction && (
           <>
             {currentAction.description && (
               <div className={styles.row}>
@@ -201,7 +177,7 @@ const CreateProposalTab = (props: { onCancel: Function }) => {
               setTxRaw={setTxRaw}
             />
           </>
-        )}
+        )} */}
       </div>
     </SidebarScroll>
   );

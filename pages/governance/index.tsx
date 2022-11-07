@@ -1,58 +1,52 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import type { NextPage } from 'next';
 import { ColumnType } from 'antd/lib/table';
 import c from 'classnames';
 import { PublicKey } from '@solana/web3.js';
 import { ProposalState } from '@tribecahq/tribeca-sdk';
 
-import HoneyContent from '../../components/HoneyContent/HoneyContent';
-import LayoutRedesign from '../../components/LayoutRedesign/LayoutRedesign';
-import HoneySider from '../../components/HoneySider/HoneySider';
-import GovernanceSidebar from '../../components/GovernanceSidebar/GovernanceSidebar';
-import HoneyTable from '../../components/HoneyTable/HoneyTable';
-import HoneyButton from '../../components/HoneyButton/HoneyButton';
-import HoneyToggle from '../../components/HoneyToggle/HoneyToggle';
-import ProgressStatus from '../../components/ProgressStatus/ProgressStatus';
-import HexaBoxContainer from '../../components/HexaBoxContainer/HexaBoxContainer';
-import NewProposalSidebar from '../../components/NewProposalSidebar/NewProposalSidebar';
-import GetVeHoneySidebar from '../../components/GetVeHoneySidebar/GetVeHoneySidebar';
-import { GovernanceStats } from '../../components/GovernanceStats/GovernanceStats';
-import HoneyTableNameCell from '../../components/HoneyTable/HoneyTableNameCell/HoneyTableNameCell';
-import HoneyTableRow from '../../components/HoneyTable/HoneyTableRow/HoneyTableRow';
-import HoneyTooltip from '../../components/HoneyTooltip/HoneyTooltip';
-
+import HoneyContent from 'components/HoneyContent/HoneyContent';
+import LayoutRedesign from 'components/LayoutRedesign/LayoutRedesign';
+import HoneySider from 'components/HoneySider/HoneySider';
+import GovernanceSidebar from 'components/GovernanceSidebar/GovernanceSidebar';
+import HoneyTable from 'components/HoneyTable/HoneyTable';
+import HoneyButton from 'components/HoneyButton/HoneyButton';
+import HoneyToggle from 'components/HoneyToggle/HoneyToggle';
+import ProgressStatus from 'components/ProgressStatus/ProgressStatus';
+import HexaBoxContainer from 'components/HexaBoxContainer/HexaBoxContainer';
+import NewProposalSidebar from 'components/NewProposalSidebar/NewProposalSidebar';
+import GetVeHoneySidebar from 'components/GetVeHoneySidebar/GetVeHoneySidebar';
+import { GovernanceStats } from 'components/GovernanceStats/GovernanceStats';
+import HoneyTableNameCell from 'components/HoneyTable/HoneyTableNameCell/HoneyTableNameCell';
+import HoneyTableRow from 'components/HoneyTable/HoneyTableRow/HoneyTableRow';
+import HoneyTooltip from 'components/HoneyTooltip/HoneyTooltip';
 import {
   GovernanceSidebarForm,
   GovernanceTableRow,
   ProposalStatus
-} from '../../types/governance';
-
-import * as style from '../../styles/governance.css';
-import { hideTablet, showTablet, table } from '../../styles/markets.css';
-import { vars } from '../../styles/theme.css';
-
-import { formatNumber } from '../../helpers/format';
-import { getVoteCountFmt } from '../../helpers/utils';
+} from 'types/governance';
+import { formatNumber } from 'helpers/format';
+import { getVoteCountFmt } from 'helpers/utils';
 import {
   GovernanceProvider,
   useGovernanceContext
-} from '../../contexts/GovernanceProvider';
+} from 'contexts/GovernanceProvider';
+
+import * as style from 'styles/governance.css';
+import { hideTablet, showTablet, table } from 'styles/markets.css';
+import { vars } from 'styles/theme.css';
 
 const { format: f, formatShortName: fsn } = formatNumber;
-const NUM_PLACEHOLDERS = 0;
 
 const Governance: NextPage = () => {
+  const { govToken, proposals } = useGovernanceContext();
+
   const [isDraftFilterEnabled, setIsDraftFilterEnabled] = useState(false);
   const [selectedProposalKey, setSelectedProposalKey] = useState<PublicKey>(
     PublicKey.default
   );
-  const [tableData, setTableData] = useState<GovernanceTableRow[]>();
-
-  const { govToken, proposals } = useGovernanceContext();
-
   const [sidebarMode, setSidebarMode] =
     useState<GovernanceSidebarForm>('get_vehoney');
-
   const [isMobileSidebarVisible, setShowMobileSidebar] = useState(false);
 
   const showMobileSidebar = () => {
@@ -64,19 +58,6 @@ const Governance: NextPage = () => {
     setShowMobileSidebar(false);
     document.body.classList.remove('disable-scroll');
   };
-
-  const allProposals = [
-    ...(proposals ?? []),
-    ...new Array<null>(NUM_PLACEHOLDERS).fill(null)
-  ].filter(p => {
-    const proposalState = p?.status;
-    return isDraftFilterEnabled
-      ? true
-      : proposalState !== ProposalState.Draft &&
-          proposalState !== ProposalState.Canceled;
-  });
-
-  // console.log({ allProposals });
 
   const getStatus = (state: ProposalState): ProposalStatus => {
     // if(!state) return 'approved';
@@ -96,35 +77,35 @@ const Governance: NextPage = () => {
     }
   };
 
-  const getTableData = useCallback(() => {
-    const data = allProposals.map(proposal => ({
-      pubkey: proposal?.pubkey ?? PublicKey.default,
-      id: proposal?.data?.index?.toNumber() ?? 0,
-      name: proposal?.meta?.title ?? '',
-      votes: proposal?.data?.forVotes.toNumber() ?? 0,
-      against: proposal?.data?.againstVotes.toNumber() ?? 0,
-      votesRequired: 0,
-      status: getStatus(proposal?.status ?? ProposalState.Draft)
-    }));
-    if (!data || !data[0]?.id || data.length === tableData?.length) return;
-    // console.log({ data });
-    setTableData(data);
-  }, [allProposals]);
-
-  // console.log({ tableData });
-
-  useEffect(() => {
-    getTableData();
-  }, [getTableData]);
-
-  const handleToggle = (checked: boolean) => {
-    setIsDraftFilterEnabled(checked);
-  };
+  const tableData: GovernanceTableRow[] = useMemo(
+    () =>
+      proposals
+        ?.filter(p => {
+          const proposalState = p.status;
+          return isDraftFilterEnabled
+            ? true
+            : proposalState !== ProposalState.Draft &&
+                proposalState !== ProposalState.Canceled;
+        })
+        .map(p => ({
+          pubkey: p.pubkey,
+          id: p.data.index.toNumber() ?? 0,
+          name: p.meta?.title ?? '',
+          votes: p.data.forVotes.toNumber() ?? 0,
+          against: p.data.againstVotes.toNumber() ?? 0,
+          votesRequired: 0,
+          status: getStatus(p.status)
+        })) ?? [],
+    [proposals]
+  );
 
   const DraftToggle = () => (
     <div className={style.draftToggle}>
       <div className={style.toggle}>
-        <HoneyToggle checked={isDraftFilterEnabled} onChange={handleToggle} />
+        <HoneyToggle
+          checked={isDraftFilterEnabled}
+          onChange={setIsDraftFilterEnabled}
+        />
         <span className={style.toggleText}>Drafts</span>
       </div>
     </div>

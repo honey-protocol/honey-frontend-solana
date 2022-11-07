@@ -23,51 +23,51 @@ export const useProposals = () => {
 
   const createProposal = useCallback(
     async (instructions: ProposalInstruction[]) => {
-      if (governorWrapper) {
-        const { index, proposal, tx } = await governorWrapper.createProposal({
-          instructions
-        });
-        setIsProcessing?.(true);
-        const receipt = await tx.confirm();
-        setIsProcessing?.(false);
-
-        return { index, proposal, receipt };
+      if (!governorWrapper) {
+        throw new Error('Error: governor undefined');
       }
-      return null;
+      const { index, proposal, tx } = await governorWrapper.createProposal({
+        instructions
+      });
+      setIsProcessing?.(true);
+      const receipt = await tx.confirm();
+      setIsProcessing?.(false);
+
+      return { index, proposal, receipt };
     },
     [governorWrapper, setIsProcessing]
   );
 
   const cancelProposal = useCallback(
     async (proposal: PublicKey) => {
-      if (governorWrapper) {
-        const tx = governorWrapper.cancelProposal({ proposal });
-        setIsProcessing?.(true);
-        const receipt = await tx.confirm();
-        setIsProcessing?.(false);
-
-        return { receipt };
+      if (!governorWrapper) {
+        throw new Error('Error: governor undefined');
       }
-      return null;
+      const tx = governorWrapper.cancelProposal({ proposal });
+      setIsProcessing?.(true);
+      const receipt = await tx.confirm();
+      setIsProcessing?.(false);
+
+      return { receipt };
     },
     [governorWrapper, setIsProcessing]
   );
 
   const createProposalMeta = useCallback(
     async (proposal: PublicKey, title: string, descriptionLink: string) => {
-      if (governorWrapper) {
-        const tx = await governorWrapper.createProposalMeta({
-          proposal,
-          title,
-          descriptionLink
-        });
-        setIsProcessing?.(true);
-        const receipt = await tx.confirm();
-        setIsProcessing?.(false);
-
-        return { receipt };
+      if (!governorWrapper) {
+        throw new Error('Error: governor undefined');
       }
-      return null;
+      const tx = await governorWrapper.createProposalMeta({
+        proposal,
+        title,
+        descriptionLink
+      });
+      setIsProcessing?.(true);
+      const receipt = await tx.confirm();
+      setIsProcessing?.(false);
+
+      return { receipt };
     },
     [governorWrapper, setIsProcessing]
   );
