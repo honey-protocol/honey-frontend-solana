@@ -12,10 +12,8 @@ import { useGovernanceContext } from 'contexts/GovernanceProvider';
 import {
   calculateClaimableAmountFromStakePool,
   calculateVotingPower,
-  calculateNFTReceiptClaimableAmount,
-  HONEY_DECIMALS
+  calculateNFTReceiptClaimableAmount
 } from 'helpers/sdk';
-import { convert } from 'helpers/utils';
 
 export const useProposals = () => {
   const { governorWrapper, setIsProcessing, proposals } =
@@ -158,7 +156,9 @@ export const useStake = () => {
     governorWrapper,
     setIsProcessing,
     stakePoolInfo,
-    stakePoolUser
+    stakePoolUser,
+    preToken,
+    govToken
   } = useGovernanceContext();
 
   const deposit = useCallback(
@@ -210,20 +210,26 @@ export const useStake = () => {
   );
 
   const claimableAmount = useMemo(() => {
-    if (stakePoolInfo && stakePoolUser) {
-      return calculateClaimableAmountFromStakePool(
-        stakePoolUser.data,
-        stakePoolInfo.params
+    if (stakePoolInfo && stakePoolUser && govToken) {
+      return new TokenAmount(
+        govToken,
+        calculateClaimableAmountFromStakePool(
+          stakePoolUser.data,
+          stakePoolInfo.params
+        )
       );
     }
     return null;
-  }, [stakePoolInfo, stakePoolUser]);
+  }, [stakePoolInfo, stakePoolUser, govToken]);
 
   return {
+    pool: stakePoolInfo,
+    user: stakePoolUser,
     deposit,
     claim,
     vest,
-    claimableAmount
+    claimableAmount,
+    preToken
   };
 };
 

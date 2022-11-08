@@ -1,9 +1,11 @@
 import React, { useCallback, useMemo, useState } from 'react';
 import { Box, Button, Input, Stack, Text, Tag } from 'degen';
 import { TokenAmount } from '@saberhq/token-utils';
+import { BN } from '@project-serum/anchor';
 
 import { useLocker } from 'hooks/useVeHoney';
 import { useAccountByMint } from 'hooks/useAccounts';
+import { convertToBN } from 'helpers/utils';
 
 import * as styles from './HoneyModal.css';
 
@@ -43,14 +45,13 @@ const HoneyModal = () => {
   }, [govTokenAccount, govToken]);
 
   const handleLock = useCallback(async () => {
-    if (!amount || !vestingPeriodInSeconds) return;
+    if (!amount || !vestingPeriodInSeconds || !govToken) return;
 
-    // await lock(
-    //   convertToBN(amount, HONEY_DECIMALS),
-    //   new anchor.BN(vestingPeriodInSeconds),
-    //   !!escrow
-    // );
-  }, [lock, escrow, amount, vestingPeriodInSeconds]);
+    await lock(
+      convertToBN(amount, govToken.decimals),
+      new BN(vestingPeriodInSeconds)
+    );
+  }, [lock, govToken, amount, vestingPeriodInSeconds]);
 
   return (
     <Box width="96">

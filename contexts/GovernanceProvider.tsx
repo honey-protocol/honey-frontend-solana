@@ -74,6 +74,7 @@ export interface GovernanceContextValueProps {
   governorInfo?: GovernorData;
   escrow?: Escrow;
   govToken?: Token;
+  preToken?: Token;
   isProcessing: boolean;
   setIsProcessing?: Dispatch<SetStateAction<boolean>>;
   reload?: () => Promise<void>;
@@ -110,6 +111,7 @@ export const GovernanceProvider: React.FC<React.ReactNode> = ({ children }) => {
   const [user, setUser] = useState<StakePoolUser>();
   const [escrow, setEscrow] = useState<Escrow>();
   const [govToken, setGovToken] = useState<Token>();
+  const [preToken, setPreToken] = useState<Token>();
 
   const sdk = useMemo(() => {
     const provider = SolanaProvider.init({
@@ -193,12 +195,17 @@ export const GovernanceProvider: React.FC<React.ReactNode> = ({ children }) => {
         setEscrow(undefined);
       }
 
-      // Load gov token
+      // Load gov and pre tokens
       try {
-        const token = await Token.load(connection, locker.tokenMint);
-        setGovToken(token ?? undefined);
+        const [gov, pre] = await Promise.all([
+          Token.load(connection, pool.tokenMint),
+          Token.load(connection, pool.pTokenMint)
+        ]);
+        setGovToken(gov ?? undefined);
+        setPreToken(pre ?? undefined);
       } catch (e) {
         setGovToken(undefined);
+        setPreToken(undefined);
       }
 
       setIsLoading(false);
@@ -231,6 +238,7 @@ export const GovernanceProvider: React.FC<React.ReactNode> = ({ children }) => {
         governorInfo: governor,
         escrow,
         govToken,
+        preToken,
         isProcessing,
         setIsProcessing,
         reload: load

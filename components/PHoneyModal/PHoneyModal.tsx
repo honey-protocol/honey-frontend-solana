@@ -1,16 +1,36 @@
 import React, { useCallback, useMemo, useState, useEffect } from 'react';
 import { Box, Button, Input, Stack, Text, Tag } from 'degen';
-import { PublicKey } from '@solana/web3.js';
-import { useStake , useLocker} from 'hooks/useVeHoney';
-import { useAccounts } from 'hooks/useAccounts';
-import { PHONEY_DECIMALS, PHONEY_MINT } from 'helpers/sdk/constant';
-import { convert, convertToBN } from 'helpers/utils';
-import { useGovernanceContext } from 'contexts/GovernanceProvider';
+import { TokenAmount } from '@saberhq/token-utils';
+
+import { useStake } from 'hooks/useVeHoney';
+import { useAccountByMint } from 'hooks/useAccounts';
+import { PHONEY_DECIMALS } from 'helpers/sdk/constant';
+import { convertToBN } from 'helpers/utils';
 
 // console.log("The stake pool address is : ", process.env.PUBLIC_NEXT_STAKE_POOL_ADDRESS)
 const PHoneyModal = () => {
   const [amount, setAmount] = useState<number>(0);
-  const [isClaimable, setIsClaimable] = useState<boolean>(false);
+
+  const { pool, user, deposit, claim, claimableAmount, preToken } = useStake();
+  const pHoneyAccount = useAccountByMint(pool?.pTokenMint);
+
+  const isClaimable = useMemo(() => {
+    if (!claimableAmount) return false;
+
+    return !claimableAmount.equalTo(0);
+  }, [claimableAmount]);
+
+  const depositedAmount = useMemo(() => {
+    if (!user || !preToken) return null;
+
+    return new TokenAmount(preToken, user.data.depositAmount);
+  }, [user, preToken]);
+
+  const pHoneyAmount = useMemo(() => {
+    if (!pHoneyAccount || !preToken) return null;
+
+    return new TokenAmount(preToken, pHoneyAccount.data.amount);
+  }, [pHoneyAccount, preToken]);
 
   const handleOnChange = (event: any) => {
     // ideally we want to implement a debaunce here and not fire the function every second the user interacts with it
@@ -18,45 +38,11 @@ const PHoneyModal = () => {
     setAmount(Number(event.target.value));
   };
 
-  const { tokenAccounts } = useAccounts();
-
-  // ======================== Should replace with configuration ================
-  const pHoneyToken = tokenAccounts.find(t => t.info.mint.equals(PHONEY_MINT));
-  // ============================================================================
-
-  const { deposit, claim, claimableAmount } = useStake();
-
-  const {  } = useGovernanceContext();
-
-  useEffect(() => {
-    setIsClaimable(claimableAmount !== 0);
-  }, [claimableAmount]);
-
-  const depositedAmount = useMemo(() => {
-    if (!user) {
-      return 0;
-    }
-
-    return convert(user.depositAmount, PHONEY_DECIMALS);
-  }, [user]);
-
-  const pHoneyAmount = useMemo(() => {
-    if (!pHoneyToken) {
-      return 0;
-    }
-
-    return convert(pHoneyToken.info.amount, PHONEY_DECIMALS);
-  }, [pHoneyToken]);
-
   const handleDeposit = useCallback(async () => {
-    if (!amount) return;
+    if (!amount || !preToken) return;
 
-    // if (!user) {
-    //   await createUser();
-    // }
-
-    await deposit(convertToBN(amount, PHONEY_DECIMALS));
-  }, [deposit, amount]);
+    await deposit(convertToBN(amount, preToken.decimals));
+  }, [deposit, amount, preToken]);
 
   return (
     <Box width="96">
@@ -90,21 +76,23 @@ const PHoneyModal = () => {
               <Text variant="small" color="textSecondary">
                 Your pHONEY deposited
               </Text>
-              <Text variant="small">{depositedAmount}</Text>
+              <Text variant="small">{depositedAmount?.asNumber ?? '-'}</Text>
             </Stack>
             <Stack direction="horizontal" justify="space-between">
               <Text variant="small" color="textSecondary">
                 Claimable Amount
               </Text>
-              <Text variant="small">{claimableAmount}</Text>
+              <Text variant="small">{claimableAmount?.asNumber ?? '0'}</Text>
             </Stack>
           </Stack>
           <Input
             type="number"
             label="Amount"
-            labelSecondary={<Tag>{pHoneyAmount} pHONEY max</Tag>}
-            disabled={!pHoneyAmount}
-            max={pHoneyAmount || ''}
+            labelSecondary={
+              <Tag>{pHoneyAmount?.asNumber ?? '-'} pHONEY max</Tag>
+            }
+            disabled={!pHoneyAmount?.asNumber}
+            max={pHoneyAmount?.asNumber ?? ''}
             min={0}
             hideLabel
             value={amount || ''}
@@ -115,7 +103,7 @@ const PHoneyModal = () => {
           <Button onClick={handleDeposit} disabled={!amount} width="full">
             {amount ? 'Deposit' : 'Enter amount'}
           </Button>
-          <Button onClick={claim} disabled={claimableAmount == 0} width="full">
+          <Button onClick={claim} disabled={!isClaimable} width="full">
             Claim
           </Button>
         </Stack>
