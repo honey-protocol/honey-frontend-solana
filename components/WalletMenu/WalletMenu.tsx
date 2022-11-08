@@ -1,5 +1,5 @@
 import { Dropdown, Menu, Space, Typography } from 'antd';
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import * as styles from './WalletMenu.css';
 import { DownIcon } from 'icons/DownIcon';
 import { formatAddress } from 'helpers/addressUtils';
@@ -8,11 +8,10 @@ import { WalletIcon } from 'icons/WalletIcon';
 import { useWalletKit } from '@gokiprotocol/walletkit';
 import { useConnectedWallet, useSolana } from '@saberhq/use-solana';
 import { DialectNotifications } from 'components/DialectNotifications/DialectNotifications';
-import { walletDropdownWrapper } from './WalletMenu.css';
 
-const { Title, Text } = Typography;
+const { Title } = Typography;
 
-const isDialectNotificationsButtonEnabled = true;
+const isDialectNotificationsButtonEnabled = false;
 
 const WalletMenu = () => {
   const { disconnect } = useSolana();
