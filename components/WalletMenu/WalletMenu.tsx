@@ -8,6 +8,7 @@ import { WalletIcon } from 'icons/WalletIcon';
 import { useWalletKit } from '@gokiprotocol/walletkit';
 import { useConnectedWallet, useSolana } from '@saberhq/use-solana';
 import { DialectNotifications } from 'components/DialectNotifications/DialectNotifications';
+import { walletDropdownWrapper } from './WalletMenu.css';
 
 const { Title, Text } = Typography;
 
@@ -40,8 +41,10 @@ const WalletMenu = () => {
       CONNECT WALLET
     </HoneyButton>
   ) : (
-    <>
-      {isDialectNotificationsButtonEnabled && <DialectNotifications />}
+    <div className={styles.walletDropdownWrapper}>
+      <div className={styles.dialectIconWrapper}>
+        {isDialectNotificationsButtonEnabled && <DialectNotifications />}
+      </div>
       <Dropdown overlay={menu}>
         <a onClick={e => e.preventDefault()}>
           <Space size="small" align="center">
@@ -55,7 +58,7 @@ const WalletMenu = () => {
           </Space>
         </a>
       </Dropdown>
-    </>
+    </div>
   );
 };
 
