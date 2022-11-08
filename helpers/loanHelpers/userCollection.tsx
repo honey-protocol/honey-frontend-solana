@@ -254,6 +254,7 @@ const getPositionData = () => {
 
 const setObligations = async (obligations: any, currentMarketId: string, nftPrice: number) => {
   if (!obligations) return [];
+  console.log('this is obl.', obligations);
   return obligations.map((obligation: any) => {
     return {
       name: renderMarketName(currentMarketId),
@@ -270,6 +271,7 @@ const setObligations = async (obligations: any, currentMarketId: string, nftPric
 }
 
 const calculateRisk = async (obligations: any, nftPrice: number, type: boolean, currentMarketId: string, collectionName: string) => {
+  console.log('zita::', obligations, collectionName)
   if (!obligations) return 0;
   if (currentMarketId == HONEY_GENESIS_MARKET_ID && collectionName == 'Honey Genesis Bee') {
     let sumOfDebt = await obligations.reduce((acc: number, obligation: any) => {
@@ -282,16 +284,16 @@ const calculateRisk = async (obligations: any, nftPrice: number, type: boolean, 
       return (sumOfDebt / obligations.length / nftPrice)
     }
   } else if (currentMarketId == PESKY_PENGUINS_MARKET_ID && collectionName == 'Pesky Penguin') {
-    let sumOfDebt = await obligations.reduce((acc: number, obligation: any) => {
-      return acc + obligation.debt;
-    }, 0);
+     let sumOfDebt = await obligations.reduce((acc: number, obligation: any) => {
+       return acc + obligation.debt;
+     }, 0);
   
-    if (type == true) {
-      return sumOfDebt;
-    } else {
-      return (sumOfDebt / obligations.length / nftPrice)
-    }
-  } else {
+      if (type == true) {
+       return sumOfDebt;
+      } else {
+       return (sumOfDebt / obligations.length / nftPrice)
+      }
+   } else {
     return 0;
   }
 }
@@ -372,7 +374,7 @@ export async function populateMarketData(collection: MarketTableRow, connection:
       collection.user = honeyUser;
       collection.name;
     }
-
+    console.log('inside::', collection)
     return collection;
   }
 }
