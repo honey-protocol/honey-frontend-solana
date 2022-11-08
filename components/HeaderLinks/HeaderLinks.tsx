@@ -6,6 +6,7 @@ import { DownIcon } from 'icons/DownIcon';
 import HoneyButton from 'components/HoneyButton/HoneyButton';
 import { useRouter } from 'next/router';
 import cs from 'classnames';
+import { DESKTOP_BP, TABLET_BP } from '../../constants/breakpoints';
 
 export const links = [
   {
@@ -78,10 +79,10 @@ const HeaderDropdownMenu = () => {
   useEffect(() => {
     const setLinksToDisplay = () => {
       const width = window.innerWidth;
-      if (width > 1100) {
+      if (width > DESKTOP_BP) {
         setLinkDisplayed(6);
       }
-      if (width < 1100 && width > 768) {
+      if (width < DESKTOP_BP && width > TABLET_BP) {
         setLinkDisplayed(4);
       }
     };
