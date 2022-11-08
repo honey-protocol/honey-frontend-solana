@@ -20,7 +20,8 @@ export const content = style({
   flexDirection: 'column',
   alignItems: 'flex-start',
   transition: 'all 0.8s',
-  height: '70px'
+  height: '70px',
+  borderRadius: vars.space.medium
 });
 
 export const main = style({

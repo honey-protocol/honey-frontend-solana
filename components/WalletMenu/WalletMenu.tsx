@@ -11,7 +11,7 @@ import { DialectNotifications } from 'components/DialectNotifications/DialectNot
 
 const { Title, Text } = Typography;
 
-const isDialectNotificationsButtonEnabled = false;
+const isDialectNotificationsButtonEnabled = true;
 
 const WalletMenu = () => {
   const { disconnect } = useSolana();
