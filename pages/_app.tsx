@@ -6,16 +6,18 @@ import { QueryClient, QueryClientProvider } from 'react-query';
 import { AnchorProvider, HoneyProvider } from '@honey-finance/sdk';
 import { Network } from '@saberhq/solana-contrib';
 import { useConnectedWallet, useConnection } from '@saberhq/use-solana';
+import { WalletKitProvider } from '@gokiprotocol/walletkit';
 import { SailProvider } from '@saberhq/sail';
 import { ThemeProvider } from 'degen';
-import { GovernanceProvider } from 'contexts/GovernanceProvider';
 import 'degen/styles';
 import 'react-toastify/dist/ReactToastify.css';
 
-import SecPopup from '../components/SecPopup';
+import SecPopup from 'components/SecPopup';
+import { GovernanceProvider } from 'contexts/GovernanceProvider';
+import { AccountsProvider } from 'contexts/AccountsProvider';
 // import { accentSequence, ThemeAccent } from '../helpers/theme-utils';
-import { onSailError } from '../helpers/error';
-import { HONEY_MARKET_ID, HONEY_PROGRAM_ID } from '../constants/loan';
+import { onSailError } from 'helpers/error';
+import { HONEY_MARKET_ID, HONEY_PROGRAM_ID } from 'constants/loan';
 // import NoMobilePopup from 'components/NoMobilePopup/NoMobilePopup';
 
 import '../styles/globals.css';
@@ -102,25 +104,32 @@ function MyApp({ Component, pageProps }: AppProps) {
       </Script>
       <QueryClientProvider client={queryClient}>
         {/* <ReactQueryDevtools initialIsOpen={false} /> */}
-        <GovernanceProvider>
-        <SailProvider
-          initialState={{
-            onSailError
-          }}
+        <WalletKitProvider
+          defaultNetwork={network}
+          app={{ name: 'Honey Finance' }}
         >
-          {/* {children} */}
-          {showPopup ? (
-            <SecPopup setShowPopup={setShowPopup} />
-          ) : (
-            <>
-              <OnChainProvider>
-                <Component {...pageProps} />
-                <ToastContainer theme="dark" position="bottom-right" />
-              </OnChainProvider>
-            </>
-          )}
-        </SailProvider>
-        </GovernanceProvider>
+          <AccountsProvider>
+            <GovernanceProvider>
+              <SailProvider
+                initialState={{
+                  onSailError
+                }}
+              >
+                {/* {children} */}
+                {showPopup ? (
+                  <SecPopup setShowPopup={setShowPopup} />
+                ) : (
+                  <>
+                    <OnChainProvider>
+                      <Component {...pageProps} />
+                      <ToastContainer theme="dark" position="bottom-right" />
+                    </OnChainProvider>
+                  </>
+                )}
+              </SailProvider>
+            </GovernanceProvider>
+          </AccountsProvider>
+        </WalletKitProvider>
       </QueryClientProvider>
     </ThemeProvider>
   );

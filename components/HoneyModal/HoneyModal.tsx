@@ -7,19 +7,11 @@ import { HONEY_DECIMALS } from 'helpers/sdk/constant';
 import { convertToBN } from 'helpers/utils';
 import { useGovernanceContext } from 'contexts/GovernanceProvider';
 import config from '../../config';
-import { useLocker , useStake} from 'hooks/useVeHoney';
+import { useLocker, useStake } from 'hooks/useVeHoney';
 
 const HoneyModal = () => {
   const [amount, setAmount] = useState<number>(0);
   const [vestingPeriod, setVestingPeriod] = useState<number>(12);
-
-  const {
-    veHoneyAmount,
-    lockedAmount,
-    lockedPeriodEnd,
-    honeyAmount,
-    lockPeriodHasEnded
-  } = useGovernanceContext();
 
   const handleOnChange = (event: any) => {
     setAmount(event.target.value);
@@ -37,9 +29,12 @@ const HoneyModal = () => {
     return 0;
   }, [vestingPeriod]);
 
+  const { lock, unlock, escrow, lockedAmount, votingPower } = useLocker();
 
-  const { lock, unlock } = useLocker();
-  const { escrow } = useGovernanceContext(); 
+  const lockEndsTime = useMemo(() => {
+    if (!escrow) return null;
+    return new Date(escrow.data.escrowEndsAt.toNumber() * 1000);
+  }, [escrow]);
 
   const handleLock = useCallback(async () => {
     if (!amount || !vestingPeriodInSeconds) return;
@@ -74,13 +69,17 @@ const HoneyModal = () => {
               <Text variant="small" color="textSecondary">
                 veHoney (locked)
               </Text>
-              <Text variant="small">{veHoneyAmount}</Text>
+              <Text variant="small">{votingPower?.asNumber ?? '-'}</Text>
             </Stack>
             <Stack direction="horizontal" justify="space-between">
               <Text variant="small" color="textSecondary">
                 Lock period ends
               </Text>
-              <Text variant="small">{lockedPeriodEnd}</Text>
+              <Text variant="small">
+                {lockEndsTime?.toLocaleString(undefined, {
+                  timeZoneName: 'short'
+                }) ?? '-'}
+              </Text>
             </Stack>
             <Stack direction="horizontal" justify="space-between">
               <Text variant="small" color="textSecondary">
@@ -107,7 +106,9 @@ const HoneyModal = () => {
           <Input
             type="number"
             label="Amount"
-            labelSecondary={<Tag>{honeyAmount} pHONEY max</Tag>}
+            labelSecondary={
+              <Tag>{lockedAmount?.asNumber ?? '-'} HONEY max</Tag>
+            }
             max={honeyAmount || ''}
             min={0}
             value={amount || ''}
@@ -125,7 +126,11 @@ const HoneyModal = () => {
           >
             {amount ? 'Deposit' : 'Enter amount'}
           </Button>
-          <Button onClick={unlock} disabled={lockPeriodHasEnded} width="full">
+          <Button
+            onClick={unlock}
+            disabled={!!(lockEndsTime && lockEndsTime < new Date())}
+            width="full"
+          >
             Unlock
           </Button>
         </Stack>

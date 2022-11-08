@@ -245,7 +245,7 @@ export const useGovernanceContext = () => {
   const context = useContext(GovernanceContext);
 
   if (!context) {
-    throw new Error('Govern context provided undefined');
+    throw new Error('Govern context undefined');
   }
 
   return context;
