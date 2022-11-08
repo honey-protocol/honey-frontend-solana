@@ -1,31 +1,33 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import { Box, Button, Input, Stack, Text, Tag } from 'degen';
-import { PublicKey } from '@solana/web3.js';
-import * as anchor from '@project-serum/anchor';
-import * as styles from './VeHoneyModal.css';
+import { BN } from '@project-serum/anchor';
+import { TokenAmount } from '@saberhq/token-utils';
+
 import { useLocker, useStake } from 'hooks/useVeHoney';
-import { PHONEY_DECIMALS } from 'helpers/sdk/constant';
+import { useAccountByMint } from 'hooks/useAccounts';
 import { convertToBN } from 'helpers/utils';
-import { useGovernanceContext } from 'contexts/GovernanceProvider';
-import config from '../../config';
+
+import * as styles from './VeHoneyModal.css';
 
 const VeHoneyModal = () => {
   const [amount, setAmount] = useState<number>(0);
   const [vestingPeriod, setVestingPeriod] = useState<number>(12);
-  const [pHoneyConversionAmount, setPHoneyConversionAmount] =
-    useState<number>(0);
 
-  const {
-    veHoneyAmount,
-    lockedAmount,
-    lockedPeriodEnd,
-    pHoneyAmount,
-    lockPeriodHasEnded
-  } = useGovernance();
+  const { vest, preToken } = useStake();
+  const { unlock, lockedAmount, votingPower, escrow } = useLocker();
+  const pHoneyAccount = useAccountByMint(preToken?.mintAccount);
 
-  const handleOnChange = (event: any) => {
-    setAmount(event.target.value);
-  };
+  const lockEndsTime = useMemo(() => {
+    if (!escrow) return null;
+
+    return new Date(escrow.data.escrowEndsAt.toNumber() * 1000);
+  }, [escrow]);
+
+  const pHoneyAmount = useMemo(() => {
+    if (!pHoneyAccount || !preToken) return null;
+
+    return new TokenAmount(preToken, pHoneyAccount.data.amount);
+  }, [pHoneyAccount, preToken]);
 
   const veHoneyRewardRate = useMemo(() => {
     return vestingPeriod === 3
@@ -49,19 +51,18 @@ const VeHoneyModal = () => {
     return 0;
   }, [vestingPeriod]);
 
-
-  const { lock, unlock } = useLocker();
-
-  const { escrow } = useGovernanceContext();
+  const handleOnChange = (event: any) => {
+    setAmount(event.target.value);
+  };
 
   const handleStake = useCallback(async () => {
-    if (!amount || !vestingPeriodInSeconds) return;
+    if (!amount || !vestingPeriodInSeconds || !preToken) return;
 
-    await lock(
-      convertToBN(amount, PHONEY_DECIMALS),
-      new anchor.BN(vestingPeriodInSeconds),
+    await vest(
+      convertToBN(amount, preToken.decimals),
+      new BN(vestingPeriodInSeconds)
     );
-  }, [lock, escrow, amount, vestingPeriodInSeconds]);
+  }, [vest, amount, vestingPeriodInSeconds, preToken]);
 
   return (
     <Box width="96">
@@ -100,19 +101,23 @@ const VeHoneyModal = () => {
               <Text variant="small" color="textSecondary">
                 $HONEY (locked)
               </Text>
-              <Text variant="small">{lockedAmount}</Text>
+              <Text variant="small">{lockedAmount?.asNumber ?? '-'}</Text>
             </Stack>
             <Stack direction="horizontal" justify="space-between">
               <Text variant="small" color="textSecondary">
                 veHoney (locked)
               </Text>
-              <Text variant="small">{veHoneyAmount}</Text>
+              <Text variant="small">{votingPower?.asNumber ?? '-'}</Text>
             </Stack>
             <Stack direction="horizontal" justify="space-between">
               <Text variant="small" color="textSecondary">
                 Lock period ends
               </Text>
-              <Text variant="small">{lockedPeriodEnd}</Text>
+              <Text variant="small">
+                {lockEndsTime?.toLocaleString(undefined, {
+                  timeZoneName: 'short'
+                }) ?? '-'}
+              </Text>
             </Stack>
             <Stack direction="horizontal" justify="space-between">
               <Text variant="small" color="textSecondary">
@@ -137,11 +142,13 @@ const VeHoneyModal = () => {
           <Input
             type="number"
             label="Amount"
-            labelSecondary={<Tag>{pHoneyAmount} pHONEY max</Tag>}
-            max={pHoneyAmount || ''}
+            labelSecondary={
+              <Tag>{pHoneyAmount?.asNumber ?? '-'} pHONEY max</Tag>
+            }
+            max={pHoneyAmount?.asNumber ?? ''}
             min={0}
             value={amount || ''}
-            disabled={!pHoneyAmount}
+            disabled={!pHoneyAmount?.asNumber}
             hideLabel
             units="pHONEY"
             placeholder="0"
@@ -155,7 +162,11 @@ const VeHoneyModal = () => {
           >
             {amount ? 'Deposit' : 'Enter amount'}
           </Button>
-          <Button onClick={unlock} disabled={lockPeriodHasEnded} width="full">
+          <Button
+            onClick={unlock}
+            disabled={!!lockEndsTime && lockEndsTime > new Date()}
+            width="full"
+          >
             Unlock
           </Button>
         </Stack>
