@@ -396,6 +396,7 @@ export const useLocker = () => {
 
   return {
     escrow,
+    govToken,
     votingPower,
     lockedAmount,
     minActivationThreshold,

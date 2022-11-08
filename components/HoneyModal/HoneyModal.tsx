@@ -1,13 +1,11 @@
 import React, { useCallback, useMemo, useState } from 'react';
 import { Box, Button, Input, Stack, Text, Tag } from 'degen';
-import { PublicKey } from '@solana/web3.js';
-import * as anchor from '@project-serum/anchor';
+import { TokenAmount } from '@saberhq/token-utils';
+
+import { useLocker } from 'hooks/useVeHoney';
+import { useAccountByMint } from 'hooks/useAccounts';
+
 import * as styles from './HoneyModal.css';
-import { HONEY_DECIMALS } from 'helpers/sdk/constant';
-import { convertToBN } from 'helpers/utils';
-import { useGovernanceContext } from 'contexts/GovernanceProvider';
-import config from '../../config';
-import { useLocker, useStake } from 'hooks/useVeHoney';
 
 const HoneyModal = () => {
   const [amount, setAmount] = useState<number>(0);
@@ -29,12 +27,20 @@ const HoneyModal = () => {
     return 0;
   }, [vestingPeriod]);
 
-  const { lock, unlock, escrow, lockedAmount, votingPower } = useLocker();
+  const { lock, unlock, escrow, lockedAmount, votingPower, govToken } =
+    useLocker();
+  const govTokenAccount = useAccountByMint(govToken?.mintAccount);
 
   const lockEndsTime = useMemo(() => {
     if (!escrow) return null;
     return new Date(escrow.data.escrowEndsAt.toNumber() * 1000);
   }, [escrow]);
+
+  const honeyAmount = useMemo(() => {
+    if (!govTokenAccount || !govToken) return null;
+
+    return new TokenAmount(govToken, govTokenAccount.data.amount);
+  }, [govTokenAccount, govToken]);
 
   const handleLock = useCallback(async () => {
     if (!amount || !vestingPeriodInSeconds) return;
@@ -106,13 +112,11 @@ const HoneyModal = () => {
           <Input
             type="number"
             label="Amount"
-            labelSecondary={
-              <Tag>{lockedAmount?.asNumber ?? '-'} HONEY max</Tag>
-            }
-            max={honeyAmount || ''}
+            labelSecondary={<Tag>{honeyAmount?.asNumber ?? '-'} HONEY max</Tag>}
+            max={honeyAmount?.asNumber ?? ''}
             min={0}
             value={amount || ''}
-            disabled={!honeyAmount}
+            disabled={!honeyAmount?.asNumber}
             hideLabel
             units="HONEY"
             placeholder="0"
