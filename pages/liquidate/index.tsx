@@ -65,7 +65,7 @@ import {
   BURRITO_BOYZ_MARKET_NAME,
   renderMarketImageByID
 } from 'helpers/marketHelpers';
-import { marketCollections, liquidationCollections } from 'constants/borrowLendMarkets';
+import { marketCollections } from 'constants/borrowLendMarkets';
 import { populateMarketData } from 'helpers/loanHelpers/userCollection';
 import { setMarketId } from 'pages/_app';
 import { MarketTableRow } from 'types/markets';

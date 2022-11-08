@@ -22,6 +22,7 @@ export type MarketTableRow = {
   openPositions?: any;
   liqThreshold?: any;
   untilLiquidation?: number;
+  verifiedCreator: string;
 };
 
 export type MarketTablePosition = {
