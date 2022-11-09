@@ -10,7 +10,7 @@ import {
   BORROW_RATE_ONE,
   BORROW_RATE_TWO,
   BORROW_RATE_THREE
-} from '../../constants/interestRate'
+} from '../../constants/interestRate';
 
 /**
  * @description calculates the total user debt, ltv and allowance over all collections
@@ -54,8 +54,6 @@ export async function calculateCollectionwideAllowance(
   let sumOfLtv = RoundHalfDown(ltv);
   let sumOfTotalDebt = RoundHalfUp(totalDebt);
 
-
-
   return {
     sumOfAllowance,
     sumOfLtv,
@@ -75,12 +73,16 @@ export async function calcNFT(
 ) {
   if (marketReserveInfo && parsedReserves && honeyMarket) {
     let solPrice = await getOraclePrice(
-      'mainnet-beta',
+      // uncomment for devnet
+      'devnet',
+      // 'mainnet-beta',
       connection,
       parsedReserves[0].switchboardPriceAggregator
     ); //in sol
     let nftPrice = await getOraclePrice(
-      'mainnet-beta',
+      // uncomment for devnet
+      'devnet',
+      // 'mainnet-beta',
       connection,
       honeyMarket.nftSwitchboardPriceAggregator
     ); //in usd
@@ -94,23 +96,20 @@ export async function calcNFT(
  * @params marketreserve | parsedreserve | honeymarket | connection
  * @returns the current sol price
  */
- export async function fetchSolPrice(
-  parsedReserves: any,
-  connection: any
-) {
+export async function fetchSolPrice(parsedReserves: any, connection: any) {
   if (parsedReserves && connection) {
     try {
       let solPrice = await getOraclePrice(
         // when in devnet uncomment the below
-        // 'devnet',
-        'mainnet-beta',
+        'devnet',
+        // 'mainnet-beta',
         connection,
         parsedReserves[0].switchboardPriceAggregator
       );
-      console.log(`Solprice: ${solPrice}`)
-      return solPrice; 
+      console.log(`Solprice: ${solPrice}`);
+      return solPrice;
     } catch (error) {
-      return `An error occurred: ${error}`
+      return `An error occurred: ${error}`;
     }
   }
 }
@@ -120,21 +119,32 @@ export async function getInterestRate(utilizationRate: number) {
 
   try {
     if (utilizationRate < OPTIMAL_RATIO_ONE) {
-      interestRate = BASE_BORROW_RATE + (utilizationRate / OPTIMAL_RATIO_ONE) * (BORROW_RATE_ONE - BASE_BORROW_RATE);
-      console.log('@@-- interest rate 1', interestRate * 100)
-      return (interestRate * 100);
+      interestRate =
+        BASE_BORROW_RATE +
+        (utilizationRate / OPTIMAL_RATIO_ONE) *
+          (BORROW_RATE_ONE - BASE_BORROW_RATE);
+      console.log('@@-- interest rate 1', interestRate * 100);
+      return interestRate * 100;
     } else if (utilizationRate > OPTIMAL_RATIO_ONE) {
-        if (utilizationRate < OPTIMAL_RATIO_TWO) {
-          interestRate = BASE_BORROW_RATE + BORROW_RATE_ONE + ((utilizationRate - OPTIMAL_RATIO_ONE) / (1 - OPTIMAL_RATIO_ONE)) * (BORROW_RATE_TWO - BASE_BORROW_RATE);
-          console.log('@@-- interest rate 2', (interestRate * 100))
-          return (interestRate * 100);
-        } else {
-          interestRate = BASE_BORROW_RATE + BORROW_RATE_TWO + ((utilizationRate - OPTIMAL_RATIO_TWO) / (1 - OPTIMAL_RATIO_TWO)) * (BORROW_RATE_THREE - BASE_BORROW_RATE);
-          console.log('@@-- interest rate 3', (interestRate * 100))
-          return (interestRate * 100);
+      if (utilizationRate < OPTIMAL_RATIO_TWO) {
+        interestRate =
+          BASE_BORROW_RATE +
+          BORROW_RATE_ONE +
+          ((utilizationRate - OPTIMAL_RATIO_ONE) / (1 - OPTIMAL_RATIO_ONE)) *
+            (BORROW_RATE_TWO - BASE_BORROW_RATE);
+        console.log('@@-- interest rate 2', interestRate * 100);
+        return interestRate * 100;
+      } else {
+        interestRate =
+          BASE_BORROW_RATE +
+          BORROW_RATE_TWO +
+          ((utilizationRate - OPTIMAL_RATIO_TWO) / (1 - OPTIMAL_RATIO_TWO)) *
+            (BORROW_RATE_THREE - BASE_BORROW_RATE);
+        console.log('@@-- interest rate 3', interestRate * 100);
+        return interestRate * 100;
       }
-    } 
+    }
   } catch (error) {
-    console.log('Error:', error)
+    console.log('Error:', error);
   }
 }

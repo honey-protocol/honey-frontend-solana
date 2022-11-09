@@ -2,7 +2,6 @@ import { FC, useState } from 'react';
 import * as styles from './CreateMarketTab.css';
 import HoneyButton from 'components/HoneyButton/HoneyButton';
 import SidebarScroll from '../../SidebarScroll/SidebarScroll';
-import LiquidationMarketsStep from '../../LiquidationMarketsStep/LiquidationMarketsStep';
 import { AddOracleStep } from '../AddOracleStep/AddOracleStep';
 import { HoneySteps } from '../../HoneySteps/HoneySteps';
 import { MarketStepsProps } from '../../HoneySteps/type';
@@ -10,10 +9,11 @@ import TabTitle from '../../HoneyTabs/TabTitle/TabTitle';
 import { AboutMarketStep } from '../AboutMarketStep/AboutMarketStep';
 import { SettingMarketStep } from '../SettingMarketStep/SettingMarketStep';
 import { RiskModelStep } from '../RiskModelStep/RiskModelStep';
-import { PublicKey } from '@solana/web3.js';
+import { Keypair, PublicKey } from '@solana/web3.js';
 import { HoneyMarket } from '@honey-finance/sdk';
 import { buildReserveConfig } from './reserveConfigs';
 import MarketDetailsStep from '../MarketDetailsStep/MarketDetailsStep';
+import { HONEY_PROGRAM_ID } from 'constants/loan';
 
 interface CreateMarketTabProps {
   wallet: any;
@@ -34,8 +34,12 @@ const CreateMarketTab: FC<CreateMarketTabProps> = (
     const owner = wallet?.publicKey!;
     const quoteCurrencyName = 'USDC';
     const quoteCurrencyMint = new PublicKey(
-      'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v'
+      '4zMMC9srt5Ri5X14GAgXhaHii3GnPAEERYPJgZJDncDU'
     );
+
+    // const marketKp: Keypair = Keypair.generate();
+    // const marketPk = marketKp.publicKey;
+
     // might want to consider adding some kinda validation here that
     // the verified creator actually points to the same nft
     const market = await honeyClient.createMarket({
@@ -49,11 +53,8 @@ const CreateMarketTab: FC<CreateMarketTabProps> = (
     // between this step and another they will need to know what market id to use to fix it
     // + we might need to find a way to associate markets with PKs
     // or at least cache market ids in local storage
-    setCreatedMarket(market);
-    console.log(market.address.toBase58());
-
-    // initialize the reserve
-    await initMarketReserve();
+    setCreatedMarket(await HoneyMarket.load(honeyClient, market.address));
+    console.log('Market Public Key: ', market.address.toString());
   };
 
   const initMarketReserve = async () => {
@@ -76,6 +77,11 @@ const CreateMarketTab: FC<CreateMarketTabProps> = (
     });
   };
 
+  const copyToClipboard = () => {
+    const data = `VERIFIED_CREATOR = ${nftCollectionCreator}\nNFT_ORACLE = ${nftOracle}\nMARKET_ID = ${createdMarket?.address.toString()}\n`;
+    navigator.clipboard.writeText(data);
+  };
+
   const next = () => {
     setCurrentStep(currentStep + 1);
   };
@@ -91,10 +97,6 @@ const CreateMarketTab: FC<CreateMarketTabProps> = (
         <AboutMarketStep setNftCollectionCreator={setNftCollectionCreator} />
       )
     },
-    // {
-    //   step: 2,
-    //   content: <LiquidationMarketsStep />
-    // },
     {
       step: 2,
       content: <AddOracleStep setOracle={setNftOracle} />
@@ -110,7 +112,12 @@ const CreateMarketTab: FC<CreateMarketTabProps> = (
     {
       step: 5,
       content: (
-        <MarketDetailsStep createdMarket={createdMarket}></MarketDetailsStep>
+        <MarketDetailsStep
+          createMarket={createMarket}
+          createdMarket={createdMarket}
+          initMarketReserve={initMarketReserve}
+          copyToClipboard={copyToClipboard}
+        ></MarketDetailsStep>
       )
     }
   ];
@@ -129,18 +136,9 @@ const CreateMarketTab: FC<CreateMarketTabProps> = (
             </HoneyButton>
           </div>
           <div className={styles.bigCol}>
-            {currentStep < steps.length - 2 && (
+            {currentStep < steps.length - 1 && (
               <HoneyButton variant="primary" block onClick={() => next()}>
                 Next step
-              </HoneyButton>
-            )}
-            {currentStep === steps.length - 2 && (
-              <HoneyButton
-                variant="primary"
-                block
-                onClick={() => createMarket()}
-              >
-                Create market
               </HoneyButton>
             )}
           </div>
