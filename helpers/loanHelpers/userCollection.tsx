@@ -1,5 +1,5 @@
 import { RoundHalfDown, RoundHalfUp } from 'helpers/utils';
-import { HONEY_GENESIS_MARKET_ID, HONEY_PROGRAM_ID, MAX_LTV, PESKY_PENGUINS_MARKET_ID } from '../../constants/loan';
+import { BURRITO_BOYZ_MARKET_ID, HONEY_GENESIS_MARKET_ID, HONEY_PROGRAM_ID, LIFINITY_FLARES_MARKET_ID, MAX_LTV, OG_ATADIANS_MARKET_ID, PESKY_PENGUINS_MARKET_ID } from '../../constants/loan';
 import BN from 'bn.js';
 import { BnToDecimal, getOraclePrice } from '../../helpers/loanHelpers/index';
 import {
@@ -20,8 +20,17 @@ import { formatNumber } from '../../helpers/format';
 import { generateMockHistoryData } from 'helpers/chartUtils';
 import { MarketTableRow } from 'types/markets';
 import { LIQUIDATION_THRESHOLD } from '../../constants/loan';
-import { renderMarket, renderMarketName } from 'helpers/marketHelpers';
 import NodeWallet from '@project-serum/anchor/dist/cjs/nodewallet';
+import { 
+  renderMarket, 
+  renderMarketName, 
+  HONEY_GENESIS_BEE_MARKET_NAME,
+  LIFINITY_FLARES_MARKET_NAME,
+  OG_ATADIANS_MARKET_NAME,
+  PESKY_PENGUINS_MARKET_NAME,
+  BURRITO_BOYZ_MARKET_NAME,
+  renderMarketImageByID 
+} from 'helpers/marketHelpers';
 
 /**
  * @description formatting functions to format with perfect / format in SOL with icon or just a regular 2 decimal format
@@ -254,7 +263,7 @@ const getPositionData = () => {
 
 const setObligations = async (obligations: any, currentMarketId: string, nftPrice: number) => {
   if (!obligations) return [];
-  console.log('this is obl.', obligations);
+
   return obligations.map((obligation: any) => {
     return {
       name: renderMarketName(currentMarketId),
@@ -271,40 +280,79 @@ const setObligations = async (obligations: any, currentMarketId: string, nftPric
 }
 
 const calculateRisk = async (obligations: any, nftPrice: number, type: boolean, currentMarketId: string, collectionName: string) => {
-  console.log('zita::', obligations, collectionName)
   if (!obligations) return 0;
-  if (currentMarketId == HONEY_GENESIS_MARKET_ID && collectionName == 'Honey Genesis Bee') {
+
+  if (currentMarketId === HONEY_GENESIS_MARKET_ID && collectionName === HONEY_GENESIS_BEE_MARKET_NAME) {
     let sumOfDebt = await obligations.reduce((acc: number, obligation: any) => {
       return acc + obligation.debt;
     }, 0);
   
-    if (type == true) {
+    if (type === true) {
       return sumOfDebt;
     } else {
       return (sumOfDebt / obligations.length / nftPrice)
     }
-  } else if (currentMarketId == PESKY_PENGUINS_MARKET_ID && collectionName == 'Pesky Penguin') {
+  } else if (currentMarketId === PESKY_PENGUINS_MARKET_ID && collectionName === PESKY_PENGUINS_MARKET_NAME) {
      let sumOfDebt = await obligations.reduce((acc: number, obligation: any) => {
        return acc + obligation.debt;
      }, 0);
   
-      if (type == true) {
+      if (type === true) {
        return sumOfDebt;
       } else {
        return (sumOfDebt / obligations.length / nftPrice)
       }
-   } else {
+   } else if (currentMarketId === OG_ATADIANS_MARKET_ID && collectionName === OG_ATADIANS_MARKET_NAME) {
+    let sumOfDebt = await obligations.reduce((acc: number, obligation: any) => {
+      return acc + obligation.debt;
+    }, 0);
+ 
+     if (type === true) {
+      return sumOfDebt;
+     } else {
+      return (sumOfDebt / obligations.length / nftPrice)
+     }
+  } else if (currentMarketId === LIFINITY_FLARES_MARKET_ID && collectionName === LIFINITY_FLARES_MARKET_NAME) {
+    let sumOfDebt = await obligations.reduce((acc: number, obligation: any) => {
+      return acc + obligation.debt;
+    }, 0);
+ 
+     if (type === true) {
+      return sumOfDebt;
+     } else {
+      return (sumOfDebt / obligations.length / nftPrice)
+     }
+  } else if (currentMarketId === BURRITO_BOYZ_MARKET_ID && collectionName === BURRITO_BOYZ_MARKET_NAME) {
+    let sumOfDebt = await obligations.reduce((acc: number, obligation: any) => {
+      return acc + obligation.debt;
+    }, 0);
+ 
+     if (type === true) {
+      return sumOfDebt;
+     } else {
+      return (sumOfDebt / obligations.length / nftPrice)
+     }
+  } else {
     return 0;
   }
 }
 
 const calculateTVL = async (obligations: any, nftPrice: number, currentMarketId: string, collectionName: string) => {
   if (!obligations) return 0;
-  
-  if (currentMarketId == HONEY_GENESIS_MARKET_ID && collectionName == 'Honey Genesis Bee') {
+
+  if (currentMarketId === HONEY_GENESIS_MARKET_ID && collectionName === HONEY_GENESIS_BEE_MARKET_NAME) {
     const filterNullState = await obligations.filter((obligation: any) => Boolean(obligation.debt))
     return nftPrice * filterNullState.length;
-  } else if (currentMarketId == PESKY_PENGUINS_MARKET_ID && collectionName == 'Pesky Penguin') {
+  } else if (currentMarketId === PESKY_PENGUINS_MARKET_ID && collectionName === PESKY_PENGUINS_MARKET_NAME) {
+    const filterNullState = await obligations.filter((obligation: any) => Boolean(obligation.debt));
+    return nftPrice * filterNullState.length;
+  } else if (currentMarketId === OG_ATADIANS_MARKET_ID && collectionName === OG_ATADIANS_MARKET_NAME) {
+    const filterNullState = await obligations.filter((obligation: any) => Boolean(obligation.debt));
+    return nftPrice * filterNullState.length;
+  } else if (currentMarketId === BURRITO_BOYZ_MARKET_ID && collectionName === BURRITO_BOYZ_MARKET_NAME) {
+    const filterNullState = await obligations.filter((obligation: any) => Boolean(obligation.debt));
+    return nftPrice * filterNullState.length;
+  } else if (currentMarketId === LIFINITY_FLARES_MARKET_ID && collectionName === LIFINITY_FLARES_MARKET_NAME) {
     const filterNullState = await obligations.filter((obligation: any) => Boolean(obligation.debt));
     return nftPrice * filterNullState.length;
   }
@@ -356,7 +404,8 @@ export async function populateMarketData(collection: MarketTableRow, connection:
       collection.utilizationRate = Number(f((totalMarketDebt) / (totalMarketDeposits + totalMarketDebt)));
       collection.user = honeyUser;
       collection.risk = obligations ? await calculateRisk(obligations.obligations, obligations.nftPrice, false, currentMarketId, collection.name) : 0;
-      collection.totalDebt = obligations ? await calculateRisk(obligations.obligations, obligations.nftPrice, true, currentMarketId, collection.name) : 0;
+      // collection.totalDebt = obligations ? await calculateRisk(obligations.obligations, obligations.nftPrice, true, currentMarketId, collection.name) : 0;
+      collection.totalDebt = sumOfTotalValue - totalMarketDeposits;
       collection.openPositions = obligations ? await setObligations(obligations.obligations, currentMarketId, obligations.nftPrice) : [];
       collection.tvl = obligations ? await calculateTVL(obligations.obligations, obligations.nftPrice, currentMarketId, collection.name) : 0;
 
@@ -374,7 +423,7 @@ export async function populateMarketData(collection: MarketTableRow, connection:
       collection.user = honeyUser;
       collection.name;
     }
-    console.log('inside::', collection)
+
     return collection;
   }
 }
