@@ -248,8 +248,8 @@ const Liquidate: NextPage = () => {
           if (!currentUserBid) return;
 
           toast.processing();
+          
           let transactionOutcome: any = await liquidatorClient.revokeBid({
-            // TODO: pass market id for each call
             market: new PublicKey(mrktID),
             bidder: wallet.publicKey,
             bid_mint: NATIVE_MINT,
@@ -258,6 +258,7 @@ const Liquidate: NextPage = () => {
 
           if (transactionOutcome[0] == 'SUCCESS') {
             setCurrentUserBid(0);
+
             return toast.success('Bid revoked, fetching chain data');
           } else {
             return toast.error('Revoke bid failed');
@@ -267,16 +268,15 @@ const Liquidate: NextPage = () => {
           if (!userBid) return;
 
           userBid = Number(userBid.toFixed(2));
-
           toast.processing();
+
           let transactionOutcome: any = await liquidatorClient.placeBid({
             bid_limit: userBid,
-            // TODO: pass market id for each call
             market: new PublicKey(mrktID),
             bidder: wallet.publicKey,
             bid_mint: NATIVE_MINT
           });
-          // refreshDB();
+
           if (transactionOutcome[0] == 'SUCCESS') {
             return toast.success('Bid placed, fetching chain data');
           } else {
@@ -289,7 +289,6 @@ const Liquidate: NextPage = () => {
           toast.processing();
           let transactionOutcome: any = await liquidatorClient.increaseBid({
             bid_increase: userBid,
-            // TODO: pass market id for each call
             market: new PublicKey(mrktID),
             bidder: wallet.publicKey,
             bid_mint: NATIVE_MINT
@@ -305,7 +304,6 @@ const Liquidate: NextPage = () => {
         return;
       }
     } catch (error) {
-      console.log('The error:', error);
       return toast.error('Bid failed');
     }
   }
@@ -334,7 +332,6 @@ const Liquidate: NextPage = () => {
 
   useEffect(() => {
       if (status.positions) {
-        console.log('zeta::', status.positions)
         setPositionsObject(status.positions);
       } else {
         setPositionsObject([])
@@ -349,10 +346,6 @@ const Liquidate: NextPage = () => {
       }
 
   }, [status.positions, status.bids]);
-
-  // useEffect(() => {
-  //   if (status.bids) handleBiddingState(status.bids);
-  // }, [currentMarketId, status])
 
   const [tableData, setTableData] = useState<MarketTableRow[]>([]);
   const [tableDataFiltered, setTableDataFiltered] = useState<
@@ -556,7 +549,7 @@ const Liquidate: NextPage = () => {
         dataIndex: 'totalDebt',
         sorter: (a, b) => a.totalDebt! - b.totalDebt!,
         render: (available: number, market) => {
-          return <div className={style.availableCell}>{fs(market.available)}</div>;
+          return <div className={style.availableCell}>{fs(market.totalDebt)}</div>;
         }
       },
       {
@@ -580,7 +573,6 @@ const Liquidate: NextPage = () => {
         dataIndex: 'tvl',
         sorter: (a, b) => a.tvl! - b.tvl!,
         render: (value: number, market: any) => {
-          console.log('beta::', value);
           return <div className={style.valueCell}>{fs(market.value)}</div>;
         }
       },
@@ -646,7 +638,7 @@ const Liquidate: NextPage = () => {
               <HoneyTableRow>
                 {/* <div className={style.rateCell}>{fp(row.risk * 100)}</div> */}
                 <div className={style.rateCell}>{}</div>
-                <div className={style.rateCell}>{fs(row.available)}</div>
+                <div className={style.rateCell}>{fs(row.totalDebt)}</div>
                 <div className={style.availableCell}>{fs(row.value)}</div>
               </HoneyTableRow>
             </>
