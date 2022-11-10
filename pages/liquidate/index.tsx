@@ -573,7 +573,7 @@ const Liquidate: NextPage = () => {
         dataIndex: 'tvl',
         sorter: (a, b) => a.tvl! - b.tvl!,
         render: (value: number, market: any) => {
-          return <div className={style.valueCell}>{fs(market.value)}</div>;
+          return <div className={style.valueCell}>{fs(market.tvl)}</div>;
         }
       },
       {

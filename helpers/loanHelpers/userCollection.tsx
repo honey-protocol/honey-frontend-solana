@@ -276,8 +276,9 @@ const setObligations = async (obligations: any, currentMarketId: string, nftPric
       obligation: obligation.obligation,
       highestBid: obligation.highest_bid
     }
-  })
+  }).filter((obl: any) => obl.debt !== 0);
 }
+
 
 const calculateRisk = async (obligations: any, nftPrice: number, type: boolean, currentMarketId: string, collectionName: string) => {
   if (!obligations) return 0;
@@ -423,7 +424,7 @@ export async function populateMarketData(collection: MarketTableRow, connection:
       // collection.totalDebt = obligations ? await calculateRisk(obligations.obligations, obligations.nftPrice, true, currentMarketId, collection.name) : 0;
       collection.totalDebt = sumOfTotalValue - totalMarketDeposits;
       collection.openPositions = obligations ? await setObligations(obligations.obligations, currentMarketId, obligations.nftPrice) : [];
-      collection.tvl = obligations ? await calculateTVL(obligations.obligations, obligations.nftPrice, currentMarketId, collection.name) : 0;
+      collection.tvl = obligations ? await calculateTVL(collection.openPositions, obligations.nftPrice, currentMarketId, collection.name) : 0;
 
       if (collection.openPositions) {
         collection.openPositions.map((openPos: any) => {
