@@ -703,6 +703,10 @@ const Lend: NextPage = () => {
                 onClick: event => handleMarketId(record)
               };
             }}
+            selectedRowsKeys={[
+              tableDataFiltered.find(data => data.id === currentMarketId)
+                ?.key || ''
+            ]}
 
             // TODO: uncomment when the chart has been replaced and implemented
             // expandable={{
