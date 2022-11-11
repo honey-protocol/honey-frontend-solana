@@ -8,11 +8,13 @@ import TabTitle from '../../HoneyTabs/TabTitle/TabTitle';
 import { PublicKey } from '@solana/web3.js';
 
 interface AboutMarketStepProps {
+  setCollectionName: any;
+  setCollectionUrl: any;
   setNftCollectionCreator: any;
 }
 export const AboutMarketStep = (props: AboutMarketStepProps) => {
-  const { setNftCollectionCreator } = props;
-  const [collectionUrl, setCollectionUrl] = useState<string>('');
+  const { setNftCollectionCreator, setCollectionUrl, setCollectionName } =
+    props;
 
   const mockCollectionData = {
     title: 'Mock collection title',
@@ -27,25 +29,25 @@ export const AboutMarketStep = (props: AboutMarketStepProps) => {
     } catch (e) {}
   };
 
-  const renderFoundCollectionInfo = () => {
-    if (collectionUrl.length) {
-      return (
-        <div className={styles.foundCollectionInfo}>
-          <div className={styles.collectionLogo}>
-            {mockCollectionData.image}
-          </div>
-          <div className={styles.collectionInfoContainer}>
-            <div className={styles.collectionTitle}>
-              {mockCollectionData.title}
-            </div>
-            <div className={styles.collectionDescription}>
-              {mockCollectionData.description}
-            </div>
-          </div>
-        </div>
-      );
-    }
-  };
+  // const renderFoundCollectionInfo = () => {
+  //   if (collectionUrl.length) {
+  //     return (
+  //       <div className={styles.foundCollectionInfo}>
+  //         <div className={styles.collectionLogo}>
+  //           {mockCollectionData.image}
+  //         </div>
+  //         <div className={styles.collectionInfoContainer}>
+  //           <div className={styles.collectionTitle}>
+  //             {mockCollectionData.title}
+  //           </div>
+  //           <div className={styles.collectionDescription}>
+  //             {mockCollectionData.description}
+  //           </div>
+  //         </div>
+  //       </div>
+  //     );
+  //   }
+  // };
 
   return (
     <div className={styles.aboutMarketStep}>
@@ -59,11 +61,23 @@ export const AboutMarketStep = (props: AboutMarketStepProps) => {
           />
         </div>
         <HoneyInputWithLabel
+          placeholder="NFT collection name"
+          onChange={e => setCollectionName(e.target.value)}
+          label="Collection Name"
+        />
+        <div className={styles.spacer}></div>
+        <HoneyInputWithLabel
+          placeholder="https://magiceden.io/marketplace/y00ts"
+          onChange={e => setCollectionUrl(e.target.value)}
+          label="Collection on Magic Eden"
+        />
+        <div className={styles.spacer}></div>
+        <HoneyInputWithLabel
           placeholder="Collection's Verified Creator"
           onChange={e => onChange(e.target.value)}
           label="Verified Creator"
         />
-        {renderFoundCollectionInfo()}
+        {/* {renderFoundCollectionInfo()} */}
       </div>
     </div>
   );

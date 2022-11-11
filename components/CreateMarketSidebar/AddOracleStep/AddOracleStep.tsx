@@ -4,6 +4,7 @@ import TabTitle from '../../HoneyTabs/TabTitle/TabTitle';
 import { HoneyInputWithLabel } from '../../HoneyInputWithLabel/HoneyInputWithLabel';
 import * as styles from './AddOracleStep.css';
 import { PublicKey } from '@solana/web3.js';
+import HoneyButton from 'components/HoneyButton/HoneyButton';
 
 interface AddOracleStepProps {
   setOracle: any;
@@ -11,7 +12,6 @@ interface AddOracleStepProps {
 
 export const AddOracleStep = (props: AddOracleStepProps) => {
   const { setOracle } = props;
-  const [value, setValue] = useState<string>('');
 
   const onChange = (value: string) => {
     try {
@@ -19,6 +19,22 @@ export const AddOracleStep = (props: AddOracleStepProps) => {
       setOracle(pk);
       console.log('working');
     } catch (e) {}
+  };
+
+  const openSwitchboardApp = () => {
+    window.open(
+      'https://app.switchboard.xyz/',
+      '_blank',
+      'noopener,noreferrer'
+    );
+  };
+
+  const openDocs = () => {
+    window.open(
+      'https://docs.switchboard.xyz/about',
+      '_blank',
+      'noopener,noreferrer'
+    );
   };
 
   return (
@@ -30,9 +46,22 @@ export const AddOracleStep = (props: AddOracleStepProps) => {
         />
       </div>
 
+      <span>Create the Switchboard oracle for your NFT collection </span>
+      <div className={styles.spacer}></div>
+
+      <HoneyButton block variant="primary" onClick={() => openSwitchboardApp()}>
+        Open Switchboard app
+      </HoneyButton>
+      <div className={styles.spacer}></div>
+
+      <HoneyButton block variant="primary" onClick={() => openDocs()}>
+        Open Switchboard Docs
+      </HoneyButton>
+      <div className={styles.spacer}></div>
+
       <HoneyInputWithLabel
-        label="Oracle"
-        placeholder="Oracle"
+        label="Switchboard oracle"
+        placeholder="Switchboard oracle public key"
         onChange={e => onChange(e.target.value)}
         allowClear
       />

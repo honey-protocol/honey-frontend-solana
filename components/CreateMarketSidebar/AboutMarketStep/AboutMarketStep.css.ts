@@ -64,3 +64,7 @@ export const collectionDescription = style({
   height: 14,
   fontWeight: 500
 });
+
+export const spacer = style({
+  padding: '10px 0'
+});

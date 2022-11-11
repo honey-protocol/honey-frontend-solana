@@ -19,28 +19,38 @@ const MarketDetailsStep = (props: MarketDetailsProps) => {
   };
   return (
     <>
-      <HoneyButton variant="primary" onClick={() => createMarket()}>
+      <HoneyButton block variant="primary" onClick={() => createMarket()}>
         Create market
       </HoneyButton>
+      <div className={styles.spacer}></div>
+
       <div className={styles.newMarketPublicKey}>
-        <span className={styles.marketAddress}>Market Address: </span>
+        <span className={styles.marketAddress}>
+          <b>Market Address: </b>
+        </span>
         <span className={styles.publicKeyOverflow}>
           {createdMarket && createdMarket.address.toString()}
         </span>
       </div>
-      <HoneyButton variant="primary" onClick={() => initMarketReserve()}>
+      <div className={styles.spacer}></div>
+
+      <HoneyButton block variant="primary" onClick={() => initMarketReserve()}>
         Create reserve
       </HoneyButton>
+      <div className={styles.spacer}></div>
 
       <div>
-        Register your market with the official Honey Labs Github Repository
+        Register your market with the official Honey Labs Github repository
       </div>
-      <HoneyButton variant="secondary" onClick={() => copyToClipboard()}>
-        Copy
-      </HoneyButton>
-      <HoneyButton variant="primary" onClick={() => openGithubInNewTab()}>
-        Open Github Pull Request
-      </HoneyButton>
+
+      <div className={styles.githubCopyRow}>
+        <HoneyButton variant="primary" onClick={() => openGithubInNewTab()}>
+          Open Github Pull Request
+        </HoneyButton>
+        <HoneyButton variant="secondary" onClick={() => copyToClipboard()}>
+          Copy
+        </HoneyButton>
+      </div>
     </>
   );
 };

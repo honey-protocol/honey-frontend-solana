@@ -25,6 +25,8 @@ const CreateMarketTab: FC<CreateMarketTabProps> = (
   const { wallet, honeyClient } = props;
   const [currentStep, setCurrentStep] = useState<number>(0);
   const [createdMarket, setCreatedMarket] = useState<HoneyMarket | null>();
+  const [collectionName, setCollectionName] = useState<string>('');
+  const [collectionUrl, setCollectionUrl] = useState<string>('');
   const [nftCollectionCreator, setNftCollectionCreator] = useState();
   const [nftOracle, setNftOracle] = useState<PublicKey>();
   const [marketConfigOpts, setMarketConfigOpts] = useState<any>({});
@@ -78,7 +80,7 @@ const CreateMarketTab: FC<CreateMarketTabProps> = (
   };
 
   const copyToClipboard = () => {
-    const data = `VERIFIED_CREATOR = ${nftCollectionCreator}\nNFT_ORACLE = ${nftOracle}\nMARKET_ID = ${createdMarket?.address.toString()}\n`;
+    const data = `COLLECTION_NAME=${collectionName}\nCOLLECTION_URL=${collectionUrl}\nVERIFIED_CREATOR=${nftCollectionCreator}\nNFT_ORACLE=${nftOracle}\nMARKET_ID=${createdMarket?.address.toString()}`;
     navigator.clipboard.writeText(data);
   };
 
@@ -94,7 +96,11 @@ const CreateMarketTab: FC<CreateMarketTabProps> = (
     {
       step: 1,
       content: (
-        <AboutMarketStep setNftCollectionCreator={setNftCollectionCreator} />
+        <AboutMarketStep
+          setNftCollectionCreator={setNftCollectionCreator}
+          setCollectionName={setCollectionName}
+          setCollectionUrl={setCollectionUrl}
+        />
       )
     },
     {

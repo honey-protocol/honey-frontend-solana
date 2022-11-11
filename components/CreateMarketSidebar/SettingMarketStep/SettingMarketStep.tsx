@@ -147,7 +147,7 @@ export const SettingMarketStep = (props: SettingMarketStepProps) => {
               : { color: vars.colors.black }
           }
         >
-          Up to 100 %
+          Up to 10 %
         </div>
       </div>
       <div className={styles.adminFee}>

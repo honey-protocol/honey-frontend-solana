@@ -1,7 +1,10 @@
 export const HONEY_PROGRAM_ID = 'F1PypuidC78bosb7cHfU2ERZSd1RWLdbsq82nR9Tdgkh';
 export const HONEY_MARKET_ID = '5W8daSFdTEcAGiDyjHUi81QiNXLvkYbucaGBt9uiYxTN';
+
+// mainnet-beta
 // export const HONEY_PROGRAM_ID = 'hNEYyRsRBVq2La65V1KjvdbTE39w36gwrdjkmcpvysk';
 // export const HONEY_MARKET_ID = '6FcJaAzQnuoA6o3sVw1GD6Ba69XuL5jinZpQTzJhd2R3';
+
 export const OPEN_POSITIONS = 'Open positions';
 export const NEW_POSITIONS = 'New position';
 export const TYPE_OPEN = 'open';
