@@ -16,7 +16,7 @@ import {
   InfoBlockData,
   SwapInfoBlock
 } from '../../components/SwapInfoBlock/SwapInfoBlock';
-import { TOKEN_LIST_URL, useJupiter } from '@jup-ag/react-hook';
+import { SwapMode, TOKEN_LIST_URL, useJupiter } from '@jup-ag/react-hook';
 import { TokenInfo } from '@saberhq/token-utils';
 import { SwapFooter } from '../../components/SwapFooter/SwapFooter';
 import { HoneySearchTokenModal } from '../../components/HoneySearchTokenModal/HoneySearchTokenModal';
@@ -47,7 +47,7 @@ const Swap: NextPage = () => {
   const [haveTokensDetailsLoaded, setHaveTokensDetailsLoaded] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
-  const [swapAmount, setSwapAmount] = useState(0);
+  const [swapAmount, setSwapAmount] = useState(1);
   const [estimatedOutAmount, setEstimatedOutAmount] = useState(0);
   const [isInputTokenModalVisible, setIsInputTokenModalVisible] =
     useState(false);
@@ -68,7 +68,7 @@ const Swap: NextPage = () => {
     useState(false);
 
   const [slippage, setSlippage] = useState(DEFAULT_SLIPPAGE);
-  const [debounceTime] = useState(1000);
+  const [debounceTime] = useState(500);
 
   const jupiter = useJupiter({
     amount: JSBI.BigInt(
@@ -343,8 +343,13 @@ const Swap: NextPage = () => {
   };
 
   const handleOutputInput = (value: ValueType) => {
+    if (!value) {
+      setSwapAmount(0);
+      return;
+    }
     const reverseRate = exchangeRate ? 1 / exchangeRate : 0;
     const valueD = new Decimal(value);
+    setEstimatedOutAmount(valueD.toNumber());
     setSwapAmount(valueD.mul(reverseRate).floor().toNumber());
   };
 
