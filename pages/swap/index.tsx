@@ -116,21 +116,21 @@ const Swap: NextPage = () => {
     }
 
     const depositAndFee = await bestRoute.getDepositAndFee();
-    console.log('depositAndFee', depositAndFee);
   }, [bestRoute]);
 
   const swapStats: InfoBlockData[] = useMemo(() => {
     const outDecimals = outputToken?.decimals || 1;
     const priceImpact = bestRoute ? bestRoute.priceImpactPct * 100 : 0;
-    console.log('bestRoute', bestRoute);
     const minReceived = bestRoute
       ? lamportsToNumber(bestRoute.otherAmountThreshold.toString(), outDecimals)
       : 0;
     const transactionFee = 0;
 
-    console.log('exchangeRate', exchangeRate);
     const exchangeRateFormatted = ftad(exchangeRate || 0, outDecimals);
-    console.log('exchangeRateFormatted', exchangeRateFormatted);
+    const reverseExchangeRateFormatted = ftad(
+      exchangeRate ? 1 / exchangeRate : 0,
+      outDecimals
+    );
 
     return [
       {
@@ -143,6 +143,10 @@ const Swap: NextPage = () => {
             className={styles.reloadIcon}
           />
         )
+      },
+      {
+        title: '',
+        value: `1 ${outputToken?.symbol} =  ${reverseExchangeRateFormatted} ${inputToken?.symbol}`
       },
       {
         title: 'Price Impact',
@@ -290,6 +294,7 @@ const Swap: NextPage = () => {
     const newOutputMint = inputMint;
     setInputMint(newInputMint);
     setOutputMint(newOutputMint);
+    setSwapAmount(estimatedOutAmount);
   };
 
   const tokenInputFormatter = (
@@ -403,6 +408,7 @@ const Swap: NextPage = () => {
                 <div className={styles.tokenInputWrapper}>
                   <HoneyFormattedNumericInput
                     decimalSeparator="."
+                    disabled={isLoading}
                     formatter={value =>
                       tokenInputFormatter(value, outputToken?.decimals)
                     }
