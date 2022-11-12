@@ -27,7 +27,11 @@ import { ValueType } from 'rc-input-number/lib/utils/MiniDecimal';
 import { useWalletKit } from '@gokiprotocol/walletkit';
 import Decimal from 'decimal.js';
 
-const { formatTokenAllDecimals: ftad } = formatNumber;
+const {
+  formatTokenAllDecimals: ftad,
+  format: f,
+  formatPercent: fp
+} = formatNumber;
 
 const MAX_SLIPPAGE = 1;
 const DEFAULT_SLIPPAGE = 0.5;
@@ -84,6 +88,10 @@ const Swap: NextPage = () => {
     routes, // all the routes from inputMint to outputMint
     error
   } = jupiter;
+
+  if (error) {
+    console.error(error);
+  }
 
   const bestRoute = useMemo(() => {
     if (routes) {
@@ -150,8 +158,7 @@ const Swap: NextPage = () => {
       },
       {
         title: 'Price Impact',
-        value:
-          priceImpact > 0.1 ? `${ftad(priceImpact, outDecimals)}` : '< 0.1%'
+        value: priceImpact > 0.1 ? `${fp(priceImpact)}` : '< 0.1%'
       },
       {
         title: 'Minimum Received',
@@ -294,7 +301,6 @@ const Swap: NextPage = () => {
     const newOutputMint = inputMint;
     setInputMint(newInputMint);
     setOutputMint(newOutputMint);
-    setSwapAmount(estimatedOutAmount);
   };
 
   const tokenInputFormatter = (
@@ -334,6 +340,12 @@ const Swap: NextPage = () => {
     }
 
     return errors.map(error => <div key={error}>{error}</div>);
+  };
+
+  const handleOutputInput = (value: ValueType) => {
+    const reverseRate = exchangeRate ? 1 / exchangeRate : 0;
+    const valueD = new Decimal(value);
+    setSwapAmount(valueD.mul(reverseRate).floor().toNumber());
   };
 
   return (
@@ -413,7 +425,7 @@ const Swap: NextPage = () => {
                       tokenInputFormatter(value, outputToken?.decimals)
                     }
                     value={estimatedOutAmount}
-                    readOnly
+                    onChange={handleOutputInput}
                   />
                   <div
                     className={styles.tokenSelector}

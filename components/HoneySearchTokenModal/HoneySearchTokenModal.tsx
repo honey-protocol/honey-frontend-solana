@@ -39,7 +39,6 @@ export const HoneySearchTokenModal = (props: HoneySearchTokenModalProps) => {
     return sortBy(tokens, token => {
       const price = 1;
       const balance = getTokenBalance(token);
-      console.log('balance', balance);
       return balance ? -1 * balance * price : 0;
     });
   };
