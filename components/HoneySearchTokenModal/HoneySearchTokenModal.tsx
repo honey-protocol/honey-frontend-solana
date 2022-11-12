@@ -8,6 +8,7 @@ import { TokenInfo } from '@saberhq/token-utils';
 import debounce from 'lodash/debounce';
 import { lamportsToNumber } from '../../helpers/math/math';
 import { formatNumber } from '../../helpers/format';
+import { sortBy } from 'lodash';
 
 const TOKEN_ITEM_SIZE = 60;
 const MODAL_WIDTH = 394;
@@ -27,15 +28,27 @@ export const HoneySearchTokenModal = (props: HoneySearchTokenModalProps) => {
     const f = [...tokens].filter(token => {
       return r.test(token.symbol);
     });
-    console.log('filtered', f);
     return f;
+  };
+
+  /**
+   * Sort tokens to show the ones with the bigest value on top of the list
+   * price oracles are not connected so mock price of any token = 1
+   */
+  const sortByValue = (tokens: TokenInfo[]): TokenInfo[] => {
+    return sortBy(tokens, token => {
+      const price = 1;
+      const balance = getTokenBalance(token);
+      console.log('balance', balance);
+      return balance ? -1 * balance * price : 0;
+    });
   };
 
   const debouncedSearch = useCallback(
     debounce(searchQuery => {
-      setFilteredTokens(onSearch(searchQuery));
+      setFilteredTokens(sortByValue(onSearch(searchQuery)));
     }, 300),
-    [tokens]
+    [tokens, tokensBalancesMap]
   );
 
   const handleSearchInputChange = useCallback(
