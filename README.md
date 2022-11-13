@@ -2,7 +2,7 @@
 
 ### <span style="color: rgb(235, 85, 69); font-weight: 300; font-style: italic;">This is a <a href="https://nextjs.org/" target="blank">Next.JS</a> project bootstrapped with <a href="https://github.com/vercel/next.js/tree/canary/packages/create-next-app" target="blank">create-react-app</a> 
 
-## <span style="color: rgb(235, 85, 69); font-weight: 900">General overview</span>
+## <span style="color: rgb(235, 85, 69); font-weight: 900">General overview</span>.  
 
 Hello and welcome 👋🏼, we are happy to see that you arrived at Honey Labs - **The Liquidity Solution** builder for NFTs. This repo contains a Front-end interface built with NextJS and makes use of the following tools:
 
