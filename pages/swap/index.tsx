@@ -1,7 +1,13 @@
 import { NextPage } from 'next';
 import LayoutRedesign from '../../components/LayoutRedesign/LayoutRedesign';
 import HoneyContent from '../../components/HoneyContent/HoneyContent';
-import React, { useEffect, useMemo, useState } from 'react';
+import React, {
+  ChangeEvent,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState
+} from 'react';
 import * as styles from '../../styles/swap.css';
 import HoneyCardYellowShadow from '../../components/HoneyCardYellowShadow/HoneyCardYellowShadow';
 import HoneyButton from '../../components/HoneyButton/HoneyButton';
@@ -26,6 +32,7 @@ import { formatNumber } from '../../helpers/format';
 import { ValueType } from 'rc-input-number/lib/utils/MiniDecimal';
 import { useWalletKit } from '@gokiprotocol/walletkit';
 import Decimal from 'decimal.js';
+import debounce from 'lodash/debounce';
 
 const {
   formatTokenAllDecimals: ftad,
@@ -72,7 +79,9 @@ const Swap: NextPage = () => {
 
   const jupiter = useJupiter({
     amount: JSBI.BigInt(
-      numberToLamports(swapAmount, inputToken?.decimals || 1).toString()
+      numberToLamports(swapAmount, inputToken?.decimals || 1)
+        .floor()
+        .toString()
     ),
     inputMint,
     outputMint,
@@ -342,16 +351,39 @@ const Swap: NextPage = () => {
     return errors.map(error => <div key={error}>{error}</div>);
   };
 
-  const handleOutputInput = (value: ValueType) => {
-    if (!value) {
-      setSwapAmount(0);
-      return;
-    }
-    const reverseRate = exchangeRate ? 1 / exchangeRate : 0;
-    const valueD = new Decimal(value);
-    setEstimatedOutAmount(valueD.toNumber());
-    setSwapAmount(valueD.mul(reverseRate).floor().toNumber());
-  };
+  const debouncedHandleOutputInput = useCallback(
+    debounce((value: ValueType) => {
+      if (!value) {
+        console.log('NO VALUE');
+        setSwapAmount(0);
+        return;
+      }
+      if (!exchangeRate) {
+        return;
+      }
+      const reverseRate = exchangeRate ? 1 / exchangeRate : 0;
+      const valueD = new Decimal(value);
+      setEstimatedOutAmount(valueD.toNumber());
+      setSwapAmount(valueD.mul(reverseRate).toNumber());
+    }, 500),
+    [exchangeRate]
+  );
+
+  // const debouncedSearch = useCallback(
+  //   debounce(searchQuery => {
+  //     setFilteredTokens(sortByValue(onSearch(searchQuery)));
+  //   }, 300),
+  //   [tokens, tokensBalancesMap]
+  // );
+
+  // const handleSearchInputChange = useCallback(
+  //   (e: ChangeEvent<HTMLInputElement>) => {
+  //     const value = e.target.value;
+  //     setSearchQuery(value);
+  //     debouncedSearch(value);
+  //   },
+  //   [tokens]
+  // );
 
   return (
     <LayoutRedesign>
@@ -430,7 +462,7 @@ const Swap: NextPage = () => {
                       tokenInputFormatter(value, outputToken?.decimals)
                     }
                     value={estimatedOutAmount}
-                    onChange={handleOutputInput}
+                    onChange={debouncedHandleOutputInput}
                   />
                   <div
                     className={styles.tokenSelector}
