@@ -514,6 +514,7 @@ const Swap: NextPage = () => {
                 setIsInputTokenModalVisible(false);
               }}
               tokens={tokensDetails}
+              featuredTokens={['$HONEY', 'USDC', 'SOL']}
               visible={isInputTokenModalVisible}
               onCancel={() => setIsInputTokenModalVisible(false)}
               destroyOnClose

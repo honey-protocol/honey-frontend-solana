@@ -26,6 +26,44 @@ export const inputWrapper = style([
   }
 ]);
 
+export const featuredTokens = style({
+  display: 'flex',
+  marginBottom: `18px`,
+  flexWrap: 'wrap'
+});
+
+export const featuredToken = style([
+  typography.button,
+  {
+    display: 'flex',
+    alignItems: 'center',
+    padding: '6px 12px',
+    position: 'relative',
+    background: vars.colors.grayMiddle,
+    textAlign: 'center',
+    whiteSpace: 'nowrap',
+    marginRight: `6px`,
+    marginBottom: 6,
+    cursor: 'pointer',
+    borderRadius: 10,
+    selectors: {
+      '&:hover': {
+        background: vars.colors.grayDark
+      }
+    }
+  }
+]);
+
+export const featuredTokenLogo = style([
+  {
+    display: 'flex',
+    width: 14,
+    height: 14,
+    marginRight: 6,
+    borderRadius: '100%'
+  }
+]);
+
 export const tokenInfoWrapper = style({
   display: 'flex',
   justifyContent: 'flex-start',
@@ -61,7 +99,8 @@ export const tokenLogo = style({
   width: 28,
   height: 28,
   marginRight: 12,
-  marginTop: 2
+  marginTop: 2,
+  borderRadius: '100%'
 });
 
 export const tokenDescription = style([

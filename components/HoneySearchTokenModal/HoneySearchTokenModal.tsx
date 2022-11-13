@@ -16,7 +16,13 @@ const MODAL_WIDTH = 394;
 const { formatTokenAllDecimals: ftad } = formatNumber;
 
 export const HoneySearchTokenModal = (props: HoneySearchTokenModalProps) => {
-  const { tokens, tokensBalancesMap, onTokenSelected, ...rest } = props;
+  const {
+    tokens,
+    featuredTokens,
+    tokensBalancesMap,
+    onTokenSelected,
+    ...rest
+  } = props;
   const [searchQuery, setSearchQuery] = useState('');
   const [filteredTokens, setFilteredTokens] = useState(tokens);
 
@@ -104,6 +110,33 @@ export const HoneySearchTokenModal = (props: HoneySearchTokenModalProps) => {
     [filteredTokens]
   );
 
+  const handleFeaturedTokenClick = (token: TokenInfo) => {
+    onTokenSelected(token.address);
+  };
+
+  const renderFeaturedTokens = () => {
+    if (!featuredTokens) {
+      return null;
+    }
+
+    return featuredTokens
+      .map(featuredToken => {
+        return tokens.find(token => token.symbol === featuredToken);
+      })
+      .filter(t => Boolean(t))
+      .map(token => {
+        return (
+          <div
+            onClick={() => handleFeaturedTokenClick(token!)}
+            className={styles.featuredToken}
+          >
+            <img src={token!.logoURI} className={styles.featuredTokenLogo} />
+            {token!.symbol}
+          </div>
+        );
+      });
+  };
+
   return (
     <HoneyModalRedesign
       {...rest}
@@ -121,6 +154,9 @@ export const HoneySearchTokenModal = (props: HoneySearchTokenModalProps) => {
             placeholder={'Enter your token...'}
           />
         </div>
+        {featuredTokens && featuredTokens.length > 0 ? (
+          <div className={styles.featuredTokens}>{renderFeaturedTokens()}</div>
+        ) : null}
         <FixedSizeList
           height={TOKEN_ITEM_SIZE * 6}
           itemData={filteredTokens}

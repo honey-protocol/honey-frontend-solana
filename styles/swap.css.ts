@@ -57,7 +57,8 @@ export const tokenLogo = style([
   {
     width: 20,
     height: 20,
-    marginRight: 8
+    marginRight: 8,
+    borderRadius: '100%'
   }
 ]);
 

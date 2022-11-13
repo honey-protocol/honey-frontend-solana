@@ -6,4 +6,5 @@ export type HoneySearchTokenModalProps = HoneyModalProps & {
   tokens: TokenInfo[];
   tokensBalancesMap: TokenBalances;
   onTokenSelected: (mint: string) => void;
+  featuredTokens?: string[];
 };
