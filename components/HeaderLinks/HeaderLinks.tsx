@@ -1,4 +1,4 @@
-import { Dropdown, Menu, Space, Typography } from 'antd';
+import { Dropdown, Menu, Space } from 'antd';
 import React, { useEffect, useState } from 'react';
 import * as styles from './HeaderLinks.css';
 import Link from 'next/link';
@@ -6,6 +6,7 @@ import { DownIcon } from 'icons/DownIcon';
 import HoneyButton from 'components/HoneyButton/HoneyButton';
 import { useRouter } from 'next/router';
 import cs from 'classnames';
+import { featureFlags } from '../../helpers/featureFlags';
 
 export const links = [
   {
@@ -17,10 +18,6 @@ export const links = [
     title: 'BORROW',
     href: '/borrow'
   },
-  // {
-  //   title: 'SWAP',
-  //   href: '/swap'
-  // },
   {
     title: 'LEND',
     href: '/lend'
@@ -59,6 +56,13 @@ export const links = [
     href: 'https://app.honey.finance'
   }
 ];
+
+if (featureFlags.isSwapPageEnabled) {
+  links.splice(4, 0, {
+    title: 'SWAP',
+    href: '/swap'
+  });
+}
 
 const HeaderDropdownMenu = () => {
   const [linksDisplayed, setLinkDisplayed] = useState(6);
