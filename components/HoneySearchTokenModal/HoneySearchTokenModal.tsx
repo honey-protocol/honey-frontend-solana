@@ -127,6 +127,7 @@ export const HoneySearchTokenModal = (props: HoneySearchTokenModalProps) => {
       .map(token => {
         return (
           <div
+            key={token!.address}
             onClick={() => handleFeaturedTokenClick(token!)}
             className={styles.featuredToken}
           >

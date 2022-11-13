@@ -95,6 +95,7 @@ const HoneyJupiterProvider: FC<{ children: ReactNode }> = ({ children }) => {
     getPlatformFeeAccounts(connection, platformFeeWallet).then(res => {
       setPlatformFeeAccounts(res);
     });
+    //  eslint-disable react-hooks/exhaustive-deps
   }, []);
 
   let platformFeeAndAccounts = undefined;
