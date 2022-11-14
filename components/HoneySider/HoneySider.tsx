@@ -18,13 +18,15 @@ const HoneySider = ({ isMobileSidebarVisible, children }: HoneySiderProps) => {
 
     if (height != null) {
       if (sidebar != null) {
-        scrollTop >= height.clientHeight + 12
-          ? sidebar.classList.add('is-sticky')
-          : sidebar.classList.remove('is-sticky');
+        const buffer = 24;
+        scrollTop <= height.clientHeight + buffer
+          ? sidebar.classList.remove('is-sticky')
+          : sidebar.classList.add('is-sticky');
       }
     } else {
       if (sidebar != null) {
-        scrollTop >= 12
+        const buffer = 12;
+        scrollTop >= buffer
           ? sidebar.classList.add('is-sticky')
           : sidebar.classList.remove('is-sticky');
       }

@@ -15,13 +15,15 @@ import HoneyTooltip from '../HoneyTooltip/HoneyTooltip';
 import HealthLvl from 'components/HealthLvl/HealthLvl';
 import HoneyButton from 'components/HoneyButton/HoneyButton';
 import { MAX_LTV } from 'constants/loan';
+import { renderMarketImageByID } from 'helpers/marketHelpers';
 
 const { formatPercent: fp, formatSol: fs } = formatNumber;
 
 export const LiquidateExpandTableMobile: FC<{
   data: LiquidateTablePosition[];
   onPlaceBid: Function;
-}> = ({ data, onPlaceBid }) => {
+  currentMarketId: string;
+}> = ({ data, onPlaceBid, currentMarketId }) => {
   const expandColumnsMobile: ColumnType<LiquidateTablePosition>[] = [
     {
       dataIndex: 'name',
@@ -32,7 +34,7 @@ export const LiquidateExpandTableMobile: FC<{
           <div className={sharedStyles.expandedRowIcon} />
           <div className={sharedStyles.collectionLogo}>
             <HexaBoxContainer>
-              <Image src={honeyGenesisBee} />
+              {renderMarketImageByID(currentMarketId)}
             </HexaBoxContainer>
           </div>
           <div className={sharedStyles.nameCellText}>
@@ -61,7 +63,9 @@ export const LiquidateExpandTableMobile: FC<{
           <span className={styles.positionsCounterTitleMobile}>
             Open positions
           </span>
-          <span className={styles.positionsCount}>{data.length}</span>
+          <span className={styles.positionsCount}>
+            {data && data.length ? data.length : 0}
+          </span>
         </div>
         <HoneyButton variant="text" onClick={() => onPlaceBid()}>
           Place bid <div className={sharedStyles.arrowRightIcon} />

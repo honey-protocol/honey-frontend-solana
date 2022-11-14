@@ -13,16 +13,16 @@ import 'degen/styles';
 import 'react-toastify/dist/ReactToastify.css';
 
 import SecPopup from 'components/SecPopup';
-import { GovernanceProvider } from 'contexts/GovernanceProvider';
 import { AccountsProvider } from 'contexts/AccountsProvider';
 // import { accentSequence, ThemeAccent } from '../helpers/theme-utils';
 import { onSailError } from 'helpers/error';
-import { HONEY_MARKET_ID, HONEY_PROGRAM_ID } from 'constants/loan';
+import { HONEY_GENESIS_MARKET_ID, HONEY_PROGRAM_ID } from 'constants/loan';
 // import NoMobilePopup from 'components/NoMobilePopup/NoMobilePopup';
 
 import '../styles/globals.css';
 
 export const network = (process.env.NETWORK as Network) || 'mainnet-beta';
+export const setMarketId = (marketID: string) => marketID;
 
 const queryClient = new QueryClient();
 
@@ -35,6 +35,7 @@ const queryClient = new QueryClient();
 const OnChainProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const wallet = useConnectedWallet();
   const connection = useConnection();
+  const network = 'mainnet-beta';
 
   return (
     <AnchorProvider
@@ -47,7 +48,7 @@ const OnChainProvider: FC<{ children: ReactNode }> = ({ children }) => {
         wallet={wallet}
         connection={connection}
         honeyProgramId={HONEY_PROGRAM_ID}
-        honeyMarketId={HONEY_MARKET_ID}
+        honeyMarketId={setMarketId(HONEY_GENESIS_MARKET_ID)}
       >
         {children}
       </HoneyProvider>

@@ -1,4 +1,4 @@
-import { style } from '@vanilla-extract/css';
+import { globalStyle, style } from '@vanilla-extract/css';
 import { typography, vars } from '../../styles/theme.css';
 
 export const warning = style({
@@ -27,10 +27,13 @@ export const warningDanger = style({
 export const warningTitle = style([
   typography.description,
   {
-    color: vars.colors.brownMiddle,
-    marginBottom: '8px!important'
+    color: vars.colors.brownMiddle
   }
 ]);
+
+globalStyle(`.ant-typography ${warningTitle}`, {
+  marginBottom: 0
+});
 
 export const warningDangerTitle = style({
   color: vars.colors.redDark,

@@ -15,6 +15,8 @@ import { BidFormProps } from './types';
 import { hAlign } from 'styles/common.css';
 import { questionIcon } from 'styles/icons.css';
 import useToast from 'hooks/useToast';
+import { HONEY_GENESIS_MARKET_ID, PESKY_PENGUINS_MARKET_ID, LIFINITY_FLARES_MARKET_ID, BURRITO_BOYZ_MARKET_ID, OG_ATADIANS_MARKET_ID } from 'constants/loan';
+import { renderMarketImageByID, renderMarketImageByName, renderMarketName } from 'helpers/marketHelpers';
 
 const {
   format: f,
@@ -31,6 +33,7 @@ const BidForm = (props: BidFormProps) => {
     highestBiddingValue,
     currentUserBid,
     fetchedSolPrice,
+    currentMarketId,
     handleRevokeBid,
     handleIncreaseBid,
     handlePlaceBid,
@@ -40,10 +43,11 @@ const BidForm = (props: BidFormProps) => {
   const [valueSOL, setValueSOL] = useState<number>(0);
   // const [valueUSDC, setValueUSDC] = useState<number>(0);
   const [sliderValue, setSliderValue] = useState(0);
+  const [userBidValue, setUserBidValue] = useState(0);
+
   const { toast, ToastComponent } = useToast();
 
   const maxValue = 1000;
-
   // TODO: import SOL price via oracle
   const solPrice = fetchedSolPrice;
   // Put your validators here
@@ -83,13 +87,17 @@ const BidForm = (props: BidFormProps) => {
   };
 
   function triggerIndicator() {
-    currentUserBid != 0
-      ? handlePlaceBid('increase_bid', valueSOL, toast)
-      : handleIncreaseBid('place_bid', valueSOL, toast);
+    userBidValue != 0
+      ? handlePlaceBid('increase_bid', valueSOL, toast, currentMarketId)
+      : handleIncreaseBid('place_bid', valueSOL, toast, currentMarketId);
   }
 
   useEffect(() => {
-    console.log('@@--', currentUserBid);
+    if (currentUserBid) {
+      setUserBidValue(currentUserBid)
+    } else {
+      setUserBidValue(0);
+    }
   }, [currentUserBid]);
 
   return (
@@ -113,7 +121,7 @@ const BidForm = (props: BidFormProps) => {
                 solAmount={valueSOL || 0}
                 onClick={triggerIndicator}
               >
-                {currentUserBid != 0 ? 'Increase Bid' : 'Place Bid'}
+                {userBidValue != 0 ? 'Increase Bid' : 'Place Bid'}
               </HoneyButton>
             </div>
           </div>
@@ -124,10 +132,12 @@ const BidForm = (props: BidFormProps) => {
         <div className={styles.nftInfo}>
           <div className={styles.nftImage}>
             <HexaBoxContainer>
-              <Image src={honeyGenesisBee} />
+              {renderMarketImageByID(currentMarketId)}
             </HexaBoxContainer>
           </div>
-          <div className={styles.nftName}>Honey Genesis Bee</div>
+          <div className={styles.nftName}>
+            {renderMarketName(currentMarketId)}
+          </div>
         </div>
         <div className={styles.row}>
           <div className={styles.col}>
@@ -137,17 +147,17 @@ const BidForm = (props: BidFormProps) => {
             ></HoneyWarning>
           </div>
         </div>
-        {currentUserBid && (
+        {userBidValue && (
           <div className={styles.row}>
             <div className={styles.col}>
               <CurrentBid
-                value={currentUserBid}
+                value={userBidValue}
                 title={
-                  currentUserBid == highestBiddingValue
+                  userBidValue == highestBiddingValue
                     ? 'Your bid is #1'
                     : 'Your bid is:'
                 }
-                handleRevokeBid={() => handleRevokeBid('revoke_bid', toast)}
+                handleRevokeBid={() => handleRevokeBid('revoke_bid', toast, currentMarketId)}
               />
             </div>
           </div>
