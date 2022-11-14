@@ -247,7 +247,11 @@ export async function getInterestRate(utilizationRate: number) {
     throw error;
   }
 }
-
+/**
+ * @description pollutes the chart on lend with dummy historic rates
+ * @params none
+ * @returns chart data 
+ */
 const getPositionData = () => {
   const isMock = true;
 
@@ -260,7 +264,11 @@ const getPositionData = () => {
   }
   return [];
 };
-
+/**
+ * @description sets the obligations of a collection and filters out obligations with zero debt
+ * @params obligations array, currentmarketid. nft
+ * @returns chart data 
+ */
 const setObligations = async (obligations: any, currentMarketId: string, nftPrice: number) => {
   if (!obligations) return [];
 
