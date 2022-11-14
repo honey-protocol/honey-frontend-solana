@@ -9,7 +9,7 @@ export type OpenPositions = {
   updateAuthority: PublicKey;
   uri: string;
 };
-
+// collection structure for liquidations
 export const liquidationCollections: MarketTableRow[] = [
   {
     id: '6FcJaAzQnuoA6o3sVw1GD6Ba69XuL5jinZpQTzJhd2R3',
@@ -27,7 +27,7 @@ export const liquidationCollections: MarketTableRow[] = [
     utilizationRate: 0,
   }
 ];
-  
+// collection strucutre for the markets 
 export const marketCollections: MarketTableRow[] = [
   {
     id: '6FcJaAzQnuoA6o3sVw1GD6Ba69XuL5jinZpQTzJhd2R3',
@@ -105,7 +105,6 @@ export const marketCollections: MarketTableRow[] = [
     utilizationRate: 0,
   },
 ];
-
 // fees
 export const LIQUIDATION_FEE = 0.65;
 export const BORROW_FEE = 0;
