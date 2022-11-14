@@ -220,7 +220,7 @@ export const GovernanceProvider: React.FC<React.ReactNode> = ({ children }) => {
     return () => {
       clearInterval(timer);
     };
-  }, []);
+  }, [load]);
 
   return (
     <GovernanceContext.Provider
