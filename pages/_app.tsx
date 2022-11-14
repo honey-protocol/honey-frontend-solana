@@ -109,25 +109,23 @@ function MyApp({ Component, pageProps }: AppProps) {
           app={{ name: 'Honey Finance' }}
         >
           <AccountsProvider>
-            <GovernanceProvider>
-              <SailProvider
-                initialState={{
-                  onSailError
-                }}
-              >
-                {/* {children} */}
-                {showPopup ? (
-                  <SecPopup setShowPopup={setShowPopup} />
-                ) : (
-                  <>
-                    <OnChainProvider>
-                      <Component {...pageProps} />
-                      <ToastContainer theme="dark" position="bottom-right" />
-                    </OnChainProvider>
-                  </>
-                )}
-              </SailProvider>
-            </GovernanceProvider>
+            <SailProvider
+              initialState={{
+                onSailError
+              }}
+            >
+              {/* {children} */}
+              {showPopup ? (
+                <SecPopup setShowPopup={setShowPopup} />
+              ) : (
+                <>
+                  <OnChainProvider>
+                    <Component {...pageProps} />
+                    <ToastContainer theme="dark" position="bottom-right" />
+                  </OnChainProvider>
+                </>
+              )}
+            </SailProvider>
           </AccountsProvider>
         </WalletKitProvider>
       </QueryClientProvider>

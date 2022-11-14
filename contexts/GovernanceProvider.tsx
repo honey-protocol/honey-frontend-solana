@@ -9,7 +9,7 @@ import {
   SetStateAction
 } from 'react';
 import { PublicKey, Keypair } from '@solana/web3.js';
-import { Wallet } from '@project-serum/anchor';
+import { SignerWallet as Wallet } from '@saberhq/solana-contrib';
 import { useConnectedWallet, useConnection } from '@saberhq/use-solana';
 import { SolanaProvider } from '@saberhq/solana-contrib';
 import { Token } from '@saberhq/token-utils';
@@ -120,24 +120,11 @@ export const GovernanceProvider: React.FC<React.ReactNode> = ({ children }) => {
       opts: { commitment: 'confirmed' }
     });
     return VeHoneySDK.load({ provider });
-  }, [connection, wallet]);
+  }, [wallet]);
 
   async function load() {
-    if (sdk) {
+    if (governorWrapper && stakeWrapper && lockerWrapper) {
       setIsLoading(true);
-
-      // Load wrappers
-      const stakeWrapper = await StakeWrapper.load(sdk, STAKE_POOL_ADDR);
-      const lockerWrapper = await LockerWrapper.load(
-        sdk,
-        LOCKER_ADDR,
-        GOVERNOR_ADDR
-      );
-      const tribecaSDK = TribecaSDK.load({ provider: sdk.provider });
-      const governorWrapper = new GovernorWrapper(tribecaSDK, GOVERNOR_ADDR);
-      setStakeWrapper(stakeWrapper);
-      setLockerWrapper(lockerWrapper);
-      setGovernorWrapper(governorWrapper);
 
       // Load proposals
       const proposalDatas = await governorWrapper.program.account.proposal.all([
@@ -170,6 +157,7 @@ export const GovernanceProvider: React.FC<React.ReactNode> = ({ children }) => {
         lockerWrapper.data(),
         governorWrapper.data()
       ]);
+      console.log(pool);
       setPool(pool);
       setLocker(locker);
       setGovernor(governor);
@@ -179,7 +167,7 @@ export const GovernanceProvider: React.FC<React.ReactNode> = ({ children }) => {
         const user = await stakeWrapper.fetchPoolUser();
         setUser(user);
       } catch (e) {
-        setUser(undefined);
+        // setUser(undefined);
       }
 
       try {
@@ -192,7 +180,7 @@ export const GovernanceProvider: React.FC<React.ReactNode> = ({ children }) => {
         }, new Map<number, ReceiptData>());
         setEscrow({ ...escrow, receipts: receiptsMap });
       } catch (e) {
-        setEscrow(undefined);
+        // setEscrow(undefined);
       }
 
       // Load gov and pre tokens
@@ -204,8 +192,8 @@ export const GovernanceProvider: React.FC<React.ReactNode> = ({ children }) => {
         setGovToken(gov ?? undefined);
         setPreToken(pre ?? undefined);
       } catch (e) {
-        setGovToken(undefined);
-        setPreToken(undefined);
+        // setGovToken(undefined);
+        // setPreToken(undefined);
       }
 
       setIsLoading(false);
@@ -213,9 +201,21 @@ export const GovernanceProvider: React.FC<React.ReactNode> = ({ children }) => {
   }
 
   useEffect(() => {
+    // Load wrappers
+    const stakeWrapper = new StakeWrapper(sdk, STAKE_POOL_ADDR);
+    const lockerWrapper = new LockerWrapper(sdk, LOCKER_ADDR, GOVERNOR_ADDR);
+    const tribecaSDK = TribecaSDK.load({ provider: sdk.provider });
+    const governorWrapper = new GovernorWrapper(tribecaSDK, GOVERNOR_ADDR);
+    setStakeWrapper(stakeWrapper);
+    setLockerWrapper(lockerWrapper);
+    setGovernorWrapper(governorWrapper);
+  }, [sdk]);
+
+  useEffect(() => {
     load();
 
     const timer = setInterval(() => {
+      console.log('timer');
       load();
     }, 10000);
 

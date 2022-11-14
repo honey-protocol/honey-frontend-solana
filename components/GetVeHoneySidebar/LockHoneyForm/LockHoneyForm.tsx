@@ -1,5 +1,6 @@
 import React, { useCallback, useMemo, useState } from 'react';
 import { BN } from '@project-serum/anchor';
+import { TokenAmount } from '@saberhq/token-utils';
 
 import { InfoBlock } from 'components/InfoBlock/InfoBlock';
 import HoneyButton from 'components/HoneyButton/HoneyButton';
@@ -11,9 +12,9 @@ import TabTitle from 'components/HoneyTabs/TabTitle/TabTitle';
 
 import { useLocker } from 'hooks/useVeHoney';
 import useToast from 'hooks/useToast';
+import { useAccountByMint } from 'hooks/useAccounts';
 import { formatNumber } from 'helpers/format';
 import { convertToBN } from 'helpers/utils';
-import { HONEY_DECIMALS } from 'helpers/sdk';
 
 import * as styles from './LockHoneyForm.css';
 import { hAlign } from 'styles/common.css';
@@ -46,16 +47,43 @@ const LockHoneyForm = (props: { onCancel: Function }) => {
       ? 25 / 100
       : 1;
 
-  const { lock, escrow, votingPower, lockedAmount } = useLocker();
+  const { lock, escrow, votingPower, lockedAmount, govToken } = useLocker();
+  const honeyAccount = useAccountByMint(govToken?.mintAccount);
+
+  console.log(govToken);
 
   const lockEndsTime = useMemo(() => {
     if (!escrow) return null;
     return new Date(escrow.data.escrowEndsAt.toNumber() * 1000);
   }, [escrow]);
 
-  const maxValue = lockedAmount;
+  const honeyAmount = useMemo(() => {
+    if (!govToken || !honeyAccount) return null;
+    return new TokenAmount(govToken, honeyAccount.data.amount);
+  }, [honeyAccount, govToken]);
+
+  const handleLock = useCallback(async () => {
+    if (
+      valueHONEY &&
+      govToken &&
+      ['1', '3', '6', '12', '48'].includes(lockPeriod)
+    ) {
+      const date = new Date();
+      const current = Math.floor(date.getTime() / 1000);
+      // date.setMonth(date.getMonth() + Number(lockPeriod));
+      // const nMonthsLater = Math.floor(date.getTime() / 1000);
+      // const lockPeroidInSeconds = nMonthsLater - current;
+      const lockPeroidInSeconds = Number(lockPeriod) * 10;11
+
+      await lock(
+        convertToBN(valueHONEY, govToken.decimals),
+        new BN(lockPeroidInSeconds)
+      );
+    }
+  }, [lock, valueHONEY, lockPeriod, govToken]);
 
   const handleHoneyInputChange = (honeyValue: number | undefined) => {
+    console.log(honeyValue);
     if (!honeyValue) {
       setValueHONEY(0);
       setValueVeHONEY(0);
@@ -76,37 +104,10 @@ const LockHoneyForm = (props: { onCancel: Function }) => {
     setValueVeHONEY(veHoneyValue);
   };
 
-  // console.log({
-  //   veHoneyAmount,
-  //   lockedAmount,
-  //   lockedPeriodEnd,
-  //   honeyAmount,
-  //   lockPeriodHasEnded
-  // });
   // Put your validators here
   const isLockButtonDisabled = () => {
     return false;
   };
-
-  const vestingPeriodInSeconds = useMemo(() => {
-    if (['1', '3', '6', '12', '48'].includes(lockPeriod)) {
-      const date = new Date();
-      const current = Math.floor(date.getTime() / 1000);
-      date.setMonth(date.getMonth() + Number(lockPeriod));
-      const nMonthsLater = Math.floor(date.getTime() / 1000);
-
-      return nMonthsLater - current;
-    }
-    return 0;
-  }, [lockPeriod]);
-
-  const handleLock = useCallback(async () => {
-    if (!valueHONEY || !vestingPeriodInSeconds) return;
-    await lock(
-      convertToBN(valueHONEY, HONEY_DECIMALS),
-      new BN(vestingPeriodInSeconds)
-    );
-  }, [lock, escrow, valueHONEY, toast, vestingPeriodInSeconds]);
 
   return (
     <SidebarScroll
@@ -147,7 +148,7 @@ const LockHoneyForm = (props: { onCancel: Function }) => {
         <div className={styles.row}>
           <div className={styles.col}>
             <InfoBlock
-              value={f(lockedAmount?.asNumber)}
+              value={f(honeyAmount?.asNumber)}
               title={
                 <span className={hAlign}>
                   $HONEY balance
@@ -228,7 +229,7 @@ const LockHoneyForm = (props: { onCancel: Function }) => {
           secondInputValue={valueVeHONEY}
           onChangeFirstInput={handleHoneyInputChange}
           onChangeSecondInput={handleVeHoneyInputChange}
-          maxValue={maxValue?.asNumber ?? 0}
+          maxValue={honeyAmount?.asNumber ?? 0}
           delimiterIcon={
             <div className={styles.inputsDelimiter}>
               {1 / veHoneyPrice} to 1
