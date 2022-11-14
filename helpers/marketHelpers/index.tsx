@@ -4,7 +4,7 @@
  * Whenever a new market is added - please add the values here for each function and the whole app
  * should be updated.
  */
-// import market IDs
+import Image from 'next/image';
 import {
   HONEY_PROGRAM_ID,
   HONEY_GENESIS_MARKET_ID,
@@ -13,8 +13,6 @@ import {
   LIFINITY_FLARES_MARKET_ID,
   BURRITO_BOYZ_MARKET_ID
 } from 'constants/loan';
-
-import Image from 'next/image';
 // market verified creators
 export const VERIFIED_CREATOR_HONEY_GENESIS_BEE = '6vRx1iVZo3xfrBHdpvuwArL2jucVj9j9nLpd2VUTTGMG';
 export const VERIFIED_CREATOR_PESKY_PENGUINS = 'A6XTVFiwGVsG6b6LsvQTGnV5LH3Pfa3qW3TGz8RjToLp';
@@ -208,40 +206,16 @@ export const renderNftList = (marketID: string, nftArray: any) => {
   }
 };
 /**
- * @description filters out the open positions according to the collection id | market id and open pos. array
+ * @description filters out the open positions based on verified creator
  * @params collection id market id open positions array
  * @returns filtered array based on current active market
  */
 export const handleOpenPositions = (
-  collectionID: string,
-  marketID: string,
+  verifiedCreator: string,
   openPositions: any
 ) => {
-  if (
-    collectionID == HONEY_GENESIS_MARKET_ID &&
-    marketID == HONEY_GENESIS_MARKET_ID
-  ) {
-    return openPositions.filter((pos: any) => pos.name.includes('Honey'));
-  } else if (
-    collectionID == PESKY_PENGUINS_MARKET_ID &&
-    marketID == PESKY_PENGUINS_MARKET_ID
-  ) {
-    return openPositions.filter((pos: any) => pos.name.includes('Pesky'));
-  } else if (
-    collectionID == LIFINITY_FLARES_MARKET_ID &&
-    marketID == LIFINITY_FLARES_MARKET_ID
-  ) {
-    return openPositions.filter((pos: any) => pos.name.includes('LIFINITY'));
-  } else if (
-    collectionID == OG_ATADIANS_MARKET_ID &&
-    marketID == OG_ATADIANS_MARKET_ID
-  ) {
-    return openPositions.filter((pos: any) => pos.name.includes('OG'));
-  } else if (
-    collectionID == BURRITO_BOYZ_MARKET_ID &&
-    marketID == BURRITO_BOYZ_MARKET_ID
-  ) {
-    return openPositions.filter((pos: any) => pos.name.includes('Burrito'));
+  if (openPositions) {
+    return openPositions.filter((pos: any) => pos.verifiedCreator === verifiedCreator)
   } else {
     return [];
   }
