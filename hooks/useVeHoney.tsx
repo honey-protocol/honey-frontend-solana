@@ -242,15 +242,10 @@ export const useLocker = () => {
       if (lockerWrapper) {
         const tx = await lockerWrapper.lock(amount, duration);
         setIsProcessing?.(true);
-        try {
-          const receipt = await tx.simulate();
-          console.log(receipt);
-        } catch (e) {
-          console.log(e);
-        }
+        const receipt = await tx.confirm();
         setIsProcessing?.(false);
 
-        // return { receipt };
+        return { receipt };
       }
       return null;
     },

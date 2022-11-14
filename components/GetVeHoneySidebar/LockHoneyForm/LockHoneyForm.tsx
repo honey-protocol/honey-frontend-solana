@@ -50,8 +50,6 @@ const LockHoneyForm = (props: { onCancel: Function }) => {
   const { lock, escrow, votingPower, lockedAmount, govToken } = useLocker();
   const honeyAccount = useAccountByMint(govToken?.mintAccount);
 
-  console.log(govToken);
-
   const lockEndsTime = useMemo(() => {
     if (!escrow) return null;
     return new Date(escrow.data.escrowEndsAt.toNumber() * 1000);
@@ -68,22 +66,27 @@ const LockHoneyForm = (props: { onCancel: Function }) => {
       govToken &&
       ['1', '3', '6', '12', '48'].includes(lockPeriod)
     ) {
+      // mainnet
       const date = new Date();
       const current = Math.floor(date.getTime() / 1000);
-      // date.setMonth(date.getMonth() + Number(lockPeriod));
-      // const nMonthsLater = Math.floor(date.getTime() / 1000);
-      // const lockPeroidInSeconds = nMonthsLater - current;
-      const lockPeroidInSeconds = Number(lockPeriod) * 10;11
+      date.setMonth(date.getMonth() + Number(lockPeriod));
+      const nMonthsLater = Math.floor(date.getTime() / 1000);
+      const lockPeroidInSeconds = nMonthsLater - current;
+
+      // testing on devnet
+      // const lockPeroidInSeconds = Number(lockPeriod) * 10;
 
       await lock(
         convertToBN(valueHONEY, govToken.decimals),
         new BN(lockPeroidInSeconds)
       );
+
+      setValueHONEY(0);
+      setValueVeHONEY(0);
     }
   }, [lock, valueHONEY, lockPeriod, govToken]);
 
   const handleHoneyInputChange = (honeyValue: number | undefined) => {
-    console.log(honeyValue);
     if (!honeyValue) {
       setValueHONEY(0);
       setValueVeHONEY(0);
@@ -105,9 +108,12 @@ const LockHoneyForm = (props: { onCancel: Function }) => {
   };
 
   // Put your validators here
-  const isLockButtonDisabled = () => {
+  const isLockButtonDisabled = useMemo(() => {
+    if (!valueHONEY || (honeyAmount && valueHONEY > honeyAmount.asNumber)) {
+      return true;
+    }
     return false;
-  };
+  }, [valueHONEY, honeyAmount]);
 
   return (
     <SidebarScroll
@@ -124,7 +130,7 @@ const LockHoneyForm = (props: { onCancel: Function }) => {
             <div className={styles.bigCol}>
               <HoneyButton
                 variant="primary"
-                disabled={isLockButtonDisabled()}
+                disabled={isLockButtonDisabled}
                 block
                 onClick={handleLock}
               >

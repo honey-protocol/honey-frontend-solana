@@ -6,7 +6,8 @@ import {
   useEffect,
   useContext,
   Dispatch,
-  SetStateAction
+  SetStateAction,
+  useCallback
 } from 'react';
 import { PublicKey, Keypair } from '@solana/web3.js';
 import { SignerWallet as Wallet } from '@saberhq/solana-contrib';
@@ -122,9 +123,18 @@ export const GovernanceProvider: React.FC<React.ReactNode> = ({ children }) => {
     return VeHoneySDK.load({ provider });
   }, [wallet]);
 
-  async function load() {
-    if (governorWrapper && stakeWrapper && lockerWrapper) {
+  const load = useCallback(async () => {
+    if (sdk) {
       setIsLoading(true);
+
+      // Load wrappers
+      const stakeWrapper = new StakeWrapper(sdk, STAKE_POOL_ADDR);
+      const lockerWrapper = new LockerWrapper(sdk, LOCKER_ADDR, GOVERNOR_ADDR);
+      const tribecaSDK = TribecaSDK.load({ provider: sdk.provider });
+      const governorWrapper = new GovernorWrapper(tribecaSDK, GOVERNOR_ADDR);
+      setStakeWrapper(stakeWrapper);
+      setLockerWrapper(lockerWrapper);
+      setGovernorWrapper(governorWrapper);
 
       // Load proposals
       const proposalDatas = await governorWrapper.program.account.proposal.all([
@@ -157,7 +167,6 @@ export const GovernanceProvider: React.FC<React.ReactNode> = ({ children }) => {
         lockerWrapper.data(),
         governorWrapper.data()
       ]);
-      console.log(pool);
       setPool(pool);
       setLocker(locker);
       setGovernor(governor);
@@ -180,6 +189,7 @@ export const GovernanceProvider: React.FC<React.ReactNode> = ({ children }) => {
         }, new Map<number, ReceiptData>());
         setEscrow({ ...escrow, receipts: receiptsMap });
       } catch (e) {
+        console.log(e);
         // setEscrow(undefined);
       }
 
@@ -198,24 +208,12 @@ export const GovernanceProvider: React.FC<React.ReactNode> = ({ children }) => {
 
       setIsLoading(false);
     }
-  }
-
-  useEffect(() => {
-    // Load wrappers
-    const stakeWrapper = new StakeWrapper(sdk, STAKE_POOL_ADDR);
-    const lockerWrapper = new LockerWrapper(sdk, LOCKER_ADDR, GOVERNOR_ADDR);
-    const tribecaSDK = TribecaSDK.load({ provider: sdk.provider });
-    const governorWrapper = new GovernorWrapper(tribecaSDK, GOVERNOR_ADDR);
-    setStakeWrapper(stakeWrapper);
-    setLockerWrapper(lockerWrapper);
-    setGovernorWrapper(governorWrapper);
   }, [sdk]);
 
   useEffect(() => {
     load();
 
     const timer = setInterval(() => {
-      console.log('timer');
       load();
     }, 10000);
 

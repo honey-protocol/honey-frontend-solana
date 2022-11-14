@@ -9,7 +9,7 @@ export type LockerTypes = AnchorTypes<
     escrow: EscrowData;
     whitelistEntry: WhitelistEntryData;
     proof: ProofData;
-    receipt: ReceiptData;
+    nftReceipt: ReceiptData;
   },
   {
     lockerParams: LockerParams;

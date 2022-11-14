@@ -474,11 +474,11 @@ export class LockerWrapper {
       authority,
       receiptId
     );
-    return this.program.account.receipt.fetch(receipt);
+    return this.program.account.nftReceipt.fetch(receipt);
   }
 
   async fetchAllReceipts(authority: PublicKey = this.walletKey) {
-    return this.program.account.receipt.all([
+    return this.program.account.nftReceipt.all([
       {
         memcmp: {
           offset: 16,
