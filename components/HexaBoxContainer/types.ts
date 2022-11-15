@@ -1,0 +1,1 @@
+export type HexaBoxBordersColor = 'black' | 'gray' | 'green' | 'red' | 'brownLight' | 'blue';

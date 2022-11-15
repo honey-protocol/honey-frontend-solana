@@ -19,6 +19,20 @@ export const links = [
     href: '/borrow'
   },
   {
+    title: 'p2p',
+    href: '',
+    submenu: [
+      {
+        title: 'LENDING',
+        href: '/p2p/lend'
+      },
+      {
+        title: 'BORROWING',
+        href: '/p2p/borrow'
+      }
+    ]
+  },
+  {
     title: 'LEND',
     href: '/lend'
   },
@@ -67,6 +81,7 @@ if (featureFlags.isSwapPageEnabled) {
 const HeaderDropdownMenu = () => {
   const [linksDisplayed, setLinkDisplayed] = useState(6);
   const router = useRouter();
+
   const MoreMenu = (
     <Menu
       selectable
@@ -101,26 +116,59 @@ const HeaderDropdownMenu = () => {
   }, []);
 
   return (
-    <ul className={styles.container}>
+    <Menu className={styles.container} triggerSubMenuAction="hover">
       {links
         .filter((_, i) => i < linksDisplayed)
         .map((link, i) => (
-          <li
-            className={cs({
-              [styles.activeLink]: router.pathname.includes(link.href)
+          <Menu.Item
+            className={cs(styles.item, {
+              [styles.activeLink]: router.pathname === link.href
             })}
             key={i}
           >
-            {link.disabled ? (
+            {link.disabled && !link.submenu ? (
               <HoneyButton disabled variant="textSecondary">
                 {link.title}
               </HoneyButton>
             ) : (
-              <Link href={link.href} passHref>
-                <HoneyButton variant="textSecondary">{link.title}</HoneyButton>
-              </Link>
+              <>
+                {!link.submenu && (
+                  <Link href={link.href} passHref>
+                    <HoneyButton variant="textSecondary">
+                      {link.title}
+                    </HoneyButton>
+                  </Link>
+                )}
+              </>
             )}
-          </li>
+
+            {link.submenu && (
+              <Menu.SubMenu
+                title={
+                  <>
+                    {link.title}
+                    <DownIcon />
+                  </>
+                }
+                className={styles.submenu}
+              >
+                {link.submenu.map(s => (
+                  <Menu.Item
+                    key={s.title}
+                    className={cs(styles.item, styles.subItem, {
+                      [styles.activeLink]: router.pathname === s.href
+                    })}
+                  >
+                    <Link href={s.href} passHref>
+                      <HoneyButton variant="textSecondary">
+                        {s.title}
+                      </HoneyButton>
+                    </Link>
+                  </Menu.Item>
+                ))}
+              </Menu.SubMenu>
+            )}
+          </Menu.Item>
         ))}
       <li>
         <Dropdown overlay={MoreMenu}>
@@ -132,7 +180,7 @@ const HeaderDropdownMenu = () => {
           </HoneyButton>
         </Dropdown>
       </li>
-    </ul>
+    </Menu>
   );
 };
 export default HeaderDropdownMenu;
