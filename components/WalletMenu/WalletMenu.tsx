@@ -8,10 +8,9 @@ import { WalletIcon } from 'icons/WalletIcon';
 import { useWalletKit } from '@gokiprotocol/walletkit';
 import { useConnectedWallet, useSolana } from '@saberhq/use-solana';
 import { DialectNotifications } from 'components/DialectNotifications/DialectNotifications';
+import { featureFlags } from '../../helpers/featureFlags';
 
 const { Title } = Typography;
-
-const isDialectNotificationsButtonEnabled = true;
 
 const WalletMenu = () => {
   const { disconnect } = useSolana();
@@ -42,7 +41,7 @@ const WalletMenu = () => {
   ) : (
     <div className={styles.walletDropdownWrapper}>
       <div className={styles.dialectIconWrapper}>
-        {isDialectNotificationsButtonEnabled && <DialectNotifications />}
+        {featureFlags.isDialectNotificationsEnabled && <DialectNotifications />}
       </div>
       <Dropdown overlay={menu}>
         <a onClick={e => e.preventDefault()}>
