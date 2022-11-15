@@ -367,16 +367,15 @@ const Markets: NextPage = () => {
       setUserOpenPositions([]);
     }
   }, [collateralNFTPositions, currentMarketId]);
-
+  // function is setup to handle an array for all markets and return based on specific market by verified creator
   async function handlePositions(verifiedCreator: string, currentOpenPositions: any) {
     return await handleOpenPositions(verifiedCreator, currentOpenPositions);
   }
-
+  // calculation of health percentage 
   const healthPercent =
     ((nftPrice - userDebt / LIQUIDATION_THRESHOLD) / nftPrice) * 100;
 
-  // PUT YOUR DATA SOURCE HERE
-  // MOCK DATA FOR NOW
+  // inits the markets with relevant data
   useEffect(() => {
     if (sdkConfig.saberHqConnection) {
       function getData() {
