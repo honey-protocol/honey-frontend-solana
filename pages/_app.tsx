@@ -1,6 +1,7 @@
 import type { AppProps } from 'next/app';
 import { ThemeProvider } from 'degen';
 import 'degen/styles';
+import '@dialectlabs/react-ui/index.css';
 import { WalletKitProvider } from '@gokiprotocol/walletkit';
 import '../styles/globals.css';
 import { Network } from '@saberhq/solana-contrib';
@@ -36,6 +37,7 @@ import {
   PESKY_PENGUINS_MARKET_ID
 } from '../constants/loan';
 import NoMobilePopup from 'components/NoMobilePopup/NoMobilePopup';
+import { DialectProviders } from 'contexts/DialectProvider';
 import { PublicKey } from '@solana/web3.js';
 export const setMarketId = (marketID: string) => marketID;
 
@@ -197,6 +199,7 @@ function MyApp({ Component, pageProps }: AppProps) {
                   ) : (
                     <>
                       <HoneyJupiterProvider>
+                        <DialectProviders>
                         <OnChainProvider>
                           <Component {...pageProps} />
                           <ToastContainer
@@ -204,6 +207,7 @@ function MyApp({ Component, pageProps }: AppProps) {
                             position="bottom-right"
                           />
                         </OnChainProvider>
+                        </DialectProviders>
                       </HoneyJupiterProvider>
                     </>
                   )}
