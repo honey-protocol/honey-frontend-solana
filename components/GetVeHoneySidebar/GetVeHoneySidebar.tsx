@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import * as styles from './GetVeHoneySidebar.css';
 import HoneyTabs, { HoneyTabItem } from '../HoneyTabs/HoneyTabs';
 import EmptyStateDetails from '../EmptyStateDetails/EmptyStateDetails';
+import StakePHoney from './StakePHoney/StakePHoney';
 import LockHoneyForm from './LockHoneyForm/LockHoneyForm';
 import BurnNftsForm from './BurnNftsForm/BurnNftsForm';
 import ClaimRewards from './ClaimRewards/ClaimRewards';
@@ -9,18 +10,19 @@ import { useConnectedWallet } from '@saberhq/use-solana';
 import { useWalletKit } from '@gokiprotocol/walletkit';
 import { mobileReturnButton } from 'styles/common.css';
 
-const items: [HoneyTabItem, HoneyTabItem, HoneyTabItem] = [
+const items: HoneyTabItem[] = [
+  { label: 'Stake pre-Honey', key: 'stake_phoney' },
   { label: 'Lock Honey', key: 'lock_honey' },
   { label: 'Burn Nfts', key: 'burn_nfts' },
   { label: 'Claim Rewards', key: 'claim_rewards' }
 ];
 
-type Tab = 'lock_honey' | 'burn_nfts' | 'claim_rewards';
+type Tab = 'stake_phoney' | 'lock_honey' | 'burn_nfts' | 'claim_rewards';
 
 const GetVeHoneySidebar = (props: { onCancel: Function }) => {
   const wallet = useConnectedWallet();
   const { connect } = useWalletKit();
-  const [activeTab, setActiveTab] = useState<Tab>('lock_honey');
+  const [activeTab, setActiveTab] = useState<Tab>('stake_phoney');
 
   const handleTabChange = (tabKey: string) => {
     // if (tabKey === 'burn_nfts') return;
@@ -55,6 +57,9 @@ const GetVeHoneySidebar = (props: { onCancel: Function }) => {
           />
         ) : (
           <>
+            {activeTab === 'stake_phoney' && (
+              <StakePHoney onCancel={props.onCancel} />
+            )}
             {activeTab === 'lock_honey' && (
               <LockHoneyForm onCancel={props.onCancel} />
             )}

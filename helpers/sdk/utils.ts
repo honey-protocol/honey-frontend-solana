@@ -34,7 +34,15 @@ export const calculateVotingPower = (
   params: LockerParams
 ): BN => {
   const duration = escrow.escrowEndsAt.sub(escrow.escrowStartedAt);
-  return escrow.amount
+  return calculateVotingPowerWithParams(escrow.amount, duration, params);
+};
+
+export const calculateVotingPowerWithParams = (
+  amount: BN,
+  duration: BN,
+  params: LockerParams
+): BN => {
+  return amount
     .mul(duration)
     .muln(params.multiplier)
     .div(params.maxStakeDuration);

@@ -28,8 +28,8 @@ export function findTokenVaultAddress(
   return PublicKey.findProgramAddress(
     [
       Buffer.from(TOKEN_VAULT_SEED),
-      preTokenMint.toBuffer(),
-      tokenMint.toBuffer()
+      tokenMint.toBuffer(),
+      preTokenMint.toBuffer()
     ],
     VEHONEY_ADDRESSES.Stake
   );

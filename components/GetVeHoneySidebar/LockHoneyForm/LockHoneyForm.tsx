@@ -47,7 +47,15 @@ const LockHoneyForm = (props: { onCancel: Function }) => {
       ? 25 / 100
       : 1;
 
-  const { lock, escrow, votingPower, lockedAmount, govToken } = useLocker();
+  const {
+    lock,
+    unlock,
+    escrow,
+    votingPower,
+    lockedAmount,
+    govToken,
+    closeEscrow
+  } = useLocker();
   const honeyAccount = useAccountByMint(govToken?.mintAccount);
 
   const lockEndsTime = useMemo(() => {
@@ -59,6 +67,19 @@ const LockHoneyForm = (props: { onCancel: Function }) => {
     if (!govToken || !honeyAccount) return null;
     return new TokenAmount(govToken, honeyAccount.data.amount);
   }, [honeyAccount, govToken]);
+
+  const unlockable = useMemo(() => {
+    if (!escrow) return false;
+    return new Date(escrow.data.escrowEndsAt.toNumber() * 1000) <= new Date();
+  }, [escrow]);
+
+  const closable = useMemo(() => {
+    if (!escrow) return false;
+    return (
+      new Date(escrow.data.escrowEndsAt.toNumber() * 1000) <= new Date() &&
+      escrow.data.amount.eqn(0)
+    );
+  }, [escrow]);
 
   const handleLock = useCallback(async () => {
     if (
@@ -108,11 +129,11 @@ const LockHoneyForm = (props: { onCancel: Function }) => {
   };
 
   // Put your validators here
-  const isLockButtonDisabled = useMemo(() => {
+  const lockable = useMemo(() => {
     if (!valueHONEY || (honeyAmount && valueHONEY > honeyAmount.asNumber)) {
-      return true;
+      return false;
     }
-    return false;
+    return true;
   }, [valueHONEY, honeyAmount]);
 
   return (
@@ -123,18 +144,32 @@ const LockHoneyForm = (props: { onCancel: Function }) => {
         ) : (
           <div className={styles.buttons}>
             <div className={styles.smallCol}>
-              <HoneyButton onClick={() => props.onCancel()} variant="secondary">
+              <HoneyButton
+                onClick={closeEscrow}
+                disabled={!closable}
+                variant="secondary"
+              >
                 Close
               </HoneyButton>
             </div>
             <div className={styles.bigCol}>
               <HoneyButton
                 variant="primary"
-                disabled={isLockButtonDisabled}
+                disabled={!lockable}
                 block
                 onClick={handleLock}
               >
                 Lock
+              </HoneyButton>
+            </div>
+            <div className={styles.bigCol}>
+              <HoneyButton
+                variant="primary"
+                disabled={!unlockable}
+                block
+                onClick={unlock}
+              >
+                Unlock
               </HoneyButton>
             </div>
           </div>

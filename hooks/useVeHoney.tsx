@@ -239,7 +239,8 @@ export const useStake = () => {
     claim,
     vest,
     claimableAmount,
-    preToken
+    preToken,
+    govToken
   };
 };
 
