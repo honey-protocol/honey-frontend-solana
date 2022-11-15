@@ -5,7 +5,7 @@ import { BnToDecimal, getOraclePrice } from '../../helpers/loanHelpers/index';
 import {
   OPTIMAL_RATIO_ONE,
   OPTIMAL_RATIO_TWO,
-  OPTIMAL_RATIO_THREE,
+  MAX_UTILISATION_RATIO,
   BASE_BORROW_RATE,
   BORROW_RATE_ONE,
   BORROW_RATE_TWO,
@@ -232,7 +232,7 @@ export async function getInterestRate(utilizationRate: number) {
         return (interestRate * 100);
       }
     } else {
-      interestRate = ((BORROW_RATE_THREE - BORROW_RATE_TWO) / ( OPTIMAL_RATIO_THREE - OPTIMAL_RATIO_TWO)) * utilizationRate + (-1*((BORROW_RATE_THREE - BORROW_RATE_TWO) / ( OPTIMAL_RATIO_THREE - OPTIMAL_RATIO_TWO )) * OPTIMAL_RATIO_TWO + BORROW_RATE_TWO)
+      interestRate = ((BORROW_RATE_THREE - BORROW_RATE_TWO) / ( MAX_UTILISATION_RATIO - OPTIMAL_RATIO_TWO)) * utilizationRate + (-1*((BORROW_RATE_THREE - BORROW_RATE_TWO) / ( MAX_UTILISATION_RATIO - OPTIMAL_RATIO_TWO )) * OPTIMAL_RATIO_TWO + BORROW_RATE_TWO)
       return (interestRate * 100);
     }
   } catch (error) {
