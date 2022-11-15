@@ -121,7 +121,7 @@ export const HoneySearchTokenModal = (props: HoneySearchTokenModalProps) => {
 
     return featuredTokens
       .map(featuredToken => {
-        return tokens.find(token => token.symbol === featuredToken);
+        return tokens.find(token => token.address === featuredToken);
       })
       .filter(t => Boolean(t))
       .map(token => {
@@ -150,6 +150,7 @@ export const HoneySearchTokenModal = (props: HoneySearchTokenModalProps) => {
         <div className={styles.title}>Select a Token</div>
         <div className={styles.inputWrapper}>
           <HoneyInput
+            autoFocus
             allowClear
             onChange={handleSearchInputChange}
             placeholder={'Enter your token...'}

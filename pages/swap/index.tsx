@@ -546,7 +546,16 @@ const Swap: NextPage = () => {
                 setIsInputTokenModalVisible(false);
               }}
               tokens={tokensDetails}
-              featuredTokens={['$HONEY', 'USDC', 'SOL']}
+              featuredTokens={[
+                'HonyeYAaTPgKUgQpayL914P6VAqbQZPrbkGMETZvW4iN', // $HONEY
+                'EchesyfXePKdLtoiZSL8pBe8Myagyy8ZRqsACNCFGnvp', // FIDA
+                'So11111111111111111111111111111111111111112', // wSOL
+                '4k3Dyjzvzp8eMZWUXbBCjEvwSkkk59S5iCNLY3QrkX6R', // RAY
+                'MangoCzJ36AjZyKwVj3VnYU4GTonjfVEnJmvvWaxLac', // Mango
+                'Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB', // USDT
+                'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v', // USDC
+                'mSoLzYCxHdYgdzU16g5QSh3i5K3z3KZK7ytfqcJm7So' // mSOL
+              ]}
               visible={isInputTokenModalVisible}
               onCancel={() => setIsInputTokenModalVisible(false)}
               destroyOnClose
