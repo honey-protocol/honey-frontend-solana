@@ -89,6 +89,7 @@ import {
 import { setMarketId } from 'pages/_app';
 import { render } from 'react-dom';
 import { renderMarket, renderMarketImageByName } from 'helpers/marketHelpers';
+
 /**
  * @description formatting functions to format with perfect / format in SOL with icon or just a regular 2 decimal format
  * @params value to be formatted
@@ -99,7 +100,6 @@ import { SizeMe } from 'react-sizeme';
 // import { network } from 'pages/_app';
 
 const network = 'mainnet-beta'; // change to dynamic value
-
 const { format: f, formatPercent: fp, formatSol: fs } = formatNumber;
 
 const Markets: NextPage = () => {
@@ -216,6 +216,8 @@ const Markets: NextPage = () => {
   const [isCreateMarketAreaOnHover, setIsCreateMarketAreaOnHover] =
     useState<boolean>(false);
 
+  console.log('avail', availableNFTs)
+
   // calls upon setting the user nft list per market
   useEffect(() => {
     if (availableNFTs) setUserAvailableNFTs(availableNFTs[0]);
@@ -249,6 +251,7 @@ const Markets: NextPage = () => {
     if (marketReserveInfo && honeyUser)
       fetchUserTotalDeposits(marketReserveInfo, honeyUser);
   }, [marketReserveInfo, honeyUser]);
+
   // fetches the sol price
   // TODO: create type for reserves and connection
   async function fetchSolValue(reserves: any, connection: any) {
@@ -367,16 +370,8 @@ const Markets: NextPage = () => {
     }
   }, [collateralNFTPositions, currentMarketId]);
 
-  async function handlePositions(
-    currentCollectionID: string,
-    activeMarketID: string,
-    currentOpenPositions: any
-  ) {
-    return await handleOpenPositions(
-      currentCollectionID,
-      activeMarketID,
-      currentOpenPositions
-    );
+  async function handlePositions(verifiedCreator: string, currentOpenPositions: any) {
+    return await handleOpenPositions(verifiedCreator, currentOpenPositions);
   }
 
   const healthPercent =
@@ -399,16 +394,10 @@ const Markets: NextPage = () => {
               false
             );
 
-            collection.positions = await handlePositions(
-              collection.id,
-              currentMarketId,
-              userOpenPositions
-            );
-            collection.rate =
-              (await getInterestRate(collection.utilizationRate)) || 0;
-
-            if (currentMarketId === collection.id)
-              setActiveInterestRate(collection.rate);
+            collection.positions = await handlePositions(collection.verifiedCreator, userOpenPositions);
+            collection.rate = (await getInterestRate(collection.utilizationRate)) || 0;
+            
+            if (currentMarketId === collection.id) setActiveInterestRate(collection.rate);
             return collection;
           })
         );
