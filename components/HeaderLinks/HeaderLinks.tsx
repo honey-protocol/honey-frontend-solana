@@ -80,11 +80,11 @@ if (featureFlags.isP2PPageEnabled) {
     href: '',
     submenu: [
       {
-        title: 'LENDING',
+        title: 'Lend',
         href: '/p2p/lend'
       },
       {
-        title: 'BORROWING',
+        title: 'Borrow',
         href: '/p2p/borrow'
       }
     ]
