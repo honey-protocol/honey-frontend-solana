@@ -89,7 +89,6 @@ const BorrowForm = (props: BorrowProps) => {
   };
 
   const handleUsdInputChange = (usdValue: number | undefined) => {
-    console.log('usdValue', usdValue);
     if (userAllowance == 0) return;
     if (!usdValue) {
       setValueUSD(0);
@@ -126,18 +125,14 @@ const BorrowForm = (props: BorrowProps) => {
     }
   };
 
-  console.log('open pos', openPositions)
-
   // if user has an open position, we need to be able to click on the position and borrow against it
   useEffect(() => {
     if (openPositions?.length) {
       const { name, image, mint } = openPositions[0];
-      console.log('xyz open pos', openPositions)
       setSelectedNft({ name, img: image, mint });
       setIsNftSelected(true);
       setHasOpenPosition(true);
     } else if (openPositions.length == 0) {
-      console.log('xyz open pos nope')
       setIsNftSelected(false);
       setHasOpenPosition(false);
     }
