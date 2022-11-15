@@ -12,6 +12,10 @@ export const disabled = style([
   }
 ]);
 
+export const center = style({
+  textAlign: 'center'
+});
+
 export const value = styleVariants({
   normal: typography.numbersRegular,
   big: typography.numbersLarge

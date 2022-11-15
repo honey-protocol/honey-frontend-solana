@@ -23,7 +23,7 @@ import { LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js';
 
 type NftListProps = {
   data: NftCardProps[];
-  selectNFT: (name: string, img: string, mint: any) => void;
+  selectNFT: Function
   nftPrice: any;
   selectedNFTMint: string | undefined;
 };

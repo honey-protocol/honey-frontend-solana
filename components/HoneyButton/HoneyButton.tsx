@@ -9,6 +9,7 @@ export interface HoneyButtonProps extends ButtonProps {
   variant?: 'primary' | 'secondary' | 'tertiary' | 'text' | 'textSecondary';
   solAmount?: number;
   usdcValue?: number;
+  textRight?: string;
 }
 const { format: f, formatPercent: fp, formatUsd: fu } = formatNumber;
 
@@ -20,6 +21,7 @@ const HoneyButton = (props: HoneyButtonProps) => {
     children,
     disabled,
     variant,
+    textRight,
     ...rest
   } = props;
 
@@ -33,17 +35,28 @@ const HoneyButton = (props: HoneyButtonProps) => {
         variant ? styles[variant] : styles['primary'],
         {
           [styles.disabled]: disabled,
-          [styles.withValues]: isButtonWithValues
+          [styles.withValues]: isButtonWithValues || textRight
         },
         className
       )}
     >
       {props.children}
 
-      {isButtonWithValues && (
-        <div className={styles.valueContainer}>
-          <span className={styles.usdcAmount}>SOL {f(solAmount)}</span>
-          <span className={styles.usdcValue}>{fu(usdcValue)}</span>
+      {(textRight || isButtonWithValues) && (
+        <div
+          className={c({
+            [styles.valueContainer]: isButtonWithValues,
+            [styles.valueContainerTextRight]: textRight
+          })}
+        >
+          {isButtonWithValues && (
+            <>
+              <span className={styles.usdcAmount}>SOL {f(solAmount)}</span>
+              <span className={styles.usdcValue}>{fu(usdcValue)}</span>
+            </>
+          )}
+
+          {textRight && <span className={styles.textRight}>{textRight}</span>}
         </div>
       )}
     </Button>
