@@ -39,7 +39,7 @@ export const InputsBlock: FC<InputsBlockProps> = ({
   ),
   secondInputAddon = <> USD </>
 }) => {
-  const handleFirstInputChange = (value: ValueType) => {
+  const handleFirstInputChange = (value: ValueType | null) => {
     if (isNil(value)) {
       onChangeFirstInput(undefined);
     } else {
@@ -47,7 +47,7 @@ export const InputsBlock: FC<InputsBlockProps> = ({
     }
   };
 
-  const handleSecondInputChange = (value: ValueType) => {
+  const handleSecondInputChange = (value: ValueType | null) => {
     if (isNil(value)) {
       onChangeSecondInput(undefined);
     } else {

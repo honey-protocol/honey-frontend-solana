@@ -55,22 +55,7 @@ export const liquidationThreshold = style({
 
 export const liquidationThresholdTitle = style([blockTitle]);
 
-export const input = style([
-  typography.numbersRegular,
-  {
-    width: '100%',
-    height: '100%',
-    borderRadius: 11,
-    background: 'transparent',
-    margin: 0,
-    border: `none`,
-    selectors: {
-      '&::placeholder': {
-        color: vars.colors.grayTransparent
-      }
-    }
-  }
-]);
+export const input = style([]);
 
 export const inputWrapper = style({
   display: 'flex',
@@ -117,28 +102,6 @@ export const inputDescription = style([
   }
 ]);
 
-globalStyle(`${input} .ant-input-number-input`, {
-  height: 'auto',
-  padding: 16,
-  borderColor: 'transparent'
-});
-globalStyle(`${input}.ant-input-number:hover`, {
-  height: 'auto',
-  borderColor: 'transparent'
-});
-globalStyle(`${input}.ant-input-number`, {
-  borderRight: 'none',
-  boxShadow: 'none',
-  borderColor: 'transparent'
-});
-globalStyle(`${input}.ant-input-number:focus`, {
-  borderRight: 'none',
-  borderColor: 'transparent'
-});
-globalStyle(`${input}.ant-input-number:active`, {
-  borderRight: 'none',
-  borderColor: 'transparent'
-});
 globalStyle(
   `${settingMarketStep} .ant-input-number-wrapper.ant-input-number-group > .ant-input-number-group-addon`,
   {

@@ -47,7 +47,7 @@ import {
   LIFINITY_FLARES_MARKET_ID,
   BURRITO_BOYZ_MARKET_ID
 } from 'constants/loan';
-import { NATIVE_MINT } from '@solana/spl-token';
+import { NATIVE_MINT } from '@solana/spl-token-v-0.1.8';
 import HoneySider from 'components/HoneySider/HoneySider';
 import HoneyContent from 'components/HoneyContent/HoneyContent';
 import { hideTablet, showTablet, table } from 'styles/markets.css';
@@ -116,7 +116,7 @@ const Liquidate: NextPage = () => {
     sdkConfig.saberHqConnection,
     sdkConfig.sdkWallet,
     sdkConfig.honeyId,
-    currentMarketId
+    currentMarketId,
   );
 
   /**
@@ -128,14 +128,8 @@ const Liquidate: NextPage = () => {
   const [highestBiddingAddress, setHighestBiddingAddress] = useState('');
   const [highestBiddingValue, setHighestBiddingValue] = useState(0);
   const [currentUserBid, setCurrentUserBid] = useState<number>();
-  const [userInput, setUserInput] = useState(0);
-  const [loadingState, setLoadingState] = useState(false);
-  const [refetchState, setRefetchState] = useState(false);
   const [nftPrice, setNftPrice] = useState<number>(0);
-  const [totalDebt, setTotalDebt] = useState<number>(0);
-  const [tvl, setTvl] = useState<number>(0);
   const [userBalance, setUserBalance] = useState(0);
-  const [loanToValue, setLoanToValue] = useState<number>(0);
   const [fetchedSolPrice, setFetchedSolPrice] = useState(0);
   const [isMobileSidebarVisible, setShowMobileSidebar] = useState(false);
   
@@ -204,8 +198,6 @@ const Liquidate: NextPage = () => {
     }
   }
 
-  console.log('user has pos', hasPosition)
-  console.log('user has bid', currentUserBid)
   // calculates nft price
   async function calculateNFTPrice() {
     if (marketReserveInfo && parsedReserves && honeyMarket) {
@@ -342,6 +334,7 @@ const Liquidate: NextPage = () => {
 
   useEffect(() => {
       if (status.positions) {
+        console.log('zeta::', status.positions)
         setPositionsObject(status.positions);
       } else {
         setPositionsObject([])
@@ -380,7 +373,7 @@ const Liquidate: NextPage = () => {
     if (sdkConfig.saberHqConnection && marketReserveInfo) {
       function getData() {
         return Promise.all(
-          liquidationCollections.map(async collection => {
+          marketCollections.map(async collection => {
             await populateMarketData(
               collection,
               sdkConfig.saberHqConnection,
@@ -393,7 +386,6 @@ const Liquidate: NextPage = () => {
                 marketReserveInfo: marketReserveInfo
               }
             )
-
             return collection
 
           })
@@ -402,6 +394,7 @@ const Liquidate: NextPage = () => {
 
       getData().then(result => {
         setTableData(result);
+        setTableDataFiltered(result);
       });
     }
   }, [
@@ -421,7 +414,7 @@ const Liquidate: NextPage = () => {
     if (!searchTerm) {
       return [...tableData];
     }
-    const r = new RegExp(searchTerm, 'gmi');
+    const r = new RegExp(searchTerm, 'mi');
     return [...tableData].filter(row => {
       return r.test(row.name);
     });
@@ -494,30 +487,30 @@ const Liquidate: NextPage = () => {
           );
         }
       },
-      {
-        width: columnsWidth[1],
-        title: ({ sortColumns }) => {
-          const sortOrder = getColumnSortStatus(sortColumns, 'risk');
-          return (
-            <div
-              className={
-                style.headerCell[
-                  sortOrder === 'disabled' ? 'disabled' : 'active'
-                ]
-              }
-              style={{paddingLeft: 15}}
-            >
-              <span>Risk</span>
-              <div className={style.sortIcon[sortOrder]} />
-            </div>
-          );
-        },
-        dataIndex: 'risk',
-        sorter: (a, b) => a.risk! - b.risk!,
-        render: (rate: number, market: any) => {
-          return <div className={style.rateCell} >{fp(market.risk * 100)}</div>;
-        }
-      },
+      // {
+      //   width: columnsWidth[1],
+      //   title: ({ sortColumns }) => {
+      //     const sortOrder = getColumnSortStatus(sortColumns, 'risk');
+      //     return (
+      //       <div
+      //         className={
+      //           style.headerCell[
+      //             sortOrder === 'disabled' ? 'disabled' : 'active'
+      //           ]
+      //         }
+      //         style={{paddingLeft: 15}}
+      //       >
+      //         <span>Risk</span>
+      //         <div className={style.sortIcon[sortOrder]} />
+      //       </div>
+      //     );
+      //   },
+      //   dataIndex: 'risk',
+      //   sorter: (a, b) => a.risk! - b.risk!,
+      //   render: (rate: number, market: any) => {
+      //     return <div className={style.rateCell} >{fp(market.risk * 100)}</div>;
+      //   }
+      // },
       {
         width: columnsWidth[2],
         title: ({ sortColumns }) => {
@@ -562,8 +555,8 @@ const Liquidate: NextPage = () => {
         },
         dataIndex: 'totalDebt',
         sorter: (a, b) => a.totalDebt! - b.totalDebt!,
-        render: (available: number) => {
-          return <div className={style.availableCell}>{fs(available)}</div>;
+        render: (available: number, market) => {
+          return <div className={style.availableCell}>{fs(market.available)}</div>;
         }
       },
       {
@@ -587,7 +580,8 @@ const Liquidate: NextPage = () => {
         dataIndex: 'tvl',
         sorter: (a, b) => a.tvl! - b.tvl!,
         render: (value: number, market: any) => {
-          return <div className={style.valueCell}>{fs(value)}</div>;
+          console.log('beta::', value);
+          return <div className={style.valueCell}>{fs(market.value)}</div>;
         }
       },
       {
@@ -631,7 +625,7 @@ const Liquidate: NextPage = () => {
                     <div className={style.logoWrapper}>
                       <div className={style.collectionLogo}>
                         <HexaBoxContainer>
-                          {renderMarketImageByID(currentMarketId)}
+                          {renderMarketImageByName(name)}
                         </HexaBoxContainer>
                       </div>
                     </div>
@@ -650,9 +644,10 @@ const Liquidate: NextPage = () => {
               />
 
               <HoneyTableRow>
-                <div className={style.rateCell}>{fp(row.risk * 100)}</div>
-                <div className={style.rateCell}>{fs(row.totalDebt)}</div>
-                <div className={style.availableCell}>{fs(row.tvl)}</div>
+                {/* <div className={style.rateCell}>{fp(row.risk * 100)}</div> */}
+                <div className={style.rateCell}>{}</div>
+                <div className={style.rateCell}>{fs(row.available)}</div>
+                <div className={style.availableCell}>{fs(row.value)}</div>
               </HoneyTableRow>
             </>
           );
@@ -735,7 +730,7 @@ const Liquidate: NextPage = () => {
           </div>
 
           <div className={style.mobileTableHeader}>
-            <div className={style.tableCell}>Risk</div>
+            <div className={style.tableCell}></div>
             <div className={style.tableCell}>Debt</div>
             <div className={style.tableCell}>TVL</div>
           </div>
@@ -749,6 +744,11 @@ const Liquidate: NextPage = () => {
             className={classNames(style.table, {
               [style.emptyTable]: !tableDataFiltered.length
             })}
+            onRow={(record, rowIndex) => {
+              return {
+                onClick: event => handleMarketId(record)
+              };
+            }}
             expandable={{
               // we use our own custom expand column
               showExpandColumn: false,

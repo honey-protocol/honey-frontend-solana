@@ -90,7 +90,7 @@ export const liquidationInput = style([
   }
 ]);
 
-export const tabTitle = style({
+export const SectionTitle = style({
   marginBottom: 16
 });
 

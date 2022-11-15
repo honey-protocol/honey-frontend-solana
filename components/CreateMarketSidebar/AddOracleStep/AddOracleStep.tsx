@@ -1,6 +1,6 @@
 import React, { useCallback, useState } from 'react';
 import HoneyTooltip from '../../HoneyTooltip/HoneyTooltip';
-import TabTitle from '../../HoneyTabs/TabTitle/TabTitle';
+import SectionTitle from '../../SectionTitle/SectionTitle';
 import { HoneyInputWithLabel } from '../../HoneyInputWithLabel/HoneyInputWithLabel';
 import * as styles from './AddOracleStep.css';
 
@@ -8,10 +8,10 @@ export const AddOracleStep = () => {
   const [value, setValue] = useState<string>('');
   return (
     <>
-      <div className={styles.tabTitle}>
-        <TabTitle
+      <div className={styles.SectionTitle}>
+        <SectionTitle
           title="Oracle"
-          tooltip={<HoneyTooltip tooltipIcon placement="top" label={'Mock'} />}
+          tooltip={<HoneyTooltip tooltipIcon placement="top" title={'Mock'} />}
         />
       </div>
 

@@ -32,6 +32,7 @@ const CustomDropdown = (props: CustomDropdownProps) => {
   };
 
   useEffect(() => {
+    // @ts-ignore
     window.onclick = event => {
       if (isOpen && event.target !== optionsContainerRef.current) {
         setIsOpen(false);

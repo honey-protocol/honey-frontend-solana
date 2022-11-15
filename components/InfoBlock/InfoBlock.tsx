@@ -11,6 +11,8 @@ interface InfoBlockProps {
   valueSize?: 'normal' | 'big';
   isDisabled?: boolean;
   toolTipLabel?: string | ReactElement;
+  className?: string;
+  center?: boolean;
 }
 
 export const InfoBlock: FC<InfoBlockProps> = ({
@@ -20,19 +22,22 @@ export const InfoBlock: FC<InfoBlockProps> = ({
   valueSize = 'normal',
   isDisabled,
   toolTipLabel,
-  valueColor
+  valueColor,
+  center,
+  className
 }) => {
   const Container = (a: { children: ReactNode }) =>
     toolTipLabel ? (
-      <HoneyTooltip label={toolTipLabel}>{a.children}</HoneyTooltip>
+      <HoneyTooltip title={toolTipLabel}>{a.children}</HoneyTooltip>
     ) : (
       <Fragment>{a.children}</Fragment>
     );
   return (
     <Container>
       <div
-        className={c(styles.infoBlockContainer, {
-          [styles.disabled]: isDisabled
+        className={c(styles.infoBlockContainer, className, {
+          [styles.disabled]: isDisabled,
+          [styles.center]: center
         })}
       >
         {title && (
