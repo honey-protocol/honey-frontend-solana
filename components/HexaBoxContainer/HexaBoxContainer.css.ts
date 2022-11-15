@@ -20,6 +20,10 @@ export const black = style({
   background: vars.colors.black
 });
 
+export const blue = style({
+  background: vars.colors.blue
+});
+
 export const white = style({
   background: vars.colors.white
 });

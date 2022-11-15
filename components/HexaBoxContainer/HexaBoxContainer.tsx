@@ -2,10 +2,11 @@ import React, { ReactNode } from 'react';
 import * as styles from './HexaBoxContainer.css';
 import c from 'classnames';
 import { vars } from '../../styles/theme.css';
+import {HexaBoxBordersColor} from "./types";
 
 interface HexaBoxContainerProps {
-  borderColor?: 'black' | 'gray' | 'green' | 'red' | 'brownLight';
-  shadowColor?: 'black' | 'gray' | 'green' | 'red' | 'brownLight';
+  borderColor?: HexaBoxBordersColor;
+  shadowColor?: HexaBoxBordersColor;
   children: ReactNode;
 }
 

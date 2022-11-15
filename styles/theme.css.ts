@@ -20,6 +20,8 @@ export const vars = createGlobalTheme(':root', {
     greenDark: '#007700',
     greenDarkest: '#008800',
 
+    blue: '#009EE7',
+
     red: '#CF4536',
     redDark: '#A62B1E',
 
