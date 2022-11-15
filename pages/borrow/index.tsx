@@ -216,8 +216,6 @@ const Markets: NextPage = () => {
   const [isCreateMarketAreaOnHover, setIsCreateMarketAreaOnHover] =
     useState<boolean>(false);
 
-  console.log('avail', availableNFTs)
-
   // calls upon setting the user nft list per market
   useEffect(() => {
     if (availableNFTs) setUserAvailableNFTs(availableNFTs[0]);
