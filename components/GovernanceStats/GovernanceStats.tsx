@@ -93,7 +93,7 @@ export const GovernanceStats: FC<GoveranceStatsProps> = ({
     <div className={styles.governanceGraphs}>
       <div className={styles.statBlock}>
         <div className={styles.blockTitle}>
-          <HoneyTooltip label="Honey tokens can be bought on the open market or earned by staking Honey Gensis Bees on the farm page.">
+          <HoneyTooltip title="Honey tokens can be bought on the open market or earned by staking Honey Gensis Bees on the farm page.">
             <Space size="small" className={c(styles.title, styles.yellow)}>
               HONEY balance
               <div className={questionIconYellow} />
@@ -124,7 +124,7 @@ export const GovernanceStats: FC<GoveranceStatsProps> = ({
 
       <div className={styles.statBlock}>
         <div className={styles.blockTitle}>
-          <HoneyTooltip label="veHONEY is the Governance token of the Honey Ecosystem. It is used to create and vote on DAO proposals.">
+          <HoneyTooltip title="veHONEY is the Governance token of the Honey Ecosystem. It is used to create and vote on DAO proposals.">
             <Space className={styles.title}>
               veHONEY || Voting power <div className={questionIcon} />
             </Space>
@@ -148,7 +148,7 @@ export const GovernanceStats: FC<GoveranceStatsProps> = ({
 
       <div className={c(styles.statBlock, styles.lockPeriodBlock)}>
         <div className={styles.blockTitle}>
-          <HoneyTooltip label="A countdown until your veHONEY can be unlocked. When you unlock your veHONEY you will be able to claim your previously locked HONEY tokens. This countdown is pushed back each time more HONEY is vested.">
+          <HoneyTooltip title="A countdown until your veHONEY can be unlocked. When you unlock your veHONEY you will be able to claim your previously locked HONEY tokens. This countdown is pushed back each time more HONEY is vested.">
             <Space className={styles.title} size="small">
               Lock period <div className={questionIcon} />
             </Space>

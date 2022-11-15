@@ -11,9 +11,9 @@ import {
 } from '@tribecahq/tribeca-sdk';
 
 import { InfoBlock } from 'components/InfoBlock/InfoBlock';
-import TabTitle from 'components/HoneyTabs/TabTitle/TabTitle';
 import { Proposal } from 'contexts/GovernanceProvider';
 import { useGokiTransactionData } from 'helpers/parser';
+import SectionTitle from 'components/SectionTitle/SectionTitle';
 
 import * as styles from '../../VoteForm.css';
 
@@ -96,7 +96,7 @@ const ProposalHistory: React.FC<Props> = ({ proposalInfo }: Props) => {
   console.log({ events });
   return (
     <div>
-      <TabTitle title="History" />
+      <SectionTitle title="History" />
       {events.map((event, i) => (
         <div className={styles.row} key={i}>
           <InfoBlock

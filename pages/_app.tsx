@@ -3,22 +3,24 @@ import type { AppProps } from 'next/app';
 import Script from 'next/script';
 import { ToastContainer } from 'react-toastify';
 import { QueryClient, QueryClientProvider } from 'react-query';
+import { ThemeProvider } from 'degen';
 import { AnchorProvider, HoneyProvider } from '@honey-finance/sdk';
+import { PublicKey } from '@solana/web3.js';
+import { getPlatformFeeAccounts, JupiterProvider } from '@jup-ag/react-hook';
 import { Network } from '@saberhq/solana-contrib';
 import { useConnectedWallet, useConnection } from '@saberhq/use-solana';
 import { WalletKitProvider } from '@gokiprotocol/walletkit';
 import { SailProvider } from '@saberhq/sail';
-import { ThemeProvider } from 'degen';
-import 'degen/styles';
-import 'react-toastify/dist/ReactToastify.css';
 
 import SecPopup from 'components/SecPopup';
 import { AccountsProvider } from 'contexts/AccountsProvider';
-// import { accentSequence, ThemeAccent } from '../helpers/theme-utils';
+import { DialectProviders } from 'contexts/DialectProvider';
 import { onSailError } from 'helpers/error';
 import { HONEY_GENESIS_MARKET_ID, HONEY_PROGRAM_ID } from 'constants/loan';
-// import NoMobilePopup from 'components/NoMobilePopup/NoMobilePopup';
 
+import 'degen/styles';
+import 'react-toastify/dist/ReactToastify.css';
+import '@dialectlabs/react-ui/index.css';
 import '../styles/globals.css';
 
 export const network = (process.env.NETWORK as Network) || 'mainnet-beta';
@@ -53,6 +55,47 @@ const OnChainProvider: FC<{ children: ReactNode }> = ({ children }) => {
         {children}
       </HoneyProvider>
     </AnchorProvider>
+  );
+};
+
+const HoneyJupiterProvider: FC<{ children: ReactNode }> = ({ children }) => {
+  const wallet = useConnectedWallet();
+  const connection = useConnection();
+  const [platformFeeAccounts, setPlatformFeeAccounts] = useState(new Map());
+  const platformFeeBps = Number(process.env.NEXT_PUBLIC_JUPITER_FEE_BPS || '0');
+  const platformFeeWallet = process.env.NEXT_PUBLIC_JUPITER_FEE_ADDRESS
+    ? new PublicKey(process.env.NEXT_PUBLIC_JUPITER_FEE_ADDRESS)
+    : undefined;
+
+  useEffect(() => {
+    if (!platformFeeBps || !platformFeeWallet) {
+      return;
+    }
+    getPlatformFeeAccounts(connection, platformFeeWallet).then(res => {
+      setPlatformFeeAccounts(res);
+    });
+    //  eslint-disable react-hooks/exhaustive-deps
+  }, []);
+
+  let platformFeeAndAccounts = undefined;
+  if (platformFeeBps && platformFeeWallet) {
+    platformFeeAndAccounts = {
+      feeBps: platformFeeBps,
+      feeAccounts: platformFeeAccounts
+    };
+  }
+  console.log('platformFeeAndAccounts', platformFeeAndAccounts);
+
+  return (
+    <JupiterProvider
+      connection={connection}
+      cluster="mainnet-beta"
+      platformFeeAndAccounts={platformFeeAndAccounts}
+      userPublicKey={wallet?.publicKey || undefined}
+      onlyDirectRoutes={false}
+    >
+      {children}
+    </JupiterProvider>
   );
 };
 
@@ -92,7 +135,6 @@ function MyApp({ Component, pageProps }: AppProps) {
         strategy="lazyOnload"
         src={`https://www.googletagmanager.com/gtag/js?id=${process.env.NEXT_PUBLIC_GA}`}
       />
-
       <Script id="gtm-script" strategy="lazyOnload">
         {`
           window.dataLayer = window.dataLayer || [];
@@ -120,10 +162,14 @@ function MyApp({ Component, pageProps }: AppProps) {
                 <SecPopup setShowPopup={setShowPopup} />
               ) : (
                 <>
-                  <OnChainProvider>
-                    <Component {...pageProps} />
-                    <ToastContainer theme="dark" position="bottom-right" />
-                  </OnChainProvider>
+                  <HoneyJupiterProvider>
+                    <DialectProviders>
+                      <OnChainProvider>
+                        <Component {...pageProps} />
+                        <ToastContainer theme="dark" position="bottom-right" />
+                      </OnChainProvider>
+                    </DialectProviders>
+                  </HoneyJupiterProvider>
                 </>
               )}
             </SailProvider>

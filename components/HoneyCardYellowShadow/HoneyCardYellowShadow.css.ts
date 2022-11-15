@@ -14,3 +14,7 @@ export const card = style({
     }
   }
 });
+
+export const noOverflowHidden = style({
+  overflow: 'initial'
+});

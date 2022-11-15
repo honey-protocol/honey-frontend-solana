@@ -5,7 +5,7 @@ import SidebarScroll from 'components/SidebarScroll/SidebarScroll';
 import HexaBoxContainer from 'components/HexaBoxContainer/HexaBoxContainer';
 import HoneyButton from 'components/HoneyButton/HoneyButton';
 import HoneyToggle from 'components/HoneyToggle/HoneyToggle';
-import TabTitle from 'components/HoneyTabs/TabTitle/TabTitle';
+import SectionTitle from '../../SectionTitle/SectionTitle';
 
 import * as styles from './HowItWorksTab.css';
 
@@ -57,7 +57,7 @@ const HowItWorksTab = (props: HowItWorksTabProps) => {
     >
       <div className={styles.howItWorksTab}>
         <div className={styles.contentWrapper}>
-          <TabTitle title="How to create new proposal" />
+          <SectionTitle title="How to create new proposal" />
           <div className={styles.listItem}>
             <div className={styles.listIcon}>
               <HexaBoxContainer>

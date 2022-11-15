@@ -47,7 +47,7 @@ import {
   LIFINITY_FLARES_MARKET_ID,
   BURRITO_BOYZ_MARKET_ID
 } from 'constants/loan';
-import { NATIVE_MINT } from '@solana/spl-token';
+import { NATIVE_MINT } from '@solana/spl-token-v-0.1.8';
 import HoneySider from 'components/HoneySider/HoneySider';
 import HoneyContent from 'components/HoneyContent/HoneyContent';
 import { hideTablet, showTablet, table } from 'styles/markets.css';
@@ -414,7 +414,7 @@ const Liquidate: NextPage = () => {
     if (!searchTerm) {
       return [...tableData];
     }
-    const r = new RegExp(searchTerm, 'gmi');
+    const r = new RegExp(searchTerm, 'mi');
     return [...tableData].filter(row => {
       return r.test(row.name);
     });

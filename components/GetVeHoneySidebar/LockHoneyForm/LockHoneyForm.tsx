@@ -8,7 +8,7 @@ import SidebarScroll from 'components/SidebarScroll/SidebarScroll';
 import { HoneyButtonTabs } from 'components/HoneyButtonTabs/HoneyButtonTabs';
 import HoneyWarning from 'components/HoneyWarning/HoneyWarning';
 import { InputsBlock } from 'components/InputsBlock/InputsBlock';
-import TabTitle from 'components/HoneyTabs/TabTitle/TabTitle';
+import SectionTitle from 'components/SectionTitle/SectionTitle';
 
 import { useLocker } from 'hooks/useVeHoney';
 import useToast from 'hooks/useToast';
@@ -142,7 +142,7 @@ const LockHoneyForm = (props: { onCancel: Function }) => {
       }
     >
       <div className={styles.depositForm}>
-        <TabTitle title="Deposit HONEY and receive veHONEY" />
+        <SectionTitle title="Deposit HONEY and receive veHONEY" />
         <div className={styles.row}>
           <div className={styles.col}>
             <HoneyWarning

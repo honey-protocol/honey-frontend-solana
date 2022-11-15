@@ -1,9 +1,10 @@
-import { Table, Tabs, Typography } from 'antd';
-import classNames from 'classnames';
 import React, { ReactNode } from 'react';
-import * as styles from './HoneyTabs.css';
+import { Typography } from 'antd';
+import classNames from 'classnames';
 import TabBgLeft from './TabBgLeft';
 import TabBgRight from './TabBgRight';
+
+import * as styles from './HoneyTabs.css';
 
 export type HoneyTabItem = {
   label: string;
@@ -29,20 +30,20 @@ const HoneyTabs = (props: {
 
         {props.items.map((tabInfo, i) => (
           <div
-            key={tabInfo.key}
+            key={tabInfo?.key}
             className={classNames(
               styles.tab,
-              props.activeKey === tabInfo.key
+              props.activeKey === tabInfo?.key
                 ? styles.activeText
                 : styles.inactiveText,
-              tabInfo.disabled ? styles.disabled : ''
+              tabInfo?.disabled ? styles.disabled : ''
             )}
             onClick={() =>
-              tabInfo.disabled ? null : props.onTabChange(tabInfo.key)
+              tabInfo?.disabled ? null : props.onTabChange(tabInfo?.key)
             }
           >
             <Typography.Text className={styles.tabText}>
-              {tabInfo.label}
+              {tabInfo?.label}
             </Typography.Text>
           </div>
         ))}

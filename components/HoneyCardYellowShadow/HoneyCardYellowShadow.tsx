@@ -1,8 +1,18 @@
-import React, { ReactNode } from 'react';
+import React, { FC } from 'react';
 import * as styles from './HoneyCardYellowShadow.css';
+import { HoneyCardYellowShadowProps } from './types';
+import c from 'classnames';
 
-const HoneyCardYellowShadow = (props: { children: ReactNode }) => (
-  <div className={styles.card}>{props.children}</div>
-);
+const HoneyCardYellowShadow: FC<HoneyCardYellowShadowProps> = props => {
+  return (
+    <div
+      className={c(styles.card, {
+        [styles.noOverflowHidden]: props.isOverflowHiddenDisabled
+      })}
+    >
+      {props.children}
+    </div>
+  );
+};
 
 export default HoneyCardYellowShadow;

@@ -1,17 +1,11 @@
 import React, { useMemo, useState } from 'react';
-// import cs from 'classnames';
-// import invariant from 'tiny-invariant';
-// import { Spinner } from 'degen';
 import { Transaction } from '@solana/web3.js';
 import { extractErrorMessage } from '@saberhq/sail';
 
+import SectionTitle from 'components/SectionTitle/SectionTitle';
 import HoneyButton from 'components/HoneyButton/HoneyButton';
 import SidebarScroll from 'components/SidebarScroll/SidebarScroll';
 import { HoneyTextArea } from 'components/HoneyTextArea/HoneyTextArea';
-// import CustomDropdown from 'components/CustomDropdown/CustomDropdown';
-import TabTitle from 'components/HoneyTabs/TabTitle/TabTitle';
-// import HoneyWarning from 'components/HoneyWarning/HoneyWarning';
-// import { ACTIONS, ActionType } from 'actions/types';
 import useToast from 'hooks/useToast';
 import { useProposals } from 'hooks/useVeHoney';
 
@@ -107,7 +101,7 @@ const CreateProposalTab = (props: { onCancel: Function }) => {
       }
     >
       <div className={styles.createProposalTab}>
-        <TabTitle title="Create new proposal" />
+        <SectionTitle title="Create new proposal" />
 
         <div className={styles.titleInput}>
           <HoneyTextArea
@@ -140,7 +134,7 @@ const CreateProposalTab = (props: { onCancel: Function }) => {
           />
         </div>
 
-        <TabTitle title="Proposed Action" />
+        <SectionTitle title="Proposed Action" />
 
         {/* <div className={cs(styles.row, styles.mb12)}>
           <CustomDropdown

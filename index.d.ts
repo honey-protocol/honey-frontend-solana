@@ -17,3 +17,11 @@ type NFT = {
   tokenId: string;
   mint: string;
 };
+
+declare global {
+  interface Window {
+    solana: any;
+  }
+}
+
+declare var window: any;

@@ -1,24 +1,29 @@
 import React, { ReactNode } from 'react';
 import * as styles from './HoneyTooltip.css';
-import { Tooltip } from 'antd';
-import {TooltipPlacement} from "antd/lib/tooltip";
+import { Tooltip, TooltipProps } from 'antd';
+import { TooltipPlacement } from 'antd/lib/tooltip';
 
-interface HoneyTooltipProps {
-  label: string | ReactNode;
-  children?: ReactNode;
-  placement?: TooltipPlacement;
+type HoneyTooltipProps = TooltipProps & {
   tooltipIcon?: boolean;
-}
+  customIcon?: string;
+};
 
 const HoneyTooltip = (props: HoneyTooltipProps) => {
+  const { children, placement, ...rest } = props;
   return (
     <Tooltip
-      placement={props.placement ? props.placement : "bottom"}
-      title={props.label}
+      placement={placement ? placement : 'bottom'}
       overlayClassName={styles.tooltip}
+      {...rest}
     >
-      {props.children && <div className={styles.container}>{props.children}</div>}
-      {props.tooltipIcon && <div className={styles.tooltipIcon} />}
+      {props.children && (
+        <div className={styles.container}>{props.children}</div>
+      )}
+      {props.tooltipIcon && (
+        <div
+          className={props.customIcon ? props.customIcon : styles.tooltipIcon}
+        />
+      )}
     </Tooltip>
   );
 };

@@ -16,7 +16,7 @@ export const tabsContainer = style({
   marginBottom: '12px'
 });
 
-export const tabTitle = style({
+export const SectionTitle = style({
   marginBottom: '16px'
 });
 

@@ -12,16 +12,15 @@ import {
 import { VoteFormProps } from './types';
 import ProposalVote, { VoteType } from './Proposals/ProposalVote/ProposalVote';
 import ProposalQueue from './Proposals/ProposalQueue/ProposalQueue';
-// import ProposalExecute from './Proposals/ProposalExecute/ProposalExecute';
 import ProposalActivate from './Proposals/ProposalActivate/ProposalActivate';
 import ProposalHistory from './Proposals/ProposalHistory/ProposalHistory';
-import TabTitle from '../../HoneyTabs/TabTitle/TabTitle';
+import SectionTitle from 'components/SectionTitle/SectionTitle';
 
-import { InfoBlock } from '../../InfoBlock/InfoBlock';
-import HoneyButton from '../../HoneyButton/HoneyButton';
-import SidebarScroll from '../../SidebarScroll/SidebarScroll';
-import HoneyWarning from '../../HoneyWarning/HoneyWarning';
-import useToast from '../../../hooks/useToast';
+import { InfoBlock } from 'components/InfoBlock/InfoBlock';
+import HoneyButton from 'components/HoneyButton/HoneyButton';
+import SidebarScroll from 'components/SidebarScroll/SidebarScroll';
+import HoneyWarning from 'components/HoneyWarning/HoneyWarning';
+import useToast from 'hooks/useToast';
 import {
   useLocker,
   useProposalWithKey,
@@ -30,8 +29,8 @@ import {
 } from 'hooks/useVeHoney';
 import { formatNumber } from 'helpers/format';
 
-import * as styles from './VoteForm.css';
 import { questionIcon } from 'styles/icons.css';
+import * as styles from './VoteForm.css';
 
 const { formatShortName: fsn } = formatNumber;
 
@@ -209,7 +208,7 @@ const VoteForm: FC<VoteFormProps> = (props: VoteFormProps) => {
       }
     >
       <div className={styles.depositForm}>
-        <TabTitle title={proposalInfo.meta?.title || '--'} />
+        <SectionTitle title={proposalInfo?.meta?.title || '--'} />
         <div className={styles.row}>
           <HoneyWarning
             message="Discuss about this proposal on forum"

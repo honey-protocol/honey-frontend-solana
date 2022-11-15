@@ -161,7 +161,7 @@ const Governance: NextPage = () => {
                 </div>
               </div>
               <div className={style.titleTooltipContainer}>
-                <HoneyTooltip label={row.name}>
+                <HoneyTooltip title={row.name}>
                   <div className={style.collectionName}>{row.name}</div>
                 </HoneyTooltip>
               </div>

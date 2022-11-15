@@ -19,7 +19,7 @@ export const SliderPosition: FC<SliderPositionProps> = ({ position }) => {
       </div>
       <div className={styles.honeyPositionValues}>
         <span className={styles.honeyPositionName}>
-          <HoneyTooltip label={name}>{fnn(name)}</HoneyTooltip>
+          <HoneyTooltip title={name}>{fnn(name)}</HoneyTooltip>
         </span>
         <div className={styles.honeyPositionDigits}>
           <div className={styles.honeyPositionPrice}>$ {fsn(value)}</div>
