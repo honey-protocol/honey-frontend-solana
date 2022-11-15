@@ -12,7 +12,6 @@ Hello and welcome 👋🏼, we are happy to see that you arrived at Honey Labs -
 - <a href="https://degen-xyz.vercel.app/" target="blank">Degen-UI:</a> for styling accopanied by <a href="https://vanilla-extract.style/documentation/setup/" target="blank">Vanilla-Extract</a> for custom CSS classes
 
 
-
 ##  <span style="color: rgb(235, 85, 69); font-weight: 900">Getting Started</span>
 The Honey Finance Ecosystem consists of several components this repo represents the Front-end.
 
@@ -33,7 +32,7 @@ yarn dev #spins up the server at localhost:3000
 ```
 In order to test the production server run:
 ```bash
-yarn build
+yarn build 
 ```
 
 </br><hr>
