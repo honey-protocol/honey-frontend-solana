@@ -23,7 +23,7 @@ export const FiltersSidebar = ({ tags, rules, initParams }: FiltersSidebarProps)
     initParams.minTotalSupplied, initParams.maxTotalSupplied]);
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
 
-  const tabs: [HoneyTabItem, HoneyTabItem?] = [
+  const tabs: [HoneyTabItem] = [
     {label: 'Filters', key: 'filters'},
   ];
   

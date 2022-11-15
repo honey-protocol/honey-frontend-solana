@@ -96,6 +96,7 @@ const ClaimRewards = (props: { onCancel: Function }) => {
           </tr>
           {receipts.map(r => (
             <ListItem
+              key={r.id.toString()}
               receipt={r}
               onClaim={() => handleClaim(r.id)}
               onClose={() => handleClose(r.id)}
