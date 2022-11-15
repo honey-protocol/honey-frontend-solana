@@ -6,8 +6,8 @@ import EmptyStateDetails from '../EmptyStateDetails/EmptyStateDetails';
 import { useConnectedWallet } from '@saberhq/use-solana';
 import { useWalletKit } from '@gokiprotocol/walletkit';
 import { mobileReturnButton } from 'styles/common.css';
-import { CounterOfferTab } from "../CounterOfferTab/CounterOfferTab";
-import { OfferItem } from "../CounterOfferTab/types";
+import { CounterOfferTab } from '../CounterOfferTab/CounterOfferTab';
+import { OfferItem } from '../CounterOfferTab/types';
 import LendForm from '../LendForm/LendForm';
 
 const items: [HoneyTabItem, HoneyTabItem] = [
@@ -18,11 +18,31 @@ const items: [HoneyTabItem, HoneyTabItem] = [
 type Tab = 'lend' | 'counter_offer';
 
 const mockOffersArray: OfferItem[] = [
-  { hash: '2ijWvdsnOP1vnjds8dsa12edasd1dw', endDate: '2022-11-22T14:46:57.353Z', rate: 12, date: '2022-11-07T14:46:57.353Z' },
-  { hash: '2ijWvdsnOP1vnjds8dsa12edasd1dw', endDate: '2022-11-22T14:46:57.353Z', rate: 12, date: '2022-11-07T14:46:57.353Z' },
-  { hash: '2ijWvdsnOP1vnjds8dsa12edasd1dw', endDate: '2022-11-22T14:46:57.353Z', rate: 12, date: '2022-11-07T14:46:57.353Z' },
-  { hash: '2ijWvdsnOP1vnjds8dsa12edasd1dw', endDate: '2022-11-22T14:46:57.353Z', rate: 12, date: '2022-11-07T14:46:57.353Z' }
-]
+  {
+    address: '2ijWvdsnOP1vnjds8dsa12edasd1dw',
+    end: 1668888000000,
+    rate: 12,
+    start: 1668024000000
+  },
+  {
+    address: '2ijWvdsnOP1vnjds8dsa12edasd1dw',
+    end: 1668888000000,
+    rate: 12,
+    start: 1668024000000
+  },
+  {
+    address: '2ijWvdsnOP1vnjds8dsa12edasd1dw',
+    end: 1668888000000,
+    rate: 12,
+    start: 1668024000000
+  },
+  {
+    address: '2ijWvdsnOP1vnjds8dsa12edasd1dw',
+    end: 1668888000000,
+    rate: 12,
+    start: 1668024000000
+  }
+];
 
 const LendingSidebar = (props: LendingSidebarProps) => {
   const {
@@ -98,7 +118,7 @@ const LendingSidebar = (props: LendingSidebarProps) => {
               />
             )}
             {activeTab === 'counter_offer' && (
-              <CounterOfferTab offers={mockOffersArray} price={1000} token={'USDC'} />
+              <CounterOfferTab offers={mockOffersArray} />
             )}
           </>
         )}

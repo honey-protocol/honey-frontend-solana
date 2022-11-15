@@ -1,12 +1,10 @@
 export type OfferItem = {
-  hash: string,
-  date: string,
-  rate: number,
-  endDate: string,
-}
+  address: string;
+  start: number;
+  rate: number;
+  end: number;
+};
 
 export type CounterOfferTabProps = {
-  token: string,
-  price: number,
-  offers: OfferItem[]
-}
+  offers: OfferItem[];
+};

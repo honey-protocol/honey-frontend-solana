@@ -14,7 +14,7 @@ import { format, differenceInDays } from 'date-fns';
 import { formatNumber } from '../../helpers/format';
 import { LendFormProps } from './types';
 
-const { formatPercent: fp, formatUsd: fu } = formatNumber;
+const { formatPercent: fp, formatSol: fs } = formatNumber;
 
 const LendForm = (props: LendFormProps) => {
   const {
@@ -91,7 +91,7 @@ const LendForm = (props: LendFormProps) => {
         <div className={styles.row}>
           <div className={styles.col}>
             <InfoBlock
-              value={fu(request)}
+              value={fs(request)}
               valueSize="big"
               footer={<>Request</>}
             />
@@ -105,7 +105,7 @@ const LendForm = (props: LendFormProps) => {
           </div>
           <div className={styles.col}>
             <InfoBlock
-              value={fu(total)}
+              value={fs(total)}
               valueSize="big"
               footer={<>Total interest</>}
             />
