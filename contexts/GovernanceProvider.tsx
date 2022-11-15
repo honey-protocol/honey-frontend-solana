@@ -60,7 +60,8 @@ export interface StakePoolUser {
 export interface Escrow {
   pubkey: PublicKey;
   data: EscrowData;
-  receipts: Map<number, ReceiptData>;
+  receiptsMap: Map<number, ReceiptData>;
+  receipts: ReceiptData[];
 }
 
 export interface GovernanceContextValueProps {
@@ -187,7 +188,11 @@ export const GovernanceProvider: React.FC<React.ReactNode> = ({ children }) => {
         const receiptsMap = receipts.reduce((m, i) => {
           return m.set(i.account.receiptId.toNumber(), i.account);
         }, new Map<number, ReceiptData>());
-        setEscrow({ ...escrow, receipts: receiptsMap });
+        setEscrow({
+          ...escrow,
+          receipts: receipts.map(r => r.account),
+          receiptsMap
+        });
       } catch (e) {
         console.log(e);
         // setEscrow(undefined);
@@ -245,14 +250,4 @@ export const GovernanceProvider: React.FC<React.ReactNode> = ({ children }) => {
       {children}
     </GovernanceContext.Provider>
   );
-};
-
-export const useGovernanceContext = () => {
-  const context = useContext(GovernanceContext);
-
-  if (!context) {
-    throw new Error('Govern context undefined');
-  }
-
-  return context;
 };

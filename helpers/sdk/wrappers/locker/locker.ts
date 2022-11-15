@@ -220,12 +220,12 @@ export class LockerWrapper {
       {
         pubkey: nft,
         isSigner: false,
-        isWritable: false
+        isWritable: true
       },
       {
         pubkey: nftEdition,
         isSigner: false,
-        isWritable: false
+        isWritable: true
       }
     ];
 
@@ -497,7 +497,7 @@ export class LockerWrapper {
   async newReceiptId(): Promise<BN> {
     const receipts = await this.fetchAllReceipts();
     if (!receipts.length) {
-      return new BN(1);
+      return new BN(0);
     }
     const maxReceiptId = receipts.reduce(
       (a, b) => (a.gt(b.account.receiptId) ? a : b.account.receiptId),

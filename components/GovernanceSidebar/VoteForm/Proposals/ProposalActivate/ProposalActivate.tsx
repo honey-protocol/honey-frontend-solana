@@ -3,8 +3,8 @@ import { Space, Spin, Typography } from 'antd';
 
 import HexaBoxContainer from 'components/HexaBoxContainer/HexaBoxContainer';
 import { formatDurationSeconds } from 'helpers/format';
-import { useLocker, useProposalWithKey } from 'hooks/useVeHoney';
-import { Proposal, useGovernanceContext } from 'contexts/GovernanceProvider';
+import { useLocker, useProposalWithKey, useGovernance } from 'hooks/useVeHoney';
+import { Proposal } from 'contexts/GovernanceProvider';
 
 import * as icons from 'styles/icons.css';
 import * as styles from '../../VoteForm.css';
@@ -17,7 +17,7 @@ interface ProposalActivateProps {
 const ProposalActivate = (props: ProposalActivateProps) => {
   const { proposalInfo } = props;
 
-  const { governorInfo, lockerInfo } = useGovernanceContext();
+  const { governorInfo } = useGovernance();
   const { minActivationThreshold, votingPower, isActivatiable } = useLocker();
   const { earliestActivationTime } = useProposalWithKey(proposalInfo.pubkey);
 

@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useMemo } from 'react';
+import { useState, useEffect, useCallback, useMemo, useContext } from 'react';
 import { PublicKey } from '@solana/web3.js';
 import { TokenAmount } from '@saberhq/token-utils';
 import {
@@ -8,16 +8,26 @@ import {
 } from '@tribecahq/tribeca-sdk';
 import { BN } from '@project-serum/anchor';
 
-import { useGovernanceContext } from 'contexts/GovernanceProvider';
+import { GovernanceContext } from 'contexts/GovernanceProvider';
 import {
   calculateClaimableAmountFromStakePool,
   calculateVotingPower,
-  calculateNFTReceiptClaimableAmount
+  calculateNFTReceiptClaimableAmount,
+  calculateMaxRewardAmount
 } from 'helpers/sdk';
 
+export const useGovernance = () => {
+  const context = useContext(GovernanceContext);
+
+  if (!context) {
+    throw new Error('Govern context undefined');
+  }
+
+  return context;
+};
+
 export const useProposals = () => {
-  const { governorWrapper, setIsProcessing, proposals } =
-    useGovernanceContext();
+  const { governorWrapper, setIsProcessing, proposals } = useGovernance();
 
   const createProposal = useCallback(
     async (instructions: ProposalInstruction[]) => {
@@ -79,7 +89,7 @@ export const useProposals = () => {
 };
 
 export const useProposalWithKey = (pubkey: PublicKey) => {
-  const { proposals, governorInfo } = useGovernanceContext();
+  const { proposals, governorInfo } = useGovernance();
 
   const proposal = useMemo(
     () => proposals?.find(p => p.pubkey.equals(pubkey)),
@@ -111,7 +121,7 @@ export interface Vote {
 }
 
 export const useVote = (proposal: PublicKey) => {
-  const { governorWrapper } = useGovernanceContext();
+  const { governorWrapper } = useGovernance();
 
   const [vote, setVote] = useState<Vote>();
 
@@ -159,7 +169,7 @@ export const useStake = () => {
     stakePoolUser,
     preToken,
     govToken
-  } = useGovernanceContext();
+  } = useGovernance();
 
   const deposit = useCallback(
     async (amount: BN) => {
@@ -235,7 +245,7 @@ export const useStake = () => {
 
 export const useLocker = () => {
   const { lockerWrapper, lockerInfo, escrow, setIsProcessing, govToken } =
-    useGovernanceContext();
+    useGovernance();
 
   const lock = useCallback(
     async (amount: BN, duration: BN) => {
@@ -386,8 +396,8 @@ export const useLocker = () => {
 
   const getClaimableAmount = useCallback(
     (receiptId: number) => {
-      if (lockerInfo && govToken && escrow?.receipts.has(receiptId)) {
-        const receipt = escrow.receipts.get(receiptId);
+      if (lockerInfo && govToken && escrow?.receiptsMap.has(receiptId)) {
+        const receipt = escrow.receiptsMap.get(receiptId);
         if (receipt) {
           return new TokenAmount(
             govToken,
@@ -400,11 +410,23 @@ export const useLocker = () => {
     [lockerInfo, escrow, govToken]
   );
 
+  const maxNFTRewardAmount = useMemo(() => {
+    if (lockerInfo && govToken) {
+      return new TokenAmount(
+        govToken,
+        calculateMaxRewardAmount(lockerInfo.params)
+      );
+    }
+    return null;
+  }, [lockerInfo, govToken]);
+
   return {
+    locker: lockerInfo,
     escrow,
     govToken,
     votingPower,
     lockedAmount,
+    maxNFTRewardAmount,
     minActivationThreshold,
     isActivatiable,
     getClaimableAmount,

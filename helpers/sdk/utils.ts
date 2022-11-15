@@ -61,10 +61,24 @@ export const calculateNFTReceiptClaimableAmount = (
     if (i >= params.nftRewardHalvingStartsAt) {
       amountPerUnit = amountPerUnit.divn(2);
     }
-    claimableAmount.add(amountPerUnit);
+    claimableAmount = claimableAmount.add(amountPerUnit);
   }
 
   return claimableAmount.gt(receipt.claimedAmount)
     ? claimableAmount.sub(receipt.claimedAmount)
     : new BN(0);
+};
+
+export const calculateMaxRewardAmount = (params: LockerParams): BN => {
+  let amount = new BN(0);
+  let amountPerUnit = params.nftStakeBaseReward;
+
+  for (let i = 0; i < params.nftStakeDurationCount; i++) {
+    if (i >= params.nftRewardHalvingStartsAt) {
+      amountPerUnit = amountPerUnit.divn(2);
+    }
+    amount = amount.add(amountPerUnit);
+  }
+
+  return amount;
 };

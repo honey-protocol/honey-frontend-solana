@@ -57,7 +57,7 @@ export function findNFTReceiptAddress(
       Buffer.from(NFT_RECEIPT_SEED),
       locker.toBuffer(),
       owner.toBuffer(),
-      receiptId.toBuffer('le', 8)
+      receiptId.toArrayLike(Buffer, 'le', 8)
     ],
     VEHONEY_ADDRESSES.Locker
   );

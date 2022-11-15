@@ -21,14 +21,14 @@ import { InfoBlock } from '../../InfoBlock/InfoBlock';
 import HoneyButton from '../../HoneyButton/HoneyButton';
 import SidebarScroll from '../../SidebarScroll/SidebarScroll';
 import HoneyWarning from '../../HoneyWarning/HoneyWarning';
-import { useGovernanceContext } from '../../../contexts/GovernanceProvider';
 import useToast from '../../../hooks/useToast';
 import {
   useLocker,
   useProposalWithKey,
-  useVote
-} from '../../../hooks/useVeHoney';
-import { formatNumber } from '../../../helpers/format';
+  useVote,
+  useGovernance
+} from 'hooks/useVeHoney';
+import { formatNumber } from 'helpers/format';
 
 import * as styles from './VoteForm.css';
 import { questionIcon } from 'styles/icons.css';
@@ -38,7 +38,7 @@ const { formatShortName: fsn } = formatNumber;
 const VoteForm: FC<VoteFormProps> = (props: VoteFormProps) => {
   const { proposalInfo, setSidebarMode, onCancel } = props;
 
-  const { reload } = useGovernanceContext();
+  const { reload } = useGovernance();
   const {
     escrow,
     votingPower,

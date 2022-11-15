@@ -27,10 +27,8 @@ import {
 } from 'types/governance';
 import { formatNumber } from 'helpers/format';
 import { getVoteCountFmt } from 'helpers/utils';
-import {
-  GovernanceProvider,
-  useGovernanceContext
-} from 'contexts/GovernanceProvider';
+import { GovernanceProvider } from 'contexts/GovernanceProvider';
+import { useGovernance } from 'hooks/useVeHoney';
 
 import * as style from 'styles/governance.css';
 import { hideTablet, showTablet, table } from 'styles/markets.css';
@@ -39,7 +37,7 @@ import { vars } from 'styles/theme.css';
 const { format: f, formatShortName: fsn } = formatNumber;
 
 const Governance: NextPage = () => {
-  const { govToken, proposals } = useGovernanceContext();
+  const { govToken, proposals } = useGovernance();
 
   const [isDraftFilterEnabled, setIsDraftFilterEnabled] = useState(false);
   const [selectedProposalKey, setSelectedProposalKey] = useState<PublicKey>(

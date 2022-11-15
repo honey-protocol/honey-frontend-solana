@@ -9,8 +9,8 @@ import { formatNumber } from '../../helpers/format';
 import { GoveranceStatsProps } from './types';
 import HoneyPeriod from '../HoneyPeriod/HoneyPeriod';
 import HoneyTooltip from 'components/HoneyTooltip/HoneyTooltip';
-import { useGovernanceContext } from 'contexts/GovernanceProvider';
 import { useLocker } from 'hooks/useVeHoney';
+
 // import { generateMockHistoryData } from 'helpers/chartUtils';
 
 import { questionIcon, questionIconYellow } from 'styles/icons.css';
@@ -24,8 +24,7 @@ export const GovernanceStats: FC<GoveranceStatsProps> = ({
   // const isMock = true;
   // const lockedPercent = 24;
 
-  const { govToken, lockerInfo } = useGovernanceContext();
-  const { escrow, votingPower } = useLocker();
+  const { escrow, votingPower, locker, govToken } = useLocker();
   const { data: govTokenData } = useTokenMint(govToken?.mintAccount);
 
   const lockEndsTime = useMemo(() => {
@@ -50,15 +49,15 @@ export const GovernanceStats: FC<GoveranceStatsProps> = ({
   );
 
   const lockedSupplyFmt = useMemo(() => {
-    if (govToken && lockerInfo) {
-      return new TokenAmount(govToken, lockerInfo.lockedSupply).format({
+    if (govToken && locker) {
+      return new TokenAmount(govToken, locker.lockedSupply).format({
         numberFormatOptions: {
           maximumFractionDigits: 0
         }
       });
     }
     return null;
-  }, [lockerInfo, govToken]);
+  }, [locker, govToken]);
 
   const lockedSupply = Number(
     lockedSupplyFmt?.toString().replaceAll(',', '') ?? 0
