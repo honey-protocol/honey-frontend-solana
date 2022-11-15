@@ -64,3 +64,7 @@ export const trashIcon = style({
 export const infoIcon = style({
   background: 'url("/images/alternative-tooltip-icon.svg") center center no-repeat',
 });
+
+export const swapIcon = style({
+  background: 'url("/images/swap-vertical.svg") center center no-repeat',
+});

@@ -14,8 +14,15 @@
     "isolatedModules": true,
     "jsx": "preserve",
     "baseUrl": ".",
-    "incremental": true
+    "incremental": true,
+    "typeRoots": ["./node_modules/@types", "./src/types", "index.d.ts"]
   },
-  "include": ["next-env.d.ts", "index.d.ts", "**/*.ts", "**/*.tsx"],
+  "include": [
+    "next-env.d.ts",
+    "index.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    "node_modules/eslint-plugin-react/lib/types.d.ts"
+  ],
   "exclude": ["node_modules"]
 }

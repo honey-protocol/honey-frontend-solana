@@ -4,7 +4,7 @@ import {
   ASSOCIATED_TOKEN_PROGRAM_ID,
   Token,
   TOKEN_PROGRAM_ID
-} from '@solana/spl-token';
+} from '@solana/spl-token-v-0.1.8';
 
 import { ClientBase } from './base';
 import { HONEY_MINT } from './constant';
@@ -162,8 +162,6 @@ export class VeHoneyClient extends ClientBase<VeHoney> {
     return { txSig, escrow };
   }
 
-
-
   async getEscrowPDA(locker: PublicKey) {
     return anchor.web3.PublicKey.findProgramAddress(
       [
@@ -200,7 +198,7 @@ export class VeHoneyClient extends ClientBase<VeHoney> {
       this.program.programId
     );
   }
-  
+
   async getAllEscrowAccounts() {
     return this.program.account.escrow.all();
   }

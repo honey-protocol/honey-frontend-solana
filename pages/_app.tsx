@@ -28,9 +28,15 @@ import {
   SDKProvider
 } from 'helpers/sdk';
 import { QueryClient, QueryClientProvider } from 'react-query';
+import { getPlatformFeeAccounts, JupiterProvider } from '@jup-ag/react-hook';
 export const network = (process.env.NETWORK as Network) || 'mainnet-beta';
-import { HONEY_GENESIS_MARKET_ID, HONEY_PROGRAM_ID, PESKY_PENGUINS_MARKET_ID } from '../constants/loan';
+import {
+  HONEY_GENESIS_MARKET_ID,
+  HONEY_PROGRAM_ID,
+  PESKY_PENGUINS_MARKET_ID
+} from '../constants/loan';
 import NoMobilePopup from 'components/NoMobilePopup/NoMobilePopup';
+import { PublicKey } from '@solana/web3.js';
 export const setMarketId = (marketID: string) => marketID;
 
 const networkConfiguration = () => {
@@ -49,7 +55,6 @@ const storedAccent =
     ? (localStorage.getItem('accent') as ThemeAccent)
     : undefined;
 
-console.log(networkConfiguration(), network);
 const OnChainProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const wallet = useConnectedWallet();
   const connection = useConnection();
@@ -71,6 +76,47 @@ const OnChainProvider: FC<{ children: ReactNode }> = ({ children }) => {
         {children}
       </HoneyProvider>
     </AnchorProvider>
+  );
+};
+
+const HoneyJupiterProvider: FC<{ children: ReactNode }> = ({ children }) => {
+  const wallet = useConnectedWallet();
+  const connection = useConnection();
+  const [platformFeeAccounts, setPlatformFeeAccounts] = useState(new Map());
+  const platformFeeBps = Number(process.env.NEXT_PUBLIC_JUPITER_FEE_BPS || '0');
+  const platformFeeWallet = process.env.NEXT_PUBLIC_JUPITER_FEE_ADDRESS
+    ? new PublicKey(process.env.NEXT_PUBLIC_JUPITER_FEE_ADDRESS)
+    : undefined;
+
+  useEffect(() => {
+    if (!platformFeeBps || !platformFeeWallet) {
+      return;
+    }
+    getPlatformFeeAccounts(connection, platformFeeWallet).then(res => {
+      setPlatformFeeAccounts(res);
+    });
+    //  eslint-disable react-hooks/exhaustive-deps
+  }, []);
+
+  let platformFeeAndAccounts = undefined;
+  if (platformFeeBps && platformFeeWallet) {
+    platformFeeAndAccounts = {
+      feeBps: platformFeeBps,
+      feeAccounts: platformFeeAccounts
+    };
+  }
+  console.log('platformFeeAndAccounts', platformFeeAndAccounts);
+
+  return (
+    <JupiterProvider
+      connection={connection}
+      cluster="mainnet-beta"
+      platformFeeAndAccounts={platformFeeAndAccounts}
+      userPublicKey={wallet?.publicKey || undefined}
+      onlyDirectRoutes={false}
+    >
+      {children}
+    </JupiterProvider>
   );
 };
 
@@ -110,7 +156,6 @@ function MyApp({ Component, pageProps }: AppProps) {
         strategy="lazyOnload"
         src={`https://www.googletagmanager.com/gtag/js?id=${process.env.NEXT_PUBLIC_GA}`}
       />
-
       <Script id="gtm-script" strategy="lazyOnload">
         {`
           window.dataLayer = window.dataLayer || [];
@@ -151,10 +196,15 @@ function MyApp({ Component, pageProps }: AppProps) {
                     <SecPopup setShowPopup={setShowPopup} />
                   ) : (
                     <>
-                      <OnChainProvider>
-                        <Component {...pageProps} />
-                        <ToastContainer theme="dark" position="bottom-right" />
-                      </OnChainProvider>
+                      <HoneyJupiterProvider>
+                        <OnChainProvider>
+                          <Component {...pageProps} />
+                          <ToastContainer
+                            theme="dark"
+                            position="bottom-right"
+                          />
+                        </OnChainProvider>
+                      </HoneyJupiterProvider>
                     </>
                   )}
                 </GovernorProvider>

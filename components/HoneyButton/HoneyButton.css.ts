@@ -12,7 +12,7 @@ export const honeyButton = style([
     border: 'none',
     gap: '10px',
     transition: 'all .5s',
-    justifyContent: 'space-between',
+    justifyContent: 'center',
     alignItems: 'center',
     ':after': {
       display: 'none!important'
@@ -147,6 +147,10 @@ export const disabled = style({
   ':active': {
     background: `${vars.colors.grayMiddle} !important`
   }
+});
+
+export const withValues = style({
+  justifyContent: 'center'
 });
 
 globalStyle(`${tertiary}.${disabled}`, {

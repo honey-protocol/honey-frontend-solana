@@ -31,7 +31,10 @@ const HoneyButton = (props: HoneyButtonProps) => {
       className={c(
         styles.honeyButton,
         variant ? styles[variant] : styles['primary'],
-        { [styles.disabled]: disabled },
+        {
+          [styles.disabled]: disabled,
+          [styles.withValues]: isButtonWithValues
+        },
         className
       )}
     >
