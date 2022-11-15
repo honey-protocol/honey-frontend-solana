@@ -6,8 +6,19 @@ import { DownIcon } from 'icons/DownIcon';
 import HoneyButton from 'components/HoneyButton/HoneyButton';
 import { useRouter } from 'next/router';
 import cs from 'classnames';
+import { featureFlags } from '../../helpers/featureFlags';
 
-export const links = [
+type MenuLink = {
+  title: string;
+  href: string;
+  disabled?: boolean;
+  submenu?: Array<{
+    title: string;
+    href: string;
+  }>;
+};
+
+export const links: MenuLink[] = [
   {
     title: 'DASHBOARD',
     href: '/dashboard',
@@ -16,20 +27,6 @@ export const links = [
   {
     title: 'BORROW',
     href: '/borrow'
-  },
-  {
-    title: 'p2p',
-    href: '',
-    submenu: [
-      {
-        title: 'LENDING',
-        href: '/p2p/lend'
-      },
-      {
-        title: 'BORROWING',
-        href: '/p2p/borrow'
-      }
-    ]
   },
   {
     title: 'LEND',
@@ -69,6 +66,23 @@ export const links = [
     href: 'https://app.honey.finance'
   }
 ];
+
+if (featureFlags.isP2PPageEnabled) {
+  links.splice(4, 0, {
+    title: 'p2p',
+    href: '',
+    submenu: [
+      {
+        title: 'LENDING',
+        href: '/p2p/lend'
+      },
+      {
+        title: 'BORROWING',
+        href: '/p2p/borrow'
+      }
+    ]
+  });
+}
 
 const HeaderDropdownMenu = () => {
   const [linksDisplayed, setLinkDisplayed] = useState(6);
