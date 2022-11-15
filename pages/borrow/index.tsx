@@ -1116,6 +1116,10 @@ const Markets: NextPage = () => {
           <HoneyTable
             hasRowsShadow={true}
             tableLayout="fixed"
+            selectedRowsKeys={[
+              tableDataFiltered.find(data => data.id === currentMarketId)
+                ?.key || ''
+            ]}
             columns={columns}
             dataSource={tableDataFiltered}
             pagination={false}
@@ -1139,7 +1143,7 @@ const Markets: NextPage = () => {
               // we use our own custom expand column
               showExpandColumn: false,
               onExpand: (expanded, row) => {
-                setExpandedRowKeys([row.key]);
+                setExpandedRowKeys(expanded ? [row.key] : []);
               },
               expandedRowKeys,
               expandedRowRender: record => {
