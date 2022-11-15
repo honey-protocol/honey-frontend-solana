@@ -12,7 +12,7 @@ export type HoneyTabItem = {
 };
 
 const HoneyTabs = (props: {
-  items: [HoneyTabItem, HoneyTabItem];
+  items: [HoneyTabItem, HoneyTabItem, HoneyTabItem];
   children: ReactNode;
   activeKey: string;
   active: boolean;
@@ -52,7 +52,9 @@ const HoneyTabs = (props: {
         className={classNames(
           styles.content,
           props.active ? styles.active : styles.inactive,
-          props.activeKey === props.items[0].key ? styles.activeBorderLeft : styles.activeBorderRight
+          props.activeKey === props.items[0].key
+            ? styles.activeBorderLeft
+            : styles.activeBorderRight
         )}
       >
         {props.children}

@@ -1,49 +1,26 @@
-import React, { FC, useState } from 'react';
-import * as styles from './BurnNftsForm.css';
-import { formatNumber } from '../../../helpers/format';
-import SidebarScroll from '../../SidebarScroll/SidebarScroll';
-import HoneyWarning from '../../HoneyWarning/HoneyWarning';
-import HoneyButton from '../../HoneyButton/HoneyButton';
-import HexaBoxContainer from '../../HexaBoxContainer/HexaBoxContainer';
-import honeyGenesisBee from '/public/images/imagePlaceholder.png';
-import { Checkbox } from 'antd';
+import React, { FC, useState, useCallback } from 'react';
 import Image from 'next/image';
 import { CheckboxChangeEvent } from 'antd/es/checkbox';
-import { HoneyCheckbox } from '../../HoneyCheckbox/HoneyCheckbox';
+import { PublicKey } from '@solana/web3.js';
+
+import SidebarScroll from 'components/SidebarScroll/SidebarScroll';
+import HoneyWarning from 'components/HoneyWarning/HoneyWarning';
+import HoneyButton from 'components/HoneyButton/HoneyButton';
+import HexaBoxContainer from 'components/HexaBoxContainer/HexaBoxContainer';
+import { HoneyCheckbox } from 'components/HoneyCheckbox/HoneyCheckbox';
+import { useAccounts } from 'hooks/useAccounts';
+import { useLocker } from 'hooks/useVeHoney';
+import { formatNumber } from 'helpers/format';
+
+import honeyGenesisBee from 'public/images/imagePlaceholder.png';
+import * as styles from './BurnNftsForm.css';
 
 const { format: f, formatPercent: fp, formatUsd: fu } = formatNumber;
-
-const nftToBurn = [
-  {
-    name: 'HONEY #1291',
-    value: 1000,
-    id: '1'
-  },
-  {
-    name: 'HONEY #1291',
-    value: 1000,
-    id: '2'
-  },
-  {
-    name: 'HONEY #1291',
-    value: 1000,
-    id: '3'
-  },
-  {
-    name: 'HONEY #1291',
-    value: 1000,
-    id: '4'
-  },
-  {
-    name: 'HONEY #1291',
-    value: 1000,
-    id: '5'
-  }
-];
 
 interface ListItemProps {
   name: string;
   value: string;
+  image?: string;
   id: string;
   isSelected: boolean;
   onChange: (event: CheckboxChangeEvent, id: string) => void;
@@ -52,6 +29,7 @@ interface ListItemProps {
 const ListItem: FC<ListItemProps> = ({
   name,
   value,
+  image,
   onChange,
   id,
   isSelected
@@ -61,7 +39,7 @@ const ListItem: FC<ListItemProps> = ({
       <div className={styles.listItemLeft}>
         <div className={styles.listItemIcon}>
           <HexaBoxContainer>
-            <Image src={honeyGenesisBee} />
+            <Image src={image ?? honeyGenesisBee} width={40} height={40} />
           </HexaBoxContainer>
         </div>
 
@@ -79,19 +57,23 @@ const ListItem: FC<ListItemProps> = ({
 };
 
 const BurnNftsForm = (props: { onCancel: Function }) => {
-  const [selected, setSelected] = useState<string[]>([]);
+  const [selected, setSelected] = useState<string>();
+  const { nfts } = useAccounts();
+  const { maxNFTRewardAmount, lockNft } = useLocker();
 
   const onItemSelect = (e: CheckboxChangeEvent, id: string) => {
     if (e.target.checked) {
-      setSelected(prevState => [...prevState, id]);
+      setSelected(id);
     } else {
-      setSelected(prevState => prevState.filter(item => item !== id));
+      setSelected(undefined);
     }
   };
 
-  const setSelectAll = () => {
-    setSelected(nftToBurn.map(token => token.id));
-  };
+  const lockNFT = useCallback(async () => {
+    if (selected) {
+      await lockNft(new PublicKey(selected));
+    }
+  }, [lockNft, selected]);
 
   return (
     <SidebarScroll
@@ -105,11 +87,11 @@ const BurnNftsForm = (props: { onCancel: Function }) => {
           <div className={styles.bigCol}>
             <HoneyButton
               variant="primary"
-              disabled={false}
+              disabled={!selected}
               block
-              onClick={setSelectAll}
+              onClick={lockNFT}
             >
-              {selected.length ? 'Burn selected' : 'Select All'}
+              Burn NFT
             </HoneyButton>
           </div>
         </div>
@@ -130,13 +112,14 @@ const BurnNftsForm = (props: { onCancel: Function }) => {
         </div>
 
         <div className={styles.list}>
-          {nftToBurn.map((token, index) => (
+          {nfts.map(nft => (
             <ListItem
-              key={index}
-              id={token.id}
-              name={token.name}
-              value={f(token.value)}
-              isSelected={selected.includes(token.id)}
+              key={nft.data.mint.toBase58()}
+              id={nft.data.mint.toString()}
+              name={nft.data.name}
+              image={nft.data.image}
+              value={f(maxNFTRewardAmount?.asNumber)}
+              isSelected={selected === nft.data.mint.toBase58()}
               onChange={onItemSelect}
             />
           ))}

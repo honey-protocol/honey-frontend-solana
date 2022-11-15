@@ -7,6 +7,7 @@ export const getVeHoneySidebar = style([
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'stretch',
+    maxWidth: 540
   },
   sidebar
 ]);

@@ -4,16 +4,18 @@ import HoneyTabs, { HoneyTabItem } from '../HoneyTabs/HoneyTabs';
 import EmptyStateDetails from '../EmptyStateDetails/EmptyStateDetails';
 import LockHoneyForm from './LockHoneyForm/LockHoneyForm';
 import BurnNftsForm from './BurnNftsForm/BurnNftsForm';
+import ClaimRewards from './ClaimRewards/ClaimRewards';
 import { useConnectedWallet } from '@saberhq/use-solana';
 import { useWalletKit } from '@gokiprotocol/walletkit';
 import { mobileReturnButton } from 'styles/common.css';
 
-const items: [HoneyTabItem, HoneyTabItem] = [
+const items: [HoneyTabItem, HoneyTabItem, HoneyTabItem] = [
   { label: 'Lock Honey', key: 'lock_honey' },
-  { label: 'Burn Nfts', key: 'burn_nfts' }
+  { label: 'Burn Nfts', key: 'burn_nfts' },
+  { label: 'Claim Rewards', key: 'claim_rewards' }
 ];
 
-type Tab = 'lock_honey' | 'burn_nfts';
+type Tab = 'lock_honey' | 'burn_nfts' | 'claim_rewards';
 
 const GetVeHoneySidebar = (props: { onCancel: Function }) => {
   const wallet = useConnectedWallet();
@@ -58,6 +60,9 @@ const GetVeHoneySidebar = (props: { onCancel: Function }) => {
             )}
             {activeTab === 'burn_nfts' && (
               <BurnNftsForm onCancel={props.onCancel} />
+            )}
+            {activeTab === 'claim_rewards' && (
+              <ClaimRewards onCancel={props.onCancel} />
             )}
           </>
         )}
