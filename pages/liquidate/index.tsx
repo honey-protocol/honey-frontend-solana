@@ -356,13 +356,8 @@ const Liquidate: NextPage = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [currentMarketName, setCurrentMarketName] = useState(HONEY_GENESIS_BEE_MARKET_NAME);
 
-  // PUT YOUR DATA SOURCE HERE
-  // MOCK DATA FOR NOW
+  // populate market data
   useEffect(() => {
-    // if (!wallet) {
-    //   setTableData(liquidationCollections);
-    // }
-    
     if (sdkConfig.saberHqConnection && marketReserveInfo) {
       function getData() {
         return Promise.all(
