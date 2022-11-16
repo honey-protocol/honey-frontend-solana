@@ -57,14 +57,6 @@ import { ToastProps } from 'hooks/useToast';
 import HoneyTableRow from 'components/HoneyTable/HoneyTableRow/HoneyTableRow';
 import HoneyTableNameCell from 'components/HoneyTable/HoneyTableNameCell/HoneyTableNameCell';
 import LiquidateExpandTableMobile from 'components/LiquidateExpandTable/LiquidateExpandTableMobile';
-import { 
-  HONEY_GENESIS_BEE_MARKET_NAME,
-  LIFINITY_FLARES_MARKET_NAME,
-  OG_ATADIANS_MARKET_NAME,
-  PESKY_PENGUINS_MARKET_NAME,
-  BURRITO_BOYZ_MARKET_NAME,
-  renderMarketImageByID
-} from 'helpers/marketHelpers';
 import { marketCollections } from 'constants/borrowLendMarkets';
 import { populateMarketData } from 'helpers/loanHelpers/userCollection';
 import { setMarketId } from 'pages/_app';
@@ -330,6 +322,8 @@ const Liquidate: NextPage = () => {
     fetchLiquidatorClient(type, userBid!, toast, mID);
   }
 
+  console.log('STATUS.POSITIONS', positionsObject);
+
   useEffect(() => {
       if (status.positions) {
         setPositionsObject(status.positions);
@@ -354,7 +348,6 @@ const Liquidate: NextPage = () => {
   const [expandedRowKeys, setExpandedRowKeys] = useState<readonly Key[]>([]);
   const [isMyBidsFilterEnabled, setIsMyBidsFilterEnabled] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
-  const [currentMarketName, setCurrentMarketName] = useState(HONEY_GENESIS_BEE_MARKET_NAME);
 
   // populate market data
   useEffect(() => {
@@ -417,7 +410,6 @@ const Liquidate: NextPage = () => {
     const marketData = renderMarket(record.id);
     setCurrentMarketId(marketData!.id);
     setMarketId(marketData!.id);
-    setCurrentMarketName(marketData!.name);
     handleBiddingState(status.bids)
   }
 
@@ -475,6 +467,7 @@ const Liquidate: NextPage = () => {
           );
         }
       },
+      // TODO: Once risk is fixed comment back in
       // {
       //   width: columnsWidth[1],
       //   title: ({ sortColumns }) => {
@@ -695,9 +688,9 @@ const Liquidate: NextPage = () => {
                 setExpandedRowKeys(expanded ? [row.key] : []),
               expandedRowKeys,
               expandedRowRender: record => {
-                if (wallet === null) {
-                  return;
-                } else {
+                // if (wallet === null) {
+                //   return;
+                // } else {
                   return (
                     <div className={style.expandSection}>
                       <div className={style.dashedDivider} />
@@ -705,7 +698,7 @@ const Liquidate: NextPage = () => {
                     </div>
                   );
                 }
-              }
+              // }
             }}
           />
         </div>
