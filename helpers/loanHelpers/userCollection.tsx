@@ -123,7 +123,7 @@ export async function calculateMarketDebt(honeyReserves: any) {
  * @params nftprice | collateralnftpositions | honeyuser (connected via wallet) | marketreserveinfo
  * @returns sum of allowance | sum of ltv | sum of debt
  */
-export async function calculateCollectionwideAllowance(
+export async function fetchAllowanceLtvAndDebt(
   nftPrice: any,
   collateralNFTPositions: any,
   honeyUser: any,
@@ -282,7 +282,7 @@ const getPositionData = () => {
   return [];
 };
 /**
- * @description sets the obligations of a collection and filters out obligations with zero debt
+ * @description sets the obligations for the liquidation page of a collection and filters out obligations with zero debt
  * @params obligations array, currentmarketid. nft
  * @returns chart data 
  */
@@ -303,8 +303,11 @@ const setObligations = async (obligations: any, currentMarketId: string, nftPric
     }
   }).filter((obl: any) => obl.debt !== 0);
 }
-
-
+/**
+ * @description calculates the risk of a market
+ * @params array of obligations | nft price | boolean: false will calculate the risk - true will calculate the total debt | market id | name of collection
+ * @returns total debt of market if type is true, risk of market if type is false
+*/
 const calculateRisk = async (obligations: any, nftPrice: number, type: boolean, currentMarketId: string, collectionName: string) => {
   if (!obligations) return 0;
 
@@ -362,7 +365,11 @@ const calculateRisk = async (obligations: any, nftPrice: number, type: boolean, 
     return 0;
   }
 }
-
+/**
+ * @description calculates the total value locked of a market
+ * @params array of obligations | nft price | market id | collection name
+ * @returns TVL
+*/
 const calculateTVL = async (obligations: any, nftPrice: number, currentMarketId: string, collectionName: string) => {
   if (!obligations) return 0;
 
@@ -399,14 +406,19 @@ const calculateTVL = async (obligations: any, nftPrice: number, currentMarketId:
     return nftPrice * obligations.length;
   }
 }
-
+/**
+ * @description Being called for each collection in the array, calculates the collections values
+ * @params collection | connection | wallet | market id | boolean (if request comes from liquidation page) | array of obligations
+ * @returns collection object 
+*/
 export async function populateMarketData(collection: MarketTableRow, connection: Connection, wallet: ConnectedWallet | null, currentMarketId: string, liquidations: boolean, obligations?: any) {
+  // create dummy keypair if no wallet is connected to fetch values of the collections regardless of connected wallet
   let dummyWallet = wallet ? wallet : new NodeWallet(new Keypair())
-
+  // since we inject the market id at top level (app.tsx) we need to create a new provider, init new honeyClient and market, for each market
   const provider = new anchor.AnchorProvider(connection, dummyWallet, anchor.AnchorProvider.defaultOptions());
   const honeyClient = await HoneyClient.connect(provider, collection.id, false);
   const honeyMarket = await HoneyMarket.load(honeyClient, new PublicKey(collection.id));
-
+  // init reserves
   const honeyReserves: HoneyReserve[] = honeyMarket.reserves.map(
     (reserve) => new HoneyReserve(honeyClient, honeyMarket, reserve.reserve),
   );
@@ -427,17 +439,16 @@ export async function populateMarketData(collection: MarketTableRow, connection:
     break;
   }
 
-  
   if(parsedReserve !== undefined) {
     let totalMarketDeposits = BnToDecimal(
       parsedReserve.reserveState.totalDeposits,
       9,
       2
     );
-
+    // set values for total debt in collection
     const totalMarketDebt = RoundHalfDown(parsedReserve.reserveState.outstandingDebt.div(new BN(10 ** 15)).toNumber() / LAMPORTS_PER_SOL);
     const sumOfTotalValue = totalMarketDeposits + totalMarketDebt;
-
+    // if request comes from liquidation page we need the collection object to be different 
     if (liquidations) {
       collection.name;
       collection.available = totalMarketDeposits;
@@ -450,13 +461,13 @@ export async function populateMarketData(collection: MarketTableRow, connection:
       collection.totalDebt = sumOfTotalValue - totalMarketDeposits;
       collection.openPositions = obligations ? await setObligations(obligations.obligations, currentMarketId, obligations.nftPrice) : [];
       collection.tvl = obligations ? await calculateTVL(collection.openPositions, obligations.nftPrice, currentMarketId, collection.name) : 0;
-
+      // if there are open positions in the collections, calculate until liquidation value
       if (collection.openPositions) {
         collection.openPositions.map((openPos: any) => {
           return openPos.untilLiquidation = openPos.estimatedValue - openPos.debt / LIQUIDATION_THRESHOLD;
         })
       }
-
+    // request comes from borrow or lend - same base collection object
     } else {
       collection.available = totalMarketDeposits;
       collection.value = sumOfTotalValue;
@@ -468,7 +479,11 @@ export async function populateMarketData(collection: MarketTableRow, connection:
     return collection;
   }
 }
-
+/**
+ * @description NON Active func. - future work; can be used to fetch position bids via Front-end
+ * @params devnet boolean | connection | wallet | honeyId | honeyReserves | honeyMarket | marketReserveInfo
+ * @returns open positions in a collection and open bids on a collections NFT
+*/
 export const fetchPositionBids = async (devnet:boolean, connection: Connection, wallet: ConnectedWallet, honeyId: string, honeyReserves: HoneyReserve[], honeyMarket: HoneyMarket, marketReserveInfo: HoneyMarketReserveInfo[]) => {
   console.log('fetching bids...', honeyId, honeyReserves, honeyMarket, marketReserveInfo);
   const resBids = await fetch(
@@ -546,7 +561,11 @@ export const fetchPositionBids = async (devnet:boolean, connection: Connection, 
 
 
 };
-
+/**
+ * @description NON Active func. - future work; can be used to fetch collateral positions in the Front-end
+ * @params connection | honeyUser
+ * @returns collateral nft positions array | loanPositions array
+*/
 export const fetchBorrowPositions = async (connection: Connection, honeyUser: HoneyUser) => {
 
   const collateralNFTPositions: CollateralNFTPosition[] = [];
