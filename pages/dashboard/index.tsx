@@ -34,7 +34,7 @@ import BN from 'bn.js';
 import { RoundHalfDown } from '../../helpers/utils';
 import {
   calcNFT,
-  calculateCollectionwideAllowance,
+  fetchAllowanceLtvAndDebt,
   fetchSolPrice,
   getInterestRate
 } from '../../helpers/loanHelpers/userCollection';
@@ -398,7 +398,7 @@ const Dashboard: NextPage = () => {
     honeyUser: any,
     marketReserveInfo: any
   ) {
-    let outcome = await calculateCollectionwideAllowance(
+    let outcome = await fetchAllowanceLtvAndDebt(
       nftPrice,
       collateralNFTPositions,
       honeyUser,
@@ -409,8 +409,6 @@ const Dashboard: NextPage = () => {
       : setUserAllowance(outcome.sumOfAllowance);
     setUserDebt(outcome.sumOfTotalDebt);
     setLoanToValue(outcome.sumOfLtv);
-    console.log('this is ltv', loanToValue);
-    console.log('this is user allowance', userAllowance);
   }
 
   /**
