@@ -397,7 +397,7 @@ const Lend: NextPage = () => {
               false
             );
             collection.rate =
-              ((await getInterestRate(collection.utilizationRate)) || 0) *
+              ((await getInterestRate(collection.utilizationRate, collection.id)) || 0) *
               collection.utilizationRate;
             collection.stats = getPositionData();
 

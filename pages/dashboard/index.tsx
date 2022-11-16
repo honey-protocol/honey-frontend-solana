@@ -42,7 +42,7 @@ import { ToastProps } from '../../hooks/useToast';
 import { Metadata } from '@metaplex-foundation/mpl-token-metadata';
 import { generateMockHistoryData } from '../../helpers/chartUtils';
 import { HoneyProfileChart } from '../../components/HoneyProfileChart/HoneyProfileChart';
-import { MAX_LTV } from '../../constants/loan';
+import { HONEY_GENESIS_MARKET_ID, MAX_LTV } from '../../constants/loan';
 import useWindowSize from '../../hooks/useWindowSize';
 import { TABLET_BP } from '../../constants/breakpoints';
 import LendSidebar from '../../components/LendSidebar/LendSidebar';
@@ -476,7 +476,8 @@ const Dashboard: NextPage = () => {
   }, [totalMarketDeposits, totalMarketDebt, totalMarketDeposits]);
 
   async function calculateInterestRate(utilizationRate: number) {
-    let interestRate = await getInterestRate(utilizationRate);
+    // TODO: update market ID param to be dynamic before going live with the dashboard page
+    let interestRate = await getInterestRate(utilizationRate, HONEY_GENESIS_MARKET_ID);
     if (interestRate) setCalculatedInterestRate(interestRate);
   }
 
