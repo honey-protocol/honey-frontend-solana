@@ -392,7 +392,7 @@ const Markets: NextPage = () => {
             );
 
             collection.positions = await handlePositions(collection.verifiedCreator, userOpenPositions);
-            collection.rate = (await getInterestRate(collection.utilizationRate)) || 0;
+            collection.rate = (await getInterestRate(collection.utilizationRate, collection.id)) || 0;
             
             if (currentMarketId === collection.id) setActiveInterestRate(collection.rate);
             return collection;
