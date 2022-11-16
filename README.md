@@ -21,7 +21,7 @@ The Honey Finance Ecosystem consists of several components this repo represents 
 
 In order to run this project you need to create a 
 ```bash
-.env #you can use the .env.example file as silver lining
+.env #you can use the .env.example file as silver lining.
 ``` 
 The RPC_URL which is required is the standard mainnet RPC. You should replace this with a custom one if you are in need of better performance. We currently do not have farm listed on devnet, however we will add instructions to add farm to devnet in the future.
 
