@@ -700,9 +700,9 @@ const Liquidate: NextPage = () => {
                 setExpandedRowKeys(expanded ? [row.key] : []),
               expandedRowKeys,
               expandedRowRender: record => {
-                if (wallet === null) {
-                  return;
-                } else {
+                // if (wallet === null) {
+                //   return;
+                // } else {
                   return (
                     <div className={style.expandSection}>
                       <div className={style.dashedDivider} />
@@ -710,7 +710,7 @@ const Liquidate: NextPage = () => {
                     </div>
                   );
                 }
-              }
+              // }
             }}
           />
         </div>
