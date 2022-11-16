@@ -18,7 +18,8 @@ import React, {
   useCallback,
   useEffect,
   useMemo,
-  useState
+  useState,
+  useRef
 } from 'react';
 import { formatNFTName, formatNumber } from '../../helpers/format';
 import Image from 'next/image';
@@ -31,10 +32,10 @@ import HoneyButton from '../../components/HoneyButton/HoneyButton';
 import EmptyStateDetails from 'components/EmptyStateDetails/EmptyStateDetails';
 import { getColumnSortStatus } from '../../helpers/tableUtils';
 import { useConnectedWallet, useSolana } from '@saberhq/use-solana';
-import useFetchNFTByUser from '../../hooks/useNFTV2';
 import { BnToDecimal, ConfigureSDK } from '../../helpers/loanHelpers/index';
 import { LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js';
 import HealthLvl from '../../components/HealthLvl/HealthLvl';
+import useFetchNFTByUser from 'hooks/useNFTV2';
 import BN from 'bn.js';
 import {
   borrowAndRefresh,
@@ -47,7 +48,7 @@ import {
 } from '@honey-finance/sdk';
 import {
   calcNFT,
-  calculateCollectionwideAllowance,
+  fetchAllowanceLtvAndDebt,
   fetchSolPrice,
   getInterestRate,
   populateMarketData,
@@ -69,43 +70,28 @@ import HoneyTableNameCell from '../../components/HoneyTable/HoneyTableNameCell/H
 import { marketCollections, OpenPositions } from 'constants/borrowLendMarkets';
 import HoneyTooltip from '../../components/HoneyTooltip/HoneyTooltip';
 import {
-  HONEY_GENESIS_BEE_MARKET_NAME,
-  LIFINITY_FLARES_MARKET_NAME,
-  OG_ATADIANS_MARKET_NAME,
-  PESKY_PENGUINS_MARKET_NAME,
-  BURRITO_BOYZ_MARKET_NAME,
   handleOpenPositions,
   renderMarketName,
   renderMarketImageByID
 } from '../../helpers/marketHelpers';
 import {
   HONEY_GENESIS_MARKET_ID,
-  PESKY_PENGUINS_MARKET_ID,
-  OG_ATADIANS_MARKET_ID,
-  LIFINITY_FLARES_MARKET_ID,
-  BURRITO_BOYZ_MARKET_ID,
   LIQUIDATION_THRESHOLD
 } from '../../constants/loan';
 import { setMarketId } from 'pages/_app';
-import { render } from 'react-dom';
 import { renderMarket, renderMarketImageByName } from 'helpers/marketHelpers';
-
 /**
  * @description formatting functions to format with perfect / format in SOL with icon or just a regular 2 decimal format
  * @params value to be formatted
  * @returns requested format
  */
 import CreateMarketSidebar from '../../components/CreateMarketSidebar/CreateMarketSidebar';
-import { SizeMe } from 'react-sizeme';
 // import { network } from 'pages/_app';
 
 const network = 'mainnet-beta'; // change to dynamic value
 const { format: f, formatPercent: fp, formatSol: fs } = formatNumber;
 
 const Markets: NextPage = () => {
-  const [currentMarketName, setCurrentMarketName] = useState(
-    HONEY_GENESIS_BEE_MARKET_NAME
-  );
   // Sets market ID which is used for fetching market specific data
   // each market currently is a different call and re-renders the page
   const [currentMarketId, setCurrentMarketId] = useState<string>(
@@ -118,27 +104,24 @@ const Markets: NextPage = () => {
   const [sidebarMode, setSidebarMode] = useState<BorrowSidebarMode>(
     BorrowSidebarMode.MARKET
   );
-
   /**
    * @description sets the market ID based on market click
-   * @params Honey table record - contains all info about a table (aka market)
+   * @params Honey table record - contains all info about a table (aka market / collection)
    * @returns sets the market ID which re-renders page state and fetches market specific data
    */
   async function handleMarketId(record: any) {
     const marketData = renderMarket(record.id);
     setCurrentMarketId(marketData!.id);
     setMarketId(marketData!.id);
-    setCurrentMarketName(marketData!.name);
   }
-
   /**
-   * @description calls upon markets which
+   * @description fetches market reserve info | parsed reserves | fetch market (func) from SDK
    * @params none
    * @returns market | market reserve information | parsed reserves |
    */
   const { market, marketReserveInfo, parsedReserves, fetchMarket } = useHoney();
   /**
-   * @description calls upon the honey sdk
+   * @description fetches honey client | honey user | honey reserves | honey market from SDK
    * @params  useConnection func. | useConnectedWallet func. | honeyID | marketID
    * @returns honeyUser | honeyReserves - used for interaction regarding the SDK
    */
@@ -149,8 +132,8 @@ const Markets: NextPage = () => {
     currentMarketId
   );
   /**
-   * @description fetches open positions and the amount regarding loan positions / token account
-   * @params none
+   * @description fetches collateral nft positions | refresh positions (func) from SDK
+   * @params useConnection func. | useConnectedWallet func. | honeyID | marketID
    * @returns collateralNFTPositions | loanPositions | loading | error
    */
   let {
@@ -211,15 +194,10 @@ const Markets: NextPage = () => {
    * [1] loading state
    * [2] reFetch function which can be called after deposit or withdraw and updates nft list
    */
-  const availableNFTs = useFetchNFTByUser(wallet);
-  const reFetchNFTs = availableNFTs[2];
+  const [NFTs, isLoadingNfts, refetchNfts] = useFetchNFTByUser(wallet);
+
   const [isCreateMarketAreaOnHover, setIsCreateMarketAreaOnHover] =
     useState<boolean>(false);
-
-  // calls upon setting the user nft list per market
-  useEffect(() => {
-    if (availableNFTs) setUserAvailableNFTs(availableNFTs[0]);
-  }, [availableNFTs]);
 
   // function for fetching the total market debt
   async function fetchTotalMarketDebt(honeyReserves: any) {
@@ -317,7 +295,7 @@ const Markets: NextPage = () => {
     honeyUser: any,
     marketReserveInfo: any
   ) {
-    let outcome = await calculateCollectionwideAllowance(
+    let outcome = await fetchAllowanceLtvAndDebt(
       nftPrice,
       collateralNFTPositions,
       honeyUser,
@@ -372,8 +350,7 @@ const Markets: NextPage = () => {
     return await handleOpenPositions(verifiedCreator, currentOpenPositions);
   }
   // calculation of health percentage 
-  const healthPercent =
-    ((nftPrice - userDebt / LIQUIDATION_THRESHOLD) / nftPrice) * 100;
+  const healthPercent = ((nftPrice - userDebt / LIQUIDATION_THRESHOLD) / nftPrice) * 100;
 
   // inits the markets with relevant data
   useEffect(() => {
@@ -406,14 +383,14 @@ const Markets: NextPage = () => {
       });
     }
   }, [
-    totalMarketDeposits,
-    totalMarketDebt,
+     // totalMarketDeposits,
+    // totalMarketDebt,
     nftPrice,
-    userAllowance,
+    // userAllowance,
     userDebt,
-    loanToValue,
-    honeyReserves,
-    parsedReserves,
+    // loanToValue,
+    // honeyReserves,
+    // parsedReserves,
     sdkConfig.saberHqConnection,
     sdkConfig.sdkWallet,
     currentMarketId,
@@ -906,7 +883,7 @@ const Markets: NextPage = () => {
             );
 
             await refreshPositions();
-            reFetchNFTs({});
+            refetchNfts({});
           }
         }
       });
@@ -940,7 +917,7 @@ const Markets: NextPage = () => {
 
       if (tx[0] == 'SUCCESS') {
         await refreshPositions();
-        reFetchNFTs({});
+        refetchNfts({});
 
         toast.success(
           'Withdraw success',
