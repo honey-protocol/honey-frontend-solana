@@ -7,6 +7,7 @@ import {
   OPTIMAL_RATIO_TWO,
   MAX_UTILISATION_RATIO,
   BASE_BORROW_RATE,
+  DISCOUNTED_BORROW_RATE,
   BORROW_RATE_ONE,
   BORROW_RATE_TWO,
   BORROW_RATE_THREE
@@ -228,24 +229,39 @@ export async function calcNFT(
  * @params utilization ratio
  * @returns interest rate for market
  */
-export async function getInterestRate(utilizationRate: number) {
+export async function getInterestRate(utilizationRate: number, marketId: string) {
   let interestRate = 0;
 
   try {
-    if (utilizationRate < OPTIMAL_RATIO_ONE) {
-      interestRate = ((BORROW_RATE_ONE - BASE_BORROW_RATE) / ( OPTIMAL_RATIO_ONE - 0 )) * utilizationRate + (-1*((BORROW_RATE_ONE - BASE_BORROW_RATE) / ( OPTIMAL_RATIO_ONE - 0  )) * 0 + BASE_BORROW_RATE )
-      return (interestRate * 100);
-    } else if (utilizationRate > OPTIMAL_RATIO_ONE) {
-      if (utilizationRate < OPTIMAL_RATIO_TWO) {
-        interestRate = ((BORROW_RATE_TWO - BORROW_RATE_ONE) / ( OPTIMAL_RATIO_TWO - OPTIMAL_RATIO_ONE )) * utilizationRate + (-1*((BORROW_RATE_TWO - BORROW_RATE_ONE) / ( OPTIMAL_RATIO_TWO - OPTIMAL_RATIO_ONE )) * OPTIMAL_RATIO_ONE + BORROW_RATE_ONE )
+    if (marketId === LIFINITY_FLARES_MARKET_ID || marketId === OG_ATADIANS_MARKET_ID) {
+      if (utilizationRate < OPTIMAL_RATIO_ONE) {
+        interestRate = ((BORROW_RATE_ONE - DISCOUNTED_BORROW_RATE) / ( OPTIMAL_RATIO_ONE - 0 )) * utilizationRate + (-1*((BORROW_RATE_ONE - DISCOUNTED_BORROW_RATE) / ( OPTIMAL_RATIO_ONE - 0  )) * 0 + DISCOUNTED_BORROW_RATE )
+        return (interestRate * 100);
+      } else if (utilizationRate > OPTIMAL_RATIO_ONE) {
+        if (utilizationRate < OPTIMAL_RATIO_TWO) {
+          interestRate = ((BORROW_RATE_TWO - BORROW_RATE_ONE) / ( OPTIMAL_RATIO_TWO - OPTIMAL_RATIO_ONE )) * utilizationRate + (-1*((BORROW_RATE_TWO - BORROW_RATE_ONE) / ( OPTIMAL_RATIO_TWO - OPTIMAL_RATIO_ONE )) * OPTIMAL_RATIO_ONE + BORROW_RATE_ONE )
+          return (interestRate * 100);
+        }
+      } else {
+        interestRate = ((BORROW_RATE_THREE - BORROW_RATE_TWO) / ( MAX_UTILISATION_RATIO - OPTIMAL_RATIO_TWO)) * utilizationRate + (-1*((BORROW_RATE_THREE - BORROW_RATE_TWO) / ( MAX_UTILISATION_RATIO - OPTIMAL_RATIO_TWO )) * OPTIMAL_RATIO_TWO + BORROW_RATE_TWO)
         return (interestRate * 100);
       }
     } else {
-      interestRate = ((BORROW_RATE_THREE - BORROW_RATE_TWO) / ( MAX_UTILISATION_RATIO - OPTIMAL_RATIO_TWO)) * utilizationRate + (-1*((BORROW_RATE_THREE - BORROW_RATE_TWO) / ( MAX_UTILISATION_RATIO - OPTIMAL_RATIO_TWO )) * OPTIMAL_RATIO_TWO + BORROW_RATE_TWO)
-      return (interestRate * 100);
-    }
+      if (utilizationRate < OPTIMAL_RATIO_ONE) {
+        interestRate = ((BORROW_RATE_ONE - BASE_BORROW_RATE) / ( OPTIMAL_RATIO_ONE - 0 )) * utilizationRate + (-1*((BORROW_RATE_ONE - BASE_BORROW_RATE) / ( OPTIMAL_RATIO_ONE - 0  )) * 0 + BASE_BORROW_RATE )
+        return (interestRate * 100);
+      } else if (utilizationRate > OPTIMAL_RATIO_ONE) {
+        if (utilizationRate < OPTIMAL_RATIO_TWO) {
+          interestRate = ((BORROW_RATE_TWO - BORROW_RATE_ONE) / ( OPTIMAL_RATIO_TWO - OPTIMAL_RATIO_ONE )) * utilizationRate + (-1*((BORROW_RATE_TWO - BORROW_RATE_ONE) / ( OPTIMAL_RATIO_TWO - OPTIMAL_RATIO_ONE )) * OPTIMAL_RATIO_ONE + BORROW_RATE_ONE )
+          return (interestRate * 100);
+        }
+      } else {
+        interestRate = ((BORROW_RATE_THREE - BORROW_RATE_TWO) / ( MAX_UTILISATION_RATIO - OPTIMAL_RATIO_TWO)) * utilizationRate + (-1*((BORROW_RATE_THREE - BORROW_RATE_TWO) / ( MAX_UTILISATION_RATIO - OPTIMAL_RATIO_TWO )) * OPTIMAL_RATIO_TWO + BORROW_RATE_TWO)
+        return (interestRate * 100);
+      }
+    } 
   } catch (error) {
-    throw error;
+      throw error;
   }
 }
 /**
