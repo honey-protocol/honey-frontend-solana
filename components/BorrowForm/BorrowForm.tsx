@@ -31,6 +31,7 @@ interface NFT {
   name: string;
   img: string;
   mint: string;
+  creator: string;
 }
 
 const BorrowForm = (props: BorrowProps) => {
@@ -116,11 +117,11 @@ const BorrowForm = (props: BorrowProps) => {
   };
 
   // set selection state and render (or not) detail nft
-  const selectNFT = (name: string, img: string, mint?: any) => {
+  const selectNFT = (name: string, img: string, mint: any, creators: any) => {
     if (hasOpenPosition == false) {
-      setSelectedNft({ name, img, mint });
+      setSelectedNft({ name, img, mint, creator: creators[0].address });
     } else {
-      setSelectedNft({ name, img, mint });
+      setSelectedNft({ name, img, mint, creator: creators[0].address });
       setIsNftSelected(true);
     }
   };
@@ -128,8 +129,9 @@ const BorrowForm = (props: BorrowProps) => {
   // if user has an open position, we need to be able to click on the position and borrow against it
   useEffect(() => {
     if (openPositions?.length) {
-      const { name, image, mint } = openPositions[0];
-      setSelectedNft({ name, img: image, mint });
+      console.log('THIS IS OPEN POS', openPositions)
+      const { name, image, mint, verifiedCreator } = openPositions[0];
+      setSelectedNft({ name, img: image, mint, creator: verifiedCreator });
       setIsNftSelected(true);
       setHasOpenPosition(true);
     } else if (openPositions.length == 0) {
@@ -142,7 +144,7 @@ const BorrowForm = (props: BorrowProps) => {
     if (selectedNft && selectedNft.mint.length < 1)
       return toastResponse('ERROR', 'Please select an NFT', 'ERROR');
     if (selectedNft && selectedNft.mint.length > 1)
-      executeDepositNFT(selectedNft.mint, toast, selectedNft.name);
+      executeDepositNFT(selectedNft.mint, toast, selectedNft.name, selectedNft.creator);
     handleSliderChange(0);
   };
 

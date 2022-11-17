@@ -9,7 +9,7 @@ export type BorrowProps = {
   fetchedSolPrice: number;
   calculatedInterestRate: number;
   currentMarketId: string;
-  executeDepositNFT: (mint: string, toast: any, name: string) => void;
+  executeDepositNFT: (mint: string, toast: any, name: string, creator: string) => void;
   executeBorrow: (val: number, toast: any) => void;
   hideMobileSidebar?: () => void;
 };

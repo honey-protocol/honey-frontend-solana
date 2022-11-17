@@ -32,7 +32,7 @@ const NftList = (props: NftListProps) => {
   const { data, selectNFT, nftPrice, selectedNFTMint } = props;
 
   function handleClick(item: any) {
-    selectNFT(item.name, item.image, item.mint);
+    selectNFT(item.name, item.image, item.mint, item.creators);
   }
 
   return (
