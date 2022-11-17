@@ -86,9 +86,8 @@ import { renderMarket, renderMarketImageByName } from 'helpers/marketHelpers';
  * @returns requested format
  */
 import CreateMarketSidebar from '../../components/CreateMarketSidebar/CreateMarketSidebar';
-// import { network } from 'pages/_app';
-
-const network = 'mainnet-beta'; // change to dynamic value
+// TODO: change to dynamic value
+const network = 'mainnet-beta'; 
 const { format: f, formatPercent: fp, formatSol: fs } = formatNumber;
 
 const Markets: NextPage = () => {
@@ -155,8 +154,8 @@ const Markets: NextPage = () => {
   const [totalMarketDebt, setTotalMarketDebt] = useState(0);
   const [nftPrice, setNftPrice] = useState(0);
   const [calculatedNftPrice, setCalculatedNftPrice] = useState(false);
-  const [marketPositions, setMarketPositions] = useState(0);
-  const [userAvailableNFTs, setUserAvailableNFTs] = useState<Array<NFT>>([]);
+  // const [marketPositions, setMarketPositions] = useState(0);
+  // const [userAvailableNFTs, setUserAvailableNFTs] = useState<Array<NFT>>([]);
   const [userOpenPositions, setUserOpenPositions] = useState<
     Array<OpenPositions>
   >([]);
@@ -255,15 +254,15 @@ const Markets: NextPage = () => {
     }
   }, [parsedReserves]);
 
-  // fetches total market positions aka. obligations
-  async function fetchObligations() {
-    let obligations = await honeyMarket.fetchObligations();
-    setMarketPositions(obligations.length);
-  }
-  // if there is a honeyMarket fetch the opbligations
-  useEffect(() => {
-    if (honeyMarket) fetchObligations();
-  }, [honeyMarket]);
+  // // fetches total market positions aka. obligations
+  // async function fetchObligations() {
+  //   let obligations = await honeyMarket.fetchObligations();
+  //   setMarketPositions(obligations.length);
+  // }
+  // // if there is a honeyMarket fetch the opbligations
+  // useEffect(() => {
+  //   if (honeyMarket) fetchObligations();
+  // }, [honeyMarket]);
 
   // calculates nft price
   // TODO: create types for marketReserveInfo && parsedReserves && honeyMarket
@@ -288,7 +287,11 @@ const Markets: NextPage = () => {
     calculateNFTPrice(marketReserveInfo, parsedReserves, honeyMarket);
   }, [marketReserveInfo, parsedReserves, honeyMarket]);
 
-  // calculates user allowance, userdebt, and loanToValue ratio
+  /**
+   * @description fetches allowance | user debt | loan to value
+   * @params nft price | collateral nft positions | honey user | market reserve info
+   * @returns outcome object with allowance | user debt | loan to value
+  */
   async function fetchHelperValues(
     nftPrice: any,
     collateralNFTPositions: any,
@@ -345,6 +348,7 @@ const Markets: NextPage = () => {
       setUserOpenPositions([]);
     }
   }, [collateralNFTPositions, currentMarketId]);
+
   // function is setup to handle an array for all markets and return based on specific market by verified creator
   async function handlePositions(verifiedCreator: string, currentOpenPositions: any) {
     return await handleOpenPositions(verifiedCreator, currentOpenPositions);
@@ -456,8 +460,8 @@ const Markets: NextPage = () => {
     );
   };
   const columnsWidth: Array<number | string> = [240, 150, 150, 150, 150];
-
-  // @ts-ignore
+  // Render func. for desktop
+  // @ts-ignore 
   const columns: HoneyTableColumnType<MarketTableRow>[] = useMemo(
     () =>
       [
@@ -649,7 +653,7 @@ const Markets: NextPage = () => {
       }),
     [isMyCollectionsFilterEnabled, tableData, searchQuery, windowWidth]
   );
-
+  // Render func. for mobile
   const columnsMobile: ColumnType<MarketTableRow>[] = useMemo(
     () => [
       {
@@ -851,19 +855,23 @@ const Markets: NextPage = () => {
 
   /**
    * @description executes the deposit NFT func. from SDK
-   * @params mint of the NFT
+   * @params mint of the NFT | toast | name 
    * @returns succes | failure
    */
   async function executeDepositNFT(
     mintID: any,
     toast: ToastProps['toast'],
-    name: string
+    name: string,
+    creator: string
   ) {
     try {
       if (!mintID) return;
       toast.processing();
 
       marketCollections.map(async collection => {
+        console.log('THIS IS COLLECTION', collection)
+        console.log('THIS IS CREATOR', creator)
+        // TODO: use creator instead of name
         if (name.includes(collection.name)) {
           const metadata = await Metadata.findByMint(
             collection.connection,
