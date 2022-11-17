@@ -5,6 +5,7 @@ import { HoneyInputWithLabel } from '../../HoneyInputWithLabel/HoneyInputWithLab
 import * as styles from './AddOracleStep.css';
 import { PublicKey } from '@solana/web3.js';
 import HoneyButton from 'components/HoneyButton/HoneyButton';
+import HoneyWarning from 'components/HoneyWarning/HoneyWarning';
 
 interface AddOracleStepProps {
   setOracle: any;
@@ -40,9 +41,13 @@ export const AddOracleStep = (props: AddOracleStepProps) => {
   return (
     <>
       <div className={styles.tabTitle}>
-        <TabTitle
+        {/* <TabTitle
           title="Oracle"
           tooltip={<HoneyTooltip tooltipIcon placement="top" label={'Mock'} />}
+        /> */}
+        <HoneyWarning
+          message="Learn more on how to setup your own oracle"
+          link="a" //TODO use real link
         />
       </div>
 
@@ -51,11 +56,6 @@ export const AddOracleStep = (props: AddOracleStepProps) => {
 
       <HoneyButton block variant="primary" onClick={() => openSwitchboardApp()}>
         Open Switchboard app
-      </HoneyButton>
-      <div className={styles.spacer}></div>
-
-      <HoneyButton block variant="primary" onClick={() => openDocs()}>
-        Open Switchboard Docs
       </HoneyButton>
       <div className={styles.spacer}></div>
 
