@@ -14,6 +14,8 @@ import { HoneyMarket } from '@honey-finance/sdk';
 import { buildReserveConfig } from './reserveConfigs';
 import MarketDetailsStep from '../MarketDetailsStep/MarketDetailsStep';
 import { HONEY_PROGRAM_ID } from 'constants/loan';
+import HoneyTooltip from 'components/HoneyTooltip/HoneyTooltip';
+import { extLink } from 'styles/common.css';
 
 interface CreateMarketTabProps {
   wallet: any;
@@ -128,6 +130,48 @@ const CreateMarketTab: FC<CreateMarketTabProps> = (
     }
   ];
 
+  const getTabTitle = () => {
+    switch (currentStep + 1) {
+      case 1:
+        return {
+          title: 'Create market'
+        };
+      case 2:
+        return {
+          title: 'Setup oracle',
+          tooltip: (
+            <HoneyTooltip
+              tooltipIcon
+              placement="top"
+              label={
+                <span>
+                  An oracle is needed to track the floor price of your market’s
+                  collateral.{' '}
+                  <a
+                    className={extLink}
+                    target="_blank"
+                    href="https://docs.honey.finance/learn/defi-lending#loan-to-value-ratio"
+                    rel="noreferrer"
+                  >
+                    {' '}
+                    Learn more
+                  </a>
+                </span>
+              }
+            />
+          )
+        };
+      case 3:
+        return { title: 'Setup market parameters' };
+      case 4:
+        return { title: 'Select risk model' };
+      case 5:
+        return { title: 'Deploy programs' };
+      default:
+        return { title: '' };
+    }
+  };
+
   return (
     <SidebarScroll
       footer={
@@ -152,9 +196,13 @@ const CreateMarketTab: FC<CreateMarketTabProps> = (
       }
     >
       <div className={styles.createMarketTab}>
-        <TabTitle title="Create market" className={styles.createMarket} />
+        <TabTitle {...getTabTitle()} className={styles.createMarket} />
 
-        <HoneySteps steps={steps} currentStep={currentStep} />
+        <HoneySteps
+          steps={steps}
+          currentStep={currentStep}
+          setCurrentStep={setCurrentStep}
+        />
 
         <div className={styles.createSteps}>{steps[currentStep].content}</div>
       </div>

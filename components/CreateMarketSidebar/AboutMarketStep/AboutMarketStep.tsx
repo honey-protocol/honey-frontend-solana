@@ -53,12 +53,12 @@ export const AboutMarketStep = (props: AboutMarketStepProps) => {
     <div className={styles.aboutMarketStep}>
       <div className={styles.aboutMarketStepContainer}>
         <div className={styles.stepTitle}>
-          <TabTitle
+          {/* <TabTitle
             title="About Market"
             tooltip={
               <HoneyTooltip tooltipIcon placement="top" label={'Mock'} />
             }
-          />
+          /> */}
         </div>
         <HoneyInputWithLabel
           placeholder="NFT collection name"
