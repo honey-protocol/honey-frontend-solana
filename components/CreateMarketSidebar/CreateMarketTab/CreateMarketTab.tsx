@@ -80,7 +80,7 @@ const CreateMarketTab: FC<CreateMarketTabProps> = (
   };
 
   const copyToClipboard = () => {
-    const data = `COLLECTION_NAME=${collectionName}\nCOLLECTION_URL=${collectionUrl}\nVERIFIED_CREATOR=${nftCollectionCreator}\nNFT_ORACLE=${nftOracle}\nMARKET_ID=${createdMarket?.address.toString()}`;
+    const data = `COLLECTION_NAME: ${collectionName}\nCOLLECTION_URL: ${collectionUrl}\nVERIFIED_CREATOR: ${nftCollectionCreator}\nNFT_ORACLE: ${nftOracle}\nMARKET_ID: ${createdMarket?.address.toString()}\n IMG_PATH: ''\n`;
     navigator.clipboard.writeText(data);
   };
 
