@@ -11,6 +11,7 @@ import {
   BORROW_RATE_TWO,
   BORROW_RATE_THREE
 } from '../../constants/interestRate';
+import { network } from 'pages/_app';
 
 /**
  * @description calculates the total user debt, ltv and allowance over all collections
@@ -73,16 +74,12 @@ export async function calcNFT(
 ) {
   if (marketReserveInfo && parsedReserves && honeyMarket) {
     let solPrice = await getOraclePrice(
-      // uncomment for devnet
-      'devnet',
-      // 'mainnet-beta',
+      network === 'devnet' ? 'devnet' : 'mainnet-beta',
       connection,
       parsedReserves[0].switchboardPriceAggregator
     ); //in sol
     let nftPrice = await getOraclePrice(
-      // uncomment for devnet
-      'devnet',
-      // 'mainnet-beta',
+      network === 'devnet' ? 'devnet' : 'mainnet-beta',
       connection,
       honeyMarket.nftSwitchboardPriceAggregator
     ); //in usd
@@ -100,9 +97,7 @@ export async function fetchSolPrice(parsedReserves: any, connection: any) {
   if (parsedReserves && connection) {
     try {
       let solPrice = await getOraclePrice(
-        // when in devnet uncomment the below
-        'devnet',
-        // 'mainnet-beta',
+        network === 'devnet' ? 'devnet' : 'mainnet-beta',
         connection,
         parsedReserves[0].switchboardPriceAggregator
       );
