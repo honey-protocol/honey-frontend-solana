@@ -1,5 +1,5 @@
 import { style } from '@vanilla-extract/css';
-import { breakpoints, typography } from './theme.css';
+import { breakpoints, typography, vars } from './theme.css';
 
 export const container = style({
   width: '100%',
@@ -49,5 +49,23 @@ export const mobileReturnButton = style({
       maxWidth: 360,
       display: 'none'
     }
+  }
+});
+
+export const extLink = style({
+  color: vars.colors.brownMiddle,
+  ':hover': {
+    background: 'transparent',
+    color: vars.colors.brownDark
+  },
+  ':active': {
+    background: 'transparent',
+    color: vars.colors.brownDark,
+    borderColor: 'transparent'
+  },
+  ':focus': {
+    background: 'transparent',
+    color: vars.colors.brownDark,
+    borderColor: 'transparent'
   }
 });
