@@ -59,29 +59,49 @@ export const RiskModelStep = (props: RiskModelStepProps) => {
     }
   };
 
+  const lowRiskChartData = [
+    { x: 5, y: 0 },
+    { x: 60, y: 50 },
+    { x: 80, y: 80 },
+    { x: 100, y: 200 }
+  ];
+
+  const defaultRiskChartData = [
+    { x: 10, y: 0 },
+    { x: 40, y: 25 },
+    { x: 80, y: 40 },
+    { x: 100, y: 140 }
+  ];
+
+  const highRiskChartData = [
+    { x: 20, y: 0 },
+    { x: 40, y: 20 },
+    { x: 60, y: 40 },
+    { x: 100, y: 180 }
+  ];
+
   const getChartData = () => {
-    if (isMock) {
-      const from = new Date()
-        .setFullYear(new Date().getFullYear() - 1)
-        .valueOf();
-      const to = new Date().valueOf();
-      return generateMockHistoryData(from, to, 10000);
+    switch (activeTab) {
+      case RiskModelTab.LOW:
+        return lowRiskChartData;
+      case RiskModelTab.DEFAULT:
+        return defaultRiskChartData;
+      case RiskModelTab.HIGH:
+        return highRiskChartData;
+
+      default:
+        return lowRiskChartData;
     }
-    return [];
   };
 
   const renderGraph = () => {
-    if (activeTab === RiskModelTab.LOW) {
-      return <HoneyLineChart data={getChartData()} />;
-    }
-
-    if (activeTab === RiskModelTab.DEFAULT) {
-      return <HoneyLineChart data={getChartData()} />;
-    }
-
-    if (activeTab === RiskModelTab.HIGH) {
-      return <HoneyLineChart data={getChartData()} />;
-    }
+    return (
+      <HoneyLineChart
+        data={getChartData()}
+        xAxisLabel="Utilisation rate (%)"
+        yAxisLabel="Interest rate"
+      />
+    );
   };
 
   return (
