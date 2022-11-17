@@ -55,7 +55,7 @@ const CreateMarketSidebar: FC<CreateMarketSidebarProps> = (
           <EmptyStateDetails
             icon={<div className={styles.lightIcon} />}
             title="You didn’t connect any wallet yet"
-            description="First, choose a proposal"
+            description="First, connect a wallet"
           />
         ) : (
           <>
