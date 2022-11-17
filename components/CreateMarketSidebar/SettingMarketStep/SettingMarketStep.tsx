@@ -7,6 +7,7 @@ import { CreateMarketSlider } from '../CreateMarketSlider/CreateMarketSlider';
 import { formatNumber } from '../../../helpers/format';
 import { isNil } from '../../../helpers/utils';
 import { vars } from '../../../styles/theme.css';
+import { extLink } from 'styles/common.css';
 import c from 'classnames';
 import TabTitle from '../../HoneyTabs/TabTitle/TabTitle';
 
@@ -24,7 +25,7 @@ export const SettingMarketStep = (props: SettingMarketStepProps) => {
   const [liquidationThreshold, setLiquidationThreshold] = useState<number>(
     MIN_LUQUIDATION_VALUE
   );
-  const maxLiquidationFee = 100;
+  const maxLiquidationFee = 10;
   const maxAdminFee = 50;
 
   useEffect(() => {
@@ -107,7 +108,7 @@ export const SettingMarketStep = (props: SettingMarketStepProps) => {
     );
   };
 
-  const isLiquidationFeeRisky = Number(liquidationFee) >= maxLiquidationFee;
+  const isLiquidationFeeRisky = Number(liquidationFee) > maxLiquidationFee;
 
   const isAdminFeeRisky = Number(adminFee) >= maxAdminFee;
 
@@ -118,7 +119,13 @@ export const SettingMarketStep = (props: SettingMarketStepProps) => {
           <TabTitle
             title="Liquidation Fee"
             tooltip={
-              <HoneyTooltip tooltipIcon placement="top" label={'Mock'} />
+              <HoneyTooltip
+                tooltipIcon
+                placement="top"
+                label={
+                  'Percentage of the debt given to liquidators who crank liquidation transactions.'
+                }
+              />
             }
           />
         </div>
@@ -136,7 +143,7 @@ export const SettingMarketStep = (props: SettingMarketStepProps) => {
             onChange={handleLiquidationFeeChange}
             formatter={defaultInputFormatted}
             bordered
-            addonAfter={liquidationFeeInputButtonsRender()}
+            // addonAfter={liquidationFeeInputButtonsRender()}
           />
         </div>
         <div
@@ -155,7 +162,23 @@ export const SettingMarketStep = (props: SettingMarketStepProps) => {
           <TabTitle
             title="Admin Fee"
             tooltip={
-              <HoneyTooltip tooltipIcon placement="top" label={'Mock'} />
+              <HoneyTooltip
+                tooltipIcon
+                placement="top"
+                label={
+                  <span>
+                    Value borrowed from the lending pool, upon which interest
+                    accrues.{' '}
+                    <a
+                      className={extLink}
+                      target="blank"
+                      href="https://docs.honey.finance/learn/defi-lending#debt"
+                    >
+                      Learn more.
+                    </a>
+                  </span>
+                }
+              />
             }
           />
         </div>
@@ -172,7 +195,7 @@ export const SettingMarketStep = (props: SettingMarketStepProps) => {
             onChange={handleAdminFeeChange}
             formatter={defaultInputFormatted}
             bordered
-            addonAfter={adminFeeInputButtonsRender()}
+            // addonAfter={adminFeeInputButtonsRender()}
           />
         </div>
         <div
@@ -207,7 +230,22 @@ export const SettingMarketStep = (props: SettingMarketStepProps) => {
           <TabTitle
             title=" Liquidation threshold"
             tooltip={
-              <HoneyTooltip tooltipIcon placement="top" label={'Mock'} />
+              <HoneyTooltip
+                tooltipIcon
+                placement="top"
+                label={
+                  <span>
+                    Determines the LTV at which collateral can be liquidated.{' '}
+                    <a
+                      className={extLink}
+                      target="blank"
+                      href="https://switchboard.xyz/explorer"
+                    >
+                      Learn more
+                    </a>
+                  </span>
+                }
+              />
             }
           />
         </div>
