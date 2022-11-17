@@ -19,8 +19,9 @@ const MarketDetailsStep = (props: MarketDetailsProps) => {
   };
   return (
     <>
+      <div className={styles.stepText}>Step 1</div>
       <HoneyButton block variant="primary" onClick={() => createMarket()}>
-        Create market
+        Deploy market programs
       </HoneyButton>
       <div className={styles.spacer}></div>
 
@@ -34,21 +35,23 @@ const MarketDetailsStep = (props: MarketDetailsProps) => {
       </div>
       <div className={styles.spacer}></div>
 
+      <div className={styles.stepText}>Step 2</div>
       <HoneyButton block variant="primary" onClick={() => initMarketReserve()}>
-        Create reserve
+        Deploy SOL reserve
       </HoneyButton>
       <div className={styles.spacer}></div>
 
       <div>
-        Register your market with the official Honey Labs Github repository
+        To list your market, create a pull request in the Honey Labs Github
+        repository. View our instructions here
       </div>
 
       <div className={styles.githubCopyRow}>
-        <HoneyButton variant="primary" onClick={() => openGithubInNewTab()}>
-          Open Github Pull Request
-        </HoneyButton>
         <HoneyButton variant="secondary" onClick={() => copyToClipboard()}>
           Copy
+        </HoneyButton>
+        <HoneyButton variant="primary" onClick={() => openGithubInNewTab()}>
+          Open Github Pull Request
         </HoneyButton>
       </div>
     </>
