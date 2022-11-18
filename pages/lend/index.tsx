@@ -168,14 +168,15 @@ const Lend: NextPage = () => {
     }, 1500);
   }
   /**
-   * @description updates honeyUser | marketReserveInfo | - timeout required
+   * @description updates honeyUser | marketReserveInfo |
    * @params none
    * @returns honeyUser | marketReserveInfo |
    */
   useEffect(() => {
     if (marketReserveInfo && honeyUser)
       calculateTotalDeposits(marketReserveInfo, honeyUser);
-  });
+  }, [marketReserveInfo, honeyUser, userDepositWithdraw]);
+
   // fetches the current sol price
   async function fetchSolValue(reserves: any, connection: any) {
     const slPrice = await fetchSolPrice(reserves, connection);

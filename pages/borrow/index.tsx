@@ -398,7 +398,8 @@ const Markets: NextPage = () => {
     sdkConfig.saberHqConnection,
     sdkConfig.sdkWallet,
     currentMarketId,
-    userOpenPositions
+    userOpenPositions,
+    processUserPayment
   ]);
 
   const showMobileSidebar = () => {
@@ -854,8 +855,8 @@ const Markets: NextPage = () => {
   );
 
   /**
-   * @description executes the deposit NFT func. from SDK
-   * @params mint of the NFT | toast | name 
+   * @description executes Deposit NFT (SDK helper)
+   * @params mint of the NFT | toast | name | verified creator
    * @returns succes | failure
    */
   async function executeDepositNFT(
@@ -867,12 +868,9 @@ const Markets: NextPage = () => {
     try {
       if (!mintID) return;
       toast.processing();
-
+      // loop through collections -> verified creator is used for validation
       marketCollections.map(async collection => {
-        console.log('THIS IS COLLECTION', collection)
-        console.log('THIS IS CREATOR', creator)
-        // TODO: use creator instead of name
-        if (name.includes(collection.name)) {
+        if (collection.verifiedCreator === creator) {
           const metadata = await Metadata.findByMint(
             collection.connection,
             mintID
@@ -941,16 +939,14 @@ const Markets: NextPage = () => {
   }
 
   /**
-   * @description
-   * executes the borrow function which allows user to borrow against NFT
-   * base value of NFT is 2 SOL - liquidation trashold is 50%, so max 1 SOL available
+   * @description executes the borrow function which allows user to borrow against NFT
    * @params borrow amount
    * @returns borrowTx
    */
   async function executeBorrow(val: any, toast: ToastProps['toast']) {
     try {
       if (!val) return toast.error('Please provide a value');
-      if (val == 1.6) val = val - 0.01;
+      // if (val == 1.6) val = val - 0.01;
       const borrowTokenMint = new PublicKey(
         'So11111111111111111111111111111111111111112'
       );
@@ -974,6 +970,7 @@ const Markets: NextPage = () => {
           'Borrow success',
           `https://solscan.io/tx/${tx[1][0]}?cluster=${network}`
         );
+        // make sure data is processed - change in state which triggers re-render
         setTimeout(() => {
           processUserPayment == 0
             ? setProcessUserPayment(1)
@@ -1020,7 +1017,7 @@ const Markets: NextPage = () => {
           'Repay success',
           `https://solscan.io/tx/${tx[1][0]}?cluster=${network}`
         );
-
+        // make sure data is processed - change in state which triggers re-render
         setTimeout(() => {
           processUserPayment == 0
             ? setProcessUserPayment(1)
