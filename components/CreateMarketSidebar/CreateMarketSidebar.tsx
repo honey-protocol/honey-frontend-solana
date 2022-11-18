@@ -6,6 +6,8 @@ import HowItWorksBorrowTab from '../HowItWorksBorrowTab/HowItWorksBorrowTab';
 import { CreateMarketSidebarProps } from './types';
 import { noop } from 'lodash';
 import CreateMarketTab from './CreateMarketTab/CreateMarketTab';
+import { useWalletKit } from '@gokiprotocol/walletkit';
+import { useGovernance } from 'contexts/GovernanceProvider';
 
 const items: [HoneyTabItem, HoneyTabItem] = [
   { label: 'How it works', key: 'how_it_works' },
@@ -19,7 +21,10 @@ const CreateMarketSidebar: FC<CreateMarketSidebarProps> = (
   props: CreateMarketSidebarProps
 ) => {
   const { onCancel, wallet, honeyClient } = props;
+  const { connect } = useWalletKit();
   const [activeTab, setActiveTab] = useState<Tab>('how_it_works');
+  const { veHoneyAmount } = useGovernance();
+  const requiredVeHONEY = 50000;
 
   const handleTabChange = (tabKey: string) => {
     setActiveTab(tabKey as Tab);
@@ -56,8 +61,14 @@ const CreateMarketSidebar: FC<CreateMarketSidebarProps> = (
             icon={<div className={styles.lightIcon} />}
             title="You didn’t connect any wallet yet"
             description="First, connect a wallet"
+            buttons={[
+              {
+                title: 'connect wallet',
+                onClick: connect
+              }
+            ]}
           />
-        ) : (
+        ) : veHoneyAmount > requiredVeHONEY ? (
           <>
             {activeTab === 'how_it_works' && (
               <HowItWorksBorrowTab
@@ -71,6 +82,15 @@ const CreateMarketSidebar: FC<CreateMarketSidebarProps> = (
               <CreateMarketTab wallet={wallet} honeyClient={honeyClient} />
             )}
           </>
+        ) : (
+          <EmptyStateDetails
+            icon=""
+            title="Insufficient veHONEY"
+            description={`You need to ${
+              requiredVeHONEY - veHoneyAmount
+            }  more veHONEY to create a market`}
+            buttons={[{ title: 'GET VEHONEY', onClick: () => {} }]}
+          />
         )}
       </HoneyTabs>
     </div>

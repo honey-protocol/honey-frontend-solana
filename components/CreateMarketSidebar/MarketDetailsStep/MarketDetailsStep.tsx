@@ -48,6 +48,7 @@ const MarketDetailsStep = (props: MarketDetailsProps) => {
         </span>
         <span className={styles.publicKeyOverflow}>{reserveMarket}</span>
       </div>
+      <div className={styles.spacer}></div>
 
       <div>
         To list your market, create a pull request in the Honey Labs Github
