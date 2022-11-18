@@ -13,6 +13,7 @@ interface MarketDetailsProps {
 const MarketDetailsStep = (props: MarketDetailsProps) => {
   const { createMarket, createdMarket, initMarketReserve, copyToClipboard } =
     props;
+  const reserveMarket = '';
 
   const openGithubInNewTab = () => {
     window.open('https://google.com', '_blank', 'noopener,noreferrer');
@@ -40,6 +41,13 @@ const MarketDetailsStep = (props: MarketDetailsProps) => {
         Deploy SOL reserve
       </HoneyButton>
       <div className={styles.spacer}></div>
+
+      <div className={styles.newMarketPublicKey}>
+        <span className={styles.marketAddress}>
+          <b>Reserve Address: </b>
+        </span>
+        <span className={styles.publicKeyOverflow}>{reserveMarket}</span>
+      </div>
 
       <div>
         To list your market, create a pull request in the Honey Labs Github
