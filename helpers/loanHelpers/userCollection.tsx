@@ -486,7 +486,7 @@ export async function populateMarketData(collection: MarketTableRow, connection:
  * @returns open positions in a collection and open bids on a collections NFT
 */
 export const fetchPositionBids = async (devnet:boolean, connection: Connection, wallet: ConnectedWallet, honeyId: string, honeyReserves: HoneyReserve[], honeyMarket: HoneyMarket, marketReserveInfo: HoneyMarketReserveInfo[]) => {
-  console.log('fetching bids...', honeyId, honeyReserves, honeyMarket, marketReserveInfo);
+  console.log('fetching bids local func...', honeyId, honeyReserves, honeyMarket, marketReserveInfo);
   const resBids = await fetch(
     devnet?'https://honey-nft-api.herokuapp.com/bids': 'https://honey-mainnet-api.herokuapp.com/bids',
     // 'http://localhost:3001/bids',
