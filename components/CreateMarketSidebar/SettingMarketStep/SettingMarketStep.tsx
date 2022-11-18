@@ -172,7 +172,7 @@ export const SettingMarketStep = (props: SettingMarketStepProps) => {
                     <a
                       className={extLink}
                       target="blank"
-                      href="https://docs.honey.finance/learn/defi-lending#debt"
+                      href="https://docs.honey.finance/lending-protocol/fees#admin-fees"
                     >
                       Learn more.
                     </a>
@@ -239,7 +239,7 @@ export const SettingMarketStep = (props: SettingMarketStepProps) => {
                     <a
                       className={extLink}
                       target="blank"
-                      href="https://switchboard.xyz/explorer"
+                      href="https://docs.honey.finance/lending-protocol/liquidations#liquidation-thresholds"
                     >
                       Learn more
                     </a>

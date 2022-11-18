@@ -150,7 +150,7 @@ const CreateMarketTab: FC<CreateMarketTabProps> = (
                   <a
                     className={extLink}
                     target="_blank"
-                    href="https://docs.honey.finance/learn/defi-lending#loan-to-value-ratio"
+                    href="https://docs.switchboard.xyz/about"
                     rel="noreferrer"
                   >
                     {' '}
