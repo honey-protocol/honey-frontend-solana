@@ -129,7 +129,6 @@ const BorrowForm = (props: BorrowProps) => {
   // if user has an open position, we need to be able to click on the position and borrow against it
   useEffect(() => {
     if (openPositions?.length) {
-      console.log('THIS IS OPEN POS', openPositions)
       const { name, image, mint, verifiedCreator } = openPositions[0];
       setSelectedNft({ name, img: image, mint, creator: verifiedCreator });
       setIsNftSelected(true);
