@@ -74,10 +74,10 @@ export const RiskModelStep = (props: RiskModelStepProps) => {
   ];
 
   const highRiskChartData = [
-    { x: 20, y: 0 },
-    { x: 40, y: 20 },
-    { x: 60, y: 40 },
-    { x: 100, y: 180 }
+    { x: 0, y: 10 },
+    { x: 40, y: 70 },
+    { x: 60, y: 80 },
+    { x: 100, y: 300 }
   ];
 
   const getChartData = () => {
