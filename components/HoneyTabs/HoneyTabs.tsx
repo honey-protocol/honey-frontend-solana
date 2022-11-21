@@ -1,10 +1,9 @@
-import React, { ReactNode } from 'react';
-import { Typography } from 'antd';
 import classNames from 'classnames';
+import React, { ReactNode } from 'react';
+import * as styles from './HoneyTabs.css';
+import { Typography } from 'antd';
 import TabBgLeft from './TabBgLeft';
 import TabBgRight from './TabBgRight';
-
-import * as styles from './HoneyTabs.css';
 
 export type HoneyTabItem = {
   label: string;
@@ -13,7 +12,7 @@ export type HoneyTabItem = {
 };
 
 const HoneyTabs = (props: {
-  items: HoneyTabItem[];
+  items: [HoneyTabItem, HoneyTabItem];
   children: ReactNode;
   activeKey: string;
   active: boolean;

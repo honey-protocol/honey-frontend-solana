@@ -9,20 +9,21 @@ import ClaimRewards from './ClaimRewards/ClaimRewards';
 import { useConnectedWallet } from '@saberhq/use-solana';
 import { useWalletKit } from '@gokiprotocol/walletkit';
 import { mobileReturnButton } from 'styles/common.css';
+import { HoneyButtonTabs } from 'components/HoneyButtonTabs/HoneyButtonTabs';
 
-const items: HoneyTabItem[] = [
-  { label: 'Stake pre-Honey', key: 'stake_phoney' },
+const items: [HoneyTabItem, HoneyTabItem] = [
   { label: 'Lock Honey', key: 'lock_honey' },
-  { label: 'Burn Nfts', key: 'burn_nfts' },
-  { label: 'Claim Rewards', key: 'claim_rewards' }
+  { label: 'Burn Nfts', key: 'burn_nfts' }
 ];
 
-type Tab = 'stake_phoney' | 'lock_honey' | 'burn_nfts' | 'claim_rewards';
+type Tab = 'lock_honey' | 'burn_nfts';
 
 const GetVeHoneySidebar = (props: { onCancel: Function }) => {
   const wallet = useConnectedWallet();
   const { connect } = useWalletKit();
-  const [activeTab, setActiveTab] = useState<Tab>('stake_phoney');
+  const [activeTab, setActiveTab] = useState<Tab>('lock_honey');
+  const [lockHoneyMode, setLockHoneyMode] = useState('lock_honey');
+  const [burnNftMode, setBurnNftMode] = useState('burn_nfts');
 
   const handleTabChange = (tabKey: string) => {
     // if (tabKey === 'burn_nfts') return;
@@ -57,17 +58,45 @@ const GetVeHoneySidebar = (props: { onCancel: Function }) => {
           />
         ) : (
           <>
-            {activeTab === 'stake_phoney' && (
-              <StakePHoney onCancel={props.onCancel} />
-            )}
             {activeTab === 'lock_honey' && (
-              <LockHoneyForm onCancel={props.onCancel} />
+              <>
+                <div className={styles.secTabsContainer}>
+                  <HoneyButtonTabs
+                    items={[
+                      { name: 'Lock Honey', slug: 'lock_honey' },
+                      { name: 'Stake Pre-Honey', slug: 'stake_pHoney' }
+                    ]}
+                    activeItemSlug={lockHoneyMode}
+                    isFullWidth
+                    onClick={setLockHoneyMode}
+                  />
+                </div>
+                {lockHoneyMode === 'lock_honey' ? (
+                  <LockHoneyForm onCancel={props.onCancel} />
+                ) : (
+                  <StakePHoney onCancel={props.onCancel} />
+                )}
+              </>
             )}
             {activeTab === 'burn_nfts' && (
-              <BurnNftsForm onCancel={props.onCancel} />
-            )}
-            {activeTab === 'claim_rewards' && (
-              <ClaimRewards onCancel={props.onCancel} />
+              <>
+                <div className={styles.secTabsContainer}>
+                  <HoneyButtonTabs
+                    items={[
+                      { name: 'Burn Nfts', slug: 'burn_nfts' },
+                      { name: 'Claim Rewards', slug: 'claim_rewards' }
+                    ]}
+                    activeItemSlug={burnNftMode}
+                    isFullWidth
+                    onClick={setBurnNftMode}
+                  />
+                </div>
+                {burnNftMode == 'burn_nfts' ? (
+                  <BurnNftsForm onCancel={props.onCancel} />
+                ) : (
+                  <ClaimRewards onCancel={props.onCancel} />
+                )}
+              </>
             )}
           </>
         )}

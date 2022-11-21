@@ -6,8 +6,7 @@ export const getVeHoneySidebar = style([
   {
     display: 'flex',
     flexDirection: 'column',
-    alignItems: 'stretch',
-    maxWidth: 540
+    alignItems: 'stretch'
   },
   sidebar
 ]);
@@ -32,4 +31,8 @@ export const lightIcon = style({
   width: 52,
   height: 52,
   background: 'url("/images/lightIcon.svg") center center no-repeat'
+});
+
+export const secTabsContainer = style({
+  padding: 20
 });
