@@ -486,78 +486,88 @@ export async function populateMarketData(collection: MarketTableRow, connection:
  * @returns open positions in a collection and open bids on a collections NFT
 */
 export const fetchPositionBids = async (devnet:boolean, connection: Connection, wallet: ConnectedWallet, honeyId: string, honeyReserves: HoneyReserve[], honeyMarket: HoneyMarket, marketReserveInfo: HoneyMarketReserveInfo[]) => {
-  console.log('fetching bids local func...', honeyId, honeyReserves, honeyMarket, marketReserveInfo);
-  const resBids = await fetch(
-    devnet?'https://honey-nft-api.herokuapp.com/bids': 'https://honey-mainnet-api.herokuapp.com/bids',
-    // 'http://localhost:3001/bids',
-    { mode: 'cors' },
-  );
-  const arrBids = await resBids.json();
-  // const parsedBids = arrBids.map((str) => JSON.parse(str));
+  try {
+    const resBids = await fetch(
+      'https://honey-mainnet-api.herokuapp.com/bids',
+      { mode: 'cors' },
+    );
+  
+    if (resBids) {
+      const arrBids = await resBids.json();
+      console.log('result: bidding array', arrBids);
 
-  const highestBid = Math.max.apply(
-    Math,
-    arrBids.map(function (o: any) {
-      return o.bidLimit;
-    }),
-  );
-  console.log('fetching positions...');
-  const provider = new anchor.AnchorProvider(connection, wallet, anchor.AnchorProvider.defaultOptions());
-  const client: HoneyClient = await HoneyClient.connect(provider, honeyId, true);
-  let arrPositions: NftPosition[] = [];
-
-
-  const solPriceUsd = await getOraclePrice(devnet?'devnet': 'mainnet-beta', connection, honeyReserves[0].data?.switchboardPriceAggregator);
-  const nftPriceUsd = await getOraclePrice(devnet?'devnet': 'mainnet-beta', connection, honeyMarket.nftSwitchboardPriceAggregator);
-  const nftPrice = nftPriceUsd / solPriceUsd;
-
-  let obligations = await honeyMarket.fetchObligations();
-  if (obligations && marketReserveInfo) {
-    await Promise.all(
-      obligations.map(async (item) => {
-        let nftMints: PublicKey[] = item.account.collateralNftMint;
-
-        const parsePosition = (position: any) => {
-          const pos: ObligationPositionStruct = {
-            account: new PublicKey(position.account),
-            amount: new BN(position.amount),
-            side: position.side,
-            reserveIndex: position.reserveIndex,
-            _reserved: [],
-          };
-          return pos;
-        };
-
-        item.account.loans = PositionInfoList.decode(Buffer.from(item.account.loans as any as number[])).map(
-          parsePosition,
-        );
+      const highestBid = Math.max.apply(
+        Math,
+        arrBids.map(function (o: any) {
+          return o.bidLimit;
+        }),
+      );
+      console.log('fetching positions...');
+      const provider = new anchor.AnchorProvider(connection, wallet, anchor.AnchorProvider.defaultOptions());
+      const client: HoneyClient = await HoneyClient.connect(provider, honeyId, true);
+      let arrPositions: NftPosition[] = [];
+    
+    
+      const solPriceUsd = await getOraclePrice(devnet?'devnet': 'mainnet-beta', connection, honeyReserves[0].data?.switchboardPriceAggregator);
+      const nftPriceUsd = await getOraclePrice(devnet?'devnet': 'mainnet-beta', connection, honeyMarket.nftSwitchboardPriceAggregator);
+      const nftPrice = nftPriceUsd / solPriceUsd;
+    
+      let obligations = await honeyMarket.fetchObligations();
+      if (obligations && marketReserveInfo) {
         await Promise.all(
-          nftMints.map(async (nft) => {
-            if (nft.toString() != '11111111111111111111111111111111') {
-              const totalDebt =
-                marketReserveInfo[0].loanNoteExchangeRate
-                  .mul(item.account?.loans[0]?.amount)
-                  .div(new BN(10 ** 15))
-                  .div(new BN(10 ** 6)) //!!
-                  .div(new BN(10 ** 5))
-                  .toNumber() /
-                10 ** 4; //dividing lamport
-              let position: NftPosition = {
-                obligation: item.publicKey.toString(),
-                debt: totalDebt,
-                nft_mint: new PublicKey(nft),
-                owner: item.account.owner,
-                ltv: 40,
-                is_healthy: getHealthStatus(totalDebt, nftPrice),
-                highest_bid: highestBid,
+          obligations.map(async (item) => {
+            let nftMints: PublicKey[] = item.account.collateralNftMint;
+    
+            const parsePosition = (position: any) => {
+              const pos: ObligationPositionStruct = {
+                account: new PublicKey(position.account),
+                amount: new BN(position.amount),
+                side: position.side,
+                reserveIndex: position.reserveIndex,
+                _reserved: [],
               };
-              arrPositions.push(position);
-            }
+              return pos;
+            };
+    
+            item.account.loans = PositionInfoList.decode(Buffer.from(item.account.loans as any as number[])).map(
+              parsePosition,
+            );
+            await Promise.all(
+              nftMints.map(async (nft) => {
+                if (nft.toString() != '11111111111111111111111111111111') {
+                  const totalDebt =
+                    marketReserveInfo[0].loanNoteExchangeRate
+                      .mul(item.account?.loans[0]?.amount)
+                      .div(new BN(10 ** 15))
+                      .div(new BN(10 ** 6)) //!!
+                      .div(new BN(10 ** 5))
+                      .toNumber() /
+                    10 ** 4; //dividing lamport
+                  let position: NftPosition = {
+                    obligation: item.publicKey.toString(),
+                    debt: totalDebt,
+                    nft_mint: new PublicKey(nft),
+                    owner: item.account.owner,
+                    ltv: 40,
+                    is_healthy: getHealthStatus(totalDebt, nftPrice),
+                    highest_bid: highestBid,
+                  };
+                  arrPositions.push(position);
+                }
+              }),
+            );
           }),
         );
-      }),
-    );
-    return { positions: arrPositions, bids: arrBids };
+        return { positions: arrPositions, bids: arrBids };
+      }  
+    } 
+    
+    else {
+      console.log('THE RESULT @@ inside else')
+      return [];
+    }
+  } catch (error) {
+    console.log('THE RESULT @@ ERROR', error);
   }
 
 
