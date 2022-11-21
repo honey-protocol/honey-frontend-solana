@@ -76,14 +76,16 @@ const ClaimRewards = (props: { onCancel: Function }) => {
     <SidebarScroll>
       <div className={styles.burnNftsForm}>
         <div className={styles.articleWrapper}>
-          <div className={styles.articleTitle}>
-            Claim Rewards for NFTs burnt
-          </div>
+          <div className={styles.articleTitle}>Proof for burned NFTs</div>
         </div>
 
         <div className={styles.row}>
           <div className={styles.col}>
-            <HoneyWarning message="You can claim your locked HONEY for the burnt NFT receipt. NOTE: it descreases your governance voting power (veHONEY amount)" />
+            <HoneyWarning message=
+            "Honey rewards for burned Genesis NFTs are locked/vested upfront for 10 years.
+            Rewards unlock in real time in the form of a claimable balance.
+            NOTE: claiming rewards decreases your governance voting power as the veHONEY amount is reduced. 
+              Learn more about this in our docs." />
           </div>
         </div>
 

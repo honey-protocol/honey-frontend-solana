@@ -100,14 +100,15 @@ const BurnNftsForm = (props: { onCancel: Function }) => {
       <div className={styles.burnNftsForm}>
         <div className={styles.articleWrapper}>
           <div className={styles.articleTitle}>Burn your NFTs</div>
-          <div className={styles.articleDescription}>
-            Earn 20,379.24 veHONEY
-          </div>
+          <div className={styles.articleDescription}>Earn veHONEY</div>
         </div>
 
         <div className={styles.row}>
           <div className={styles.col}>
-            <HoneyWarning message="You can burn your Bee NFT and get some veHONEY tokens to participate in governance. Note that it can’t be undone" />
+            <HoneyWarning message=
+            "You can burn your Genesis Bee NFT and get some veHONEY tokens to participate in governance. 
+            Note that this can’t be undone. 
+            Learn more about this in our docs." />
           </div>
         </div>
 
