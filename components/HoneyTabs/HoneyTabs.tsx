@@ -12,7 +12,7 @@ export type HoneyTabItem = {
 };
 
 const HoneyTabs = (props: {
-  items: [HoneyTabItem, HoneyTabItem];
+  items: [HoneyTabItem, HoneyTabItem?];
   children: ReactNode;
   activeKey: string;
   active: boolean;
