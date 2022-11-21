@@ -1,27 +1,27 @@
 import React, { FC, ReactNode, useEffect, useState } from 'react';
 import type { AppProps } from 'next/app';
-import Script from 'next/script';
+import 'degen/styles';
+import '@dialectlabs/react-ui/index.css';
+
+import '../styles/globals.css';
+import 'react-toastify/dist/ReactToastify.css';
+import { Network } from '@saberhq/solana-contrib';
 import { ToastContainer } from 'react-toastify';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { ThemeProvider } from 'degen';
+import SecPopup from 'components/SecPopup';
 import { AnchorProvider, HoneyProvider } from '@honey-finance/sdk';
 import { PublicKey } from '@solana/web3.js';
 import { getPlatformFeeAccounts, JupiterProvider } from '@jup-ag/react-hook';
-import { Network } from '@saberhq/solana-contrib';
 import { useConnectedWallet, useConnection } from '@saberhq/use-solana';
 import { WalletKitProvider } from '@gokiprotocol/walletkit';
 import { SailProvider } from '@saberhq/sail';
+import Script from 'next/script';
 
-import SecPopup from 'components/SecPopup';
 import { AccountsProvider } from 'contexts/AccountsProvider';
 import { DialectProviders } from 'contexts/DialectProvider';
 import { onSailError } from 'helpers/error';
 import { HONEY_GENESIS_MARKET_ID, HONEY_PROGRAM_ID } from 'constants/loan';
-
-import 'degen/styles';
-import 'react-toastify/dist/ReactToastify.css';
-import '@dialectlabs/react-ui/index.css';
-import '../styles/globals.css';
 
 export const network = (process.env.NETWORK as Network) || 'mainnet-beta';
 export const setMarketId = (marketID: string) => marketID;
