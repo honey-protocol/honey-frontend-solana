@@ -134,9 +134,9 @@ const CreateProposalTab = (props: { onCancel: Function }) => {
           />
         </div>
 
-        <SectionTitle title="Proposed Action" />
+        {/*  <SectionTitle title="Proposed Action" />
 
-        {/* <div className={cs(styles.row, styles.mb12)}>
+        <div className={cs(styles.row, styles.mb12)}>
           <CustomDropdown
             onChange={value => {
               setActionType(value as ActionType);
