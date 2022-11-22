@@ -1,5 +1,5 @@
 import * as styles from './AboutMarketStep.css';
-import React, { useCallback, useState } from 'react';
+import React from 'react';
 import mockCollectionImage from '../../../public/images/mock-collection-image.svg';
 import Image from 'next/image';
 import HoneyTooltip from '../../HoneyTooltip/HoneyTooltip';

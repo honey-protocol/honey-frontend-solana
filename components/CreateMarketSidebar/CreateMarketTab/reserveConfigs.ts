@@ -67,9 +67,9 @@ const lowRiskConfig = {
 
 export const buildReserveConfig = (riskModel: any, marketConfigOpts: any) => {
   let config = defaultConfig;
-  if (RiskModelTab.HIGH) {
+  if (riskModel == RiskModelTab.HIGH) {
     config = highRiskConfig;
-  } else if (RiskModelTab.LOW) {
+  } else if (riskModel == RiskModelTab.LOW) {
     config = lowRiskConfig;
   }
 
@@ -78,8 +78,6 @@ export const buildReserveConfig = (riskModel: any, marketConfigOpts: any) => {
     (1 / (marketConfigOpts.liquidationThreshold / 100)) * 10000
   );
   config.liquidationPremium = marketConfigOpts.liquidationFee * 100;
-
-  console.log(config);
 
   return config;
 };

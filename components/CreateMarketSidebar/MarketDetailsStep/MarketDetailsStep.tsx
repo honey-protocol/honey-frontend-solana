@@ -16,7 +16,11 @@ const MarketDetailsStep = (props: MarketDetailsProps) => {
   const reserveMarket = '';
 
   const openGithubInNewTab = () => {
-    window.open('https://google.com', '_blank', 'noopener,noreferrer');
+    window.open(
+      'https://github.com/honey-labs/honey-market-registry',
+      '_blank',
+      'noopener,noreferrer'
+    );
   };
   return (
     <>
