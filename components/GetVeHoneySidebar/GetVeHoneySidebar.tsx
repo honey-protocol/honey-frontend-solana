@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import * as styles from './GetVeHoneySidebar.css';
 import HoneyTabs, { HoneyTabItem } from '../HoneyTabs/HoneyTabs';
 import EmptyStateDetails from '../EmptyStateDetails/EmptyStateDetails';
-import StakePHoney from './StakePHoney/StakePHoney';
 import LockHoneyForm from './LockHoneyForm/LockHoneyForm';
 import BurnNftsForm from './BurnNftsForm/BurnNftsForm';
 import ClaimRewards from './ClaimRewards/ClaimRewards';
@@ -10,6 +9,8 @@ import { useConnectedWallet } from '@saberhq/use-solana';
 import { useWalletKit } from '@gokiprotocol/walletkit';
 import { mobileReturnButton } from 'styles/common.css';
 import { HoneyButtonTabs } from 'components/HoneyButtonTabs/HoneyButtonTabs';
+import PHoneyToHoney from './StakePHoney/PHoneyToHoney';
+import PHoneyToVeHoney from './StakePHoney/PHoneyToVeHoney';
 
 const items: [HoneyTabItem, HoneyTabItem] = [
   { label: 'Lock Honey', key: 'lock_honey' },
@@ -63,8 +64,30 @@ const GetVeHoneySidebar = (props: { onCancel: Function }) => {
                 <div className={styles.secTabsContainer}>
                   <HoneyButtonTabs
                     items={[
-                      { name: 'Lock Honey', slug: 'lock_honey' },
-                      { name: 'Stake Pre-Honey', slug: 'stake_pHoney' }
+                      {
+                        name: (
+                          <>
+                            <div>Honey</div>↓<div>veHoney</div>
+                          </>
+                        ),
+                        slug: 'lock_honey'
+                      },
+                      {
+                        name: (
+                          <>
+                            <div>pHoney</div>↓<div>Honey</div>
+                          </>
+                        ),
+                        slug: 'pHoneyToHoney'
+                      },
+                      {
+                        name: (
+                          <>
+                            <div>pHoney</div>↓<div>veHoney</div>
+                          </>
+                        ),
+                        slug: 'stake_pHoney'
+                      }
                     ]}
                     activeItemSlug={lockHoneyMode}
                     isFullWidth
@@ -74,8 +97,10 @@ const GetVeHoneySidebar = (props: { onCancel: Function }) => {
                 <div className={styles.formContainer}>
                   {lockHoneyMode === 'lock_honey' ? (
                     <LockHoneyForm onCancel={props.onCancel} />
+                  ) : lockHoneyMode === 'pHoneyToHoney' ? (
+                    <PHoneyToHoney onCancel={props.onCancel} />
                   ) : (
-                    <StakePHoney onCancel={props.onCancel} />
+                    <PHoneyToVeHoney onCancel={props.onCancel} />
                   )}
                 </div>
               </div>
