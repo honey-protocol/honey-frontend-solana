@@ -2,10 +2,9 @@ import * as styles from './AboutMarketStep.css';
 import React from 'react';
 import mockCollectionImage from '../../../public/images/mock-collection-image.svg';
 import Image from 'next/image';
+import { PublicKey } from '@solana/web3.js';
 import HoneyTooltip from '../../HoneyTooltip/HoneyTooltip';
 import { HoneyInputWithLabel } from '../../HoneyInputWithLabel/HoneyInputWithLabel';
-import TabTitle from '../../HoneyTabs/TabTitle/TabTitle';
-import { PublicKey } from '@solana/web3.js';
 import SectionTitle from '../../SectionTitle/SectionTitle';
 
 interface AboutMarketStepProps {
@@ -30,37 +29,16 @@ export const AboutMarketStep = (props: AboutMarketStepProps) => {
     } catch (e) {}
   };
 
-  // const renderFoundCollectionInfo = () => {
-  //   if (collectionUrl.length) {
-  //     return (
-  //       <div className={styles.foundCollectionInfo}>
-  //         <div className={styles.collectionLogo}>
-  //           {mockCollectionData.image}
-  //         </div>
-  //         <div className={styles.collectionInfoContainer}>
-  //           <div className={styles.collectionTitle}>
-  //             {mockCollectionData.title}
-  //           </div>
-  //           <div className={styles.collectionDescription}>
-  //             {mockCollectionData.description}
-  //           </div>
-  //         </div>
-  //       </div>
-  //     );
-  //   }
-  // };
-
   return (
     <div className={styles.aboutMarketStep}>
       <div className={styles.aboutMarketStepContainer}>
         <div className={styles.stepTitle}>
-          {/* <TabTitle
           <SectionTitle
             title="About Market"
             tooltip={
               <HoneyTooltip tooltipIcon placement="top" title={'Mock'} />
             }
-          /> */}
+          />
         </div>
         <HoneyInputWithLabel
           placeholder="NFT collection name"
@@ -79,7 +57,6 @@ export const AboutMarketStep = (props: AboutMarketStepProps) => {
           onChange={e => onChange(e.target.value)}
           label="Verified Creator"
         />
-        {/* {renderFoundCollectionInfo()} */}
       </div>
     </div>
   );

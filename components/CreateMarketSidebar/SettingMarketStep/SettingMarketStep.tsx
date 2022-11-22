@@ -52,6 +52,15 @@ export const SettingMarketStep = (props: SettingMarketStepProps) => {
     }
   };
 
+  useEffect(() => {
+    setMarketConfigOpts({
+      liquidationFee: liquidationFee,
+      adminFee: adminFee,
+      maxLTV: maxLTV,
+      liquidationThreshold: liquidationThreshold
+    });
+  }, [liquidationFee, adminFee, maxLTV, liquidationThreshold]);
+
   const defaultInputFormatted = (value: ValueType | undefined) => {
     // TODO: pass decimals as props if needed
     return value ? formatNumber.formatPercentRounded(Number(value), 2) : '';
@@ -128,7 +137,6 @@ export const SettingMarketStep = (props: SettingMarketStepProps) => {
             onChange={handleLiquidationFeeChange}
             formatter={defaultInputFormatted}
             bordered
-            // addonAfter={liquidationFeeInputButtonsRender()}
           />
         </div>
         <div
@@ -164,7 +172,6 @@ export const SettingMarketStep = (props: SettingMarketStepProps) => {
             onChange={handleAdminFeeChange}
             formatter={defaultInputFormatted}
             bordered
-            // addonAfter={adminFeeInputButtonsRender()}
           />
         </div>
         <div
@@ -178,22 +185,6 @@ export const SettingMarketStep = (props: SettingMarketStepProps) => {
           Up to 50 %
         </div>
       </div>
-      {/* <div className={styles.maximumLtv}>
-        <div className={styles.maximumLtvTitle}>
-          <SectionTitle
-            title="Maximum LTV"
-            tooltip={
-              <HoneyTooltip tooltipIcon placement="top" title={'Mock'} />
-            }
-          />
-        </div>
-        <CreateMarketSlider
-          currentValue={maxLTV}
-          onChange={setMaxLTV}
-          minValue={10}
-          maxValue={90}
-        />
-      </div> */}
       <div className={styles.liquidationThreshold}>
         <div className={styles.liquidationThresholdTitle}>
           <SectionTitle
@@ -210,7 +201,6 @@ export const SettingMarketStep = (props: SettingMarketStepProps) => {
           dangerValue={75}
           minValue={MIN_LUQUIDATION_VALUE}
           maxValue={95}
-          // totalValue={95}
         />
       </div>
     </div>

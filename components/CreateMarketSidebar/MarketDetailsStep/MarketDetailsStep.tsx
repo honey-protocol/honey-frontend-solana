@@ -22,6 +22,7 @@ const MarketDetailsStep = (props: MarketDetailsProps) => {
       'noopener,noreferrer'
     );
   };
+
   return (
     <>
       <div className={styles.stepText}>Step 1</div>

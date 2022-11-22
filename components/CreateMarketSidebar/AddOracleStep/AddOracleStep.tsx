@@ -18,21 +18,12 @@ export const AddOracleStep = (props: AddOracleStepProps) => {
     try {
       const pk = new PublicKey(value);
       setOracle(pk);
-      console.log('working');
     } catch (e) {}
   };
 
   const openSwitchboardApp = () => {
     window.open(
       'https://app.switchboard.xyz/',
-      '_blank',
-      'noopener,noreferrer'
-    );
-  };
-
-  const openDocs = () => {
-    window.open(
-      'https://docs.switchboard.xyz/about',
       '_blank',
       'noopener,noreferrer'
     );

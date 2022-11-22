@@ -41,9 +41,6 @@ const CreateMarketTab: FC<CreateMarketTabProps> = (
       '4zMMC9srt5Ri5X14GAgXhaHii3GnPAEERYPJgZJDncDU'
     );
 
-    // const marketKp: Keypair = Keypair.generate();
-    // const marketPk = marketKp.publicKey;
-
     // might want to consider adding some kinda validation here that
     // the verified creator actually points to the same nft
     const market = await honeyClient.createMarket({
@@ -143,21 +140,21 @@ const CreateMarketTab: FC<CreateMarketTabProps> = (
             <HoneyTooltip
               tooltipIcon
               placement="top"
-              label={
-                <span>
-                  An oracle is needed to track the floor price of your market’s
-                  collateral.{' '}
-                  <a
-                    className={extLink}
-                    target="_blank"
-                    href="https://docs.switchboard.xyz/about"
-                    rel="noreferrer"
-                  >
-                    {' '}
-                    Learn more
-                  </a>
-                </span>
-              }
+              // label={
+              //   <span>
+              //     An oracle is needed to track the floor price of your market’s
+              //     collateral.{' '}
+              //     <a
+              //       className={extLink}
+              //       target="_blank"
+              //       href="https://docs.switchboard.xyz/about"
+              //       rel="noreferrer"
+              //     >
+              //       {' '}
+              //       Learn more
+              //     </a>
+              //   </span>
+              // }
             />
           )
         };
