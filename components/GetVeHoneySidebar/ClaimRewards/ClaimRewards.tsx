@@ -29,12 +29,15 @@ const ListItem = ({
   const claimableN = convert(claimable);
 
   return (
-    <tr>
+    <tr className={styles.receiptListItem}>
       <td>#{id.toString()}</td>
       <td>{convert(claimed)}</td>
       <td>{convert(claimable)}</td>
       <td>
-        <HoneyButton onClick={() => (claimableN ? onClaim() : onClose())}>
+        <HoneyButton
+          size="small"
+          onClick={() => (claimableN ? onClaim() : onClose())}
+        >
           {claimableN ? 'Claim' : 'Close'}
         </HoneyButton>
       </td>
@@ -81,19 +84,20 @@ const ClaimRewards = (props: { onCancel: Function }) => {
 
         <div className={styles.row}>
           <div className={styles.col}>
-            <HoneyWarning message=
-            "Honey rewards for burned Genesis NFTs are locked/vested upfront for 10 years.
+            <HoneyWarning
+              message="Honey rewards for burned Genesis NFTs are locked/vested upfront for 10 years.
             Rewards unlock in real time in the form of a claimable balance.
             NOTE: claiming rewards decreases your governance voting power as the veHONEY amount is reduced. 
-              Learn more about this in our docs." />
+              Learn more about this in our docs."
+            />
           </div>
         </div>
 
         <table>
           <tr>
-            <th>Receipt #</th>
-            <th>Claimed ($HONEY)</th>
-            <th>Claimable ($HONEY)</th>
+            <th>Receipt#</th>
+            <th>Claimed</th>
+            <th>Claimable</th>
             <th>Action</th>
           </tr>
           {receipts.map(r => (

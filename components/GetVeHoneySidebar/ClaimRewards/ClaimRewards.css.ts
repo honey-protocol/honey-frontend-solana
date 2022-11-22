@@ -1,4 +1,4 @@
-import { style } from '@vanilla-extract/css';
+import { globalStyle, style } from '@vanilla-extract/css';
 import { typography, vars } from '../../../styles/theme.css';
 
 export const burnNftsForm = style({
@@ -66,6 +66,12 @@ export const bigCol = style([
     flex: '1 0 auto'
   }
 ]);
+
+export const receiptListItem = style({});
+
+globalStyle(`${receiptListItem} td`, {
+  textAlign: 'center'
+});
 
 export const list = style({
   display: 'flex',
