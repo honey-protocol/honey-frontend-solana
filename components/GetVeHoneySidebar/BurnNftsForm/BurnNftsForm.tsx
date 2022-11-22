@@ -105,10 +105,11 @@ const BurnNftsForm = (props: { onCancel: Function }) => {
 
         <div className={styles.row}>
           <div className={styles.col}>
-            <HoneyWarning message=
-            "You can burn your Genesis Bee NFT and get some veHONEY tokens to participate in governance. 
+            <HoneyWarning
+              message={`You can burn your Genesis Bee NFT and get some veHONEY tokens to participate in governance. 
             Note that this can’t be undone. 
-            Learn more about this in our docs." />
+            Learn more about this in our docs.`}
+            />
           </div>
         </div>
 
