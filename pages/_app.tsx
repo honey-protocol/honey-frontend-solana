@@ -1,6 +1,7 @@
 import type { AppProps } from 'next/app';
 import { ThemeProvider } from 'degen';
 import 'degen/styles';
+import '@dialectlabs/react-ui/index.css';
 import { WalletKitProvider } from '@gokiprotocol/walletkit';
 import '../styles/globals.css';
 import { Network } from '@saberhq/solana-contrib';
@@ -15,7 +16,7 @@ import React, { FC, ReactNode, useEffect, useState } from 'react';
 import { GovernorProvider } from 'hooks/tribeca/useGovernor';
 import { GovernanceProvider } from 'contexts/GovernanceProvider';
 import Script from 'next/script';
-import { HONEY_MARKET_ID, HONEY_PROGRAM_ID } from '../constants/loan';
+
 // import NoMobilePopup from 'components/NoMobilePopup/NoMobilePopup';
 import { SailProvider } from '@saberhq/sail';
 import { onSailError } from '../helpers/error';
@@ -28,7 +29,17 @@ import {
   SDKProvider
 } from 'helpers/sdk';
 import { QueryClient, QueryClientProvider } from 'react-query';
+import { getPlatformFeeAccounts, JupiterProvider } from '@jup-ag/react-hook';
 export const network = (process.env.NETWORK as Network) || 'mainnet-beta';
+import {
+  HONEY_GENESIS_MARKET_ID,
+  HONEY_PROGRAM_ID,
+  PESKY_PENGUINS_MARKET_ID
+} from '../constants/loan';
+import NoMobilePopup from 'components/NoMobilePopup/NoMobilePopup';
+import { DialectProviders } from 'contexts/DialectProvider';
+import { PublicKey } from '@solana/web3.js';
+export const setMarketId = (marketID: string) => marketID;
 
 const networkConfiguration = () => {
   if (process.env.NETWORK_CONFIGURATION) {
@@ -46,10 +57,10 @@ const storedAccent =
     ? (localStorage.getItem('accent') as ThemeAccent)
     : undefined;
 
-console.log(networkConfiguration(), network);
 const OnChainProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const wallet = useConnectedWallet();
   const connection = useConnection();
+  const network = 'mainnet-beta';
 
   return (
     <AnchorProvider
@@ -62,11 +73,52 @@ const OnChainProvider: FC<{ children: ReactNode }> = ({ children }) => {
         wallet={wallet}
         connection={connection}
         honeyProgramId={HONEY_PROGRAM_ID}
-        honeyMarketId={HONEY_MARKET_ID}
+        honeyMarketId={setMarketId(HONEY_GENESIS_MARKET_ID)}
       >
         {children}
       </HoneyProvider>
     </AnchorProvider>
+  );
+};
+
+const HoneyJupiterProvider: FC<{ children: ReactNode }> = ({ children }) => {
+  const wallet = useConnectedWallet();
+  const connection = useConnection();
+  const [platformFeeAccounts, setPlatformFeeAccounts] = useState(new Map());
+  const platformFeeBps = Number(process.env.NEXT_PUBLIC_JUPITER_FEE_BPS || '0');
+  const platformFeeWallet = process.env.NEXT_PUBLIC_JUPITER_FEE_ADDRESS
+    ? new PublicKey(process.env.NEXT_PUBLIC_JUPITER_FEE_ADDRESS)
+    : undefined;
+
+  useEffect(() => {
+    if (!platformFeeBps || !platformFeeWallet) {
+      return;
+    }
+    getPlatformFeeAccounts(connection, platformFeeWallet).then(res => {
+      setPlatformFeeAccounts(res);
+    });
+    //  eslint-disable react-hooks/exhaustive-deps
+  }, []);
+
+  let platformFeeAndAccounts = undefined;
+  if (platformFeeBps && platformFeeWallet) {
+    platformFeeAndAccounts = {
+      feeBps: platformFeeBps,
+      feeAccounts: platformFeeAccounts
+    };
+  }
+  console.log('platformFeeAndAccounts', platformFeeAndAccounts);
+
+  return (
+    <JupiterProvider
+      connection={connection}
+      cluster="mainnet-beta"
+      platformFeeAndAccounts={platformFeeAndAccounts}
+      userPublicKey={wallet?.publicKey || undefined}
+      onlyDirectRoutes={false}
+    >
+      {children}
+    </JupiterProvider>
   );
 };
 
@@ -106,7 +158,6 @@ function MyApp({ Component, pageProps }: AppProps) {
         strategy="lazyOnload"
         src={`https://www.googletagmanager.com/gtag/js?id=${process.env.NEXT_PUBLIC_GA}`}
       />
-
       <Script id="gtm-script" strategy="lazyOnload">
         {`
           window.dataLayer = window.dataLayer || [];
@@ -147,10 +198,17 @@ function MyApp({ Component, pageProps }: AppProps) {
                     <SecPopup setShowPopup={setShowPopup} />
                   ) : (
                     <>
-                      <OnChainProvider>
-                        <Component {...pageProps} />
-                        <ToastContainer theme="dark" position="bottom-right" />
-                      </OnChainProvider>
+                      <HoneyJupiterProvider>
+                        <DialectProviders>
+                        <OnChainProvider>
+                          <Component {...pageProps} />
+                          <ToastContainer
+                            theme="dark"
+                            position="bottom-right"
+                          />
+                        </OnChainProvider>
+                        </DialectProviders>
+                      </HoneyJupiterProvider>
                     </>
                   )}
                 </GovernorProvider>

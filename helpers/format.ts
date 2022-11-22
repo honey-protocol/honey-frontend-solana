@@ -158,6 +158,17 @@ export const formatNumber = {
     }
 
     return `${integersValue}.${decimalsValue.slice(0, decimals)}`;
+  },
+  formatTokenAllDecimals: (amount: number, decimals: number) => {
+    if (amount <= 0) {
+      return String(amount);
+    }
+
+    return new Intl.NumberFormat('en-US', {
+      style: 'decimal',
+      minimumFractionDigits: 0,
+      maximumFractionDigits: decimals
+    }).format(amount);
   }
 };
 

@@ -26,7 +26,7 @@ export const LendPositionCard: FC<LendPositionCardProps> = ({
         </HexaBoxContainer>
       </div>
       <div className={styles.positionName}>
-        <HoneyTooltip label={position.name}>{fnn(position.name)}</HoneyTooltip>
+        <HoneyTooltip title={position.name}>{fnn(position.name)}</HoneyTooltip>
         <div className={styles.arrowIcon} />
       </div>
       <div className={styles.positionValues}>

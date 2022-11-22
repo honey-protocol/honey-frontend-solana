@@ -9,7 +9,7 @@ import { GemBank, initGemBank } from '../gem-bank';
 import { GemFarm, initGemFarm } from '../gem-farm';
 import { programs } from '@metaplex/js';
 import { BN } from '@project-serum/anchor';
-import { TOKEN_PROGRAM_ID } from '@solana/spl-token';
+import { TOKEN_PROGRAM_ID } from '@solana/spl-token-v-0.1.8';
 import { extractMetaData } from './utils';
 import { TGFarm } from 'constants/new-farms';
 

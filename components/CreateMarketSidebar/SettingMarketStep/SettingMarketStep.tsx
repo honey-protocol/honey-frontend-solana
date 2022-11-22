@@ -9,7 +9,7 @@ import { isNil } from '../../../helpers/utils';
 import { vars } from '../../../styles/theme.css';
 import { extLink } from 'styles/common.css';
 import c from 'classnames';
-import TabTitle from '../../HoneyTabs/TabTitle/TabTitle';
+import SectionTitle from '../../SectionTitle/SectionTitle';
 
 const MIN_LUQUIDATION_VALUE = 15;
 
@@ -28,16 +28,7 @@ export const SettingMarketStep = (props: SettingMarketStepProps) => {
   const maxLiquidationFee = 10;
   const maxAdminFee = 50;
 
-  useEffect(() => {
-    setMarketConfigOpts({
-      liquidationFee: liquidationFee,
-      adminFee: adminFee,
-      maxLTV: maxLTV,
-      liquidationThreshold: liquidationThreshold
-    });
-  }, [liquidationFee, adminFee, maxLTV, liquidationThreshold]);
-
-  const handleLiquidationFeeChange = (value: ValueType) => {
+  const handleLiquidationFeeChange = (value: ValueType | null) => {
     if (isNil(value)) {
       setLiquidationFee(undefined);
     } else {
@@ -49,7 +40,7 @@ export const SettingMarketStep = (props: SettingMarketStepProps) => {
     }
   };
 
-  const handleAdminFeeChange = (value: ValueType) => {
+  const handleAdminFeeChange = (value: ValueType | null) => {
     if (isNil(value)) {
       setAdminFee(undefined);
     } else {
@@ -116,16 +107,10 @@ export const SettingMarketStep = (props: SettingMarketStepProps) => {
     <div className={styles.settingMarketStep}>
       <div className={styles.liquidationFee}>
         <div className={styles.liquidationFeeTitle}>
-          <TabTitle
+          <SectionTitle
             title="Liquidation Fee"
             tooltip={
-              <HoneyTooltip
-                tooltipIcon
-                placement="top"
-                label={
-                  'Percentage of the debt given to liquidators who crank liquidation transactions.'
-                }
-              />
+              <HoneyTooltip tooltipIcon placement="top" title={'Mock'} />
             }
           />
         </div>
@@ -159,26 +144,10 @@ export const SettingMarketStep = (props: SettingMarketStepProps) => {
       </div>
       <div className={styles.adminFee}>
         <div className={styles.adminFeeTitle}>
-          <TabTitle
+          <SectionTitle
             title="Admin Fee"
             tooltip={
-              <HoneyTooltip
-                tooltipIcon
-                placement="top"
-                label={
-                  <span>
-                    Value borrowed from the lending pool, upon which interest
-                    accrues.{' '}
-                    <a
-                      className={extLink}
-                      target="blank"
-                      href="https://docs.honey.finance/lending-protocol/fees#admin-fees"
-                    >
-                      Learn more.
-                    </a>
-                  </span>
-                }
-              />
+              <HoneyTooltip tooltipIcon placement="top" title={'Mock'} />
             }
           />
         </div>
@@ -211,10 +180,10 @@ export const SettingMarketStep = (props: SettingMarketStepProps) => {
       </div>
       {/* <div className={styles.maximumLtv}>
         <div className={styles.maximumLtvTitle}>
-          <TabTitle
+          <SectionTitle
             title="Maximum LTV"
             tooltip={
-              <HoneyTooltip tooltipIcon placement="top" label={'Mock'} />
+              <HoneyTooltip tooltipIcon placement="top" title={'Mock'} />
             }
           />
         </div>
@@ -227,25 +196,10 @@ export const SettingMarketStep = (props: SettingMarketStepProps) => {
       </div> */}
       <div className={styles.liquidationThreshold}>
         <div className={styles.liquidationThresholdTitle}>
-          <TabTitle
+          <SectionTitle
             title=" Liquidation threshold"
             tooltip={
-              <HoneyTooltip
-                tooltipIcon
-                placement="top"
-                label={
-                  <span>
-                    Determines the LTV at which collateral can be liquidated.{' '}
-                    <a
-                      className={extLink}
-                      target="blank"
-                      href="https://docs.honey.finance/lending-protocol/liquidations#liquidation-thresholds"
-                    >
-                      Learn more
-                    </a>
-                  </span>
-                }
-              />
+              <HoneyTooltip tooltipIcon placement="top" title={'Mock'} />
             }
           />
         </div>

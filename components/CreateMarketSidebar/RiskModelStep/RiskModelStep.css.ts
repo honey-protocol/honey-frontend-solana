@@ -16,7 +16,7 @@ export const tabsContainer = style({
   marginBottom: '12px'
 });
 
-export const tabTitle = style({
+export const SectionTitle = style({
   marginBottom: '16px'
 });
 
@@ -42,4 +42,8 @@ export const graphTitle = style({});
 
 export const warningContainer = style({
   width: '100%'
+});
+
+export const marginTop = style({
+  marginTop: 8
 });

@@ -5,7 +5,7 @@ import HoneyToggle from '../HoneyToggle/HoneyToggle';
 import HoneyButton from '../HoneyButton/HoneyButton';
 import HexaBoxContainer from '../HexaBoxContainer/HexaBoxContainer';
 import Link from 'antd/lib/typography/Link';
-import TabTitle from '../HoneyTabs/TabTitle/TabTitle';
+import SectionTitle from '../SectionTitle/SectionTitle';
 import { HowItWorksBorrowTabProps } from './types';
 
 const HowItWorksBorrowTab: FC<HowItWorksBorrowTabProps> = ({
@@ -53,7 +53,7 @@ const HowItWorksBorrowTab: FC<HowItWorksBorrowTabProps> = ({
     >
       <div className={styles.howItWorksTab}>
         <div className={styles.contentWrapper}>
-          <TabTitle title="How to create a new market" />
+          <SectionTitle title="How to create a new market" />
 
           <div className={styles.listItem}>
             <div className={styles.listIcon}>

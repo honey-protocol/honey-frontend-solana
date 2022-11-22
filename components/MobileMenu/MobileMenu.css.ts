@@ -1,16 +1,27 @@
 import { createVar, globalStyle, keyframes, style } from '@vanilla-extract/css';
+import { breakpoints } from 'styles/theme.css';
 
 export const mobileMenu = style({
   listStyle: 'none',
   padding: '30px 35px',
   gap: '22px',
   display: 'flex',
-  flexDirection: 'column'
+  flexDirection: 'column',
+  width: '100%',
+  '@media': {
+    [`screen and (min-width: ${breakpoints.tablet}px)`]: {
+      display: 'none'
+    }
+  }
 });
 
-export const visible = style({});
+export const visible = style({
+  overflow: 'auto'
+});
 
-export const hidden = style({});
+export const hidden = style({
+  overflow: 'hidden'
+});
 
 export const animateIn = keyframes({
   '0%': {

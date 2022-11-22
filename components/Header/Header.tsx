@@ -13,7 +13,7 @@ const Header: FC = () => {
 
   return (
     <div className={styles.headerContainer}>
-      <HoneyCardYellowShadow>
+      <HoneyCardYellowShadow isOverflowHiddenDisabled={true}>
         <div className={cs(styles.content, { ['open']: showMobileMenu })}>
           <div className={styles.main}>
             <Space size="small">

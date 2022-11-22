@@ -5,7 +5,7 @@ import SidebarScroll from '../../SidebarScroll/SidebarScroll';
 import { AddOracleStep } from '../AddOracleStep/AddOracleStep';
 import { HoneySteps } from '../../HoneySteps/HoneySteps';
 import { MarketStepsProps } from '../../HoneySteps/type';
-import TabTitle from '../../HoneyTabs/TabTitle/TabTitle';
+import SectionTitle from '../../SectionTitle/SectionTitle';
 import { AboutMarketStep } from '../AboutMarketStep/AboutMarketStep';
 import { SettingMarketStep } from '../SettingMarketStep/SettingMarketStep';
 import { RiskModelStep } from '../RiskModelStep/RiskModelStep';
@@ -196,7 +196,7 @@ const CreateMarketTab: FC<CreateMarketTabProps> = (
       }
     >
       <div className={styles.createMarketTab}>
-        <TabTitle {...getTabTitle()} className={styles.createMarket} />
+        <SectionTitle title="Create market" className={styles.createMarket} />
 
         <HoneySteps
           steps={steps}

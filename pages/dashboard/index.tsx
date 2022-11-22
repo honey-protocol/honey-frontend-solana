@@ -15,6 +15,7 @@ import {
 } from '../../components/HoneyCardsGrid/types';
 import MarketsSidebar from '../../components/MarketsSidebar/MarketsSidebar';
 import { OpenPositions, UserNFTs } from '../../types/markets';
+
 import {
   borrow,
   depositNFT,
@@ -41,7 +42,7 @@ import { ToastProps } from '../../hooks/useToast';
 import { Metadata } from '@metaplex-foundation/mpl-token-metadata';
 import { generateMockHistoryData } from '../../helpers/chartUtils';
 import { HoneyProfileChart } from '../../components/HoneyProfileChart/HoneyProfileChart';
-import { MAX_LTV } from '../../constants/loan';
+import { HONEY_GENESIS_MARKET_ID, MAX_LTV } from '../../constants/loan';
 import useWindowSize from '../../hooks/useWindowSize';
 import { TABLET_BP } from '../../constants/breakpoints';
 import LendSidebar from '../../components/LendSidebar/LendSidebar';
@@ -116,7 +117,7 @@ const Dashboard: NextPage = () => {
     sdkConfig.saberHqConnection,
     sdkConfig.sdkWallet!,
     sdkConfig.honeyId,
-    sdkConfig.marketId
+    'current_market_id'
   );
 
   const [selected, setSelected] = useState<string | undefined>();
@@ -248,7 +249,7 @@ const Dashboard: NextPage = () => {
     sdkConfig.saberHqConnection,
     sdkConfig.sdkWallet!,
     sdkConfig.honeyId,
-    sdkConfig.marketId
+    'current_market_id'
   );
 
   const [totalMarketDeposits, setTotalMarketDeposits] = useState(0);
@@ -475,7 +476,8 @@ const Dashboard: NextPage = () => {
   }, [totalMarketDeposits, totalMarketDebt, totalMarketDeposits]);
 
   async function calculateInterestRate(utilizationRate: number) {
-    let interestRate = await getInterestRate(utilizationRate);
+    // TODO: update market ID param to be dynamic before going live with the dashboard page
+    let interestRate = await getInterestRate(utilizationRate, HONEY_GENESIS_MARKET_ID);
     if (interestRate) setCalculatedInterestRate(interestRate);
   }
 
@@ -686,8 +688,6 @@ const Dashboard: NextPage = () => {
     <HoneySider isMobileSidebarVisible={isMobileSidebarVisible}>
       {positionType === 'borrow' ? (
         <MarketsSidebar
-          collectionId="s"
-          availableNFTs={userAvailableNFTs}
           openPositions={userOpenPositions}
           nftPrice={nftPrice}
           executeDepositNFT={executeDepositNFT}
@@ -696,11 +696,12 @@ const Dashboard: NextPage = () => {
           executeRepay={executeRepay}
           userDebt={userDebt}
           userAllowance={userAllowance}
-          userUSDCBalance={userUSDCBalance}
           loanToValue={loanToValue}
           hideMobileSidebar={hideMobileSidebar}
           fetchedSolPrice={fetchedSolPrice}
           calculatedInterestRate={calculatedInterestRate}
+          //TODO: fix market id
+          currentMarketId={''}
         />
       ) : (
         <LendSidebar
@@ -717,6 +718,9 @@ const Dashboard: NextPage = () => {
           userWalletBalance={userWalletBalance}
           fetchedSolPrice={fetchedSolPrice}
           onCancel={hideMobileSidebar}
+          //TODO: fix market id
+          currentMarketId={''}
+          marketImage={''}
         />
       )}
     </HoneySider>

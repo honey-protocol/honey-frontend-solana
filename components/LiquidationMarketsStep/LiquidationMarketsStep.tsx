@@ -5,7 +5,7 @@ import { Typography } from 'antd';
 import HoneyWarning from '../HoneyWarning/HoneyWarning';
 import React, { useState } from 'react';
 import HoneyLink from '../HoneyLink/HoneyLink';
-import TabTitle from '../HoneyTabs/TabTitle/TabTitle';
+import SectionTitle from '../SectionTitle/SectionTitle';
 import HoneyTooltip from '../HoneyTooltip/HoneyTooltip';
 import c from 'classnames';
 
@@ -30,10 +30,10 @@ const LiquidationMarketsStep = () => {
 
   return (
     <>
-      <div className={styles.tabTitle}>
-        <TabTitle
+      <div className={styles.SectionTitle}>
+        <SectionTitle
           title="Liquidation markets"
-          tooltip={<HoneyTooltip tooltipIcon placement="top" label={'Mock'} />}
+          tooltip={<HoneyTooltip tooltipIcon placement="top" title={'Mock'} />}
         />
       </div>
 
@@ -74,7 +74,7 @@ const LiquidationMarketsStep = () => {
       )}
 
       <HoneyWarning message="Description about Liquidation markets.">
-        <HoneyLink link="#" target="_blank">
+        <HoneyLink link="#" target="_blank" className={styles.marginTop}>
           Learn More
         </HoneyLink>
       </HoneyWarning>

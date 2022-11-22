@@ -12,7 +12,7 @@ export const honeyButton = style([
     border: 'none',
     gap: '10px',
     transition: 'all .5s',
-    justifyContent: 'space-between',
+    justifyContent: 'center',
     alignItems: 'center',
     ':after': {
       display: 'none!important'
@@ -149,6 +149,10 @@ export const disabled = style({
   }
 });
 
+export const withValues = style({
+  justifyContent: 'space-between'
+});
+
 globalStyle(`${tertiary}.${disabled}`, {
   background: 'transparent !important'
 });
@@ -166,6 +170,15 @@ export const valueContainer = style([
   }
 ]);
 
+export const valueContainerTextRight = style([
+  rightBlock,
+  {
+    height: '100%',
+    display: 'flex',
+    alignItems: 'center'
+  }
+]);
+
 export const usdcAmount = style([
   typography.caption,
   {
@@ -178,5 +191,13 @@ export const usdcValue = style([
   {
     color: vars.colors.grayTransparent,
     display: 'block'
+  }
+]);
+
+export const textRight = style([
+  typography.numbersMini,
+  {
+    color: vars.colors.grayTransparent,
+    textTransform: 'none'
   }
 ]);

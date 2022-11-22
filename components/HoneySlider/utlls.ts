@@ -11,12 +11,14 @@ export const getPositionedLabels = ({
   lastLabelValue,
   maxLeftSliderValue,
   maxValue,
-  labels
+  labels,
+  step
 }: {
   lastLabelValue: number;
   maxLeftSliderValue: number;
   maxValue: number;
-  labels: number[]
+  labels?: number[];
+  step?: number;
 }) => {
   const getLabelPosition = (globalPosition: number, max: number) => {
     return Math.round(globalPosition / max);
@@ -24,9 +26,9 @@ export const getPositionedLabels = ({
 
   let renderLabels = labels;
 
-  if (!labels.length) {
+  if (!labels?.length) {
     const autoLabels = [];
-    const labelsStep = 0.25;
+    const labelsStep = step || 0.25;
     let currentLabel = 0;
     while (currentLabel < lastLabelValue) {
       autoLabels.push(currentLabel * 100);
@@ -43,7 +45,7 @@ export const getPositionedLabels = ({
     left: {},
     center: {}
   };
-  renderLabels.forEach(label => {
+  renderLabels?.forEach(label => {
     const labelPart = label / 100;
     if (maxLeftSliderValue && labelPart <= leftSliderPart) {
       preparedLabels.left[getLabelPosition(label, leftSliderPart)] = {

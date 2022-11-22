@@ -13,14 +13,18 @@ import { formatNumber, formatNFTName } from '../../helpers/format';
 import RiskLvl from '../RiskLvl/RiskLvl';
 import HoneyTooltip from '../HoneyTooltip/HoneyTooltip';
 import HealthLvl from 'components/HealthLvl/HealthLvl';
+import { HONEY_GENESIS_MARKET_ID, PESKY_PENGUINS_MARKET_ID } from 'constants/loan';
+import { renderMarketImageByID } from 'helpers/marketHelpers';
+import { RoundHalfDown } from 'helpers/utils';
+import { LiquidateExpandTableProps } from './LiquidateExpandTableProps';
 
 const { formatPercent: fp, formatSol: fs } = formatNumber;
 
 type FilterType = 'most_critical' | 'max_debt' | 'most_valuable';
 
-export const LiquidateExpandTable: FC<{ data: LiquidateTablePosition[] }> = ({
-  data
-}) => {
+
+export const LiquidateExpandTable = (props: LiquidateExpandTableProps) =>  {
+  const { data, currentMarketId} = props;
   const [filter, setFilter] = useState<FilterType>('most_critical');
 
   const expandColumns: ColumnType<LiquidateTablePosition>[] = useMemo(
@@ -35,11 +39,11 @@ export const LiquidateExpandTable: FC<{ data: LiquidateTablePosition[] }> = ({
             <div className={sharedStyles.expandedRowIcon} />
             <div className={sharedStyles.collectionLogo}>
               <HexaBoxContainer>
-                <Image src={honeyGenesisBee} />
+                {renderMarketImageByID(currentMarketId)}
               </HexaBoxContainer>
             </div>
             <div className={sharedStyles.nameCellText}>
-              <HoneyTooltip label={name}>
+              <HoneyTooltip title={name}>
                 <div className={sharedStyles.collectionName}>
                   {formatNFTName(name)}
                 </div>
@@ -55,7 +59,7 @@ export const LiquidateExpandTable: FC<{ data: LiquidateTablePosition[] }> = ({
           <div className={sharedStyles.expandedRowCell}>
             <InfoBlock
               title={'Until liquidation:'}
-              value={fs(untilLiquidation)}
+              value={fs(RoundHalfDown(untilLiquidation, 5))}
             />
           </div>
         )
@@ -83,13 +87,13 @@ export const LiquidateExpandTable: FC<{ data: LiquidateTablePosition[] }> = ({
     ],
     [filter]
   );
-
+  
   return (
     <>
       <div className={styles.expandTableHeader}>
         <div className={styles.positionsCounterContainer}>
           <span className={styles.positionsCounterTitle}>Open positions</span>
-          <span className={styles.positionsCount}>{data.length}</span>
+          <span className={styles.positionsCount}>{data && data.length ? data.length : 0}</span>
         </div>
         <HoneyButtonTabs
           items={[

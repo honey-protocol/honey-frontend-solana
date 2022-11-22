@@ -27,7 +27,7 @@ import ProposalActivate from './Proposals/ProposalActivate/ProposalActivate';
 import ProposalHistory from './Proposals/ProposalHistory/ProposalHistory';
 import cs from 'classnames';
 import { questionIcon } from 'styles/icons.css';
-import TabTitle from '../../HoneyTabs/TabTitle/TabTitle';
+import SectionTitle from '../../SectionTitle/SectionTitle';
 
 const { formatShortName: fsn } = formatNumber;
 
@@ -280,7 +280,7 @@ const VoteForm: FC<VoteFormProps> = (props: VoteFormProps) => {
       }
     >
       <div className={styles.depositForm}>
-        <TabTitle title={proposalInfo?.proposalMetaData?.title || '--'} />
+        <SectionTitle title={proposalInfo?.proposalMetaData?.title || '--'} />
         <div className={styles.row}>
           <HoneyWarning
             message="Discuss about this proposal on forum"

@@ -1,6 +1,6 @@
 import { style } from '@vanilla-extract/css';
 
-export const tabTitle = style({
+export const SectionTitle = style({
   marginBottom: 16
 });
 

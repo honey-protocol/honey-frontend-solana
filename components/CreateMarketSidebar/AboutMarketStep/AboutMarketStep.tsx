@@ -6,6 +6,7 @@ import HoneyTooltip from '../../HoneyTooltip/HoneyTooltip';
 import { HoneyInputWithLabel } from '../../HoneyInputWithLabel/HoneyInputWithLabel';
 import TabTitle from '../../HoneyTabs/TabTitle/TabTitle';
 import { PublicKey } from '@solana/web3.js';
+import SectionTitle from '../../SectionTitle/SectionTitle';
 
 interface AboutMarketStepProps {
   setCollectionName: any;
@@ -54,9 +55,10 @@ export const AboutMarketStep = (props: AboutMarketStepProps) => {
       <div className={styles.aboutMarketStepContainer}>
         <div className={styles.stepTitle}>
           {/* <TabTitle
+          <SectionTitle
             title="About Market"
             tooltip={
-              <HoneyTooltip tooltipIcon placement="top" label={'Mock'} />
+              <HoneyTooltip tooltipIcon placement="top" title={'Mock'} />
             }
           /> */}
         </div>

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import * as styles from './RiskModelStep.css';
 import HoneyTooltip from '../../HoneyTooltip/HoneyTooltip';
-import TabTitle from '../../HoneyTabs/TabTitle/TabTitle';
+import SectionTitle from '../../SectionTitle/SectionTitle';
 import { HoneyButtonTabs } from '../../HoneyButtonTabs/HoneyButtonTabs';
 import HoneyWarning from '../../HoneyWarning/HoneyWarning';
 import HoneyLink from '../../HoneyLink/HoneyLink';
@@ -31,7 +31,7 @@ export const RiskModelStep = (props: RiskModelStepProps) => {
     if (activeTab === RiskModelTab.LOW) {
       return (
         <HoneyWarning message="LOW Risk Description">
-          <HoneyLink link="#" target="_blank">
+          <HoneyLink link="#" target="_blank" className={styles.marginTop}>
             Learn More
           </HoneyLink>
         </HoneyWarning>
@@ -41,7 +41,7 @@ export const RiskModelStep = (props: RiskModelStepProps) => {
     if (activeTab === RiskModelTab.DEFAULT) {
       return (
         <HoneyWarning message="The Default risk model establishes an average income for lenders with keeping good risk management.">
-          <HoneyLink link="#" target="_blank">
+          <HoneyLink link="#" target="_blank" className={styles.marginTop}>
             Learn More
           </HoneyLink>
         </HoneyWarning>
@@ -51,7 +51,7 @@ export const RiskModelStep = (props: RiskModelStepProps) => {
     if (activeTab === RiskModelTab.HIGH) {
       return (
         <HoneyWarning message="The High risk model establishes an average income for lenders with keeping good risk management.">
-          <HoneyLink link="#" target="_blank">
+          <HoneyLink link="#" target="_blank" className={styles.marginTop}>
             Learn More
           </HoneyLink>
         </HoneyWarning>
@@ -106,14 +106,14 @@ export const RiskModelStep = (props: RiskModelStepProps) => {
 
   return (
     <div className={styles.riskModelStep}>
-      <div className={styles.tabTitle}>
-        <TabTitle
+      <div className={styles.SectionTitle}>
+        <SectionTitle
           title="Select your asset risk model"
           tooltip={
             <HoneyTooltip
               tooltipIcon
               placement="top"
-              label={'TODO: add tooltip'}
+              title={'TODO: add tooltip'}
             />
           }
         />
@@ -137,7 +137,7 @@ export const RiskModelStep = (props: RiskModelStepProps) => {
 
       <div className={styles.graphContainer}>
         <div className={styles.graphTitle}>
-          <TabTitle title="Interest rate" />
+          <SectionTitle title="Interest rate" />
         </div>
         <div className={styles.graphWrapper}>{renderGraph()}</div>
       </div>

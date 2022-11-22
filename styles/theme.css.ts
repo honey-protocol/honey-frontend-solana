@@ -20,8 +20,11 @@ export const vars = createGlobalTheme(':root', {
     greenDark: '#007700',
     greenDarkest: '#008800',
 
+    blue: '#009EE7',
+
     red: '#CF4536',
     redDark: '#A62B1E',
+    lightRedTransparent: 'rgba(166, 43, 30, 0.1)',
 
     grayTransparent: 'rgba(17, 17, 17, 0.4)',
     lightGrayTransparent: 'rgba(0, 0, 0, 0.12)',
@@ -48,6 +51,12 @@ export const vars = createGlobalTheme(':root', {
 });
 
 export const typography = {
+  pageTitle: {
+    fontFamily: 'Scandia',
+    fontWeight: '500',
+    fontSize: '32px',
+    lineHeight: '38px'
+  },
   title: {
     fontFamily: 'Scandia',
     fontWeight: '500',

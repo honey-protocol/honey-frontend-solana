@@ -1,6 +1,6 @@
 import { globalStyle, style } from '@vanilla-extract/css';
 import { container } from '../../styles/common.css';
-import { vars } from '../../styles/theme.css';
+import { breakpoints, vars } from '../../styles/theme.css';
 
 export const headerContainer = style([
   container,
@@ -20,7 +20,8 @@ export const content = style({
   flexDirection: 'column',
   alignItems: 'flex-start',
   transition: 'all 0.8s',
-  height: '70px'
+  height: '70px',
+  borderRadius: vars.space.medium
 });
 
 export const main = style({
@@ -32,7 +33,7 @@ export const main = style({
 });
 
 globalStyle(`${content}.open`, {
-  height: 'calc(100vh - 30px)',
+  height: `calc(100vh - 18px)`,
   backgroundColor: vars.colors.white
 });
 
@@ -53,7 +54,7 @@ export const menuToggle = style({
   width: 20,
   height: 20,
   '@media': {
-    'screen and (max-width: 768px)': {
+    [`screen and (max-width: ${breakpoints.tablet}px)`]: {
       display: 'block'
     }
   }

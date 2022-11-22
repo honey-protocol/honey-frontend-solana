@@ -1,4 +1,4 @@
-import { Dropdown, Menu, Space, Typography } from 'antd';
+import { Dropdown, Menu, Space } from 'antd';
 import React, { useEffect, useState } from 'react';
 import * as styles from './HeaderLinks.css';
 import Link from 'next/link';
@@ -6,8 +6,20 @@ import { DownIcon } from 'icons/DownIcon';
 import HoneyButton from 'components/HoneyButton/HoneyButton';
 import { useRouter } from 'next/router';
 import cs from 'classnames';
+import { DESKTOP_BP, TABLET_BP } from '../../constants/breakpoints';
+import { featureFlags } from '../../helpers/featureFlags';
 
-export const links = [
+type MenuLink = {
+  title: string;
+  href: string;
+  disabled?: boolean;
+  submenu?: Array<{
+    title: string;
+    href: string;
+  }>;
+};
+
+export const links: MenuLink[] = [
   {
     title: 'DASHBOARD',
     href: '/dashboard',
@@ -56,9 +68,34 @@ export const links = [
   }
 ];
 
+if (featureFlags.isSwapPageEnabled) {
+  links.splice(4, 0, {
+    title: 'SWAP',
+    href: '/swap'
+  });
+}
+
+if (featureFlags.isP2PPageEnabled) {
+  links.splice(5, 0, {
+    title: 'p2p',
+    href: '',
+    submenu: [
+      {
+        title: 'Lend',
+        href: '/p2p/lend'
+      },
+      {
+        title: 'Borrow',
+        href: '/p2p/borrow'
+      }
+    ]
+  });
+}
+
 const HeaderDropdownMenu = () => {
   const [linksDisplayed, setLinkDisplayed] = useState(6);
   const router = useRouter();
+
   const MoreMenu = (
     <Menu
       selectable
@@ -78,10 +115,10 @@ const HeaderDropdownMenu = () => {
   useEffect(() => {
     const setLinksToDisplay = () => {
       const width = window.innerWidth;
-      if (width > 1100) {
+      if (width > DESKTOP_BP) {
         setLinkDisplayed(6);
       }
-      if (width < 1100 && width > 768) {
+      if (width < DESKTOP_BP && width > TABLET_BP) {
         setLinkDisplayed(4);
       }
     };
@@ -93,26 +130,59 @@ const HeaderDropdownMenu = () => {
   }, []);
 
   return (
-    <ul className={styles.container}>
+    <Menu className={styles.container} triggerSubMenuAction="hover">
       {links
         .filter((_, i) => i < linksDisplayed)
         .map((link, i) => (
-          <li
-            className={cs({
-              [styles.activeLink]: router.pathname.includes(link.href)
+          <Menu.Item
+            className={cs(styles.item, {
+              [styles.activeLink]: router.pathname === link.href
             })}
             key={i}
           >
-            {link.disabled ? (
+            {link.disabled && !link.submenu ? (
               <HoneyButton disabled variant="textSecondary">
                 {link.title}
               </HoneyButton>
             ) : (
-              <Link href={link.href} passHref>
-                <HoneyButton variant="textSecondary">{link.title}</HoneyButton>
-              </Link>
+              <>
+                {!link.submenu && (
+                  <Link href={link.href} passHref>
+                    <HoneyButton variant="textSecondary">
+                      {link.title}
+                    </HoneyButton>
+                  </Link>
+                )}
+              </>
             )}
-          </li>
+
+            {link.submenu && (
+              <Menu.SubMenu
+                title={
+                  <>
+                    {link.title}
+                    <DownIcon />
+                  </>
+                }
+                className={styles.submenu}
+              >
+                {link.submenu.map(s => (
+                  <Menu.Item
+                    key={s.title}
+                    className={cs(styles.item, styles.subItem, {
+                      [styles.activeLink]: router.pathname === s.href
+                    })}
+                  >
+                    <Link href={s.href} passHref>
+                      <HoneyButton variant="textSecondary">
+                        {s.title}
+                      </HoneyButton>
+                    </Link>
+                  </Menu.Item>
+                ))}
+              </Menu.SubMenu>
+            )}
+          </Menu.Item>
         ))}
       <li>
         <Dropdown overlay={MoreMenu}>
@@ -124,7 +194,7 @@ const HeaderDropdownMenu = () => {
           </HoneyButton>
         </Dropdown>
       </li>
-    </ul>
+    </Menu>
   );
 };
 export default HeaderDropdownMenu;
