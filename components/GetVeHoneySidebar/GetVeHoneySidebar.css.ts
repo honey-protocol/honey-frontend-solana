@@ -11,6 +11,11 @@ export const getVeHoneySidebar = style([
   sidebar
 ]);
 
+export const container = style({
+  display: 'flex',
+  flexDirection: 'column',
+  height: '100%'
+});
 export const content = style({
   borderRadius: vars.space.medium,
   overflow: 'hidden',
@@ -35,4 +40,8 @@ export const lightIcon = style({
 
 export const secTabsContainer = style({
   padding: 20
+});
+
+export const formContainer = style({
+  flex: 1
 });

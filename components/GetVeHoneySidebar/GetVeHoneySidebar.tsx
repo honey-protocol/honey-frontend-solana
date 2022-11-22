@@ -59,7 +59,7 @@ const GetVeHoneySidebar = (props: { onCancel: Function }) => {
         ) : (
           <>
             {activeTab === 'lock_honey' && (
-              <>
+              <div className={styles.container}>
                 <div className={styles.secTabsContainer}>
                   <HoneyButtonTabs
                     items={[
@@ -71,15 +71,17 @@ const GetVeHoneySidebar = (props: { onCancel: Function }) => {
                     onClick={setLockHoneyMode}
                   />
                 </div>
-                {lockHoneyMode === 'lock_honey' ? (
-                  <LockHoneyForm onCancel={props.onCancel} />
-                ) : (
-                  <StakePHoney onCancel={props.onCancel} />
-                )}
-              </>
+                <div className={styles.formContainer}>
+                  {lockHoneyMode === 'lock_honey' ? (
+                    <LockHoneyForm onCancel={props.onCancel} />
+                  ) : (
+                    <StakePHoney onCancel={props.onCancel} />
+                  )}
+                </div>
+              </div>
             )}
             {activeTab === 'burn_nfts' && (
-              <>
+              <div className={styles.container}>
                 <div className={styles.secTabsContainer}>
                   <HoneyButtonTabs
                     items={[
@@ -91,12 +93,14 @@ const GetVeHoneySidebar = (props: { onCancel: Function }) => {
                     onClick={setBurnNftMode}
                   />
                 </div>
-                {burnNftMode == 'burn_nfts' ? (
-                  <BurnNftsForm onCancel={props.onCancel} />
-                ) : (
-                  <ClaimRewards onCancel={props.onCancel} />
-                )}
-              </>
+                <div className={styles.formContainer}>
+                  {burnNftMode == 'burn_nfts' ? (
+                    <BurnNftsForm onCancel={props.onCancel} />
+                  ) : (
+                    <ClaimRewards onCancel={props.onCancel} />
+                  )}
+                </div>
+              </div>
             )}
           </>
         )}
