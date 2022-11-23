@@ -9,16 +9,13 @@ import { LAMPORTS_PER_SOL } from '@solana/web3.js';
 
 const BidsList = (props: BidListProps) => {
   const { biddingArray, fetchedSolPrice } = props;
-  const [valueUSD, setValueUSD] = useState<number>();
-  const [valueUSDC, setValueUSDC] = useState<number>();
-  const [valueSOL, setValueSOL] = useState<number>(0);
   const [convertedBiddingArray, setConvertedBiddingArray] = useState([]);
 
   // Put your validators here
   const isSubmitButtonDisabled = () => {
     return false;
   };
-
+  // function that handles the conversion for the bidding array
   async function handleConvertion(bArray: any) {
     let converted = await bArray.map((bid: any, index: number) => {
       return {
@@ -32,7 +29,7 @@ const BidsList = (props: BidListProps) => {
 
     setConvertedBiddingArray(converted);
   }
-
+  // set bidding array to either bidding array or empty array
   useEffect(() => {
     if (biddingArray.length) {
       handleConvertion(biddingArray)
@@ -40,7 +37,7 @@ const BidsList = (props: BidListProps) => {
       handleConvertion([]);
     };
   }, [biddingArray]);
-
+  // set bidCardData equal to current bidding array 
   const currentBidCardData: CurrentBidCardProps[] = convertedBiddingArray;
 
   return (
