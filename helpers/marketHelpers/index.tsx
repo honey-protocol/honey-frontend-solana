@@ -4,7 +4,7 @@
  * Whenever a new market is added - please add the values here for each function and the whole app
  * should be updated.
  */
-// import market IDs
+import Image from 'next/image';
 import {
   HONEY_PROGRAM_ID,
   HONEY_GENESIS_MARKET_ID,
@@ -13,16 +13,18 @@ import {
   LIFINITY_FLARES_MARKET_ID,
   BURRITO_BOYZ_MARKET_ID
 } from 'constants/loan';
-
-import Image from 'next/image';
-
+// market verified creators
+export const VERIFIED_CREATOR_HONEY_GENESIS_BEE = '6vRx1iVZo3xfrBHdpvuwArL2jucVj9j9nLpd2VUTTGMG';
+export const VERIFIED_CREATOR_PESKY_PENGUINS = 'A6XTVFiwGVsG6b6LsvQTGnV5LH3Pfa3qW3TGz8RjToLp';
+export const VERIFIED_CREATOR_OG_ATADIANS = '4pi2MRDQgGVFwV1Hv8ka7hSSu9TgdFmafk6jtQhrB9HN';
+export const VERIFIED_CREATOR_LIFINITY_FLARES = 'EWyWxSkxWHWGzxfCd9kG7zGrKTUDbZGiV6VbFJF8YfqN';
+export const VERIFIED_CREATOR_BURRITO_BOYZ = '2UCkKjTHvz7qFjPZMjhWZiPmyTc6ZwZ44iYPbSpe3aVo';
 // market names
 export const HONEY_GENESIS_BEE_MARKET_NAME = 'Honey Genesis Bee';
 export const LIFINITY_FLARES_MARKET_NAME = 'LIFINITY Flares';
 export const OG_ATADIANS_MARKET_NAME = 'OG Atadians';
 export const PESKY_PENGUINS_MARKET_NAME = 'Pesky Penguin';
 export const BURRITO_BOYZ_MARKET_NAME = 'Burrito Boyz';
-
 // constants used for the below stated functions
 const HONEY_IMAGE =
   'https://img-cdn.magiceden.dev/rs:fill:400:400:0:0/plain/https://dl.airtable.com/.attachmentThumbnails/6b6c8954aed777a74de52fd70f8751ab/46b325db';
@@ -100,7 +102,11 @@ export const renderMarketImageByID = (marketID: string) => {
       );
     case PESKY_PENGUINS_MARKET_ID:
       return (
-        <Image src={PESKY_IMAGE} alt="Pesky Penguins NFT image" layout="fill" />
+        <Image 
+          src={PESKY_IMAGE} 
+          alt="Pesky Penguins NFT image" 
+          layout="fill" 
+        />
       );
     case BURRITO_BOYZ_MARKET_ID:
       return (
@@ -170,9 +176,15 @@ export const renderMarket = (record: string) => {
  * @params nft array market name
  * @returns filtered array of nfts scoped to specific market
  */
-function filterNfts(nftArray: any, marketName: string) {
-  console.log('the nfts', nftArray);
-  return nftArray.filter((nft: any) => nft.name.includes(marketName));
+function filterNfts(nftArray: any, verifiedCreator: string, marketName: string) {
+  const nameFilteredArray = nftArray.filter((nft: any) => nft.name.includes(marketName));
+  const verifiedCreatorFilteredArray = nameFilteredArray.filter((nft: any) => {
+    if (nft.creators) {
+      return nft.creators.map((creator: any) => creator.address === verifiedCreator)
+    }
+  });
+
+  return verifiedCreatorFilteredArray;
 }
 /**
  * @description see above
@@ -182,52 +194,28 @@ function filterNfts(nftArray: any, marketName: string) {
 export const renderNftList = (marketID: string, nftArray: any) => {
   switch (marketID) {
     case HONEY_GENESIS_MARKET_ID:
-      return filterNfts(nftArray, HONEY_GENESIS_BEE_MARKET_NAME);
+      return filterNfts(nftArray, VERIFIED_CREATOR_HONEY_GENESIS_BEE, HONEY_GENESIS_BEE_MARKET_NAME);
     case LIFINITY_FLARES_MARKET_ID:
-      return filterNfts(nftArray, LIFINITY_FLARES_MARKET_NAME);
+      return filterNfts(nftArray, VERIFIED_CREATOR_LIFINITY_FLARES, LIFINITY_FLARES_MARKET_NAME);
     case OG_ATADIANS_MARKET_ID:
-      return filterNfts(nftArray, OG_ATADIANS_MARKET_NAME);
+      return filterNfts(nftArray, VERIFIED_CREATOR_OG_ATADIANS, OG_ATADIANS_MARKET_NAME);
     case PESKY_PENGUINS_MARKET_ID:
-      return filterNfts(nftArray, PESKY_PENGUINS_MARKET_NAME);
+      return filterNfts(nftArray, VERIFIED_CREATOR_PESKY_PENGUINS, PESKY_PENGUINS_MARKET_NAME);
     case BURRITO_BOYZ_MARKET_ID:
-      return filterNfts(nftArray, BURRITO_BOYZ_MARKET_NAME);
+      return filterNfts(nftArray, VERIFIED_CREATOR_BURRITO_BOYZ, BURRITO_BOYZ_MARKET_NAME);
   }
 };
 /**
- * @description filters out the open positions according to the collection id | market id and open pos. array
+ * @description filters out the open positions based on verified creator
  * @params collection id market id open positions array
  * @returns filtered array based on current active market
  */
 export const handleOpenPositions = (
-  collectionID: string,
-  marketID: string,
+  verifiedCreator: string,
   openPositions: any
 ) => {
-  if (
-    collectionID == HONEY_GENESIS_MARKET_ID &&
-    marketID == HONEY_GENESIS_MARKET_ID
-  ) {
-    return openPositions.filter((pos: any) => pos.name.includes('Honey'));
-  } else if (
-    collectionID == PESKY_PENGUINS_MARKET_ID &&
-    marketID == PESKY_PENGUINS_MARKET_ID
-  ) {
-    return openPositions.filter((pos: any) => pos.name.includes('Pesky'));
-  } else if (
-    collectionID == LIFINITY_FLARES_MARKET_ID &&
-    marketID == LIFINITY_FLARES_MARKET_ID
-  ) {
-    return openPositions.filter((pos: any) => pos.name.includes('LIFINITY'));
-  } else if (
-    collectionID == OG_ATADIANS_MARKET_ID &&
-    marketID == OG_ATADIANS_MARKET_ID
-  ) {
-    return openPositions.filter((pos: any) => pos.name.includes('OG'));
-  } else if (
-    collectionID == BURRITO_BOYZ_MARKET_ID &&
-    marketID == BURRITO_BOYZ_MARKET_ID
-  ) {
-    return openPositions.filter((pos: any) => pos.name.includes('Burrito'));
+  if (openPositions) {
+    return openPositions.filter((pos: any) => pos.verifiedCreator === verifiedCreator)
   } else {
     return [];
   }

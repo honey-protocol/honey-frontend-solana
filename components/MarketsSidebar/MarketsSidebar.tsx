@@ -49,6 +49,8 @@ const MarketsSidebar = (props: MarketsSidebarProps) => {
     if (openPositions.length == 0) handleTabChange('borrow');
   }, [openPositions, availableNFTs]);
 
+
+
   const items: [HoneyTabItem, HoneyTabItem] = [
     { label: 'Borrow', key: 'borrow' },
     { label: 'Repay', key: 'repay', disabled: !Boolean(openPositions.length) }
@@ -99,7 +101,7 @@ const MarketsSidebar = (props: MarketsSidebarProps) => {
             description=""
           />
         ) : (!availableNFTsInSelectedMarket ||
-            availableNFTsInSelectedMarket.length === 0) &&
+          availableNFTsInSelectedMarket.length === 0) &&
           openPositions.length === 0 ? (
           <EmptyStateDetails
             icon={<div className={styles.boltIcon} />}

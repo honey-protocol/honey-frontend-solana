@@ -89,6 +89,7 @@ import {
 import { setMarketId } from 'pages/_app';
 import { render } from 'react-dom';
 import { renderMarket, renderMarketImageByName } from 'helpers/marketHelpers';
+
 /**
  * @description formatting functions to format with perfect / format in SOL with icon or just a regular 2 decimal format
  * @params value to be formatted
@@ -99,7 +100,6 @@ import { SizeMe } from 'react-sizeme';
 // import { network } from 'pages/_app';
 
 const network = 'mainnet-beta'; // change to dynamic value
-
 const { format: f, formatPercent: fp, formatSol: fs } = formatNumber;
 
 const Markets: NextPage = () => {
@@ -249,6 +249,7 @@ const Markets: NextPage = () => {
     if (marketReserveInfo && honeyUser)
       fetchUserTotalDeposits(marketReserveInfo, honeyUser);
   }, [marketReserveInfo, honeyUser]);
+
   // fetches the sol price
   // TODO: create type for reserves and connection
   async function fetchSolValue(reserves: any, connection: any) {
@@ -366,24 +367,15 @@ const Markets: NextPage = () => {
       setUserOpenPositions([]);
     }
   }, [collateralNFTPositions, currentMarketId]);
-
-  async function handlePositions(
-    currentCollectionID: string,
-    activeMarketID: string,
-    currentOpenPositions: any
-  ) {
-    return await handleOpenPositions(
-      currentCollectionID,
-      activeMarketID,
-      currentOpenPositions
-    );
+  // function is setup to handle an array for all markets and return based on specific market by verified creator
+  async function handlePositions(verifiedCreator: string, currentOpenPositions: any) {
+    return await handleOpenPositions(verifiedCreator, currentOpenPositions);
   }
-
+  // calculation of health percentage 
   const healthPercent =
     ((nftPrice - userDebt / LIQUIDATION_THRESHOLD) / nftPrice) * 100;
 
-  // PUT YOUR DATA SOURCE HERE
-  // MOCK DATA FOR NOW
+  // inits the markets with relevant data
   useEffect(() => {
     if (sdkConfig.saberHqConnection) {
       function getData() {
@@ -399,16 +391,10 @@ const Markets: NextPage = () => {
               false
             );
 
-            collection.positions = await handlePositions(
-              collection.id,
-              currentMarketId,
-              userOpenPositions
-            );
-            collection.rate =
-              (await getInterestRate(collection.utilizationRate)) || 0;
-
-            if (currentMarketId === collection.id)
-              setActiveInterestRate(collection.rate);
+            collection.positions = await handlePositions(collection.verifiedCreator, userOpenPositions);
+            collection.rate = (await getInterestRate(collection.utilizationRate, collection.id)) || 0;
+            
+            if (currentMarketId === collection.id) setActiveInterestRate(collection.rate);
             return collection;
           })
         );
@@ -1116,6 +1102,10 @@ const Markets: NextPage = () => {
           <HoneyTable
             hasRowsShadow={true}
             tableLayout="fixed"
+            selectedRowsKeys={[
+              tableDataFiltered.find(data => data.id === currentMarketId)
+                ?.key || ''
+            ]}
             columns={columns}
             dataSource={tableDataFiltered}
             pagination={false}
@@ -1139,7 +1129,7 @@ const Markets: NextPage = () => {
               // we use our own custom expand column
               showExpandColumn: false,
               onExpand: (expanded, row) => {
-                setExpandedRowKeys([row.key]);
+                setExpandedRowKeys(expanded ? [row.key] : []);
               },
               expandedRowKeys,
               expandedRowRender: record => {
