@@ -55,10 +55,12 @@ const MarketDetailsStep = (props: MarketDetailsProps) => {
       </div>
       <div className={styles.spacer}></div>
 
+      <div className={styles.stepText}>Step 3</div>
       <div>
         To list your market, create a pull request in the Honey Labs Github
         repository. View our instructions here
       </div>
+      <div className={styles.spacer}></div>
 
       <div className={styles.githubCopyRow}>
         <HoneyButton variant="secondary" onClick={() => copyToClipboard()}>
