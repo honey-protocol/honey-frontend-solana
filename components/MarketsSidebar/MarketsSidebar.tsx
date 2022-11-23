@@ -12,9 +12,6 @@ import { mobileReturnButton } from 'styles/common.css';
 import { renderNftList } from 'helpers/marketHelpers';
 import useFetchNFTByUser from 'hooks/useNFTV2';
 import { spinner } from 'styles/common.css';
-
-const { Text } = Typography;
-
 type Tab = 'borrow' | 'repay';
 
 const MarketsSidebar = (props: MarketsSidebarProps) => {
