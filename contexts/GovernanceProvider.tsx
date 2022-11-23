@@ -4,7 +4,6 @@ import {
   useMemo,
   useState,
   useEffect,
-  useContext,
   Dispatch,
   SetStateAction,
   useCallback
@@ -146,13 +145,19 @@ export const GovernanceProvider: React.FC<React.ReactNode> = ({ children }) => {
           }
         }
       ]);
-      const fetchProposalMetasPromise = proposalDatas.map(p =>
-        governorWrapper.fetchProposalMeta(p.publicKey)
-      );
+      const fetchProposalMetasPromise = proposalDatas.map(async p => {
+        try {
+          return await governorWrapper.fetchProposalMeta(p.publicKey);
+        } catch (_) {
+          return undefined;
+        }
+      });
       const proposalMetas = await Promise.all(fetchProposalMetasPromise);
 
       const proposals: Proposal[] = proposalDatas.map(p => {
-        const meta = proposalMetas.find(meta => meta.proposal === p.publicKey);
+        const meta = proposalMetas.find(
+          meta => meta && meta.proposal === p.publicKey
+        );
         return {
           pubkey: p.publicKey,
           data: p.account,
