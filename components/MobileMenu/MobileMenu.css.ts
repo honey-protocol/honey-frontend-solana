@@ -1,4 +1,5 @@
 import { createVar, globalStyle, keyframes, style } from '@vanilla-extract/css';
+import { breakpoints } from 'styles/theme.css';
 
 export const mobileMenu = style({
   listStyle: 'none',
@@ -6,7 +7,12 @@ export const mobileMenu = style({
   gap: '22px',
   display: 'flex',
   flexDirection: 'column',
-  width: '100%'
+  width: '100%',
+  '@media': {
+    [`screen and (min-width: ${breakpoints.tablet}px)`]: {
+      display: 'none'
+    }
+  }
 });
 
 export const visible = style({

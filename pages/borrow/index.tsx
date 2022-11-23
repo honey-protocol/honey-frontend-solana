@@ -80,6 +80,7 @@ import {
 } from '../../constants/loan';
 import { setMarketId } from 'pages/_app';
 import { renderMarket, renderMarketImageByName } from 'helpers/marketHelpers';
+
 /**
  * @description formatting functions to format with perfect / format in SOL with icon or just a regular 2 decimal format
  * @params value to be formatted
@@ -348,7 +349,6 @@ const Markets: NextPage = () => {
       setUserOpenPositions([]);
     }
   }, [collateralNFTPositions, currentMarketId]);
-
   // function is setup to handle an array for all markets and return based on specific market by verified creator
   async function handlePositions(verifiedCreator: string, currentOpenPositions: any) {
     return await handleOpenPositions(verifiedCreator, currentOpenPositions);

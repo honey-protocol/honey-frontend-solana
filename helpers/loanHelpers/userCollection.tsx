@@ -455,7 +455,6 @@ export async function populateMarketData(collection: MarketTableRow, connection:
       collection.user = honeyUser;
       collection.name;
     }
-
     return collection;
   }
 }
