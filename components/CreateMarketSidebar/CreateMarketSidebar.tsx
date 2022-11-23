@@ -24,7 +24,7 @@ const CreateMarketSidebar: FC<CreateMarketSidebarProps> = (
   const { connect } = useWalletKit();
   const [activeTab, setActiveTab] = useState<Tab>('how_it_works');
   const { veHoneyAmount } = useGovernance();
-  const requiredVeHONEY = 50000;
+  const requiredVeHONEY = 25;
 
   const handleTabChange = (tabKey: string) => {
     setActiveTab(tabKey as Tab);
