@@ -18,7 +18,7 @@ const NftCard = (props: NftCardProps) => {
     creators,
     hasBorder = true
   } = props;
-
+  // runs onClick which is handleClick from NftList component - which selects the NFT
   const _onClick = useCallback(() => {
     if (typeof onClick === 'function') {
       onClick(name, image, mint, creators);
