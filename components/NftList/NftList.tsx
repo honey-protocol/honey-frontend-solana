@@ -28,8 +28,8 @@ const NftList = (props: NftListProps) => {
   const { data, selectNFT, nftPrice, selectedNFTMint } = props;
   /**
    * @description runs selectNFT with nft
-   * @params item, being NFT object - see type definition NFTObject
-   * @returns fires off selectNFT 
+   * @params NFT object - see type definition NFTObject
+   * @returns fires off selectNFT with desired values
   */
   function handleClick(nft: NFTObject) {
     selectNFT(nft.name, nft.image, nft.mint, nft.creators);
