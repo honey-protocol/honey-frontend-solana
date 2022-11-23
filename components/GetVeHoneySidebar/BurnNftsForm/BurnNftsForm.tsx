@@ -14,6 +14,7 @@ import { formatNumber } from 'helpers/format';
 
 import honeyGenesisBee from 'public/images/imagePlaceholder.png';
 import * as styles from './BurnNftsForm.css';
+import useToast from 'hooks/useToast';
 
 const { format: f, formatPercent: fp, formatUsd: fu } = formatNumber;
 
@@ -60,6 +61,7 @@ const BurnNftsForm = (props: { onCancel: Function }) => {
   const [selected, setSelected] = useState<string>();
   const { nfts } = useAccounts();
   const { maxNFTRewardAmount, lockNft } = useLocker();
+  const { toast, ToastComponent } = useToast();
 
   const onItemSelect = (e: CheckboxChangeEvent, id: string) => {
     if (e.target.checked) {
@@ -71,30 +73,40 @@ const BurnNftsForm = (props: { onCancel: Function }) => {
 
   const lockNFT = useCallback(async () => {
     if (selected) {
-      await lockNft(new PublicKey(selected));
+      try {
+        toast.processing();
+        await lockNft(new PublicKey(selected));
+        toast.success('Successfully burnt NFT');
+      } catch (error) {
+        toast.error('Error. Failed to burn NFT');
+      }
     }
-  }, [lockNft, selected]);
+  }, [lockNft, selected, toast]);
 
   return (
     <SidebarScroll
       footer={
-        <div className={styles.buttons}>
-          <div className={styles.smallCol}>
-            <HoneyButton onClick={() => props.onCancel()} variant="secondary">
-              Close
-            </HoneyButton>
+        toast.state ? (
+          <ToastComponent />
+        ) : (
+          <div className={styles.buttons}>
+            <div className={styles.smallCol}>
+              <HoneyButton onClick={() => props.onCancel()} variant="secondary">
+                Close
+              </HoneyButton>
+            </div>
+            <div className={styles.bigCol}>
+              <HoneyButton
+                variant="primary"
+                disabled={!selected}
+                block
+                onClick={lockNFT}
+              >
+                Burn NFT
+              </HoneyButton>
+            </div>
           </div>
-          <div className={styles.bigCol}>
-            <HoneyButton
-              variant="primary"
-              disabled={!selected}
-              block
-              onClick={lockNFT}
-            >
-              Burn NFT
-            </HoneyButton>
-          </div>
-        </div>
+        )
       }
     >
       <div className={styles.burnNftsForm}>
