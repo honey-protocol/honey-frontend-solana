@@ -51,6 +51,12 @@ export const mobileReturnButton = style({
   }
 });
 
+export const spinner = style({});
+
+globalStyle(`${spinner} .ant-spin-dot-item`, {
+  background: vars.colors.brownDark
+});
+
 export const extLink = style({
   color: vars.colors.brownMiddle,
   ':hover': {
