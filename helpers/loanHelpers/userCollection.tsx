@@ -374,35 +374,14 @@ const calculateTVL = async (obligations: any, nftPrice: number, currentMarketId:
   if (!obligations) return 0;
 
   if (currentMarketId === HONEY_GENESIS_MARKET_ID && collectionName === HONEY_GENESIS_BEE_MARKET_NAME) {
-    // const filterNullState = await obligations.filter((obligation: any) => {
-    //   console.log('this is obligation', obligation)
-    //   if (obligation.debt !== 0) return obligation 
-    // });
-
     return nftPrice * obligations.length;
   } else if (currentMarketId === PESKY_PENGUINS_MARKET_ID && collectionName === PESKY_PENGUINS_MARKET_NAME) {
-    // const filterNullState = await obligations.filter((obligation: any) => {
-    //   if (obligation.debt !== 0) return obligation 
-    // });
-
     return nftPrice * obligations.length;
   } else if (currentMarketId === OG_ATADIANS_MARKET_ID && collectionName === OG_ATADIANS_MARKET_NAME) {
-    // const filterNullState = await obligations.filter((obligation: any) => {
-    //   if (obligation.debt !== 0) return obligation 
-    // });
-
     return nftPrice * obligations.length;
   } else if (currentMarketId === BURRITO_BOYZ_MARKET_ID && collectionName === BURRITO_BOYZ_MARKET_NAME) {
-    // const filterNullState = await obligations.filter((obligation: any) => {
-    //   if (obligation.debt !== 0) return obligation 
-    // });
-
     return nftPrice * obligations.length;
   } else if (currentMarketId === LIFINITY_FLARES_MARKET_ID && collectionName === LIFINITY_FLARES_MARKET_NAME) {
-    // const filterNullState = await obligations.filter((obligation: any) => {
-    //   if (obligation.debt !== 0) return obligation 
-    // });
-
     return nftPrice * obligations.length;
   }
 }
