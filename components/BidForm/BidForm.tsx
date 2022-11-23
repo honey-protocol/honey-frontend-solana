@@ -41,26 +41,24 @@ const BidForm = (props: BidFormProps) => {
   } = props;
   const [valueUSD, setValueUSD] = useState<number>(0);
   const [valueSOL, setValueSOL] = useState<number>(0);
-  // const [valueUSDC, setValueUSDC] = useState<number>(0);
   const [sliderValue, setSliderValue] = useState(0);
   const [userBidValue, setUserBidValue] = useState(0);
 
   const { toast, ToastComponent } = useToast();
 
   const maxValue = 1000;
-  // TODO: import SOL price via oracle
   const solPrice = fetchedSolPrice;
   // Put your validators here
   const isSubmitButtonDisabled = () => {
     return false;
   };
-
+  // change of input - render calculated values
   const handleSliderChange = (value: number) => {
     setSliderValue(value);
     setValueUSD(value * solPrice);
     setValueSOL(value);
   };
-
+  // change of input - render calculated values
   const handleUsdInputChange = (usdValue: number | undefined) => {
     if (!usdValue) {
       setValueUSD(0);
@@ -72,7 +70,7 @@ const BidForm = (props: BidFormProps) => {
     setValueSOL(usdValue / solPrice);
     setSliderValue(usdValue / solPrice);
   };
-
+  // change of input - render calculated values
   const handleSolInputChange = (solValue: number | undefined) => {
     if (!solValue) {
       setValueUSD(0);
@@ -85,13 +83,13 @@ const BidForm = (props: BidFormProps) => {
     setValueSOL(solValue);
     setSliderValue(solValue);
   };
-
+  // function for content render increase of place bid
   function triggerIndicator() {
     userBidValue != 0
       ? handlePlaceBid('increase_bid', valueSOL, toast, currentMarketId)
       : handleIncreaseBid('place_bid', valueSOL, toast, currentMarketId);
   }
-
+  // render logic for current user bid
   useEffect(() => {
     if (currentUserBid) {
       setUserBidValue(currentUserBid)
