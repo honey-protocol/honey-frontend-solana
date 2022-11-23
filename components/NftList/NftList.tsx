@@ -5,38 +5,52 @@ import NftCard from '../NftCard/NftCard';
 import { NftCardProps } from '../NftCard/types';
 import * as style from './NftList.css';
 import cs from 'classnames';
-
+// type definition for Nft list
 type NftListProps = {
   data: NftCardProps[];
   selectNFT: Function
   nftPrice: any;
   selectedNFTMint: string | undefined;
 };
+// type definition for Nft Object 
+type NFTObject = {
+  name: string;
+  image: string;
+  mint: string;
+  creators: [];
+  symbol?: string;
+  tokenId?: string;
+  updateAuthority?: string;
+}
 
 const NftList = (props: NftListProps) => {
+  // get props
   const { data, selectNFT, nftPrice, selectedNFTMint } = props;
-
-  function handleClick(item: any) {
-    console.log('item----', item)
-    selectNFT(item.name, item.image, item.mint, item.creators);
+  /**
+   * @description runs selectNFT with nft
+   * @params item, being NFT object - see type definition NFTObject
+   * @returns fires off selectNFT 
+  */
+  function handleClick(nft: NFTObject) {
+    selectNFT(nft.name, nft.image, nft.mint, nft.creators);
   }
 
   return (
     <div className={style.nftsListContainer}>
       {data.length > 0 ? (
-        data.map((item, index) => {
+        data.map((nft, index) => {
           return (
             <div
               className={cs(style.listItem, {
-                [style.selectedListItem]: item.mint === selectedNFTMint
+                [style.selectedListItem]: nft.mint === selectedNFTMint
               })}
-              key={item.name}
+              key={nft.name}
             >
               <NftCard
-                onClick={() => handleClick(item)}
-                {...item}
+                onClick={() => handleClick(nft)}
+                {...nft}
                 hasBorder={
-                  index !== data.length - 1 || item.mint === selectedNFTMint
+                  index !== data.length - 1 || nft.mint === selectedNFTMint
                 }
                 text={`◎ ${nftPrice.toFixed(2)} value`}
                 buttonText={RoundHalfDown(nftPrice * MAX_LTV, 4).toString()}
