@@ -1,25 +1,10 @@
-import {
-  HONEY_GENESIS_MARKET_ID,
-  MAX_LTV,
-  PESKY_PENGUINS_MARKET_ID
-} from 'constants/loan';
+import { MAX_LTV } from 'constants/loan';
 import { RoundHalfDown } from 'helpers/utils';
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import NftCard from '../NftCard/NftCard';
 import { NftCardProps } from '../NftCard/types';
 import * as style from './NftList.css';
 import cs from 'classnames';
-import { renderMarketName, renderNftList } from 'helpers/marketHelpers';
-import {
-  HONEY_GENESIS_BEE_MARKET_NAME,
-  OG_ATADIANS_MARKET_NAME,
-  PESKY_PENGUINS_MARKET_NAME,
-  BURRITO_BOYZ_MARKET_NAME,
-  LIFINITY_FLARES_MARKET_NAME
-} from '../../helpers/marketHelpers';
-import HoneyLogoIcon from '/public/images/HoneyLogoIcon.svg';
-import { string } from 'yup';
-import { LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js';
 
 type NftListProps = {
   data: NftCardProps[];
@@ -32,6 +17,7 @@ const NftList = (props: NftListProps) => {
   const { data, selectNFT, nftPrice, selectedNFTMint } = props;
 
   function handleClick(item: any) {
+    console.log('item----', item)
     selectNFT(item.name, item.image, item.mint, item.creators);
   }
 
