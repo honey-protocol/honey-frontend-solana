@@ -99,9 +99,34 @@ const PHoneyToVeHoney = (props: { onCancel: Function }) => {
   }, [phoneyValue2, preToken, lockPeriod]);
 
   return (
-    <SidebarScroll>
+    <SidebarScroll
+      footer={
+        <div className={styles.buttons}>
+          <div className={styles.smallCol}>
+            <HoneyButton variant="secondary" onClick={() => {}}>
+              Cancel
+            </HoneyButton>
+          </div>
+          <div className={styles.bigCol}>
+            <HoneyButton
+              variant="primary"
+              disabled={
+                !phoneyValue2 || phoneyValue2 > (pHoneyAmount?.asNumber ?? 0)
+              }
+              block
+              onClick={handleVest}
+            >
+              Vest
+            </HoneyButton>
+          </div>
+        </div>
+      }
+    >
       <div className={styles.depositForm}>
-        {/* <SectionTitle title="Deposit pHONEY and receive veHONEY" /> */}
+        <SectionTitle
+          title="Deposit pHONEY and receive veHONEY"
+          className={styles.mb10}
+        />
         <div className={styles.row}>
           <div className={styles.col}>
             <HoneyWarning message="Deposit and burn $pHoney tokens to step to lock $Honey (multiplied by locking period) and get $veHoney to hold voting power of the governance." />
@@ -131,7 +156,7 @@ const PHoneyToVeHoney = (props: { onCancel: Function }) => {
             />
           </div>
         </div>
-
+        <div className={styles.divider} />
         <div className={styles.row}>
           <HoneyButtonTabs
             items={PERIODS.map(period => ({
@@ -146,49 +171,35 @@ const PHoneyToVeHoney = (props: { onCancel: Function }) => {
             isFullWidth
           />
         </div>
-        <div>
-          $pHONEY
+        <div className={styles.mb10}>
           <HoneyFormattedNumericInput
             placeholder="0.00"
             decimalSeparator="."
             value={phoneyValue2}
             formatter={defaultInputFormatted}
             onChange={handlePHoneyValueChange2}
+            addonAfter="PHONEY"
           />
         </div>
-        <div>
-          $HONEY
+        <div className={styles.mb10}>
           <HoneyFormattedNumericInput
             placeholder="0.00"
             decimalSeparator="."
             value={honeyValue}
             formatter={defaultInputFormatted}
             disabled
+            addonAfter="HONEY"
           />
         </div>
         <div>
-          $veHONEY
           <HoneyFormattedNumericInput
             placeholder="0.00"
             decimalSeparator="."
             value={veHoneyValue}
             formatter={defaultInputFormatted}
             disabled
+            addonAfter="VEHONEY"
           />
-        </div>
-        <div className={styles.row}>
-          <div className={styles.col}>
-            <HoneyButton
-              variant="primary"
-              disabled={
-                !phoneyValue2 || phoneyValue2 > (pHoneyAmount?.asNumber ?? 0)
-              }
-              block
-              onClick={handleVest}
-            >
-              Vest
-            </HoneyButton>
-          </div>
         </div>
       </div>
     </SidebarScroll>

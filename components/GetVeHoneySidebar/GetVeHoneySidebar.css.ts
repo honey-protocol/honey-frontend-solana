@@ -39,7 +39,8 @@ export const lightIcon = style({
 });
 
 export const secTabsContainer = style({
-  padding: 20
+  padding: 20,
+  paddingBottom: 0
 });
 
 export const formContainer = style({

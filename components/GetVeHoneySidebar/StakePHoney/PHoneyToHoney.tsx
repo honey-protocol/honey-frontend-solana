@@ -60,9 +60,45 @@ const PHoneyToHoney = (props: { onCancel: Function }) => {
   }, [phoneyValue1, preToken]);
 
   return (
-    <SidebarScroll>
+    <SidebarScroll
+      footer={
+        <div className={styles.buttons}>
+          <div className={styles.smallCol}>
+            <HoneyButton variant="secondary" onClick={() => {}}>
+              Cancel
+            </HoneyButton>
+          </div>
+
+          <div className={styles.bigCol}>
+            <HoneyButton
+              variant="primary"
+              disabled={
+                !phoneyValue1 || phoneyValue1 > (pHoneyAmount?.asNumber ?? 0)
+              }
+              block
+              onClick={handleDeposit}
+            >
+              Deposit
+            </HoneyButton>
+          </div>
+          <div className={styles.bigCol}>
+            <HoneyButton
+              variant="primary"
+              disabled={!claimableAmount?.asNumber}
+              block
+              onClick={claim}
+            >
+              Claim
+            </HoneyButton>
+          </div>
+        </div>
+      }
+    >
       <div className={styles.depositForm}>
-        {/* <SectionTitle title="Deposit pHONEY and receive HONEY" /> */}
+        <SectionTitle
+          title="Deposit pHONEY and receive HONEY"
+          className={styles.mb10}
+        />
         <div className={styles.row}>
           <div className={styles.col}>
             <HoneyWarning message="Deposit and burn $pHoney tokens to claim the same amount of $Honey daily basis for 21 days." />
@@ -96,37 +132,16 @@ const PHoneyToHoney = (props: { onCancel: Function }) => {
             />
           </div>
         </div>
+
+        <div className={styles.divider} />
         <div>
           <HoneyFormattedNumericInput
             placeholder="0.00"
             decimalSeparator="."
             formatter={defaultInputFormatted}
             onChange={handlePHoneyValueChange1}
+            addonAfter="PHONEY"
           />
-        </div>
-        <div className={styles.row}>
-          <div className={styles.col}>
-            <HoneyButton
-              variant="primary"
-              disabled={
-                !phoneyValue1 || phoneyValue1 > (pHoneyAmount?.asNumber ?? 0)
-              }
-              block
-              onClick={handleDeposit}
-            >
-              Deposit
-            </HoneyButton>
-          </div>
-          <div className={styles.col}>
-            <HoneyButton
-              variant="primary"
-              disabled={!claimableAmount?.asNumber}
-              block
-              onClick={claim}
-            >
-              Claim
-            </HoneyButton>
-          </div>
         </div>
       </div>
     </SidebarScroll>

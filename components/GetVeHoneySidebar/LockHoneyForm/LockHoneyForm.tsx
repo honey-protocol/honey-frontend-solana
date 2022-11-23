@@ -177,7 +177,10 @@ const LockHoneyForm = (props: { onCancel: Function }) => {
       }
     >
       <div className={styles.depositForm}>
-        <SectionTitle title="Deposit HONEY and receive veHONEY" />
+        <SectionTitle
+          title="Deposit HONEY and receive veHONEY"
+          className={styles.mb10}
+        />
         <div className={styles.row}>
           <div className={styles.col}>
             <HoneyWarning
