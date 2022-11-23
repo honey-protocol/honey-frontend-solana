@@ -387,14 +387,8 @@ const Markets: NextPage = () => {
       });
     }
   }, [
-     // totalMarketDeposits,
-    // totalMarketDebt,
     nftPrice,
-    // userAllowance,
     userDebt,
-    // loanToValue,
-    // honeyReserves,
-    // parsedReserves,
     sdkConfig.saberHqConnection,
     sdkConfig.sdkWallet,
     currentMarketId,

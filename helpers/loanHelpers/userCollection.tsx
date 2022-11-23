@@ -13,7 +13,7 @@ import {
   BORROW_RATE_THREE
 } from '../../constants/interestRate';
 import { ConnectedWallet } from '@saberhq/use-solana';
-import { Connection, Keypair, PublicKey, Transaction, LAMPORTS_PER_SOL } from '@solana/web3.js';
+import { Connection, Keypair, PublicKey, LAMPORTS_PER_SOL } from '@solana/web3.js';
 
 import * as anchor from "@project-serum/anchor";
 import { CollateralNFTPosition, getHealthStatus, getNFTAssociatedMetadata, HoneyClient, HoneyMarket, HoneyMarketReserveInfo, HoneyReserve, HoneyUser, LoanPosition, METADATA_PROGRAM_ID, NftPosition, ObligationAccount, ObligationPositionStruct, PositionInfoList, TReserve } from '@honey-finance/sdk';
@@ -24,14 +24,12 @@ import { MarketTableRow } from 'types/markets';
 import { LIQUIDATION_THRESHOLD } from '../../constants/loan';
 import NodeWallet from '@project-serum/anchor/dist/cjs/nodewallet';
 import { 
-  renderMarket, 
   renderMarketName, 
   HONEY_GENESIS_BEE_MARKET_NAME,
   LIFINITY_FLARES_MARKET_NAME,
   OG_ATADIANS_MARKET_NAME,
   PESKY_PENGUINS_MARKET_NAME,
   BURRITO_BOYZ_MARKET_NAME,
-  renderMarketImageByID 
 } from 'helpers/marketHelpers';
 
 /**
@@ -64,7 +62,6 @@ export async function calculateUserDeposits(marketReserveInfo: any, honeyUser: a
   }
 
   if (honeyUser?.deposits().length > 0) {
-    // let totalDeposit = BnDivided(honeyUser.deposits()[0].amount, 10, 5) * depositNoteExchangeRate / (10 ** 4)
     let totalDeposit =
       (honeyUser
         .deposits()[0]
@@ -436,7 +433,6 @@ export async function populateMarketData(collection: MarketTableRow, connection:
       collection.utilizationRate = Number(f((totalMarketDebt) / (totalMarketDeposits + totalMarketDebt)));
       collection.user = honeyUser;
       collection.risk = obligations ? await calculateRisk(obligations.obligations, obligations.nftPrice, false, currentMarketId, collection.name) : 0;
-      // collection.totalDebt = obligations ? await calculateRisk(obligations.obligations, obligations.nftPrice, true, currentMarketId, collection.name) : 0;
       collection.totalDebt = sumOfTotalValue - totalMarketDeposits;
       collection.openPositions = obligations ? await setObligations(obligations.obligations, currentMarketId, obligations.nftPrice) : [];
       collection.tvl = obligations ? await calculateTVL(collection.openPositions, obligations.nftPrice, currentMarketId, collection.name) : 0;
