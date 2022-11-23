@@ -68,7 +68,7 @@ const CreateMarketSidebar: FC<CreateMarketSidebarProps> = (
               }
             ]}
           />
-        ) : veHoneyAmount < requiredVeHONEY ? (
+        ) : veHoneyAmount > requiredVeHONEY ? (
           <>
             {activeTab === 'how_it_works' && (
               <HowItWorksBorrowTab

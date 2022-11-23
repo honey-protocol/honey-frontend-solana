@@ -59,14 +59,14 @@ export const RiskModelStep = (props: RiskModelStepProps) => {
     }
   };
 
-  const lowRiskChartData = [
+  const defaultRiskChartData = [
     { x: 5, y: 0 },
     { x: 60, y: 50 },
     { x: 80, y: 80 },
     { x: 100, y: 200 }
   ];
 
-  const defaultRiskChartData = [
+  const lowRiskChartData = [
     { x: 10, y: 0 },
     { x: 40, y: 25 },
     { x: 80, y: 40 },
