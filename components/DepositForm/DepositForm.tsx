@@ -38,27 +38,20 @@ const DepositForm = (props: DepositFormProps) => {
     currentMarketId,
     onCancel
   } = props;
-
+  // state declarations
   const [valueUSD, setValueUSD] = useState<number>(0);
   const [valueSOL, setValueSOL] = useState<number>(0);
   const [sliderValue, setSliderValue] = useState(0);
-  const [userInteraction, setUserInteraction] = useState<boolean>(false);
   const [utilizationRate, setUtilizationRate] = useState(0);
-
+  // imports toast for responses
   const { toast, ToastComponent } = useToast();
-
+  // sets utilization rate
   useEffect(() => {
     if (value && available) {
       setUtilizationRate(Number(f(((value - available) / value) * 100)));
     }
   }, [value, available]);
-
-  useEffect(() => {
-    if (value && available) {
-      setUtilizationRate(Number(f(((value - available) / value) * 100)));
-    }
-  }, [value, available]);
-
+  // constants
   const maxValue = userWalletBalance;
   const solPrice = fetchedSolPrice;
 
@@ -66,13 +59,13 @@ const DepositForm = (props: DepositFormProps) => {
   const isDepositButtonDisabled = () => {
     return false;
   };
-
+  // change of input - render calculated values
   const handleSliderChange = (value: number) => {
     setSliderValue(value);
     setValueUSD(value * solPrice);
     setValueSOL(value);
   };
-
+  // change of input - render calculated values
   const handleUsdInputChange = (usdValue: number | undefined) => {
     if (!usdValue) {
       setValueUSD(0);
@@ -84,7 +77,7 @@ const DepositForm = (props: DepositFormProps) => {
     setValueSOL(usdValue / solPrice);
     setSliderValue(usdValue / solPrice);
   };
-
+  // change of input - render calculated values
   const handleSolInputChange = (solValue: number | undefined) => {
     if (!solValue) {
       setValueUSD(0);
@@ -97,9 +90,9 @@ const DepositForm = (props: DepositFormProps) => {
     setValueSOL(solValue);
     setSliderValue(solValue);
   };
-
+  // executes deposit
   const handleDeposit = async () => {
-    await executeDeposit(valueSOL, toast);
+    executeDeposit(valueSOL, toast);
     handleSliderChange(0);
   };
 
