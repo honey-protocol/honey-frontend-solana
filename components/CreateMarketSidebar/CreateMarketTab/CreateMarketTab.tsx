@@ -193,7 +193,7 @@ const CreateMarketTab: FC<CreateMarketTabProps> = (
       }
     >
       <div className={styles.createMarketTab}>
-        <SectionTitle title="Create market" className={styles.createMarket} />
+        <SectionTitle {...getTabTitle()} className={styles.createMarket} />
 
         <HoneySteps
           steps={steps}
