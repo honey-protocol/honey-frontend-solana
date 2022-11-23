@@ -37,25 +37,23 @@ const MarketsSidebar = (props: MarketsSidebarProps) => {
     executeBorrow,
     executeRepay
   } = props;
-
+  // tab state
   const [activeTab, setActiveTab] = useState<Tab>('borrow');
   const { connect } = useWalletKit();
-
+  // sets active tab
   const handleTabChange = (tabKey: string) => {
     setActiveTab(tabKey as Tab);
   };
-
+  // sets active tab based on positions
   useEffect(() => {
     if (openPositions.length == 0) handleTabChange('borrow');
   }, [openPositions, availableNFTs]);
-
-
-
+  // passed as props for child components regarding tab click
   const items: [HoneyTabItem, HoneyTabItem] = [
     { label: 'Borrow', key: 'borrow' },
     { label: 'Repay', key: 'repay', disabled: !Boolean(openPositions.length) }
   ];
-
+  // fetches available nfts in current market
   const availableNFTsInSelectedMarket = renderNftList(
     currentMarketId,
     availableNFTs
