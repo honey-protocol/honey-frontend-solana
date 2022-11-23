@@ -393,15 +393,12 @@ const Lend: NextPage = () => {
       });
     }
   }, [
-    // totalMarketDebt,
     nftPrice,
     honeyReserves,
     parsedReserves,
     sdkConfig.saberHqConnection,
     sdkConfig.sdkWallet,
     currentMarketId,
-    // peskyInterestRate,
-    // honeyInterestRate,
     userDepositWithdraw,
     marketReserveInfo,
     honeyUser,
