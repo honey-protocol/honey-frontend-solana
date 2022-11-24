@@ -22,7 +22,7 @@ export const sidebar = style({
   pointerEvents: 'all',
   '@media': {
     [`screen and (min-width: ${breakpoints.desktop}px)`]: {
-      maxWidth: 360,
+      maxWidth: 360
     }
   }
 });
@@ -55,4 +55,22 @@ export const spinner = style({});
 
 globalStyle(`${spinner} .ant-spin-dot-item`, {
   background: vars.colors.brownDark
+});
+
+export const extLink = style({
+  color: vars.colors.brownMiddle,
+  ':hover': {
+    background: 'transparent',
+    color: vars.colors.brownDark
+  },
+  ':active': {
+    background: 'transparent',
+    color: vars.colors.brownDark,
+    borderColor: 'transparent'
+  },
+  ':focus': {
+    background: 'transparent',
+    color: vars.colors.brownDark,
+    borderColor: 'transparent'
+  }
 });

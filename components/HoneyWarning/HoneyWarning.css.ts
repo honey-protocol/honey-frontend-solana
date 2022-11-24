@@ -42,7 +42,8 @@ export const warningDangerTitle = style({
 
 export const warningLink = style({
   display: 'flex',
-  justifyContent: 'space-between'
+  justifyContent: 'space-between',
+  alignItems: 'center'
 });
 
 export const warningLinkIcon = style({

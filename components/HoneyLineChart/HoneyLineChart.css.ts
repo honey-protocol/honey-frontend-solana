@@ -4,7 +4,7 @@ import { breakpoints, typography, vars } from '../../styles/theme.css';
 export const honeyLineChart = style({
   display: 'flex',
   position: 'relative',
-  height: `100%`
+  height: `calc(100% - 30px)`
 });
 
 const axisYWidth = 35;
@@ -30,5 +30,14 @@ export const axisX = style([
     bottom: -13,
     left: axisYWidth,
     width: `calc(100% - ${axisYWidth}px)`
+  }
+]);
+
+export const xAxisTitle = style([
+  typography.numbersMini,
+  {
+    display: 'flex',
+    justifyContent: 'center',
+    paddingTop: 5
   }
 ]);

@@ -16,7 +16,7 @@ import { toastResponse } from 'helpers/loanHelpers';
 import SidebarScroll from '../SidebarScroll/SidebarScroll';
 import imagePlaceholder from 'public/images/imagePlaceholder.png';
 import * as stylesRepay from '../RepayForm/RepayForm.css';
-import { hAlign } from 'styles/common.css';
+import { hAlign, extLink } from 'styles/common.css';
 import { questionIcon } from 'styles/icons.css';
 import useToast from 'hooks/useToast';
 import { useSolBalance } from 'hooks/useSolBalance';
@@ -201,7 +201,7 @@ const BorrowForm = (props: BorrowProps) => {
                   The worth of your collateral according to the market’s oracle.
                   Learn more about this market’s{' '}
                   <a
-                    className={styles.extLink}
+                    className={extLink}
                     target="blank"
                     href="https://switchboard.xyz/explorer"
                   >
@@ -233,7 +233,7 @@ const BorrowForm = (props: BorrowProps) => {
               toolTipLabel={
                 <span>
                   <a
-                    className={styles.extLink}
+                    className={extLink}
                     target="blank"
                     href="https://docs.honey.finance/learn/defi-lending#loan-to-value-ratio"
                   >
@@ -271,7 +271,7 @@ const BorrowForm = (props: BorrowProps) => {
                 <span>
                   New{' '}
                   <a
-                    className={styles.extLink}
+                    className={extLink}
                     target="blank"
                     href="https://docs.honey.finance/learn/defi-lending#loan-to-value-ratio"
                   >
@@ -308,7 +308,7 @@ const BorrowForm = (props: BorrowProps) => {
                   Value borrowed from the lending pool, upon which interest
                   accrues.{' '}
                   <a
-                    className={styles.extLink}
+                    className={extLink}
                     target="blank"
                     href="https://docs.honey.finance/learn/defi-lending#debt"
                   >
@@ -330,7 +330,7 @@ const BorrowForm = (props: BorrowProps) => {
                 <span>
                   Estimated{' '}
                   <a
-                    className={styles.extLink}
+                    className={extLink}
                     target="blank"
                     href="https://docs.honey.finance/learn/defi-lending#debt"
                   >
@@ -362,7 +362,7 @@ const BorrowForm = (props: BorrowProps) => {
                 <span>
                   Price at which the position (NFT) will be liquidated.{' '}
                   <a
-                    className={styles.extLink}
+                    className={extLink}
                     target="blank"
                     href=" " //TODO: add link to docs
                   >
@@ -384,7 +384,7 @@ const BorrowForm = (props: BorrowProps) => {
                 <span>
                   Estimated{' '}
                   <a
-                    className={styles.extLink}
+                    className={extLink}
                     target="blank"
                     href=" " //TODO: add link to docs
                   >
@@ -413,7 +413,7 @@ const BorrowForm = (props: BorrowProps) => {
                   <span>
                     Variable interest rate, based on Utilization rate.{' '}
                     <a
-                      className={styles.extLink}
+                      className={extLink}
                       target="blank"
                       href=" " //TODO: add link to docs
                     >
@@ -437,7 +437,7 @@ const BorrowForm = (props: BorrowProps) => {
                 toolTipLabel={
                   <span>
                     Borrow Fee is a{' '}
-                    <a className={styles.extLink} target="blank" href=" ">
+                    <a className={extLink} target="blank" href=" ">
                       protocol fee{' '}
                     </a>
                     that is charged upon borrowing. For now it is set at 0,00%.

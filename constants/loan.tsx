@@ -1,3 +1,8 @@
+// devnet
+// export const HONEY_PROGRAM_ID = 'F1PypuidC78bosb7cHfU2ERZSd1RWLdbsq82nR9Tdgkh';
+// export const HONEY_MARKET_ID = '5W8daSFdTEcAGiDyjHUi81QiNXLvkYbucaGBt9uiYxTN';
+
+// mainnet-beta
 export const HONEY_PROGRAM_ID = 'hNEYyRsRBVq2La65V1KjvdbTE39w36gwrdjkmcpvysk';
 export const HONEY_GENESIS_MARKET_ID = '6FcJaAzQnuoA6o3sVw1GD6Ba69XuL5jinZpQTzJhd2R3';
 export const PESKY_PENGUINS_MARKET_ID = 'Bw77MGpg189EaATjN67WXcnp3c4544LhKoV4Ftmdg4C';

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import * as styles from './RiskModelStep.css';
 import HoneyTooltip from '../../HoneyTooltip/HoneyTooltip';
 import SectionTitle from '../../SectionTitle/SectionTitle';
@@ -6,20 +6,23 @@ import { HoneyButtonTabs } from '../../HoneyButtonTabs/HoneyButtonTabs';
 import HoneyWarning from '../../HoneyWarning/HoneyWarning';
 import HoneyLink from '../../HoneyLink/HoneyLink';
 import { HoneyLineChart } from '../../HoneyLineChart/HoneyLineChart';
-import { generateMockHistoryData } from '../../../helpers/chartUtils';
 
-enum RiskModelTab {
+export enum RiskModelTab {
   LOW = 'low',
   DEFAULT = 'default',
   HIGH = 'high'
 }
 
-export const RiskModelStep = () => {
-  const [activeTab, setActiveTab] = useState(RiskModelTab.DEFAULT);
-  const isMock = true;
+interface RiskModelStepProps {
+  setRiskModel: Function;
+  riskModel: RiskModelTab | undefined;
+}
+
+export const RiskModelStep = (props: RiskModelStepProps) => {
+  const { setRiskModel, riskModel } = props;
 
   const renderWarning = () => {
-    if (activeTab === RiskModelTab.LOW) {
+    if (riskModel === RiskModelTab.LOW) {
       return (
         <HoneyWarning message="LOW Risk Description">
           <HoneyLink link="#" target="_blank" className={styles.marginTop}>
@@ -29,7 +32,7 @@ export const RiskModelStep = () => {
       );
     }
 
-    if (activeTab === RiskModelTab.DEFAULT) {
+    if (riskModel === RiskModelTab.DEFAULT) {
       return (
         <HoneyWarning message="The Default risk model establishes an average income for lenders with keeping good risk management.">
           <HoneyLink link="#" target="_blank" className={styles.marginTop}>
@@ -39,7 +42,7 @@ export const RiskModelStep = () => {
       );
     }
 
-    if (activeTab === RiskModelTab.HIGH) {
+    if (riskModel === RiskModelTab.HIGH) {
       return (
         <HoneyWarning message="The High risk model establishes an average income for lenders with keeping good risk management.">
           <HoneyLink link="#" target="_blank" className={styles.marginTop}>
@@ -50,29 +53,49 @@ export const RiskModelStep = () => {
     }
   };
 
+  const defaultRiskChartData = [
+    { x: 5, y: 0 },
+    { x: 60, y: 50 },
+    { x: 80, y: 80 },
+    { x: 100, y: 200 }
+  ];
+
+  const lowRiskChartData = [
+    { x: 10, y: 0 },
+    { x: 40, y: 25 },
+    { x: 80, y: 40 },
+    { x: 100, y: 140 }
+  ];
+
+  const highRiskChartData = [
+    { x: 0, y: 10 },
+    { x: 40, y: 70 },
+    { x: 60, y: 80 },
+    { x: 100, y: 300 }
+  ];
+
   const getChartData = () => {
-    if (isMock) {
-      const from = new Date()
-        .setFullYear(new Date().getFullYear() - 1)
-        .valueOf();
-      const to = new Date().valueOf();
-      return generateMockHistoryData(from, to, 10000);
+    switch (riskModel) {
+      case RiskModelTab.LOW:
+        return lowRiskChartData;
+      case RiskModelTab.DEFAULT:
+        return defaultRiskChartData;
+      case RiskModelTab.HIGH:
+        return highRiskChartData;
+
+      default:
+        return lowRiskChartData;
     }
-    return [];
   };
 
   const renderGraph = () => {
-    if (activeTab === RiskModelTab.LOW) {
-      return <HoneyLineChart data={getChartData()} />;
-    }
-
-    if (activeTab === RiskModelTab.DEFAULT) {
-      return <HoneyLineChart data={getChartData()} />;
-    }
-
-    if (activeTab === RiskModelTab.HIGH) {
-      return <HoneyLineChart data={getChartData()} />;
-    }
+    return (
+      <HoneyLineChart
+        data={getChartData()}
+        xAxisLabel="Utilisation rate (%)"
+        yAxisLabel="Interest rate"
+      />
+    );
   };
 
   return (
@@ -98,8 +121,10 @@ export const RiskModelStep = () => {
             { name: 'High Risk', slug: RiskModelTab.HIGH }
           ]}
           isFullWidth
-          activeItemSlug={activeTab}
-          onClick={slug => setActiveTab(slug as RiskModelTab)}
+          activeItemSlug={riskModel || ''}
+          onClick={slug => {
+            setRiskModel(slug);
+          }}
         />
       </div>
 
