@@ -6,7 +6,6 @@
  */
 import Image from 'next/image';
 import {
-  HONEY_PROGRAM_ID,
   HONEY_GENESIS_MARKET_ID,
   PESKY_PENGUINS_MARKET_ID,
   OG_ATADIANS_MARKET_ID,
