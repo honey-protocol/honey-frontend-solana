@@ -1,13 +1,12 @@
 import {
   useConnection,
-  useConnectedWallet,
-  ConnectedWallet
+  useConnectedWallet
 } from '@saberhq/use-solana';
-import { HONEY_PROGRAM_ID, HONEY_GENESIS_MARKET_ID } from 'constants/loan';
+import { HONEY_PROGRAM_ID } from 'constants/loan';
 import { toast } from 'react-toastify';
 import BN from 'bn.js';
 import { Big } from 'big.js';
-import { clusterApiUrl, Connection, Keypair, PublicKey } from '@solana/web3.js';
+import { Connection, Keypair, PublicKey } from '@solana/web3.js';
 import {
   AggregatorAccount,
   loadSwitchboardProgram
@@ -16,17 +15,15 @@ import {
 /**
  * @description exports the current sdk configuration object
  * @params none
- * @returns connection | wallet | honeyID | marketID
+ * @returns connection | wallet | honeyID |
  */
 export function ConfigureSDK() {
   return {
     saberHqConnection: useConnection(),
-    // saberHqConnection: new Connection("https://explorer-api.devnet.solana.com/"),
     sdkWallet: useConnectedWallet() || null,
     honeyId: HONEY_PROGRAM_ID
   };
 }
-
 /**
  * @description exports function that validates if input is number
  * @params user input
@@ -56,9 +53,9 @@ export async function inputNumberValidator(val: any) {
 }
 
 /**
- * @description
- * @params
- * @returns
+ * @description custom toast response
+ * @params responseType | message | id | trigger type
+ * @returns toast message object
  */
 export async function toastResponse(
   responseType: string,
@@ -98,9 +95,9 @@ export async function toastResponse(
   }
 }
 /**
- * @description
- * @params
- * @returns
+ * @description custom async timeout which returns a promise
+ * @params miliseconds 
+ * @returns promise
  */
 export const asyncTimeout = (ms: number) => {
   return new Promise(resolve => {
@@ -109,9 +106,9 @@ export const asyncTimeout = (ms: number) => {
 };
 
 /**
- * @description
- * @params
- * @returns
+ * @description converts bn to decimal
+ * @params value as in BN, amount of decimals required, amount of precision
+ * @returns number with requested decimals 
  */
 export function BnToDecimal(
   val: BN | undefined,

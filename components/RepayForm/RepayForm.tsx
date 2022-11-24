@@ -1,4 +1,4 @@
-import { FC, useEffect, useState } from 'react';
+import { useState } from 'react';
 import Image from 'next/image';
 import { InfoBlock } from '../InfoBlock/InfoBlock';
 import { InputsBlock } from '../InputsBlock/InputsBlock';
@@ -9,8 +9,6 @@ import HoneyButton from 'components/HoneyButton/HoneyButton';
 import HexaBoxContainer from '../HexaBoxContainer/HexaBoxContainer';
 import { RepayProps } from './types';
 import SidebarScroll from '../SidebarScroll/SidebarScroll';
-import { PublicKey } from '@solana/web3.js';
-import { isNil } from '../../helpers/utils';
 import { hAlign } from 'styles/common.css';
 import { questionIcon } from 'styles/icons.css';
 import cs from 'classnames';
@@ -18,7 +16,6 @@ import useToast from 'hooks/useToast';
 import { useSolBalance } from 'hooks/useSolBalance';
 import { MAX_LTV } from 'constants/loan';
 import { LIQUIDATION_FEE } from 'constants/borrowLendMarkets';
-import { HONEY_GENESIS_MARKET_ID, LIFINITY_FLARES_MARKET_ID, OG_ATADIANS_MARKET_ID, PESKY_PENGUINS_MARKET_ID, BURRITO_BOYZ_MARKET_ID  } from 'constants/loan';
 import { renderMarketImageByID } from 'helpers/marketHelpers';
 
 const {
@@ -30,6 +27,7 @@ const {
 } = formatNumber;
 
 const RepayForm = (props: RepayProps) => {
+  // extract props
   const {
     executeRepay,
     openPositions,
@@ -38,34 +36,37 @@ const RepayForm = (props: RepayProps) => {
     userAllowance,
     userDebt,
     loanToValue,
-    availableNFTs,
     fetchedSolPrice,
     currentMarketId,
     hideMobileSidebar,
     changeTab
   } = props;
-
-  console.log('@@-- repay form:: sol price', fetchedSolPrice);
-
+  // state
   const [valueUSD, setValueUSD] = useState<number>();
   const [valueSOL, setValueSOL] = useState<number>();
   const [sliderValue, setSliderValue] = useState(0);
   const { toast, ToastComponent } = useToast();
-
+  // constants && calculations
   const maxValue = userDebt != 0 ? userDebt : userAllowance;
   const solPrice = fetchedSolPrice;
   const liquidationThreshold = LIQUIDATION_FEE;
   const SOLBalance = useSolBalance();
-
   const newDebt = userDebt - (valueSOL ? valueSOL : 0);
-
   const borrowedValue = userDebt;
+  const liquidationPrice = userDebt / liquidationThreshold;
+  const newLiquidationPrice = newDebt / liquidationThreshold;
+  const liqPercent = nftPrice
+    ? ((nftPrice - liquidationPrice) / nftPrice) * 100
+    : 0;
+  const newLiqPercent = nftPrice
+    ? ((nftPrice - newLiquidationPrice) / nftPrice) * 100
+    : 0;
 
   // Put your validators here
   const isRepayButtonDisabled = () => {
     return false;
   };
-
+  // change of input - render calculated values
   const handleSliderChange = (value: number) => {
     if (userDebt <= 0) return;
 
@@ -73,7 +74,7 @@ const RepayForm = (props: RepayProps) => {
     setValueUSD(value * solPrice);
     setValueSOL(value);
   };
-
+  // change of input - render calculated values
   const handleUsdInputChange = (usdValue: number | undefined) => {
     if (!usdValue || userDebt <= 0) {
       setValueUSD(0);
@@ -85,7 +86,7 @@ const RepayForm = (props: RepayProps) => {
     setValueSOL(usdValue / solPrice);
     setSliderValue(usdValue / solPrice);
   };
-
+  // change of input - render calculated values
   const handleSolInputChange = (solValue: number | undefined) => {
     if (!solValue || userDebt <= 0) {
       setValueUSD(0);
@@ -98,51 +99,18 @@ const RepayForm = (props: RepayProps) => {
     setValueSOL(solValue);
     setSliderValue(solValue);
   };
-
+  // executes repay function - changes tab state to borrow if changeTab exists
   const onRepay = async (event: any) => {
     if (userDebt == 0 && openPositions[0]) {
-      await executeWithdrawNFT(openPositions[0].mint, toast);
+      executeWithdrawNFT(openPositions[0].mint, toast);
       if (changeTab) {
         changeTab('borrow');
       }
     } else {
-      await executeRepay(valueSOL || 0, toast);
+      executeRepay(valueSOL || 0, toast);
       handleSliderChange(0);
     }
   };
-
-  useEffect(() => {}, [
-    openPositions,
-    userDebt,
-    userAllowance,
-    nftPrice,
-    loanToValue,
-    availableNFTs
-  ]);
-
-  const liquidationPrice = userDebt / liquidationThreshold;
-  const newLiquidationPrice = newDebt / liquidationThreshold;
-
-  const liqPercent = nftPrice
-    ? ((nftPrice - liquidationPrice) / nftPrice) * 100
-    : 0;
-  const newLiqPercent = nftPrice
-    ? ((nftPrice - newLiquidationPrice) / nftPrice) * 100
-    : 0;
-
-  const renderImage = (marketID: string) => {
-    if (marketID == HONEY_GENESIS_MARKET_ID) {
-      return <Image src='https://img-cdn.magiceden.dev/rs:fill:400:400:0:0/plain/https://dl.airtable.com/.attachmentThumbnails/6b6c8954aed777a74de52fd70f8751ab/46b325db' alt='Honey Genesis Bee NFT' layout="fill" />
-    } else if (marketID == LIFINITY_FLARES_MARKET_ID) {
-      return <Image src='https://img-cdn.magiceden.dev/rs:fill:400:400:0:0/plain/https://dl.airtable.com/.attachmentThumbnails/6972d5c2efb77d49be97b07ccf4fbc69/e9572fb8' alt='Lifinity Flares NFT' layout="fill" />
-    } else if (marketID == OG_ATADIANS_MARKET_ID) {
-      return <Image src='https://img-cdn.magiceden.dev/rs:fill:400:400:0:0/plain/https://creator-hub-prod.s3.us-east-2.amazonaws.com/atadians_pfp_1646721263627.gif' alt='OG Atadians NFT' layout="fill" />
-    } else if (marketID == BURRITO_BOYZ_MARKET_ID) {
-      return <Image src='https://img-cdn.magiceden.dev/rs:fill:400:400:0:0/plain/https://creator-hub-prod.s3.us-east-2.amazonaws.com/burrito_boyz_pfp_1653394754301.png' alt='Burrito Boyz NFT' layout="fill" />
-    } else if (marketID == PESKY_PENGUINS_MARKET_ID) {
-      return <Image src='https://img-cdn.magiceden.dev/rs:fill:400:400:0:0/plain/https://i.imgur.com/37nsjBZ.png' alt='Pesky NFT' layout="fill" />
-    }
-  }
 
   return (
     <SidebarScroll

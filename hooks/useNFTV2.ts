@@ -69,11 +69,12 @@ export default function useFetchNFTByUser(
               text: walletPublicKey,
               connection
             });
-            // get all NFT tokens from wallet
+            // get all NFT tokens from wallet || filter out all nfts that don't have creators array
             const nftArray = await getParsedNftAccountsByOwner({
               publicAddress,
               connection
-            });
+            }).then((result) => result.filter(nft => nft.data.creators));
+
             const promises = nftArray.map(async nft => {
               const imageURI = await getNFTImgURI(nft.data.uri);
               const tokenMetaPublicKey =

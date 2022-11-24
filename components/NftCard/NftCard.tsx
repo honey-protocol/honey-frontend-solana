@@ -1,30 +1,27 @@
-import React, { useCallback, useEffect } from 'react';
+import React, { useCallback } from 'react';
 import * as styles from './NftCard.css';
 import HexaBoxContainer from '../HexaBoxContainer/HexaBoxContainer';
 import HoneyButton from '../HoneyButton/HoneyButton';
 import { NftCardProps } from './types';
 import c from 'classnames';
 import Image from 'next/image';
-import { renderMarketName } from 'helpers/marketHelpers';
 
 const NftCard = (props: NftCardProps) => {
   const {
     onClick,
-    id,
     name,
     text,
     hint,
     buttonText,
-    img,
     image,
     mint,
-    currentMarketId,
+    creators,
     hasBorder = true
   } = props;
-
+  // runs onClick which is handleClick from NftList component - which selects the NFT
   const _onClick = useCallback(() => {
     if (typeof onClick === 'function') {
-      onClick(name, image, mint);
+      onClick(name, image, mint, creators);
     }
   }, [mint]);
   

@@ -9,7 +9,7 @@ export type MarketsSidebarProps = {
   fetchedSolPrice: number;
   calculatedInterestRate: number;
   currentMarketId: string;
-  executeDepositNFT: (mint: any, toast: any, name: string) => void;
+  executeDepositNFT: (mint: any, toast: any, name: string, creator: string) => void;
   executeWithdrawNFT: (mint: any, toast: any) => void;
   executeBorrow: (val: any, toast: any) => void;
   executeRepay: (val: any, toast: any) => void;

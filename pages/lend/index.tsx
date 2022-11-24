@@ -14,27 +14,21 @@ import * as style from '../../styles/markets.css';
 import c from 'classnames';
 import { ColumnType } from 'antd/lib/table';
 import HexaBoxContainer from '../../components/HexaBoxContainer/HexaBoxContainer';
-import Image from 'next/image';
-import honeyGenesisBee from '/public/images/imagePlaceholder.png';
 import HoneyButton from '../../components/HoneyButton/HoneyButton';
 import { Key } from 'antd/lib/table/interface';
-import { formatNFTName, formatNumber } from '../../helpers/format';
+import { formatNumber } from '../../helpers/format';
 import SearchInput from '../../components/SearchInput/SearchInput';
 import debounce from 'lodash/debounce';
 import { getColumnSortStatus } from '../../helpers/tableUtils';
-import { HoneyChart } from '../../components/HoneyChart/HoneyChart';
 import HoneySider from '../../components/HoneySider/HoneySider';
 import HoneyContent from '../../components/HoneyContent/HoneyContent';
 import { deposit, withdraw, useMarket, useHoney } from '@honey-finance/sdk';
 import {
-  toastResponse,
   BnToDecimal,
-  BnDivided,
   ConfigureSDK
 } from '../../helpers/loanHelpers/index';
 import { LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js';
 import BN from 'bn.js';
-import HoneyToggle from 'components/HoneyToggle/HoneyToggle';
 import {
   calcNFT,
   getInterestRate,
@@ -42,7 +36,6 @@ import {
   populateMarketData
 } from 'helpers/loanHelpers/userCollection';
 import { ToastProps } from 'hooks/useToast';
-import { RoundHalfDown } from 'helpers/utils';
 import { Typography } from 'antd';
 import { pageDescription, pageTitle } from 'styles/common.css';
 import HoneyTableNameCell from 'components/HoneyTable/HoneyTableNameCell/HoneyTableNameCell';
@@ -50,19 +43,10 @@ import HoneyTableRow from 'components/HoneyTable/HoneyTableRow/HoneyTableRow';
 
 const { format: f, formatPercent: fp, formatSol: fs } = formatNumber;
 import {
-  BURRITO_BOYZ_MARKET_NAME,
   HONEY_GENESIS_BEE_MARKET_NAME,
-  LIFINITY_FLARES_MARKET_NAME,
-  OG_ATADIANS_MARKET_NAME,
-  PESKY_PENGUINS_MARKET_NAME
 } from '../../helpers/marketHelpers';
-
 import {
   HONEY_GENESIS_MARKET_ID,
-  PESKY_PENGUINS_MARKET_ID,
-  OG_ATADIANS_MARKET_ID,
-  LIFINITY_FLARES_MARKET_ID,
-  BURRITO_BOYZ_MARKET_ID
 } from '../../constants/loan';
 import { setMarketId } from 'pages/_app';
 import { marketCollections } from '../../constants/borrowLendMarkets';
@@ -121,12 +105,9 @@ const Lend: NextPage = () => {
   // market specific constants - calculations / ratios / debt / allowance etc.
   const [userTotalDeposits, setUserTotalDeposits] = useState(0);
   const [reserveHoneyState, setReserveHoneyState] = useState(0);
-  const [marketPositions, setMarketPositions] = useState(0);
   const [nftPrice, setNftPrice] = useState(0);
   const [userWalletBalance, setUserWalletBalance] = useState<number>(0);
   const [fetchedSolPrice, setFetchedSolPrice] = useState(0);
-  const [honeyInterestRate, setHoneyInterestRate] = useState(0);
-  const [peskyInterestRate, setPeskyInterestRate] = useState(0);
   const [userDepositWithdraw, setUserDepositWithdraw] = useState(0);
   const [activeMarketSupplied, setActiveMarketSupplied] = useState(0);
   const [activeMarketAvailable, setActiveMarketAvailable] = useState(0);
@@ -148,7 +129,11 @@ const Lend: NextPage = () => {
       fetchWalletBalance(walletPK);
     }
   }, [walletPK]);
-
+  /**
+   * @description
+   * @params
+   * @returns
+  */
   async function calculateTotalDeposits(
     marketReserveInfo: any,
     honeyUser: any
@@ -182,23 +167,21 @@ const Lend: NextPage = () => {
       }
     }, 1500);
   }
-
   /**
-   * @description updates honeyUser | marketReserveInfo | - timeout required
+   * @description updates honeyUser | marketReserveInfo |
    * @params none
    * @returns honeyUser | marketReserveInfo |
    */
   useEffect(() => {
     if (marketReserveInfo && honeyUser)
       calculateTotalDeposits(marketReserveInfo, honeyUser);
-  });
+  }, [marketReserveInfo, honeyUser, userDepositWithdraw]);
 
   // fetches the current sol price
   async function fetchSolValue(reserves: any, connection: any) {
     const slPrice = await fetchSolPrice(reserves, connection);
     setFetchedSolPrice(slPrice);
   }
-
   /**
    * @description sets state of marketValue by parsing lamports outstanding debt amount to SOL
    * @params none, requires parsedReserves
@@ -222,19 +205,6 @@ const Lend: NextPage = () => {
       }
     }
   }, [parsedReserves]);
-
-  // fetches total market positions
-  async function fetchObligations() {
-    let obligations = await honeyMarket.fetchObligations();
-    console.log('obligations:', obligations);
-    setMarketPositions(obligations.length);
-  }
-  // on honeyMarket change call upon fetch obligations
-  useEffect(() => {
-    if (honeyMarket) {
-      fetchObligations();
-    }
-  }, [honeyMarket]);
 
   // calculates nft price
   async function calculateNFTPrice() {
@@ -352,13 +322,16 @@ const Lend: NextPage = () => {
   }
 
   const isMock = true;
-
   const [isMobileSidebarVisible, setShowMobileSidebar] = useState(false);
   const hideMobileSidebar = () => {
     setShowMobileSidebar(false);
     document.body.classList.remove('disable-scroll');
   };
-
+  /**
+   * @description
+   * @params
+   * @returns
+  */
   const getPositionData = () => {
     if (isMock) {
       const from = new Date()
@@ -381,9 +354,12 @@ const Lend: NextPage = () => {
   );
   const [expandedRowKeys, setExpandedRowKeys] = useState<readonly Key[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
-  const [isMyCollectionsFilterEnabled, setIsMyCollectionsFilterEnabled] =
-    useState(false);
-
+  const [isMyCollectionsFilterEnabled, setIsMyCollectionsFilterEnabled] = useState(false);
+  /**
+   * @description
+   * @params
+   * @returns
+  */
   useEffect(() => {
     if (sdkConfig.saberHqConnection) {
       function getData() {
@@ -417,15 +393,12 @@ const Lend: NextPage = () => {
       });
     }
   }, [
-    // totalMarketDebt,
     nftPrice,
     honeyReserves,
     parsedReserves,
     sdkConfig.saberHqConnection,
     sdkConfig.sdkWallet,
     currentMarketId,
-    // peskyInterestRate,
-    // honeyInterestRate,
     userDepositWithdraw,
     marketReserveInfo,
     honeyUser,
@@ -477,7 +450,7 @@ const Lend: NextPage = () => {
   };
 
   const MyCollectionsToggle = () => null;
-
+  // handle search form- filter collections
   const SearchForm = () => {
     return (
       <SearchInput
@@ -489,7 +462,7 @@ const Lend: NextPage = () => {
   };
 
   const columnsWidth: Array<number | string> = [240, 150, 150, 150, 150];
-
+  // Render Desktop Data
   const columns: ColumnType<LendTableRow>[] = useMemo(
     () => [
       {
@@ -603,7 +576,7 @@ const Lend: NextPage = () => {
       currentMarketId
     ]
   );
-
+  // Render Mobile Data
   const columnsMobile: ColumnType<LendTableRow>[] = useMemo(
     () => [
       {

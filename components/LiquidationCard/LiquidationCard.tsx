@@ -1,23 +1,6 @@
-import React, { useState, useEffect } from 'react';
-import { Box, Stack, Button, IconChevronLeft, Text, Avatar } from 'degen';
-import Layout from '../../components/Layout/Layout';
+import React from 'react';
+import { Box, Text} from 'degen';
 import * as styles from '../../styles/liquidation.css';
-import Link from 'next/link'
-import { LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js';
-
-// interface LiquidationCardProps {
-//   debt: number;
-//   address: PublicKey;
-//   ltv: number;
-//   isHealthy: boolean;
-//   highestBid: number;
-//   openPositions?: boolean;
-//   liquidationType?: boolean;
-//   handleShowBiddingModal?: () => void;
-//   showBiddingModal?: boolean;
-//   handleExecuteBid: () => void;
-//   key: number;
-// }
 interface LiquidationCardProps {
   loan: any;
   openPositions?: boolean;
@@ -27,7 +10,7 @@ interface LiquidationCardProps {
 }
 
 const LiquidationCard = (props: LiquidationCardProps) => {
-  const { openPositions, liquidationType, handleExecuteBid, loan, index } = props;
+  const { loan, index } = props;
 
   return (
         <Box className={styles.subWrapper}>
