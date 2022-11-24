@@ -4,6 +4,7 @@ export const PESKY_PENGUINS_MARKET_ID = 'Bw77MGpg189EaATjN67WXcnp3c4544LhKoV4Ftm
 export const BURRITO_BOYZ_MARKET_ID = 'F8rZviSSuqgkTsjMeoyrTUSNSqh7yNDCAozJkxm7eujY'
 export const OG_ATADIANS_MARKET_ID = 'Bxk1JQCbVjpeFnjzvH5n9bepnZeHjRADUFwZiVC7L5Gq';
 export const LIFINITY_FLARES_MARKET_ID = 'H2H2pJuccdvpET9A75ajB3GgdYdCUL4T3kiwUMA6DJ7q';
+export const BLOCKSMITH_LABS_MARKET_ID = 'GrKPvcdHVb4cwR5a2CCgCTvdkSqhNDRgSUiUVzXRWLk6';
 export const OPEN_POSITIONS = 'Open positions';
 export const NEW_POSITIONS = 'New position';
 export const TYPE_OPEN = 'open';
