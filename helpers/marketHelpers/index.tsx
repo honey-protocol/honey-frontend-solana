@@ -10,7 +10,8 @@ import {
   PESKY_PENGUINS_MARKET_ID,
   OG_ATADIANS_MARKET_ID,
   LIFINITY_FLARES_MARKET_ID,
-  BURRITO_BOYZ_MARKET_ID
+  BURRITO_BOYZ_MARKET_ID,
+  BLOCKSMITH_LABS_MARKET_ID
 } from 'constants/loan';
 // market verified creators
 export const VERIFIED_CREATOR_HONEY_GENESIS_BEE = '6vRx1iVZo3xfrBHdpvuwArL2jucVj9j9nLpd2VUTTGMG';
@@ -18,12 +19,14 @@ export const VERIFIED_CREATOR_PESKY_PENGUINS = 'A6XTVFiwGVsG6b6LsvQTGnV5LH3Pfa3q
 export const VERIFIED_CREATOR_OG_ATADIANS = '4pi2MRDQgGVFwV1Hv8ka7hSSu9TgdFmafk6jtQhrB9HN';
 export const VERIFIED_CREATOR_LIFINITY_FLARES = 'EWyWxSkxWHWGzxfCd9kG7zGrKTUDbZGiV6VbFJF8YfqN';
 export const VERIFIED_CREATOR_BURRITO_BOYZ = '2UCkKjTHvz7qFjPZMjhWZiPmyTc6ZwZ44iYPbSpe3aVo';
+export const VERIFIED_CREATOR_BLOCKSMITH_LABS = '8m2b8ar9BNZErJQgSBwY3eCe73yR4k9qHUxxGffxyw2d';
 // market names
 export const HONEY_GENESIS_BEE_MARKET_NAME = 'Honey Genesis Bee';
 export const LIFINITY_FLARES_MARKET_NAME = 'LIFINITY Flares';
 export const OG_ATADIANS_MARKET_NAME = 'OG Atadians';
 export const PESKY_PENGUINS_MARKET_NAME = 'Pesky Penguin';
 export const BURRITO_BOYZ_MARKET_NAME = 'Burrito Boyz';
+export const BLOCKSMITH_LABS_MARKET_NAME = 'Blocksmith Labs';
 // constants used for the below stated functions
 const HONEY_IMAGE =
   'https://img-cdn.magiceden.dev/rs:fill:400:400:0:0/plain/https://dl.airtable.com/.attachmentThumbnails/6b6c8954aed777a74de52fd70f8751ab/46b325db';
@@ -35,6 +38,8 @@ const LIFINITY_FLARES_IMAGE =
   'https://img-cdn.magiceden.dev/rs:fill:400:400:0:0/plain/https://dl.airtable.com/.attachmentThumbnails/6972d5c2efb77d49be97b07ccf4fbc69/e9572fb8';
 const BURRITO_BOYZ_IMAGE =
   'https://img-cdn.magiceden.dev/rs:fill:400:400:0:0/plain/https://creator-hub-prod.s3.us-east-2.amazonaws.com/burrito_boyz_pfp_1653394754301.png';
+const BLOCKSMITH_LABS_IMAGE = 
+  'https://img-cdn.magiceden.dev/rs:fill:400:400:0:0/plain/https://bafkreih3jh6bz4g5xegjz622ogjdnkwwwnx35opnenh2nzstqnczomo7ha.ipfs.dweb.link/';
 /**
  * @description returns the image setup used for each market
  * @params name of the market in string format
@@ -69,6 +74,14 @@ export const renderMarketImageByName = (marketName: string) => {
         <Image
           src={BURRITO_BOYZ_IMAGE}
           alt="Burrito Boys NFT image"
+          layout="fill"
+        />
+      );
+    case BLOCKSMITH_LABS_MARKET_NAME:
+      return (
+        <Image
+          src={BLOCKSMITH_LABS_IMAGE}
+          alt="Blocksmith Labs NFT image"
           layout="fill"
         />
       );
@@ -115,6 +128,14 @@ export const renderMarketImageByID = (marketID: string) => {
           layout="fill"
         />
       );
+    case BLOCKSMITH_LABS_MARKET_ID:
+      return (
+        <Image
+          src={BLOCKSMITH_LABS_IMAGE}
+          alt="Blocksmith Labs NFT image"
+          layout="fill"
+        />
+      );
   }
 };
 /**
@@ -134,6 +155,8 @@ export const renderMarketName = (marketID: string) => {
       return PESKY_PENGUINS_MARKET_NAME;
     case BURRITO_BOYZ_MARKET_ID:
       return BURRITO_BOYZ_MARKET_NAME;
+    case BLOCKSMITH_LABS_MARKET_ID:
+      return BLOCKSMITH_LABS_MARKET_NAME;
   }
 };
 /**
@@ -167,6 +190,11 @@ export const renderMarket = (record: string) => {
       return {
         id: BURRITO_BOYZ_MARKET_ID,
         name: BURRITO_BOYZ_MARKET_NAME
+      };
+    case BLOCKSMITH_LABS_MARKET_ID:
+      return {
+        id: BLOCKSMITH_LABS_MARKET_ID,
+        name: BLOCKSMITH_LABS_MARKET_NAME
       };
   }
 };
@@ -202,6 +230,8 @@ export const renderNftList = (marketID: string, nftArray: any) => {
       return filterNfts(nftArray, VERIFIED_CREATOR_PESKY_PENGUINS, PESKY_PENGUINS_MARKET_NAME);
     case BURRITO_BOYZ_MARKET_ID:
       return filterNfts(nftArray, VERIFIED_CREATOR_BURRITO_BOYZ, BURRITO_BOYZ_MARKET_NAME);
+    case BLOCKSMITH_LABS_MARKET_ID:
+      return filterNfts(nftArray, VERIFIED_CREATOR_BLOCKSMITH_LABS, BLOCKSMITH_LABS_MARKET_NAME);
   }
 };
 /**
