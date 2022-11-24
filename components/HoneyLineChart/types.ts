@@ -1,12 +1,15 @@
 import { SizeMeProps } from 'react-sizeme';
 
-export type TimestampPoint = {
-  epoch: number;
-  value: number;
+export type rawData = {
+  x: number;
+  y: number;
+  label?: string;
 };
 
 export type HoneyLineChartProps = {
-  data: TimestampPoint[];
+  data: rawData[];
   size: SizeMeProps['size'];
   color?: string;
+  yAxisLabel?: string;
+  xAxisLabel?: string;
 };
