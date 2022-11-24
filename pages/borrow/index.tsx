@@ -39,7 +39,9 @@ import BN from 'bn.js';
 import {
   borrowAndRefresh,
   depositNFT,
+  HoneyMarket,
   repayAndRefresh,
+  ReserveConfig,
   useBorrowPositions,
   useHoney,
   useMarket,
@@ -216,7 +218,10 @@ const Markets: NextPage = () => {
   const [isCreateMarketAreaOnHover, setIsCreateMarketAreaOnHover] =
     useState<boolean>(false);
 
-  // calls upon setting the user nft list per market
+  const [createHoneyMarket, setCreateHoneyMarket] =
+    useState<HoneyMarket | null>(null);
+
+  // sets the market debt
   useEffect(() => {
     if (availableNFTs) setUserAvailableNFTs(availableNFTs[0]);
   }, [availableNFTs]);
@@ -368,10 +373,13 @@ const Markets: NextPage = () => {
     }
   }, [collateralNFTPositions, currentMarketId]);
   // function is setup to handle an array for all markets and return based on specific market by verified creator
-  async function handlePositions(verifiedCreator: string, currentOpenPositions: any) {
+  async function handlePositions(
+    verifiedCreator: string,
+    currentOpenPositions: any
+  ) {
     return await handleOpenPositions(verifiedCreator, currentOpenPositions);
   }
-  // calculation of health percentage 
+  // calculation of health percentage
   const healthPercent =
     ((nftPrice - userDebt / LIQUIDATION_THRESHOLD) / nftPrice) * 100;
 
@@ -391,10 +399,18 @@ const Markets: NextPage = () => {
               false
             );
 
-            collection.positions = await handlePositions(collection.verifiedCreator, userOpenPositions);
-            collection.rate = (await getInterestRate(collection.utilizationRate, collection.id)) || 0;
-            
-            if (currentMarketId === collection.id) setActiveInterestRate(collection.rate);
+            collection.positions = await handlePositions(
+              collection.verifiedCreator,
+              userOpenPositions
+            );
+            collection.rate =
+              (await getInterestRate(
+                collection.utilizationRate,
+                collection.id
+              )) || 0;
+
+            if (currentMarketId === collection.id)
+              setActiveInterestRate(collection.rate);
             return collection;
           })
         );
@@ -446,7 +462,7 @@ const Markets: NextPage = () => {
     });
   };
 
-  const isCreateMarketVisible = false;
+  const isCreateMarketVisible = true;
 
   const debouncedSearch = useCallback(
     debounce(searchQuery => {
@@ -1080,6 +1096,8 @@ const Markets: NextPage = () => {
               onCancel={() => {
                 setSidebarMode(BorrowSidebarMode.MARKET);
               }}
+              wallet={wallet}
+              honeyClient={honeyClient}
             />
           </HoneySider>
         );

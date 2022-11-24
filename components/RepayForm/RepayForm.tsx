@@ -11,7 +11,7 @@ import { RepayProps } from './types';
 import SidebarScroll from '../SidebarScroll/SidebarScroll';
 import { PublicKey } from '@solana/web3.js';
 import { isNil } from '../../helpers/utils';
-import { hAlign } from 'styles/common.css';
+import { hAlign, extLink } from 'styles/common.css';
 import { questionIcon } from 'styles/icons.css';
 import cs from 'classnames';
 import useToast from 'hooks/useToast';
@@ -203,7 +203,7 @@ const RepayForm = (props: RepayProps) => {
                   The worth of your collateral according to the market’s oracle.
                   Learn more about this market’s{' '}
                   <a
-                    className={styles.extLink}
+                    className={extLink}
                     target="blank"
                     href="https://switchboard.xyz/explorer"
                   >
@@ -235,7 +235,7 @@ const RepayForm = (props: RepayProps) => {
               toolTipLabel={
                 <span>
                   <a
-                    className={styles.extLink}
+                    className={extLink}
                     target="blank"
                     href="https://docs.honey.finance/learn/defi-lending#loan-to-value-ratio"
                   >
@@ -276,7 +276,7 @@ const RepayForm = (props: RepayProps) => {
                 <span>
                   New{' '}
                   <a
-                    className={styles.extLink}
+                    className={extLink}
                     target="blank"
                     href="https://docs.honey.finance/learn/defi-lending#loan-to-value-ratio"
                   >
@@ -314,7 +314,7 @@ const RepayForm = (props: RepayProps) => {
                   Value borrowed from the lending pool, upon which interest
                   accrues.{' '}
                   <a
-                    className={styles.extLink}
+                    className={extLink}
                     target="blank"
                     href="https://docs.honey.finance/learn/defi-lending#debt"
                   >
@@ -338,7 +338,7 @@ const RepayForm = (props: RepayProps) => {
                 <span>
                   Estimated{' '}
                   <a
-                    className={styles.extLink}
+                    className={extLink}
                     target="blank"
                     href="https://docs.honey.finance/learn/defi-lending#debt"
                   >
@@ -368,7 +368,7 @@ const RepayForm = (props: RepayProps) => {
                 <span>
                   Price at which the position (NFT) will be liquidated.{' '}
                   <a
-                    className={styles.extLink}
+                    className={extLink}
                     target="blank"
                     href=" " //TODO: add link to docs
                   >
@@ -390,7 +390,7 @@ const RepayForm = (props: RepayProps) => {
                 <span>
                   Estimated{' '}
                   <a
-                    className={styles.extLink}
+                    className={extLink}
                     target="blank"
                     href=" " //TODO: add link to docs
                   >
