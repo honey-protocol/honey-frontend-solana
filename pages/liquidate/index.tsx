@@ -35,10 +35,10 @@ import { useConnectedWallet } from '@saberhq/use-solana';
 import { LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js';
 import { calcNFT, fetchSolPrice } from 'helpers/loanHelpers/userCollection';
 import {
-  HONEY_PROGRAM_ID,
-  HONEY_GENESIS_MARKET_ID,
   LIQUIDATION_THRESHOLD
 } from 'constants/loan';
+import {  HONEY_PROGRAM_ID,
+  HONEY_GENESIS_MARKET_ID} from '../../helpers/marketHelpers/index';
 import { NATIVE_MINT } from '@solana/spl-token-v-0.1.8';
 import HoneySider from 'components/HoneySider/HoneySider';
 import HoneyContent from 'components/HoneyContent/HoneyContent';

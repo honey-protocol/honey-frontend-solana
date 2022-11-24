@@ -75,9 +75,9 @@ import {
   renderMarketImageByID
 } from '../../helpers/marketHelpers';
 import {
-  HONEY_GENESIS_MARKET_ID,
-  LIQUIDATION_THRESHOLD
-} from '../../constants/loan';
+  HONEY_GENESIS_MARKET_ID
+} from '../../helpers/marketHelpers/index';
+import {LIQUIDATION_THRESHOLD} from '../../constants/loan'
 import { setMarketId } from 'pages/_app';
 import { renderMarket, renderMarketImageByName } from 'helpers/marketHelpers';
 

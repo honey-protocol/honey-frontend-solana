@@ -1,6 +1,5 @@
-import { FC, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import * as styles from './BidsList.css';
-import HoneyButton from 'components/HoneyButton/HoneyButton';
 import SidebarScroll from '../SidebarScroll/SidebarScroll';
 import { CurrentBidCardProps } from '../CurrentBidCard/types';
 import CurrentBidList from '../CurrentBidList/CurrentBidList';

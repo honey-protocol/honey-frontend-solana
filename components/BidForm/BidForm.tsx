@@ -1,11 +1,9 @@
-import { FC, useEffect, useState } from 'react';
-import Image from 'next/image';
+import { useEffect, useState } from 'react';
 import { InfoBlock } from '../InfoBlock/InfoBlock';
 import { InputsBlock } from '../InputsBlock/InputsBlock';
 import { HoneySlider } from '../HoneySlider/HoneySlider';
 import * as styles from './BidForm.css';
 import { formatNumber } from '../../helpers/format';
-import honeyGenesisBee from '/public/images/imagePlaceholder.png';
 import HoneyButton from 'components/HoneyButton/HoneyButton';
 import HexaBoxContainer from '../HexaBoxContainer/HexaBoxContainer';
 import HoneyWarning from '../HoneyWarning/HoneyWarning';
@@ -15,8 +13,7 @@ import { BidFormProps } from './types';
 import { hAlign } from 'styles/common.css';
 import { questionIcon } from 'styles/icons.css';
 import useToast from 'hooks/useToast';
-import { HONEY_GENESIS_MARKET_ID, PESKY_PENGUINS_MARKET_ID, LIFINITY_FLARES_MARKET_ID, BURRITO_BOYZ_MARKET_ID, OG_ATADIANS_MARKET_ID } from 'constants/loan';
-import { renderMarketImageByID, renderMarketImageByName, renderMarketName } from 'helpers/marketHelpers';
+import { renderMarketImageByID, renderMarketName } from 'helpers/marketHelpers';
 
 const {
   format: f,

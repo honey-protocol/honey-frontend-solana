@@ -1,5 +1,6 @@
 import { RoundHalfDown, RoundHalfUp } from 'helpers/utils';
-import { BURRITO_BOYZ_MARKET_ID, HONEY_GENESIS_MARKET_ID, LIFINITY_FLARES_MARKET_ID, MAX_LTV, OG_ATADIANS_MARKET_ID, PESKY_PENGUINS_MARKET_ID, BLOCKSMITH_LABS_MARKET_ID } from '../../constants/loan';
+import { BURRITO_BOYZ_MARKET_ID, HONEY_GENESIS_MARKET_ID, LIFINITY_FLARES_MARKET_ID, OG_ATADIANS_MARKET_ID, PESKY_PENGUINS_MARKET_ID, BLOCKSMITH_LABS_MARKET_ID } from '../marketHelpers/index';
+import {MAX_LTV} from '../../constants/loan';
 import BN from 'bn.js';
 import { BnToDecimal, getOraclePrice } from '../../helpers/loanHelpers/index';
 import {

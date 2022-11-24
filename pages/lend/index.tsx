@@ -47,7 +47,7 @@ import {
 } from '../../helpers/marketHelpers';
 import {
   HONEY_GENESIS_MARKET_ID,
-} from '../../constants/loan';
+} from '../../helpers/marketHelpers/index';
 import { setMarketId } from 'pages/_app';
 import { marketCollections } from '../../constants/borrowLendMarkets';
 import { generateMockHistoryData } from '../../helpers/chartUtils';

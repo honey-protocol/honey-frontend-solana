@@ -4,15 +4,14 @@
  * Whenever a new market is added - please add the values here for each function and the whole app
  * should be updated.
  */
-import Image from 'next/image';
-import {
-  HONEY_GENESIS_MARKET_ID,
-  PESKY_PENGUINS_MARKET_ID,
-  OG_ATADIANS_MARKET_ID,
-  LIFINITY_FLARES_MARKET_ID,
-  BURRITO_BOYZ_MARKET_ID,
-  BLOCKSMITH_LABS_MARKET_ID
-} from 'constants/loan';
+// market IDs
+export const HONEY_PROGRAM_ID = 'hNEYyRsRBVq2La65V1KjvdbTE39w36gwrdjkmcpvysk';
+export const HONEY_GENESIS_MARKET_ID = '6FcJaAzQnuoA6o3sVw1GD6Ba69XuL5jinZpQTzJhd2R3';
+export const PESKY_PENGUINS_MARKET_ID = 'Bw77MGpg189EaATjN67WXcnp3c4544LhKoV4Ftmdg4C';
+export const BURRITO_BOYZ_MARKET_ID = 'F8rZviSSuqgkTsjMeoyrTUSNSqh7yNDCAozJkxm7eujY'
+export const OG_ATADIANS_MARKET_ID = 'Bxk1JQCbVjpeFnjzvH5n9bepnZeHjRADUFwZiVC7L5Gq';
+export const LIFINITY_FLARES_MARKET_ID = 'H2H2pJuccdvpET9A75ajB3GgdYdCUL4T3kiwUMA6DJ7q';
+export const BLOCKSMITH_LABS_MARKET_ID = 'GrKPvcdHVb4cwR5a2CCgCTvdkSqhNDRgSUiUVzXRWLk6';
 // market verified creators
 export const VERIFIED_CREATOR_HONEY_GENESIS_BEE = '6vRx1iVZo3xfrBHdpvuwArL2jucVj9j9nLpd2VUTTGMG';
 export const VERIFIED_CREATOR_PESKY_PENGUINS = 'A6XTVFiwGVsG6b6LsvQTGnV5LH3Pfa3qW3TGz8RjToLp';
@@ -27,6 +26,8 @@ export const OG_ATADIANS_MARKET_NAME = 'OG Atadians';
 export const PESKY_PENGUINS_MARKET_NAME = 'Pesky Penguin';
 export const BURRITO_BOYZ_MARKET_NAME = 'Burrito Boyz';
 export const BLOCKSMITH_LABS_MARKET_NAME = 'Blocksmith Labs';
+// import image from next
+import Image from 'next/image';
 // constants used for the below stated functions
 const HONEY_IMAGE =
   'https://img-cdn.magiceden.dev/rs:fill:400:400:0:0/plain/https://dl.airtable.com/.attachmentThumbnails/6b6c8954aed777a74de52fd70f8751ab/46b325db';

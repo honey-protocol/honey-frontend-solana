@@ -2,7 +2,7 @@ import {
   useConnection,
   useConnectedWallet
 } from '@saberhq/use-solana';
-import { HONEY_PROGRAM_ID } from 'constants/loan';
+import { HONEY_PROGRAM_ID } from 'helpers/marketHelpers/index';
 import { toast } from 'react-toastify';
 import BN from 'bn.js';
 import { Big } from 'big.js';
