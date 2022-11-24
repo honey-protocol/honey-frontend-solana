@@ -1120,16 +1120,23 @@ const Markets: NextPage = () => {
           <HoneyTable
             hasRowsShadow={true}
             tableLayout="fixed"
-            selectedRowsKeys={[
-              tableDataFiltered.find(data => data.id === currentMarketId)
-                ?.key || ''
-            ]}
+            selectedRowsKeys={
+              sidebarMode === BorrowSidebarMode.MARKET
+                ? [
+                    tableDataFiltered.find(data => data.id === currentMarketId)
+                      ?.key || ''
+                  ]
+                : []
+            }
             columns={columns}
             dataSource={tableDataFiltered}
             pagination={false}
             onRow={(record, rowIndex) => {
               return {
-                onClick: event => handleMarketId(record)
+                onClick: event => {
+                  handleMarketId(record);
+                  setSidebarMode(BorrowSidebarMode.MARKET);
+                }
               };
             }}
             onHeaderRow={(data, index) => {
@@ -1208,7 +1215,10 @@ const Markets: NextPage = () => {
             showHeader={false}
             onRow={(record, rowIndex) => {
               return {
-                onClick: event => handleMarketId(record)
+                onClick: event => {
+                  handleMarketId(record);
+                  setSidebarMode(BorrowSidebarMode.MARKET);
+                }
               };
             }}
             className={classNames(style.table, {
