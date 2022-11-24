@@ -1,56 +1,56 @@
-import {
-  HONEY_GENESIS_MARKET_ID,
-  MAX_LTV,
-  PESKY_PENGUINS_MARKET_ID
-} from 'constants/loan';
+import { MAX_LTV } from 'constants/loan';
 import { RoundHalfDown } from 'helpers/utils';
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import NftCard from '../NftCard/NftCard';
 import { NftCardProps } from '../NftCard/types';
 import * as style from './NftList.css';
 import cs from 'classnames';
-import { renderMarketName, renderNftList } from 'helpers/marketHelpers';
-import {
-  HONEY_GENESIS_BEE_MARKET_NAME,
-  OG_ATADIANS_MARKET_NAME,
-  PESKY_PENGUINS_MARKET_NAME,
-  BURRITO_BOYZ_MARKET_NAME,
-  LIFINITY_FLARES_MARKET_NAME
-} from '../../helpers/marketHelpers';
-import HoneyLogoIcon from '/public/images/HoneyLogoIcon.svg';
-import { string } from 'yup';
-import { LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js';
-
+// type definition for Nft list
 type NftListProps = {
   data: NftCardProps[];
   selectNFT: Function
   nftPrice: any;
   selectedNFTMint: string | undefined;
 };
+// type definition for Nft Object 
+type NFTObject = {
+  name: string;
+  image: string;
+  mint: string;
+  creators: [];
+  symbol?: string;
+  tokenId?: string;
+  updateAuthority?: string;
+}
 
 const NftList = (props: NftListProps) => {
+  // get props
   const { data, selectNFT, nftPrice, selectedNFTMint } = props;
-
-  function handleClick(item: any) {
-    selectNFT(item.name, item.image, item.mint);
+  /**
+   * @description runs selectNFT with nft
+   * @params NFT object - see type definition NFTObject
+   * @returns fires off selectNFT with desired values
+  */
+  function handleClick(nft: NFTObject) {
+    selectNFT(nft.name, nft.image, nft.mint, nft.creators);
   }
 
   return (
     <div className={style.nftsListContainer}>
       {data.length > 0 ? (
-        data.map((item, index) => {
+        data.map((nft, index) => {
           return (
             <div
               className={cs(style.listItem, {
-                [style.selectedListItem]: item.mint === selectedNFTMint
+                [style.selectedListItem]: nft.mint === selectedNFTMint
               })}
-              key={item.name}
+              key={nft.name}
             >
               <NftCard
-                onClick={() => handleClick(item)}
-                {...item}
+                onClick={() => handleClick(nft)}
+                {...nft}
                 hasBorder={
-                  index !== data.length - 1 || item.mint === selectedNFTMint
+                  index !== data.length - 1 || nft.mint === selectedNFTMint
                 }
                 text={`◎ ${nftPrice.toFixed(2)} value`}
                 buttonText={RoundHalfDown(nftPrice * MAX_LTV, 4).toString()}

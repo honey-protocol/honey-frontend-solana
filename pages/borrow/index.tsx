@@ -18,7 +18,8 @@ import React, {
   useCallback,
   useEffect,
   useMemo,
-  useState
+  useState,
+  useRef
 } from 'react';
 import { formatNFTName, formatNumber } from '../../helpers/format';
 import Image from 'next/image';
@@ -31,10 +32,10 @@ import HoneyButton from '../../components/HoneyButton/HoneyButton';
 import EmptyStateDetails from 'components/EmptyStateDetails/EmptyStateDetails';
 import { getColumnSortStatus } from '../../helpers/tableUtils';
 import { useConnectedWallet, useSolana } from '@saberhq/use-solana';
-import useFetchNFTByUser from '../../hooks/useNFTV2';
 import { BnToDecimal, ConfigureSDK } from '../../helpers/loanHelpers/index';
 import { LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js';
 import HealthLvl from '../../components/HealthLvl/HealthLvl';
+import useFetchNFTByUser from 'hooks/useNFTV2';
 import BN from 'bn.js';
 import {
   borrowAndRefresh,
@@ -49,7 +50,7 @@ import {
 } from '@honey-finance/sdk';
 import {
   calcNFT,
-  calculateCollectionwideAllowance,
+  fetchAllowanceLtvAndDebt,
   fetchSolPrice,
   getInterestRate,
   populateMarketData,
@@ -71,25 +72,15 @@ import HoneyTableNameCell from '../../components/HoneyTable/HoneyTableNameCell/H
 import { marketCollections, OpenPositions } from 'constants/borrowLendMarkets';
 import HoneyTooltip from '../../components/HoneyTooltip/HoneyTooltip';
 import {
-  HONEY_GENESIS_BEE_MARKET_NAME,
-  LIFINITY_FLARES_MARKET_NAME,
-  OG_ATADIANS_MARKET_NAME,
-  PESKY_PENGUINS_MARKET_NAME,
-  BURRITO_BOYZ_MARKET_NAME,
   handleOpenPositions,
   renderMarketName,
   renderMarketImageByID
 } from '../../helpers/marketHelpers';
 import {
   HONEY_GENESIS_MARKET_ID,
-  PESKY_PENGUINS_MARKET_ID,
-  OG_ATADIANS_MARKET_ID,
-  LIFINITY_FLARES_MARKET_ID,
-  BURRITO_BOYZ_MARKET_ID,
   LIQUIDATION_THRESHOLD
 } from '../../constants/loan';
 import { setMarketId } from 'pages/_app';
-import { render } from 'react-dom';
 import { renderMarket, renderMarketImageByName } from 'helpers/marketHelpers';
 
 /**
@@ -106,9 +97,6 @@ const network = 'mainnet-beta'; // change to dynamic value
 const { format: f, formatPercent: fp, formatSol: fs } = formatNumber;
 
 const Markets: NextPage = () => {
-  const [currentMarketName, setCurrentMarketName] = useState(
-    HONEY_GENESIS_BEE_MARKET_NAME
-  );
   // Sets market ID which is used for fetching market specific data
   // each market currently is a different call and re-renders the page
   const [currentMarketId, setCurrentMarketId] = useState<string>(
@@ -121,27 +109,24 @@ const Markets: NextPage = () => {
   const [sidebarMode, setSidebarMode] = useState<BorrowSidebarMode>(
     BorrowSidebarMode.MARKET
   );
-
   /**
    * @description sets the market ID based on market click
-   * @params Honey table record - contains all info about a table (aka market)
+   * @params Honey table record - contains all info about a table (aka market / collection)
    * @returns sets the market ID which re-renders page state and fetches market specific data
    */
   async function handleMarketId(record: any) {
     const marketData = renderMarket(record.id);
     setCurrentMarketId(marketData!.id);
     setMarketId(marketData!.id);
-    setCurrentMarketName(marketData!.name);
   }
-
   /**
-   * @description calls upon markets which
+   * @description fetches market reserve info | parsed reserves | fetch market (func) from SDK
    * @params none
    * @returns market | market reserve information | parsed reserves |
    */
   const { market, marketReserveInfo, parsedReserves, fetchMarket } = useHoney();
   /**
-   * @description calls upon the honey sdk
+   * @description fetches honey client | honey user | honey reserves | honey market from SDK
    * @params  useConnection func. | useConnectedWallet func. | honeyID | marketID
    * @returns honeyUser | honeyReserves - used for interaction regarding the SDK
    */
@@ -152,8 +137,8 @@ const Markets: NextPage = () => {
     currentMarketId
   );
   /**
-   * @description fetches open positions and the amount regarding loan positions / token account
-   * @params none
+   * @description fetches collateral nft positions | refresh positions (func) from SDK
+   * @params useConnection func. | useConnectedWallet func. | honeyID | marketID
    * @returns collateralNFTPositions | loanPositions | loading | error
    */
   let {
@@ -175,8 +160,8 @@ const Markets: NextPage = () => {
   const [totalMarketDebt, setTotalMarketDebt] = useState(0);
   const [nftPrice, setNftPrice] = useState(0);
   const [calculatedNftPrice, setCalculatedNftPrice] = useState(false);
-  const [marketPositions, setMarketPositions] = useState(0);
-  const [userAvailableNFTs, setUserAvailableNFTs] = useState<Array<NFT>>([]);
+  // const [marketPositions, setMarketPositions] = useState(0);
+  // const [userAvailableNFTs, setUserAvailableNFTs] = useState<Array<NFT>>([]);
   const [userOpenPositions, setUserOpenPositions] = useState<
     Array<OpenPositions>
   >([]);
@@ -214,18 +199,10 @@ const Markets: NextPage = () => {
    * [1] loading state
    * [2] reFetch function which can be called after deposit or withdraw and updates nft list
    */
-  const availableNFTs = useFetchNFTByUser(wallet);
-  const reFetchNFTs = availableNFTs[2];
+  const [NFTs, isLoadingNfts, refetchNfts] = useFetchNFTByUser(wallet);
+
   const [isCreateMarketAreaOnHover, setIsCreateMarketAreaOnHover] =
     useState<boolean>(false);
-
-  const [createHoneyMarket, setCreateHoneyMarket] =
-    useState<HoneyMarket | null>(null);
-
-  // sets the market debt
-  useEffect(() => {
-    if (availableNFTs) setUserAvailableNFTs(availableNFTs[0]);
-  }, [availableNFTs]);
 
   // function for fetching the total market debt
   async function fetchTotalMarketDebt(honeyReserves: any) {
@@ -283,15 +260,15 @@ const Markets: NextPage = () => {
     }
   }, [parsedReserves]);
 
-  // fetches total market positions aka. obligations
-  async function fetchObligations() {
-    let obligations = await honeyMarket.fetchObligations();
-    setMarketPositions(obligations.length);
-  }
-  // if there is a honeyMarket fetch the opbligations
-  useEffect(() => {
-    if (honeyMarket) fetchObligations();
-  }, [honeyMarket]);
+  // // fetches total market positions aka. obligations
+  // async function fetchObligations() {
+  //   let obligations = await honeyMarket.fetchObligations();
+  //   setMarketPositions(obligations.length);
+  // }
+  // // if there is a honeyMarket fetch the opbligations
+  // useEffect(() => {
+  //   if (honeyMarket) fetchObligations();
+  // }, [honeyMarket]);
 
   // calculates nft price
   // TODO: create types for marketReserveInfo && parsedReserves && honeyMarket
@@ -316,14 +293,18 @@ const Markets: NextPage = () => {
     calculateNFTPrice(marketReserveInfo, parsedReserves, honeyMarket);
   }, [marketReserveInfo, parsedReserves, honeyMarket]);
 
-  // calculates user allowance, userdebt, and loanToValue ratio
+  /**
+   * @description fetches allowance | user debt | loan to value
+   * @params nft price | collateral nft positions | honey user | market reserve info
+   * @returns outcome object with allowance | user debt | loan to value
+   */
   async function fetchHelperValues(
     nftPrice: any,
     collateralNFTPositions: any,
     honeyUser: any,
     marketReserveInfo: any
   ) {
-    let outcome = await calculateCollectionwideAllowance(
+    let outcome = await fetchAllowanceLtvAndDebt(
       nftPrice,
       collateralNFTPositions,
       honeyUser,
@@ -423,18 +404,13 @@ const Markets: NextPage = () => {
       });
     }
   }, [
-    totalMarketDeposits,
-    totalMarketDebt,
     nftPrice,
-    userAllowance,
     userDebt,
-    loanToValue,
-    honeyReserves,
-    parsedReserves,
     sdkConfig.saberHqConnection,
     sdkConfig.sdkWallet,
     currentMarketId,
-    userOpenPositions
+    userOpenPositions,
+    processUserPayment
   ]);
 
   const showMobileSidebar = () => {
@@ -496,7 +472,7 @@ const Markets: NextPage = () => {
     );
   };
   const columnsWidth: Array<number | string> = [240, 150, 150, 150, 150];
-
+  // Render func. for desktop
   // @ts-ignore
   const columns: HoneyTableColumnType<MarketTableRow>[] = useMemo(
     () =>
@@ -653,7 +629,7 @@ const Markets: NextPage = () => {
       }),
     [isMyCollectionsFilterEnabled, tableData, searchQuery, windowWidth]
   );
-
+  // Render func. for mobile
   const columnsMobile: ColumnType<MarketTableRow>[] = useMemo(
     () => [
       {
@@ -854,21 +830,22 @@ const Markets: NextPage = () => {
   );
 
   /**
-   * @description executes the deposit NFT func. from SDK
-   * @params mint of the NFT
+   * @description executes Deposit NFT (SDK helper)
+   * @params mint of the NFT | toast | name | verified creator
    * @returns succes | failure
    */
   async function executeDepositNFT(
     mintID: any,
     toast: ToastProps['toast'],
-    name: string
+    name: string,
+    creator: string
   ) {
     try {
       if (!mintID) return;
       toast.processing();
-
+      // loop through collections -> verified creator is used for validation
       marketCollections.map(async collection => {
-        if (name.includes(collection.name)) {
+        if (collection.verifiedCreator === creator) {
           const metadata = await Metadata.findByMint(
             collection.connection,
             mintID
@@ -887,7 +864,7 @@ const Markets: NextPage = () => {
             );
 
             await refreshPositions();
-            reFetchNFTs({});
+            refetchNfts({});
           }
         }
       });
@@ -921,7 +898,7 @@ const Markets: NextPage = () => {
 
       if (tx[0] == 'SUCCESS') {
         await refreshPositions();
-        reFetchNFTs({});
+        refetchNfts({});
 
         toast.success(
           'Withdraw success',
@@ -937,16 +914,14 @@ const Markets: NextPage = () => {
   }
 
   /**
-   * @description
-   * executes the borrow function which allows user to borrow against NFT
-   * base value of NFT is 2 SOL - liquidation trashold is 50%, so max 1 SOL available
+   * @description executes the borrow function which allows user to borrow against NFT
    * @params borrow amount
    * @returns borrowTx
    */
   async function executeBorrow(val: any, toast: ToastProps['toast']) {
     try {
       if (!val) return toast.error('Please provide a value');
-      if (val == 1.6) val = val - 0.01;
+      // if (val == 1.6) val = val - 0.01;
       const borrowTokenMint = new PublicKey(
         'So11111111111111111111111111111111111111112'
       );
@@ -970,6 +945,7 @@ const Markets: NextPage = () => {
           'Borrow success',
           `https://solscan.io/tx/${tx[1][0]}?cluster=${network}`
         );
+        // make sure data is processed - change in state which triggers re-render
         setTimeout(() => {
           processUserPayment == 0
             ? setProcessUserPayment(1)
@@ -1016,7 +992,7 @@ const Markets: NextPage = () => {
           'Repay success',
           `https://solscan.io/tx/${tx[1][0]}?cluster=${network}`
         );
-
+        // make sure data is processed - change in state which triggers re-render
         setTimeout(() => {
           processUserPayment == 0
             ? setProcessUserPayment(1)

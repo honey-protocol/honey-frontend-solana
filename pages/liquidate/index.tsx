@@ -57,14 +57,6 @@ import { ToastProps } from 'hooks/useToast';
 import HoneyTableRow from 'components/HoneyTable/HoneyTableRow/HoneyTableRow';
 import HoneyTableNameCell from 'components/HoneyTable/HoneyTableNameCell/HoneyTableNameCell';
 import LiquidateExpandTableMobile from 'components/LiquidateExpandTable/LiquidateExpandTableMobile';
-import { 
-  HONEY_GENESIS_BEE_MARKET_NAME,
-  LIFINITY_FLARES_MARKET_NAME,
-  OG_ATADIANS_MARKET_NAME,
-  PESKY_PENGUINS_MARKET_NAME,
-  BURRITO_BOYZ_MARKET_NAME,
-  renderMarketImageByID
-} from 'helpers/marketHelpers';
 import { marketCollections } from 'constants/borrowLendMarkets';
 import { populateMarketData } from 'helpers/loanHelpers/userCollection';
 import { setMarketId } from 'pages/_app';
@@ -119,11 +111,7 @@ const Liquidate: NextPage = () => {
     currentMarketId,
   );
 
-  /**
-   * @description declare state
-   * @params none
-   * @returns open positions | bidding data | userbid | user position
-   */
+  // base state 
   const [hasPosition, setHasPosition] = useState(false);
   const [highestBiddingAddress, setHighestBiddingAddress] = useState('');
   const [highestBiddingValue, setHighestBiddingValue] = useState(0);
@@ -132,24 +120,34 @@ const Liquidate: NextPage = () => {
   const [userBalance, setUserBalance] = useState(0);
   const [fetchedSolPrice, setFetchedSolPrice] = useState(0);
   const [isMobileSidebarVisible, setShowMobileSidebar] = useState(false);
-  
   const [positionsObject, setPositionsObject] = useState<Array<NftPosition>>([]);
   const [biddingArray, setBiddingArray] = useState({});
-  
+  /**
+   * @description 
+   * @params  
+   * @returns 
+   */
   const showMobileSidebar = () => {
     setShowMobileSidebar(true);
     document.body.classList.add('disable-scroll');
   };
-
+  /**
+   * @description 
+   * @params  
+   * @returns 
+   */
   const hideMobileSidebar = () => {
     setShowMobileSidebar(false);
     document.body.classList.remove('disable-scroll');
   };
-
   // create stringyfied instance of walletPK
   let stringyfiedWalletPK = sdkConfig.sdkWallet?.publicKey.toString();
   let walletPK = sdkConfig.sdkWallet?.publicKey;
-
+  /**
+   * @description
+   * @params
+   * @returns
+  */
   async function fetchWalletBalance(key: PublicKey) {
     try {
       const userBalance =
@@ -159,7 +157,11 @@ const Liquidate: NextPage = () => {
       console.log('Error', error);
     }
   }
-
+  /**
+   * @description
+   * @params
+   * @returns
+  */
   useEffect(() => {
     if (walletPK) {
       fetchWalletBalance(walletPK);
@@ -197,8 +199,11 @@ const Liquidate: NextPage = () => {
     }
     }
   }
-
-  // calculates nft price
+  /**
+   * @description
+   * @params
+   * @returns
+  */
   async function calculateNFTPrice() {
     if (marketReserveInfo && parsedReserves && honeyMarket) {
       let nftPrice = await calcNFT(
@@ -210,18 +215,30 @@ const Liquidate: NextPage = () => {
       setNftPrice(Number(nftPrice));
     }
   }
-
+  /**
+   * @description
+   * @params
+   * @returns
+  */
   async function fetchSolValue(reserves: any, connection: any) {
     const slPrice = await fetchSolPrice(reserves, connection);
     setFetchedSolPrice(slPrice);
   }
-
+  /**
+   * @description
+   * @params
+   * @returns
+  */
   useEffect(() => {
     if (parsedReserves && sdkConfig.saberHqConnection) {
       fetchSolValue(parsedReserves, sdkConfig.saberHqConnection);
     }
   }, [parsedReserves]);
-
+  /**
+   * @description
+   * @params
+   * @returns
+  */
   useEffect(() => {
     calculateNFTPrice();
   }, [marketReserveInfo, parsedReserves, positionsObject]);
@@ -307,11 +324,19 @@ const Liquidate: NextPage = () => {
       return toast.error('Bid failed');
     }
   }
-
+  /**
+   * @description
+   * @params
+   * @returns
+  */
   function handleRevokeBid(type: string, toast: ToastProps['toast'], mID: string) {
     fetchLiquidatorClient(type, undefined, toast, mID);
   }
-
+  /**
+   * @description
+   * @params
+   * @returns
+  */
   function handleIncreaseBid(
     type: string,
     userBid: number,
@@ -320,7 +345,11 @@ const Liquidate: NextPage = () => {
   ) {
     fetchLiquidatorClient(type, userBid!, toast, mID);
   }
-
+  /**
+   * @description
+   * @params
+   * @returns
+  */
   function handlePlaceBid(
     type: string,
     userBid: number,
@@ -329,7 +358,11 @@ const Liquidate: NextPage = () => {
   ) {
     fetchLiquidatorClient(type, userBid!, toast, mID);
   }
-
+  /**
+   * @description
+   * @params
+   * @returns
+  */
   useEffect(() => {
       if (status.positions) {
         setPositionsObject(status.positions);
@@ -354,15 +387,13 @@ const Liquidate: NextPage = () => {
   const [expandedRowKeys, setExpandedRowKeys] = useState<readonly Key[]>([]);
   const [isMyBidsFilterEnabled, setIsMyBidsFilterEnabled] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
-  const [currentMarketName, setCurrentMarketName] = useState(HONEY_GENESIS_BEE_MARKET_NAME);
 
-  // PUT YOUR DATA SOURCE HERE
-  // MOCK DATA FOR NOW
+  /**
+   * @description
+   * @params
+   * @returns
+  */
   useEffect(() => {
-    // if (!wallet) {
-    //   setTableData(liquidationCollections);
-    // }
-    
     if (sdkConfig.saberHqConnection && marketReserveInfo) {
       function getData() {
         return Promise.all(
@@ -398,11 +429,19 @@ const Liquidate: NextPage = () => {
     positionsObject,
     marketReserveInfo,
   ]);
-
+  /**
+   * @description 
+   * @params  
+   * @returns 
+   */
   const handleToggle = (checked: boolean) => {
     setIsMyBidsFilterEnabled(checked);
   };
-
+  /**
+   * @description 
+   * @params  
+   * @returns 
+   */
   const onSearch = (searchTerm: string): MarketTableRow[] => {
     if (!searchTerm) {
       return [...tableData];
@@ -412,7 +451,6 @@ const Liquidate: NextPage = () => {
       return r.test(row.name);
     });
   };
-
   /**
    * @description sets the market ID based on market click
    * @params Honey table record - contains all info about a table (aka market)
@@ -422,10 +460,13 @@ const Liquidate: NextPage = () => {
     const marketData = renderMarket(record.id);
     setCurrentMarketId(marketData!.id);
     setMarketId(marketData!.id);
-    setCurrentMarketName(marketData!.name);
     handleBiddingState(status.bids)
   }
-
+  /**
+   * @description 
+   * @params  
+   * @returns 
+   */
   const debouncedSearch = useCallback(
     debounce(searchQuery => {
       setTableDataFiltered(onSearch(searchQuery));
@@ -445,7 +486,11 @@ const Liquidate: NextPage = () => {
   useEffect(() => {
     debouncedSearch(searchQuery);
   }, [tableData]);
-
+  /**
+   * @description 
+   * @params  
+   * @returns 
+   */
   const SearchForm = () => {
     return (
       <SearchInput
@@ -455,9 +500,8 @@ const Liquidate: NextPage = () => {
       />
     );
   };
-
   const columnsWidth: Array<number | string> = [200, 100, 150, 150, 100, 70];
-
+  // Render Desktop Configuration
   const columns: ColumnType<MarketTableRow>[] = useMemo(
     () => [
       {
@@ -480,6 +524,7 @@ const Liquidate: NextPage = () => {
           );
         }
       },
+      // TODO: Once risk is fixed comment back in
       // {
       //   width: columnsWidth[1],
       //   title: ({ sortColumns }) => {
@@ -601,7 +646,7 @@ const Liquidate: NextPage = () => {
     ],
     [isMyBidsFilterEnabled, tableData, searchQuery]
   );
-
+  // Render Mobile Configuration
   const columnsMobile: ColumnType<LiquidateTableRow>[] = useMemo(
     () => [
       {
@@ -700,17 +745,13 @@ const Liquidate: NextPage = () => {
                 setExpandedRowKeys(expanded ? [row.key] : []),
               expandedRowKeys,
               expandedRowRender: record => {
-                // if (wallet === null) {
-                //   return;
-                // } else {
-                  return (
-                    <div className={style.expandSection}>
-                      <div className={style.dashedDivider} />
-                      <LiquidateExpandTable data={record.openPositions} currentMarketId={currentMarketId} />
-                    </div>
-                  );
-                }
-              // }
+                return (
+                  <div className={style.expandSection}>
+                    <div className={style.dashedDivider} />
+                    <LiquidateExpandTable data={record.openPositions} currentMarketId={currentMarketId} />
+                  </div>
+                );
+              }
             }}
           />
         </div>
