@@ -14,16 +14,21 @@ import SectionTitle from '../../SectionTitle/SectionTitle';
 const MIN_LUQUIDATION_VALUE = 15;
 
 interface SettingMarketStepProps {
+  marketConfigOpts: any;
   setMarketConfigOpts: any;
 }
 
 export const SettingMarketStep = (props: SettingMarketStepProps) => {
-  const { setMarketConfigOpts } = props;
-  const [liquidationFee, setLiquidationFee] = useState<ValueType | undefined>();
-  const [adminFee, setAdminFee] = useState<ValueType | undefined>();
+  const { setMarketConfigOpts, marketConfigOpts } = props;
+  const [liquidationFee, setLiquidationFee] = useState<ValueType | undefined>(
+    marketConfigOpts.liquidationFee ?? 0
+  );
+  const [adminFee, setAdminFee] = useState<ValueType | undefined>(
+    marketConfigOpts.adminFee ?? 0
+  );
   const [maxLTV, setMaxLTV] = useState<number>(0);
   const [liquidationThreshold, setLiquidationThreshold] = useState<number>(
-    MIN_LUQUIDATION_VALUE
+    marketConfigOpts.liquidationThreshold ?? MIN_LUQUIDATION_VALUE
   );
   const maxLiquidationFee = 10;
   const maxAdminFee = 50;

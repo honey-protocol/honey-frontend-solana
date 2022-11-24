@@ -8,7 +8,7 @@ import { MarketStepsProps } from '../../HoneySteps/type';
 import SectionTitle from '../../SectionTitle/SectionTitle';
 import { AboutMarketStep } from '../AboutMarketStep/AboutMarketStep';
 import { SettingMarketStep } from '../SettingMarketStep/SettingMarketStep';
-import { RiskModelStep } from '../RiskModelStep/RiskModelStep';
+import { RiskModelStep, RiskModelTab } from '../RiskModelStep/RiskModelStep';
 import { Keypair, PublicKey } from '@solana/web3.js';
 import { HoneyMarket } from '@honey-finance/sdk';
 import { buildReserveConfig } from './reserveConfigs';
@@ -29,10 +29,10 @@ const CreateMarketTab: FC<CreateMarketTabProps> = (
   const [createdMarket, setCreatedMarket] = useState<HoneyMarket | null>();
   const [collectionName, setCollectionName] = useState<string>('');
   const [collectionUrl, setCollectionUrl] = useState<string>('');
-  const [nftCollectionCreator, setNftCollectionCreator] = useState();
-  const [nftOracle, setNftOracle] = useState<PublicKey>();
+  const [nftCollectionCreator, setNftCollectionCreator] = useState<string>();
+  const [nftOracle, setNftOracle] = useState<string>();
   const [marketConfigOpts, setMarketConfigOpts] = useState<any>({});
-  const [riskModel, setRiskModel] = useState<PublicKey>();
+  const [riskModel, setRiskModel] = useState<RiskModelTab>();
 
   const createMarket = async () => {
     const owner = wallet?.publicKey!;
@@ -47,8 +47,8 @@ const CreateMarketTab: FC<CreateMarketTabProps> = (
       owner,
       quoteCurrencyName,
       quoteCurrencyMint,
-      nftCollectionCreator,
-      nftOraclePrice: nftOracle
+      nftCollectionCreator: new PublicKey(nftCollectionCreator ?? ''),
+      nftOraclePrice: new PublicKey(nftOracle ?? '')
     });
     // we need to tell the user somehow what their market id is, because if something gets messed up
     // between this step and another they will need to know what market id to use to fix it
@@ -96,23 +96,35 @@ const CreateMarketTab: FC<CreateMarketTabProps> = (
       step: 1,
       content: (
         <AboutMarketStep
+          collectionCreator={nftCollectionCreator}
           setNftCollectionCreator={setNftCollectionCreator}
+          collectionName={collectionName}
           setCollectionName={setCollectionName}
+          collectionUrl={collectionUrl}
           setCollectionUrl={setCollectionUrl}
         />
       )
     },
     {
       step: 2,
-      content: <AddOracleStep setOracle={setNftOracle} />
+      content: (
+        <AddOracleStep oracle={nftOracle || ''} setOracle={setNftOracle} />
+      )
     },
     {
       step: 3,
-      content: <SettingMarketStep setMarketConfigOpts={setMarketConfigOpts} />
+      content: (
+        <SettingMarketStep
+          marketConfigOpts={marketConfigOpts}
+          setMarketConfigOpts={setMarketConfigOpts}
+        />
+      )
     },
     {
       step: 4,
-      content: <RiskModelStep setRiskModel={setRiskModel} />
+      content: (
+        <RiskModelStep riskModel={riskModel} setRiskModel={setRiskModel} />
+      )
     },
     {
       step: 5,

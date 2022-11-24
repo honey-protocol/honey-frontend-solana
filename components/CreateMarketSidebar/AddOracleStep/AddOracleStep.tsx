@@ -3,23 +3,15 @@ import HoneyTooltip from '../../HoneyTooltip/HoneyTooltip';
 import SectionTitle from '../../SectionTitle/SectionTitle';
 import { HoneyInputWithLabel } from '../../HoneyInputWithLabel/HoneyInputWithLabel';
 import * as styles from './AddOracleStep.css';
-import { PublicKey } from '@solana/web3.js';
 import HoneyButton from 'components/HoneyButton/HoneyButton';
-import HoneyWarning from 'components/HoneyWarning/HoneyWarning';
 
 interface AddOracleStepProps {
   setOracle: any;
+  oracle: string;
 }
 
 export const AddOracleStep = (props: AddOracleStepProps) => {
-  const { setOracle } = props;
-
-  const onChange = (value: string) => {
-    try {
-      const pk = new PublicKey(value);
-      setOracle(pk);
-    } catch (e) {}
-  };
+  const { setOracle, oracle } = props;
 
   const openSwitchboardApp = () => {
     window.open(
@@ -49,8 +41,9 @@ export const AddOracleStep = (props: AddOracleStepProps) => {
       <HoneyInputWithLabel
         label="Switchboard oracle"
         placeholder="Switchboard oracle public key"
-        onChange={e => onChange(e.target.value)}
+        onChange={e => setOracle(e.target.value)}
         allowClear
+        value={oracle}
       />
     </>
   );
