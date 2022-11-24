@@ -99,6 +99,7 @@ import { renderMarket, renderMarketImageByName } from 'helpers/marketHelpers';
  */
 import CreateMarketSidebar from '../../components/CreateMarketSidebar/CreateMarketSidebar';
 import { SizeMe } from 'react-sizeme';
+import { featureFlags } from 'helpers/featureFlags';
 // import { network } from 'pages/_app';
 
 const network = 'mainnet-beta'; // change to dynamic value
@@ -462,7 +463,7 @@ const Markets: NextPage = () => {
     });
   };
 
-  const isCreateMarketVisible = true;
+  const isCreateMarketVisible = featureFlags.isMarketCreationEnabled;
 
   const debouncedSearch = useCallback(
     debounce(searchQuery => {
@@ -507,43 +508,7 @@ const Markets: NextPage = () => {
           key: 'name',
           children: [
             {
-              title: () => {
-                return (
-                  <div
-                    className={style.createMarketLauncherCell}
-                    style={{ width: launchAreaWidth }}
-                    onClick={() =>
-                      setSidebarMode(BorrowSidebarMode.CREATE_MARKET)
-                    }
-                  >
-                    <div className={style.createMarket}>
-                      <div className={style.nameCell}>
-                        <div className={style.logoWrapper}>
-                          <div className={style.createMarketLogo}>
-                            <HexaBoxContainer borderColor="gray">
-                              <div className={style.createMarketIconStyle} />
-                            </HexaBoxContainer>
-                          </div>
-                        </div>
-                        <div className={style.createMarketTitle}>
-                          Do you want to create a new one?
-                        </div>
-                      </div>
-                      <div className={style.buttonsCell}>
-                        <HoneyButton variant="text">
-                          Create{' '}
-                          <div
-                            className={c(style.arrowRightIcon, {
-                              [style.createMarketHover]:
-                                isCreateMarketAreaOnHover
-                            })}
-                          />
-                        </HoneyButton>
-                      </div>
-                    </div>
-                  </div>
-                );
-              },
+              // title: '',
               dataIndex: 'name',
               width: columnsWidth[0],
               key: 'name',
@@ -1140,7 +1105,7 @@ const Markets: NextPage = () => {
               };
             }}
             onHeaderRow={(data, index) => {
-              if (index && !isCreateMarketVisible) {
+              if (index) {
                 return {
                   hidden: true
                 };
@@ -1282,6 +1247,38 @@ const Markets: NextPage = () => {
               />
             </div>
           ))}
+        {featureFlags.isMarketCreationEnabled && (
+          <div
+            className={style.createMarketLauncherCell}
+            style={{ width: launchAreaWidth }}
+            onClick={() => setSidebarMode(BorrowSidebarMode.CREATE_MARKET)}
+          >
+            <div className={style.createMarket}>
+              <div className={style.nameCell}>
+                <div className={style.logoWrapper}>
+                  <div className={style.createMarketLogo}>
+                    <HexaBoxContainer borderColor="gray">
+                      <div className={style.createMarketIconStyle} />
+                    </HexaBoxContainer>
+                  </div>
+                </div>
+                <div className={style.createMarketTitle}>
+                  Do you want to create a new one?
+                </div>
+              </div>
+              <div className={style.buttonsCell}>
+                <HoneyButton variant="text">
+                  Create{' '}
+                  <div
+                    className={c(style.arrowRightIcon, {
+                      [style.createMarketHover]: isCreateMarketAreaOnHover
+                    })}
+                  />
+                </HoneyButton>
+              </div>
+            </div>
+          </div>
+        )}
       </HoneyContent>
     </LayoutRedesign>
   );

@@ -28,5 +28,8 @@ export const featureFlags = {
   isP2PPageEnabled: isFeatureFlagEnabled('NEXT_PUBLIC_IS_P2P_PAGE_ENABLED'),
   isDialectNotificationsEnabled: isFeatureFlagEnabled(
     'NEXT_PUBLIC_IS_DIALECT_NOTIFICATIONS_ENABLED'
+  ),
+  isMarketCreationEnabled: isFeatureFlagEnabled(
+    `NEXT_PUBLIC_IS_MARKET_CREATION_ENABLED`
   )
 } as const;
