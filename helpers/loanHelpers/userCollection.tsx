@@ -229,37 +229,36 @@ export async function calcNFT(
  * @params utilization ratio
  * @returns interest rate for market
  */
-export async function getInterestRate(utilizationRate: number, marketId: string) {
+ export async function getInterestRate(utilizationRate: number, marketId: string) {
   let interestRate = 0;
 
   try {
-    if (marketId === LIFINITY_FLARES_MARKET_ID || marketId === OG_ATADIANS_MARKET_ID) {
-      if (utilizationRate < OPTIMAL_RATIO_ONE) {
-        interestRate = ((BORROW_RATE_ONE - DISCOUNTED_BORROW_RATE) / ( OPTIMAL_RATIO_ONE - 0 )) * utilizationRate + (-1*((BORROW_RATE_ONE - DISCOUNTED_BORROW_RATE) / ( OPTIMAL_RATIO_ONE - 0  )) * 0 + DISCOUNTED_BORROW_RATE )
-        return (interestRate * 100);
-      } else if (utilizationRate > OPTIMAL_RATIO_ONE) {
-        if (utilizationRate < OPTIMAL_RATIO_TWO) {
-          interestRate = ((BORROW_RATE_TWO - BORROW_RATE_ONE) / ( OPTIMAL_RATIO_TWO - OPTIMAL_RATIO_ONE )) * utilizationRate + (-1*((BORROW_RATE_TWO - BORROW_RATE_ONE) / ( OPTIMAL_RATIO_TWO - OPTIMAL_RATIO_ONE )) * OPTIMAL_RATIO_ONE + BORROW_RATE_ONE )
-          return (interestRate * 100);
-        }
+    if (utilizationRate < OPTIMAL_RATIO_ONE) {
+      interestRate =
+        BASE_BORROW_RATE +
+        (utilizationRate / OPTIMAL_RATIO_ONE) *
+          (BORROW_RATE_ONE - BASE_BORROW_RATE);
+      console.log('@@-- interest rate 1', interestRate * 100);
+      return interestRate * 100;
+    } else if (utilizationRate >= OPTIMAL_RATIO_ONE) {
+      if (utilizationRate < OPTIMAL_RATIO_TWO) {
+        interestRate =
+          BASE_BORROW_RATE +
+          BORROW_RATE_ONE +
+          ((utilizationRate - OPTIMAL_RATIO_ONE) / (1 - OPTIMAL_RATIO_ONE)) *
+            (BORROW_RATE_TWO - BASE_BORROW_RATE);
+        console.log('@@-- interest rate 2', interestRate * 100);
+        return interestRate * 100;
       } else {
-        interestRate = ((BORROW_RATE_THREE - BORROW_RATE_TWO) / ( MAX_UTILISATION_RATIO - OPTIMAL_RATIO_TWO)) * utilizationRate + (-1*((BORROW_RATE_THREE - BORROW_RATE_TWO) / ( MAX_UTILISATION_RATIO - OPTIMAL_RATIO_TWO )) * OPTIMAL_RATIO_TWO + BORROW_RATE_TWO)
-        return (interestRate * 100);
+        interestRate =
+          BASE_BORROW_RATE +
+          BORROW_RATE_TWO +
+          ((utilizationRate - OPTIMAL_RATIO_TWO) / (1 - OPTIMAL_RATIO_TWO)) *
+            (BORROW_RATE_THREE - BASE_BORROW_RATE);
+        console.log('@@-- interest rate 3', interestRate * 100);
+        return interestRate * 100;
       }
-    } else {
-      if (utilizationRate < OPTIMAL_RATIO_ONE) {
-        interestRate = ((BORROW_RATE_ONE - BASE_BORROW_RATE) / ( OPTIMAL_RATIO_ONE - 0 )) * utilizationRate + (-1*((BORROW_RATE_ONE - BASE_BORROW_RATE) / ( OPTIMAL_RATIO_ONE - 0  )) * 0 + BASE_BORROW_RATE )
-        return (interestRate * 100);
-      } else if (utilizationRate > OPTIMAL_RATIO_ONE) {
-        if (utilizationRate < OPTIMAL_RATIO_TWO) {
-          interestRate = ((BORROW_RATE_TWO - BORROW_RATE_ONE) / ( OPTIMAL_RATIO_TWO - OPTIMAL_RATIO_ONE )) * utilizationRate + (-1*((BORROW_RATE_TWO - BORROW_RATE_ONE) / ( OPTIMAL_RATIO_TWO - OPTIMAL_RATIO_ONE )) * OPTIMAL_RATIO_ONE + BORROW_RATE_ONE )
-          return (interestRate * 100);
-        }
-      } else {
-        interestRate = ((BORROW_RATE_THREE - BORROW_RATE_TWO) / ( MAX_UTILISATION_RATIO - OPTIMAL_RATIO_TWO)) * utilizationRate + (-1*((BORROW_RATE_THREE - BORROW_RATE_TWO) / ( MAX_UTILISATION_RATIO - OPTIMAL_RATIO_TWO )) * OPTIMAL_RATIO_TWO + BORROW_RATE_TWO)
-        return (interestRate * 100);
-      }
-    } 
+    }
   } catch (error) {
       throw error;
   }
