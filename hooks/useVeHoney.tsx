@@ -93,7 +93,7 @@ export const useProposalWithKey = (pubkey: PublicKey) => {
 
   const proposal = useMemo(
     () => proposals?.find(p => p.pubkey.equals(pubkey)),
-    [proposals]
+    [proposals, pubkey]
   );
 
   const earliestActivationTime = useMemo(

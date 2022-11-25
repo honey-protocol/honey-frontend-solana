@@ -233,7 +233,7 @@ const Governance: NextPage = () => {
         }
       }
     ],
-    [isDraftFilterEnabled]
+    [govToken]
   );
 
   const columnsMobile: ColumnType<GovernanceTableRow>[] = useMemo(
@@ -289,7 +289,7 @@ const Governance: NextPage = () => {
         }
       }
     ],
-    [tableData, isDraftFilterEnabled]
+    [govToken]
   );
 
   const renderSidebar = () => {

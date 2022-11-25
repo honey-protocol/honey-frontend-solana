@@ -93,7 +93,6 @@ const ProposalHistory: React.FC<Props> = ({ proposalInfo }: Props) => {
   );
   const events = proposalInfo && tx ? extractEvents(proposalInfo.data, tx) : [];
 
-  console.log({ events });
   return (
     <div>
       <SectionTitle title="History" />

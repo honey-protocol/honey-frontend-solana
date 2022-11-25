@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import { Transaction } from '@solana/web3.js';
 import { extractErrorMessage } from '@saberhq/sail';
 
@@ -50,26 +50,28 @@ const CreateProposalTab = (props: { onCancel: Function }) => {
 
   // const ctx = { locker: lockerData?.publicKey, governor, minter };
 
-  const doProposeTransaction = async () => {
-    try {
+  const handleCreateProposal = useCallback(async () => {
+    if (titleValue && descriptionValue) {
       toast.processing();
-      // invariant(tribecaMut);
-      // const gov = new GovernorWrapper(tribecaMut, governor!);
-      const { proposal: proposalKey } = await createProposal(
-        tx?.instructions ?? []
-      );
-      await createProposalMeta(
-        proposalKey,
-        titleValue,
-        discussionLinkValue
-          ? `${descriptionValue}\n\n[View Discussion](${discussionLinkValue})`
-          : descriptionValue
-      );
-      toast.success('New proposal created');
-    } catch (error) {
-      toast.error('Error creating new proposal');
+      try {
+        const { proposal: proposalKey } = await createProposal(
+          tx?.instructions ?? []
+        );
+        await createProposalMeta(
+          proposalKey,
+          titleValue,
+          discussionLinkValue
+            ? `${descriptionValue}\n\n[View Discussion](${discussionLinkValue})`
+            : descriptionValue
+        );
+        toast.success('New proposal created');
+      } catch (_) {
+        toast.error('Error creating new proposal');
+      }
+    } else {
+      toast.error('Title and Descroption fields must be filled');
     }
-  };
+  }, [tx, titleValue, descriptionValue, discussionLinkValue, toast]);
 
   // const actor = smartWallet;
   // const currentAction = ACTIONS.find(action => action.title === actionType);
@@ -91,7 +93,7 @@ const CreateProposalTab = (props: { onCancel: Function }) => {
                 variant="primary"
                 disabled={isCreateProposalButtonDisabled()}
                 block
-                onClick={doProposeTransaction}
+                onClick={handleCreateProposal}
               >
                 Create proposal
               </HoneyButton>
@@ -134,9 +136,9 @@ const CreateProposalTab = (props: { onCancel: Function }) => {
           />
         </div>
 
-        {/*  <SectionTitle title="Proposed Action" />
+        <SectionTitle title="Proposed Action" />
 
-        <div className={cs(styles.row, styles.mb12)}>
+        {/* <div className={cs(styles.row, styles.mb12)}>
           <CustomDropdown
             onChange={value => {
               setActionType(value as ActionType);

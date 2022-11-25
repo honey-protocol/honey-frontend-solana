@@ -53,18 +53,21 @@ const VoteForm: FC<VoteFormProps> = (props: VoteFormProps) => {
   const [voteType, setVoteType] = useState<VoteType>('vote_for');
   const [hasVoted, setHasVoted] = useState<boolean>(!!vote?.data.side);
 
-  const side: VoteSide =
-    vote?.data.side ||
-    (voteType === 'vote_for' ? VoteSide.For : VoteSide.Against);
+  const side = useMemo(
+    () =>
+      vote?.data.side ||
+      (voteType === 'vote_for' ? VoteSide.For : VoteSide.Against),
+    [vote]
+  );
 
-  useEffect(() => {
-    if (!earliestActivationTime) return;
-    const remainingTime = earliestActivationTime.getTime() - Date.now();
-    const timeout = setTimeout(() => {
-      void reload?.();
-    }, remainingTime + 1);
-    return () => clearTimeout(timeout);
-  }, [earliestActivationTime]);
+  // useEffect(() => {
+  //   if (!earliestActivationTime) return;
+  //   const remainingTime = earliestActivationTime.getTime() - Date.now();
+  //   const timeout = setTimeout(() => {
+  //     void reload?.();
+  //   }, remainingTime + 1);
+  //   return () => clearTimeout(timeout);
+  // }, [earliestActivationTime]);
 
   const handleActivateProposal = async () => {
     try {
@@ -290,7 +293,7 @@ const VoteForm: FC<VoteFormProps> = (props: VoteFormProps) => {
             )} */}
         </div>
         <div className={styles.divider} />
-        <ProposalHistory proposalInfo={proposalInfo} />
+        {/* <ProposalHistory proposalInfo={proposalInfo} /> */}
       </div>
     </SidebarScroll>
   );

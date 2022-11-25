@@ -8,20 +8,15 @@ import { formatNumber } from '../../helpers/format';
 import HoneyButton from 'components/HoneyButton/HoneyButton';
 import HexaBoxContainer from 'components/HexaBoxContainer/HexaBoxContainer';
 import NftList from '../NftList/NftList';
-import { NftCardProps } from '../NftCard/types';
-import { BURRITO_BOYZ_MARKET_ID, HONEY_GENESIS_MARKET_ID, LIFINITY_FLARES_MARKET_ID, MAX_LTV, OG_ATADIANS_MARKET_ID, PESKY_PENGUINS_MARKET_ID } from '../../constants/loan';
-import { usdcAmount } from '../HoneyButton/HoneyButton.css';
+import { MAX_LTV } from '../../constants/loan';
 import { BorrowProps } from './types';
 import { toastResponse } from 'helpers/loanHelpers';
 import SidebarScroll from '../SidebarScroll/SidebarScroll';
-import imagePlaceholder from 'public/images/imagePlaceholder.png';
 import * as stylesRepay from '../RepayForm/RepayForm.css';
-import { hAlign } from 'styles/common.css';
+import { hAlign, extLink } from 'styles/common.css';
 import { questionIcon } from 'styles/icons.css';
 import useToast from 'hooks/useToast';
-import { useSolBalance } from 'hooks/useSolBalance';
 import cs from 'classnames';
-import Nft from 'pages/farm/[name]';
 import { BORROW_FEE, LIQUIDATION_FEE } from 'constants/borrowLendMarkets';
 import { renderMarketImageByID, renderNftList } from 'helpers/marketHelpers';
 
@@ -31,6 +26,7 @@ interface NFT {
   name: string;
   img: string;
   mint: string;
+  creator: string;
 }
 
 const BorrowForm = (props: BorrowProps) => {
@@ -48,7 +44,7 @@ const BorrowForm = (props: BorrowProps) => {
     calculatedInterestRate,
     currentMarketId,
   } = props;
-
+  // state declarations
   const [valueUSD, setValueUSD] = useState<number>(0);
   const [valueSOL, setValueSOL] = useState<number>(0);
   const [isNftSelected, setIsNftSelected] = useState(false);
@@ -56,19 +52,16 @@ const BorrowForm = (props: BorrowProps) => {
   const [hasOpenPosition, setHasOpenPosition] = useState(false);
   const [sliderValue, setSliderValue] = useState(0);
   const { toast, ToastComponent } = useToast();
-  const SOLBalance = useSolBalance();
-
+  // constants && calculations
   const borrowedValue = userDebt;
   const maxValue = userAllowance;
   const solPrice = fetchedSolPrice;
   const liquidationThreshold = LIQUIDATION_FEE; // TODO: change where relevant, currently set to 65% on mainnet
   const borrowFee = BORROW_FEE; // TODO: 1,5% later but 0% for now
-
   const newAdditionalDebt = valueSOL * (1 + borrowFee);
   const newTotalDebt = newAdditionalDebt
     ? userDebt + newAdditionalDebt
     : userDebt;
-
   const liquidationPrice = userDebt / liquidationThreshold;
   const liqPercent = ((nftPrice - liquidationPrice) / nftPrice) * 100;
   const newLiquidationPrice = newTotalDebt / liquidationThreshold;
@@ -80,14 +73,14 @@ const BorrowForm = (props: BorrowProps) => {
   const isBorrowButtonDisabled = () => {
     return userAllowance == 0 ? true : false;
   };
-
+  // change of input - render calculated values
   const handleSliderChange = (value: number) => {
     if (userAllowance == 0) return;
     setSliderValue(value);
     setValueUSD(value * solPrice);
     setValueSOL(value);
   };
-
+  // change of input - render calculated values
   const handleUsdInputChange = (usdValue: number | undefined) => {
     if (userAllowance == 0) return;
     if (!usdValue) {
@@ -100,7 +93,7 @@ const BorrowForm = (props: BorrowProps) => {
     setValueSOL(usdValue / solPrice);
     setSliderValue(usdValue / solPrice);
   };
-
+  // change of input - render calculated values
   const handleSolInputChange = (solValue: number | undefined) => {
     if (userAllowance == 0) return;
     if (!solValue) {
@@ -116,11 +109,11 @@ const BorrowForm = (props: BorrowProps) => {
   };
 
   // set selection state and render (or not) detail nft
-  const selectNFT = (name: string, img: string, mint?: any) => {
+  const selectNFT = (name: string, img: string, mint: any, creators: any) => {
     if (hasOpenPosition == false) {
-      setSelectedNft({ name, img, mint });
+      setSelectedNft({ name, img, mint, creator: creators[0].address });
     } else {
-      setSelectedNft({ name, img, mint });
+      setSelectedNft({ name, img, mint, creator: creators[0].address });
       setIsNftSelected(true);
     }
   };
@@ -128,8 +121,8 @@ const BorrowForm = (props: BorrowProps) => {
   // if user has an open position, we need to be able to click on the position and borrow against it
   useEffect(() => {
     if (openPositions?.length) {
-      const { name, image, mint } = openPositions[0];
-      setSelectedNft({ name, img: image, mint });
+      const { name, image, mint, verifiedCreator } = openPositions[0];
+      setSelectedNft({ name, img: image, mint, creator: verifiedCreator });
       setIsNftSelected(true);
       setHasOpenPosition(true);
     } else if (openPositions.length == 0) {
@@ -137,25 +130,25 @@ const BorrowForm = (props: BorrowProps) => {
       setHasOpenPosition(false);
     }
   }, [openPositions, availableNFTs]);
-
+  // handles the deposit NFT function - which is depending on selectedNft
   const handleDepositNFT = async () => {
     if (selectedNft && selectedNft.mint.length < 1)
       return toastResponse('ERROR', 'Please select an NFT', 'ERROR');
     if (selectedNft && selectedNft.mint.length > 1)
-      executeDepositNFT(selectedNft.mint, toast, selectedNft.name);
+      executeDepositNFT(selectedNft.mint, toast, selectedNft.name, selectedNft.creator);
     handleSliderChange(0);
   };
-
+  // executes the borrow function
   const handleBorrow = async () => {
     executeBorrow(valueSOL, toast);
     handleSliderChange(0);
   };
-
+  // fetches the market specific available nfts
   const availableNFTsInSelectedMarket = renderNftList(
     currentMarketId,
     availableNFTs
   );
-
+  // renders nft list is no nft is selected
   const renderContent = () => {
     if (isNftSelected == false) {
       return (
@@ -201,7 +194,7 @@ const BorrowForm = (props: BorrowProps) => {
                   The worth of your collateral according to the market’s oracle.
                   Learn more about this market’s{' '}
                   <a
-                    className={styles.extLink}
+                    className={extLink}
                     target="blank"
                     href="https://switchboard.xyz/explorer"
                   >
@@ -233,7 +226,7 @@ const BorrowForm = (props: BorrowProps) => {
               toolTipLabel={
                 <span>
                   <a
-                    className={styles.extLink}
+                    className={extLink}
                     target="blank"
                     href="https://docs.honey.finance/learn/defi-lending#loan-to-value-ratio"
                   >
@@ -271,7 +264,7 @@ const BorrowForm = (props: BorrowProps) => {
                 <span>
                   New{' '}
                   <a
-                    className={styles.extLink}
+                    className={extLink}
                     target="blank"
                     href="https://docs.honey.finance/learn/defi-lending#loan-to-value-ratio"
                   >
@@ -308,7 +301,7 @@ const BorrowForm = (props: BorrowProps) => {
                   Value borrowed from the lending pool, upon which interest
                   accrues.{' '}
                   <a
-                    className={styles.extLink}
+                    className={extLink}
                     target="blank"
                     href="https://docs.honey.finance/learn/defi-lending#debt"
                   >
@@ -330,7 +323,7 @@ const BorrowForm = (props: BorrowProps) => {
                 <span>
                   Estimated{' '}
                   <a
-                    className={styles.extLink}
+                    className={extLink}
                     target="blank"
                     href="https://docs.honey.finance/learn/defi-lending#debt"
                   >
@@ -362,7 +355,7 @@ const BorrowForm = (props: BorrowProps) => {
                 <span>
                   Price at which the position (NFT) will be liquidated.{' '}
                   <a
-                    className={styles.extLink}
+                    className={extLink}
                     target="blank"
                     href=" " //TODO: add link to docs
                   >
@@ -384,7 +377,7 @@ const BorrowForm = (props: BorrowProps) => {
                 <span>
                   Estimated{' '}
                   <a
-                    className={styles.extLink}
+                    className={extLink}
                     target="blank"
                     href=" " //TODO: add link to docs
                   >
@@ -413,7 +406,7 @@ const BorrowForm = (props: BorrowProps) => {
                   <span>
                     Variable interest rate, based on Utilization rate.{' '}
                     <a
-                      className={styles.extLink}
+                      className={extLink}
                       target="blank"
                       href=" " //TODO: add link to docs
                     >
@@ -437,7 +430,7 @@ const BorrowForm = (props: BorrowProps) => {
                 toolTipLabel={
                   <span>
                     Borrow Fee is a{' '}
-                    <a className={styles.extLink} target="blank" href=" ">
+                    <a className={extLink} target="blank" href=" ">
                       protocol fee{' '}
                     </a>
                     that is charged upon borrowing. For now it is set at 0,00%.

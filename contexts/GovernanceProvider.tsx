@@ -153,10 +153,9 @@ export const GovernanceProvider: React.FC<React.ReactNode> = ({ children }) => {
         }
       });
       const proposalMetas = await Promise.all(fetchProposalMetasPromise);
-
       const proposals: Proposal[] = proposalDatas.map(p => {
         const meta = proposalMetas.find(
-          meta => meta && meta.proposal === p.publicKey
+          meta => meta && meta.proposal.equals(p.publicKey)
         );
         return {
           pubkey: p.publicKey,

@@ -2,7 +2,7 @@
 
 ### <span style="color: rgb(235, 85, 69); font-weight: 300; font-style: italic;">This is a <a href="https://nextjs.org/" target="blank">Next.JS</a> project bootstrapped with <a href="https://github.com/vercel/next.js/tree/canary/packages/create-next-app" target="blank">create-react-app</a> 
 
-## <span style="color: rgb(235, 85, 69); font-weight: 900">General overview</span>
+## <span style="color: rgb(235, 85, 69); font-weight: 900">General overview</span>.  
 
 Hello and welcome 👋🏼, we are happy to see that you arrived at Honey Labs - **The Liquidity Solution** builder for NFTs. This repo contains a Front-end interface built with NextJS and makes use of the following tools:
 
@@ -11,12 +11,13 @@ Hello and welcome 👋🏼, we are happy to see that you arrived at Honey Labs -
 - <a href="https://github.com/GokiProtocol/walletkit" target="blank">Goki-Wallet:</a> for connecting to Solana wallets
 - <a href="https://degen-xyz.vercel.app/" target="blank">Degen-UI:</a> for styling accopanied by <a href="https://vanilla-extract.style/documentation/setup/" target="blank">Vanilla-Extract</a> for custom CSS classes
 
-
 ##  <span style="color: rgb(235, 85, 69); font-weight: 900">Getting Started</span>
 The Honey Finance Ecosystem consists of several components this repo represents the Front-end.
 
 <b>***Note @Heron
 - what is the min. required node version in order to run the project?******</b> 
+
+
 
 In order to run this project you need to create a 
 ```bash

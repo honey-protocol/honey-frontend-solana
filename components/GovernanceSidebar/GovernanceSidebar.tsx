@@ -7,7 +7,7 @@ import HoneyTabs, { HoneyTabItem } from '../HoneyTabs/HoneyTabs';
 import EmptyStateDetails from '../EmptyStateDetails/EmptyStateDetails';
 import VoteForm from './VoteForm/VoteForm';
 import GovernanceDescription from './GovernanceDescription/GovernanceDescription';
-import { useProposalWithKey } from '../../hooks/useVeHoney';
+import { useProposalWithKey } from 'hooks/useVeHoney';
 
 import * as styles from './GovernanceSidebar.css';
 import { mobileReturnButton } from '../../styles/common.css';
@@ -83,7 +83,7 @@ const GovernanceSidebar = ({
             )}
             {activeTab === 'description' && (
               <GovernanceDescription
-                description={proposalInfo?.meta?.descriptionLink || ''}
+                proposalInfo={proposalInfo}
                 setActiveTab={setActiveTab}
               />
             )}
