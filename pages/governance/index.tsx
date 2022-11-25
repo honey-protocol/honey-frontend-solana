@@ -80,10 +80,11 @@ const Governance: NextPage = () => {
       proposals
         ?.filter(p => {
           const proposalState = p.status;
-          return isDraftFilterEnabled
-            ? true
-            : proposalState !== ProposalState.Draft &&
-                proposalState !== ProposalState.Canceled;
+          return (
+            isDraftFilterEnabled ||
+            (proposalState !== ProposalState.Draft &&
+              proposalState !== ProposalState.Canceled)
+          );
         })
         .map(p => ({
           pubkey: p.pubkey,
@@ -94,7 +95,7 @@ const Governance: NextPage = () => {
           votesRequired: 0,
           status: getStatus(p.status)
         })) ?? [],
-    [proposals]
+    [proposals, isDraftFilterEnabled]
   );
 
   const DraftToggle = () => (
@@ -337,87 +338,85 @@ const Governance: NextPage = () => {
   };
 
   return (
-    <GovernanceProvider>
-      <LayoutRedesign>
-        <HoneyContent>
-          <GovernanceStats onGetVeHoneyClick={handleGetVeHoneyClick} />
-        </HoneyContent>
-        <HoneyContent
-          sidebar={
-            <HoneySider isMobileSidebarVisible={isMobileSidebarVisible}>
-              {renderSidebar()}
-            </HoneySider>
-          }
-        >
-          <div className={hideTablet}>
-            <HoneyTable
-              tableLayout={'fixed'}
-              pagination={false}
-              hasRowsShadow={true}
-              rowKey={'id'}
-              columns={columns}
-              dataSource={tableData}
-              onRow={record => {
-                return {
-                  onClick: event => handleRowClick(event, record)
-                };
-              }}
-              rowClassName={getRowClassName}
-              selectedRowsKeys={[selectedProposalKey.toBase58()]}
-            />
+    <LayoutRedesign>
+      <HoneyContent>
+        <GovernanceStats onGetVeHoneyClick={handleGetVeHoneyClick} />
+      </HoneyContent>
+      <HoneyContent
+        sidebar={
+          <HoneySider isMobileSidebarVisible={isMobileSidebarVisible}>
+            {renderSidebar()}
+          </HoneySider>
+        }
+      >
+        <div className={hideTablet}>
+          <HoneyTable
+            tableLayout={'fixed'}
+            pagination={false}
+            hasRowsShadow={true}
+            rowKey={'id'}
+            columns={columns}
+            dataSource={tableData}
+            onRow={record => {
+              return {
+                onClick: event => handleRowClick(event, record)
+              };
+            }}
+            rowClassName={getRowClassName}
+            selectedRowsKeys={[selectedProposalKey.toBase58()]}
+          />
+        </div>
+
+        <div className={showTablet}>
+          <div className={style.mobileTableTitle}>
+            <div>{MainTitleTable()}</div>
+
+            {DraftToggle()}
           </div>
 
-          <div className={showTablet}>
-            <div className={style.mobileTableTitle}>
-              <div>{MainTitleTable()}</div>
-
-              {DraftToggle()}
-            </div>
-
-            <div className={style.mobileTableHeader}>
-              <div className={style.tableCell}>Voted For</div>
-              <div className={style.tableCell}>Against</div>
-              <div className={style.tableCell}>Status</div>
-            </div>
-
-            <HoneyTable
-              hasRowsShadow={true}
-              tableLayout="fixed"
-              columns={columnsMobile}
-              dataSource={tableData}
-              pagination={false}
-              showHeader={false}
-              className={c(table, style.governanceTableMobile)}
-              onRow={(record, rowIndex) => {
-                return {
-                  onClick: event => handleRowClick(event, record)
-                };
-              }}
-            />
+          <div className={style.mobileTableHeader}>
+            <div className={style.tableCell}>Voted For</div>
+            <div className={style.tableCell}>Against</div>
+            <div className={style.tableCell}>Status</div>
           </div>
 
-          <div className={style.create}>
-            <div className={style.nameCell}>
-              <div className={style.logoWrapper}>
-                <div className={style.collectionLogo}>
-                  <HexaBoxContainer borderColor="gray">
-                    <div className={style.lampIconStyle} />
-                  </HexaBoxContainer>
-                </div>
-              </div>
-              <div className={style.collectionNameCreate}>
-                Do you want to suggest a new one?
+          <HoneyTable
+            hasRowsShadow={true}
+            tableLayout="fixed"
+            columns={columnsMobile}
+            dataSource={tableData}
+            pagination={false}
+            showHeader={false}
+            className={c(table, style.governanceTableMobile)}
+            onRow={(record, rowIndex) => {
+              return {
+                onClick: event => handleRowClick(event, record)
+              };
+            }}
+          />
+        </div>
+
+        <div className={style.create}>
+          <div className={style.nameCell}>
+            <div className={style.logoWrapper}>
+              <div className={style.collectionLogo}>
+                <HexaBoxContainer borderColor="gray">
+                  <div className={style.lampIconStyle} />
+                </HexaBoxContainer>
               </div>
             </div>
-            <div className={style.buttonsCell}>
-              <HoneyButton variant="text" onClick={handleCreateProposal}>
-                Create <div className={style.arrowIcon} />
-              </HoneyButton>
+            <div className={style.collectionNameCreate}>
+              Do you want to suggest a new one?
             </div>
           </div>
-        </HoneyContent>
-      </LayoutRedesign>
-    </GovernanceProvider>
+          <div className={style.buttonsCell}>
+            <HoneyButton variant="text" onClick={handleCreateProposal}>
+              Create <div className={style.arrowIcon} />
+            </HoneyButton>
+          </div>
+        </div>
+      </HoneyContent>
+    </LayoutRedesign>
   );
 };
 

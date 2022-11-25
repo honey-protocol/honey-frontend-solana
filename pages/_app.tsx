@@ -20,6 +20,7 @@ import Script from 'next/script';
 
 import { AccountsProvider } from 'contexts/AccountsProvider';
 import { DialectProviders } from 'contexts/DialectProvider';
+import { GovernanceProvider } from 'contexts/GovernanceProvider';
 import { onSailError } from 'helpers/error';
 import { HONEY_GENESIS_MARKET_ID, HONEY_PROGRAM_ID } from 'constants/loan';
 
@@ -165,8 +166,13 @@ function MyApp({ Component, pageProps }: AppProps) {
                   <HoneyJupiterProvider>
                     <DialectProviders>
                       <OnChainProvider>
-                        <Component {...pageProps} />
-                        <ToastContainer theme="dark" position="bottom-right" />
+                        <GovernanceProvider>
+                          <Component {...pageProps} />
+                          <ToastContainer
+                            theme="dark"
+                            position="bottom-right"
+                          />
+                        </GovernanceProvider>
                       </OnChainProvider>
                     </DialectProviders>
                   </HoneyJupiterProvider>
