@@ -391,6 +391,7 @@ const Markets: NextPage = () => {
 
             if (currentMarketId === collection.id)
               setActiveInterestRate(collection.rate);
+              console.log('@@@@ the collection', collection);
             return collection;
           })
         );
