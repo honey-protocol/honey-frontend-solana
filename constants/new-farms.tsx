@@ -217,5 +217,21 @@ export const newFarmCollections: TGFarm[] = [
     rewardTokenName: 'PB',
     farmAddress: 'GxrqNkFfSC5ry8ZzamsChtJyeRCiohQinAf3KnHm2XEt',
     bankAddress: 'DVQGr4DNksZ8M9eZnBRm9i5A1sDXziSemw32E4piBpAV'
+  },
+  {
+    id: 'HOBO', 
+    imageUrl:
+      'https://daliw65ixtl5mildqjheqgwbnocfhay4x4aeq4i67yzu7a7eupsa.arweave.net/GBaLe6i819YhY4JOSBrBa4RTgxy_AEhxHv4zT4Pko-Q?ext=png',
+    name: 'HoboFrenz',
+    totalStaked: '???',
+    totalNumber: 6969,
+    allocation: '62',
+    totalStakedByUser: '-',
+    eventStartDate: '2022-11-25T14:50Z',
+    eventDuration: '∞',
+    updateAuthority: 'HoBogU6LsquyvUVmd6McVqv2WCVLQtTt74GFFhWP7Wq5',
+    rewardTokenName: 'PENNY',
+    farmAddress: 'BRLvosEMtto9RBqrPNqf4snrP9xWPSTYamQbLjbJEgaY',
+    bankAddress: '53VPtEWdq8hKrrgC2kRcmgFgdw6cymGdrDwEqP7oB4G3'
   }
 ];
