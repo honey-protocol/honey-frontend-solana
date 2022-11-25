@@ -235,7 +235,7 @@ export async function getInterestRate(utilizationRate: number, marketId: string)
           (BORROW_RATE_ONE - BASE_BORROW_RATE);
       console.log('@@-- interest rate 1', interestRate * 100);
       return interestRate * 100;
-    } else if (utilizationRate > OPTIMAL_RATIO_ONE) {
+    } else if (utilizationRate >= OPTIMAL_RATIO_ONE) {
       if (utilizationRate < OPTIMAL_RATIO_TWO) {
         interestRate =
           BASE_BORROW_RATE +
