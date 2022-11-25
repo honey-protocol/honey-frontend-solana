@@ -397,8 +397,10 @@ const Lend: NextPage = () => {
               false
             );
             collection.rate =
-              ((await getInterestRate(collection.utilizationRate, collection.id)) || 0) *
-              collection.utilizationRate;
+              ((await getInterestRate(
+                collection.utilizationRate,
+                collection.id
+              )) || 0) * collection.utilizationRate;
             collection.stats = getPositionData();
 
             if (currentMarketId == collection.id) {
@@ -532,7 +534,9 @@ const Lend: NextPage = () => {
         dataIndex: 'rate',
         sorter: (a: any = 0, b: any = 0) => a.rate - b.rate,
         render: (rate: number, market: any) => {
-          return <div className={style.rateCell}>{fp(rate)}</div>;
+          return (
+            <div className={c(style.rateCell, style.lendRate)}>{fp(rate)}</div>
+          );
         }
       },
       {
