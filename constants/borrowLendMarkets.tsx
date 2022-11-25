@@ -1,6 +1,5 @@
 import { Connection, PublicKey } from '@solana/web3.js';
 import { MarketTableRow } from 'types/markets';
-
 // type for open positions
 export type OpenPositions = {
   image: string;

@@ -1,25 +1,36 @@
 import * as styles from './SettingMarketStep.css';
 import HoneyTooltip from '../../HoneyTooltip/HoneyTooltip';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import HoneyFormattedNumericInput from '../../HoneyFormattedNumericInput/HoneyFormattedInput';
 import { ValueType } from 'rc-input-number/lib/utils/MiniDecimal';
 import { CreateMarketSlider } from '../CreateMarketSlider/CreateMarketSlider';
 import { formatNumber } from '../../../helpers/format';
 import { isNil } from '../../../helpers/utils';
 import { vars } from '../../../styles/theme.css';
+import { extLink } from 'styles/common.css';
 import c from 'classnames';
 import SectionTitle from '../../SectionTitle/SectionTitle';
 
 const MIN_LUQUIDATION_VALUE = 15;
 
-export const SettingMarketStep = () => {
-  const [liquidationFee, setLiquidationFee] = useState<ValueType | undefined>();
-  const [adminFee, setAdminFee] = useState<ValueType | undefined>();
+interface SettingMarketStepProps {
+  marketConfigOpts: any;
+  setMarketConfigOpts: any;
+}
+
+export const SettingMarketStep = (props: SettingMarketStepProps) => {
+  const { setMarketConfigOpts, marketConfigOpts } = props;
+  const [liquidationFee, setLiquidationFee] = useState<ValueType | undefined>(
+    marketConfigOpts.liquidationFee ?? 0
+  );
+  const [adminFee, setAdminFee] = useState<ValueType | undefined>(
+    marketConfigOpts.adminFee ?? 0
+  );
   const [maxLTV, setMaxLTV] = useState<number>(0);
   const [liquidationThreshold, setLiquidationThreshold] = useState<number>(
-    MIN_LUQUIDATION_VALUE
+    marketConfigOpts.liquidationThreshold ?? MIN_LUQUIDATION_VALUE
   );
-  const maxLiquidationFee = 100;
+  const maxLiquidationFee = 10;
   const maxAdminFee = 50;
 
   const handleLiquidationFeeChange = (value: ValueType | null) => {
@@ -45,6 +56,15 @@ export const SettingMarketStep = () => {
       }
     }
   };
+
+  useEffect(() => {
+    setMarketConfigOpts({
+      liquidationFee: liquidationFee,
+      adminFee: adminFee,
+      maxLTV: maxLTV,
+      liquidationThreshold: liquidationThreshold
+    });
+  }, [liquidationFee, adminFee, maxLTV, liquidationThreshold]);
 
   const defaultInputFormatted = (value: ValueType | undefined) => {
     // TODO: pass decimals as props if needed
@@ -93,7 +113,7 @@ export const SettingMarketStep = () => {
     );
   };
 
-  const isLiquidationFeeRisky = Number(liquidationFee) >= maxLiquidationFee;
+  const isLiquidationFeeRisky = Number(liquidationFee) > maxLiquidationFee;
 
   const isAdminFeeRisky = Number(adminFee) >= maxAdminFee;
 
@@ -122,7 +142,6 @@ export const SettingMarketStep = () => {
             onChange={handleLiquidationFeeChange}
             formatter={defaultInputFormatted}
             bordered
-            addonAfter={liquidationFeeInputButtonsRender()}
           />
         </div>
         <div
@@ -133,7 +152,7 @@ export const SettingMarketStep = () => {
               : { color: vars.colors.black }
           }
         >
-          Up to 100 %
+          Up to 10 %
         </div>
       </div>
       <div className={styles.adminFee}>
@@ -158,7 +177,6 @@ export const SettingMarketStep = () => {
             onChange={handleAdminFeeChange}
             formatter={defaultInputFormatted}
             bordered
-            addonAfter={adminFeeInputButtonsRender()}
           />
         </div>
         <div
@@ -171,22 +189,6 @@ export const SettingMarketStep = () => {
         >
           Up to 50 %
         </div>
-      </div>
-      <div className={styles.maximumLtv}>
-        <div className={styles.maximumLtvTitle}>
-          <SectionTitle
-            title="Maximum LTV"
-            tooltip={
-              <HoneyTooltip tooltipIcon placement="top" title={'Mock'} />
-            }
-          />
-        </div>
-        <CreateMarketSlider
-          currentValue={maxLTV}
-          onChange={setMaxLTV}
-          minValue={10}
-          maxValue={90}
-        />
       </div>
       <div className={styles.liquidationThreshold}>
         <div className={styles.liquidationThresholdTitle}>
@@ -204,7 +206,6 @@ export const SettingMarketStep = () => {
           dangerValue={75}
           minValue={MIN_LUQUIDATION_VALUE}
           maxValue={95}
-          // totalValue={95}
         />
       </div>
     </div>

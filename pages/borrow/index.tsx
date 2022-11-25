@@ -40,7 +40,9 @@ import BN from 'bn.js';
 import {
   borrowAndRefresh,
   depositNFT,
+  HoneyMarket,
   repayAndRefresh,
+  ReserveConfig,
   useBorrowPositions,
   useHoney,
   useMarket,
@@ -89,6 +91,8 @@ import { renderMarket, renderMarketImageByName } from 'helpers/marketHelpers';
 import CreateMarketSidebar from '../../components/CreateMarketSidebar/CreateMarketSidebar';
 // TODO: change to dynamic value
 const network = 'mainnet-beta'; 
+import { featureFlags } from 'helpers/featureFlags';
+// import { network } from 'pages/_app';
 const { format: f, formatPercent: fp, formatSol: fs } = formatNumber;
 
 const Markets: NextPage = () => {
@@ -350,7 +354,10 @@ const Markets: NextPage = () => {
     }
   }, [collateralNFTPositions, currentMarketId]);
   // function is setup to handle an array for all markets and return based on specific market by verified creator
-  async function handlePositions(verifiedCreator: string, currentOpenPositions: any) {
+  async function handlePositions(
+    verifiedCreator: string,
+    currentOpenPositions: any
+  ) {
     return await handleOpenPositions(verifiedCreator, currentOpenPositions);
   }
   // calculation of health percentage 
@@ -372,10 +379,18 @@ const Markets: NextPage = () => {
               false
             );
 
-            collection.positions = await handlePositions(collection.verifiedCreator, userOpenPositions);
-            collection.rate = (await getInterestRate(collection.utilizationRate, collection.id)) || 0;
-            
-            if (currentMarketId === collection.id) setActiveInterestRate(collection.rate);
+            collection.positions = await handlePositions(
+              collection.verifiedCreator,
+              userOpenPositions
+            );
+            collection.rate =
+              (await getInterestRate(
+                collection.utilizationRate,
+                collection.id
+              )) || 0;
+
+            if (currentMarketId === collection.id)
+              setActiveInterestRate(collection.rate);
             return collection;
           })
         );
@@ -422,7 +437,7 @@ const Markets: NextPage = () => {
     });
   };
 
-  const isCreateMarketVisible = false;
+  const isCreateMarketVisible = featureFlags.isMarketCreationEnabled;
 
   const debouncedSearch = useCallback(
     debounce(searchQuery => {
@@ -467,43 +482,7 @@ const Markets: NextPage = () => {
           key: 'name',
           children: [
             {
-              title: () => {
-                return (
-                  <div
-                    className={style.createMarketLauncherCell}
-                    style={{ width: launchAreaWidth }}
-                    onClick={() =>
-                      setSidebarMode(BorrowSidebarMode.CREATE_MARKET)
-                    }
-                  >
-                    <div className={style.createMarket}>
-                      <div className={style.nameCell}>
-                        <div className={style.logoWrapper}>
-                          <div className={style.createMarketLogo}>
-                            <HexaBoxContainer borderColor="gray">
-                              <div className={style.createMarketIconStyle} />
-                            </HexaBoxContainer>
-                          </div>
-                        </div>
-                        <div className={style.createMarketTitle}>
-                          Do you want to create a new one?
-                        </div>
-                      </div>
-                      <div className={style.buttonsCell}>
-                        <HoneyButton variant="text">
-                          Create{' '}
-                          <div
-                            className={c(style.arrowRightIcon, {
-                              [style.createMarketHover]:
-                                isCreateMarketAreaOnHover
-                            })}
-                          />
-                        </HoneyButton>
-                      </div>
-                    </div>
-                  </div>
-                );
-              },
+              // title: '',
               dataIndex: 'name',
               width: columnsWidth[0],
               key: 'name',
@@ -1056,6 +1035,8 @@ const Markets: NextPage = () => {
               onCancel={() => {
                 setSidebarMode(BorrowSidebarMode.MARKET);
               }}
+              wallet={wallet}
+              honeyClient={honeyClient}
             />
           </HoneySider>
         );
@@ -1078,20 +1059,27 @@ const Markets: NextPage = () => {
           <HoneyTable
             hasRowsShadow={true}
             tableLayout="fixed"
-            selectedRowsKeys={[
-              tableDataFiltered.find(data => data.id === currentMarketId)
-                ?.key || ''
-            ]}
+            selectedRowsKeys={
+              sidebarMode === BorrowSidebarMode.MARKET
+                ? [
+                    tableDataFiltered.find(data => data.id === currentMarketId)
+                      ?.key || ''
+                  ]
+                : []
+            }
             columns={columns}
             dataSource={tableDataFiltered}
             pagination={false}
             onRow={(record, rowIndex) => {
               return {
-                onClick: event => handleMarketId(record)
+                onClick: event => {
+                  handleMarketId(record);
+                  setSidebarMode(BorrowSidebarMode.MARKET);
+                }
               };
             }}
             onHeaderRow={(data, index) => {
-              if (index && !isCreateMarketVisible) {
+              if (index) {
                 return {
                   hidden: true
                 };
@@ -1166,7 +1154,10 @@ const Markets: NextPage = () => {
             showHeader={false}
             onRow={(record, rowIndex) => {
               return {
-                onClick: event => handleMarketId(record)
+                onClick: event => {
+                  handleMarketId(record);
+                  setSidebarMode(BorrowSidebarMode.MARKET);
+                }
               };
             }}
             className={classNames(style.table, {
@@ -1230,6 +1221,38 @@ const Markets: NextPage = () => {
               />
             </div>
           ))}
+        {featureFlags.isMarketCreationEnabled && (
+          <div
+            className={style.createMarketLauncherCell}
+            style={{ width: launchAreaWidth }}
+            onClick={() => setSidebarMode(BorrowSidebarMode.CREATE_MARKET)}
+          >
+            <div className={style.createMarket}>
+              <div className={style.nameCell}>
+                <div className={style.logoWrapper}>
+                  <div className={style.createMarketLogo}>
+                    <HexaBoxContainer borderColor="gray">
+                      <div className={style.createMarketIconStyle} />
+                    </HexaBoxContainer>
+                  </div>
+                </div>
+                <div className={style.createMarketTitle}>
+                  Do you want to create a new one?
+                </div>
+              </div>
+              <div className={style.buttonsCell}>
+                <HoneyButton variant="text">
+                  Create{' '}
+                  <div
+                    className={c(style.arrowRightIcon, {
+                      [style.createMarketHover]: isCreateMarketAreaOnHover
+                    })}
+                  />
+                </HoneyButton>
+              </div>
+            </div>
+          </div>
+        )}
       </HoneyContent>
     </LayoutRedesign>
   );
