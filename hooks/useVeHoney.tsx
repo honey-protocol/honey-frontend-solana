@@ -1,11 +1,7 @@
 import { useState, useEffect, useCallback, useMemo, useContext } from 'react';
 import { PublicKey } from '@solana/web3.js';
 import { TokenAmount } from '@saberhq/token-utils';
-import {
-  VoteData,
-  VoteSide,
-  ProposalInstruction
-} from '@tribecahq/tribeca-sdk';
+import { VoteSide, ProposalInstruction } from '@tribecahq/tribeca-sdk';
 import { BN } from '@project-serum/anchor';
 
 import { GovernanceContext } from 'contexts/GovernanceProvider';
@@ -116,12 +112,12 @@ export const useProposalWithKey = (pubkey: PublicKey) => {
 
 export interface Vote {
   pubkey: PublicKey;
-  data: VoteData;
+  weight?: TokenAmount;
   side: VoteSide;
 }
 
 export const useVote = (proposal: PublicKey) => {
-  const { governorWrapper } = useGovernance();
+  const { governorWrapper, govToken } = useGovernance();
 
   const [vote, setVote] = useState<Vote>();
 
@@ -135,7 +131,7 @@ export const useVote = (proposal: PublicKey) => {
         const vote = await governorWrapper.program.account.vote.fetch(voteKey);
         setVote({
           pubkey: voteKey,
-          data: vote,
+          weight: govToken ? new TokenAmount(govToken, vote.weight) : undefined,
           side: vote.side as VoteSide
         });
       } else {
@@ -390,7 +386,10 @@ export const useLocker = () => {
 
   const isActivatiable = useMemo(() => {
     if (minActivationThreshold && votingPower) {
-      return votingPower.greaterThan(minActivationThreshold);
+      return (
+        votingPower.greaterThan(minActivationThreshold) ||
+        votingPower.equalTo(minActivationThreshold)
+      );
     }
     return false;
   }, [votingPower, minActivationThreshold]);

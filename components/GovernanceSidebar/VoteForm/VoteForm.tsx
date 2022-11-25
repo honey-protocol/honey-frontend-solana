@@ -1,6 +1,5 @@
-import React, { FC, useEffect, useMemo, useState } from 'react';
+import React, { FC, useCallback, useMemo, useState } from 'react';
 import cs from 'classnames';
-import invariant from 'tiny-invariant';
 import { noop } from 'lodash';
 import { sleep } from '@saberhq/token-utils';
 import {
@@ -13,7 +12,6 @@ import { VoteFormProps } from './types';
 import ProposalVote, { VoteType } from './Proposals/ProposalVote/ProposalVote';
 import ProposalQueue from './Proposals/ProposalQueue/ProposalQueue';
 import ProposalActivate from './Proposals/ProposalActivate/ProposalActivate';
-import ProposalHistory from './Proposals/ProposalHistory/ProposalHistory';
 import SectionTitle from 'components/SectionTitle/SectionTitle';
 
 import { InfoBlock } from 'components/InfoBlock/InfoBlock';
@@ -21,12 +19,7 @@ import HoneyButton from 'components/HoneyButton/HoneyButton';
 import SidebarScroll from 'components/SidebarScroll/SidebarScroll';
 import HoneyWarning from 'components/HoneyWarning/HoneyWarning';
 import useToast from 'hooks/useToast';
-import {
-  useLocker,
-  useProposalWithKey,
-  useVote,
-  useGovernance
-} from 'hooks/useVeHoney';
+import { useLocker, useProposalWithKey, useVote } from 'hooks/useVeHoney';
 import { formatNumber } from 'helpers/format';
 
 import { questionIcon } from 'styles/icons.css';
@@ -37,9 +30,7 @@ const { formatShortName: fsn } = formatNumber;
 const VoteForm: FC<VoteFormProps> = (props: VoteFormProps) => {
   const { proposalInfo, setSidebarMode, onCancel } = props;
 
-  const { reload } = useGovernance();
   const {
-    escrow,
     votingPower,
     minActivationThreshold,
     isActivatiable,
@@ -51,13 +42,12 @@ const VoteForm: FC<VoteFormProps> = (props: VoteFormProps) => {
   const { toast, ToastComponent } = useToast();
 
   const [voteType, setVoteType] = useState<VoteType>('vote_for');
-  const [hasVoted, setHasVoted] = useState<boolean>(!!vote?.data.side);
+  const [hasVoted, setHasVoted] = useState<boolean>(!!vote?.side);
 
   const side = useMemo(
     () =>
-      vote?.data.side ||
-      (voteType === 'vote_for' ? VoteSide.For : VoteSide.Against),
-    [vote]
+      vote?.side || (voteType === 'vote_for' ? VoteSide.For : VoteSide.Against),
+    [vote, voteType]
   );
 
   // useEffect(() => {
@@ -69,14 +59,12 @@ const VoteForm: FC<VoteFormProps> = (props: VoteFormProps) => {
   //   return () => clearTimeout(timeout);
   // }, [earliestActivationTime]);
 
-  const handleActivateProposal = async () => {
+  const handleActivateProposal = useCallback(async () => {
     try {
       if (!proposalInfo) return;
       toast.processing();
-      invariant(escrow);
       await activateProposal(proposalInfo.pubkey);
       await sleep(1_000);
-      await reload?.();
       noop();
       toast.success('Successfully activated proposal');
     } catch (error) {
@@ -85,23 +73,20 @@ const VoteForm: FC<VoteFormProps> = (props: VoteFormProps) => {
     } finally {
       toast.clear();
     }
-  };
+  }, [proposalInfo, toast]);
 
   // FOR VOTING
-  const handleVote = async () => {
+  const handleVote = useCallback(async () => {
     try {
       toast.processing();
       if (!proposalInfo) return toast.error('No proposal info');
-
-      invariant(escrow && side);
       await castVote(proposalInfo.pubkey, side);
       setHasVoted(true);
       toast.success('Vote Success');
     } catch (error) {
-      console.log(error);
       toast.error('Vote error');
     }
-  };
+  }, [toast, proposalInfo, side]);
 
   // TODO: FOR QUEUING
   const handleQueueProposal = async () => {
@@ -131,17 +116,17 @@ const VoteForm: FC<VoteFormProps> = (props: VoteFormProps) => {
     return minActivationThreshold.asNumber - votingPower.asNumber;
   }, [minActivationThreshold, votingPower]);
 
-  const getBtnDetails = (): {
+  const buttonDetails: {
     title: string;
     onClick: Function;
     disabled?: boolean;
-  } => {
+  } = useMemo(() => {
     if (!proposalInfo) return { title: '', onClick: () => {} };
     switch (proposalInfo.status) {
       case ProposalState.Draft:
         return {
           title: isActivatiable ? 'Activate' : 'Not enough vehoney',
-          onClick: isActivatiable ? activateProposal : () => {},
+          onClick: isActivatiable ? handleActivateProposal : () => {},
           disabled: Boolean(
             (earliestActivationTime && earliestActivationTime > new Date()) ||
               !isActivatiable
@@ -170,7 +155,15 @@ const VoteForm: FC<VoteFormProps> = (props: VoteFormProps) => {
           disabled: true
         };
     }
-  };
+  }, [
+    proposalInfo,
+    isActivatiable,
+    earliestActivationTime,
+    handleActivateProposal,
+    handleExecuteProposal,
+    handleQueueProposal,
+    handleVote
+  ]);
 
   return (
     <SidebarScroll
@@ -198,11 +191,11 @@ const VoteForm: FC<VoteFormProps> = (props: VoteFormProps) => {
               <div className={styles.bigCol}>
                 <HoneyButton
                   variant="primary"
-                  disabled={getBtnDetails().disabled}
+                  disabled={buttonDetails.disabled}
                   block
-                  onClick={() => getBtnDetails().onClick()}
+                  onClick={() => buttonDetails.onClick()}
                 >
-                  {getBtnDetails().title}
+                  {buttonDetails.title}
                 </HoneyButton>
               </div>
             </div>
@@ -278,10 +271,9 @@ const VoteForm: FC<VoteFormProps> = (props: VoteFormProps) => {
           )}
           {proposalInfo.status === ProposalState.Active && (
             <ProposalVote
-              proposalInfo={proposalInfo}
+              proposal={proposalInfo}
               voteType={voteType}
               setVoteType={setVoteType}
-              votingPower={votingPower}
             />
           )}
           {proposalInfo.status === ProposalState.Succeeded && (

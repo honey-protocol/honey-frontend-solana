@@ -27,7 +27,6 @@ import {
 } from 'types/governance';
 import { formatNumber } from 'helpers/format';
 import { getVoteCountFmt } from 'helpers/utils';
-import { GovernanceProvider } from 'contexts/GovernanceProvider';
 import { useGovernance } from 'hooks/useVeHoney';
 
 import * as style from 'styles/governance.css';
@@ -98,16 +97,19 @@ const Governance: NextPage = () => {
     [proposals, isDraftFilterEnabled]
   );
 
-  const DraftToggle = () => (
-    <div className={style.draftToggle}>
-      <div className={style.toggle}>
-        <HoneyToggle
-          checked={isDraftFilterEnabled}
-          onChange={setIsDraftFilterEnabled}
-        />
-        <span className={style.toggleText}>Drafts</span>
+  const DraftToggle = useMemo(
+    () => (
+      <div className={style.draftToggle}>
+        <div className={style.toggle}>
+          <HoneyToggle
+            checked={isDraftFilterEnabled}
+            onChange={setIsDraftFilterEnabled}
+          />
+          <span className={style.toggleText}>Drafts</span>
+        </div>
       </div>
-    </div>
+    ),
+    [isDraftFilterEnabled]
   );
 
   const MainTitleTable = () => (
@@ -203,9 +205,6 @@ const Governance: NextPage = () => {
         width: columnsWidth[1],
         dataIndex: 'status',
         render: (_, row: GovernanceTableRow) => {
-          console.log(row.votes, row.votesRequired, {
-            percent: (row.votes / row.votesRequired) * 100
-          });
           return (
             <div>
               <ProgressStatus
@@ -233,7 +232,7 @@ const Governance: NextPage = () => {
         }
       }
     ],
-    [govToken]
+    [govToken, DraftToggle]
   );
 
   const columnsMobile: ColumnType<GovernanceTableRow>[] = useMemo(
@@ -371,7 +370,7 @@ const Governance: NextPage = () => {
           <div className={style.mobileTableTitle}>
             <div>{MainTitleTable()}</div>
 
-            {DraftToggle()}
+            {DraftToggle}
           </div>
 
           <div className={style.mobileTableHeader}>

@@ -1,25 +1,40 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { TokenAmount } from '@saberhq/token-utils';
 
 import { HoneyButtonTabs } from 'components/HoneyButtonTabs/HoneyButtonTabs';
 import { HoneySlider } from 'components/HoneySlider/HoneySlider';
 import { InfoBlock } from 'components/InfoBlock/InfoBlock';
 import { Proposal } from 'contexts/GovernanceProvider';
+import { useLocker } from 'hooks/useVeHoney';
 
 import * as styles from '../../VoteForm.css';
 
 export type VoteType = 'vote_for' | 'vote_against';
 interface ProposalVoteProps {
-  proposalInfo: Proposal;
+  proposal?: Proposal;
   voteType: VoteType;
   setVoteType: Function;
-  votingPower: TokenAmount | null;
 }
-const ProposalVote = (props: ProposalVoteProps) => {
-  const { proposalInfo, voteType, setVoteType, votingPower } = props;
-  const totalDeterminingVotes = proposalInfo.data.forVotes.add(
-    proposalInfo.data.againstVotes
-  );
+const ProposalVote = ({
+  voteType,
+  setVoteType,
+  proposal
+}: ProposalVoteProps) => {
+  const { govToken, votingPower } = useLocker();
+
+  const votes = useMemo(() => {
+    if (proposal && govToken) {
+      return {
+        for: new TokenAmount(govToken, proposal.data.forVotes),
+        against: new TokenAmount(govToken, proposal.data.againstVotes),
+        total: new TokenAmount(
+          govToken,
+          proposal.data.forVotes.add(proposal.data.againstVotes)
+        )
+      };
+    }
+    return null;
+  }, [govToken, proposal]);
 
   return (
     <div style={{ width: '100%' }}>
@@ -38,24 +53,24 @@ const ProposalVote = (props: ProposalVoteProps) => {
       <div className={styles.grid}>
         <div className={styles.gridCell}>
           <InfoBlock
-            value={proposalInfo.data.forVotes.toString() || ''}
+            value={votes?.for.asNumber.toString() ?? '-'}
             footer={<span>Voted for</span>}
           />
           <HoneySlider
-            currentValue={proposalInfo.data.forVotes.toNumber() || 0}
-            maxValue={totalDeterminingVotes?.toNumber() || 1000}
+            currentValue={votes?.for.asNumber ?? 0}
+            maxValue={votes?.total.asNumber ?? 1000}
             minAvailableValue={0}
             isReadonly
           />
         </div>
         <div className={styles.gridCell}>
           <InfoBlock
-            value={proposalInfo.data.againstVotes.toString() || ''}
+            value={votes?.against.asNumber.toString() ?? '-'}
             footer={<span>Voted against</span>}
           />
           <HoneySlider
-            currentValue={proposalInfo.data.againstVotes.toNumber() || 0}
-            maxValue={totalDeterminingVotes?.toNumber() || 0}
+            currentValue={votes?.against.asNumber ?? 0}
+            maxValue={votes?.total.asNumber ?? 0}
             minAvailableValue={0}
             maxSafePosition={0}
             dangerPosition={0}
