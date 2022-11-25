@@ -137,7 +137,6 @@ export async function getOraclePrice(
   // load the switchboard program
   if(!aggregatorKey)
     return 0;
-  console.log('@@@-- cluster', cluster);
   const program = await loadSwitchboardProgram(
     cluster,
     connection,
