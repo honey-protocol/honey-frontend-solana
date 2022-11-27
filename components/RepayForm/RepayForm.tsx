@@ -15,7 +15,7 @@ import cs from 'classnames';
 import useToast from 'hooks/useToast';
 import { useSolBalance } from 'hooks/useSolBalance';
 import { MAX_LTV } from 'constants/loan';
-import { LIQUIDATION_FEE } from 'constants/borrowLendMarkets';
+import { COLLATERAL_FACTOR } from 'constants/borrowLendMarkets';
 import { renderMarketImageByID } from 'helpers/marketHelpers';
 
 const {
@@ -49,7 +49,7 @@ const RepayForm = (props: RepayProps) => {
   // constants && calculations
   const maxValue = userDebt != 0 ? userDebt : userAllowance;
   const solPrice = fetchedSolPrice;
-  const liquidationThreshold = LIQUIDATION_FEE;
+  const liquidationThreshold = COLLATERAL_FACTOR;
   const SOLBalance = useSolBalance();
   const newDebt = userDebt - (valueSOL ? valueSOL : 0);
   const borrowedValue = userDebt;
