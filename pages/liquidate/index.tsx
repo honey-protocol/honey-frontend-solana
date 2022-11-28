@@ -49,7 +49,7 @@ import { ToastProps } from 'hooks/useToast';
 import HoneyTableRow from 'components/HoneyTable/HoneyTableRow/HoneyTableRow';
 import HoneyTableNameCell from 'components/HoneyTable/HoneyTableNameCell/HoneyTableNameCell';
 import LiquidateExpandTableMobile from 'components/LiquidateExpandTable/LiquidateExpandTableMobile';
-import { marketCollections } from 'constants/borrowLendMarkets';
+import { marketCollections } from '../../helpers/marketHelpers/index';
 import { populateMarketData } from 'helpers/loanHelpers/userCollection';
 import { setMarketId } from 'pages/_app';
 import { MarketTableRow } from 'types/markets';
@@ -449,9 +449,12 @@ const Liquidate: NextPage = () => {
    */
    async function handleMarketId(record: any) {
     const marketData = renderMarket(record.id);
-    setCurrentMarketId(marketData!.id);
-    setMarketId(marketData!.id);
-    handleBiddingState(status.bids)
+
+    if (marketData[0].id) {
+      setCurrentMarketId(marketData[0].id);
+      setMarketId(marketData[0].id);
+      handleBiddingState(status.bids)
+    }
   }
   /**
    * @description 
