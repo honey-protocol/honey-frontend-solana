@@ -1,5 +1,5 @@
 import { RoundHalfDown, RoundHalfUp } from 'helpers/utils';
-import { BURRITO_BOYZ_MARKET_ID, HONEY_GENESIS_MARKET_ID, LIFINITY_FLARES_MARKET_ID, OG_ATADIANS_MARKET_ID, PESKY_PENGUINS_MARKET_ID, BLOCKSMITH_LABS_MARKET_ID } from '../marketHelpers/index';
+import { BURRITO_BOYZ_MARKET_ID, HONEY_GENESIS_MARKET_ID, LIFINITY_FLARES_MARKET_ID, OG_ATADIANS_MARKET_ID, PESKY_PENGUINS_MARKET_ID } from '../marketHelpers/index';
 import {MAX_LTV} from '../../constants/loan';
 import BN from 'bn.js';
 import { BnToDecimal, getOraclePrice } from '../../helpers/loanHelpers/index';
@@ -31,8 +31,7 @@ import {
   LIFINITY_FLARES_MARKET_NAME,
   OG_ATADIANS_MARKET_NAME,
   PESKY_PENGUINS_MARKET_NAME,
-  BURRITO_BOYZ_MARKET_NAME,
-  BLOCKSMITH_LABS_MARKET_NAME
+  BURRITO_BOYZ_MARKET_NAME
 } from 'helpers/marketHelpers';
 
 /**
@@ -378,16 +377,6 @@ const calculateRisk = async (obligations: any, nftPrice: number, type: boolean, 
      } else {
       return (sumOfDebt / obligations.length / nftPrice)
      }
-  } else if (currentMarketId === BLOCKSMITH_LABS_MARKET_ID && collectionName === BLOCKSMITH_LABS_MARKET_NAME) {
-      let sumOfDebt = await obligations.reduce((acc: number, obligation: any) => {
-        return acc + obligation.debt;
-      }, 0);
-  
-      if (type === true) {
-        return sumOfDebt;
-      } else {
-        return (sumOfDebt / obligations.length / nftPrice)
-      }
   } else {
     return 0;
   }
@@ -409,8 +398,6 @@ const calculateTVL = async (obligations: any, nftPrice: number, currentMarketId:
   } else if (currentMarketId === BURRITO_BOYZ_MARKET_ID && collectionName === BURRITO_BOYZ_MARKET_NAME) {
     return nftPrice * obligations.length;
   } else if (currentMarketId === LIFINITY_FLARES_MARKET_ID && collectionName === LIFINITY_FLARES_MARKET_NAME) {
-    return nftPrice * obligations.length;
-  } else if (currentMarketId === BLOCKSMITH_LABS_MARKET_ID && collectionName === BLOCKSMITH_LABS_MARKET_NAME) {
     return nftPrice * obligations.length;
   }
 }

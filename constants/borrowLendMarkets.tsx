@@ -9,24 +9,6 @@ export type OpenPositions = {
   updateAuthority: PublicKey;
   uri: string;
 };
-// collection structure for liquidations
-export const liquidationCollections: MarketTableRow[] = [
-  {
-    id: '6FcJaAzQnuoA6o3sVw1GD6Ba69XuL5jinZpQTzJhd2R3',
-    key: 'HNYG',
-    name: 'Honey Genesis Bee',
-    verifiedCreator: '6vRx1iVZo3xfrBHdpvuwArL2jucVj9j9nLpd2VUTTGMG',
-    rate: 0,
-    available: 0,
-    value: 0,
-    allowance: 0,
-    positions: [],
-    connection: undefined,
-    user: undefined,
-    debt: 0,
-    utilizationRate: 0,
-  }
-];
 // collection strucutre for the markets 
 export const marketCollections: MarketTableRow[] = [
   {
@@ -94,21 +76,6 @@ export const marketCollections: MarketTableRow[] = [
     key: 'BURR',
     name: 'Burrito Boyz',
     verifiedCreator: '2UCkKjTHvz7qFjPZMjhWZiPmyTc6ZwZ44iYPbSpe3aVo',
-    rate: 0,
-    available: 0,
-    value: 0,
-    allowance: 0,
-    positions: [],
-    connection: undefined,
-    user: undefined,
-    debt: 0,
-    utilizationRate: 0,
-  },
-  {
-    id: 'GrKPvcdHVb4cwR5a2CCgCTvdkSqhNDRgSUiUVzXRWLk6',
-    key: 'Smyths',
-    name: 'Blocksmith Labs',
-    verifiedCreator: '8m2b8ar9BNZErJQgSBwY3eCe73yR4k9qHUxxGffxyw2d',
     rate: 0,
     available: 0,
     value: 0,
