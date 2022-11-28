@@ -17,8 +17,7 @@ import { hAlign, extLink } from 'styles/common.css';
 import { questionIcon } from 'styles/icons.css';
 import useToast from 'hooks/useToast';
 import cs from 'classnames';
-import { BORROW_FEE, LIQUIDATION_FEE } from 'constants/borrowLendMarkets';
-import { renderMarketImageByID, renderNftList } from 'helpers/marketHelpers';
+import { renderMarketImageByID, renderNftList, BORROW_FEE, LIQUIDATION_FEE  } from 'helpers/marketHelpers';
 
 const { formatPercent: fp, formatSol: fs, formatRoundDown: frd } = formatNumber;
 
