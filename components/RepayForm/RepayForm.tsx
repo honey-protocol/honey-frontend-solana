@@ -15,7 +15,7 @@ import cs from 'classnames';
 import useToast from 'hooks/useToast';
 import { useSolBalance } from 'hooks/useSolBalance';
 import { MAX_LTV } from 'constants/loan';
-import { LIQUIDATION_FEE } from 'constants/borrowLendMarkets';
+import { LIQUIDATION_FEE } from 'helpers/marketHelpers';
 import { renderMarketImageByID } from 'helpers/marketHelpers';
 
 const {
