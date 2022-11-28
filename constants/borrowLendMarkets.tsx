@@ -24,10 +24,10 @@ export const liquidationCollections: MarketTableRow[] = [
     connection: undefined,
     user: undefined,
     debt: 0,
-    utilizationRate: 0,
+    utilizationRate: 0
   }
 ];
-// collection strucutre for the markets 
+// collection structure for the markets
 export const marketCollections: MarketTableRow[] = [
   {
     id: '6FcJaAzQnuoA6o3sVw1GD6Ba69XuL5jinZpQTzJhd2R3',
@@ -42,7 +42,7 @@ export const marketCollections: MarketTableRow[] = [
     connection: undefined,
     user: undefined,
     debt: 0,
-    utilizationRate: 0,
+    utilizationRate: 0
   },
   {
     id: 'Bw77MGpg189EaATjN67WXcnp3c4544LhKoV4Ftmdg4C',
@@ -102,9 +102,9 @@ export const marketCollections: MarketTableRow[] = [
     connection: undefined,
     user: undefined,
     debt: 0,
-    utilizationRate: 0,
-  },
+    utilizationRate: 0
+  }
 ];
 // fees
-export const LIQUIDATION_FEE = 0.65;
+export const COLLATERAL_FACTOR = 0.65;
 export const BORROW_FEE = 0;
