@@ -59,7 +59,7 @@ const LockHoneyForm = (props: { onCancel: Function }) => {
   const honeyAccount = useAccountByMint(govToken?.mintAccount);
 
   const lockEndsTime = useMemo(() => {
-    if (!escrow) return null;
+    if (!escrow || escrow.data.escrowEndsAt.eqn(0)) return null;
     return new Date(escrow.data.escrowEndsAt.toNumber() * 1000);
   }, [escrow]);
 

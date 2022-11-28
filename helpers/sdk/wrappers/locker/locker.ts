@@ -163,7 +163,6 @@ export class LockerWrapper {
     const duration = lockerData.params.nftStakeDurationUnit.muln(
       lockerData.params.nftStakeDurationCount
     );
-    const receiptId = await this.newReceiptId();
     const { escrow, instruction: initEscrowIx } = await this.getOrCreateEscrow(
       authority
     );
@@ -184,6 +183,7 @@ export class LockerWrapper {
     if (createWlATAIx) {
       instructions.push(createWlATAIx);
     }
+    const receiptId = await this.newReceiptId();
     const [receipt] = await findNFTReceiptAddress(
       this.locker,
       authority,
@@ -495,14 +495,7 @@ export class LockerWrapper {
   }
 
   async newReceiptId(): Promise<BN> {
-    const receipts = await this.fetchAllReceipts();
-    if (!receipts.length) {
-      return new BN(0);
-    }
-    const maxReceiptId = receipts.reduce(
-      (a, b) => (a.gt(b.account.receiptId) ? a : b.account.receiptId),
-      new BN(0)
-    );
-    return maxReceiptId.addn(1);
+    const escrow = await this.fetchEscrowData();
+    return escrow.data.receiptCount;
   }
 }

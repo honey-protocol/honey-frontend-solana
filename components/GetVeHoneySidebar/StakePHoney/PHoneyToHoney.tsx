@@ -1,4 +1,4 @@
-import React, { FC, useState, useCallback, useMemo } from 'react';
+import React, { useState, useCallback, useMemo } from 'react';
 import { ValueType } from 'rc-input-number/lib/utils/MiniDecimal';
 import { InfoBlock } from 'components/InfoBlock/InfoBlock';
 import SidebarScroll from 'components/SidebarScroll/SidebarScroll';
@@ -6,22 +6,20 @@ import HoneyWarning from 'components/HoneyWarning/HoneyWarning';
 import SectionTitle from 'components/SectionTitle/SectionTitle';
 import HoneyButton from 'components/HoneyButton/HoneyButton';
 import HoneyFormattedNumericInput from 'components/HoneyFormattedNumericInput/HoneyFormattedInput';
-import { useAccountByMint, useAccounts } from 'hooks/useAccounts';
-import { useStake, useLocker } from 'hooks/useVeHoney';
+import { useAccountByMint } from 'hooks/useAccounts';
+import { useStake } from 'hooks/useVeHoney';
 import { formatNumber } from 'helpers/format';
-import { convert, convertToBN, isNil } from 'helpers/utils';
+import { convertToBN, isNil } from 'helpers/utils';
 import * as styles from '../LockHoneyForm/LockHoneyForm.css';
 import { hAlign } from 'styles/common.css';
 import { TokenAmount } from '@saberhq/token-utils';
 
 const { format: f, formatPercent: fp, formatUsd: fu, parse: p } = formatNumber;
 
-const PHoneyToHoney = (props: { onCancel: Function }) => {
+const PHoneyToHoney = (_: { onCancel: Function }) => {
   const [phoneyValue1, setPHoneyValue1] = useState<number>();
-
-  const { preToken, govToken, user, claimableAmount, deposit, vest, claim } =
+  const { preToken, govToken, user, claimableAmount, deposit, claim } =
     useStake();
-  const { escrow, votingPower, locker } = useLocker();
   const pHoneyAccount = useAccountByMint(preToken?.mintAccount);
 
   const pHoneyAmount = useMemo(() => {

@@ -1,4 +1,4 @@
-import React, { FC, useState, useCallback, useMemo } from 'react';
+import React, { useState, useCallback, useMemo } from 'react';
 import { ValueType } from 'rc-input-number/lib/utils/MiniDecimal';
 import { BN } from '@project-serum/anchor';
 
@@ -28,15 +28,14 @@ const PERIODS = [
 
 type LockPeriod = typeof PERIODS[number]['slug'];
 
-const PHoneyToVeHoney = (props: { onCancel: Function }) => {
+const PHoneyToVeHoney = (_: { onCancel: Function }) => {
   const [lockPeriod, setLockPeriod] = useState<LockPeriod>('3');
   const [phoneyValue2, setPHoneyValue2] = useState<number>();
   const [honeyValue, setHoneyValue] = useState<number>();
   const [veHoneyValue, setVeHoneyValue] = useState<number>();
   const honeyPrice = lockPeriod === '3' ? 2 : lockPeriod === '6' ? 5 : 10;
 
-  const { preToken, govToken, user, claimableAmount, deposit, vest, claim } =
-    useStake();
+  const { preToken, govToken, deposit, vest } = useStake();
   const { escrow, votingPower, locker } = useLocker();
   const pHoneyAccount = useAccountByMint(preToken?.mintAccount);
 
@@ -51,7 +50,7 @@ const PHoneyToVeHoney = (props: { onCancel: Function }) => {
   }, [escrow, govToken]);
 
   const lockEndsTime = useMemo(() => {
-    if (!escrow) return null;
+    if (!escrow || escrow.data.escrowEndsAt.eqn(0)) return null;
     return new Date(escrow.data.escrowEndsAt.toNumber() * 1000);
   }, [escrow]);
 
