@@ -69,7 +69,7 @@ import { Typography } from 'antd';
 import { pageDescription, pageTitle } from 'styles/common.css';
 import HoneyTableRow from 'components/HoneyTable/HoneyTableRow/HoneyTableRow';
 import HoneyTableNameCell from '../../components/HoneyTable/HoneyTableNameCell/HoneyTableNameCell';
-import { marketCollections, OpenPositions } from 'constants/borrowLendMarkets';
+import { marketCollections, OpenPositions } from '../../helpers/marketHelpers/index';
 import HoneyTooltip from '../../components/HoneyTooltip/HoneyTooltip';
 import {
   handleOpenPositions,
@@ -98,9 +98,7 @@ const { format: f, formatPercent: fp, formatSol: fs } = formatNumber;
 const Markets: NextPage = () => {
   // Sets market ID which is used for fetching market specific data
   // each market currently is a different call and re-renders the page
-  const [currentMarketId, setCurrentMarketId] = useState<string>(
-    HONEY_GENESIS_MARKET_ID
-  );
+  const [currentMarketId, setCurrentMarketId] = useState(HONEY_GENESIS_MARKET_ID);
   // init wallet and sdkConfiguration file
   const wallet = useConnectedWallet() || null;
   const sdkConfig = ConfigureSDK();
@@ -115,8 +113,10 @@ const Markets: NextPage = () => {
    */
   async function handleMarketId(record: any) {
     const marketData = renderMarket(record.id);
-    setCurrentMarketId(marketData!.id);
-    setMarketId(marketData!.id);
+    if (marketData[0].id) {
+      setCurrentMarketId(marketData[0].id);
+      setMarketId(marketData[0].id);
+    }
   }
   /**
    * @description fetches market reserve info | parsed reserves | fetch market (func) from SDK
