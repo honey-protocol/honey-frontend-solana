@@ -219,13 +219,13 @@ export const newFarmCollections: TGFarm[] = [
     bankAddress: 'DVQGr4DNksZ8M9eZnBRm9i5A1sDXziSemw32E4piBpAV'
   },
   {
-    id: 'HOBO', 
+    id: 'HOBO',
     imageUrl:
       'https://daliw65ixtl5mildqjheqgwbnocfhay4x4aeq4i67yzu7a7eupsa.arweave.net/GBaLe6i819YhY4JOSBrBa4RTgxy_AEhxHv4zT4Pko-Q?ext=png',
     name: 'HoboFrenz',
     totalStaked: '???',
     totalNumber: 6969,
-    allocation: '62',
+    allocation: '3',
     totalStakedByUser: '-',
     eventStartDate: '2022-11-25T14:50Z',
     eventDuration: '∞',
