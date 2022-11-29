@@ -18,7 +18,6 @@ The Honey Finance Ecosystem consists of several components this repo represents 
 - what is the min. required node version in order to run the project?******</b> 
 
 
-
 In order to run this project you need to create a 
 ```bash
 .env #you can use the .env.example file as silver lining
