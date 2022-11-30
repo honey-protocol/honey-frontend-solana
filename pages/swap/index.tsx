@@ -153,6 +153,7 @@ const Swap: NextPage = () => {
       {
         title: 'Rate',
         value: `1 ${inputToken?.symbol} =  ${exchangeRateFormatted} ${outputToken?.symbol}`,
+        altValue: `1 ${outputToken?.symbol} =  ${reverseExchangeRateFormatted} ${inputToken?.symbol}`,
         titleAddon: (
           <div
             onClick={refreshJupiter}
@@ -160,10 +161,6 @@ const Swap: NextPage = () => {
             className={styles.reloadIcon}
           />
         )
-      },
-      {
-        title: '',
-        value: `1 ${outputToken?.symbol} =  ${reverseExchangeRateFormatted} ${inputToken?.symbol}`
       },
       {
         title: 'Price Impact',
