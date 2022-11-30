@@ -49,7 +49,9 @@ export const link = style({
   animationFillMode: 'both',
   animationTimingFunction: 'ease-in-out',
   animationDelay: `calc(${linkOrder} * 70ms)`,
-  opacity: '0'
+  opacity: '0',
+  display: 'flex',
+  justifyContent: 'center'
 });
 
 globalStyle(`${visible} ${link}`, {
