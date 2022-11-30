@@ -339,6 +339,19 @@ const calculateRisk = async (obligations: any, nftPrice: number, type: boolean, 
     }
   })
 }
+/**
+ * @description calculates the debt of all the obligations
+ * @params obligation array
+ * @returns debt of market of all obligations
+*/
+async function calculateTotalDebt(obligations: any) {
+  if (obligations.length) {
+    const sumOfMarketDebt = await obligations.reduce((acc: number, obl: any) => {
+      return acc + obl.debt
+    }, 0);
+    return sumOfMarketDebt;
+  };
+}
 
 /**
  * @description Being called for each collection in the array, calculates the collections values
@@ -382,6 +395,7 @@ export async function populateMarketData(collection: MarketTableRow, connection:
     // set values for total debt in collection
     const totalMarketDebt = RoundHalfDown(parsedReserve.reserveState.outstandingDebt.div(new BN(10 ** 15)).toNumber() / LAMPORTS_PER_SOL);
     const sumOfTotalValue = totalMarketDeposits + totalMarketDebt;
+    console.log('OBLIGATIONS', obligations)
     // if request comes from liquidation page we need the collection object to be different 
     if (liquidations) {
       collection.name;
@@ -391,7 +405,7 @@ export async function populateMarketData(collection: MarketTableRow, connection:
       collection.utilizationRate = Number(f((totalMarketDebt) / (totalMarketDeposits + totalMarketDebt)));
       collection.user = honeyUser;
       collection.risk = obligations ? await calculateRisk(obligations, nftPrice, false, currentMarketId, collection.name) : 0;
-      collection.totalDebt = sumOfTotalValue - totalMarketDeposits;
+      collection.totalDebt = obligations ? await calculateTotalDebt(obligations) : 0;
       collection.openPositions = obligations ? await setObligations(obligations, currentMarketId, nftPrice) : [];
       // if there are open positions in the collections, calculate until liquidation value
       if (collection.openPositions) {
