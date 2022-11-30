@@ -114,7 +114,6 @@ const Liquidate: NextPage = () => {
   const [isMobileSidebarVisible, setShowMobileSidebar] = useState(false);
   const [positionsObject, setPositionsObject] = useState<Array<NftPosition>>([]);
   const [biddingArray, setBiddingArray] = useState({});
-  const [totalMarketDebt, setTotalMarketDebt] = useState<number>(0)
   /**
    * @description 
    * @params  
