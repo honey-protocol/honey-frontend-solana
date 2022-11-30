@@ -55,6 +55,7 @@ import { setMarketId } from 'pages/_app';
 import { MarketTableRow } from 'types/markets';
 import { renderMarket, renderMarketImageByName } from 'helpers/marketHelpers';
 import { network } from 'pages/_app';
+import { cp } from 'fs';
 
 const { formatPercent: fp, formatSol: fs, formatRoundDown: fd } = formatNumber;
 const Liquidate: NextPage = () => {
@@ -389,17 +390,15 @@ const Liquidate: NextPage = () => {
       function getData() {
         return Promise.all(
           marketCollections.map(async collection => {
+            let obligationObject = collection.constants.marketId === currentMarketId ? positionsObject : [];
             await populateMarketData(
               collection,
               sdkConfig.saberHqConnection,
               sdkConfig.sdkWallet,
               currentMarketId,
               true,
-              {
-                obligations: positionsObject,
-                nftPrice: nftPrice,
-                marketReserveInfo: marketReserveInfo
-              }
+              obligationObject,
+              nftPrice,
             )
             return collection
 
@@ -612,7 +611,7 @@ const Liquidate: NextPage = () => {
         dataIndex: 'tvl',
         sorter: (a, b) => a.tvl! - b.tvl!,
         render: (value: number, market: any) => {
-          return <div className={style.valueCell}>{fs(market.tvl)}</div>;
+          return  <div className={style.valueCell}>{fs(nftPrice * market.openPositions.length)}</div>
         }
       },
       {
