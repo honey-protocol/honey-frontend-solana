@@ -19,7 +19,6 @@ import Script from 'next/script';
 // import NoMobilePopup from 'components/NoMobilePopup/NoMobilePopup';
 import { SailProvider } from '@saberhq/sail';
 import { onSailError } from '../helpers/error';
-import { ReactQueryDevtools } from 'react-query/devtools';
 
 import {
   GOVERNOR_ADDRESS,
@@ -32,10 +31,8 @@ import { getPlatformFeeAccounts, JupiterProvider } from '@jup-ag/react-hook';
 export const network = (process.env.NETWORK as Network) || 'mainnet-beta';
 import {
   HONEY_GENESIS_MARKET_ID,
-  HONEY_PROGRAM_ID,
-  PESKY_PENGUINS_MARKET_ID
-} from '../constants/loan';
-import NoMobilePopup from 'components/NoMobilePopup/NoMobilePopup';
+  HONEY_PROGRAM_ID
+} from '../helpers/marketHelpers/index';
 import { DialectProviders } from 'contexts/DialectProvider';
 import { PublicKey } from '@solana/web3.js';
 // top level function that injects the app with a new market ID - being called from pages where interaction with markets is possible. Currently: borrow | lend | liquidate

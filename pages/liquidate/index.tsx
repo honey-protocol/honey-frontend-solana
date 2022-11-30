@@ -13,17 +13,14 @@ import React, {
   useState
 } from 'react';
 import { Key } from 'antd/lib/table/interface';
-import HoneyToggle from '../../components/HoneyToggle/HoneyToggle';
 import debounce from 'lodash/debounce';
 import SearchInput from '../../components/SearchInput/SearchInput';
 import { ColumnType } from 'antd/lib/table';
 import HexaBoxContainer from '../../components/HexaBoxContainer/HexaBoxContainer';
-import Image from 'next/image';
-import honeyGenesisBee from '/public/images/imagePlaceholder.png';
 import { getColumnSortStatus } from '../../helpers/tableUtils';
 import HoneyButton from '../../components/HoneyButton/HoneyButton';
 import { formatNumber } from '../../helpers/format';
-import { BiddingPosition, LiquidateTableRow } from '../../types/liquidate';
+import { LiquidateTableRow } from '../../types/liquidate';
 import { LiquidateExpandTable } from '../../components/LiquidateExpandTable/LiquidateExpandTable';
 import {
   useAnchor,
@@ -35,29 +32,24 @@ import {
 } from '@honey-finance/sdk';
 import { ConfigureSDK } from 'helpers/loanHelpers';
 import { useConnectedWallet } from '@saberhq/use-solana';
-import { Connection, Keypair, LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js';
+import { LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js';
 import { calcNFT, fetchSolPrice } from 'helpers/loanHelpers/userCollection';
-import { LiquidateTablePosition } from '../../types/liquidate';
 import {
-  HONEY_PROGRAM_ID,
-  HONEY_GENESIS_MARKET_ID,
-  LIQUIDATION_THRESHOLD,
-  PESKY_PENGUINS_MARKET_ID,
-  OG_ATADIANS_MARKET_ID,
-  LIFINITY_FLARES_MARKET_ID,
-  BURRITO_BOYZ_MARKET_ID
+  LIQUIDATION_THRESHOLD
 } from 'constants/loan';
+import {  HONEY_PROGRAM_ID,
+  HONEY_GENESIS_MARKET_ID} from '../../helpers/marketHelpers/index';
 import { NATIVE_MINT } from '@solana/spl-token-v-0.1.8';
 import HoneySider from 'components/HoneySider/HoneySider';
 import HoneyContent from 'components/HoneyContent/HoneyContent';
-import { hideTablet, showTablet, table } from 'styles/markets.css';
+import { hideTablet, showTablet } from 'styles/markets.css';
 import { pageDescription, pageTitle } from 'styles/common.css';
 import { Typography } from 'antd';
 import { ToastProps } from 'hooks/useToast';
 import HoneyTableRow from 'components/HoneyTable/HoneyTableRow/HoneyTableRow';
 import HoneyTableNameCell from 'components/HoneyTable/HoneyTableNameCell/HoneyTableNameCell';
 import LiquidateExpandTableMobile from 'components/LiquidateExpandTable/LiquidateExpandTableMobile';
-import { marketCollections } from 'constants/borrowLendMarkets';
+import { marketCollections } from '../../helpers/marketHelpers/index';
 import { populateMarketData } from 'helpers/loanHelpers/userCollection';
 import { setMarketId } from 'pages/_app';
 import { MarketTableRow } from 'types/markets';
@@ -69,7 +61,6 @@ const Liquidate: NextPage = () => {
   // TODO: write dynamic currentMarketId based on user interaction
   const [currentMarketId, setCurrentMarketId] = useState(HONEY_GENESIS_MARKET_ID);
   // start sdk integration
-  const liquidationThreshold = 0.65; // TODO: values like this should be imported from constants per collection
   // init anchor
   const { program } = useAnchor();
   // create wallet instance for PK
@@ -458,9 +449,12 @@ const Liquidate: NextPage = () => {
    */
    async function handleMarketId(record: any) {
     const marketData = renderMarket(record.id);
-    setCurrentMarketId(marketData!.id);
-    setMarketId(marketData!.id);
-    handleBiddingState(status.bids)
+
+    if (marketData[0].id) {
+      setCurrentMarketId(marketData[0].id);
+      setMarketId(marketData[0].id);
+      handleBiddingState(status.bids)
+    }
   }
   /**
    * @description 

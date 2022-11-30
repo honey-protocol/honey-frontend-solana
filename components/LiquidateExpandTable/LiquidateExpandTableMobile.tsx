@@ -1,20 +1,14 @@
-import { HoneyButtonTabs } from '../HoneyButtonTabs/HoneyButtonTabs';
 import HoneyTable from '../HoneyTable/HoneyTable';
 import * as sharedStyles from '../../styles/markets.css';
 import * as styles from './LiquidateExpandTable.css';
-import React, { FC, useMemo, useState } from 'react';
+import React, { FC } from 'react';
 import { ColumnType } from 'antd/lib/table';
 import { LiquidateTablePosition } from '../../types/liquidate';
 import HexaBoxContainer from '../HexaBoxContainer/HexaBoxContainer';
-import Image from 'next/image';
-import honeyGenesisBee from '/public/images/imagePlaceholder.png';
 import { InfoBlock } from '../InfoBlock/InfoBlock';
-import { formatNumber, formatNFTName } from '../../helpers/format';
-import RiskLvl from '../RiskLvl/RiskLvl';
-import HoneyTooltip from '../HoneyTooltip/HoneyTooltip';
+import { formatNumber } from '../../helpers/format';
 import HealthLvl from 'components/HealthLvl/HealthLvl';
 import HoneyButton from 'components/HoneyButton/HoneyButton';
-import { MAX_LTV } from 'constants/loan';
 import { renderMarketImageByID } from 'helpers/marketHelpers';
 
 const { formatPercent: fp, formatSol: fs } = formatNumber;

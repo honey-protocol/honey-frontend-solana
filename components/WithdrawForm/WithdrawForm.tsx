@@ -1,17 +1,11 @@
-import React, { FC, useState, useEffect } from 'react';
-import Image from 'next/image';
+import React, { useState, useEffect } from 'react';
 import { InfoBlock } from '../InfoBlock/InfoBlock';
 import { InputsBlock } from '../InputsBlock/InputsBlock';
 import { HoneySlider } from '../HoneySlider/HoneySlider';
 import * as styles from './WithdrawForm.css';
 import { formatNumber } from '../../helpers/format';
-import honeyGenesisBee from '/public/images/imagePlaceholder.png';
 import HoneyButton from 'components/HoneyButton/HoneyButton';
 import HexaBoxContainer from '../HexaBoxContainer/HexaBoxContainer';
-import {
-  HONEY_GENESIS_MARKET_ID,
-  PESKY_PENGUINS_MARKET_ID
-} from '../../constants/loan';
 import SidebarScroll from '../SidebarScroll/SidebarScroll';
 import { WithdrawFormProps } from './types';
 import { questionIcon } from 'styles/icons.css';
