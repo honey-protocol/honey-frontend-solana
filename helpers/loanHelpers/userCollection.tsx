@@ -339,23 +339,13 @@ const calculateRisk = async (obligations: any, nftPrice: number, type: boolean, 
     }
   })
 }
-/**
- * @description calculates the total value locked of a market
- * @params array of obligations | nft price | market id | collection name
- * @returns TVL
-*/
-const calculateTVL = async (obligations: any, nftPrice: number, currentMarketId: string, collectionName: string) => {
-  if (!obligations) return 0;
-  marketCollections.map((market) => {
-    if (market.constants.marketId === currentMarketId && market.constants.marketName === collectionName) return nftPrice * obligations.length;
-  })
-}
+
 /**
  * @description Being called for each collection in the array, calculates the collections values
  * @params collection | connection | wallet | market id | boolean (if request comes from liquidation page) | array of obligations
  * @returns collection object 
 */
-export async function populateMarketData(collection: MarketTableRow, connection: Connection, wallet: ConnectedWallet | null, currentMarketId: string, liquidations: boolean, obligations?: any) {
+export async function populateMarketData(collection: MarketTableRow, connection: Connection, wallet: ConnectedWallet | null, currentMarketId: string, liquidations: boolean, obligations: any, nftPrice: number) {
   // create dummy keypair if no wallet is connected to fetch values of the collections regardless of connected wallet
   let dummyWallet = wallet ? wallet : new NodeWallet(new Keypair())
   // since we inject the market id at top level (app.tsx) we need to create a new provider, init new honeyClient and market, for each market
@@ -400,10 +390,9 @@ export async function populateMarketData(collection: MarketTableRow, connection:
       collection.connection = connection;
       collection.utilizationRate = Number(f((totalMarketDebt) / (totalMarketDeposits + totalMarketDebt)));
       collection.user = honeyUser;
-      collection.risk = obligations ? await calculateRisk(obligations.obligations, obligations.nftPrice, false, currentMarketId, collection.name) : 0;
+      collection.risk = obligations ? await calculateRisk(obligations, nftPrice, false, currentMarketId, collection.name) : 0;
       collection.totalDebt = sumOfTotalValue - totalMarketDeposits;
-      collection.openPositions = obligations ? await setObligations(obligations.obligations, currentMarketId, obligations.nftPrice) : [];
-      collection.tvl = obligations ? await calculateTVL(collection.openPositions, obligations.nftPrice, currentMarketId, collection.name) : 0;
+      collection.openPositions = obligations ? await setObligations(obligations, currentMarketId, nftPrice) : [];
       // if there are open positions in the collections, calculate until liquidation value
       if (collection.openPositions) {
         collection.openPositions.map((openPos: any) => {
