@@ -17,8 +17,12 @@ import { hAlign, extLink } from 'styles/common.css';
 import { questionIcon } from 'styles/icons.css';
 import useToast from 'hooks/useToast';
 import cs from 'classnames';
-import { renderMarketImageByID, renderNftList, BORROW_FEE, LIQUIDATION_FEE  } from 'helpers/marketHelpers';
-
+import {
+  renderMarketImageByID,
+  renderNftList,
+  BORROW_FEE,
+  COLLATERAL_FACTOR
+} from 'helpers/marketHelpers';
 const { formatPercent: fp, formatSol: fs, formatRoundDown: frd } = formatNumber;
 
 interface NFT {
@@ -41,7 +45,7 @@ const BorrowForm = (props: BorrowProps) => {
     hideMobileSidebar,
     fetchedSolPrice,
     calculatedInterestRate,
-    currentMarketId,
+    currentMarketId
   } = props;
   // state declarations
   const [valueUSD, setValueUSD] = useState<number>(0);
@@ -55,7 +59,7 @@ const BorrowForm = (props: BorrowProps) => {
   const borrowedValue = userDebt;
   const maxValue = userAllowance;
   const solPrice = fetchedSolPrice;
-  const liquidationThreshold = LIQUIDATION_FEE; // TODO: change where relevant, currently set to 65% on mainnet
+  const liquidationThreshold = COLLATERAL_FACTOR; // TODO: change where relevant, currently set to 65% on mainnet
   const borrowFee = BORROW_FEE; // TODO: 1,5% later but 0% for now
   const newAdditionalDebt = valueSOL * (1 + borrowFee);
   const newTotalDebt = newAdditionalDebt
@@ -134,7 +138,12 @@ const BorrowForm = (props: BorrowProps) => {
     if (selectedNft && selectedNft.mint.length < 1)
       return toastResponse('ERROR', 'Please select an NFT', 'ERROR');
     if (selectedNft && selectedNft.mint.length > 1)
-      executeDepositNFT(selectedNft.mint, toast, selectedNft.name, selectedNft.creator);
+      executeDepositNFT(
+        selectedNft.mint,
+        toast,
+        selectedNft.name,
+        selectedNft.creator
+      );
     handleSliderChange(0);
   };
   // executes the borrow function
@@ -168,12 +177,15 @@ const BorrowForm = (props: BorrowProps) => {
         <div className={styles.nftInfo}>
           <div className={styles.nftImage}>
             <HexaBoxContainer>
-              {
-                openPositions.length ?
-                <Image src={openPositions[0].image} alt='Honey NFT image' layout='fill' />
-                :
+              {openPositions.length ? (
+                <Image
+                  src={openPositions[0].image}
+                  alt="Honey NFT image"
+                  layout="fill"
+                />
+              ) : (
                 renderMarketImageByID(currentMarketId)
-              }
+              )}
             </HexaBoxContainer>
           </div>
           <div className={styles.nftName}>{selectedNft?.name}</div>

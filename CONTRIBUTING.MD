@@ -8,59 +8,78 @@ These steps will help you to set up your development environment. That includes 
 
 Before completing the below stated steps [please see the requirements]() in order to run the project successfully.
 
-1. Clone the git repository: 
+1. Clone the git repository:
+
 ```bash
 git clone git@github.com:honey-labs/honey-frontend.git
 ```
-2. Navigate into the cloned folder: 
-```bash 
+
+2. Navigate into the cloned folder:
+
+```bash
 cd honey-frontend/
 ```
-3. Install all dependencies: 
-```bash 
-yarn install 
+
+3. Install all dependencies:
+
+```bash
+yarn install
 ```
+
 4. Spin up the local environment:
+
 ```bash
 yarn dev
 ```
 
 ## <span style="color: rgb(235, 85, 69); font-weight: 900">The Repo Structure
+
 This repository contains the structure of the Honey Finance Front-end. Please note that this documentation is still a WIP. The Honey Finance Front-end can be divided into two stacks, the <b style="color: rgb(235, 85, 69); font-weight: 900">main-stack</b> and the <b style="color: rgb(235, 85, 69); font-weight: 900">sub-stack</b>. The main-stack consists of the following technologies:
+
 - <a href="https://nextjs.org/" target="_blank">Next.JS</a>
 - <a href="https://create-react-app.dev/">Create-react-app</a>
 - <a href="https://www.typescriptlang.org/" target="_blank">Typescript</a>
 
-
 #### <span style="color: rgb(235, 85, 69); font-weight: 900">Main stack structure</span>
+
 The main-stack uses Next.JS underneath the hood which is the main wrapper of the whole application. Next.JS has a file system based router built on the concept of pages. Whenever a new file is added to the `pages` directory it automatically becomes available as a route. To find a more detailed overview of routing within Next.JS please visit the following <a href="https://nextjs.org/docs/routing/introduction" target="_blank">link</a>
 
-The root of the project is listed in `pages/app.tsx`. This file contains the logic of importing and wrapping the application with respect to packages / SDKs and other third party services. The file which is then being served as main (index) of the project is called; index.tsx `pages/index.tsx`. Next.JS automatically serves this page as the root of the project. This page renders out the home page of Honey Finance. Apart from the `index.tsx` file you can find a folder which is named `pages`. Each page inside this folder makes uses of a styles component which lives inside the `~/styles` folder. These styling components figure as the core stylers for the overall page layout. However, when components are being imported there are custom stylecomponents being written to style them separately. 
+The root of the project is listed in `pages/app.tsx`. This file contains the logic of importing and wrapping the application with respect to packages / SDKs and other third party services. The file which is then being served as main (index) of the project is called; index.tsx `pages/index.tsx`. Next.JS automatically serves this page as the root of the project. This page renders out the home page of Honey Finance. Apart from the `index.tsx` file you can find a folder which is named `pages`. Each page inside this folder makes uses of a styles component which lives inside the `~/styles` folder. These styling components figure as the core stylers for the overall page layout. However, when components are being imported there are custom stylecomponents being written to style them separately.
 
 #### <span style="color: rgb(235, 85, 69); font-weight: 900">Sub stack structure</span>
+
+Examples (needs to be worked out):
+
 - Degen
 - Vanilla
 - Other tooling which is being used
 
 ## <span style="color: rgb(235, 85, 69); font-weight: 900">Coding Standards
+
 - Structure of components
 - Declaration of constants and variables
-- 
+-
+
 ## <span style="color: rgb(235, 85, 69); font-weight: 900">Creating a branch
+
 ## <span style="color: rgb(235, 85, 69); font-weight: 900">How to create an issue
+
 ## <span style="color: rgb(235, 85, 69); font-weight: 900">Tests
-The Honey Finance Front-end makes use of two frameworks regarding testing: 
+
+The Honey Finance Front-end makes use of two frameworks regarding testing:
+
 - Jest
 - React Testing Library
 
-<b>Jest</b> a framework that will actually run our test. Jest runs in a headless mode which means it doenst actually opens a browser. It uses JSDOM under the hood to render out the components. So we dont have access to the window object. 
+<b>Jest</b> a framework that will actually run our test. Jest runs in a headless mode which means it doenst actually opens a browser. It uses JSDOM under the hood to render out the components. So we dont have access to the window object.
 <b>React Testing Library takes each of our react components and gives us the 'end' result as in how the user will see it. So this is more regarding the UI part, as we can also interact with all the components.
 </b>
 
-`jest.setup.js`: 
+`jest.setup.js`:
 
-****
-as well as ... (EXAMPLE: several addons like the debugging package). This is reflected in the directory structure of this repository. Each package has a `src/` folder where the source code can be found, a `test` folder for all sorts of tests that check if the code in `src/` is correct, and a `dist/` folder where you can find the bundled artifacts. Note that the `dist/` folder may not be present initially. It will be created as soon as you run any of the build scripts inside `package.json`. 
+---
+
+as well as ... (EXAMPLE: several addons like the debugging package). This is reflected in the directory structure of this repository. Each package has a `src/` folder where the source code can be found, a `test` folder for all sorts of tests that check if the code in `src/` is correct, and a `dist/` folder where you can find the bundled artifacts. Note that the `dist/` folder may not be present initially. It will be created as soon as you run any of the build scripts inside `package.json`.
 
 A quick overview of our repository (or ideally how it should become):
 
@@ -78,7 +97,7 @@ A quick overview of our repository (or ideally how it should become):
   	src/  # Source code of the compat addon
   	test/ # Tests related to the compat addon
   	dist/ # Build artifacts for publishing on npm (may not be present)
-  
+
   # Sub-package, can be imported via `preact/hooks` by users.
   # The hooks API is an effect based API to deal with component lifcycles.
   # It's similar to hooks in React
@@ -86,7 +105,7 @@ A quick overview of our repository (or ideally how it should become):
   	src/  # Source code of the hooks addon
   	test/ # Tests related to the hooks addon
   	dist/ # Build artifacts for publishing on npm (may not be present)
-  
+
   # Sub-package, can be imported via `preact/debug` by users.
   # Includes debugging warnings and error messages for common mistakes found
   # in Preact application. Also hosts the devtools bridge
@@ -94,21 +113,22 @@ A quick overview of our repository (or ideally how it should become):
   	src/  # Source code of the debug addon
   	test/ # Tests related to the debug addon
   	dist/ # Build artifacts for publishing on npm (may not be present)
-  
+
   # Sub-package, can be imported via `preact/test-utils` by users.
   # Provides helpers to make testing Preact applications easier
   test-utils/
   	src/  # Source code of the test-utils addon
   	test/ # Tests related to the test-utils addon
   	dist/ # Build artifacts for publishing on npm (may not be present)
-  
+
   # A demo application that we use to debug tricky errors and play with new
   # features.
   demo/
-  
+
   # Contains build scripts and dependencies for development
   package.json
 ```
+
 ## Example explainers: -- core devs should fill this in
 
 ### What does `XYZ.json` do?
@@ -121,7 +141,7 @@ It's a special file that can be used to ... Because each sub-package has it's ow
 
 ## Important Branches and examples of branch management
 
-We merge every PR into the `development` branch. Once changes are final and tested we merge the `development` branch with the `main` branch to update the site. 
+We merge every PR into the `development` branch. Once changes are final and tested we merge the `development` branch with the `main` branch to update the site.
 
 We prefer to have branches structured as:
 /feature/lending-page-layout/fetching-nfts
@@ -129,12 +149,13 @@ We prefer to have branches structured as:
 /type/page/xyz
 
 TODO:
+
 ## Creating your first Pull-Request
 
-We try to make it as easy as possible to contribute to Honey Finance by... 
+We try to make it as easy as possible to contribute to Honey Finance by...
 
-Once a PR or a Draft PR has been created our community and devs will be given time to join the discussion about the proposed change. 
-Sometimes that includes ideas for test cases or even different ways to go about implementing a feature. Often this also includes ideas on how to make the code smaller/more efficient. 
+Once a PR or a Draft PR has been created our community and devs will be given time to join the discussion about the proposed change.
+Sometimes that includes ideas for test cases or even different ways to go about implementing a feature. Often this also includes ideas on how to make the code smaller/more efficient.
 
 When everything is good to go someone will approve the PR and the changes will be merged into the `development` branch and we usually merge with `main` a week or two later.
 
@@ -148,12 +169,14 @@ The short summary is:
 4. A new release will be merged with `main` (every 2-3 weeks).
 
 TODO: share tips
+
 ## Tips for getting to know the code base
 
-- XYZ 
+- XYZ
 - XYZ
 
 TODO: change examples
+
 ## FAQ -- change examples!
 
 ### Why does the JSDoc use TypeScript syntax to specify types?
@@ -177,6 +200,7 @@ In the end there is no effect on size regardless if you use `const`, `let` or us
 This will only become important once shipping modern JavaScript code on npm becomes a thing and bundlers follow suit.
 
 TODO: give tips for bug reports
+
 ## How to create a good bug report
 
 To be able to fix issues we need to see them on our machine. This is only possible when we can reproduce the error. The easiest way to do that is narrow down the problem to specific components or combination of them. This can be done by removing as much unrelated code as possible.
@@ -184,11 +208,13 @@ To be able to fix issues we need to see them on our machine. This is only possib
 The perfect way to do that is to make a [codesandbox](https://codesandbox.io/). That way you can easily share the problematic code and ensure that others can see the same issue you are seeing.
 
 TODO: add email and discord
+
 ## I have more questions on how to contribute to Honey Finance. How can I reach you?
 
 We closely watch our issues and have a pretty active [Discord](XYZ). Nearly all our communication happens via these two forms of communication.
 
 TODO: create release notes
+
 ## Writing release notes -- example
 
 The release notes have become a sort of tiny blog post about what's

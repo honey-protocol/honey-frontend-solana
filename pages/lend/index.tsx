@@ -23,10 +23,7 @@ import { getColumnSortStatus } from '../../helpers/tableUtils';
 import HoneySider from '../../components/HoneySider/HoneySider';
 import HoneyContent from '../../components/HoneyContent/HoneyContent';
 import { deposit, withdraw, useMarket, useHoney } from '@honey-finance/sdk';
-import {
-  BnToDecimal,
-  ConfigureSDK
-} from '../../helpers/loanHelpers/index';
+import { BnToDecimal, ConfigureSDK } from '../../helpers/loanHelpers/index';
 import { LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js';
 import BN from 'bn.js';
 import {
@@ -42,12 +39,8 @@ import HoneyTableNameCell from 'components/HoneyTable/HoneyTableNameCell/HoneyTa
 import HoneyTableRow from 'components/HoneyTable/HoneyTableRow/HoneyTableRow';
 
 const { format: f, formatPercent: fp, formatSol: fs } = formatNumber;
-import {
-  HONEY_GENESIS_BEE_MARKET_NAME,
-} from '../../helpers/marketHelpers';
-import {
-  HONEY_GENESIS_MARKET_ID,
-} from '../../helpers/marketHelpers/index';
+import { HONEY_GENESIS_BEE_MARKET_NAME } from '../../helpers/marketHelpers';
+import { HONEY_GENESIS_MARKET_ID } from '../../helpers/marketHelpers/index';
 import { setMarketId } from 'pages/_app';
 import { marketCollections } from '../../helpers/marketHelpers';
 import { generateMockHistoryData } from '../../helpers/chartUtils';
@@ -136,7 +129,7 @@ const Lend: NextPage = () => {
    * @description
    * @params
    * @returns
-  */
+   */
   async function calculateTotalDeposits(
     marketReserveInfo: any,
     honeyUser: any
@@ -334,7 +327,7 @@ const Lend: NextPage = () => {
    * @description
    * @params
    * @returns
-  */
+   */
   const getPositionData = () => {
     if (isMock) {
       const from = new Date()
@@ -357,12 +350,13 @@ const Lend: NextPage = () => {
   );
   const [expandedRowKeys, setExpandedRowKeys] = useState<readonly Key[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
-  const [isMyCollectionsFilterEnabled, setIsMyCollectionsFilterEnabled] = useState(false);
+  const [isMyCollectionsFilterEnabled, setIsMyCollectionsFilterEnabled] =
+    useState(false);
   /**
    * @description
    * @params
    * @returns
-  */
+   */
   useEffect(() => {
     if (sdkConfig.saberHqConnection) {
       function getData() {
@@ -376,8 +370,10 @@ const Lend: NextPage = () => {
               false
             );
             collection.rate =
-              ((await getInterestRate(collection.utilizationRate, collection.id)) || 0) *
-              collection.utilizationRate;
+              ((await getInterestRate(
+                collection.utilizationRate,
+                collection.id
+              )) || 0) * collection.utilizationRate;
             collection.stats = getPositionData();
 
             if (currentMarketId == collection.id) {
@@ -508,7 +504,9 @@ const Lend: NextPage = () => {
         dataIndex: 'rate',
         sorter: (a: any = 0, b: any = 0) => a.rate - b.rate,
         render: (rate: number, market: any) => {
-          return <div className={style.rateCell}>{fp(rate)}</div>;
+          return (
+            <div className={c(style.rateCell, style.lendRate)}>{fp(rate)}</div>
+          );
         }
       },
       {
