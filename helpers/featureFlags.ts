@@ -24,7 +24,6 @@ function isFeatureFlagEnabled(featureFlagName: string): boolean {
 }
 
 export const featureFlags = {
-  isSwapPageEnabled: isFeatureFlagEnabled('NEXT_PUBLIC_IS_SWAP_PAGE_ENABLED'),
   isP2PPageEnabled: isFeatureFlagEnabled('NEXT_PUBLIC_IS_P2P_PAGE_ENABLED'),
   isDialectNotificationsEnabled: isFeatureFlagEnabled(
     'NEXT_PUBLIC_IS_DIALECT_NOTIFICATIONS_ENABLED'
