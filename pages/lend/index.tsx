@@ -367,7 +367,9 @@ const Lend: NextPage = () => {
               sdkConfig.saberHqConnection,
               sdkConfig.sdkWallet,
               currentMarketId,
-              false
+              false,
+              [],
+              nftPrice
             );
             collection.rate =
               ((await getInterestRate(
