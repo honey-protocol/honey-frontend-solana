@@ -35,6 +35,7 @@ export const marketCollections: MarketTableRow[] = [
     user: undefined,
     debt: 0,
     utilizationRate: 0,
+    openPositions: [],
     constants: {
       marketId: '6FcJaAzQnuoA6o3sVw1GD6Ba69XuL5jinZpQTzJhd2R3',
       verifiedCreator: '6vRx1iVZo3xfrBHdpvuwArL2jucVj9j9nLpd2VUTTGMG',
@@ -58,6 +59,7 @@ export const marketCollections: MarketTableRow[] = [
     user: undefined,
     debt: 0,
     utilizationRate: 0,
+    openPositions: [],
     constants: {
       marketId: 'Bw77MGpg189EaATjN67WXcnp3c4544LhKoV4Ftmdg4C',
       verifiedCreator: 'A6XTVFiwGVsG6b6LsvQTGnV5LH3Pfa3qW3TGz8RjToLp',
@@ -81,6 +83,7 @@ export const marketCollections: MarketTableRow[] = [
     user: undefined,
     debt: 0,
     utilizationRate: 0,
+    openPositions: [],
     constants: {
       marketId: 'H2H2pJuccdvpET9A75ajB3GgdYdCUL4T3kiwUMA6DJ7q',
       verifiedCreator: 'EWyWxSkxWHWGzxfCd9kG7zGrKTUDbZGiV6VbFJF8YfqN',
@@ -104,6 +107,7 @@ export const marketCollections: MarketTableRow[] = [
     user: undefined,
     debt: 0,
     utilizationRate: 0,
+    openPositions: [],
     constants: {
       marketId: 'Bxk1JQCbVjpeFnjzvH5n9bepnZeHjRADUFwZiVC7L5Gq',
       verifiedCreator: '4pi2MRDQgGVFwV1Hv8ka7hSSu9TgdFmafk6jtQhrB9HN',
@@ -127,6 +131,7 @@ export const marketCollections: MarketTableRow[] = [
     user: undefined,
     debt: 0,
     utilizationRate: 0,
+    openPositions: [],
     constants: {
       marketId: 'F8rZviSSuqgkTsjMeoyrTUSNSqh7yNDCAozJkxm7eujY',
       verifiedCreator: '2UCkKjTHvz7qFjPZMjhWZiPmyTc6ZwZ44iYPbSpe3aVo',
