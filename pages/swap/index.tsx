@@ -40,7 +40,7 @@ const {
   formatPercent: fp
 } = formatNumber;
 
-const MAX_SLIPPAGE = 1;
+export const MAX_SLIPPAGE = 5;
 const DEFAULT_SLIPPAGE = 0.5;
 
 const Swap: NextPage = () => {
