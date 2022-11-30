@@ -376,7 +376,9 @@ const Markets: NextPage = () => {
               sdkConfig.saberHqConnection,
               sdkConfig.sdkWallet,
               currentMarketId,
-              false
+              false,
+              [],
+              nftPrice
             );
 
             collection.positions = await handlePositions(
