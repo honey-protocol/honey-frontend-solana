@@ -13,7 +13,7 @@ import { Keypair, PublicKey } from '@solana/web3.js';
 import { HoneyMarket } from '@honey-finance/sdk';
 import { buildReserveConfig } from './reserveConfigs';
 import MarketDetailsStep from '../MarketDetailsStep/MarketDetailsStep';
-import { HONEY_PROGRAM_ID } from 'constants/loan';
+import { HONEY_PROGRAM_ID } from 'helpers/marketHelpers/index';
 import HoneyTooltip from 'components/HoneyTooltip/HoneyTooltip';
 import { extLink } from 'styles/common.css';
 

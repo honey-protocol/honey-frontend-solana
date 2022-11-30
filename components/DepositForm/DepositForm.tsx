@@ -1,21 +1,16 @@
 import React, { FC, useState, useEffect } from 'react';
-import Image from 'next/image';
 import { InfoBlock } from '../InfoBlock/InfoBlock';
 import { InputsBlock } from '../InputsBlock/InputsBlock';
 import { HoneySlider } from '../HoneySlider/HoneySlider';
 import * as styles from './DepositForm.css';
 import { formatNumber } from '../../helpers/format';
-import honeyGenesisBee from '/public/images/imagePlaceholder.png';
 import HoneyButton from 'components/HoneyButton/HoneyButton';
 import HexaBoxContainer from '../HexaBoxContainer/HexaBoxContainer';
 import SidebarScroll from '../SidebarScroll/SidebarScroll';
 import { DepositFormProps } from './types';
-import { PublicKey, LAMPORTS_PER_SOL } from '@solana/web3.js';
-import { ConfigureSDK } from 'helpers/loanHelpers';
 import { questionIcon } from 'styles/icons.css';
 import { hAlign } from 'styles/common.css';
 import useToast from 'hooks/useToast';
-import { HONEY_GENESIS_MARKET_ID } from 'constants/loan';
 import { renderMarketImageByID, renderMarketName } from 'helpers/marketHelpers';
 
 const {

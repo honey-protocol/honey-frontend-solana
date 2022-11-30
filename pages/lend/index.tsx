@@ -40,9 +40,9 @@ import HoneyTableRow from 'components/HoneyTable/HoneyTableRow/HoneyTableRow';
 
 const { format: f, formatPercent: fp, formatSol: fs } = formatNumber;
 import { HONEY_GENESIS_BEE_MARKET_NAME } from '../../helpers/marketHelpers';
-import { HONEY_GENESIS_MARKET_ID } from '../../constants/loan';
+import { HONEY_GENESIS_MARKET_ID } from '../../helpers/marketHelpers/index';
 import { setMarketId } from 'pages/_app';
-import { marketCollections } from '../../constants/borrowLendMarkets';
+import { marketCollections } from '../../helpers/marketHelpers';
 import { generateMockHistoryData } from '../../helpers/chartUtils';
 import { renderMarket, renderMarketImageByName } from 'helpers/marketHelpers';
 // TODO: fetch based on config
@@ -74,9 +74,12 @@ const Lend: NextPage = () => {
    */
   async function handleMarketId(record: any) {
     const marketData = renderMarket(record.id);
-    setCurrentMarketId(marketData!.id);
-    setMarketId(marketData!.id);
-    setCurrentMarketName(marketData!.name);
+
+    if (marketData[0].id) {
+      setCurrentMarketId(marketData[0].id);
+      setMarketId(marketData[0].id);
+      setCurrentMarketName(marketData[0].name);
+    }
   }
   /**
    * @description calls upon markets which

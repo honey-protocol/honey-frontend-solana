@@ -4,206 +4,255 @@
  * Whenever a new market is added - please add the values here for each function and the whole app
  * should be updated.
  */
-import Image from 'next/image';
-import {
-  HONEY_GENESIS_MARKET_ID,
-  PESKY_PENGUINS_MARKET_ID,
-  OG_ATADIANS_MARKET_ID,
-  LIFINITY_FLARES_MARKET_ID,
-  BURRITO_BOYZ_MARKET_ID
-} from 'constants/loan';
-// market verified creators
-export const VERIFIED_CREATOR_HONEY_GENESIS_BEE = '6vRx1iVZo3xfrBHdpvuwArL2jucVj9j9nLpd2VUTTGMG';
-export const VERIFIED_CREATOR_PESKY_PENGUINS = 'A6XTVFiwGVsG6b6LsvQTGnV5LH3Pfa3qW3TGz8RjToLp';
-export const VERIFIED_CREATOR_OG_ATADIANS = '4pi2MRDQgGVFwV1Hv8ka7hSSu9TgdFmafk6jtQhrB9HN';
-export const VERIFIED_CREATOR_LIFINITY_FLARES = 'EWyWxSkxWHWGzxfCd9kG7zGrKTUDbZGiV6VbFJF8YfqN';
-export const VERIFIED_CREATOR_BURRITO_BOYZ = '2UCkKjTHvz7qFjPZMjhWZiPmyTc6ZwZ44iYPbSpe3aVo';
-// market names
+
+import { PublicKey } from '@solana/web3.js';
+import { MarketTableRow } from 'types/markets';
+import { logoIcon } from 'styles/icons.css';
+
+// type for open positions
+export type OpenPositions = {
+  image: string;
+  mint: PublicKey;
+  name: string;
+  symbol: string;
+  updateAuthority: PublicKey;
+  uri: string;
+};
+
+// collection strucutre for the markets
+export const marketCollections: MarketTableRow[] = [
+  {
+    id: '6FcJaAzQnuoA6o3sVw1GD6Ba69XuL5jinZpQTzJhd2R3',
+    key: 'HNYG',
+    name: 'Honey Genesis Bee',
+    verifiedCreator: '6vRx1iVZo3xfrBHdpvuwArL2jucVj9j9nLpd2VUTTGMG',
+    rate: 0,
+    available: 0,
+    value: 0,
+    allowance: 0,
+    positions: [],
+    connection: undefined,
+    user: undefined,
+    debt: 0,
+    utilizationRate: 0,
+    constants: {
+      marketId: '6FcJaAzQnuoA6o3sVw1GD6Ba69XuL5jinZpQTzJhd2R3',
+      verifiedCreator: '6vRx1iVZo3xfrBHdpvuwArL2jucVj9j9nLpd2VUTTGMG',
+      marketName: 'Honey Genesis Bee',
+      marketImage:
+        'https://img-cdn.magiceden.dev/rs:fill:400:400:0:0/plain/https://dl.airtable.com/.attachmentThumbnails/6b6c8954aed777a74de52fd70f8751ab/46b325db',
+      discountedMarket: false
+    }
+  },
+  {
+    id: 'Bw77MGpg189EaATjN67WXcnp3c4544LhKoV4Ftmdg4C',
+    key: 'NOOT',
+    name: 'Pesky Penguin',
+    verifiedCreator: 'A6XTVFiwGVsG6b6LsvQTGnV5LH3Pfa3qW3TGz8RjToLp',
+    rate: 0,
+    available: 0,
+    value: 0,
+    allowance: 0,
+    positions: [],
+    connection: undefined,
+    user: undefined,
+    debt: 0,
+    utilizationRate: 0,
+    constants: {
+      marketId: 'Bw77MGpg189EaATjN67WXcnp3c4544LhKoV4Ftmdg4C',
+      verifiedCreator: 'A6XTVFiwGVsG6b6LsvQTGnV5LH3Pfa3qW3TGz8RjToLp',
+      marketName: 'Pesky Penguin',
+      marketImage:
+        'https://img-cdn.magiceden.dev/rs:fill:400:400:0:0/plain/https://i.imgur.com/37nsjBZ.png',
+      discountedMarket: false
+    }
+  },
+  {
+    id: 'H2H2pJuccdvpET9A75ajB3GgdYdCUL4T3kiwUMA6DJ7q',
+    key: 'LIFINITY',
+    name: 'LIFINITY Flares',
+    verifiedCreator: 'EWyWxSkxWHWGzxfCd9kG7zGrKTUDbZGiV6VbFJF8YfqN',
+    rate: 0,
+    available: 0,
+    value: 0,
+    allowance: 0,
+    positions: [],
+    connection: undefined,
+    user: undefined,
+    debt: 0,
+    utilizationRate: 0,
+    constants: {
+      marketId: 'H2H2pJuccdvpET9A75ajB3GgdYdCUL4T3kiwUMA6DJ7q',
+      verifiedCreator: 'EWyWxSkxWHWGzxfCd9kG7zGrKTUDbZGiV6VbFJF8YfqN',
+      marketName: 'LIFINITY Flares',
+      marketImage:
+        'https://img-cdn.magiceden.dev/rs:fill:400:400:0:0/plain/https://dl.airtable.com/.attachmentThumbnails/6972d5c2efb77d49be97b07ccf4fbc69/e9572fb8',
+      discountedMarket: true
+    }
+  },
+  {
+    id: 'Bxk1JQCbVjpeFnjzvH5n9bepnZeHjRADUFwZiVC7L5Gq',
+    key: 'ATD',
+    name: 'OG Atadians',
+    verifiedCreator: '4pi2MRDQgGVFwV1Hv8ka7hSSu9TgdFmafk6jtQhrB9HN',
+    rate: 0,
+    available: 0,
+    value: 0,
+    allowance: 0,
+    positions: [],
+    connection: undefined,
+    user: undefined,
+    debt: 0,
+    utilizationRate: 0,
+    constants: {
+      marketId: 'Bxk1JQCbVjpeFnjzvH5n9bepnZeHjRADUFwZiVC7L5Gq',
+      verifiedCreator: '4pi2MRDQgGVFwV1Hv8ka7hSSu9TgdFmafk6jtQhrB9HN',
+      marketName: 'OG Atadians',
+      marketImage:
+        'https://i.seadn.io/gae/O8GK9vCJ5Cdtjz9aP3x7M4Bc4Z5HNgcsP0AcZFRjhC8p8fU4icgv2ecfNfZhMBjcYycVgJ2gpvCae_1TfXdbGOg2d6pKCdXRPlSsfQ?auto=format&w=384',
+      discountedMarket: true
+    }
+  },
+  {
+    id: 'F8rZviSSuqgkTsjMeoyrTUSNSqh7yNDCAozJkxm7eujY',
+    key: 'BURR',
+    name: 'Burrito Boyz',
+    verifiedCreator: '2UCkKjTHvz7qFjPZMjhWZiPmyTc6ZwZ44iYPbSpe3aVo',
+    rate: 0,
+    available: 0,
+    value: 0,
+    allowance: 0,
+    positions: [],
+    connection: undefined,
+    user: undefined,
+    debt: 0,
+    utilizationRate: 0,
+    constants: {
+      marketId: 'F8rZviSSuqgkTsjMeoyrTUSNSqh7yNDCAozJkxm7eujY',
+      verifiedCreator: '2UCkKjTHvz7qFjPZMjhWZiPmyTc6ZwZ44iYPbSpe3aVo',
+      marketName: 'Burrito Boyz',
+      marketImage:
+        'https://img-cdn.magiceden.dev/rs:fill:400:400:0:0/plain/https://creator-hub-prod.s3.us-east-2.amazonaws.com/burrito_boyz_pfp_1653394754301.png',
+      discountedMarket: false
+    }
+  }
+];
+
+// fees
+export const COLLATERAL_FACTOR = 0.65;
+export const BORROW_FEE = 0;
+
+// Honey Program ID
+export const HONEY_GENESIS_MARKET_ID =
+  '6FcJaAzQnuoA6o3sVw1GD6Ba69XuL5jinZpQTzJhd2R3';
 export const HONEY_GENESIS_BEE_MARKET_NAME = 'Honey Genesis Bee';
-export const LIFINITY_FLARES_MARKET_NAME = 'LIFINITY Flares';
-export const OG_ATADIANS_MARKET_NAME = 'OG Atadians';
-export const PESKY_PENGUINS_MARKET_NAME = 'Pesky Penguin';
-export const BURRITO_BOYZ_MARKET_NAME = 'Burrito Boyz';
-// constants used for the below stated functions
-const HONEY_IMAGE =
-  'https://img-cdn.magiceden.dev/rs:fill:400:400:0:0/plain/https://dl.airtable.com/.attachmentThumbnails/6b6c8954aed777a74de52fd70f8751ab/46b325db';
-const PESKY_IMAGE =
-  'https://img-cdn.magiceden.dev/rs:fill:400:400:0:0/plain/https://i.imgur.com/37nsjBZ.png';
-const OG_ATADIANS_IMAGE =
-  'https://i.seadn.io/gae/O8GK9vCJ5Cdtjz9aP3x7M4Bc4Z5HNgcsP0AcZFRjhC8p8fU4icgv2ecfNfZhMBjcYycVgJ2gpvCae_1TfXdbGOg2d6pKCdXRPlSsfQ?auto=format&w=384';
-const LIFINITY_FLARES_IMAGE =
-  'https://img-cdn.magiceden.dev/rs:fill:400:400:0:0/plain/https://dl.airtable.com/.attachmentThumbnails/6972d5c2efb77d49be97b07ccf4fbc69/e9572fb8';
-const BURRITO_BOYZ_IMAGE =
-  'https://img-cdn.magiceden.dev/rs:fill:400:400:0:0/plain/https://creator-hub-prod.s3.us-east-2.amazonaws.com/burrito_boyz_pfp_1653394754301.png';
+export const HONEY_PROGRAM_ID = 'hNEYyRsRBVq2La65V1KjvdbTE39w36gwrdjkmcpvysk';
+
+// import image from next
+import Image from 'next/image';
+
 /**
  * @description returns the image setup used for each market
  * @params name of the market in string format
  * @returns next.js image element with the image url && alt && style
  */
 export const renderMarketImageByName = (marketName: string) => {
-  switch (marketName) {
-    case HONEY_GENESIS_BEE_MARKET_NAME:
-      return <Image src={HONEY_IMAGE} alt="Honey NFT image" layout="fill" />;
-    case LIFINITY_FLARES_MARKET_NAME:
-      return (
-        <Image
-          src={LIFINITY_FLARES_IMAGE}
-          alt="Lifinity NFT image"
-          layout="fill"
-        />
-      );
-    case OG_ATADIANS_MARKET_NAME:
-      return (
-        <Image
-          src={OG_ATADIANS_IMAGE}
-          alt="OG Atadians NFT image"
-          layout="fill"
-        />
-      );
-    case PESKY_PENGUINS_MARKET_NAME:
-      return (
-        <Image src={PESKY_IMAGE} alt="Pesky Penguins NFT image" layout="fill" />
-      );
-    case BURRITO_BOYZ_MARKET_NAME:
-      return (
-        <Image
-          src={BURRITO_BOYZ_IMAGE}
-          alt="Burrito Boys NFT image"
-          layout="fill"
-        />
-      );
-  }
+  const filteredMarket = marketCollections.filter(
+    market => market.constants.marketName === marketName
+  );
+  return (
+    <Image
+      src={filteredMarket[0].constants.marketImage}
+      alt={`${filteredMarket[0].constants.marketName} NFT image`}
+      layout="fill"
+    />
+  );
 };
+
 /**
  * @description returns the image setup used for each market
  * @params id of the market in string format
  * @returns next.js image element with the image url && alt && style
  */
-export const renderMarketImageByID = (marketID: string) => {
-  switch (marketID) {
-    case HONEY_GENESIS_MARKET_ID:
-      return <Image src={HONEY_IMAGE} alt="Honey NFT image" layout="fill" />;
-    case LIFINITY_FLARES_MARKET_ID:
-      return (
-        <Image
-          src={LIFINITY_FLARES_IMAGE}
-          alt="Lifinity NFT image"
-          layout="fill"
-        />
-      );
-    case OG_ATADIANS_MARKET_ID:
-      return (
-        <Image
-          src={OG_ATADIANS_IMAGE}
-          alt="OG Atadians NFT image"
-          layout="fill"
-        />
-      );
-    case PESKY_PENGUINS_MARKET_ID:
-      return (
-        <Image 
-          src={PESKY_IMAGE} 
-          alt="Pesky Penguins NFT image" 
-          layout="fill" 
-        />
-      );
-    case BURRITO_BOYZ_MARKET_ID:
-      return (
-        <Image
-          src={BURRITO_BOYZ_IMAGE}
-          alt="Burrito Boys NFT image"
-          layout="fill"
-        />
-      );
-  }
+export const renderMarketImageByID = (marketId: string) => {
+  const filteredMarket = marketCollections.filter(
+    market => market.constants.marketId === marketId
+  );
+  return (
+    <Image
+      src={filteredMarket[0].constants.marketImage}
+      alt={`${filteredMarket[0].constants.marketName} NFT image`}
+      layout="fill"
+    />
+  );
 };
+
 /**
  * @description this function returns the market name based on the market ID
  * @params id of the market
  * @returns string format of the market name
  */
 export const renderMarketName = (marketID: string) => {
-  switch (marketID) {
-    case HONEY_GENESIS_MARKET_ID:
-      return HONEY_GENESIS_BEE_MARKET_NAME;
-    case LIFINITY_FLARES_MARKET_ID:
-      return LIFINITY_FLARES_MARKET_NAME;
-    case OG_ATADIANS_MARKET_ID:
-      return OG_ATADIANS_MARKET_NAME;
-    case PESKY_PENGUINS_MARKET_ID:
-      return PESKY_PENGUINS_MARKET_NAME;
-    case BURRITO_BOYZ_MARKET_ID:
-      return BURRITO_BOYZ_MARKET_NAME;
-  }
+  return marketCollections.map(market => {
+    if (market.constants.marketId === marketID) {
+      return market.constants.marketName;
+    } else {
+      return '';
+    }
+  });
 };
+
 /**
  * @description sets the market ID
  * @params Honey table record - contains all info about a table (aka market)
  * @returns sets the market ID which re-renders page state and fetches market specific data
  */
-export const renderMarket = (record: string) => {
-  switch (record) {
-    case HONEY_GENESIS_MARKET_ID:
-      return {
-        id: HONEY_GENESIS_MARKET_ID,
-        name: HONEY_GENESIS_BEE_MARKET_NAME
-      };
-    case LIFINITY_FLARES_MARKET_ID:
-      return {
-        id: LIFINITY_FLARES_MARKET_ID,
-        name: LIFINITY_FLARES_MARKET_NAME
-      };
-    case OG_ATADIANS_MARKET_ID:
-      return {
-        id: OG_ATADIANS_MARKET_ID,
-        name: OG_ATADIANS_MARKET_NAME
-      };
-    case PESKY_PENGUINS_MARKET_ID:
-      return {
-        id: PESKY_PENGUINS_MARKET_ID,
-        name: PESKY_PENGUINS_MARKET_NAME
-      };
-    case BURRITO_BOYZ_MARKET_ID:
-      return {
-        id: BURRITO_BOYZ_MARKET_ID,
-        name: BURRITO_BOYZ_MARKET_NAME
-      };
-  }
+export const renderMarket = (marketId: string) => {
+  return marketCollections.filter(
+    market => market.constants.marketId === marketId
+  );
 };
+
 /**
  * @description filters the nft array based on the market name being passed in
  * @params nft array market name
  * @returns filtered array of nfts scoped to specific market
  */
-function filterNfts(nftArray: any, verifiedCreator: string, marketName: string) {
-  const nameFilteredArray = nftArray.filter((nft: any) => nft.name.includes(marketName));
+function filterNfts(
+  nftArray: any,
+  verifiedCreator: string,
+  marketName: string
+) {
+  const nameFilteredArray = nftArray.filter((nft: any) =>
+    nft.name.includes(marketName)
+  );
   const verifiedCreatorFilteredArray = nameFilteredArray.filter((nft: any) => {
     if (nft.creators) {
-      return nft.creators.map((creator: any) => creator.address === verifiedCreator)
+      return nft.creators.map(
+        (creator: any) => creator.address === verifiedCreator
+      );
     }
   });
 
   return verifiedCreatorFilteredArray;
 }
+
 /**
  * @description see above
  * @params see above
  * @returns see above
  */
-export const renderNftList = (marketID: string, nftArray: any) => {
-  switch (marketID) {
-    case HONEY_GENESIS_MARKET_ID:
-      return filterNfts(nftArray, VERIFIED_CREATOR_HONEY_GENESIS_BEE, HONEY_GENESIS_BEE_MARKET_NAME);
-    case LIFINITY_FLARES_MARKET_ID:
-      return filterNfts(nftArray, VERIFIED_CREATOR_LIFINITY_FLARES, LIFINITY_FLARES_MARKET_NAME);
-    case OG_ATADIANS_MARKET_ID:
-      return filterNfts(nftArray, VERIFIED_CREATOR_OG_ATADIANS, OG_ATADIANS_MARKET_NAME);
-    case PESKY_PENGUINS_MARKET_ID:
-      return filterNfts(nftArray, VERIFIED_CREATOR_PESKY_PENGUINS, PESKY_PENGUINS_MARKET_NAME);
-    case BURRITO_BOYZ_MARKET_ID:
-      return filterNfts(nftArray, VERIFIED_CREATOR_BURRITO_BOYZ, BURRITO_BOYZ_MARKET_NAME);
-  }
+export const renderNftList = (marketId: string, nftArray: any) => {
+  const filteredMarket = marketCollections.filter(
+    market => market.constants.marketId === marketId
+  );
+  return filterNfts(
+    nftArray,
+    filteredMarket[0].constants.verifiedCreator,
+    filteredMarket[0].constants.marketName
+  );
 };
+
 /**
  * @description filters out the open positions based on verified creator
  * @params collection id market id open positions array
@@ -214,7 +263,9 @@ export const handleOpenPositions = (
   openPositions: any
 ) => {
   if (openPositions) {
-    return openPositions.filter((pos: any) => pos.verifiedCreator === verifiedCreator)
+    return openPositions.filter(
+      (pos: any) => pos.verifiedCreator === verifiedCreator
+    );
   } else {
     return [];
   }

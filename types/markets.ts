@@ -23,6 +23,13 @@ export type MarketTableRow = {
   liqThreshold?: any;
   untilLiquidation?: number;
   verifiedCreator: string;
+  constants: {
+    marketId: string;
+    verifiedCreator: string;
+    marketName: string;
+    marketImage: string;
+    discountedMarket: boolean;
+  }
 };
 
 export type MarketTablePosition = {

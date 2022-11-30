@@ -1,5 +1,5 @@
 import { RoundHalfDown, RoundHalfUp } from 'helpers/utils';
-import { BURRITO_BOYZ_MARKET_ID, HONEY_GENESIS_MARKET_ID, HONEY_PROGRAM_ID, LIFINITY_FLARES_MARKET_ID, MAX_LTV, OG_ATADIANS_MARKET_ID, PESKY_PENGUINS_MARKET_ID } from '../../constants/loan';
+import {MAX_LTV} from '../../constants/loan';
 import BN from 'bn.js';
 import { BnToDecimal, getOraclePrice } from '../../helpers/loanHelpers/index';
 import {
@@ -26,11 +26,7 @@ import { LIQUIDATION_THRESHOLD } from '../../constants/loan';
 import NodeWallet from '@project-serum/anchor/dist/cjs/nodewallet';
 import { 
   renderMarketName, 
-  HONEY_GENESIS_BEE_MARKET_NAME,
-  LIFINITY_FLARES_MARKET_NAME,
-  OG_ATADIANS_MARKET_NAME,
-  PESKY_PENGUINS_MARKET_NAME,
-  BURRITO_BOYZ_MARKET_NAME,
+  marketCollections
 } from 'helpers/marketHelpers';
 
 /**
@@ -222,38 +218,62 @@ export async function fetchSolPrice(parsedReserves: any, connection: any) {
  * @params utilization ratio
  * @returns interest rate for market
  */
-export async function getInterestRate(utilizationRate: number, marketId: string) {
+ export async function getInterestRate(utilizationRate: number, marketId: string) {
   let interestRate = 0;
 
   try {
-    if (utilizationRate < OPTIMAL_RATIO_ONE) {
-      interestRate =
-        BASE_BORROW_RATE +
-        (utilizationRate / OPTIMAL_RATIO_ONE) *
-          (BORROW_RATE_ONE - BASE_BORROW_RATE);
-      console.log('@@-- interest rate 1', interestRate * 100);
-      return interestRate * 100;
-    } else if (utilizationRate > OPTIMAL_RATIO_ONE) {
-      if (utilizationRate < OPTIMAL_RATIO_TWO) {
+    const activeMarket = marketCollections.filter((market) => market.constants.marketId === marketId);
+    if (activeMarket[0].constants.discountedMarket === true) {
+      if (utilizationRate < OPTIMAL_RATIO_ONE) {
+        interestRate =
+          DISCOUNTED_BORROW_RATE +
+          (utilizationRate / OPTIMAL_RATIO_ONE) *
+            (BORROW_RATE_ONE - DISCOUNTED_BORROW_RATE);
+        return interestRate * 100;
+      } else if (utilizationRate >= OPTIMAL_RATIO_ONE) {
+        if (utilizationRate < OPTIMAL_RATIO_TWO) {
+          interestRate =
+            DISCOUNTED_BORROW_RATE +
+            BORROW_RATE_ONE +
+            ((utilizationRate - OPTIMAL_RATIO_ONE) / (1 - OPTIMAL_RATIO_ONE)) *
+              (BORROW_RATE_TWO - DISCOUNTED_BORROW_RATE);
+          return interestRate * 100;
+        } else {
+          interestRate =
+            DISCOUNTED_BORROW_RATE +
+            BORROW_RATE_TWO +
+            ((utilizationRate - OPTIMAL_RATIO_TWO) / (1 - OPTIMAL_RATIO_TWO)) *
+              (BORROW_RATE_THREE - DISCOUNTED_BORROW_RATE);
+          return interestRate * 100;
+        }
+      }
+    } else {
+      if (utilizationRate < OPTIMAL_RATIO_ONE) {
         interestRate =
           BASE_BORROW_RATE +
-          BORROW_RATE_ONE +
-          ((utilizationRate - OPTIMAL_RATIO_ONE) / (1 - OPTIMAL_RATIO_ONE)) *
-            (BORROW_RATE_TWO - BASE_BORROW_RATE);
-        console.log('@@-- interest rate 2', interestRate * 100);
+          (utilizationRate / OPTIMAL_RATIO_ONE) *
+            (BORROW_RATE_ONE - BASE_BORROW_RATE);
         return interestRate * 100;
-      } else {
-        interestRate =
-          BASE_BORROW_RATE +
-          BORROW_RATE_TWO +
-          ((utilizationRate - OPTIMAL_RATIO_TWO) / (1 - OPTIMAL_RATIO_TWO)) *
-            (BORROW_RATE_THREE - BASE_BORROW_RATE);
-        console.log('@@-- interest rate 3', interestRate * 100);
-        return interestRate * 100;
+      } else if (utilizationRate >= OPTIMAL_RATIO_ONE) {
+        if (utilizationRate < OPTIMAL_RATIO_TWO) {
+          interestRate =
+            BASE_BORROW_RATE +
+            BORROW_RATE_ONE +
+            ((utilizationRate - OPTIMAL_RATIO_ONE) / (1 - OPTIMAL_RATIO_ONE)) *
+              (BORROW_RATE_TWO - BASE_BORROW_RATE);
+          return interestRate * 100;
+        } else {
+          interestRate =
+            BASE_BORROW_RATE +
+            BORROW_RATE_TWO +
+            ((utilizationRate - OPTIMAL_RATIO_TWO) / (1 - OPTIMAL_RATIO_TWO)) *
+              (BORROW_RATE_THREE - BASE_BORROW_RATE);
+          return interestRate * 100;
+        }
       }
     }
   } catch (error) {
-      throw error;
+    throw error
   }
 }
 /**
@@ -303,59 +323,21 @@ const setObligations = async (obligations: any, currentMarketId: string, nftPric
 const calculateRisk = async (obligations: any, nftPrice: number, type: boolean, currentMarketId: string, collectionName: string) => {
   if (!obligations) return 0;
 
-  if (currentMarketId === HONEY_GENESIS_MARKET_ID && collectionName === HONEY_GENESIS_BEE_MARKET_NAME) {
-    let sumOfDebt = await obligations.reduce((acc: number, obligation: any) => {
-      return acc + obligation.debt;
-    }, 0);
-  
-    if (type === true) {
-      return sumOfDebt;
-    } else {
-      return (sumOfDebt / obligations.length / nftPrice)
-    }
-  } else if (currentMarketId === PESKY_PENGUINS_MARKET_ID && collectionName === PESKY_PENGUINS_MARKET_NAME) {
-     let sumOfDebt = await obligations.reduce((acc: number, obligation: any) => {
-       return acc + obligation.debt;
-     }, 0);
-  
+  marketCollections.map(async (market) => {
+    if (market.constants.marketId === currentMarketId && market.constants.marketName === collectionName) {
+      let sumOfDebt = await obligations.reduce((acc: number, obligation: any) => {
+        return acc + obligation.debt;
+      }, 0);
+    
       if (type === true) {
-       return sumOfDebt;
+        return sumOfDebt;
       } else {
-       return (sumOfDebt / obligations.length / nftPrice)
+        return (sumOfDebt / obligations.length / nftPrice)
       }
-   } else if (currentMarketId === OG_ATADIANS_MARKET_ID && collectionName === OG_ATADIANS_MARKET_NAME) {
-    let sumOfDebt = await obligations.reduce((acc: number, obligation: any) => {
-      return acc + obligation.debt;
-    }, 0);
- 
-     if (type === true) {
-      return sumOfDebt;
-     } else {
-      return (sumOfDebt / obligations.length / nftPrice)
-     }
-  } else if (currentMarketId === LIFINITY_FLARES_MARKET_ID && collectionName === LIFINITY_FLARES_MARKET_NAME) {
-    let sumOfDebt = await obligations.reduce((acc: number, obligation: any) => {
-      return acc + obligation.debt;
-    }, 0);
- 
-     if (type === true) {
-      return sumOfDebt;
-     } else {
-      return (sumOfDebt / obligations.length / nftPrice)
-     }
-  } else if (currentMarketId === BURRITO_BOYZ_MARKET_ID && collectionName === BURRITO_BOYZ_MARKET_NAME) {
-    let sumOfDebt = await obligations.reduce((acc: number, obligation: any) => {
-      return acc + obligation.debt;
-    }, 0);
- 
-     if (type === true) {
-      return sumOfDebt;
-     } else {
-      return (sumOfDebt / obligations.length / nftPrice)
-     }
-  } else {
-    return 0;
-  }
+    } else {
+      return 0;
+    }
+  })
 }
 /**
  * @description calculates the total value locked of a market
@@ -364,18 +346,9 @@ const calculateRisk = async (obligations: any, nftPrice: number, type: boolean, 
 */
 const calculateTVL = async (obligations: any, nftPrice: number, currentMarketId: string, collectionName: string) => {
   if (!obligations) return 0;
-
-  if (currentMarketId === HONEY_GENESIS_MARKET_ID && collectionName === HONEY_GENESIS_BEE_MARKET_NAME) {
-    return nftPrice * obligations.length;
-  } else if (currentMarketId === PESKY_PENGUINS_MARKET_ID && collectionName === PESKY_PENGUINS_MARKET_NAME) {
-    return nftPrice * obligations.length;
-  } else if (currentMarketId === OG_ATADIANS_MARKET_ID && collectionName === OG_ATADIANS_MARKET_NAME) {
-    return nftPrice * obligations.length;
-  } else if (currentMarketId === BURRITO_BOYZ_MARKET_ID && collectionName === BURRITO_BOYZ_MARKET_NAME) {
-    return nftPrice * obligations.length;
-  } else if (currentMarketId === LIFINITY_FLARES_MARKET_ID && collectionName === LIFINITY_FLARES_MARKET_NAME) {
-    return nftPrice * obligations.length;
-  }
+  marketCollections.map((market) => {
+    if (market.constants.marketId === currentMarketId && market.constants.marketName === collectionName) return nftPrice * obligations.length;
+  })
 }
 /**
  * @description Being called for each collection in the array, calculates the collections values
