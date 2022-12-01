@@ -23,6 +23,9 @@ export type MarketTableRow = {
   liqThreshold?: any;
   untilLiquidation?: number;
   verifiedCreator: string;
+  nftOracle?: string;
+  collectionUrl?: string;
+  imgPath?: string;
 };
 
 export type MarketTablePosition = {

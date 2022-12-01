@@ -1,0 +1,3 @@
+[submodule "honey-market-registry"]
+	path = honey-market-registry
+	url = https://github.com/honey-labs/honey-market-registry.git
