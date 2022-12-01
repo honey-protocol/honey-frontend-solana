@@ -6,15 +6,22 @@ export type MarketTableRow = {
   available: number;
   connection: any;
   debt: number;
+  // pulled from honey-market-registry
   id: string;
   key: string;
   name: string;
+  verifiedCreator: string;
+  nftOracle: string;
+  collectionUrl: string;
+  imgPath: string;
+  discountedMarket: boolean;
+  // end pulled from honey-market-registry
   rate: number;
   user: any;
   utilizationRate: number;
   value: number;
-  openPositions: Array<MarketTablePosition>; 
-  positions: Array<MarketTablePosition>;
+  openPositions?: Array<MarketTablePosition>;
+  positions?: Array<MarketTablePosition>;
   stats?: any;
   risk?: number;
   liquidationThreshold?: number;
@@ -22,14 +29,6 @@ export type MarketTableRow = {
   tvl?: number;
   liqThreshold?: any;
   untilLiquidation?: number;
-  verifiedCreator: string;
-  constants: {
-    marketId: string;
-    verifiedCreator: string;
-    marketName: string;
-    marketImage: string;
-    discountedMarket: boolean;
-  }
 };
 
 export type MarketTablePosition = {
