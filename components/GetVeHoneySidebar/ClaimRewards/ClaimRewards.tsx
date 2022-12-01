@@ -1,5 +1,5 @@
 // MOCK UI for claim rewards
-import { useCallback, useMemo } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { BN } from '@project-serum/anchor';
 
 import SidebarScroll from 'components/SidebarScroll/SidebarScroll';
@@ -10,23 +10,24 @@ import { calculateNFTReceiptClaimableAmount } from 'helpers/sdk';
 import { convert } from 'helpers/utils';
 
 import * as styles from './ClaimRewards.css';
+import useToast from 'hooks/useToast';
+import { HoneyCheckbox } from 'components/HoneyCheckbox/HoneyCheckbox';
+import { CheckboxChangeEvent } from 'antd/es/checkbox';
 
 const ListItem = ({
   receipt,
-  onClaim,
-  onClose
+  onChange,
+  isSelected
 }: {
   receipt: {
     id: BN;
     claimed: BN;
     claimable: BN;
   };
-  onClaim: () => Promise<void>;
-  onClose: () => Promise<void>;
+  onChange: Function;
+  isSelected: boolean;
 }) => {
   const { id, claimed, claimable } = receipt;
-
-  const claimableN = convert(claimable);
 
   return (
     <tr className={styles.receiptListItem}>
@@ -34,19 +35,24 @@ const ListItem = ({
       <td>{convert(claimed)}</td>
       <td>{convert(claimable)}</td>
       <td>
-        <HoneyButton
-          size="small"
-          onClick={() => (claimableN ? onClaim() : onClose())}
-        >
-          {claimableN ? 'Claim' : 'Close'}
-        </HoneyButton>
+        <HoneyCheckbox checked={isSelected} onChange={e => onChange(e, id)} />
       </td>
     </tr>
   );
 };
 
 const ClaimRewards = (props: { onCancel: Function }) => {
+  const [selected, setSelected] = useState<BN>();
+  const { toast, ToastComponent } = useToast();
   const { escrow, locker, claim, closeReceipt } = useLocker();
+
+  const onItemSelect = (e: CheckboxChangeEvent, id: BN) => {
+    if (e.target.checked) {
+      setSelected(id);
+    } else {
+      setSelected(undefined);
+    }
+  };
 
   const receipts = useMemo(() => {
     if (escrow && locker) {
@@ -60,6 +66,11 @@ const ClaimRewards = (props: { onCancel: Function }) => {
     }
     return [];
   }, [escrow, locker]);
+
+  const selectedReceipt = receipts.find(
+    r => r.id.toString() === selected?.toString()
+  );
+  const claimableN = selectedReceipt ? convert(selectedReceipt?.claimable) : 0;
 
   const handleClaim = useCallback(
     async (receiptId: BN) => {
@@ -76,7 +87,40 @@ const ClaimRewards = (props: { onCancel: Function }) => {
   );
 
   return (
-    <SidebarScroll>
+    <SidebarScroll
+      footer={
+        toast.state ? (
+          <ToastComponent />
+        ) : (
+          <div className={styles.buttons}>
+            <div className={styles.smallCol}>
+              <HoneyButton
+                onClick={() => (selected ? handleClose(selected) : {})}
+                variant="secondary"
+              >
+                Cancel
+              </HoneyButton>
+            </div>
+            <div className={styles.bigCol}>
+              <HoneyButton
+                variant="primary"
+                disabled={!selected}
+                block
+                onClick={() =>
+                  selected
+                    ? claimableN
+                      ? handleClaim(selected)
+                      : handleClose(selected)
+                    : {}
+                }
+              >
+                {claimableN ? 'Claim' : 'Close receipt'}
+              </HoneyButton>
+            </div>
+          </div>
+        )
+      }
+    >
       <div className={styles.burnNftsForm}>
         <div className={styles.articleWrapper}>
           <div className={styles.articleTitle}>Proof for burned NFTs</div>
@@ -104,8 +148,8 @@ const ClaimRewards = (props: { onCancel: Function }) => {
             <ListItem
               key={r.id.toString()}
               receipt={r}
-              onClaim={() => handleClaim(r.id)}
-              onClose={() => handleClose(r.id)}
+              isSelected={selected === r.id}
+              onChange={onItemSelect}
             />
           ))}
         </table>
