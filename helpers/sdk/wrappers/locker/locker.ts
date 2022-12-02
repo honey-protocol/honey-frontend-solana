@@ -498,4 +498,15 @@ export class LockerWrapper {
     const escrow = await this.fetchEscrowData();
     return escrow.data.receiptCount;
   }
+
+  async fetchAllProofs() {
+    return this.program.account.proof.all([
+      {
+        memcmp: {
+          offset: 8,
+          bytes: this.locker.toBase58()
+        }
+      }
+    ]);
+  }
 }

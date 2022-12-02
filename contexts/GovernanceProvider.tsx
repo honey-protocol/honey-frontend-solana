@@ -63,6 +63,17 @@ export interface Escrow {
   receipts: ReceiptData[];
 }
 
+export enum ProofType {
+  Creator = 1 << 0,
+  Mint = 1 << 1
+}
+
+export interface Proof {
+  pubkey: PublicKey;
+  proofAddr: PublicKey;
+  proofType: ProofType;
+}
+
 export interface GovernanceContextValueProps {
   stakeWrapper?: StakeWrapper;
   lockerWrapper?: LockerWrapper;
@@ -72,6 +83,7 @@ export interface GovernanceContextValueProps {
   stakePoolInfo?: PoolInfo;
   stakePoolUser?: StakePoolUser;
   lockerInfo?: LockerData;
+  proofs?: Proof[];
   governorInfo?: GovernorData;
   escrow?: Escrow;
   govToken?: Token;
@@ -108,6 +120,7 @@ export const GovernanceProvider: React.FC<React.ReactNode> = ({ children }) => {
   const [proposals, setProposals] = useState<Proposal[]>();
   const [pool, setPool] = useState<PoolInfo>();
   const [locker, setLocker] = useState<LockerData>();
+  const [proofs, setProofs] = useState<Proof[]>();
   const [governor, setGovernor] = useState<GovernorData>();
   const [user, setUser] = useState<StakePoolUser>();
   const [escrow, setEscrow] = useState<Escrow>();
@@ -176,6 +189,17 @@ export const GovernanceProvider: React.FC<React.ReactNode> = ({ children }) => {
       setLocker(locker);
       setGovernor(governor);
 
+      // Load proofs
+      const proofs = await lockerWrapper.fetchAllProofs();
+
+      setProofs(
+        proofs.map(proof => ({
+          pubkey: proof.publicKey,
+          proofAddr: proof.account.proofAddress,
+          proofType: proof.account.proofType
+        }))
+      );
+
       // Load stake pool user
       try {
         const user = await stakeWrapper.fetchPoolUser();
@@ -242,6 +266,7 @@ export const GovernanceProvider: React.FC<React.ReactNode> = ({ children }) => {
         stakePoolInfo: pool,
         stakePoolUser: user,
         lockerInfo: locker,
+        proofs,
         governorInfo: governor,
         escrow,
         govToken,
