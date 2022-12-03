@@ -15,7 +15,9 @@ import ProposalActivate from './Proposals/ProposalActivate/ProposalActivate';
 import SectionTitle from 'components/SectionTitle/SectionTitle';
 
 import { InfoBlock } from 'components/InfoBlock/InfoBlock';
-import HoneyButton from 'components/HoneyButton/HoneyButton';
+import HoneyButton, {
+  HoneyButtonProps
+} from 'components/HoneyButton/HoneyButton';
 import SidebarScroll from 'components/SidebarScroll/SidebarScroll';
 import HoneyWarning from 'components/HoneyWarning/HoneyWarning';
 import useToast from 'hooks/useToast';
@@ -24,6 +26,8 @@ import { formatNumber } from 'helpers/format';
 
 import { questionIcon } from 'styles/icons.css';
 import * as styles from './VoteForm.css';
+import ProposalHistory from './Proposals/ProposalHistory/ProposalHistory';
+import { Space } from 'antd';
 
 const { formatShortName: fsn } = formatNumber;
 
@@ -116,11 +120,7 @@ const VoteForm: FC<VoteFormProps> = (props: VoteFormProps) => {
     return minActivationThreshold.asNumber - votingPower.asNumber;
   }, [minActivationThreshold, votingPower]);
 
-  const buttonDetails: {
-    title: string;
-    onClick: Function;
-    disabled?: boolean;
-  } = useMemo(() => {
+  const buttonDetails: HoneyButtonProps = useMemo(() => {
     if (!proposalInfo) return { title: '', onClick: () => {} };
     switch (proposalInfo.status) {
       case ProposalState.Draft:
@@ -193,7 +193,7 @@ const VoteForm: FC<VoteFormProps> = (props: VoteFormProps) => {
                   variant="primary"
                   disabled={buttonDetails.disabled}
                   block
-                  onClick={() => buttonDetails.onClick()}
+                  onClick={buttonDetails.onClick}
                 >
                   {buttonDetails.title}
                 </HoneyButton>
@@ -241,9 +241,9 @@ const VoteForm: FC<VoteFormProps> = (props: VoteFormProps) => {
               value={fsn(10000000)}
               valueSize="big"
               footer={
-                <span>
-                  Min Quorum <span className={questionIcon} />
-                </span>
+                <Space>
+                  Min Quorum <div className={questionIcon} />
+                </Space>
               }
               toolTipLabel="Tooltip label for Min Quorum"
             />
@@ -253,9 +253,9 @@ const VoteForm: FC<VoteFormProps> = (props: VoteFormProps) => {
               value={fsn(5000000)}
               valueSize="big"
               footer={
-                <span>
-                  Min Diff <span className={questionIcon} />
-                </span>
+                <Space>
+                  Min Diff <div className={questionIcon} />
+                </Space>
               }
               toolTipLabel="Label for Min Diff"
             />
@@ -285,7 +285,7 @@ const VoteForm: FC<VoteFormProps> = (props: VoteFormProps) => {
             )} */}
         </div>
         <div className={styles.divider} />
-        {/* <ProposalHistory proposalInfo={proposalInfo} /> */}
+        <ProposalHistory proposalInfo={proposalInfo} />
       </div>
     </SidebarScroll>
   );
