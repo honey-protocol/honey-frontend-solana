@@ -85,6 +85,9 @@ const Governance: NextPage = () => {
               proposalState !== ProposalState.Canceled)
           );
         })
+        .sort(
+          (a, b) => b.data.createdAt.toNumber() - a.data.createdAt.toNumber()
+        )
         .map(p => ({
           pubkey: p.pubkey,
           id: p.data.index.toNumber() ?? 0,
