@@ -18,7 +18,7 @@ export const voted = style([
 ]);
 
 export const votedGreen = style({
-  color: vars.colors.green,
+  color: vars.colors.green
 });
 
 const formSection = style([
@@ -53,6 +53,16 @@ export const gridCell = style({
   flexDirection: 'column',
   marginRight: 16,
   marginBottom: 24
+});
+
+export const votingPowerContainer = style({
+  gridColumnStart: 'span 2'
+});
+
+export const votingPowerInfo = style({
+  background: vars.colors.grayLight,
+  borderRadius: 12,
+  padding: '8px 16px'
 });
 
 export const buttons = style([
