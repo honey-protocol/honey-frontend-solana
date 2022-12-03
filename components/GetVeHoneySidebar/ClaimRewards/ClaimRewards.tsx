@@ -74,16 +74,28 @@ const ClaimRewards = (props: { onCancel: Function }) => {
 
   const handleClaim = useCallback(
     async (receiptId: BN) => {
-      await claim(receiptId);
+      try {
+        toast.processing();
+        await claim(receiptId);
+        toast.success('Claim successful');
+      } catch (error) {
+        toast.error('Claim failed');
+      }
     },
-    [claim]
+    [claim, toast]
   );
 
   const handleClose = useCallback(
     async (receiptId: BN) => {
-      await closeReceipt(receiptId);
+      try {
+        toast.processing();
+        await closeReceipt(receiptId);
+        toast.success('Close successful');
+      } catch (error) {
+        toast.error('Close failed');
+      }
     },
-    [closeReceipt]
+    [closeReceipt, toast]
   );
 
   return (

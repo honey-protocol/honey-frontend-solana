@@ -96,16 +96,31 @@ const LockHoneyForm = (props: { onCancel: Function }) => {
 
       // testing on devnet
       const lockPeroidInSeconds = Number(lockPeriod) * 10;
+      toast.processing();
+      try {
+        await lock(
+          convertToBN(valueHONEY, govToken.decimals),
+          new BN(lockPeroidInSeconds)
+        );
 
-      await lock(
-        convertToBN(valueHONEY, govToken.decimals),
-        new BN(lockPeroidInSeconds)
-      );
-
-      setValueHONEY(0);
-      setValueVeHONEY(0);
+        setValueHONEY(0);
+        setValueVeHONEY(0);
+        toast.success('Lock successful');
+      } catch (error) {
+        toast.error('Lock failed');
+      }
     }
   }, [lock, valueHONEY, lockPeriod, govToken]);
+
+  const handleUnlock = useCallback(async () => {
+    try {
+      toast.processing();
+      await unlock;
+      toast.success('Unlock successful');
+    } catch (error) {
+      toast.error('Unlock failed');
+    }
+  }, [toast, unlock]);
 
   const handleHoneyInputChange = (honeyValue: number | undefined) => {
     if (!honeyValue) {
@@ -167,7 +182,7 @@ const LockHoneyForm = (props: { onCancel: Function }) => {
                 variant="primary"
                 disabled={!unlockable}
                 block
-                onClick={unlock}
+                onClick={handleUnlock}
               >
                 Unlock
               </HoneyButton>

@@ -17,6 +17,7 @@ import * as styles from '../LockHoneyForm/LockHoneyForm.css';
 import { hAlign } from 'styles/common.css';
 import { TokenAmount } from '@saberhq/token-utils';
 import { calculateVotingPowerWithParams } from 'helpers/sdk';
+import useToast from 'hooks/useToast';
 
 const { format: f, formatPercent: fp, formatUsd: fu, parse: p } = formatNumber;
 
@@ -33,6 +34,7 @@ const PHoneyToVeHoney = (_: { onCancel: Function }) => {
   const [phoneyValue2, setPHoneyValue2] = useState<number>();
   const [honeyValue, setHoneyValue] = useState<number>();
   const [veHoneyValue, setVeHoneyValue] = useState<number>();
+  const { toast, ToastComponent } = useToast();
   const honeyPrice = lockPeriod === '3' ? 2 : lockPeriod === '6' ? 5 : 10;
 
   const { preToken, govToken, deposit, vest } = useStake();
@@ -87,15 +89,21 @@ const PHoneyToVeHoney = (_: { onCancel: Function }) => {
 
   const handleVest = useCallback(async () => {
     if (phoneyValue2 && preToken && lockPeriod) {
-      await vest(
-        convertToBN(phoneyValue2, preToken.decimals),
-        new BN(Number(lockPeriod) * 10)
-      );
-      setPHoneyValue2(undefined);
-      setHoneyValue(undefined);
-      setVeHoneyValue(undefined);
+      try {
+        toast.processing();
+        await vest(
+          convertToBN(phoneyValue2, preToken.decimals),
+          new BN(Number(lockPeriod) * 10)
+        );
+        setPHoneyValue2(undefined);
+        setHoneyValue(undefined);
+        setVeHoneyValue(undefined);
+        toast.success('Vesting successful');
+      } catch (error) {
+        toast.error('Vesting failed');
+      }
     }
-  }, [phoneyValue2, preToken, lockPeriod]);
+  }, [phoneyValue2, preToken, lockPeriod, toast]);
 
   return (
     <SidebarScroll
