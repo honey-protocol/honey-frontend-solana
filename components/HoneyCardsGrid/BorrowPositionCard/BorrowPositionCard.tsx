@@ -9,7 +9,8 @@ import { HoneySlider } from '../../HoneySlider/HoneySlider';
 import c from 'classnames';
 import HoneyTooltip from '../../HoneyTooltip/HoneyTooltip';
 import { BorrowPositionCardSlider } from '../../BorrowPositionCardSlider/BorrowPositionCardSlider';
-import { LIQUIDATION_THRESHOLD, MAX_LTV } from '../../../constants/loan';
+import { MAX_LTV } from '../../../constants/loan';
+import { COLLATERAL_FACTOR } from 'helpers/marketHelpers';
 
 const { formatUsd: fu, formatPercent: fp } = formatNumber;
 
@@ -41,7 +42,7 @@ export const BorrowPositionCard: FC<BorrowPositionCardProps> = ({
       <BorrowPositionCardSlider
         debt={position.debt}
         collateralValue={position.price}
-        liquidationThreshold={LIQUIDATION_THRESHOLD}
+        liquidationThreshold={COLLATERAL_FACTOR}
         maxLoanToValue={MAX_LTV}
       />
     </div>
