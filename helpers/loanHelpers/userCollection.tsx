@@ -1,5 +1,5 @@
 import { RoundHalfDown, RoundHalfUp } from 'helpers/utils';
-import {MAX_LTV} from '../../constants/loan';
+import { MAX_LTV } from '../../constants/loan';
 import BN from 'bn.js';
 import { BnToDecimal, getOraclePrice } from '../../helpers/loanHelpers/index';
 import {
@@ -14,99 +14,123 @@ import {
 } from '../../constants/interestRate';
 import { network } from 'pages/_app';
 import { ConnectedWallet } from '@saberhq/use-solana';
-import { Connection, Keypair, PublicKey, LAMPORTS_PER_SOL } from '@solana/web3.js';
+import {
+  Connection,
+  Keypair,
+  PublicKey,
+  LAMPORTS_PER_SOL
+} from '@solana/web3.js';
 
-import * as anchor from "@project-serum/anchor";
-import { CollateralNFTPosition, getHealthStatus, getNFTAssociatedMetadata, HoneyClient, HoneyMarket, HoneyMarketReserveInfo, HoneyReserve, HoneyUser, LoanPosition, METADATA_PROGRAM_ID, NftPosition, ObligationAccount, ObligationPositionStruct, PositionInfoList, TReserve } from '@honey-finance/sdk';
+import * as anchor from '@project-serum/anchor';
+import {
+  CollateralNFTPosition,
+  getHealthStatus,
+  getNFTAssociatedMetadata,
+  HoneyClient,
+  HoneyMarket,
+  HoneyMarketReserveInfo,
+  HoneyReserve,
+  HoneyUser,
+  LoanPosition,
+  METADATA_PROGRAM_ID,
+  NftPosition,
+  ObligationAccount,
+  ObligationPositionStruct,
+  PositionInfoList,
+  TReserve
+} from '@honey-finance/sdk';
 import { Metadata } from '@metaplex-foundation/mpl-token-metadata';
 import { formatNumber } from '../../helpers/format';
 import { generateMockHistoryData } from 'helpers/chartUtils';
 import { MarketTableRow } from 'types/markets';
-import { LIQUIDATION_THRESHOLD } from '../../constants/loan';
 import NodeWallet from '@project-serum/anchor/dist/cjs/nodewallet';
-import { 
-  renderMarketName, 
-  marketCollections
+import {
+  renderMarketName,
+  marketCollections,
+  COLLATERAL_FACTOR
 } from 'helpers/marketHelpers';
 
 /**
  * @description formatting functions to format with perfect / format in SOL with icon or just a regular 2 decimal format
  * @params value to be formatted
- * @returns requested format 
-*/
+ * @returns requested format
+ */
 const { format: f, formatPercent: fp, formatSol: fs } = formatNumber;
 
 /**
  * @description calculates the users total deposits
  * @params  marketReserveInfo and honeyUser
  * @returns users total deposits in market
-*/
+ */
 // TODO: create types for marketReserve and honeyUser
-export async function calculateUserDeposits(marketReserveInfo: any, honeyUser: any) {
+export async function calculateUserDeposits(
+  marketReserveInfo: any,
+  honeyUser: any
+) {
   try {
     let depositNoteExchangeRate = 0,
-    loanNoteExchangeRate = 0,
-    nftPrice = 0,
-    cRatio = 1;
+      loanNoteExchangeRate = 0,
+      nftPrice = 0,
+      cRatio = 1;
 
-  if (marketReserveInfo) {
-    nftPrice = 2;
-    depositNoteExchangeRate = BnToDecimal(
-      marketReserveInfo[0].depositNoteExchangeRate,
-      15,
-      5
-    );
-  }
+    if (marketReserveInfo) {
+      nftPrice = 2;
+      depositNoteExchangeRate = BnToDecimal(
+        marketReserveInfo[0].depositNoteExchangeRate,
+        15,
+        5
+      );
+    }
 
-  if (honeyUser?.deposits().length > 0) {
-    let totalDeposit =
-      (honeyUser
-        .deposits()[0]
-        .amount.div(new BN(10 ** 5))
-        .toNumber() *
-        depositNoteExchangeRate) /
-      10 ** 4;
-    return totalDeposit;
-  } else {
+    if (honeyUser?.deposits().length > 0) {
+      let totalDeposit =
+        (honeyUser
+          .deposits()[0]
+          .amount.div(new BN(10 ** 5))
+          .toNumber() *
+          depositNoteExchangeRate) /
+        10 ** 4;
+      return totalDeposit;
+    } else {
       return 0;
-    } 
+    }
   } catch (error) {
     throw error;
   }
 }
 
 /**
- * @description calculates the market debt 
+ * @description calculates the market debt
  * @params honey reserves
  * @returns market debt
-*/
+ */
 // TODO: create types for honeyReserves
 export async function calculateMarketDebt(honeyReserves: any) {
   try {
     const depositTokenMint = new PublicKey(
       'So11111111111111111111111111111111111111112'
     );
-  
+
     if (honeyReserves) {
       const depositReserve = honeyReserves.filter((reserve: any) =>
         reserve?.data?.tokenMint?.equals(depositTokenMint)
       )[0];
-  
+
       const reserveState = depositReserve.data?.reserveState;
-  
+
       if (reserveState?.outstandingDebt) {
         let marketDebt = reserveState?.outstandingDebt
           .div(new BN(10 ** 15))
           .toNumber();
         if (marketDebt) {
           let sum = Number(marketDebt / LAMPORTS_PER_SOL);
-          return marketDebt = (RoundHalfDown(sum));
+          return (marketDebt = RoundHalfDown(sum));
         }
-        return marketDebt
+        return marketDebt;
       }
     } else {
       return 0;
-    } 
+    }
   } catch (error) {
     throw error;
   }
@@ -127,7 +151,7 @@ export async function fetchAllowanceLtvAndDebt(
     let totalDebt = 0;
     let userLoans = 0;
     let nftCollateralValue = nftPrice * (collateralNFTPositions?.length || 0);
-  
+
     if (honeyUser?.loans().length > 0) {
       if (honeyUser?.loans().length > 0 && marketReserveInfo) {
         userLoans =
@@ -144,22 +168,22 @@ export async function fetchAllowanceLtvAndDebt(
             .toNumber() / LAMPORTS_PER_SOL;
       }
     }
-  
+
     const ltv = totalDebt / nftPrice;
-  
+
     let sumOfAllowance = RoundHalfDown(
       nftCollateralValue * MAX_LTV - userLoans,
       4
     );
-  
+
     let sumOfLtv = RoundHalfDown(ltv);
     let sumOfTotalDebt = RoundHalfUp(totalDebt);
-  
+
     return {
       sumOfAllowance,
       sumOfLtv,
       sumOfTotalDebt
-    }; 
+    };
   } catch (error) {
     throw error;
   }
@@ -187,11 +211,11 @@ export async function calcNFT(
         connection,
         honeyMarket.nftSwitchboardPriceAggregator
       ); //in usd
-  
+
       return nftPrice / solPrice;
     }
   } catch (error) {
-   throw error; 
+    throw error;
   }
 }
 /**
@@ -207,7 +231,7 @@ export async function fetchSolPrice(parsedReserves: any, connection: any) {
         connection,
         parsedReserves[0].switchboardPriceAggregator
       );
-      return solPrice; 
+      return solPrice;
     } catch (error) {
       throw error;
     }
@@ -218,11 +242,16 @@ export async function fetchSolPrice(parsedReserves: any, connection: any) {
  * @params utilization ratio
  * @returns interest rate for market
  */
- export async function getInterestRate(utilizationRate: number, marketId: string) {
+export async function getInterestRate(
+  utilizationRate: number,
+  marketId: string
+) {
   let interestRate = 0;
 
   try {
-    const activeMarket = marketCollections.filter((market) => market.constants.marketId === marketId);
+    const activeMarket = marketCollections.filter(
+      market => market.constants.marketId === marketId
+    );
     if (activeMarket[0].constants.discountedMarket === true) {
       if (utilizationRate < OPTIMAL_RATIO_ONE) {
         interestRate =
@@ -273,21 +302,19 @@ export async function fetchSolPrice(parsedReserves: any, connection: any) {
       }
     }
   } catch (error) {
-    throw error
+    throw error;
   }
 }
 /**
  * @description pollutes the chart on lend with dummy historic rates
  * @params none
- * @returns chart data 
+ * @returns chart data
  */
 const getPositionData = () => {
   const isMock = true;
 
   if (isMock) {
-    const from = new Date()
-      .setFullYear(new Date().getFullYear() - 1)
-      .valueOf();
+    const from = new Date().setFullYear(new Date().getFullYear() - 1).valueOf();
     const to = new Date().valueOf();
     return generateMockHistoryData(from, to);
   }
@@ -296,129 +323,195 @@ const getPositionData = () => {
 /**
  * @description sets the obligations for the liquidation page of a collection and filters out obligations with zero debt
  * @params obligations array, currentmarketid. nft
- * @returns chart data 
+ * @returns chart data
  */
-const setObligations = async (obligations: any, currentMarketId: string, nftPrice: number) => {
+const setObligations = async (
+  obligations: any,
+  currentMarketId: string,
+  nftPrice: number
+) => {
   if (!obligations) return [];
 
-  return obligations.map((obligation: any) => {
-    return {
-      name: renderMarketName(currentMarketId),
-      riskLvl: (obligation.debt / nftPrice) * 100,
-      healthLvl: ((nftPrice - obligation.debt / LIQUIDATION_THRESHOLD) / nftPrice) * 100,
-      debt: obligation.debt,
-      estimatedValue: nftPrice,
-      nftMint: obligation.nft_mint,
-      owner: obligation.owner,
-      obligation: obligation.obligation,
-      highestBid: obligation.highest_bid
-    }
-  }).filter((obl: any) => obl.debt !== 0);
-}
+  return obligations
+    .map((obligation: any) => {
+      return {
+        name: renderMarketName(currentMarketId),
+        riskLvl: (obligation.debt / nftPrice) * 100,
+        healthLvl:
+          ((nftPrice - obligation.debt / COLLATERAL_FACTOR) / nftPrice) * 100,
+        debt: obligation.debt,
+        estimatedValue: nftPrice,
+        nftMint: obligation.nft_mint,
+        owner: obligation.owner,
+        obligation: obligation.obligation,
+        highestBid: obligation.highest_bid
+      };
+    })
+    .filter((obl: any) => obl.debt !== 0);
+};
 /**
  * @description calculates the risk of a market
  * @params array of obligations | nft price | boolean: false will calculate the risk - true will calculate the total debt | market id | name of collection
  * @returns total debt of market if type is true, risk of market if type is false
-*/
-const calculateRisk = async (obligations: any, nftPrice: number, type: boolean, currentMarketId: string, collectionName: string) => {
+ */
+const calculateRisk = async (
+  obligations: any,
+  nftPrice: number,
+  type: boolean,
+  currentMarketId: string,
+  collectionName: string
+) => {
   if (!obligations) return 0;
 
-  marketCollections.map(async (market) => {
-    if (market.constants.marketId === currentMarketId && market.constants.marketName === collectionName) {
-      let sumOfDebt = await obligations.reduce((acc: number, obligation: any) => {
-        return acc + obligation.debt;
-      }, 0);
-    
+  marketCollections.map(async market => {
+    if (
+      market.constants.marketId === currentMarketId &&
+      market.constants.marketName === collectionName
+    ) {
+      let sumOfDebt = await obligations.reduce(
+        (acc: number, obligation: any) => {
+          return acc + obligation.debt;
+        },
+        0
+      );
+
       if (type === true) {
         return sumOfDebt;
       } else {
-        return (sumOfDebt / obligations.length / nftPrice)
+        return sumOfDebt / obligations.length / nftPrice;
       }
     } else {
       return 0;
     }
-  })
-}
+  });
+};
 /**
  * @description calculates the debt of all the obligations
  * @params obligation array
  * @returns debt of market of all obligations
-*/
+ */
 async function calculateTotalDebt(obligations: any) {
   if (obligations.length) {
-    const sumOfMarketDebt = await obligations.reduce((acc: number, obl: any) => {
-      return acc + obl.debt
-    }, 0);
+    const sumOfMarketDebt = await obligations.reduce(
+      (acc: number, obl: any) => {
+        return acc + obl.debt;
+      },
+      0
+    );
     return sumOfMarketDebt;
-  };
+  }
 }
 
 /**
  * @description Being called for each collection in the array, calculates the collections values
  * @params collection | connection | wallet | market id | boolean (if request comes from liquidation page) | array of obligations
- * @returns collection object 
-*/
-export async function populateMarketData(collection: MarketTableRow, connection: Connection, wallet: ConnectedWallet | null, currentMarketId: string, liquidations: boolean, obligations: any, nftPrice: number) {
+ * @returns collection object
+ */
+export async function populateMarketData(
+  collection: MarketTableRow,
+  connection: Connection,
+  wallet: ConnectedWallet | null,
+  currentMarketId: string,
+  liquidations: boolean,
+  obligations: any,
+  nftPrice: number
+) {
   // create dummy keypair if no wallet is connected to fetch values of the collections regardless of connected wallet
-  let dummyWallet = wallet ? wallet : new NodeWallet(new Keypair())
+  let dummyWallet = wallet ? wallet : new NodeWallet(new Keypair());
   // since we inject the market id at top level (app.tsx) we need to create a new provider, init new honeyClient and market, for each market
-  const provider = new anchor.AnchorProvider(connection, dummyWallet, anchor.AnchorProvider.defaultOptions());
+  const provider = new anchor.AnchorProvider(
+    connection,
+    dummyWallet,
+    anchor.AnchorProvider.defaultOptions()
+  );
   const honeyClient = await HoneyClient.connect(provider, collection.id, false);
-  const honeyMarket = await HoneyMarket.load(honeyClient, new PublicKey(collection.id));
+  const honeyMarket = await HoneyMarket.load(
+    honeyClient,
+    new PublicKey(collection.id)
+  );
   // init reserves
   const honeyReserves: HoneyReserve[] = honeyMarket.reserves.map(
-    (reserve) => new HoneyReserve(honeyClient, honeyMarket, reserve.reserve),
+    reserve => new HoneyReserve(honeyClient, honeyMarket, reserve.reserve)
   );
 
-  //@ts-ignore
-  const honeyUser = await HoneyUser.load(honeyClient, honeyMarket, dummyWallet, honeyReserves);
+  const honeyUser = await HoneyUser.load(
+    honeyClient,
+    honeyMarket,
+    // @ts-ignore
+    dummyWallet,
+    honeyReserves
+  );
   const reserveInfoList = honeyMarket.reserves;
 
-  let parsedReserve:TReserve | undefined = undefined;
+  let parsedReserve: TReserve | undefined = undefined;
 
   for (const reserve of reserveInfoList) {
     if (reserve.reserve.equals(PublicKey.default)) {
       continue;
     }
 
-    const { data, state } = await HoneyReserve.decodeReserve(honeyClient, reserve.reserve);
+    const { data, state } = await HoneyReserve.decodeReserve(
+      honeyClient,
+      reserve.reserve
+    );
     parsedReserve = data;
     break;
   }
 
-  if(parsedReserve !== undefined) {
+  if (parsedReserve !== undefined) {
     let totalMarketDeposits = BnToDecimal(
       parsedReserve.reserveState.totalDeposits,
       9,
       2
     );
     // set values for total debt in collection
-    const totalMarketDebt = RoundHalfDown(parsedReserve.reserveState.outstandingDebt.div(new BN(10 ** 15)).toNumber() / LAMPORTS_PER_SOL);
+    const totalMarketDebt = RoundHalfDown(
+      parsedReserve.reserveState.outstandingDebt
+        .div(new BN(10 ** 15))
+        .toNumber() / LAMPORTS_PER_SOL
+    );
     const sumOfTotalValue = totalMarketDeposits + totalMarketDebt;
-    console.log('OBLIGATIONS', obligations)
-    // if request comes from liquidation page we need the collection object to be different 
+    console.log('OBLIGATIONS', obligations);
+    // if request comes from liquidation page we need the collection object to be different
     if (liquidations) {
       collection.name;
       collection.available = totalMarketDeposits;
       collection.value = sumOfTotalValue;
       collection.connection = connection;
-      collection.utilizationRate = Number(f((totalMarketDebt) / (totalMarketDeposits + totalMarketDebt)));
+      collection.utilizationRate = Number(
+        f(totalMarketDebt / (totalMarketDeposits + totalMarketDebt))
+      );
       collection.user = honeyUser;
-      collection.risk = obligations ? await calculateRisk(obligations, nftPrice, false, currentMarketId, collection.name) : 0;
-      collection.totalDebt = obligations ? await calculateTotalDebt(obligations) : 0;
-      collection.openPositions = obligations ? await setObligations(obligations, currentMarketId, nftPrice) : [];
+      collection.risk = obligations
+        ? await calculateRisk(
+            obligations,
+            nftPrice,
+            false,
+            currentMarketId,
+            collection.name
+          )
+        : 0;
+      collection.totalDebt = obligations
+        ? await calculateTotalDebt(obligations)
+        : 0;
+      collection.openPositions = obligations
+        ? await setObligations(obligations, currentMarketId, nftPrice)
+        : [];
       // if there are open positions in the collections, calculate until liquidation value
       if (collection.openPositions) {
         collection.openPositions.map((openPos: any) => {
-          return openPos.untilLiquidation = openPos.estimatedValue - openPos.debt / LIQUIDATION_THRESHOLD;
-        })
+          return (openPos.untilLiquidation =
+            openPos.estimatedValue - openPos.debt / COLLATERAL_FACTOR);
+        });
       }
-    // request comes from borrow or lend - same base collection object
+      // request comes from borrow or lend - same base collection object
     } else {
       collection.available = totalMarketDeposits;
       collection.value = sumOfTotalValue;
       collection.connection = connection;
-      collection.utilizationRate = Number(f((totalMarketDebt) / (totalMarketDeposits + totalMarketDebt)));
+      collection.utilizationRate = Number(
+        f(totalMarketDebt / (totalMarketDeposits + totalMarketDebt))
+      );
       collection.user = honeyUser;
       collection.name;
     }
@@ -429,14 +522,22 @@ export async function populateMarketData(collection: MarketTableRow, connection:
  * @description NON Active func. - future work; can be used to fetch position bids via Front-end
  * @params devnet boolean | connection | wallet | honeyId | honeyReserves | honeyMarket | marketReserveInfo
  * @returns open positions in a collection and open bids on a collections NFT
-*/
-export const fetchPositionBids = async (devnet:boolean, connection: Connection, wallet: ConnectedWallet, honeyId: string, honeyReserves: HoneyReserve[], honeyMarket: HoneyMarket, marketReserveInfo: HoneyMarketReserveInfo[]) => {
+ */
+export const fetchPositionBids = async (
+  devnet: boolean,
+  connection: Connection,
+  wallet: ConnectedWallet,
+  honeyId: string,
+  honeyReserves: HoneyReserve[],
+  honeyMarket: HoneyMarket,
+  marketReserveInfo: HoneyMarketReserveInfo[]
+) => {
   try {
     const resBids = await fetch(
       'https://honey-mainnet-api.herokuapp.com/bids',
-      { mode: 'cors' },
+      { mode: 'cors' }
     );
-  
+
     if (resBids) {
       const arrBids = await resBids.json();
       console.log('result: bidding array', arrBids);
@@ -445,40 +546,55 @@ export const fetchPositionBids = async (devnet:boolean, connection: Connection, 
         Math,
         arrBids.map(function (o: any) {
           return o.bidLimit;
-        }),
+        })
       );
       console.log('fetching positions...');
-      const provider = new anchor.AnchorProvider(connection, wallet, anchor.AnchorProvider.defaultOptions());
-      const client: HoneyClient = await HoneyClient.connect(provider, honeyId, true);
+      const provider = new anchor.AnchorProvider(
+        connection,
+        wallet,
+        anchor.AnchorProvider.defaultOptions()
+      );
+      const client: HoneyClient = await HoneyClient.connect(
+        provider,
+        honeyId,
+        true
+      );
       let arrPositions: NftPosition[] = [];
-    
-    
-      const solPriceUsd = await getOraclePrice(devnet?'devnet': 'mainnet-beta', connection, honeyReserves[0].data?.switchboardPriceAggregator);
-      const nftPriceUsd = await getOraclePrice(devnet?'devnet': 'mainnet-beta', connection, honeyMarket.nftSwitchboardPriceAggregator);
+
+      const solPriceUsd = await getOraclePrice(
+        devnet ? 'devnet' : 'mainnet-beta',
+        connection,
+        honeyReserves[0].data?.switchboardPriceAggregator
+      );
+      const nftPriceUsd = await getOraclePrice(
+        devnet ? 'devnet' : 'mainnet-beta',
+        connection,
+        honeyMarket.nftSwitchboardPriceAggregator
+      );
       const nftPrice = nftPriceUsd / solPriceUsd;
-    
+
       let obligations = await honeyMarket.fetchObligations();
       if (obligations && marketReserveInfo) {
         await Promise.all(
-          obligations.map(async (item) => {
+          obligations.map(async item => {
             let nftMints: PublicKey[] = item.account.collateralNftMint;
-    
+
             const parsePosition = (position: any) => {
               const pos: ObligationPositionStruct = {
                 account: new PublicKey(position.account),
                 amount: new BN(position.amount),
                 side: position.side,
                 reserveIndex: position.reserveIndex,
-                _reserved: [],
+                _reserved: []
               };
               return pos;
             };
-    
-            item.account.loans = PositionInfoList.decode(Buffer.from(item.account.loans as any as number[])).map(
-              parsePosition,
-            );
+
+            item.account.loans = PositionInfoList.decode(
+              Buffer.from(item.account.loans as any as number[])
+            ).map(parsePosition);
             await Promise.all(
-              nftMints.map(async (nft) => {
+              nftMints.map(async nft => {
                 if (nft.toString() != '11111111111111111111111111111111') {
                   const totalDebt =
                     marketReserveInfo[0].loanNoteExchangeRate
@@ -495,35 +611,33 @@ export const fetchPositionBids = async (devnet:boolean, connection: Connection, 
                     owner: item.account.owner,
                     ltv: 40,
                     is_healthy: getHealthStatus(totalDebt, nftPrice),
-                    highest_bid: highestBid,
+                    highest_bid: highestBid
                   };
                   arrPositions.push(position);
                 }
-              }),
+              })
             );
-          }),
+          })
         );
         return { positions: arrPositions, bids: arrBids };
-      }  
-    } 
-    
-    else {
-      console.log('THE RESULT @@ inside else')
+      }
+    } else {
+      console.log('THE RESULT @@ inside else');
       return [];
     }
   } catch (error) {
     console.log('THE RESULT @@ ERROR', error);
   }
-
-
 };
 /**
  * @description NON Active func. - future work; can be used to fetch collateral positions in the Front-end
  * @params connection | honeyUser
  * @returns collateral nft positions array | loanPositions array
-*/
-export const fetchBorrowPositions = async (connection: Connection, honeyUser: HoneyUser) => {
-
+ */
+export const fetchBorrowPositions = async (
+  connection: Connection,
+  honeyUser: HoneyUser
+) => {
   const collateralNFTPositions: CollateralNFTPosition[] = [];
   const obligation = (await honeyUser.getObligationData()) as ObligationAccount;
 
@@ -533,30 +647,38 @@ export const fetchBorrowPositions = async (connection: Connection, honeyUser: Ho
   }
 
   const collateralNftMint: PublicKey[] = obligation.collateralNftMint;
-  
+
   if (!collateralNftMint || collateralNftMint.length === 0) {
     throw Error('Obligation does not have a valid collateral nft mint');
   }
-  const promises = collateralNftMint.map(async (key: PublicKey, index: number) => {
-    if (!key.equals(PublicKey.default)) {
-      const [nftMetadata, metadataBump] = await PublicKey.findProgramAddress(
-        [Buffer.from('metadata'), METADATA_PROGRAM_ID.toBuffer(), key.toBuffer()],
-        METADATA_PROGRAM_ID,
-      );
-      const data = await getNFTAssociatedMetadata(connection, nftMetadata);
-      if (!data) return;
-      const tokenMetadata = new Metadata(nftMetadata, data);
-      const arweaveData = await (await fetch(tokenMetadata.data.data.uri)).json();
-      collateralNFTPositions.push({
-        mint: new PublicKey(tokenMetadata?.data?.mint),
-        updateAuthority: new PublicKey(tokenMetadata?.data?.updateAuthority),
-        name: tokenMetadata?.data?.data?.name,
-        symbol: tokenMetadata?.data?.data.symbol,
-        uri: tokenMetadata?.data?.data.uri,
-        image: arweaveData?.image,
-      });
+  const promises = collateralNftMint.map(
+    async (key: PublicKey, index: number) => {
+      if (!key.equals(PublicKey.default)) {
+        const [nftMetadata, metadataBump] = await PublicKey.findProgramAddress(
+          [
+            Buffer.from('metadata'),
+            METADATA_PROGRAM_ID.toBuffer(),
+            key.toBuffer()
+          ],
+          METADATA_PROGRAM_ID
+        );
+        const data = await getNFTAssociatedMetadata(connection, nftMetadata);
+        if (!data) return;
+        const tokenMetadata = new Metadata(nftMetadata, data);
+        const arweaveData = await (
+          await fetch(tokenMetadata.data.data.uri)
+        ).json();
+        collateralNFTPositions.push({
+          mint: new PublicKey(tokenMetadata?.data?.mint),
+          updateAuthority: new PublicKey(tokenMetadata?.data?.updateAuthority),
+          name: tokenMetadata?.data?.data?.name,
+          symbol: tokenMetadata?.data?.data.symbol,
+          uri: tokenMetadata?.data?.data.uri,
+          image: arweaveData?.image
+        });
+      }
     }
-  });
+  );
 
   await Promise.all(promises);
 
@@ -567,7 +689,7 @@ export const fetchBorrowPositions = async (connection: Connection, honeyUser: Ho
     if (loan.account.equals(PublicKey.default)) return;
     loanPositions.push({
       amount: loan.amount.toNumber() / 10 ** 15,
-      tokenAccount: loan.account,
+      tokenAccount: loan.account
     });
   });
 

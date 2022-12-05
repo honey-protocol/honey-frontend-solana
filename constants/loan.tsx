@@ -9,5 +9,3 @@ export const TYPE_ONE = 1;
 export const TYPE_BORROW = 'borrow';
 export const TYPE_REPAY = 'repay';
 export const MAX_LTV = 0.5;
-export const LIQUIDATION_THRESHOLD = 0.65;
-

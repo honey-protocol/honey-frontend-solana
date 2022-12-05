@@ -69,19 +69,23 @@ import { Typography } from 'antd';
 import { pageDescription, pageTitle } from 'styles/common.css';
 import HoneyTableRow from 'components/HoneyTable/HoneyTableRow/HoneyTableRow';
 import HoneyTableNameCell from '../../components/HoneyTable/HoneyTableNameCell/HoneyTableNameCell';
-import { marketCollections, OpenPositions } from '../../helpers/marketHelpers/index';
+import {
+  marketCollections,
+  OpenPositions
+} from '../../helpers/marketHelpers/index';
 import HoneyTooltip from '../../components/HoneyTooltip/HoneyTooltip';
 import {
   handleOpenPositions,
   renderMarketName,
   renderMarketImageByID
 } from '../../helpers/marketHelpers';
-import {
-  HONEY_GENESIS_MARKET_ID
-} from '../../helpers/marketHelpers/index';
-import {LIQUIDATION_THRESHOLD} from '../../constants/loan'
 import { setMarketId } from 'pages/_app';
-import { renderMarket, renderMarketImageByName } from 'helpers/marketHelpers';
+import {
+  renderMarket,
+  renderMarketImageByName,
+  HONEY_GENESIS_MARKET_ID,
+  COLLATERAL_FACTOR
+} from 'helpers/marketHelpers';
 
 /**
  * @description formatting functions to format with perfect / format in SOL with icon or just a regular 2 decimal format
@@ -90,7 +94,7 @@ import { renderMarket, renderMarketImageByName } from 'helpers/marketHelpers';
  */
 import CreateMarketSidebar from '../../components/CreateMarketSidebar/CreateMarketSidebar';
 // TODO: change to dynamic value
-const network = 'mainnet-beta'; 
+const network = 'mainnet-beta';
 import { featureFlags } from 'helpers/featureFlags';
 // import { network } from 'pages/_app';
 const { format: f, formatPercent: fp, formatSol: fs } = formatNumber;
@@ -98,7 +102,9 @@ const { format: f, formatPercent: fp, formatSol: fs } = formatNumber;
 const Markets: NextPage = () => {
   // Sets market ID which is used for fetching market specific data
   // each market currently is a different call and re-renders the page
-  const [currentMarketId, setCurrentMarketId] = useState(HONEY_GENESIS_MARKET_ID);
+  const [currentMarketId, setCurrentMarketId] = useState(
+    HONEY_GENESIS_MARKET_ID
+  );
   // init wallet and sdkConfiguration file
   const wallet = useConnectedWallet() || null;
   const sdkConfig = ConfigureSDK();
@@ -296,7 +302,7 @@ const Markets: NextPage = () => {
    * @description fetches allowance | user debt | loan to value
    * @params nft price | collateral nft positions | honey user | market reserve info
    * @returns outcome object with allowance | user debt | loan to value
-  */
+   */
   async function fetchHelperValues(
     nftPrice: any,
     collateralNFTPositions: any,
@@ -360,8 +366,9 @@ const Markets: NextPage = () => {
   ) {
     return await handleOpenPositions(verifiedCreator, currentOpenPositions);
   }
-  // calculation of health percentage 
-  const healthPercent = ((nftPrice - userDebt / LIQUIDATION_THRESHOLD) / nftPrice) * 100;
+  // calculation of health percentage
+  const healthPercent =
+    ((nftPrice - userDebt / COLLATERAL_FACTOR) / nftPrice) * 100;
 
   // inits the markets with relevant data
   useEffect(() => {
@@ -473,7 +480,7 @@ const Markets: NextPage = () => {
   };
   const columnsWidth: Array<number | string> = [240, 150, 150, 150, 150];
   // Render func. for desktop
-  // @ts-ignore 
+  // @ts-ignore
   const columns: HoneyTableColumnType<MarketTableRow>[] = useMemo(
     () =>
       [
