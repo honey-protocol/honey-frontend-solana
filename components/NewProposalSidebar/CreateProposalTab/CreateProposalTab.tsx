@@ -10,6 +10,9 @@ import useToast from 'hooks/useToast';
 import { useProposals } from 'hooks/useVeHoney';
 
 import * as styles from './CreateProposalTab.css';
+import CustomDropdown from 'components/CustomDropdown/CustomDropdown';
+import cs from 'classnames';
+import { ACTIONS } from 'actions/types';
 
 const CreateProposalTab = (props: { onCancel: Function }) => {
   const { toast, ToastComponent } = useToast();
@@ -138,24 +141,25 @@ const CreateProposalTab = (props: { onCancel: Function }) => {
 
         <SectionTitle title="Proposed Action" />
 
-        {/* <div className={cs(styles.row, styles.mb12)}>
+        <div className={cs(styles.row, styles.mb12)}>
           <CustomDropdown
-            onChange={value => {
-              setActionType(value as ActionType);
-              setError(null);
-              setTxRaw('');
-            }}
+            onChange={() => {}}
+            // onChange={value => {
+            //   setActionType(value as ActionType);
+            //   setError(null);
+            //   setTxRaw('');
+            // }}
             options={ACTIONS.map(({ title, isEnabled }) => {
-              if (isEnabled && ctx && !isEnabled(ctx)) {
-                return { title: '', value: '' };
-              }
+              // if (isEnabled && ctx && !isEnabled(ctx)) {
+              //   return { title: '', value: '' };
+              // }
               return {
                 title,
                 value: title
               };
             })}
           />
-        </div> */}
+        </div>
 
         {/* {currentAction && (
           <>
