@@ -250,9 +250,9 @@ export async function getInterestRate(
 
   try {
     const activeMarket = marketCollections.filter(
-      market => market.constants.marketId === marketId
+      market => market.id === marketId
     );
-    if (activeMarket[0].constants.discountedMarket === true) {
+    if (activeMarket[0].discountedMarket === true) {
       if (utilizationRate < OPTIMAL_RATIO_ONE) {
         interestRate =
           DISCOUNTED_BORROW_RATE +
@@ -364,10 +364,7 @@ const calculateRisk = async (
   if (!obligations) return 0;
 
   marketCollections.map(async market => {
-    if (
-      market.constants.marketId === currentMarketId &&
-      market.constants.marketName === collectionName
-    ) {
+    if (market.id === currentMarketId && market.name === collectionName) {
       let sumOfDebt = await obligations.reduce(
         (acc: number, obligation: any) => {
           return acc + obligation.debt;
