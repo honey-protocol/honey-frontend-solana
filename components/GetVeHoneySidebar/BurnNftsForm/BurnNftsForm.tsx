@@ -1,4 +1,4 @@
-import React, { FC, useState, useCallback } from 'react';
+import React, { FC, useState, useCallback, useMemo } from 'react';
 import Image from 'next/image';
 import { CheckboxChangeEvent } from 'antd/es/checkbox';
 import { PublicKey } from '@solana/web3.js';
@@ -9,12 +9,13 @@ import HoneyButton from 'components/HoneyButton/HoneyButton';
 import HexaBoxContainer from 'components/HexaBoxContainer/HexaBoxContainer';
 import { HoneyCheckbox } from 'components/HoneyCheckbox/HoneyCheckbox';
 import { useAccounts } from 'hooks/useAccounts';
-import { useLocker } from 'hooks/useVeHoney';
+import { useGovernance, useLocker } from 'hooks/useVeHoney';
 import { formatNumber } from 'helpers/format';
 
 import honeyGenesisBee from 'public/images/imagePlaceholder.png';
 import * as styles from './BurnNftsForm.css';
 import useToast from 'hooks/useToast';
+import { ProofType } from 'contexts/GovernanceProvider';
 
 const { format: f, formatPercent: fp, formatUsd: fu } = formatNumber;
 
@@ -60,6 +61,7 @@ const ListItem: FC<ListItemProps> = ({
 const BurnNftsForm = (props: { onCancel: Function }) => {
   const [selected, setSelected] = useState<string>();
   const { nfts } = useAccounts();
+  const { proofs } = useGovernance();
   const { maxNFTRewardAmount, lockNft } = useLocker();
   const { toast, ToastComponent } = useToast();
 
@@ -70,6 +72,30 @@ const BurnNftsForm = (props: { onCancel: Function }) => {
       setSelected(undefined);
     }
   };
+
+  const burnableNfts = useMemo(() => {
+    if (!proofs) return;
+    const finalResults = [];
+    for (let i = 0; i < proofs.length; i++) {
+      if (proofs[i].proofType === ProofType.Creator) {
+        const results = nfts.filter(nft => {
+          const nftVerifiedCreatorAdresses = nft.data.creators
+            .filter(creator => creator.verified)
+            .map(creator => creator.address);
+          return nftVerifiedCreatorAdresses.includes(
+            proofs[i].proofAddr.toString()
+          );
+        });
+        finalResults.push(...results);
+      } else if (proofs[i].proofType === ProofType.Mint) {
+        const results = nfts.filter(
+          nft => nft.data.mint.toString() === proofs[i].proofAddr.toString()
+        );
+        finalResults.push(...results);
+      }
+    }
+    return finalResults;
+  }, [nfts, proofs]);
 
   const lockNFT = useCallback(async () => {
     if (selected) {
@@ -126,7 +152,7 @@ const BurnNftsForm = (props: { onCancel: Function }) => {
         </div>
 
         <div className={styles.list}>
-          {nfts.map(nft => (
+          {burnableNfts?.map(nft => (
             <ListItem
               key={nft.data.mint.toBase58()}
               id={nft.data.mint.toString()}

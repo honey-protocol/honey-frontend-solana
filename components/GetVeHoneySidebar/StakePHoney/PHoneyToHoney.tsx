@@ -13,10 +13,12 @@ import { convertToBN, isNil } from 'helpers/utils';
 import * as styles from '../LockHoneyForm/LockHoneyForm.css';
 import { hAlign } from 'styles/common.css';
 import { TokenAmount } from '@saberhq/token-utils';
+import useToast from 'hooks/useToast';
 
 const { format: f, formatPercent: fp, formatUsd: fu, parse: p } = formatNumber;
 
 const PHoneyToHoney = (_: { onCancel: Function }) => {
+  const { toast, ToastComponent } = useToast();
   const [phoneyValue1, setPHoneyValue1] = useState<number>();
   const { preToken, govToken, user, claimableAmount, deposit, claim } =
     useStake();
@@ -52,10 +54,26 @@ const PHoneyToHoney = (_: { onCancel: Function }) => {
 
   const handleDeposit = useCallback(async () => {
     if (phoneyValue1 && preToken) {
-      await deposit(convertToBN(phoneyValue1, preToken.decimals));
-      setPHoneyValue1(undefined);
+      try {
+        toast.processing();
+        await deposit(convertToBN(phoneyValue1, preToken.decimals));
+        setPHoneyValue1(undefined);
+        toast.success('Deposit successful');
+      } catch (error) {
+        toast.error('Deposit failed');
+      }
     }
   }, [phoneyValue1, preToken]);
+
+  const handleClaim = useCallback(async () => {
+    try {
+      toast.processing();
+      await claim();
+      toast.success('Claim successful');
+    } catch (error) {
+      toast.error('Claim failed');
+    }
+  }, [claim, toast]);
 
   return (
     <SidebarScroll
@@ -84,7 +102,7 @@ const PHoneyToHoney = (_: { onCancel: Function }) => {
               variant="primary"
               disabled={!claimableAmount?.asNumber}
               block
-              onClick={claim}
+              onClick={handleClaim}
             >
               Claim
             </HoneyButton>

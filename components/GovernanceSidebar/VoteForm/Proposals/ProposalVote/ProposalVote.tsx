@@ -6,6 +6,7 @@ import { HoneySlider } from 'components/HoneySlider/HoneySlider';
 import { InfoBlock } from 'components/InfoBlock/InfoBlock';
 import { Proposal } from 'contexts/GovernanceProvider';
 import { useLocker } from 'hooks/useVeHoney';
+import c from 'classnames';
 
 import * as styles from '../../VoteForm.css';
 
@@ -77,10 +78,12 @@ const ProposalVote = ({
             isReadonly
           />
         </div>
-        <div className={styles.gridCell}>
+        <div className={c(styles.gridCell, styles.votingPowerContainer)}>
           <InfoBlock
+            center
             value={votingPower?.asNumber.toString() ?? '--'}
             footer={<span>Your voting power</span>}
+            className={styles.votingPowerInfo}
           />
         </div>
       </div>
