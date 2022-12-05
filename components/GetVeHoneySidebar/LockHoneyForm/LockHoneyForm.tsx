@@ -115,7 +115,7 @@ const LockHoneyForm = (props: { onCancel: Function }) => {
   const handleUnlock = useCallback(async () => {
     try {
       toast.processing();
-      await unlock;
+      await unlock();
       toast.success('Unlock successful');
     } catch (error) {
       toast.error('Unlock failed');
