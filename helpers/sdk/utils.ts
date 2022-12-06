@@ -35,14 +35,19 @@ export const calculateVotingPower = (
   currentTimestamp: number = Math.floor(Date.now() / 1_000)
 ): BN => {
   if (escrow.escrowStartedAt.eqn(0)) {
+    console.log('escrow started at equals zero');
     return new BN(0);
   }
-  if (
-    escrow.escrowStartedAt.gtn(currentTimestamp) ||
-    escrow.escrowEndsAt.lten(currentTimestamp)
-  ) {
+
+  //set to zero when lock has ended
+  if (escrow.escrowEndsAt.toNumber() < currentTimestamp) {
     return new BN(0);
   }
+  // set to zero when lock hasn't started
+  if (escrow.escrowStartedAt.toNumber() > currentTimestamp) {
+    return new BN(0);
+  }
+
   const duration = escrow.escrowEndsAt.sub(escrow.escrowStartedAt);
   return calculateVotingPowerWithParams(escrow.amount, duration, params);
 };
