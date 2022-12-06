@@ -31,8 +31,18 @@ export const calculateClaimableAmountFromStakePool = (
 
 export const calculateVotingPower = (
   escrow: EscrowData,
-  params: LockerParams
+  params: LockerParams,
+  currentTimestamp: number = Math.floor(Date.now() / 1_000)
 ): BN => {
+  if (escrow.escrowStartedAt.eqn(0)) {
+    return new BN(0);
+  }
+  if (
+    escrow.escrowStartedAt.gtn(currentTimestamp) ||
+    escrow.escrowEndsAt.lten(currentTimestamp)
+  ) {
+    return new BN(0);
+  }
   const duration = escrow.escrowEndsAt.sub(escrow.escrowStartedAt);
   return calculateVotingPowerWithParams(escrow.amount, duration, params);
 };

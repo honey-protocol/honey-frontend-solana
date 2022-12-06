@@ -6,12 +6,7 @@ import {
 } from '@solana/web3.js';
 import { BN } from '@project-serum/anchor';
 import { PublicKey, TransactionEnvelope } from '@saberhq/solana-contrib';
-import {
-  findVoteAddress,
-  GovernorWrapper,
-  TribecaSDK,
-  VoteSide
-} from '@tribecahq/tribeca-sdk';
+import { GovernorWrapper, TribecaSDK, VoteSide } from '@tribecahq/tribeca-sdk';
 import {
   Metadata,
   Edition,
@@ -31,11 +26,7 @@ import {
   findNFTReceiptAddress,
   findTreasuryAddress
 } from './pda';
-import {
-  HONEY_DECIMALS,
-  NFT_PROOF_ADDRESS,
-  VEHONEY_ADDRESSES
-} from '../../constant';
+import { NFT_PROOF_ADDRESS, VEHONEY_ADDRESSES } from '../../constant';
 import {
   calculateVotingPower,
   calculateNFTReceiptClaimableAmount
