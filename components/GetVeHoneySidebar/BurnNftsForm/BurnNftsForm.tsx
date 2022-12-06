@@ -79,6 +79,9 @@ const BurnNftsForm = (props: { onCancel: Function }) => {
     for (let i = 0; i < proofs.length; i++) {
       if (proofs[i].proofType === ProofType.Creator) {
         const results = nfts.filter(nft => {
+          if (!nft.data.creators) {
+            return false;
+          }
           const nftVerifiedCreatorAdresses = nft.data.creators
             .filter(creator => creator.verified)
             .map(creator => creator.address);
