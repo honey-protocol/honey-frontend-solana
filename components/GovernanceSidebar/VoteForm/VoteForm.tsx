@@ -1,4 +1,4 @@
-import React, { FC, useCallback, useMemo, useState } from 'react';
+import React, { FC, useCallback, useEffect, useMemo, useState } from 'react';
 import cs from 'classnames';
 import { noop } from 'lodash';
 import { sleep } from '@saberhq/token-utils';
@@ -53,6 +53,10 @@ const VoteForm: FC<VoteFormProps> = (props: VoteFormProps) => {
       vote?.side || (voteType === 'vote_for' ? VoteSide.For : VoteSide.Against),
     [vote, voteType]
   );
+
+  useEffect(() => {
+    setHasVoted(!!vote?.side);
+  }, [proposalInfo, vote]);
 
   // useEffect(() => {
   //   if (!earliestActivationTime) return;
