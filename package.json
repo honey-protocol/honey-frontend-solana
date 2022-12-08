@@ -8,7 +8,8 @@
     "start": "next build && next start",
     "lint": "next lint",
     "prettier": "prettier --trailing-comma es5 \"pages/**/*.{js,jsx,ts,tsx,css,less,json}\" \"components/**/*.{js,jsx,ts,tsx,css,less,json}\"",
-    "prettier:fix": "prettier --trailing-comma es5 --write \"pages/**/*.{js,jsx,ts,tsx,css,less,json}\" \"components/**/*.{js,jsx,ts,tsx,css,less,json}\""
+    "prettier:fix": "prettier --trailing-comma es5 --write \"pages/**/*.{js,jsx,ts,tsx,css,less,json}\" \"components/**/*.{js,jsx,ts,tsx,css,less,json}\"",
+    "copy-registry": "node moveRegistryImgs.js"
   },
   "dependencies": {
     "@dialectlabs/identity-dialect-dapps": "^1.0.0",

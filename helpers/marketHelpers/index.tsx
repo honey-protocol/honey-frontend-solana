@@ -47,8 +47,8 @@ export const renderMarketImageByName = (marketName: string) => {
   );
   return (
     <Image
-      src={'/honey-market-registry/' + filteredMarket[0].imgPath}
-      alt={`${filteredMarket[0].name} NFT image`}
+      src={'/' + filteredMarket[0]?.imgPath}
+      alt={`${filteredMarket[0]?.name} NFT image`}
       layout="fill"
     />
   );
@@ -65,8 +65,8 @@ export const renderMarketImageByID = (marketId: string) => {
   );
   return (
     <Image
-      src={'/honey-market-registry/' + filteredMarket[0].imgPath}
-      alt={`${filteredMarket[0].name} NFT image`}
+      src={'/' + filteredMarket[0]?.imgPath}
+      alt={`${filteredMarket[0]?.name} NFT image`}
       layout="fill"
     />
   );
