@@ -11,6 +11,7 @@ import {
   calculateNFTReceiptClaimableAmount,
   calculateMaxRewardAmount
 } from 'helpers/sdk';
+import { TransactionEnvelope } from '@saberhq/solana-contrib';
 
 export const useGovernance = () => {
   const context = useContext(GovernanceContext);
@@ -260,14 +261,17 @@ export const useLocker = () => {
   );
 
   const lockNft = useCallback(
-    async (nft: PublicKey) => {
+    async (nfts: PublicKey[]) => {
       if (lockerWrapper) {
-        const tx = await lockerWrapper.lockNFT(nft);
+        const txs = await Promise.all(
+          nfts.map(nft => lockerWrapper.lockNFT(nft))
+        );
         setIsProcessing?.(true);
-        const receipt = await tx.confirm();
+        const pending = await TransactionEnvelope.sendAll(txs);
+        const receipts = await Promise.all(pending.map(p => p.wait()));
         setIsProcessing?.(false);
 
-        return { receipt };
+        return { receipts };
       }
     },
     [lockerWrapper, setIsProcessing]

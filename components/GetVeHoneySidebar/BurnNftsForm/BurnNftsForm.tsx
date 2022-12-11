@@ -59,7 +59,7 @@ const ListItem: FC<ListItemProps> = ({
 };
 
 const BurnNftsForm = (props: { onCancel: Function }) => {
-  const [selected, setSelected] = useState<string>();
+  const [selected, setSelected] = useState<string[]>([]);
   const { nfts } = useAccounts();
   const { proofs } = useGovernance();
   const { maxNFTRewardAmount, lockNft } = useLocker();
@@ -67,9 +67,9 @@ const BurnNftsForm = (props: { onCancel: Function }) => {
 
   const onItemSelect = (e: CheckboxChangeEvent, id: string) => {
     if (e.target.checked) {
-      setSelected(id);
+      setSelected([...selected, id]);
     } else {
-      setSelected(undefined);
+      setSelected(selected.filter(i => i !== id));
     }
   };
 
@@ -101,10 +101,10 @@ const BurnNftsForm = (props: { onCancel: Function }) => {
   }, [nfts, proofs]);
 
   const lockNFT = useCallback(async () => {
-    if (selected) {
+    if (selected && selected.length > 0) {
       try {
         toast.processing();
-        await lockNft(new PublicKey(selected));
+        await lockNft(selected.map(s => new PublicKey(s)));
         toast.success('Successfully burnt NFT');
       } catch (error) {
         toast.error('Error. Failed to burn NFT');
@@ -131,7 +131,7 @@ const BurnNftsForm = (props: { onCancel: Function }) => {
                 block
                 onClick={lockNFT}
               >
-                Burn NFT
+                Burn NFTs
               </HoneyButton>
             </div>
           </div>
@@ -162,7 +162,7 @@ const BurnNftsForm = (props: { onCancel: Function }) => {
               name={nft.data.name}
               image={nft.data.image}
               value={f(maxNFTRewardAmount?.asNumber)}
-              isSelected={selected === nft.data.mint.toBase58()}
+              isSelected={selected.includes(nft.data.mint.toBase58())}
               onChange={onItemSelect}
             />
           ))}
