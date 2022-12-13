@@ -14,7 +14,7 @@ Hello and welcome 👋🏼, we are happy to see that you arrived at Honey Labs -
 
 The Honey Finance Ecosystem consists of several components this repo represents the Front-end.
 
-In order to run this project you need to create a
+In order to run this project you need to create a 
 
 ```bash
 .env #you can use the .env.example file as silver lining
