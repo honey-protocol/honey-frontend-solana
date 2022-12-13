@@ -50,7 +50,7 @@ export const DialectProviders: FC<{ children: ReactNode }> = ({ children }) => {
 
   const dialectConfig = useMemo((): ConfigProps => {
     return {
-      environment: 'development',
+      environment: 'production',
       dialectCloud: {
         tokenStore: 'local-storage'
       },
