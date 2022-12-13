@@ -69,19 +69,23 @@ import { Typography } from 'antd';
 import { pageDescription, pageTitle } from 'styles/common.css';
 import HoneyTableRow from 'components/HoneyTable/HoneyTableRow/HoneyTableRow';
 import HoneyTableNameCell from '../../components/HoneyTable/HoneyTableNameCell/HoneyTableNameCell';
-import { marketCollections, OpenPositions } from 'constants/borrowLendMarkets';
+import {
+  marketCollections,
+  OpenPositions
+} from '../../helpers/marketHelpers/index';
 import HoneyTooltip from '../../components/HoneyTooltip/HoneyTooltip';
 import {
   handleOpenPositions,
   renderMarketName,
   renderMarketImageByID
 } from '../../helpers/marketHelpers';
-import {
-  HONEY_GENESIS_MARKET_ID,
-  LIQUIDATION_THRESHOLD
-} from '../../constants/loan';
 import { setMarketId } from 'pages/_app';
-import { renderMarket, renderMarketImageByName } from 'helpers/marketHelpers';
+import {
+  renderMarket,
+  renderMarketImageByName,
+  HONEY_GENESIS_MARKET_ID,
+  COLLATERAL_FACTOR
+} from 'helpers/marketHelpers';
 
 /**
  * @description formatting functions to format with perfect / format in SOL with icon or just a regular 2 decimal format
@@ -89,17 +93,16 @@ import { renderMarket, renderMarketImageByName } from 'helpers/marketHelpers';
  * @returns requested format
  */
 import CreateMarketSidebar from '../../components/CreateMarketSidebar/CreateMarketSidebar';
-import { SizeMe } from 'react-sizeme';
+// TODO: change to dynamic value
+const network = 'mainnet-beta';
 import { featureFlags } from 'helpers/featureFlags';
 // import { network } from 'pages/_app';
-
-const network = 'mainnet-beta'; // change to dynamic value
 const { format: f, formatPercent: fp, formatSol: fs } = formatNumber;
 
 const Markets: NextPage = () => {
   // Sets market ID which is used for fetching market specific data
   // each market currently is a different call and re-renders the page
-  const [currentMarketId, setCurrentMarketId] = useState<string>(
+  const [currentMarketId, setCurrentMarketId] = useState(
     HONEY_GENESIS_MARKET_ID
   );
   // init wallet and sdkConfiguration file
@@ -116,8 +119,10 @@ const Markets: NextPage = () => {
    */
   async function handleMarketId(record: any) {
     const marketData = renderMarket(record.id);
-    setCurrentMarketId(marketData!.id);
-    setMarketId(marketData!.id);
+    if (marketData[0].id) {
+      setCurrentMarketId(marketData[0].id);
+      setMarketId(marketData[0].id);
+    }
   }
   /**
    * @description fetches market reserve info | parsed reserves | fetch market (func) from SDK
@@ -363,7 +368,7 @@ const Markets: NextPage = () => {
   }
   // calculation of health percentage
   const healthPercent =
-    ((nftPrice - userDebt / LIQUIDATION_THRESHOLD) / nftPrice) * 100;
+    ((nftPrice - userDebt / COLLATERAL_FACTOR) / nftPrice) * 100;
 
   // inits the markets with relevant data
   useEffect(() => {
@@ -378,7 +383,9 @@ const Markets: NextPage = () => {
               sdkConfig.saberHqConnection,
               sdkConfig.sdkWallet,
               currentMarketId,
-              false
+              false,
+              [],
+              nftPrice
             );
 
             collection.positions = await handlePositions(

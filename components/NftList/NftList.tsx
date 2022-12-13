@@ -40,23 +40,23 @@ const NftList = (props: NftListProps) => {
       {data.length > 0 ? (
         data.map((nft, index) => {
           return (
-            <div
-              className={cs(style.listItem, {
-                [style.selectedListItem]: nft.mint === selectedNFTMint
-              })}
-              key={nft.name}
-            >
-              <NftCard
-                onClick={() => handleClick(nft)}
-                {...nft}
-                hasBorder={
-                  index !== data.length - 1 || nft.mint === selectedNFTMint
-                }
-                text={`◎ ${nftPrice.toFixed(2)} value`}
-                buttonText={RoundHalfDown(nftPrice * MAX_LTV, 4).toString()}
-              />
-            </div>
-          );
+              <div
+                className={cs(style.listItem, {
+                  [style.selectedListItem]: nft.mint === selectedNFTMint
+                })}
+                key={nft.name}
+              >
+                <NftCard
+                  onClick={() => handleClick(nft)}
+                  {...nft}
+                  hasBorder={
+                    index !== data.length - 1 || nft.mint === selectedNFTMint
+                  }
+                  text={`◎ ${nftPrice.toFixed(2)} value`}
+                  buttonText={RoundHalfDown(nftPrice * MAX_LTV, 4).toString()}
+                />
+              </div>
+            ); 
         })
       ) : (
         <></>

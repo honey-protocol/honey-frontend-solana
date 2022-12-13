@@ -22,7 +22,10 @@ import { AccountsProvider } from 'contexts/AccountsProvider';
 import { DialectProviders } from 'contexts/DialectProvider';
 import { GovernanceProvider } from 'contexts/GovernanceProvider';
 import { onSailError } from 'helpers/error';
-import { HONEY_GENESIS_MARKET_ID, HONEY_PROGRAM_ID } from 'constants/loan';
+import {
+  HONEY_GENESIS_MARKET_ID,
+  HONEY_PROGRAM_ID
+} from '../helpers/marketHelpers/index';
 
 export const network = (process.env.NETWORK as Network) || 'mainnet-beta';
 export const setMarketId = (marketID: string) => marketID;

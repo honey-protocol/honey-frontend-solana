@@ -13,16 +13,23 @@ export type MarketTableRow = {
   user: any;
   utilizationRate: number;
   value: number;
+  openPositions: Array<MarketTablePosition>; 
   positions: Array<MarketTablePosition>;
   stats?: any;
   risk?: number;
   liquidationThreshold?: number;
   totalDebt?: number;
   tvl?: number;
-  openPositions?: any;
   liqThreshold?: any;
   untilLiquidation?: number;
   verifiedCreator: string;
+  constants: {
+    marketId: string;
+    verifiedCreator: string;
+    marketName: string;
+    marketImage: string;
+    discountedMarket: boolean;
+  }
 };
 
 export type MarketTablePosition = {
