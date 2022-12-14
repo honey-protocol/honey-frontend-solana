@@ -299,13 +299,23 @@ const Governance: NextPage = () => {
       case 'vote':
         return (
           <GovernanceSidebar
-            onCancel={hideMobileSidebar}
+            onCancel={() => {
+              hideMobileSidebar();
+              setSidebarMode('get_vehoney');
+            }}
             selectedProposalKey={selectedProposalKey}
             setSidebarMode={setSidebarMode}
           />
         );
       case 'new_proposal':
-        return <NewProposalSidebar onCancel={hideMobileSidebar} />;
+        return (
+          <NewProposalSidebar
+            onCancel={() => {
+              hideMobileSidebar();
+              setSidebarMode('get_vehoney');
+            }}
+          />
+        );
       case 'get_vehoney':
         return <GetVeHoneySidebar onCancel={hideMobileSidebar} />;
       default:
