@@ -148,9 +148,11 @@ export async function fetchAllowanceLtvAndDebt(
   marketReserveInfo: any
 ) {
   try {
+    if (!collateralNFTPositions.length) return;
+
     let totalDebt = 0;
     let userLoans = 0;
-    let nftCollateralValue = nftPrice * (collateralNFTPositions?.length || 0);
+    let nftCollateralValue = nftPrice * collateralNFTPositions?.length;
 
     if (honeyUser?.loans().length > 0) {
       if (honeyUser?.loans().length > 0 && marketReserveInfo) {
