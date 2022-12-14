@@ -68,6 +68,9 @@ const CreateProposalTab = (props: { onCancel: Function }) => {
             : descriptionValue
         );
         toast.success('New proposal created');
+        setTimeout(() => {
+          props.onCancel();
+        }, 4000);
       } catch (_) {
         toast.error('Error creating new proposal');
       }
@@ -136,6 +139,20 @@ const CreateProposalTab = (props: { onCancel: Function }) => {
             placeholder="https://forum.honey.finance/t"
             value={discussionLinkValue}
             onChange={e => setDiscussionLinkValue(e.target.value)}
+            isValueInvalid={Boolean(
+              discussionLinkValue &&
+                !discussionLinkValue.startsWith('https://forum.honey.finance/t')
+            )}
+            error={
+              Boolean(
+                discussionLinkValue &&
+                  !discussionLinkValue.startsWith(
+                    'https://forum.honey.finance/t'
+                  )
+              )
+                ? 'URL must start with https://forum.honey.finance/t'
+                : ''
+            }
           />
         </div>
 
