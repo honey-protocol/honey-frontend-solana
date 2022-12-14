@@ -9,6 +9,7 @@ import { useLocker } from 'hooks/useVeHoney';
 import c from 'classnames';
 
 import * as styles from '../../VoteForm.css';
+import Countdown from 'react-countdown';
 
 export type VoteType = 'vote_for' | 'vote_against';
 interface ProposalVoteProps {
@@ -36,6 +37,8 @@ const ProposalVote = ({
     }
     return null;
   }, [govToken, proposal]);
+
+  const votingEndsAt = proposal?.data.votingEndsAt.toNumber();
 
   return (
     <div style={{ width: '100%' }}>
@@ -78,7 +81,7 @@ const ProposalVote = ({
             isReadonly
           />
         </div>
-        <div className={c(styles.gridCell, styles.votingPowerContainer)}>
+        <div className={c(styles.gridCell, styles.span2Cell)}>
           <InfoBlock
             center
             value={votingPower?.asNumber.toString() ?? '--'}
@@ -86,6 +89,14 @@ const ProposalVote = ({
             className={styles.votingPowerInfo}
           />
         </div>
+      </div>
+      <div className={c(styles.gridCell, styles.span2Cell)}>
+        <InfoBlock
+          center
+          value={<Countdown date={Number(votingEndsAt) * 1000} />}
+          title="Voting ends in"
+          className=""
+        />
       </div>
     </div>
   );

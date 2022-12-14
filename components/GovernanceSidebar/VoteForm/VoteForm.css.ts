@@ -55,7 +55,7 @@ export const gridCell = style({
   marginBottom: 24
 });
 
-export const votingPowerContainer = style({
+export const span2Cell = style({
   gridColumnStart: 'span 2'
 });
 

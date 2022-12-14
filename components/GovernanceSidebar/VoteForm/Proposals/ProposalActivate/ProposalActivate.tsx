@@ -39,7 +39,7 @@ const ProposalActivate = (props: ProposalActivateProps) => {
 
   return (
     <div style={{ width: '100%' }}>
-      <div className={c(styles.gridCell, styles.votingPowerContainer)}>
+      <div className={c(styles.gridCell, styles.span2Cell)}>
         <InfoBlock
           center
           value={votingPower?.asNumber.toString() ?? '--'}
