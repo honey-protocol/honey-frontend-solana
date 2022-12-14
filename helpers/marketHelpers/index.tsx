@@ -184,7 +184,8 @@ export const marketCollections: MarketTableRow[] = [
       marketId: 'D5qrmgTLJwarfkkqktguUp5uPfj83hFHuWKLvMNSWJ5w',
       verifiedCreator: 'EZcZTsLpvdisPgQy5TcCALYgmGKRMNvvyJ89t1LFWmum',
       marketName: 'Trippin ape tribe',
-      marketImage: 'https://i.imgur.com/iFgvQva.png',
+      marketImage:
+        'https://img-cdn.magiceden.dev/rs:fill:400:400:0:0/plain/https://i.imgur.com/iFgvQva.png',
       discountedMarket: false
     }
   },
