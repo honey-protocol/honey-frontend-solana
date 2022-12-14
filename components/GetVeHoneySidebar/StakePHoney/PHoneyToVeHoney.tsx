@@ -108,6 +108,9 @@ const PHoneyToVeHoney = (_: { onCancel: Function }) => {
   return (
     <SidebarScroll
       footer={
+        toast.state ? (
+          <ToastComponent />
+        ) : (
         <div className={styles.buttons}>
           <div className={styles.smallCol}>
             <HoneyButton variant="secondary" onClick={() => {}}>
@@ -127,6 +130,7 @@ const PHoneyToVeHoney = (_: { onCancel: Function }) => {
             </HoneyButton>
           </div>
         </div>
+        )
       }
     >
       <div className={styles.depositForm}>
