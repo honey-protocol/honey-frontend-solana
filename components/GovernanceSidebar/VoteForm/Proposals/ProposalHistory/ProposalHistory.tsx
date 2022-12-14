@@ -34,7 +34,7 @@ export const makeDate = (num: BN): Date => new Date(num.toNumber() * 1_000);
 
 const extractEvents = (
   proposalData: ProposalData,
-  tx: ProgramAccount<SmartWalletTransactionData>
+  tx?: ProgramAccount<SmartWalletTransactionData>
 ): ProposalEvent[] => {
   const events: ProposalEvent[] = [];
   if (!proposalData.canceledAt.eq(ZERO)) {
@@ -91,7 +91,9 @@ const ProposalHistory: React.FC<Props> = ({ proposalInfo }: Props) => {
       ? proposalInfo?.data.queuedTransaction
       : null
   );
-  const events = proposalInfo && tx ? extractEvents(proposalInfo.data, tx) : [];
+  const events = proposalInfo
+    ? extractEvents(proposalInfo.data, tx ?? undefined)
+    : [];
 
   return (
     <div>
