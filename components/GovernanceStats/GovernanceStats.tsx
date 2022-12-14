@@ -15,6 +15,8 @@ import { useLocker } from 'hooks/useVeHoney';
 
 import { questionIcon, questionIconYellow } from 'styles/icons.css';
 import * as styles from './GovernanceStats.css';
+import { useConnectedWallet } from '@saberhq/use-solana';
+import { useAccountByMint } from 'hooks/useAccounts';
 
 const { format: f, formatShortName: fsn } = formatNumber;
 
@@ -25,6 +27,7 @@ export const GovernanceStats: FC<GoveranceStatsProps> = ({
   // const lockedPercent = 24;
 
   const { escrow, votingPower, locker, govToken } = useLocker();
+  const wallet = useConnectedWallet();
   const { data: govTokenData } = useTokenMint(govToken?.mintAccount);
 
   const lockEndsTime = useMemo(() => {
@@ -63,21 +66,6 @@ export const GovernanceStats: FC<GoveranceStatsProps> = ({
     lockedSupplyFmt?.toString().replaceAll(',', '') ?? 0
   );
 
-  const lockedAmountFmt = useMemo(() => {
-    if (escrow && govToken) {
-      return new TokenAmount(govToken, escrow.data.amount).format({
-        numberFormatOptions: {
-          maximumFractionDigits: 0
-        }
-      });
-    }
-    return null;
-  }, [govToken, escrow]);
-
-  const lockedAmount = Number(
-    lockedAmountFmt?.toString().replaceAll(',', '') ?? 0
-  );
-
   // const getChartData = () => {
   //   if (isMock) {
   //     const from = new Date()
@@ -89,6 +77,12 @@ export const GovernanceStats: FC<GoveranceStatsProps> = ({
   //   return [];
   // };
 
+  const honeyAccount = useAccountByMint(govToken?.mintAccount);
+  const honeyAmount = useMemo(() => {
+    if (!govToken || !honeyAccount) return null;
+    return new TokenAmount(govToken, honeyAccount.data.amount);
+  }, [honeyAccount, govToken]);
+
   return (
     <div className={styles.governanceGraphs}>
       <div className={styles.statBlock}>
@@ -99,7 +93,7 @@ export const GovernanceStats: FC<GoveranceStatsProps> = ({
               <div className={questionIconYellow} />
             </Space>
           </HoneyTooltip>
-          <div className={styles.value}>{f(lockedAmount)}</div>
+          <div className={styles.value}>{f(honeyAmount?.asNumber)}</div>
         </div>
 
         {/* <div className={styles.content}>
@@ -154,7 +148,9 @@ export const GovernanceStats: FC<GoveranceStatsProps> = ({
             </Space>
           </HoneyTooltip>
           <div className={c(styles.value, styles.lockPeriodValue)}>
-            {lockEndsTime && lockEndsTime < Date.now() ? (
+            {(lockEndsTime && lockEndsTime < Date.now()) ||
+            !lockEndsTime ||
+            !wallet ? (
               '0'
             ) : (
               <HoneyPeriod from={Date.now()} to={lockEndsTime ?? 0} />
