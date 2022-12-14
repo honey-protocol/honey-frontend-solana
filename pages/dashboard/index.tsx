@@ -43,7 +43,7 @@ import { Metadata } from '@metaplex-foundation/mpl-token-metadata';
 import { generateMockHistoryData } from '../../helpers/chartUtils';
 import { HoneyProfileChart } from '../../components/HoneyProfileChart/HoneyProfileChart';
 import { MAX_LTV } from '../../constants/loan';
-import {HONEY_GENESIS_MARKET_ID} from '../../helpers/marketHelpers/index';
+import { HONEY_GENESIS_MARKET_ID } from '../../helpers/marketHelpers/index';
 import useWindowSize from '../../hooks/useWindowSize';
 import { TABLET_BP } from '../../constants/breakpoints';
 import LendSidebar from '../../components/LendSidebar/LendSidebar';
@@ -405,11 +405,13 @@ const Dashboard: NextPage = () => {
       honeyUser,
       marketReserveInfo
     );
-    outcome.sumOfAllowance < 0
-      ? setUserAllowance(0)
-      : setUserAllowance(outcome.sumOfAllowance);
-    setUserDebt(outcome.sumOfTotalDebt);
-    setLoanToValue(outcome.sumOfLtv);
+    if (outcome) {
+      outcome.sumOfAllowance < 0
+        ? setUserAllowance(0)
+        : setUserAllowance(outcome.sumOfAllowance);
+      setUserDebt(outcome.sumOfTotalDebt);
+      setLoanToValue(outcome.sumOfLtv);
+    }
   }
 
   /**
@@ -476,7 +478,10 @@ const Dashboard: NextPage = () => {
 
   async function calculateInterestRate(utilizationRate: number) {
     // TODO: update market ID param to be dynamic before going live with the dashboard page
-    let interestRate = await getInterestRate(utilizationRate, HONEY_GENESIS_MARKET_ID);
+    let interestRate = await getInterestRate(
+      utilizationRate,
+      HONEY_GENESIS_MARKET_ID
+    );
     if (interestRate) setCalculatedInterestRate(interestRate);
   }
 
