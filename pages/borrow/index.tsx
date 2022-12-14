@@ -193,7 +193,6 @@ const Markets: NextPage = () => {
     useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [isMobileSidebarVisible, setShowMobileSidebar] = useState(false);
-  const [processUserPayment, setProcessUserPayment] = useState(0);
   const [processUserNFT, setProcessUserNFT] = useState(0);
 
   /**
@@ -315,12 +314,14 @@ const Markets: NextPage = () => {
       honeyUser,
       marketReserveInfo
     );
-    outcome.sumOfAllowance < 0
-      ? setUserAllowance(0)
-      : setUserAllowance(outcome.sumOfAllowance);
+    if (outcome) {
+      outcome.sumOfAllowance < 0
+        ? setUserAllowance(0)
+        : setUserAllowance(outcome.sumOfAllowance);
 
-    setUserDebt(outcome.sumOfTotalDebt);
-    setLoanToValue(outcome.sumOfLtv);
+      setUserDebt(outcome.sumOfTotalDebt);
+      setLoanToValue(outcome.sumOfLtv);
+    }
   }
 
   // sets cRatio, liquidationThreshold and calls fetchHelperValues
@@ -332,14 +333,14 @@ const Markets: NextPage = () => {
       setCRatio(BnToDecimal(marketReserveInfo[0].minCollateralRatio, 15, 5));
     }
 
-    if (nftPrice && collateralNFTPositions && honeyUser && marketReserveInfo)
+    if (nftPrice && collateralNFTPositions && honeyUser && marketReserveInfo) {
       fetchHelperValues(
         nftPrice,
         collateralNFTPositions,
         honeyUser,
         marketReserveInfo
       );
-    setLiquidationThreshold((1 / cRatio) * 100);
+    }
   }, [
     marketReserveInfo,
     honeyUser,
@@ -348,7 +349,7 @@ const Markets: NextPage = () => {
     cRatio,
     nftPrice,
     currentMarketId,
-    processUserPayment
+    reserveHoneyState
   ]);
 
   // if there are open positions for the user -> set the open positions
@@ -417,7 +418,7 @@ const Markets: NextPage = () => {
     sdkConfig.sdkWallet,
     currentMarketId,
     userOpenPositions,
-    processUserPayment
+    honeyUser
   ]);
 
   const showMobileSidebar = () => {
@@ -877,7 +878,6 @@ const Markets: NextPage = () => {
           }
         }
       });
-      toast.clear();
     } catch (error) {
       return toast.error(
         'Error depositing NFT'
@@ -957,12 +957,6 @@ const Markets: NextPage = () => {
           'Borrow success',
           `https://solscan.io/tx/${tx[1][0]}?cluster=${network}`
         );
-        // make sure data is processed - change in state which triggers re-render
-        setTimeout(() => {
-          processUserPayment == 0
-            ? setProcessUserPayment(1)
-            : setProcessUserPayment(0);
-        }, 3500);
       } else {
         return toast.error('Borrow failed');
       }
@@ -1004,12 +998,6 @@ const Markets: NextPage = () => {
           'Repay success',
           `https://solscan.io/tx/${tx[1][0]}?cluster=${network}`
         );
-        // make sure data is processed - change in state which triggers re-render
-        setTimeout(() => {
-          processUserPayment == 0
-            ? setProcessUserPayment(1)
-            : setProcessUserPayment(0);
-        }, 3500);
       } else {
         return toast.error('Repay failed');
       }
