@@ -865,13 +865,15 @@ const Markets: NextPage = () => {
           );
 
           if (tx[0] == 'SUCCESS') {
-            toast.success(
-              'Deposit success',
-              `https://solscan.io/tx/${tx[1][0]}?cluster=${network}`
-            );
+            setTimeout(async () => {
+              await refreshPositions();
+              refetchNfts({});
 
-            await refreshPositions();
-            refetchNfts({});
+              toast.success(
+                'Deposit success',
+                `https://solscan.io/tx/${tx[1][0]}?cluster=${network}`
+              );
+            }, 3500);
           }
         }
       });
@@ -893,6 +895,7 @@ const Markets: NextPage = () => {
     try {
       if (!mintID) return toast.error('Please select NFT');
       toast.processing();
+
       const metadata = await Metadata.findByMint(
         sdkConfig.saberHqConnection,
         mintID
@@ -904,13 +907,15 @@ const Markets: NextPage = () => {
       );
 
       if (tx[0] == 'SUCCESS') {
-        await refreshPositions();
-        refetchNfts({});
+        setTimeout(async () => {
+          await refreshPositions();
+          refetchNfts({});
 
-        toast.success(
-          'Withdraw success',
-          `https://solscan.io/tx/${tx[1][0]}?cluster=${network}`
-        );
+          toast.success(
+            'Withdraw success',
+            `https://solscan.io/tx/${tx[1][0]}?cluster=${network}`
+          );
+        }, 3500);
       }
 
       return true;
