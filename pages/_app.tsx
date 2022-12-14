@@ -78,46 +78,46 @@ const OnChainProvider: FC<{ children: ReactNode }> = ({ children }) => {
   );
 };
 
-const HoneyJupiterProvider: FC<{ children: ReactNode }> = ({ children }) => {
-  const wallet = useConnectedWallet();
-  const connection = useConnection();
-  const [platformFeeAccounts, setPlatformFeeAccounts] = useState(new Map());
-  const platformFeeBps = Number(process.env.NEXT_PUBLIC_JUPITER_FEE_BPS || '0');
-  const platformFeeWallet = process.env.NEXT_PUBLIC_JUPITER_FEE_ADDRESS
-    ? new PublicKey(process.env.NEXT_PUBLIC_JUPITER_FEE_ADDRESS)
-    : undefined;
+// const HoneyJupiterProvider: FC<{ children: ReactNode }> = ({ children }) => {
+//   const wallet = useConnectedWallet();
+//   const connection = useConnection();
+//   const [platformFeeAccounts, setPlatformFeeAccounts] = useState(new Map());
+//   const platformFeeBps = Number(process.env.NEXT_PUBLIC_JUPITER_FEE_BPS || '0');
+//   const platformFeeWallet = process.env.NEXT_PUBLIC_JUPITER_FEE_ADDRESS
+//     ? new PublicKey(process.env.NEXT_PUBLIC_JUPITER_FEE_ADDRESS)
+//     : undefined;
 
-  useEffect(() => {
-    if (!platformFeeBps || !platformFeeWallet) {
-      return;
-    }
-    getPlatformFeeAccounts(connection, platformFeeWallet).then(res => {
-      setPlatformFeeAccounts(res);
-    });
-    //  eslint-disable react-hooks/exhaustive-deps
-  }, []);
+//   useEffect(() => {
+//     if (!platformFeeBps || !platformFeeWallet) {
+//       return;
+//     }
+//     getPlatformFeeAccounts(connection, platformFeeWallet).then(res => {
+//       setPlatformFeeAccounts(res);
+//     });
+//     //  eslint-disable react-hooks/exhaustive-deps
+//   }, []);
 
-  let platformFeeAndAccounts = undefined;
-  if (platformFeeBps && platformFeeWallet) {
-    platformFeeAndAccounts = {
-      feeBps: platformFeeBps,
-      feeAccounts: platformFeeAccounts
-    };
-  }
-  console.log('platformFeeAndAccounts', platformFeeAndAccounts);
+//   let platformFeeAndAccounts = undefined;
+//   if (platformFeeBps && platformFeeWallet) {
+//     platformFeeAndAccounts = {
+//       feeBps: platformFeeBps,
+//       feeAccounts: platformFeeAccounts
+//     };
+//   }
+//   console.log('platformFeeAndAccounts', platformFeeAndAccounts);
 
-  return (
-    <JupiterProvider
-      connection={connection}
-      cluster="mainnet-beta"
-      platformFeeAndAccounts={platformFeeAndAccounts}
-      userPublicKey={wallet?.publicKey || undefined}
-      onlyDirectRoutes={false}
-    >
-      {children}
-    </JupiterProvider>
-  );
-};
+//   return (
+//     <JupiterProvider
+//       connection={connection}
+//       cluster="mainnet-beta"
+//       platformFeeAndAccounts={platformFeeAndAccounts}
+//       userPublicKey={wallet?.publicKey || undefined}
+//       onlyDirectRoutes={false}
+//     >
+//       {children}
+//     </JupiterProvider>
+//   );
+// };
 
 function MyApp({ Component, pageProps }: AppProps) {
   const [showPopup, setShowPopup] = useState(true);
@@ -195,8 +195,8 @@ function MyApp({ Component, pageProps }: AppProps) {
                     <SecPopup setShowPopup={setShowPopup} />
                   ) : (
                     <>
-                      <HoneyJupiterProvider>
-                        <DialectProviders>
+                      {/* <HoneyJupiterProvider> */}
+                      <DialectProviders>
                         <OnChainProvider>
                           <Component {...pageProps} />
                           <ToastContainer
@@ -204,8 +204,8 @@ function MyApp({ Component, pageProps }: AppProps) {
                             position="bottom-right"
                           />
                         </OnChainProvider>
-                        </DialectProviders>
-                      </HoneyJupiterProvider>
+                      </DialectProviders>
+                      {/* </HoneyJupiterProvider> */}
                     </>
                   )}
                 </GovernorProvider>
