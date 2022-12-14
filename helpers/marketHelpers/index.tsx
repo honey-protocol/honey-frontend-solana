@@ -68,6 +68,30 @@ export const marketCollections: MarketTableRow[] = [
         'https://img-cdn.magiceden.dev/rs:fill:400:400:0:0/plain/https://i.imgur.com/37nsjBZ.png',
       discountedMarket: false
     }
+  },
+  {
+    id: '2dxJ4eMkhMxm1ZqpAhKsjunvyziuq1JRnuHaqKFRY8et',
+    key: 'Vandals',
+    name: 'Vandal City',
+    verifiedCreator: '8wACNDCJiPVVxfrFJRUYkJx4hQgvcoZggMXKmNvjQ6R7',
+    rate: 0,
+    available: 0,
+    value: 0,
+    allowance: 0,
+    positions: [],
+    connection: undefined,
+    user: undefined,
+    debt: 0,
+    utilizationRate: 0,
+    openPositions: [],
+    constants: {
+      marketId: '2dxJ4eMkhMxm1ZqpAhKsjunvyziuq1JRnuHaqKFRY8et',
+      verifiedCreator: '8wACNDCJiPVVxfrFJRUYkJx4hQgvcoZggMXKmNvjQ6R7',
+      marketName: 'Vandal City',
+      marketImage:
+        'https://img-cdn.magiceden.dev/rs:fill:400:400:0:0/plain/https://cdn.discordapp.com/attachments/975048153843777577/1005302647491928124/unknown.png',
+      discountedMarket: false
+    }
   }
   // {
   //   id: 'H2H2pJuccdvpET9A75ajB3GgdYdCUL4T3kiwUMA6DJ7q',
@@ -242,28 +266,30 @@ export const renderMarket = (marketId: string) => {
   );
 };
 
-/**
- * @description filters the nft array based on the market name being passed in
- * @params nft array market name
- * @returns filtered array of nfts scoped to specific market
- */
-function filterNfts(
-  nftArray: any,
-  verifiedCreator: string,
-  marketName: string
-) {
-  const nameFilteredArray = nftArray.filter((nft: any) =>
-    nft.name.includes(marketName)
-  );
-  const verifiedCreatorFilteredArray = nameFilteredArray.filter((nft: any) => {
-    if (nft.creators) {
-      return nft.creators.map(
-        (creator: any) => creator.address === verifiedCreator
-      );
+interface NFT {
+  creators: [
+    {
+      address: string;
+      share: number;
+      verified: number;
     }
+  ];
+  image: string;
+  mint: string;
+  name: string;
+  symbol: string;
+  tokenId: string;
+  updateAuthority: string;
+}
+/**
+ * @description filters the nft array based on the verifiedCreator
+ * @params nft array verified creator
+ * @returns filtered array of nfts scoped to active market
+ */
+function filterNfts(nftArray: any, verifiedCreator: string) {
+  return nftArray.filter((nft: NFT) => {
+    return nft.creators[0].address === verifiedCreator;
   });
-
-  return verifiedCreatorFilteredArray;
 }
 
 /**
@@ -275,11 +301,7 @@ export const renderNftList = (marketId: string, nftArray: any) => {
   const filteredMarket = marketCollections.filter(
     market => market.constants.marketId === marketId
   );
-  return filterNfts(
-    nftArray,
-    filteredMarket[0].constants.verifiedCreator,
-    filteredMarket[0].constants.marketName
-  );
+  return filterNfts(nftArray, filteredMarket[0].constants.verifiedCreator);
 };
 
 /**
