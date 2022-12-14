@@ -103,9 +103,9 @@ const RepayForm = (props: RepayProps) => {
   const onRepay = async (event: any) => {
     if (userDebt == 0 && openPositions[0]) {
       executeWithdrawNFT(openPositions[0].mint, toast);
-      if (changeTab) {
-        changeTab('borrow');
-      }
+      // if (changeTab) {
+      //   changeTab('borrow');
+      // }
     } else {
       executeRepay(valueSOL || 0, toast);
       handleSliderChange(0);
