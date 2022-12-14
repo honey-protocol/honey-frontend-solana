@@ -14,6 +14,7 @@ import * as styles from '../LockHoneyForm/LockHoneyForm.css';
 import { hAlign } from 'styles/common.css';
 import { TokenAmount } from '@saberhq/token-utils';
 import useToast from 'hooks/useToast';
+import { HoneyButtonTabs } from 'components/HoneyButtonTabs/HoneyButtonTabs';
 
 const { format: f, formatPercent: fp, formatUsd: fu, parse: p } = formatNumber;
 
@@ -81,36 +82,36 @@ const PHoneyToHoney = (_: { onCancel: Function }) => {
         toast.state ? (
           <ToastComponent />
         ) : (
-        <div className={styles.buttons}>
-          <div className={styles.smallCol}>
-            <HoneyButton variant="secondary" onClick={() => {}}>
-              Cancel
-            </HoneyButton>
-          </div>
+          <div className={styles.buttons}>
+            <div className={styles.smallCol}>
+              <HoneyButton variant="secondary" onClick={() => {}}>
+                Cancel
+              </HoneyButton>
+            </div>
 
-          <div className={styles.bigCol}>
-            <HoneyButton
-              variant="primary"
-              disabled={
-                !phoneyValue1 || phoneyValue1 > (pHoneyAmount?.asNumber ?? 0)
-              }
-              block
-              onClick={handleDeposit}
-            >
-              Deposit
-            </HoneyButton>
+            <div className={styles.bigCol}>
+              <HoneyButton
+                variant="primary"
+                disabled={
+                  !phoneyValue1 || phoneyValue1 > (pHoneyAmount?.asNumber ?? 0)
+                }
+                block
+                onClick={handleDeposit}
+              >
+                Deposit
+              </HoneyButton>
+            </div>
+            <div className={styles.bigCol}>
+              <HoneyButton
+                variant="primary"
+                disabled={!claimableAmount?.asNumber}
+                block
+                onClick={handleClaim}
+              >
+                Claim
+              </HoneyButton>
+            </div>
           </div>
-          <div className={styles.bigCol}>
-            <HoneyButton
-              variant="primary"
-              disabled={!claimableAmount?.asNumber}
-              block
-              onClick={handleClaim}
-            >
-              Claim
-            </HoneyButton>
-          </div>
-        </div>
         )
       }
     >
@@ -154,6 +155,18 @@ const PHoneyToHoney = (_: { onCancel: Function }) => {
         </div>
 
         <div className={styles.divider} />
+
+        <div className={styles.row}>
+          <HoneyButtonTabs
+            items={[{ name: '12days', slug: '12' }].map(period => ({
+              name: period.name,
+              slug: period.slug
+            }))}
+            activeItemSlug={'12'}
+            onClick={itemSlug => {}}
+            isFullWidth
+          />
+        </div>
         <div>
           <HoneyFormattedNumericInput
             placeholder="0.00"
