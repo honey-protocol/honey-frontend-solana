@@ -111,25 +111,25 @@ const PHoneyToVeHoney = (_: { onCancel: Function }) => {
         toast.state ? (
           <ToastComponent />
         ) : (
-        <div className={styles.buttons}>
-          <div className={styles.smallCol}>
-            <HoneyButton variant="secondary" onClick={() => {}}>
-              Cancel
-            </HoneyButton>
+          <div className={styles.buttons}>
+            <div className={styles.smallCol}>
+              <HoneyButton variant="secondary" onClick={() => {}}>
+                Cancel
+              </HoneyButton>
+            </div>
+            <div className={styles.bigCol}>
+              <HoneyButton
+                variant="primary"
+                disabled={
+                  !phoneyValue2 || phoneyValue2 > (pHoneyAmount?.asNumber ?? 0)
+                }
+                block
+                onClick={handleVest}
+              >
+                Vest
+              </HoneyButton>
+            </div>
           </div>
-          <div className={styles.bigCol}>
-            <HoneyButton
-              variant="primary"
-              disabled={
-                !phoneyValue2 || phoneyValue2 > (pHoneyAmount?.asNumber ?? 0)
-              }
-              block
-              onClick={handleVest}
-            >
-              Vest
-            </HoneyButton>
-          </div>
-        </div>
         )
       }
     >
@@ -146,10 +146,18 @@ const PHoneyToVeHoney = (_: { onCancel: Function }) => {
         <div className={styles.row}>
           <div className={styles.col}>
             <InfoBlock
+              value={f(pHoneyAmount?.asNumber)}
+              title={<span className={hAlign}>$pHoney balance</span>}
+            />
+          </div>
+          <div className={styles.col}>
+            <InfoBlock
               value={f(votingPower?.asNumber)}
               title={<span className={hAlign}>$veHoney balance</span>}
             />
           </div>
+        </div>
+        <div className={styles.row}>
           <div className={styles.col}>
             <InfoBlock
               value={f(lockedAmount?.asNumber)}
