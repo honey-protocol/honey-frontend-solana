@@ -10,16 +10,14 @@ import {
   BorrowSidebarMode,
   HoneyTableColumnType,
   MarketTablePosition,
-  MarketTableRow,
-  UserNFTs
+  MarketTableRow
 } from '../../types/markets';
 import React, {
   ChangeEvent,
   useCallback,
   useEffect,
   useMemo,
-  useState,
-  useRef
+  useState
 } from 'react';
 import { formatNFTName, formatNumber } from '../../helpers/format';
 import Image from 'next/image';
@@ -36,13 +34,10 @@ import { BnToDecimal, ConfigureSDK } from '../../helpers/loanHelpers/index';
 import { LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js';
 import HealthLvl from '../../components/HealthLvl/HealthLvl';
 import useFetchNFTByUser from 'hooks/useNFTV2';
-import BN from 'bn.js';
 import {
   borrowAndRefresh,
   depositNFT,
-  HoneyMarket,
   repayAndRefresh,
-  ReserveConfig,
   useBorrowPositions,
   useHoney,
   useMarket,
@@ -58,7 +53,6 @@ import {
   calculateUserDeposits
 } from 'helpers/loanHelpers/userCollection';
 import { Metadata } from '@metaplex-foundation/mpl-token-metadata';
-import { MAX_LTV } from 'constants/loan';
 import { ToastProps } from 'hooks/useToast';
 import { RoundHalfDown } from 'helpers/utils';
 import HoneyContent from '../../components/HoneyContent/HoneyContent';
@@ -128,7 +122,7 @@ const Markets: NextPage = () => {
    * @params none
    * @returns market | market reserve information | parsed reserves |
    */
-  const { market, marketReserveInfo, parsedReserves, fetchMarket } = useHoney();
+  const { marketReserveInfo, parsedReserves, fetchMarket } = useHoney();
   /**
    * @description fetches honey client | honey user | honey reserves | honey market from SDK
    * @params  useConnection func. | useConnectedWallet func. | honeyID | marketID
@@ -160,24 +154,15 @@ const Markets: NextPage = () => {
   );
 
   // market specific constants - calculations / ratios / debt / allowance etc.
-  const [totalMarketDeposits, setTotalMarketDeposits] = useState(0);
-  const [totalMarketDebt, setTotalMarketDebt] = useState(0);
   const [nftPrice, setNftPrice] = useState(0);
-  const [calculatedNftPrice, setCalculatedNftPrice] = useState(false);
-  // const [marketPositions, setMarketPositions] = useState(0);
-  // const [userAvailableNFTs, setUserAvailableNFTs] = useState<Array<NFT>>([]);
   const [userOpenPositions, setUserOpenPositions] = useState<
     Array<OpenPositions>
   >([]);
   const [userAllowance, setUserAllowance] = useState(0);
   const [loanToValue, setLoanToValue] = useState(0);
   const [userDebt, setUserDebt] = useState(0);
-  const [depositNoteExchangeRate, setDepositNoteExchangeRate] = useState(0);
   const [cRatio, setCRatio] = useState(0);
-  const [liqidationThreshold, setLiquidationThreshold] = useState(0);
   const [reserveHoneyState, setReserveHoneyState] = useState(0);
-  const [userTotalDeposits, setUserTotalDeposits] = useState(0);
-  const [sumOfTotalValue, setSumOfTotalValue] = useState(0);
   const [launchAreaWidth, setLaunchAreaWidth] = useState<number>(840);
   const [fetchedSolPrice, setFetchedSolPrice] = useState(0);
   const [activeInterestRate, setActiveInterestRate] = useState(0);
@@ -192,7 +177,6 @@ const Markets: NextPage = () => {
     useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [isMobileSidebarVisible, setShowMobileSidebar] = useState(false);
-  const [processUserNFT, setProcessUserNFT] = useState(0);
 
   /**
    * @description fetches all nfts in users wallet
@@ -207,35 +191,6 @@ const Markets: NextPage = () => {
   const [isCreateMarketAreaOnHover, setIsCreateMarketAreaOnHover] =
     useState<boolean>(false);
 
-  // function for fetching the total market debt
-  async function fetchTotalMarketDebt(honeyReserves: any) {
-    const marketDebt = await calculateMarketDebt(honeyReserves);
-    setTotalMarketDebt(marketDebt);
-  }
-  // if honey reserves -> call fetchTotalMarketDebt
-  useEffect(() => {
-    if (honeyReserves) fetchTotalMarketDebt(honeyReserves);
-  }, [honeyReserves]);
-
-  // function for fetching user total deposits
-  // TODO: create type for marketReserveInfo and honeyUser
-  async function fetchUserTotalDeposits(
-    marketReserveInfo: any,
-    honeyUser: any
-  ) {
-    const totalUserDeposits = await calculateUserDeposits(
-      marketReserveInfo,
-      honeyUser
-    );
-    setUserTotalDeposits(totalUserDeposits);
-  }
-
-  // if marketReserveInfo and honeyUser call upon fetchUserTotalDeposits
-  useEffect(() => {
-    if (marketReserveInfo && honeyUser)
-      fetchUserTotalDeposits(marketReserveInfo, honeyUser);
-  }, [marketReserveInfo, honeyUser]);
-
   // fetches the sol price
   // TODO: create type for reserves and connection
   async function fetchSolValue(reserves: any, connection: any) {
@@ -249,17 +204,8 @@ const Markets: NextPage = () => {
    * @returns updates marketValue
    */
   useEffect(() => {
-    if (parsedReserves && parsedReserves[0].reserveState.totalDeposits) {
-      let totalMarketDeposits = BnToDecimal(
-        parsedReserves[0].reserveState.totalDeposits,
-        9,
-        2
-      );
-
-      setTotalMarketDeposits(totalMarketDeposits);
-      if (parsedReserves && sdkConfig.saberHqConnection) {
-        fetchSolValue(parsedReserves, sdkConfig.saberHqConnection);
-      }
+    if (parsedReserves && sdkConfig.saberHqConnection) {
+      fetchSolValue(parsedReserves, sdkConfig.saberHqConnection);
     }
   }, [parsedReserves]);
 
@@ -288,7 +234,6 @@ const Markets: NextPage = () => {
         sdkConfig.saberHqConnection
       );
       setNftPrice(RoundHalfDown(Number(nftPrice)));
-      setCalculatedNftPrice(true);
     }
   }
   // if marketReserveInfo && parsedReserves && honeyMarket -> call upon calculateNftPrice
@@ -326,13 +271,15 @@ const Markets: NextPage = () => {
   // sets cRatio, liquidationThreshold and calls fetchHelperValues
   useEffect(() => {
     if (marketReserveInfo && parsedReserves) {
-      setDepositNoteExchangeRate(
-        BnToDecimal(marketReserveInfo[0].depositNoteExchangeRate, 15, 5)
-      );
       setCRatio(BnToDecimal(marketReserveInfo[0].minCollateralRatio, 15, 5));
     }
 
-    if (nftPrice && collateralNFTPositions && honeyUser && marketReserveInfo) {
+    if (
+      nftPrice !== 0 &&
+      collateralNFTPositions &&
+      honeyUser &&
+      marketReserveInfo
+    ) {
       fetchHelperValues(
         nftPrice,
         collateralNFTPositions,
@@ -353,12 +300,14 @@ const Markets: NextPage = () => {
 
   // if there are open positions for the user -> set the open positions
   useEffect(() => {
-    if (collateralNFTPositions) {
-      setUserOpenPositions(collateralNFTPositions);
-    } else if (!collateralNFTPositions) {
-      setUserOpenPositions([]);
+    if (loading === false) {
+      if (collateralNFTPositions) {
+        setUserOpenPositions(collateralNFTPositions);
+      } else if (!collateralNFTPositions) {
+        setUserOpenPositions([]);
+      }
     }
-  }, [collateralNFTPositions, currentMarketId]);
+  }, [loading]);
   // function is setup to handle an array for all markets and return based on specific market by verified creator
   async function handlePositions(
     verifiedCreator: string,
