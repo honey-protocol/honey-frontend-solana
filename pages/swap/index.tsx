@@ -77,6 +77,8 @@ const Swap: NextPage = () => {
   const [slippage, setSlippage] = useState(DEFAULT_SLIPPAGE);
   const [debounceTime] = useState(500);
 
+  const [transactionFee, setTransactionFee] = useState(0);
+
   const jupiter = useJupiter({
     amount: JSBI.BigInt(
       numberToLamports(swapAmount, inputToken?.decimals || 1)
@@ -127,13 +129,19 @@ const Swap: NextPage = () => {
     return outAmount / inAmount;
   }, [bestRoute]);
 
-  const swapFee = useMemo(async () => {
+  const swapFee = useCallback(async () => {
     if (!bestRoute) {
       return;
     }
 
     const depositAndFee = await bestRoute.getDepositAndFee();
+    console.log({ depositAndFee, bestRoute });
+    setTransactionFee(depositAndFee?.totalFeeAndDeposits || 0);
   }, [bestRoute]);
+
+  useEffect(() => {
+    swapFee();
+  }, [swapFee]);
 
   const swapStats: InfoBlockData[] = useMemo(() => {
     const outDecimals = outputToken?.decimals || 1;
@@ -141,7 +149,6 @@ const Swap: NextPage = () => {
     const minReceived = bestRoute
       ? lamportsToNumber(bestRoute.otherAmountThreshold.toString(), outDecimals)
       : 0;
-    const transactionFee = 0;
 
     const exchangeRateFormatted = ftad(exchangeRate || 0, outDecimals);
     const reverseExchangeRateFormatted = ftad(
