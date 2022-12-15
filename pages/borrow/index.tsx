@@ -86,7 +86,6 @@ import {
   HONEY_GENESIS_MARKET_ID,
   COLLATERAL_FACTOR
 } from 'helpers/marketHelpers';
-
 /**
  * @description formatting functions to format with perfect / format in SOL with icon or just a regular 2 decimal format
  * @params value to be formatted
