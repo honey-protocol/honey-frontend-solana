@@ -209,16 +209,6 @@ const Markets: NextPage = () => {
     }
   }, [parsedReserves]);
 
-  // // fetches total market positions aka. obligations
-  // async function fetchObligations() {
-  //   let obligations = await honeyMarket.fetchObligations();
-  //   setMarketPositions(obligations.length);
-  // }
-  // // if there is a honeyMarket fetch the opbligations
-  // useEffect(() => {
-  //   if (honeyMarket) fetchObligations();
-  // }, [honeyMarket]);
-
   // calculates nft price
   // TODO: create types for marketReserveInfo && parsedReserves && honeyMarket
   async function calculateNFTPrice(
