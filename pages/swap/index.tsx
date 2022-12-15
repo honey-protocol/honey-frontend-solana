@@ -141,8 +141,6 @@ const Swap: NextPage = () => {
     swapFee();
   }, [swapFee]);
 
-  const transactionFee = estimatedOutAmount * 0.25;
-
   const swapStats: InfoBlockData[] = useMemo(() => {
     const outDecimals = outputToken?.decimals || 1;
     const priceImpact = bestRoute ? bestRoute.priceImpactPct * 100 : 0;
@@ -179,7 +177,7 @@ const Swap: NextPage = () => {
       },
       {
         title: 'Transaction Fee',
-        value: `${f(transactionFee)} ${outputToken?.symbol}`
+        value: `${f(estimatedOutAmount * 0.0025)} ${outputToken?.symbol}`
         // titleAddon: (
         //   <HoneyTooltip placement={'top'} tooltipIcon label={'Mock'} />
         // )
