@@ -79,8 +79,6 @@ const Swap: NextPage = () => {
   const [slippage, setSlippage] = useState(DEFAULT_SLIPPAGE);
   const [debounceTime] = useState(500);
 
-  const [transactionFee, setTransactionFee] = useState(0);
-
   const jupiter = useJupiter({
     amount: JSBI.BigInt(
       numberToLamports(swapAmount, inputToken?.decimals || 1)
@@ -137,12 +135,13 @@ const Swap: NextPage = () => {
     }
 
     const depositAndFee = await bestRoute.getDepositAndFee();
-    setTransactionFee((depositAndFee?.totalFeeAndDeposits || 0) / 10 ** 9);
   }, [bestRoute]);
 
   useEffect(() => {
     swapFee();
   }, [swapFee]);
+
+  const transactionFee = estimatedOutAmount * 0.25;
 
   const swapStats: InfoBlockData[] = useMemo(() => {
     const outDecimals = outputToken?.decimals || 1;
@@ -180,7 +179,7 @@ const Swap: NextPage = () => {
       },
       {
         title: 'Transaction Fee',
-        value: `${ftad(transactionFee, outDecimals)}`
+        value: `${f(transactionFee)} ${outputToken?.symbol}`
         // titleAddon: (
         //   <HoneyTooltip placement={'top'} tooltipIcon label={'Mock'} />
         // )
