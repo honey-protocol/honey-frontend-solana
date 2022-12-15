@@ -38,7 +38,6 @@ import { pageDescription, pageTitle } from 'styles/common.css';
 import HoneyTableNameCell from 'components/HoneyTable/HoneyTableNameCell/HoneyTableNameCell';
 import HoneyTableRow from 'components/HoneyTable/HoneyTableRow/HoneyTableRow';
 
-const { format: f, formatPercent: fp, formatSol: fs } = formatNumber;
 import { HONEY_GENESIS_BEE_MARKET_NAME } from '../../helpers/marketHelpers';
 import { HONEY_GENESIS_MARKET_ID } from '../../helpers/marketHelpers/index';
 import { setMarketId } from 'pages/_app';
@@ -86,13 +85,13 @@ const Lend: NextPage = () => {
    * @params none
    * @returns market | market reserve information | parsed reserves |
    */
-  const { market, marketReserveInfo, parsedReserves, fetchMarket } = useHoney();
+  const { marketReserveInfo, parsedReserves, fetchMarket } = useHoney();
   /**
    * @description calls upon the honey sdk
    * @params  useConnection func. | useConnectedWallet func. | honeyID | marketID
    * @returns honeyUser | honeyReserves - used for interaction regarding the SDK
    */
-  const { honeyClient, honeyUser, honeyReserves, honeyMarket } = useMarket(
+  const { honeyUser, honeyReserves, honeyMarket } = useMarket(
     sdkConfig.saberHqConnection,
     sdkConfig.sdkWallet,
     sdkConfig.honeyId,
@@ -104,7 +103,6 @@ const Lend: NextPage = () => {
   const [nftPrice, setNftPrice] = useState(0);
   const [userWalletBalance, setUserWalletBalance] = useState<number>(0);
   const [fetchedSolPrice, setFetchedSolPrice] = useState(0);
-  const [userDepositWithdraw, setUserDepositWithdraw] = useState(0);
   const [activeMarketSupplied, setActiveMarketSupplied] = useState(0);
   const [activeMarketAvailable, setActiveMarketAvailable] = useState(0);
   const [totalMarketDeposits, setTotalMarketDeposits] = useState(0);
@@ -137,31 +135,31 @@ const Lend: NextPage = () => {
     if (!marketReserveInfo || !honeyUser) {
       return;
     }
-    setTimeout(async () => {
-      let depositNoteExchangeRate = BnToDecimal(
-        marketReserveInfo[0].depositNoteExchangeRate,
-        15,
-        5
-      );
-      let loanNoteExchangeRate = 0;
-      let nftPrice = 2;
-      let cRatio = 1;
 
-      let depositValue = (await honeyUser.deposits().length) > 0;
-      if (depositValue == false) {
-        return;
-      } else {
-        let totalDeposits =
-          (honeyUser
-            .deposits()[0]
-            .amount.div(new BN(10 ** 5))
-            .toNumber() *
-            depositNoteExchangeRate) /
-          10 ** 4;
+    let depositNoteExchangeRate = BnToDecimal(
+      marketReserveInfo[0].depositNoteExchangeRate,
+      15,
+      5
+    );
+    let loanNoteExchangeRate = 0;
+    let nftPrice = 2;
+    let cRatio = 1;
 
-        setUserTotalDeposits(totalDeposits);
-      }
-    }, 1500);
+    let depositValue = (await honeyUser.deposits().length) > 0;
+
+    if (depositValue == false) {
+      return setUserTotalDeposits(0);
+    } else {
+      let totalDeposits =
+        (honeyUser
+          .deposits()[0]
+          .amount.div(new BN(10 ** 5))
+          .toNumber() *
+          depositNoteExchangeRate) /
+        10 ** 4;
+
+      setUserTotalDeposits(totalDeposits);
+    }
   }
   /**
    * @description updates honeyUser | marketReserveInfo |
@@ -171,7 +169,7 @@ const Lend: NextPage = () => {
   useEffect(() => {
     if (marketReserveInfo && honeyUser)
       calculateTotalDeposits(marketReserveInfo, honeyUser);
-  }, [marketReserveInfo, honeyUser, userDepositWithdraw]);
+  });
 
   // fetches the current sol price
   async function fetchSolValue(reserves: any, connection: any) {
@@ -200,7 +198,7 @@ const Lend: NextPage = () => {
         fetchSolValue(parsedReserves, sdkConfig.saberHqConnection);
       }
     }
-  }, [parsedReserves]);
+  }, [reserveHoneyState, parsedReserves]);
 
   // calculates nft price
   async function calculateNFTPrice() {
@@ -217,7 +215,7 @@ const Lend: NextPage = () => {
   // upon marketreserve or parsed reserve change call upon calculateNFTPrice
   useEffect(() => {
     calculateNFTPrice();
-  }, [marketReserveInfo, parsedReserves]);
+  }, [parsedReserves]);
 
   /**
    * @description deposits 1 sol
@@ -253,9 +251,9 @@ const Lend: NextPage = () => {
 
         if (walletPK) await fetchWalletBalance(walletPK);
 
-        userDepositWithdraw == 0
-          ? setUserDepositWithdraw(1)
-          : setUserDepositWithdraw(0);
+        // userDepositWithdraw == 0
+        //   ? setUserDepositWithdraw(1)
+        //   : setUserDepositWithdraw(0);
 
         toast.success(
           'Deposit success',
@@ -299,11 +297,12 @@ const Lend: NextPage = () => {
             ? setReserveHoneyState(1)
             : setReserveHoneyState(0);
         });
+
         if (walletPK) await fetchWalletBalance(walletPK);
 
-        userDepositWithdraw == 0
-          ? setUserDepositWithdraw(1)
-          : setUserDepositWithdraw(0);
+        // userDepositWithdraw == 0
+        //   ? setUserDepositWithdraw(1)
+        //   : setUserDepositWithdraw(0);
 
         toast.success(
           'Withdraw success',
@@ -400,11 +399,11 @@ const Lend: NextPage = () => {
     sdkConfig.saberHqConnection,
     sdkConfig.sdkWallet,
     currentMarketId,
-    userDepositWithdraw,
-    marketReserveInfo,
-    honeyUser,
-    honeyReserves,
-    totalMarketDeposits
+    // marketReserveInfo,
+    // honeyReserves,
+    totalMarketDeposits,
+    reserveHoneyState,
+    userTotalDeposits
   ]);
 
   const onSearch = (searchTerm: string): LendTableRow[] => {
