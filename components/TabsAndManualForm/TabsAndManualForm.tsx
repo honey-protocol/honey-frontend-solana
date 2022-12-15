@@ -40,11 +40,11 @@ export const TabsAndManualForm: FC<TabsAndManualFormProps> = ({
     onChange(val);
   };
 
-  useEffect(() => {
-    if (isManualTabBlurred) {
-      setManualTabSelected(false);
-    }
-  }, [isManualTabBlurred]);
+  // useEffect(() => {
+  //   if (isManualTabBlurred) {
+  //     setManualTabSelected(false);
+  //   }
+  // }, [isManualTabBlurred]);
 
   const onManualTabFocus = (e: ChangeEvent<HTMLInputElement>) => {
     if (!error.length) {

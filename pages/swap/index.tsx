@@ -33,6 +33,7 @@ import { ValueType } from 'rc-input-number/lib/utils/MiniDecimal';
 import { useWalletKit } from '@gokiprotocol/walletkit';
 import Decimal from 'decimal.js';
 import debounce from 'lodash/debounce';
+import useToast from 'hooks/useToast';
 
 const {
   formatTokenAllDecimals: ftad,
@@ -54,6 +55,7 @@ const Swap: NextPage = () => {
   const [haveTokensDetailsLoaded, setHaveTokensDetailsLoaded] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
+  const { toast, ToastComponent } = useToast();
   const [swapAmount, setSwapAmount] = useState(1);
   const [estimatedOutAmount, setEstimatedOutAmount] = useState(0);
   const [isInputTokenModalVisible, setIsInputTokenModalVisible] =
@@ -135,8 +137,7 @@ const Swap: NextPage = () => {
     }
 
     const depositAndFee = await bestRoute.getDepositAndFee();
-    console.log({ depositAndFee, bestRoute });
-    setTransactionFee(depositAndFee?.totalFeeAndDeposits || 0);
+    setTransactionFee((depositAndFee?.totalFeeAndDeposits || 0) / 10 ** 9);
   }, [bestRoute]);
 
   useEffect(() => {
@@ -256,6 +257,7 @@ const Swap: NextPage = () => {
       return;
     }
     setIsLoading(true);
+    toast.processing();
     try {
       const txns = await exchange({
         // disable ts complain about VersionedTransaction
@@ -275,7 +277,10 @@ const Swap: NextPage = () => {
 
       refreshBalances();
       setSwapAmount(0);
+      toast.success('Swap successful');
+      console.log({ txns });
     } catch (e) {
+      toast.error('Swap failed');
       console.error(e);
     } finally {
       setIsLoading(false);
@@ -512,32 +517,35 @@ const Swap: NextPage = () => {
               <div className={styles.swapStats}>
                 <SwapInfoBlock data={swapStats} />
               </div>
-
-              <div className={styles.buttons}>
-                {!wallet || !wallet.connected ? (
-                  <HoneyButton variant="primary" block onClick={connect}>
-                    Connect wallet
-                  </HoneyButton>
-                ) : (
-                  <HoneyTooltip
-                    placement="top"
-                    title={formatSwapLabelsForTooltip(getSwapErrors())}
-                  >
-                    {/* DIV wrapper is required to propagate events to tooltip correctly; Otherwise it might stuck in some cases */}
-                    <div>
-                      <HoneyButton
-                        variant="primary"
-                        block
-                        onClick={swap}
-                        loading={isLoading}
-                        disabled={getSwapErrors().length > 0}
-                      >
-                        Swap
-                      </HoneyButton>
-                    </div>
-                  </HoneyTooltip>
-                )}
-              </div>
+              {toast.state ? (
+                <ToastComponent />
+              ) : (
+                <div className={styles.buttons}>
+                  {!wallet || !wallet.connected ? (
+                    <HoneyButton variant="primary" block onClick={connect}>
+                      Connect wallet
+                    </HoneyButton>
+                  ) : (
+                    <HoneyTooltip
+                      placement="top"
+                      title={formatSwapLabelsForTooltip(getSwapErrors())}
+                    >
+                      {/* DIV wrapper is required to propagate events to tooltip correctly; Otherwise it might stuck in some cases */}
+                      <div>
+                        <HoneyButton
+                          variant="primary"
+                          block
+                          onClick={swap}
+                          loading={isLoading}
+                          disabled={getSwapErrors().length > 0}
+                        >
+                          Swap
+                        </HoneyButton>
+                      </div>
+                    </HoneyTooltip>
+                  )}
+                </div>
+              )}
             </div>
           </HoneyCardYellowShadow>
           <SwapFooter />
