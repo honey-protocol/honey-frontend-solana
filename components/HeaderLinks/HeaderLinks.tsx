@@ -38,13 +38,17 @@ export const links: MenuLink[] = [
     href: '/liquidate'
   },
   {
-    title: 'FARM',
-    href: '/farm'
+    title: 'SWAP',
+    href: '/swap'
   },
   {
     title: 'GOVERNANCE',
     href: '/governance',
     disabled: true
+  },
+  {
+    title: 'FARM',
+    href: '/farm'
   },
   {
     title: 'DOCUMENTATION',
@@ -67,13 +71,6 @@ export const links: MenuLink[] = [
     href: 'https://app.honey.finance'
   }
 ];
-
-if (featureFlags.isSwapPageEnabled) {
-  links.splice(4, 0, {
-    title: 'SWAP',
-    href: '/swap'
-  });
-}
 
 if (featureFlags.isP2PPageEnabled) {
   links.splice(5, 0, {

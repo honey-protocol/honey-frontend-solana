@@ -14,7 +14,7 @@ import { ValueType } from 'rc-input-number/lib/utils/MiniDecimal';
 import { noop } from 'lodash';
 import { isNil } from '../../helpers/utils';
 
-const MAX_VALUE_ERROR = 'Slippage should be 0.1% — 1%';
+const MAX_VALUE_ERROR = `Slippage above 5% is high`;
 
 export const TabsAndManualForm: FC<TabsAndManualFormProps> = ({
   tabs,
@@ -40,11 +40,11 @@ export const TabsAndManualForm: FC<TabsAndManualFormProps> = ({
     onChange(val);
   };
 
-  useEffect(() => {
-    if (isManualTabBlurred) {
-      setManualTabSelected(false);
-    }
-  }, [isManualTabBlurred]);
+  // useEffect(() => {
+  //   if (isManualTabBlurred) {
+  //     setManualTabSelected(false);
+  //   }
+  // }, [isManualTabBlurred]);
 
   const onManualTabFocus = (e: ChangeEvent<HTMLInputElement>) => {
     if (!error.length) {
