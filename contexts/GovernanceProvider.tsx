@@ -67,8 +67,8 @@ export function GovernanceProvider({ children }: Props) {
       escrow.amount,
       escrow.escrowStartedAt,
       escrow.escrowEndsAt,
-      locker.params.multiplier,
-      locker.params.maxStakeDuration,
+      locker?.params.multiplier,
+      locker?.params.maxStakeDuration,
       HONEY_DECIMALS
     );
   }, [escrow]);

@@ -13,8 +13,8 @@ import SecPopup from 'components/SecPopup';
 import { AnchorProvider, HoneyProvider } from '@honey-finance/sdk';
 import { useConnectedWallet, useConnection } from '@saberhq/use-solana';
 import React, { FC, ReactNode, useEffect, useState } from 'react';
-import { GovernorProvider } from 'hooks/tribeca/useGovernor';
-import { GovernanceProvider } from 'contexts/GovernanceProvider';
+// import { GovernorProvider } from 'hooks/tribeca/useGovernor';
+// import { GovernanceProvider } from 'contexts/GovernanceProvider';
 import Script from 'next/script';
 
 // import NoMobilePopup from 'components/NoMobilePopup/NoMobilePopup';
@@ -177,14 +177,14 @@ function MyApp({ Component, pageProps }: AppProps) {
           }}
           networkConfigs={networkConfiguration()}
         >
-          <GovernanceProvider>
-            <SailProvider
-              initialState={{
-                onSailError
-              }}
-            >
-              <SDKProvider>
-                <GovernorProvider
+          {/* <GovernanceProvider> */}
+          <SailProvider
+            initialState={{
+              onSailError
+            }}
+          >
+            <SDKProvider>
+              {/* <GovernorProvider
                   initialState={{
                     governor: GOVERNOR_ADDRESS,
                     govToken: HONEY_MINT,
@@ -192,29 +192,26 @@ function MyApp({ Component, pageProps }: AppProps) {
                       mintWrapper: HONEY_MINT_WRAPPER
                     }
                   }}
-                >
-                  {/* {children} */}
-                  {showPopup ? (
-                    <SecPopup setShowPopup={setShowPopup} />
-                  ) : (
-                    <>
-                      <HoneyJupiterProvider>
-                        <DialectProviders>
-                        <OnChainProvider>
-                          <Component {...pageProps} />
-                          <ToastContainer
-                            theme="dark"
-                            position="bottom-right"
-                          />
-                        </OnChainProvider>
-                        </DialectProviders>
-                      </HoneyJupiterProvider>
-                    </>
-                  )}
-                </GovernorProvider>
-              </SDKProvider>
-            </SailProvider>
-          </GovernanceProvider>
+                > */}
+              {/* {children} */}
+              {showPopup ? (
+                <SecPopup setShowPopup={setShowPopup} />
+              ) : (
+                <>
+                  <HoneyJupiterProvider>
+                    <DialectProviders>
+                      <OnChainProvider>
+                        <Component {...pageProps} />
+                        <ToastContainer theme="dark" position="bottom-right" />
+                      </OnChainProvider>
+                    </DialectProviders>
+                  </HoneyJupiterProvider>
+                </>
+              )}
+              {/* </GovernorProvider> */}
+            </SDKProvider>
+          </SailProvider>
+          {/* </GovernanceProvider> */}
         </WalletKitProvider>
       </QueryClientProvider>
     </ThemeProvider>
