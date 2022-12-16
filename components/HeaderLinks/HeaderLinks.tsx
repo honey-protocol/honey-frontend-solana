@@ -38,13 +38,13 @@ export const links: MenuLink[] = [
     href: '/liquidate'
   },
   {
+    title: 'SWAP',
+    href: '/swap'
+  },
+  {
     title: 'GOVERNANCE',
     href: '/governance',
     disabled: true
-  },
-  {
-    title: 'SWAP',
-    href: '/swap'
   },
   {
     title: 'FARM',
