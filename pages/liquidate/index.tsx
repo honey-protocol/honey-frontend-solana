@@ -401,9 +401,7 @@ const Liquidate: NextPage = () => {
         return Promise.all(
           marketCollections.map(async collection => {
             let obligationObject =
-              collection.constants.marketId === currentMarketId
-                ? positionsObject
-                : [];
+              collection.id === currentMarketId ? positionsObject : [];
             await populateMarketData(
               collection,
               sdkConfig.saberHqConnection,
