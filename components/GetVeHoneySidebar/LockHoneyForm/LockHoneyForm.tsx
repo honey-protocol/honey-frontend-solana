@@ -29,6 +29,8 @@ const PERIODS = [
   { name: '4 Y', slug: '48' }
 ] as const;
 
+const ONE_MONTH_IN_MS = 2_629_746_000;
+
 type LockPeriod = typeof PERIODS[number]['slug'];
 
 const LockHoneyForm = (props: { onCancel: Function }) => {
@@ -62,6 +64,10 @@ const LockHoneyForm = (props: { onCancel: Function }) => {
     if (!escrow || escrow.data.escrowEndsAt.eqn(0)) return null;
     return new Date(escrow.data.escrowEndsAt.toNumber() * 1000);
   }, [escrow]);
+
+  const newLockPeriodEnds = lockEndsTime
+    ? lockEndsTime.getTime() + Number(lockPeriod) * ONE_MONTH_IN_MS
+    : 0;
 
   const honeyAmount = useMemo(() => {
     if (!govToken || !honeyAccount) return null;
@@ -199,7 +205,8 @@ const LockHoneyForm = (props: { onCancel: Function }) => {
         <div className={styles.row}>
           <div className={styles.col}>
             <HoneyWarning
-              message="Vote escrowed HONEY (or veHONEY) represents governance in the Honey DAO. Learn more about the details in our docs."
+              message="Learn more about veHONEY in our docs.
+              WARNING: locking more HONEY will extend your original lock period!"
               link="https://docs.honey.finance/tokenomics/vehoney"
             />
           </div>
@@ -238,18 +245,6 @@ const LockHoneyForm = (props: { onCancel: Function }) => {
         <div className={styles.row}>
           <div className={styles.col}>
             <InfoBlock
-              value={lockedAmount?.asNumber.toString() ?? '-'}
-              title={
-                <span className={hAlign}>
-                  $HONEY locked
-                  {/* <div className={questionIcon} /> */}
-                </span>
-              }
-              // toolTipLabel={<span>place holder</span>}
-            />
-          </div>
-          <div className={styles.col}>
-            <InfoBlock
               value={
                 lockEndsTime?.toLocaleString(undefined, {
                   timeZoneName: 'short'
@@ -262,6 +257,15 @@ const LockHoneyForm = (props: { onCancel: Function }) => {
                 </span>
               }
               // toolTipLabel={<span>place holder</span>}
+            />
+          </div>
+
+          <div className={styles.col}>
+            <InfoBlock
+              value={new Date(newLockPeriodEnds).toLocaleString(undefined, {
+                timeZoneName: 'short'
+              })}
+              title="New Lock period ends"
             />
           </div>
         </div>
