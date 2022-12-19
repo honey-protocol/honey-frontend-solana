@@ -15,16 +15,21 @@ export type TGFarm = {
   bankAddress: string;
 };
 
-//example Farm:
-/// Dino Kingz Farm
-// Dino bank = Dnijy2vbPZNvSyLm1de2vjCxsEwGjJHXoqub1dRPArJt
-// Dino farm = EprGa9AxU7PW113kctorXY9kkJDmdooPHnNSRHB4eg7f
-// update Auth = 9SFXr5PR12TXr8zVq9yajUSQtwQN21X7js52gta5ntyc
-///Baby Dino Kingz Farm
-// BDK farm = GA3FqVoGY1mL6JeTVm27i4cHoD9Ma6gusCcT8ndjff6y
-// BDK bank = DxQbbroZDeTMp8be6qiRVVb7cBfPMebxjYRGbM5E6mT6
-// update auth = e6JhrUkGTm1ts7F1LVAFmZ6s2Mnzjg6W4TYSgZRvRwN
-///
+// {
+//   id: '<PICK_NEW_ID>',
+//   imageUrl: 'https://i.imgur.com/<YOUR_IMAGE_HERE>.png',
+//   name: '<TITLE_OF_YOUR_COLLECTION>',
+//   totalStaked: '???',
+//   totalNumber: <SIZE_OF_YOUR_COLLECTION>,
+//   allocation: '<ESTIMATED_DAILY_EMISSION_PER_NFT>',
+//   totalStakedByUser: '-',
+//   eventStartDate: '2022-03-30T18:50Z ',
+//   eventDuration: '∞',
+//   updateAuthority: '<YOUR_COLLECTION_UPDATE_AUTH>',
+//   rewardTokenName: '<NAME_OF_MAIN_REWARD_TOKEN>',
+//   farmAddress: '<YOUR_GEM_FARM_ADDRESS>',
+//   bankAddress: '<YOUR_GEM_BANK_ADDRESS>'
+// }
 
 export const newFarmCollections: TGFarm[] = [
   {
