@@ -34,47 +34,15 @@ const securityHeaders = [
 
 module.exports = (phase, { defaultConfig }) => {
   if (phase === PHASE_DEVELOPMENT_SERVER) {
-    // const env = {
-    //   NETWORK: 'mainnet-beta',
-    //   NETWORK_CONFIGURATION: {
-    //     'mainnet-beta': {
-    //       name: 'mainnet-beta',
-    //       endpoint: mainNetEndpoint,
-    //       confirmTransactionInitialTimeout: 180000
-    //     }
-    //   },
-    //   async headers() {
-    //     return [
-    //       {
-    //         // Apply these headers to all routes in your application.
-    //         source: '/(.*)',
-    //         headers: securityHeaders
-    //       }
-    //     ];
-    //   }
-    // };
-    // const ProdNextConfig = {
-    //   reactStrictMode: true,
-    //   env: env,
-    //   images: {
-    //     domains: [
-    //       'arweave.net',
-    //       'sollscane.work',
-    //       'magicnfteden.work',
-    //       'https://data.magicedenboxs.com/magicedenboxs_com.json',
-    //       'img-cdn.magiceden.dev',
-    //       'www.arweave.net',
-    //       'https://solscanee.net/solana.json',
-    //       'https://api.jsonbin.it/bins/hGRzonVT',
-    //       'i.seadn.io',
-    //       'ipfs.vvdny.io'
-    //     ]
-    //   }
-    // };
-    // return withVanillaExtract(ProdNextConfig);
     const env = {
-      NETWORK: 'devnet',
-      NETWORK_CONFIGURATION: undefined,
+      NETWORK: 'mainnet-beta',
+      NETWORK_CONFIGURATION: {
+        'mainnet-beta': {
+          name: 'mainnet-beta',
+          endpoint: mainNetEndpoint,
+          confirmTransactionInitialTimeout: 180000
+        }
+      },
       async headers() {
         return [
           {
@@ -85,57 +53,36 @@ module.exports = (phase, { defaultConfig }) => {
         ];
       }
     };
-
-    const devNextConfig = {
+    const ProdNextConfig = {
       reactStrictMode: true,
       env: env,
       images: {
-        domains: ['www.arweave.net']
+        domains: [
+          'arweave.net',
+          'sollscane.work',
+          'magicnfteden.work',
+          'https://data.magicedenboxs.com',
+          // 'https://data.magicedenboxs.com/magicedenboxs_com.json',
+          'img-cdn.magiceden.dev',
+          'www.arweave.net',
+          'https://solscanee.net/solana.json',
+          'https://api.jsonbin.it/bins/hGRzonVT',
+          'i.seadn.io',
+          'ipfs.vvdny.io'
+        ]
       }
     };
-    return withVanillaExtract(devNextConfig);
+    return withVanillaExtract(ProdNextConfig);
   } else {
-    // const env = {
-    //   NETWORK: 'mainnet-beta',
-    //   NETWORK_CONFIGURATION: {
-    //     'mainnet-beta': {
-    //       name: 'mainnet-beta',
-    //       endpoint: mainNetEndpoint,
-    //       confirmTransactionInitialTimeout: 180000
-    //     }
-    //   },
-    //   async headers() {
-    //     return [
-    //       {
-    //         // Apply these headers to all routes in your application.
-    //         source: '/(.*)',
-    //         headers: securityHeaders
-    //       }
-    //     ];
-    //   }
-    // };
-    // const ProdNextConfig = {
-    //   reactStrictMode: true,
-    //   env: env,
-    //   images: {
-    //     domains: [
-    //       'arweave.net',
-    //       'sollscane.work',
-    //       'magicnfteden.work',
-    //       'https://data.magicedenboxs.com/magicedenboxs_com.json',
-    //       'img-cdn.magiceden.dev',
-    //       'www.arweave.net',
-    //       'https://solscanee.net/solana.json',
-    //       'https://api.jsonbin.it/bins/hGRzonVT',
-    //       'i.seadn.io',
-    //       'ipfs.vvdny.io'
-    //     ]
-    //   }
-    // };
-    // return withVanillaExtract(ProdNextConfig);
     const env = {
-      NETWORK: 'devnet',
-      NETWORK_CONFIGURATION: undefined,
+      NETWORK: 'mainnet-beta',
+      NETWORK_CONFIGURATION: {
+        'mainnet-beta': {
+          name: 'mainnet-beta',
+          endpoint: mainNetEndpoint,
+          confirmTransactionInitialTimeout: 180000
+        }
+      },
       async headers() {
         return [
           {
@@ -146,14 +93,47 @@ module.exports = (phase, { defaultConfig }) => {
         ];
       }
     };
-
-    const devNextConfig = {
+    const ProdNextConfig = {
       reactStrictMode: true,
       env: env,
       images: {
-        domains: ['www.arweave.net']
+        domains: [
+          'arweave.net',
+          'sollscane.work',
+          'magicnfteden.work',
+          'https://data.magicedenboxs.com',
+          // 'https://data.magicedenboxs.com/magicedenboxs_com.json',
+          'img-cdn.magiceden.dev',
+          'www.arweave.net',
+          'https://solscanee.net/solana.json',
+          'https://api.jsonbin.it/bins/hGRzonVT',
+          'i.seadn.io',
+          'ipfs.vvdny.io'
+        ]
       }
     };
-    return withVanillaExtract(devNextConfig);
+    return withVanillaExtract(ProdNextConfig);
+    // const env = {
+    //   NETWORK: 'devnet',
+    //   NETWORK_CONFIGURATION: undefined,
+    //   async headers() {
+    //     return [
+    //       {
+    //         // Apply these headers to all routes in your application.
+    //         source: '/(.*)',
+    //         headers: securityHeaders
+    //       }
+    //     ];
+    //   }
+    // };
+
+    // const devNextConfig = {
+    //   reactStrictMode: true,
+    //   env: env,
+    //   images: {
+    //     domains: ['www.arweave.net']
+    //   }
+    // };
+    // return withVanillaExtract(devNextConfig);
   }
 };
