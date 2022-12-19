@@ -87,8 +87,6 @@ const Liquidate: NextPage = () => {
     network == 'devnet' ? true : false
   );
 
-  console.log('this is status object', status);
-
   /**
    * @description calls upon markets which
    * @params none

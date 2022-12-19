@@ -50,6 +50,7 @@ const BidForm = (props: BidFormProps) => {
   const isSubmitButtonDisabled = () => {
     return false;
   };
+
   // change of input - render calculated values
   const handleSliderChange = (value: number) => {
     setSliderValue(value);
@@ -90,7 +91,7 @@ const BidForm = (props: BidFormProps) => {
   // render logic for current user bid
   useEffect(() => {
     if (currentUserBid) {
-      setUserBidValue(currentUserBid)
+      setUserBidValue(currentUserBid);
     } else {
       setUserBidValue(0);
     }
@@ -147,13 +148,15 @@ const BidForm = (props: BidFormProps) => {
           <div className={styles.row}>
             <div className={styles.col}>
               <CurrentBid
-                value={userBidValue}
+                value={highestBiddingValue}
                 title={
                   userBidValue == highestBiddingValue
                     ? 'Your bid is #1'
                     : 'Your bid is:'
                 }
-                handleRevokeBid={() => handleRevokeBid('revoke_bid', toast, currentMarketId)}
+                handleRevokeBid={() =>
+                  handleRevokeBid('revoke_bid', toast, currentMarketId)
+                }
               />
             </div>
           </div>
