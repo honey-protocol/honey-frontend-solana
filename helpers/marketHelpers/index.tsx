@@ -116,55 +116,7 @@ export const marketCollections: MarketTableRow[] = [
         'https://i.seadn.io/gae/O8GK9vCJ5Cdtjz9aP3x7M4Bc4Z5HNgcsP0AcZFRjhC8p8fU4icgv2ecfNfZhMBjcYycVgJ2gpvCae_1TfXdbGOg2d6pKCdXRPlSsfQ?auto=format&w=384',
       discountedMarket: true
     }
-  },
-  {
-    id: 'F8rZviSSuqgkTsjMeoyrTUSNSqh7yNDCAozJkxm7eujY',
-    key: 'BURR',
-    name: 'Burrito Boyz',
-    verifiedCreator: '2UCkKjTHvz7qFjPZMjhWZiPmyTc6ZwZ44iYPbSpe3aVo',
-    rate: 0,
-    available: 0,
-    value: 0,
-    allowance: 0,
-    positions: [],
-    connection: undefined,
-    user: undefined,
-    debt: 0,
-    utilizationRate: 0,
-    openPositions: [],
-    constants: {
-      marketId: 'F8rZviSSuqgkTsjMeoyrTUSNSqh7yNDCAozJkxm7eujY',
-      verifiedCreator: '2UCkKjTHvz7qFjPZMjhWZiPmyTc6ZwZ44iYPbSpe3aVo',
-      marketName: 'Burrito Boyz',
-      marketImage:
-        'https://img-cdn.magiceden.dev/rs:fill:400:400:0:0/plain/https://creator-hub-prod.s3.us-east-2.amazonaws.com/burrito_boyz_pfp_1653394754301.png',
-      discountedMarket: false
-    }
   }
-  // {
-  //   id: 'GrKPvcdHVb4cwR5a2CCgCTvdkSqhNDRgSUiUVzXRWLk6',
-  //   key: 'Smyths',
-  //   name: 'Blocksmith Labs',
-  //   verifiedCreator: '8m2b8ar9BNZErJQgSBwY3eCe73yR4k9qHUxxGffxyw2d',
-  //   rate: 0,
-  //   available: 0,
-  //   value: 0,
-  //   allowance: 0,
-  //   positions: [],
-  //   connection: undefined,
-  //   user: undefined,
-  //   debt: 0,
-  //   utilizationRate: 0,
-  //   openPositions: [],
-  //   constants: {
-  //     marketId: 'GrKPvcdHVb4cwR5a2CCgCTvdkSqhNDRgSUiUVzXRWLk6',
-  //     verifiedCreator: '8m2b8ar9BNZErJQgSBwY3eCe73yR4k9qHUxxGffxyw2d',
-  //     marketName: 'Blocksmith Labs',
-  //     marketImage:
-  //       'https://img-cdn.magiceden.dev/rs:fill:400:400:0:0/plain/https://bafkreih3jh6bz4g5xegjz622ogjdnkwwwnx35opnenh2nzstqnczomo7ha.ipfs.dweb.link/',
-  //     discountedMarket: false
-  //   }
-  // }
 ];
 
 // fees
