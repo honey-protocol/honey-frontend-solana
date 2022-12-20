@@ -6,6 +6,14 @@ export const dialectNotification = style({
   height: 20
 });
 
+globalStyle(
+  `${dialectNotification} .dialect .dt-absolute.dt-h-3.dt-w-3.dt-z-50.dt-rounded-full.dt-bg-accent.dt-text-white`,
+  {
+    background: vars.colors.brownLight,
+    left: 12
+  }
+);
+
 const popoverSelector = `${dialectNotification} .dialect .dialect > .dt-fixed`;
 
 globalStyle(`${popoverSelector}`, {
