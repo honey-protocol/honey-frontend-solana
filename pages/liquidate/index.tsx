@@ -51,7 +51,6 @@ import HoneyTableNameCell from 'components/HoneyTable/HoneyTableNameCell/HoneyTa
 import LiquidateExpandTableMobile from 'components/LiquidateExpandTable/LiquidateExpandTableMobile';
 import { marketCollections } from '../../helpers/marketHelpers/index';
 import { populateMarketData } from 'helpers/loanHelpers/userCollection';
-import { setMarketId } from 'pages/_app';
 import { MarketTableRow } from 'types/markets';
 import { renderMarket, renderMarketImageByName } from 'helpers/marketHelpers';
 import { network } from 'pages/_app';
@@ -408,19 +407,19 @@ const Liquidate: NextPage = () => {
       function getData() {
         return Promise.all(
           marketCollections.map(async collection => {
-            let obligationObject =
-              collection.constants.marketId === currentMarketId
-                ? positionsObject
-                : [];
-            await populateMarketData(
-              collection,
-              sdkConfig.saberHqConnection,
-              sdkConfig.sdkWallet,
-              currentMarketId,
-              true,
-              obligationObject,
-              nftPrice
-            );
+            // let obligationObject =
+            //   collection.constants.marketId === currentMarketId
+            //     ? positionsObject
+            //     : [];
+            // await populateMarketData(
+            //   collection,
+            //   sdkConfig.saberHqConnection,
+            //   sdkConfig.sdkWallet,
+            //   currentMarketId,
+            //   true,
+            //   obligationObject,
+            //   nftPrice
+            // );
             return collection;
           })
         );
@@ -471,7 +470,6 @@ const Liquidate: NextPage = () => {
 
     if (marketData[0].id) {
       setCurrentMarketId(marketData[0].id);
-      setMarketId(marketData[0].id);
       handleBiddingState(status.bids);
     }
   }

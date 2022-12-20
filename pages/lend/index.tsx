@@ -40,7 +40,6 @@ import HoneyTableRow from 'components/HoneyTable/HoneyTableRow/HoneyTableRow';
 
 import { HONEY_GENESIS_BEE_MARKET_NAME } from '../../helpers/marketHelpers';
 import { HONEY_GENESIS_MARKET_ID } from '../../helpers/marketHelpers/index';
-import { setMarketId } from 'pages/_app';
 import { marketCollections } from '../../helpers/marketHelpers';
 import { generateMockHistoryData } from '../../helpers/chartUtils';
 import { renderMarket, renderMarketImageByName } from 'helpers/marketHelpers';
@@ -75,7 +74,6 @@ const Lend: NextPage = () => {
     const marketData = renderMarket(record.id);
     if (marketData[0].id) {
       setCurrentMarketId(marketData[0].id);
-      setMarketId(marketData[0].id);
       setCurrentMarketName(marketData[0].name);
     }
   }
@@ -360,26 +358,26 @@ const Lend: NextPage = () => {
       function getData() {
         return Promise.all(
           marketCollections.map(async collection => {
-            await populateMarketData(
-              collection,
-              sdkConfig.saberHqConnection,
-              sdkConfig.sdkWallet,
-              currentMarketId,
-              false,
-              [],
-              nftPrice
-            );
-            collection.rate =
-              ((await getInterestRate(
-                collection.utilizationRate,
-                collection.id
-              )) || 0) * collection.utilizationRate;
-            collection.stats = getPositionData();
+            // await populateMarketData(
+            //   collection,
+            //   sdkConfig.saberHqConnection,
+            //   sdkConfig.sdkWallet,
+            //   currentMarketId,
+            //   false,
+            //   [],
+            //   nftPrice
+            // );
+            // collection.rate =
+            //   ((await getInterestRate(
+            //     collection.utilizationRate,
+            //     collection.id
+            //   )) || 0) * collection.utilizationRate;
+            // collection.stats = getPositionData();
 
-            if (currentMarketId == collection.id) {
-              setActiveMarketSupplied(collection.value);
-              setActiveMarketAvailable(collection.available);
-            }
+            // if (currentMarketId == collection.id) {
+            //   setActiveMarketSupplied(collection.value);
+            //   setActiveMarketAvailable(collection.available);
+            // }
 
             return collection;
           })
