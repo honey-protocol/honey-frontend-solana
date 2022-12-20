@@ -36,7 +36,7 @@ import {
 import { DialectProviders } from 'contexts/DialectProvider';
 import { PublicKey } from '@solana/web3.js';
 // top level function that injects the app with a new market ID - being called from pages where interaction with markets is possible. Currently: borrow | lend | liquidate
-export const setMarketId = (marketID: string) => marketID;
+// export const setMarketId = (marketID: string) => marketID;
 
 const networkConfiguration = () => {
   if (process.env.NETWORK_CONFIGURATION) {
@@ -70,7 +70,7 @@ const OnChainProvider: FC<{ children: ReactNode }> = ({ children }) => {
         wallet={wallet}
         connection={connection}
         honeyProgramId={HONEY_PROGRAM_ID}
-        honeyMarketId={setMarketId(HONEY_GENESIS_MARKET_ID)}
+        honeyMarketId={HONEY_GENESIS_MARKET_ID}
       >
         {children}
       </HoneyProvider>
