@@ -31,6 +31,8 @@ const BidForm = (props: BidFormProps) => {
     currentUserBid,
     fetchedSolPrice,
     currentMarketId,
+    highestBiddingAddress,
+    stringyfiedWalletPK,
     handleRevokeBid,
     handleIncreaseBid,
     handlePlaceBid,
@@ -144,13 +146,13 @@ const BidForm = (props: BidFormProps) => {
             ></HoneyWarning>
           </div>
         </div>
-        {userBidValue && (
+        {userBidValue !== 0 && (
           <div className={styles.row}>
             <div className={styles.col}>
               <CurrentBid
                 value={highestBiddingValue}
                 title={
-                  userBidValue == highestBiddingValue
+                  highestBiddingAddress === stringyfiedWalletPK
                     ? 'Your bid is #1'
                     : 'Your bid is:'
                 }

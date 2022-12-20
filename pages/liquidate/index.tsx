@@ -173,12 +173,22 @@ const Liquidate: NextPage = () => {
     if (biddingArray === undefined)
       biddingArray = [{ bid: '', bidder: '', bidLimit: '' }];
 
-    biddingArray.map((obligation: any) => {
-      if (stringyfiedWalletPK && obligation.bidder == stringyfiedWalletPK) {
-        setHasPosition(true);
-        setCurrentUserBid(Number(obligation.bidLimit / LAMPORTS_PER_SOL));
-      }
-    });
+    const arrayOfBiddingAddress = await biddingArray.map(
+      (obligation: any) => obligation.bidder
+    );
+
+    if (arrayOfBiddingAddress.includes(stringyfiedWalletPK)) {
+      setHasPosition(true);
+
+      biddingArray.map((obligation: any) => {
+        if (stringyfiedWalletPK && obligation.bidder === stringyfiedWalletPK) {
+          setCurrentUserBid(Number(obligation.bidLimit / LAMPORTS_PER_SOL));
+        }
+      });
+    } else {
+      setHasPosition(false);
+      setCurrentUserBid(0);
+    }
 
     if (!biddingArray.length) {
       setHasPosition(false);

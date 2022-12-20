@@ -16,11 +16,13 @@ export const mobileMenu = style({
 });
 
 export const visible = style({
-  overflow: 'auto'
+  overflow: 'auto',
+  pointerEvents: 'all'
 });
 
 export const hidden = style({
-  overflow: 'hidden'
+  overflow: 'hidden',
+  pointerEvents: 'none'
 });
 
 export const animateIn = keyframes({
