@@ -24,7 +24,8 @@ const CreateMarketSidebar: FC<CreateMarketSidebarProps> = (
   const { connect } = useWalletKit();
   const [activeTab, setActiveTab] = useState<Tab>('how_it_works');
   const { veHoneyAmount } = useGovernance();
-  const requiredVeHONEY = 25;
+  // TODO: revert change after HIP4 update, related to how we fetch veHONEY balance in the new update
+  // const requiredVeHONEY = 10000;
 
   const handleTabChange = (tabKey: string) => {
     setActiveTab(tabKey as Tab);
@@ -68,7 +69,9 @@ const CreateMarketSidebar: FC<CreateMarketSidebarProps> = (
               }
             ]}
           />
-        ) : veHoneyAmount > requiredVeHONEY ? (
+        ) : (
+          // TODO: revert change after HIP4 update
+          // veHoneyAmount > requiredVeHONEY ?
           <>
             {activeTab === 'how_it_works' && (
               <HowItWorksBorrowTab
@@ -82,15 +85,16 @@ const CreateMarketSidebar: FC<CreateMarketSidebarProps> = (
               <CreateMarketTab wallet={wallet} honeyClient={honeyClient} />
             )}
           </>
-        ) : (
-          <EmptyStateDetails
-            icon=""
-            title="Insufficient veHONEY"
-            description={`You need to ${
-              requiredVeHONEY - veHoneyAmount
-            }  more veHONEY to create a market`}
-            buttons={[{ title: 'GET VEHONEY', onClick: () => {} }]}
-          />
+          // TODO: revert change after HIP4 update
+          // ) : (
+          //   <EmptyStateDetails
+          //     icon=""
+          //     title="Insufficient veHONEY"
+          //     description={`You need to ${
+          //       requiredVeHONEY - veHoneyAmount
+          //     }  more veHONEY to create a market`}
+          //     buttons={[{ title: 'GET VEHONEY', onClick: () => {} }]}
+          //   />
         )}
       </HoneyTabs>
     </div>

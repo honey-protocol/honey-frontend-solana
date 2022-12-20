@@ -446,8 +446,6 @@ const Markets: NextPage = () => {
     });
   };
 
-  const isCreateMarketVisible = featureFlags.isMarketCreationEnabled;
-
   const debouncedSearch = useCallback(
     debounce(searchQuery => {
       setTableDataFiltered(onSearch(searchQuery));
@@ -1230,7 +1228,7 @@ const Markets: NextPage = () => {
               />
             </div>
           ))}
-        {featureFlags.isMarketCreationEnabled && (
+        {
           <div
             className={style.createMarketLauncherCell}
             style={{ width: launchAreaWidth }}
@@ -1261,7 +1259,7 @@ const Markets: NextPage = () => {
               </div>
             </div>
           </div>
-        )}
+        }
       </HoneyContent>
     </LayoutRedesign>
   );
