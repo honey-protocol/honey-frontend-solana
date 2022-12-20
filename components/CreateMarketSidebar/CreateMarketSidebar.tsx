@@ -1,13 +1,14 @@
-import React, { FC, useEffect, useState } from 'react';
-import * as styles from './CreateMarketSidebar.css';
-import HoneyTabs, { HoneyTabItem } from '../HoneyTabs/HoneyTabs';
-import EmptyStateDetails from '../EmptyStateDetails/EmptyStateDetails';
-import HowItWorksBorrowTab from '../HowItWorksBorrowTab/HowItWorksBorrowTab';
-import { CreateMarketSidebarProps } from './types';
-import { noop } from 'lodash';
-import CreateMarketTab from './CreateMarketTab/CreateMarketTab';
+import React, { FC, useEffect, useMemo, useState } from 'react';
 import { useWalletKit } from '@gokiprotocol/walletkit';
-import { useGovernance } from 'contexts/GovernanceProvider';
+
+import { CreateMarketSidebarProps } from './types';
+import CreateMarketTab from './CreateMarketTab/CreateMarketTab';
+import HoneyTabs, { HoneyTabItem } from 'components/HoneyTabs/HoneyTabs';
+import EmptyStateDetails from 'components/EmptyStateDetails/EmptyStateDetails';
+import HowItWorksBorrowTab from 'components/HowItWorksBorrowTab/HowItWorksBorrowTab';
+import { useLocker } from 'hooks/useVeHoney';
+
+import * as styles from './CreateMarketSidebar.css';
 
 const items: [HoneyTabItem, HoneyTabItem] = [
   { label: 'How it works', key: 'how_it_works' },
@@ -23,8 +24,12 @@ const CreateMarketSidebar: FC<CreateMarketSidebarProps> = (
   const { onCancel, wallet, honeyClient } = props;
   const { connect } = useWalletKit();
   const [activeTab, setActiveTab] = useState<Tab>('how_it_works');
-  const { veHoneyAmount } = useGovernance();
+  const { votingPower } = useLocker();
   const requiredVeHONEY = 25;
+  const veHoneyAmount = useMemo(
+    () => (votingPower ? votingPower.asNumber : 0),
+    [votingPower]
+  );
 
   const handleTabChange = (tabKey: string) => {
     setActiveTab(tabKey as Tab);

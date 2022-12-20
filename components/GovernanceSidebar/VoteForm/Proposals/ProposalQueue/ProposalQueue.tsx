@@ -1,16 +1,18 @@
 import React from 'react';
-import { ProposalInfo } from 'hooks/tribeca/useProposals';
+
+import { Proposal } from 'contexts/GovernanceProvider';
+
 import * as styles from '../../VoteForm.css';
 
 interface ProposalQueueProps {
-  proposalInfo: ProposalInfo;
+  proposalInfo: Proposal;
 }
 
 const ProposalQueue = (props: ProposalQueueProps) => {
   const { proposalInfo } = props;
 
   const votingEndedAt = new Date(
-    proposalInfo.proposalData.votingEndsAt.toNumber() * 1_000
+    proposalInfo.data.votingEndsAt.toNumber() * 1_000
   );
   return (
     <div className={styles.description}>

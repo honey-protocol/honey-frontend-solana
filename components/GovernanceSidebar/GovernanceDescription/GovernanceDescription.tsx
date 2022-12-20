@@ -1,14 +1,19 @@
-import { FC, useState } from 'react';
-import * as styles from './GovernanceDescription.css';
-import { formatNumber } from '../../../helpers/format';
-import SidebarScroll from '../../SidebarScroll/SidebarScroll';
 import ReactMarkdown from 'react-markdown';
+
+// import { formatNumber } from '../../../helpers/format';
 import HoneyButton from 'components/HoneyButton/HoneyButton';
+import SidebarScroll from 'components/SidebarScroll/SidebarScroll';
+import { Proposal } from 'contexts/GovernanceProvider';
 
-const { format: f, formatPercent: fp, formatUsd: fu } = formatNumber;
+import * as styles from './GovernanceDescription.css';
 
-const GovernanceDescription = (props: {
-  description: string;
+// const { format: f, formatPercent: fp, formatUsd: fu } = formatNumber;
+
+const GovernanceDescription = ({
+  proposalInfo,
+  setActiveTab
+}: {
+  proposalInfo: Proposal;
   setActiveTab: Function;
 }) => {
   return (
@@ -16,7 +21,7 @@ const GovernanceDescription = (props: {
       footer={
         <div style={{ width: '100%' }}>
           <HoneyButton
-            onClick={() => props.setActiveTab('vote')}
+            onClick={() => setActiveTab('vote')}
             variant="secondary"
             block
           >
@@ -26,8 +31,10 @@ const GovernanceDescription = (props: {
       }
     >
       <div className={styles.governanceDescription}>
+        <div>{proposalInfo.meta?.title ?? ''}</div>
+
         <ReactMarkdown className={styles.markdown} linkTarget="_blank">
-          {props.description}
+          {proposalInfo.meta?.descriptionLink ?? ''}
         </ReactMarkdown>
       </div>
     </SidebarScroll>

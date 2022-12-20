@@ -1,23 +1,23 @@
-import React, { FC, useCallback, useMemo, useState } from 'react';
-import { InfoBlock } from '../../InfoBlock/InfoBlock';
-import * as styles from './LockHoneyForm.css';
-import { formatNumber } from '../../../helpers/format';
+import React, { useCallback, useMemo, useState } from 'react';
+import { BN } from '@project-serum/anchor';
+import { TokenAmount } from '@saberhq/token-utils';
+
+import { InfoBlock } from 'components/InfoBlock/InfoBlock';
 import HoneyButton from 'components/HoneyButton/HoneyButton';
-import SidebarScroll from '../../SidebarScroll/SidebarScroll';
-import { HoneyButtonTabs } from '../../HoneyButtonTabs/HoneyButtonTabs';
-import HoneyWarning from '../../HoneyWarning/HoneyWarning';
-import { InputsBlock } from '../../InputsBlock/InputsBlock';
-import { PublicKey } from '@solana/web3.js';
-import config from '../../../config';
-import { useStake } from 'hooks/useStake';
-import { convertToBN } from 'helpers/utils';
-import { HONEY_DECIMALS } from 'helpers/sdk';
-import * as anchor from '@project-serum/anchor';
-import { useGovernance } from 'contexts/GovernanceProvider';
+import SidebarScroll from 'components/SidebarScroll/SidebarScroll';
+import { HoneyButtonTabs } from 'components/HoneyButtonTabs/HoneyButtonTabs';
+import HoneyWarning from 'components/HoneyWarning/HoneyWarning';
+import { InputsBlock } from 'components/InputsBlock/InputsBlock';
+import SectionTitle from 'components/SectionTitle/SectionTitle';
+
+import { useLocker } from 'hooks/useVeHoney';
 import useToast from 'hooks/useToast';
+import { useAccountByMint } from 'hooks/useAccounts';
+import { formatNumber } from 'helpers/format';
+import { convertToBN } from 'helpers/utils';
+
+import * as styles from './LockHoneyForm.css';
 import { hAlign } from 'styles/common.css';
-import { questionIcon } from 'styles/icons.css';
-import SectionTitle from '../../SectionTitle/SectionTitle';
 
 const { format: f, formatPercent: fp, formatUsd: fu, parse: p } = formatNumber;
 
@@ -28,6 +28,8 @@ const PERIODS = [
   { name: '1 Y', slug: '12' },
   { name: '4 Y', slug: '48' }
 ] as const;
+
+const ONE_MONTH_IN_MS = 2_629_746_000;
 
 type LockPeriod = typeof PERIODS[number]['slug'];
 
@@ -46,20 +48,85 @@ const LockHoneyForm = (props: { onCancel: Function }) => {
       : lockPeriod === '12'
       ? 25 / 100
       : 1;
-  const STAKE_POOL_ADDRESS = new PublicKey(
-    config.NEXT_PUBLIC_STAKE_POOL_ADDRESS
-  );
-  const LOCKER_ADDRESS = new PublicKey(config.NEXT_PUBLIC_LOCKER_ADDR);
 
-  const { lock, unlock, escrow } = useStake(STAKE_POOL_ADDRESS, LOCKER_ADDRESS);
   const {
-    veHoneyAmount,
+    lock,
+    unlock,
+    escrow,
+    votingPower,
     lockedAmount,
-    lockedPeriodEnd,
-    honeyAmount,
-    lockPeriodHasEnded
-  } = useGovernance();
-  const maxValue = honeyAmount;
+    govToken,
+    closeEscrow
+  } = useLocker();
+  const honeyAccount = useAccountByMint(govToken?.mintAccount);
+
+  const lockEndsTime = useMemo(() => {
+    if (!escrow || escrow.data.escrowEndsAt.eqn(0)) return null;
+    return new Date(escrow.data.escrowEndsAt.toNumber() * 1000);
+  }, [escrow]);
+
+  const newLockPeriodEnds = lockEndsTime
+    ? lockEndsTime.getTime() + Number(lockPeriod) * ONE_MONTH_IN_MS
+    : 0;
+
+  const honeyAmount = useMemo(() => {
+    if (!govToken || !honeyAccount) return null;
+    return new TokenAmount(govToken, honeyAccount.data.amount);
+  }, [honeyAccount, govToken]);
+
+  const unlockable = useMemo(() => {
+    if (!escrow) return false;
+    return new Date(escrow.data.escrowEndsAt.toNumber() * 1000) <= new Date();
+  }, [escrow]);
+
+  const closable = useMemo(() => {
+    if (!escrow) return false;
+    return (
+      new Date(escrow.data.escrowEndsAt.toNumber() * 1000) <= new Date() &&
+      escrow.data.amount.eqn(0)
+    );
+  }, [escrow]);
+
+  const handleLock = useCallback(async () => {
+    if (
+      valueHONEY &&
+      govToken &&
+      ['1', '3', '6', '12', '48'].includes(lockPeriod)
+    ) {
+      // mainnet
+      // const date = new Date();
+      // const current = Math.floor(date.getTime() / 1000);
+      // date.setMonth(date.getMonth() + Number(lockPeriod));
+      // const nMonthsLater = Math.floor(date.getTime() / 1000);
+      // const lockPeroidInSeconds = nMonthsLater - current;
+
+      // testing on devnet
+      const lockPeroidInSeconds = Number(lockPeriod) * 10;
+      toast.processing();
+      try {
+        await lock(
+          convertToBN(valueHONEY, govToken.decimals),
+          new BN(lockPeroidInSeconds)
+        );
+
+        setValueHONEY(0);
+        setValueVeHONEY(0);
+        toast.success('Lock successful');
+      } catch (error) {
+        toast.error('Lock failed');
+      }
+    }
+  }, [lock, valueHONEY, lockPeriod, govToken]);
+
+  const handleUnlock = useCallback(async () => {
+    try {
+      toast.processing();
+      await unlock();
+      toast.success('Unlock successful');
+    } catch (error) {
+      toast.error('Unlock failed');
+    }
+  }, [toast, unlock]);
 
   const handleHoneyInputChange = (honeyValue: number | undefined) => {
     if (!honeyValue) {
@@ -82,39 +149,13 @@ const LockHoneyForm = (props: { onCancel: Function }) => {
     setValueVeHONEY(veHoneyValue);
   };
 
-  // console.log({
-  //   veHoneyAmount,
-  //   lockedAmount,
-  //   lockedPeriodEnd,
-  //   honeyAmount,
-  //   lockPeriodHasEnded
-  // });
   // Put your validators here
-  const isLockButtonDisabled = () => {
-    return false;
-  };
-
-  const vestingPeriodInSeconds = useMemo(() => {
-    if (['1', '3', '6', '12', '48'].includes(lockPeriod)) {
-      const date = new Date();
-      const current = Math.floor(date.getTime() / 1000);
-      date.setMonth(date.getMonth() + Number(lockPeriod));
-      const nMonthsLater = Math.floor(date.getTime() / 1000);
-
-      return nMonthsLater - current;
+  const lockable = useMemo(() => {
+    if (!valueHONEY || (honeyAmount && valueHONEY > honeyAmount.asNumber)) {
+      return false;
     }
-    return 0;
-  }, [lockPeriod]);
-
-  const handleLock = useCallback(async () => {
-    if (!valueHONEY || !vestingPeriodInSeconds) return;
-    await lock(
-      convertToBN(valueHONEY, HONEY_DECIMALS),
-      new anchor.BN(vestingPeriodInSeconds),
-      !!escrow,
-      toast
-    );
-  }, [lock, escrow, valueHONEY, toast, vestingPeriodInSeconds]);
+    return true;
+  }, [valueHONEY, honeyAmount]);
 
   return (
     <SidebarScroll
@@ -124,18 +165,32 @@ const LockHoneyForm = (props: { onCancel: Function }) => {
         ) : (
           <div className={styles.buttons}>
             <div className={styles.smallCol}>
-              <HoneyButton onClick={() => props.onCancel()} variant="secondary">
+              <HoneyButton
+                onClick={closeEscrow}
+                disabled={!closable}
+                variant="secondary"
+              >
                 Close
               </HoneyButton>
             </div>
             <div className={styles.bigCol}>
               <HoneyButton
                 variant="primary"
-                disabled={isLockButtonDisabled()}
+                disabled={!lockable}
                 block
                 onClick={handleLock}
               >
                 Lock
+              </HoneyButton>
+            </div>
+            <div className={styles.bigCol}>
+              <HoneyButton
+                variant="primary"
+                disabled={!unlockable}
+                block
+                onClick={handleUnlock}
+              >
+                Unlock
               </HoneyButton>
             </div>
           </div>
@@ -143,11 +198,15 @@ const LockHoneyForm = (props: { onCancel: Function }) => {
       }
     >
       <div className={styles.depositForm}>
-        <SectionTitle title="Deposit HONEY and receive veHONEY" />
+        <SectionTitle
+          title="Deposit HONEY and receive veHONEY"
+          className={styles.mb10}
+        />
         <div className={styles.row}>
           <div className={styles.col}>
             <HoneyWarning
-              message="Vote escrowed HONEY (or veHONEY) represents governance in the Honey DAO. Learn more about the details in our docs."
+              message="Learn more about veHONEY in our docs.
+              WARNING: locking more HONEY will extend your original lock period!"
               link="https://docs.honey.finance/tokenomics/vehoney"
             />
           </div>
@@ -155,7 +214,7 @@ const LockHoneyForm = (props: { onCancel: Function }) => {
         <div className={styles.row}>
           <div className={styles.col}>
             <InfoBlock
-              value={f(honeyAmount)}
+              value={f(honeyAmount?.asNumber)}
               title={
                 <span className={hAlign}>
                   $HONEY balance
@@ -172,7 +231,7 @@ const LockHoneyForm = (props: { onCancel: Function }) => {
           </div>
           <div className={styles.col}>
             <InfoBlock
-              value={veHoneyAmount.toString()}
+              value={votingPower?.asNumber.toString() ?? '-'}
               title={
                 <span className={hAlign}>
                   veHONEY balance
@@ -186,19 +245,11 @@ const LockHoneyForm = (props: { onCancel: Function }) => {
         <div className={styles.row}>
           <div className={styles.col}>
             <InfoBlock
-              value={lockedAmount.toString()}
-              title={
-                <span className={hAlign}>
-                  $HONEY locked
-                  {/* <div className={questionIcon} /> */}
-                </span>
+              value={
+                lockEndsTime?.toLocaleString(undefined, {
+                  timeZoneName: 'short'
+                }) ?? '-'
               }
-              // toolTipLabel={<span>place holder</span>}
-            />
-          </div>
-          <div className={styles.col}>
-            <InfoBlock
-              value={lockedPeriodEnd.toString()}
               title={
                 <span className={hAlign}>
                   Lock period ends
@@ -206,6 +257,15 @@ const LockHoneyForm = (props: { onCancel: Function }) => {
                 </span>
               }
               // toolTipLabel={<span>place holder</span>}
+            />
+          </div>
+
+          <div className={styles.col}>
+            <InfoBlock
+              value={new Date(newLockPeriodEnds).toLocaleString(undefined, {
+                timeZoneName: 'short'
+              })}
+              title="New Lock period ends"
             />
           </div>
         </div>
@@ -232,7 +292,7 @@ const LockHoneyForm = (props: { onCancel: Function }) => {
           secondInputValue={valueVeHONEY}
           onChangeFirstInput={handleHoneyInputChange}
           onChangeSecondInput={handleVeHoneyInputChange}
-          maxValue={maxValue}
+          maxValue={honeyAmount?.asNumber ?? 0}
           delimiterIcon={
             <div className={styles.inputsDelimiter}>
               {1 / veHoneyPrice} to 1
