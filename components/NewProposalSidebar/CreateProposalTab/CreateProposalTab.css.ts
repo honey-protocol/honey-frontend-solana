@@ -52,7 +52,6 @@ export const bigCol = style([
 export const titleInput = style([
   mb12,
   {
-    marginBottom: 12,
     minHeight: 72
   }
 ]);
@@ -60,7 +59,6 @@ export const titleInput = style([
 export const descriptionInput = style([
   mb12,
   {
-    marginBottom: 12,
     minHeight: 152
   }
 ]);

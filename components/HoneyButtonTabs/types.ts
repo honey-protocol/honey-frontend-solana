@@ -1,3 +1,5 @@
+import { ReactNode } from 'react';
+
 export interface HoneyButtonTabsProps {
   items: HoneyButtonTabsItem[];
   activeItemSlug: string;
@@ -6,7 +8,7 @@ export interface HoneyButtonTabsProps {
 }
 
 type HoneyButtonTabsItem = {
-  name: string;
+  name: string | ReactNode;
   nameMobile?: string;
   nameTablet?: string;
   slug: string;

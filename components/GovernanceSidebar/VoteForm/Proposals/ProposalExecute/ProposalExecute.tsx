@@ -1,40 +1,42 @@
-import { ProposalInfo } from 'hooks/tribeca/useProposals';
-import Link from 'next/link';
 import React from 'react';
-import { useGokiTransactionData } from 'helpers/parser';
-import { useExecutiveCouncil } from 'hooks/tribeca/useExecutiveCouncil';
-import { mapSome, useTXHandlers } from '@saberhq/sail';
-import { gokiTXLink, tsToDate } from 'helpers/utils';
-import Countdown from 'react-countdown';
-import * as styles from '../../VoteForm.css';
+// import Countdown from 'react-countdown';
+// import Link from 'next/link';
 import { Space } from 'antd';
-import HoneyButton from 'components/HoneyButton/HoneyButton';
-import { ApiOutlined } from '@ant-design/icons';
+// import { ApiOutlined } from '@ant-design/icons';
+// import { mapSome } from '@saberhq/sail';
+
+// import HoneyButton from 'components/HoneyButton/HoneyButton';
+import { Proposal } from 'contexts/GovernanceProvider';
+// import { useGokiTransactionData } from 'helpers/parser';
+// import { useExecutiveCouncil } from 'hooks/tribeca/useExecutiveCouncil';
+import { tsToDate } from 'helpers/utils';
+
+import * as styles from '../../VoteForm.css';
 
 interface ProposalExecuteProps {
-  proposalInfo: ProposalInfo;
+  proposalInfo: Proposal;
 }
 const ProposalExecute = (props: ProposalExecuteProps) => {
   const { proposalInfo } = props;
-  const { ecWallet, isMemberOfEC } = useExecutiveCouncil();
-  const { data: gokiTransactionData } = useGokiTransactionData(
-    proposalInfo.proposalData.queuedTransaction
-  );
+  // const { ecWallet, isMemberOfEC } = useExecutiveCouncil();
+  // const { data: gokiTransactionData } = useGokiTransactionData(
+  //   proposalInfo.data.queuedTransaction
+  // );
 
-  if (!gokiTransactionData) {
-    return <></>;
-  }
+  // if (!gokiTransactionData) {
+  //   return <></>;
+  // }
 
-  const votingEndedAt = tsToDate(proposalInfo.proposalData.queuedAt);
-  const eta = tsToDate(gokiTransactionData.account.eta);
-  const gracePeriodEnd = mapSome(ecWallet.data, d =>
-    !gokiTransactionData.account.eta.isNeg()
-      ? tsToDate(gokiTransactionData.account.eta.add(d.account.gracePeriod))
-      : null
-  );
+  const votingEndedAt = tsToDate(proposalInfo.data.queuedAt);
+  // const eta = tsToDate(gokiTransactionData.account.eta);
+  // const gracePeriodEnd = mapSome(ecWallet.data, d =>
+  //   !gokiTransactionData.account.eta.isNeg()
+  //     ? tsToDate(gokiTransactionData.account.eta.add(d.account.gracePeriod))
+  //     : null
+  // );
 
-  const etaSurpassed = eta <= new Date();
-  const gracePeriodSurpassed = mapSome(gracePeriodEnd, g => g <= new Date());
+  // const etaSurpassed = eta <= new Date();
+  // const gracePeriodSurpassed = mapSome(gracePeriodEnd, g => g <= new Date());
 
   return (
     <Space direction="vertical" size="small" align="start">
@@ -48,7 +50,7 @@ const ProposalExecute = (props: ProposalExecuteProps) => {
         </span>
         .
       </div>
-      {gracePeriodSurpassed ? (
+      {/* {gracePeriodSurpassed ? (
         <div className={styles.description}>
           The proposal execution period expired on{' '}
           {gracePeriodEnd?.toLocaleString(undefined, {
@@ -71,16 +73,16 @@ const ProposalExecute = (props: ProposalExecuteProps) => {
           <Link href={'details'}>Executive Council</Link> in{' '}
           <Countdown date={eta} />.
         </div>
-      )}
-      <Link href={gokiTXLink(gokiTransactionData.account)} passHref>
+      )} */}
+      {/* <Link href={gokiTXLink(gokiTransactionData.account)} passHref>
         <HoneyButton variant="text" size="small">
           View on Goki <ApiOutlined />
         </HoneyButton>
-      </Link>
+      </Link> */}
       {/* </ProseSmall> */}
-      {isMemberOfEC && (
+      {/* {isMemberOfEC && (
         <div>
-          {/* {gracePeriodSurpassed && (
+          {gracePeriodSurpassed && (
 						<AsyncConfirmButton
 							modal={{
 								title: 'Revive Proposal via Emergency DAO',
@@ -141,13 +143,13 @@ const ProposalExecute = (props: ProposalExecuteProps) => {
 								'Revive Proposal via Emergency DAO'
 							)}
 						</AsyncConfirmButton>
-					)} */}
-          {/* <ExecuteProposalButton
+					)}
+          <ExecuteProposalButton
             tx={gokiTransactionData}
             onActivate={onActivate}
-          /> */}
+          />
         </div>
-      )}
+      )} */}
     </Space>
   );
 };

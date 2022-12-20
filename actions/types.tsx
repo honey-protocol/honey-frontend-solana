@@ -51,16 +51,16 @@ export const ACTIONS: Action[] = [
     description:
       "A memo allows a DAO to attest a message on chain. Memo actions may be used to create proposals that don't have any on-chain actions.",
     Renderer: Memo
-  },
-  {
-    title: 'Issue Tokens',
-    description:
-      'Issue tokens on behalf of the DAO. This can be used for grants, liquidity mining, and more.',
-    isEnabled: ({ minter }) => !!minter,
-    Renderer: IssueTokensAction
-  },
-  {
-    title: 'Raw Transaction (base64)',
-    Renderer: RawTX
   }
+  // {
+  //   title: 'Issue Tokens',
+  //   description:
+  //     'Issue tokens on behalf of the DAO. This can be used for grants, liquidity mining, and more.',
+  //   isEnabled: ({ minter }) => !!minter,
+  //   Renderer: IssueTokensAction
+  // },
+  // {
+  //   title: 'Raw Transaction (base64)',
+  //   Renderer: RawTX
+  // }
 ];

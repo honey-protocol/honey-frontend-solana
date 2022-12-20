@@ -7,25 +7,17 @@ import '../styles/globals.css';
 import { Network } from '@saberhq/solana-contrib';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { accentSequence, ThemeAccent } from 'helpers/theme-utils';
 import { PartialNetworkConfigMap } from '@saberhq/use-solana/src/utils/useConnectionInternal';
 import SecPopup from 'components/SecPopup';
 import { AnchorProvider, HoneyProvider } from '@honey-finance/sdk';
 import { useConnectedWallet, useConnection } from '@saberhq/use-solana';
 import React, { FC, ReactNode, useEffect, useState } from 'react';
-// import { GovernorProvider } from 'hooks/tribeca/useGovernor';
-// import { GovernanceProvider } from 'contexts/GovernanceProvider';
-import Script from 'next/script';
-// import NoMobilePopup from 'components/NoMobilePopup/NoMobilePopup';
-import { SailProvider } from '@saberhq/sail';
-import { onSailError } from '../helpers/error';
 
-import {
-  GOVERNOR_ADDRESS,
-  HONEY_MINT,
-  HONEY_MINT_WRAPPER,
-  SDKProvider
-} from 'helpers/sdk';
+import { AccountsProvider } from 'contexts/AccountsProvider';
+import { GovernanceProvider } from 'contexts/GovernanceProvider';
+import Script from 'next/script';
+import { SailProvider } from '@saberhq/sail';
+import { onSailError } from 'helpers/error';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { getPlatformFeeAccounts, JupiterProvider } from '@jup-ag/react-hook';
 export const network = (process.env.NETWORK as Network) || 'mainnet-beta';
@@ -48,11 +40,11 @@ const networkConfiguration = () => {
 
 const queryClient = new QueryClient();
 
-const defaultAccent: ThemeAccent = accentSequence[0];
-const storedAccent =
-  typeof window !== 'undefined'
-    ? (localStorage.getItem('accent') as ThemeAccent)
-    : undefined;
+// const defaultAccent: ThemeAccent = accentSequence[0];
+// const storedAccent =
+//   typeof window !== 'undefined'
+//     ? (localStorage.getItem('accent') as ThemeAccent)
+//     : undefined;
 
 const OnChainProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const wallet = useConnectedWallet();
@@ -169,27 +161,24 @@ function MyApp({ Component, pageProps }: AppProps) {
         {/* <ReactQueryDevtools initialIsOpen={false} /> */}
         <WalletKitProvider
           defaultNetwork={network}
-          app={{
-            name: 'Honey Finance'
-          }}
+          app={{ name: 'Honey Finance' }}
           networkConfigs={networkConfiguration()}
         >
-          {/* <GovernanceProvider> */}
-          <SailProvider
-            initialState={{
-              onSailError
-            }}
-          >
-            <SDKProvider>
+          <AccountsProvider>
+            <SailProvider
+              initialState={{
+                onSailError
+              }}
+            >
               {/* <GovernorProvider
-                  initialState={{
-                    governor: GOVERNOR_ADDRESS,
-                    govToken: HONEY_MINT,
-                    minter: {
-                      mintWrapper: HONEY_MINT_WRAPPER
-                    }
-                  }}
-                > */}
+                initialState={{
+                  governor: GOVERNOR_ADDRESS,
+                  govToken: HONEY_MINT,
+                  minter: {
+                    mintWrapper: HONEY_MINT_WRAPPER
+                  }
+                }}
+              > */}
               {/* {children} */}
               {showPopup ? (
                 <SecPopup setShowPopup={setShowPopup} />
@@ -198,17 +187,20 @@ function MyApp({ Component, pageProps }: AppProps) {
                   <HoneyJupiterProvider>
                     <DialectProviders>
                       <OnChainProvider>
-                        <Component {...pageProps} />
-                        <ToastContainer theme="dark" position="bottom-right" />
+                        <GovernanceProvider>
+                          <Component {...pageProps} />
+                          <ToastContainer
+                            theme="dark"
+                            position="bottom-right"
+                          />
+                        </GovernanceProvider>
                       </OnChainProvider>
                     </DialectProviders>
                   </HoneyJupiterProvider>
                 </>
               )}
-              {/* </GovernorProvider> */}
-            </SDKProvider>
-          </SailProvider>
-          {/* </GovernanceProvider> */}
+            </SailProvider>
+          </AccountsProvider>
         </WalletKitProvider>
       </QueryClientProvider>
     </ThemeProvider>
