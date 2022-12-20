@@ -33,6 +33,7 @@ import { ValueType } from 'rc-input-number/lib/utils/MiniDecimal';
 import { useWalletKit } from '@gokiprotocol/walletkit';
 import Decimal from 'decimal.js';
 import debounce from 'lodash/debounce';
+import useToast from 'hooks/useToast';
 
 const {
   formatTokenAllDecimals: ftad,
@@ -40,7 +41,7 @@ const {
   formatPercent: fp
 } = formatNumber;
 
-const MAX_SLIPPAGE = 1;
+export const MAX_SLIPPAGE = 5;
 const DEFAULT_SLIPPAGE = 0.5;
 
 const Swap: NextPage = () => {
@@ -54,6 +55,7 @@ const Swap: NextPage = () => {
   const [haveTokensDetailsLoaded, setHaveTokensDetailsLoaded] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
+  const { toast, ToastComponent } = useToast();
   const [swapAmount, setSwapAmount] = useState(1);
   const [estimatedOutAmount, setEstimatedOutAmount] = useState(0);
   const [isInputTokenModalVisible, setIsInputTokenModalVisible] =
@@ -127,7 +129,7 @@ const Swap: NextPage = () => {
     return outAmount / inAmount;
   }, [bestRoute]);
 
-  const swapFee = useMemo(async () => {
+  const swapFee = useCallback(async () => {
     if (!bestRoute) {
       return;
     }
@@ -135,13 +137,16 @@ const Swap: NextPage = () => {
     const depositAndFee = await bestRoute.getDepositAndFee();
   }, [bestRoute]);
 
+  useEffect(() => {
+    swapFee();
+  }, [swapFee]);
+
   const swapStats: InfoBlockData[] = useMemo(() => {
     const outDecimals = outputToken?.decimals || 1;
     const priceImpact = bestRoute ? bestRoute.priceImpactPct * 100 : 0;
     const minReceived = bestRoute
       ? lamportsToNumber(bestRoute.otherAmountThreshold.toString(), outDecimals)
       : 0;
-    const transactionFee = 0;
 
     const exchangeRateFormatted = ftad(exchangeRate || 0, outDecimals);
     const reverseExchangeRateFormatted = ftad(
@@ -153,6 +158,7 @@ const Swap: NextPage = () => {
       {
         title: 'Rate',
         value: `1 ${inputToken?.symbol} =  ${exchangeRateFormatted} ${outputToken?.symbol}`,
+        altValue: `1 ${outputToken?.symbol} =  ${reverseExchangeRateFormatted} ${inputToken?.symbol}`,
         titleAddon: (
           <div
             onClick={refreshJupiter}
@@ -160,10 +166,6 @@ const Swap: NextPage = () => {
             className={styles.reloadIcon}
           />
         )
-      },
-      {
-        title: '',
-        value: `1 ${outputToken?.symbol} =  ${reverseExchangeRateFormatted} ${inputToken?.symbol}`
       },
       {
         title: 'Price Impact',
@@ -175,7 +177,7 @@ const Swap: NextPage = () => {
       },
       {
         title: 'Transaction Fee',
-        value: `${ftad(transactionFee, outDecimals)}`
+        value: `${f(estimatedOutAmount * 0.0025)} ${outputToken?.symbol}`
         // titleAddon: (
         //   <HoneyTooltip placement={'top'} tooltipIcon label={'Mock'} />
         // )
@@ -252,6 +254,7 @@ const Swap: NextPage = () => {
       return;
     }
     setIsLoading(true);
+    toast.processing();
     try {
       const txns = await exchange({
         // disable ts complain about VersionedTransaction
@@ -271,7 +274,10 @@ const Swap: NextPage = () => {
 
       refreshBalances();
       setSwapAmount(0);
+      toast.success('Swap successful');
+      console.log({ txns });
     } catch (e) {
+      toast.error('Swap failed');
       console.error(e);
     } finally {
       setIsLoading(false);
@@ -508,32 +514,35 @@ const Swap: NextPage = () => {
               <div className={styles.swapStats}>
                 <SwapInfoBlock data={swapStats} />
               </div>
-
-              <div className={styles.buttons}>
-                {!wallet || !wallet.connected ? (
-                  <HoneyButton variant="primary" block onClick={connect}>
-                    Connect wallet
-                  </HoneyButton>
-                ) : (
-                  <HoneyTooltip
-                    placement="top"
-                    title={formatSwapLabelsForTooltip(getSwapErrors())}
-                  >
-                    {/* DIV wrapper is required to propagate events to tooltip correctly; Otherwise it might stuck in some cases */}
-                    <div>
-                      <HoneyButton
-                        variant="primary"
-                        block
-                        onClick={swap}
-                        loading={isLoading}
-                        disabled={getSwapErrors().length > 0}
-                      >
-                        Swap
-                      </HoneyButton>
-                    </div>
-                  </HoneyTooltip>
-                )}
-              </div>
+              {toast.state ? (
+                <ToastComponent />
+              ) : (
+                <div className={styles.buttons}>
+                  {!wallet || !wallet.connected ? (
+                    <HoneyButton variant="primary" block onClick={connect}>
+                      Connect wallet
+                    </HoneyButton>
+                  ) : (
+                    <HoneyTooltip
+                      placement="top"
+                      title={formatSwapLabelsForTooltip(getSwapErrors())}
+                    >
+                      {/* DIV wrapper is required to propagate events to tooltip correctly; Otherwise it might stuck in some cases */}
+                      <div>
+                        <HoneyButton
+                          variant="primary"
+                          block
+                          onClick={swap}
+                          loading={isLoading}
+                          disabled={getSwapErrors().length > 0}
+                        >
+                          Swap
+                        </HoneyButton>
+                      </div>
+                    </HoneyTooltip>
+                  )}
+                </div>
+              )}
             </div>
           </HoneyCardYellowShadow>
           <SwapFooter />
@@ -548,13 +557,20 @@ const Swap: NextPage = () => {
               tokens={tokensDetails}
               featuredTokens={[
                 'HonyeYAaTPgKUgQpayL914P6VAqbQZPrbkGMETZvW4iN', // $HONEY
-                'EchesyfXePKdLtoiZSL8pBe8Myagyy8ZRqsACNCFGnvp', // FIDA
-                'So11111111111111111111111111111111111111112', // wSOL
-                '4k3Dyjzvzp8eMZWUXbBCjEvwSkkk59S5iCNLY3QrkX6R', // RAY
-                'MangoCzJ36AjZyKwVj3VnYU4GTonjfVEnJmvvWaxLac', // Mango
-                'Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB', // USDT
-                'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v', // USDC
-                'mSoLzYCxHdYgdzU16g5QSh3i5K3z3KZK7ytfqcJm7So' // mSOL
+                'So11111111111111111111111111111111111111112', // $wSOL
+                'mSoLzYCxHdYgdzU16g5QSh3i5K3z3KZK7ytfqcJm7So', // $mSOL
+                'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v', // $USDC
+                'Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB', // $USDT
+                '9cyEStsrZF7LzqLzbNcuUeuat1NM4eHrBVApvkPBCQk4', // $ATA
+                'FUNHP94B46a486h5RSv46aeWUkeM5goTUuM5mVh4L6Qr', // $DINO
+                'A7rqejP8LKN8syXMr4tvcKjs2iJ4WtZjXNs1e6qP3m9g', // $ZION
+                'CBSTwQzAXeGiNvM5aDdkMD6wkSyuVXqsu8u3ZQmQLFa1', // $CUBIST -> check token address
+                'SKu11EypaFU3gvr8VSAbi13zEC2CPvqbz9s83N3tWHM', // $SKULL -> check token address
+                'H69DNtbZZtk92hLLbMrHYqL8HiSHFVGcf6USHU39oRMW', // $GUANO -> check token address
+                'kozyGtC1y9hRDhvwiLDyvxdREQUyjfjMjFSBTnE492T', // $KOZY -> check token address
+                'CKaKtYvz6dKPyMvYq9Rh3UBrnNqYZAyd7iF4hJtjUvks', // $GARI -> check token address
+                '6uMXkQztPYeyY4yWEnf6vZABixEgZYqrJMnq4gtSnsfn', // $PB -> check token address
+                'PENNYm54BTtSxYSyYuu552Hx11Xr2DxocrijeKc1JVX' // $PENNY
               ]}
               visible={isInputTokenModalVisible}
               onCancel={() => setIsInputTokenModalVisible(false)}
@@ -570,6 +586,23 @@ const Swap: NextPage = () => {
                 setIsOutputTokenModalVisible(false);
               }}
               tokens={tokensDetails}
+              featuredTokens={[
+                'HonyeYAaTPgKUgQpayL914P6VAqbQZPrbkGMETZvW4iN', // $HONEY
+                'So11111111111111111111111111111111111111112', // $wSOL
+                'mSoLzYCxHdYgdzU16g5QSh3i5K3z3KZK7ytfqcJm7So', // $mSOL
+                'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v', // $USDC
+                'Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB', // $USDT
+                '9cyEStsrZF7LzqLzbNcuUeuat1NM4eHrBVApvkPBCQk4', // $ATA
+                'FUNHP94B46a486h5RSv46aeWUkeM5goTUuM5mVh4L6Qr', // $DINO
+                'A7rqejP8LKN8syXMr4tvcKjs2iJ4WtZjXNs1e6qP3m9g', // $ZION
+                'CBSTwQzAXeGiNvM5aDdkMD6wkSyuVXqsu8u3ZQmQLFa1', // $CUBIST -> check token address
+                'SKu11EypaFU3gvr8VSAbi13zEC2CPvqbz9s83N3tWHM', // $SKULL -> check token address
+                'H69DNtbZZtk92hLLbMrHYqL8HiSHFVGcf6USHU39oRMW', // $GUANO -> check token address
+                'kozyGtC1y9hRDhvwiLDyvxdREQUyjfjMjFSBTnE492T', // $KOZY -> check token address
+                'CKaKtYvz6dKPyMvYq9Rh3UBrnNqYZAyd7iF4hJtjUvks', // $GARI -> check token address
+                '6uMXkQztPYeyY4yWEnf6vZABixEgZYqrJMnq4gtSnsfn', // $PB -> check token address
+                'PENNYm54BTtSxYSyYuu552Hx11Xr2DxocrijeKc1JVX' // $PENNY
+              ]}
               visible={isOutputTokenModalVisible}
               onCancel={() => setIsOutputTokenModalVisible(false)}
               destroyOnClose

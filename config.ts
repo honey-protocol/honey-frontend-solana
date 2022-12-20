@@ -13,6 +13,8 @@ interface ENV {
   NEXT_PUBLIC_WL_TOKEN_MINT: string | undefined;
   NEXT_PUBLIC_STAKE_POOL_ADDRESS: string | undefined;
   NEXT_PUBLIC_HONEY_MINT_WRAPPER: string | undefined;
+  NEXT_PUBLIC_JUPITER_FEE_ADDRESS: string | undefined;
+  NEXT_PUBLIC_JUPITER_FEE_BPS: number;
 }
 
 interface Config {
@@ -30,6 +32,8 @@ interface Config {
   NEXT_PUBLIC_WL_TOKEN_MINT: string;
   NEXT_PUBLIC_STAKE_POOL_ADDRESS: string;
   NEXT_PUBLIC_HONEY_MINT_WRAPPER: string;
+  NEXT_PUBLIC_JUPITER_FEE_ADDRESS: string | undefined;
+  NEXT_PUBLIC_JUPITER_FEE_BPS: number;
 }
 
 // Loading process.env as ENV interface
@@ -49,7 +53,12 @@ const getConfig = (): ENV => {
     NEXT_PUBLIC_HONEY_MINT: process.env.NEXT_PUBLIC_HONEY_MINT,
     NEXT_PUBLIC_WL_TOKEN_MINT: process.env.NEXT_PUBLIC_WL_TOKEN_MINT,
     NEXT_PUBLIC_STAKE_POOL_ADDRESS: process.env.NEXT_PUBLIC_STAKE_POOL_ADDRESS,
-    NEXT_PUBLIC_HONEY_MINT_WRAPPER: process.env.NEXT_PUBLIC_HONEY_MINT_WRAPPER
+    NEXT_PUBLIC_HONEY_MINT_WRAPPER: process.env.NEXT_PUBLIC_HONEY_MINT_WRAPPER,
+    NEXT_PUBLIC_JUPITER_FEE_ADDRESS:
+      process.env.NEXT_PUBLIC_JUPITER_FEE_ADDRESS,
+    NEXT_PUBLIC_JUPITER_FEE_BPS: process.env.NEXT_PUBLIC_JUPITER_FEE_BPS
+      ? parseInt(process.env.NEXT_PUBLIC_JUPITER_FEE_BPS)
+      : 0
   };
 };
 
