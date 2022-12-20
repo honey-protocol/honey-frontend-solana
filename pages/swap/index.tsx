@@ -411,6 +411,7 @@ const Swap: NextPage = () => {
                       tokenInputFormatter(value, inputToken?.decimals)
                     }
                     onChange={value => setSwapAmount(Number(value))}
+                    addonAfter=""
                   />
                   <div
                     className={styles.tokenSelector}
@@ -469,6 +470,7 @@ const Swap: NextPage = () => {
                     }
                     value={estimatedOutAmount}
                     onChange={debouncedHandleOutputInput}
+                    addonAfter=""
                   />
                   <div
                     className={styles.tokenSelector}
