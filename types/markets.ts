@@ -1,5 +1,6 @@
 import { ColumnType } from 'antd/lib/table';
 import { PublicKey } from '@solana/web3.js';
+import { MarketBundle } from '@honey-finance/sdk';
 
 export type MarketTableRow = {
   allowance: number;
@@ -30,6 +31,7 @@ export type MarketTableRow = {
     marketImage: string;
     discountedMarket: boolean;
   }
+  marketData?: Array<MarketBundle>;
 };
 
 export type MarketTablePosition = {
