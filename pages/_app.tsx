@@ -1,34 +1,42 @@
-import React, { FC, ReactNode, useEffect, useState } from 'react';
 import type { AppProps } from 'next/app';
+import { ThemeProvider } from 'degen';
 import 'degen/styles';
 import '@dialectlabs/react-ui/index.css';
-
+import { WalletKitProvider } from '@gokiprotocol/walletkit';
 import '../styles/globals.css';
-import 'react-toastify/dist/ReactToastify.css';
 import { Network } from '@saberhq/solana-contrib';
 import { ToastContainer } from 'react-toastify';
-import { QueryClient, QueryClientProvider } from 'react-query';
-import { ThemeProvider } from 'degen';
+import 'react-toastify/dist/ReactToastify.css';
+import { PartialNetworkConfigMap } from '@saberhq/use-solana/src/utils/useConnectionInternal';
 import SecPopup from 'components/SecPopup';
 import { AnchorProvider, HoneyProvider } from '@honey-finance/sdk';
-import { PublicKey } from '@solana/web3.js';
-import { getPlatformFeeAccounts, JupiterProvider } from '@jup-ag/react-hook';
 import { useConnectedWallet, useConnection } from '@saberhq/use-solana';
-import { WalletKitProvider } from '@gokiprotocol/walletkit';
-import { SailProvider } from '@saberhq/sail';
-import Script from 'next/script';
+import React, { FC, ReactNode, useEffect, useState } from 'react';
 
 import { AccountsProvider } from 'contexts/AccountsProvider';
-import { DialectProviders } from 'contexts/DialectProvider';
 import { GovernanceProvider } from 'contexts/GovernanceProvider';
+import Script from 'next/script';
+import { SailProvider } from '@saberhq/sail';
 import { onSailError } from 'helpers/error';
+import { QueryClient, QueryClientProvider } from 'react-query';
+import { getPlatformFeeAccounts, JupiterProvider } from '@jup-ag/react-hook';
+export const network = (process.env.NETWORK as Network) || 'mainnet-beta';
 import {
   HONEY_GENESIS_MARKET_ID,
   HONEY_PROGRAM_ID
 } from '../helpers/marketHelpers/index';
-
-export const network = (process.env.NETWORK as Network) || 'mainnet-beta';
+import { DialectProviders } from 'contexts/DialectProvider';
+import { PublicKey } from '@solana/web3.js';
+// top level function that injects the app with a new market ID - being called from pages where interaction with markets is possible. Currently: borrow | lend | liquidate
 export const setMarketId = (marketID: string) => marketID;
+
+const networkConfiguration = () => {
+  if (process.env.NETWORK_CONFIGURATION) {
+    return process.env.NETWORK_CONFIGURATION as PartialNetworkConfigMap;
+  } else {
+    return undefined;
+  }
+};
 
 const queryClient = new QueryClient();
 
@@ -154,6 +162,7 @@ function MyApp({ Component, pageProps }: AppProps) {
         <WalletKitProvider
           defaultNetwork={network}
           app={{ name: 'Honey Finance' }}
+          networkConfigs={networkConfiguration()}
         >
           <AccountsProvider>
             <SailProvider
@@ -161,6 +170,15 @@ function MyApp({ Component, pageProps }: AppProps) {
                 onSailError
               }}
             >
+              {/* <GovernorProvider
+                initialState={{
+                  governor: GOVERNOR_ADDRESS,
+                  govToken: HONEY_MINT,
+                  minter: {
+                    mintWrapper: HONEY_MINT_WRAPPER
+                  }
+                }}
+              > */}
               {/* {children} */}
               {showPopup ? (
                 <SecPopup setShowPopup={setShowPopup} />
