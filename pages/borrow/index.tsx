@@ -41,6 +41,8 @@ import {
   useBorrowPositions,
   useHoney,
   useMarket,
+  fetchAllMarkets,
+  MarketBundle,
   withdrawNFT
 } from '@honey-finance/sdk';
 import {
@@ -73,7 +75,7 @@ import {
   renderMarketName,
   renderMarketImageByID
 } from '../../helpers/marketHelpers';
-import { setMarketId } from 'pages/_app';
+// import { setMarketId } from 'pages/_app';
 import {
   renderMarket,
   renderMarketImageByName,
@@ -114,7 +116,6 @@ const Markets: NextPage = () => {
     const marketData = renderMarket(record.id);
     if (marketData[0].id) {
       setCurrentMarketId(marketData[0].id);
-      setMarketId(marketData[0].id);
     }
   }
   /**
@@ -197,6 +198,31 @@ const Markets: NextPage = () => {
     const slPrice = await fetchSolPrice(reserves, connection);
     setFetchedSolPrice(slPrice);
   }
+
+  const [marketData, setMarketData] = useState<MarketBundle[]>([]);
+
+  async function fetchAllMarketData(marketIDs: string[]) {
+    const data = await fetchAllMarkets(
+      sdkConfig.saberHqConnection,
+      sdkConfig.sdkWallet,
+      sdkConfig.honeyId,
+      marketIDs,
+      false
+    );
+
+    setMarketData(data as unknown as MarketBundle[]);
+  }
+
+  useEffect(() => {
+    if (
+      sdkConfig.saberHqConnection &&
+      sdkConfig.sdkWallet &&
+      sdkConfig.honeyId
+    ) {
+      const marketIDs = marketCollections.map(market => market.id);
+      fetchAllMarketData(marketIDs);
+    }
+  }, [sdkConfig.saberHqConnection, sdkConfig.sdkWallet]);
 
   /**
    * @description sets state of marketValue by parsing lamports outstanding debt amount to SOL
@@ -317,29 +343,69 @@ const Markets: NextPage = () => {
           marketCollections.map(async collection => {
             if (collection.id == '') return collection;
 
-            await populateMarketData(
-              collection,
-              sdkConfig.saberHqConnection,
-              sdkConfig.sdkWallet,
-              currentMarketId,
-              false,
-              [],
-              nftPrice
-            );
+            if (marketData.length) {
+              collection.marketData = marketData.filter(
+                marketObject =>
+                  marketObject.market.address.toString() === collection.id
+              );
 
-            collection.positions = await handlePositions(
-              collection.verifiedCreator,
-              userOpenPositions
-            );
-            collection.rate =
-              (await getInterestRate(
-                collection.utilizationRate,
-                collection.id
-              )) || 0;
+              const honeyUser = collection.marketData[0].user;
+              const honeyMarket = collection.marketData[0].market;
+              const honeyClient = collection.marketData[0].client;
 
-            if (currentMarketId === collection.id)
-              setActiveInterestRate(collection.rate);
-            return collection;
+              await populateMarketData(
+                collection,
+                sdkConfig.saberHqConnection,
+                sdkConfig.sdkWallet,
+                currentMarketId,
+                false,
+                [],
+                nftPrice,
+                true,
+                honeyClient,
+                honeyMarket,
+                honeyUser
+              );
+
+              collection.positions = await handlePositions(
+                collection.verifiedCreator,
+                userOpenPositions
+              );
+              collection.rate =
+                (await getInterestRate(
+                  collection.utilizationRate,
+                  collection.id
+                )) || 0;
+
+              if (currentMarketId === collection.id)
+                setActiveInterestRate(collection.rate);
+              return collection;
+            } else {
+              await populateMarketData(
+                collection,
+                sdkConfig.saberHqConnection,
+                sdkConfig.sdkWallet,
+                currentMarketId,
+                false,
+                [],
+                nftPrice,
+                false
+              );
+
+              collection.positions = await handlePositions(
+                collection.verifiedCreator,
+                userOpenPositions
+              );
+              collection.rate =
+                (await getInterestRate(
+                  collection.utilizationRate,
+                  collection.id
+                )) || 0;
+
+              if (currentMarketId === collection.id)
+                setActiveInterestRate(collection.rate);
+              return collection;
+            }
           })
         );
       }
@@ -356,7 +422,7 @@ const Markets: NextPage = () => {
     sdkConfig.sdkWallet,
     currentMarketId,
     userOpenPositions,
-    honeyUser
+    marketData
   ]);
 
   const showMobileSidebar = () => {
