@@ -6,6 +6,7 @@ export const dialectNotification = style({
   height: 20
 });
 
+// indicator dot style
 globalStyle(
   `${dialectNotification} .dialect .dt-absolute.dt-h-3.dt-w-3.dt-z-50.dt-rounded-full.dt-bg-accent.dt-text-white`,
   {
@@ -41,10 +42,12 @@ globalStyle(`${popoverSelector} *`, {
   lineHeight: '20px'
 });
 
+//date text style
 globalStyle(`${popoverSelector} .dt-text-right > p`, {
   fontWeight: '400',
   fontSize: '12px',
-  lineHeight: '16px'
+  lineHeight: '16px',
+  textAlign: 'left'
 });
 
 globalStyle(`${popoverSelector} label`, {
@@ -70,6 +73,10 @@ globalStyle(`${popoverSelector} button`, {
   alignItems: 'center',
   background: vars.colors.brownLight,
   color: vars.colors.black
+});
+
+globalStyle(`${popoverSelector} button:not(:has(svg))`, {
+  padding: '7px !important'
 });
 
 globalStyle(`${popoverSelector} button svg`, {
