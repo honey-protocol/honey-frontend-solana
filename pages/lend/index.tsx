@@ -22,7 +22,14 @@ import debounce from 'lodash/debounce';
 import { getColumnSortStatus } from '../../helpers/tableUtils';
 import HoneySider from '../../components/HoneySider/HoneySider';
 import HoneyContent from '../../components/HoneyContent/HoneyContent';
-import { deposit, withdraw, useMarket, useHoney } from '@honey-finance/sdk';
+import {
+  deposit,
+  withdraw,
+  useMarket,
+  useHoney,
+  fetchAllMarkets,
+  MarketBundle
+} from '@honey-finance/sdk';
 import { BnToDecimal, ConfigureSDK } from '../../helpers/loanHelpers/index';
 import { LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js';
 import BN from 'bn.js';
@@ -64,6 +71,31 @@ const Lend: NextPage = () => {
   // init wallet and sdkConfiguration file
   const sdkConfig = ConfigureSDK();
   let walletPK = sdkConfig.sdkWallet?.publicKey;
+
+  const [marketData, setMarketData] = useState<MarketBundle[]>([]);
+
+  async function fetchAllMarketData(marketIDs: string[]) {
+    const data = await fetchAllMarkets(
+      sdkConfig.saberHqConnection,
+      sdkConfig.sdkWallet,
+      sdkConfig.honeyId,
+      marketIDs,
+      false
+    );
+
+    setMarketData(data as unknown as MarketBundle[]);
+  }
+
+  useEffect(() => {
+    if (
+      sdkConfig.saberHqConnection &&
+      sdkConfig.sdkWallet &&
+      sdkConfig.honeyId
+    ) {
+      const marketIDs = marketCollections.map(market => market.id);
+      fetchAllMarketData(marketIDs);
+    }
+  }, [sdkConfig.saberHqConnection, sdkConfig.sdkWallet]);
 
   /**
    * @description sets the market ID based on market click
@@ -358,28 +390,72 @@ const Lend: NextPage = () => {
       function getData() {
         return Promise.all(
           marketCollections.map(async collection => {
-            // await populateMarketData(
-            //   collection,
-            //   sdkConfig.saberHqConnection,
-            //   sdkConfig.sdkWallet,
-            //   currentMarketId,
-            //   false,
-            //   [],
-            //   nftPrice
-            // );
-            // collection.rate =
-            //   ((await getInterestRate(
-            //     collection.utilizationRate,
-            //     collection.id
-            //   )) || 0) * collection.utilizationRate;
-            // collection.stats = getPositionData();
+            if (collection.id == '') return collection;
 
-            // if (currentMarketId == collection.id) {
-            //   setActiveMarketSupplied(collection.value);
-            //   setActiveMarketAvailable(collection.available);
-            // }
+            if (marketData.length) {
+              collection.marketData = marketData.filter(
+                marketObject =>
+                  marketObject.market.address.toString() === collection.id
+              );
 
-            return collection;
+              const honeyUser = collection.marketData[0].user;
+              const honeyMarket = collection.marketData[0].market;
+              const honeyClient = collection.marketData[0].client;
+
+              await populateMarketData(
+                collection,
+                sdkConfig.saberHqConnection,
+                sdkConfig.sdkWallet,
+                currentMarketId,
+                false,
+                [],
+                nftPrice,
+                true,
+                honeyClient,
+                honeyMarket,
+                honeyUser
+              );
+
+              collection.rate =
+                ((await getInterestRate(
+                  collection.utilizationRate,
+                  collection.id
+                )) || 0) * collection.utilizationRate;
+
+              collection.stats = getPositionData();
+
+              if (currentMarketId == collection.id) {
+                setActiveMarketSupplied(collection.value);
+                setActiveMarketAvailable(collection.available);
+              }
+
+              return collection;
+            } else {
+              await populateMarketData(
+                collection,
+                sdkConfig.saberHqConnection,
+                sdkConfig.sdkWallet,
+                currentMarketId,
+                false,
+                [],
+                nftPrice,
+                false
+              );
+
+              collection.rate =
+                ((await getInterestRate(
+                  collection.utilizationRate,
+                  collection.id
+                )) || 0) * collection.utilizationRate;
+
+              collection.stats = getPositionData();
+
+              if (currentMarketId == collection.id) {
+                setActiveMarketSupplied(collection.value);
+                setActiveMarketAvailable(collection.available);
+              }
+              return collection;
+            }
           })
         );
       }
@@ -391,16 +467,13 @@ const Lend: NextPage = () => {
     }
   }, [
     nftPrice,
-    honeyReserves,
-    parsedReserves,
     sdkConfig.saberHqConnection,
     sdkConfig.sdkWallet,
     currentMarketId,
-    // marketReserveInfo,
-    // honeyReserves,
     totalMarketDeposits,
     reserveHoneyState,
-    userTotalDeposits
+    userTotalDeposits,
+    marketData
   ]);
 
   const onSearch = (searchTerm: string): LendTableRow[] => {
