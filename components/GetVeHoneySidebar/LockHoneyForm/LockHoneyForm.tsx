@@ -94,14 +94,14 @@ const LockHoneyForm = (props: { onCancel: Function }) => {
       ['1', '3', '6', '12', '48'].includes(lockPeriod)
     ) {
       // mainnet
-      // const date = new Date();
-      // const current = Math.floor(date.getTime() / 1000);
-      // date.setMonth(date.getMonth() + Number(lockPeriod));
-      // const nMonthsLater = Math.floor(date.getTime() / 1000);
-      // const lockPeroidInSeconds = nMonthsLater - current;
+      const date = new Date();
+      const current = Math.floor(date.getTime() / 1000);
+      date.setMonth(date.getMonth() + Number(lockPeriod));
+      const nMonthsLater = Math.floor(date.getTime() / 1000);
+      const lockPeroidInSeconds = nMonthsLater - current;
 
       // testing on devnet
-      const lockPeroidInSeconds = Number(lockPeriod) * 10;
+      // const lockPeroidInSeconds = Number(lockPeriod) * 10;
       toast.processing();
       try {
         await lock(
