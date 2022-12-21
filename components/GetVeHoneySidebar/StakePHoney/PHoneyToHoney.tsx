@@ -158,7 +158,7 @@ const PHoneyToHoney = (_: { onCancel: Function }) => {
 
         <div className={styles.row}>
           <HoneyButtonTabs
-            items={[{ name: '12days', slug: '12' }].map(period => ({
+            items={[{ name: '21 days', slug: '12' }].map(period => ({
               name: period.name,
               slug: period.slug
             }))}
