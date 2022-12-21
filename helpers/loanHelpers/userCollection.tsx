@@ -67,35 +67,33 @@ export async function calculateUserDeposits(
   marketReserveInfo: any,
   honeyUser: any
 ) {
-  try {
-    let depositNoteExchangeRate = 0,
-      loanNoteExchangeRate = 0,
-      nftPrice = 0,
-      cRatio = 1;
+  if (!marketReserveInfo || !honeyUser) {
+    return;
+  }
 
-    if (marketReserveInfo) {
-      nftPrice = 2;
-      depositNoteExchangeRate = BnToDecimal(
-        marketReserveInfo[0].depositNoteExchangeRate,
-        15,
-        5
-      );
-    }
+  let depositNoteExchangeRate = BnToDecimal(
+    marketReserveInfo[0].depositNoteExchangeRate,
+    15,
+    5
+  );
+  let loanNoteExchangeRate = 0;
+  let nftPrice = 2;
+  let cRatio = 1;
 
-    if (honeyUser?.deposits().length > 0) {
-      let totalDeposit =
-        (honeyUser
-          .deposits()[0]
-          .amount.div(new BN(10 ** 5))
-          .toNumber() *
-          depositNoteExchangeRate) /
-        10 ** 4;
-      return totalDeposit;
-    } else {
-      return 0;
-    }
-  } catch (error) {
-    throw error;
+  let depositValue = (await honeyUser.deposits().length) > 0;
+
+  if (depositValue == false) {
+    return 0;
+  } else {
+    let totalDeposits =
+      (honeyUser
+        .deposits()[0]
+        .amount.div(new BN(10 ** 5))
+        .toNumber() *
+        depositNoteExchangeRate) /
+      10 ** 4;
+
+    return totalDeposits;
   }
 }
 
@@ -190,6 +188,7 @@ export async function fetchAllowanceLtvAndDebt(
     throw error;
   }
 }
+
 /**
  * @description calculates the nft price based on switchboard
  * @params marketreserve | parsedreserve | honeymarket | connection
@@ -445,7 +444,7 @@ async function handleFormatMarket(
         .toNumber() / LAMPORTS_PER_SOL
     );
     const sumOfTotalValue = totalMarketDeposits + totalMarketDebt;
-    console.log('OBLIGATIONS', obligations);
+
     // if request comes from liquidation page we need the collection object to be different
     if (liquidations) {
       collection.name;

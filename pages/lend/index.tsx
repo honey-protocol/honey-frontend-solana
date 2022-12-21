@@ -50,30 +50,83 @@ import { HONEY_GENESIS_MARKET_ID } from '../../helpers/marketHelpers/index';
 import { marketCollections } from '../../helpers/marketHelpers';
 import { generateMockHistoryData } from '../../helpers/chartUtils';
 import { renderMarket, renderMarketImageByName } from 'helpers/marketHelpers';
+import { calculateUserDeposits } from 'helpers/loanHelpers/userCollection';
 // TODO: fetch based on config
 const network = 'mainnet-beta';
 
 const Lend: NextPage = () => {
+  // market specific constants - calculations / ratios / debt / allowance etc.
+  const [userTotalDeposits, setUserTotalDeposits] = useState<number>(0);
+  const [reserveHoneyState, setReserveHoneyState] = useState(0);
+  const [nftPrice, setNftPrice] = useState(0);
+  const [userWalletBalance, setUserWalletBalance] = useState<number>(0);
+  const [fetchedSolPrice, setFetchedSolPrice] = useState(0);
+  const [activeMarketSupplied, setActiveMarketSupplied] = useState(0);
+  const [activeMarketAvailable, setActiveMarketAvailable] = useState(0);
+  const [marketData, setMarketData] = useState<MarketBundle[]>([]);
+  const isMock = true;
+  const [isMobileSidebarVisible, setShowMobileSidebar] = useState(false);
+  const [tableData, setTableData] = useState<LendTableRow[]>([]);
+  const [tableDataFiltered, setTableDataFiltered] = useState<LendTableRow[]>(
+    []
+  );
+  const [expandedRowKeys, setExpandedRowKeys] = useState<readonly Key[]>([]);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [isMyCollectionsFilterEnabled, setIsMyCollectionsFilterEnabled] =
+    useState(false);
+  // Sets market ID which is used for fetching market specific data
+  // each market currently is a different call and re-renders the page
+  const [currentMarketId, setCurrentMarketId] = useState(
+    HONEY_GENESIS_MARKET_ID
+  );
   const [currentMarketName, setCurrentMarketName] = useState(
     HONEY_GENESIS_BEE_MARKET_NAME
   );
+  // init wallet and sdkConfiguration file
+  const sdkConfig = ConfigureSDK();
+  let walletPK = sdkConfig.sdkWallet?.publicKey;
+  /**
+   * @description sets the market ID based on market click
+   * @params Honey table record - contains all info about a table (aka market)
+   * @returns sets the market ID which re-renders page state and fetches market specific data
+   */
+  async function handleMarketId(record: any) {
+    const marketData = renderMarket(record.id);
+    if (marketData[0].id) {
+      setCurrentMarketId(marketData[0].id);
+      setCurrentMarketName(marketData[0].name);
+    }
+  }
+
   /**
    * @description formatting functions to format with perfect / format in SOL with icon or just a regular 2 decimal format
    * @params value to be formatted
    * @returns requested format
    */
   const { format: f, formatPercent: fp, formatSol: fs } = formatNumber;
-  // Sets market ID which is used for fetching market specific data
-  // each market currently is a different call and re-renders the page
-  const [currentMarketId, setCurrentMarketId] = useState(
-    HONEY_GENESIS_MARKET_ID
+
+  // ************* HOOKS *************
+  /**
+   * @description calls upon markets which
+   * @params none
+   * @returns market | market reserve information | parsed reserves |
+   */
+  const { marketReserveInfo, parsedReserves, fetchMarket } = useHoney();
+
+  /**
+   * @description calls upon the honey sdk
+   * @params  useConnection func. | useConnectedWallet func. | honeyID | marketID
+   * @returns honeyUser | honeyReserves - used for interaction regarding the SDK
+   */
+  const { honeyUser, honeyReserves, honeyMarket } = useMarket(
+    sdkConfig.saberHqConnection,
+    sdkConfig.sdkWallet,
+    sdkConfig.honeyId,
+    currentMarketId
   );
-  // init wallet and sdkConfiguration file
-  const sdkConfig = ConfigureSDK();
-  let walletPK = sdkConfig.sdkWallet?.publicKey;
+  // ************* END OF HOOKS *************
 
-  const [marketData, setMarketData] = useState<MarketBundle[]>([]);
-
+  //  ************* START FETCH MARKET DATA *************
   async function fetchAllMarketData(marketIDs: string[]) {
     const data = await fetchAllMarkets(
       sdkConfig.saberHqConnection,
@@ -82,7 +135,6 @@ const Lend: NextPage = () => {
       marketIDs,
       false
     );
-
     setMarketData(data as unknown as MarketBundle[]);
   }
 
@@ -97,45 +149,9 @@ const Lend: NextPage = () => {
     }
   }, [sdkConfig.saberHqConnection, sdkConfig.sdkWallet]);
 
-  /**
-   * @description sets the market ID based on market click
-   * @params Honey table record - contains all info about a table (aka market)
-   * @returns sets the market ID which re-renders page state and fetches market specific data
-   */
-  async function handleMarketId(record: any) {
-    const marketData = renderMarket(record.id);
-    if (marketData[0].id) {
-      setCurrentMarketId(marketData[0].id);
-      setCurrentMarketName(marketData[0].name);
-    }
-  }
-  /**
-   * @description calls upon markets which
-   * @params none
-   * @returns market | market reserve information | parsed reserves |
-   */
-  const { marketReserveInfo, parsedReserves, fetchMarket } = useHoney();
-  /**
-   * @description calls upon the honey sdk
-   * @params  useConnection func. | useConnectedWallet func. | honeyID | marketID
-   * @returns honeyUser | honeyReserves - used for interaction regarding the SDK
-   */
-  const { honeyUser, honeyReserves, honeyMarket } = useMarket(
-    sdkConfig.saberHqConnection,
-    sdkConfig.sdkWallet,
-    sdkConfig.honeyId,
-    currentMarketId
-  );
-  // market specific constants - calculations / ratios / debt / allowance etc.
-  const [userTotalDeposits, setUserTotalDeposits] = useState(0);
-  const [reserveHoneyState, setReserveHoneyState] = useState(0);
-  const [nftPrice, setNftPrice] = useState(0);
-  const [userWalletBalance, setUserWalletBalance] = useState<number>(0);
-  const [fetchedSolPrice, setFetchedSolPrice] = useState(0);
-  const [activeMarketSupplied, setActiveMarketSupplied] = useState(0);
-  const [activeMarketAvailable, setActiveMarketAvailable] = useState(0);
-  const [totalMarketDeposits, setTotalMarketDeposits] = useState(0);
+  //  ************* END FETCH MARKET DATA *************
 
+  //  ************* START FETCH USER BALANCE *************
   // fetches the users balance
   async function fetchWalletBalance(key: PublicKey) {
     try {
@@ -146,89 +162,46 @@ const Lend: NextPage = () => {
       console.log('Error', error);
     }
   }
-  // if there is a wallet - we fetch the users wallet balance
+
   useEffect(() => {
-    if (walletPK) {
-      fetchWalletBalance(walletPK);
-    }
+    if (walletPK) fetchWalletBalance(walletPK);
   }, [walletPK]);
-  /**
-   * @description
-   * @params
-   * @returns
-   */
-  async function calculateTotalDeposits(
+  //  ************* END FETCH USER BALANCE *************
+
+  //  ************* START CALC. USER DEPOSITS *************
+  // calculate user deposits
+  async function calculateTotalUserDeposits(
     marketReserveInfo: any,
     honeyUser: any
   ) {
-    if (!marketReserveInfo || !honeyUser) {
-      return;
-    }
-
-    let depositNoteExchangeRate = BnToDecimal(
-      marketReserveInfo[0].depositNoteExchangeRate,
-      15,
-      5
+    const totalUserDeposits = await calculateUserDeposits(
+      marketReserveInfo,
+      honeyUser
     );
-    let loanNoteExchangeRate = 0;
-    let nftPrice = 2;
-    let cRatio = 1;
-
-    let depositValue = (await honeyUser.deposits().length) > 0;
-
-    if (depositValue == false) {
-      return setUserTotalDeposits(0);
-    } else {
-      let totalDeposits =
-        (honeyUser
-          .deposits()[0]
-          .amount.div(new BN(10 ** 5))
-          .toNumber() *
-          depositNoteExchangeRate) /
-        10 ** 4;
-
-      setUserTotalDeposits(totalDeposits);
-    }
+    console.log('total user deposits', totalUserDeposits);
+    setUserTotalDeposits(Number(totalUserDeposits));
   }
-  /**
-   * @description updates honeyUser | marketReserveInfo |
-   * @params none
-   * @returns honeyUser | marketReserveInfo |
-   */
+
   useEffect(() => {
     if (marketReserveInfo && honeyUser)
-      calculateTotalDeposits(marketReserveInfo, honeyUser);
+      calculateTotalUserDeposits(marketReserveInfo, honeyUser);
   });
+  //  ************* END CALC. USER DEPOSITS *************
 
+  //  ************* START FETCH CURRENT SOL PRICE *************
   // fetches the current sol price
   async function fetchSolValue(reserves: any, connection: any) {
     const slPrice = await fetchSolPrice(reserves, connection);
     setFetchedSolPrice(slPrice);
   }
-  /**
-   * @description sets state of marketValue by parsing lamports outstanding debt amount to SOL
-   * @params none, requires parsedReserves
-   * @returns updates marketValue
-   */
-  useEffect(() => {
-    if (parsedReserves && parsedReserves[0].reserveState.totalDeposits) {
-      let totalMarketDeposits = BnToDecimal(
-        parsedReserves[0].reserveState.totalDeposits,
-        9,
-        2
-      );
-      setTotalMarketDeposits(totalMarketDeposits);
-      setTotalMarketDeposits(
-        parsedReserves[0].reserveState.totalDeposits
-          .div(new BN(10 ** 9))
-          .toNumber()
-      );
-      if (parsedReserves && sdkConfig.saberHqConnection) {
-        fetchSolValue(parsedReserves, sdkConfig.saberHqConnection);
-      }
-    }
-  }, [reserveHoneyState, parsedReserves]);
 
+  useEffect(() => {
+    if (parsedReserves && sdkConfig.saberHqConnection)
+      fetchSolValue(parsedReserves, sdkConfig.saberHqConnection);
+  }, [parsedReserves, sdkConfig.saberHqConnection]);
+  //  ************* END FETCH CURRENT SOL PRICE *************
+
+  //  ************* START CALCULATE NFT PRICE  *************
   // calculates nft price
   async function calculateNFTPrice() {
     if (marketReserveInfo && parsedReserves && honeyMarket) {
@@ -241,10 +214,11 @@ const Lend: NextPage = () => {
       setNftPrice(Number(nftPrice));
     }
   }
-  // upon marketreserve or parsed reserve change call upon calculateNFTPrice
+
   useEffect(() => {
     calculateNFTPrice();
-  }, [parsedReserves]);
+  }, [marketReserveInfo, parsedReserves, honeyMarket]);
+  //  ************* END CALCULATE NFT PRICE  *************
 
   /**
    * @description deposits 1 sol
@@ -280,10 +254,6 @@ const Lend: NextPage = () => {
 
         if (walletPK) await fetchWalletBalance(walletPK);
 
-        // userDepositWithdraw == 0
-        //   ? setUserDepositWithdraw(1)
-        //   : setUserDepositWithdraw(0);
-
         toast.success(
           'Deposit success',
           `https://solscan.io/tx/${tx[1][0]}?cluster=${network}`
@@ -295,7 +265,6 @@ const Lend: NextPage = () => {
       return toast.error('Deposit failed', error);
     }
   }
-
   /**
    * @description withdraws 1 sol
    * @params optional value from user input; amount of SOL
@@ -345,8 +314,6 @@ const Lend: NextPage = () => {
     }
   }
 
-  const isMock = true;
-  const [isMobileSidebarVisible, setShowMobileSidebar] = useState(false);
   const hideMobileSidebar = () => {
     setShowMobileSidebar(false);
     document.body.classList.remove('disable-scroll');
@@ -372,14 +339,6 @@ const Lend: NextPage = () => {
     document.body.classList.add('disable-scroll');
   };
 
-  const [tableData, setTableData] = useState<LendTableRow[]>([]);
-  const [tableDataFiltered, setTableDataFiltered] = useState<LendTableRow[]>(
-    []
-  );
-  const [expandedRowKeys, setExpandedRowKeys] = useState<readonly Key[]>([]);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [isMyCollectionsFilterEnabled, setIsMyCollectionsFilterEnabled] =
-    useState(false);
   /**
    * @description
    * @params
@@ -465,16 +424,7 @@ const Lend: NextPage = () => {
         setTableDataFiltered(result);
       });
     }
-  }, [
-    nftPrice,
-    sdkConfig.saberHqConnection,
-    sdkConfig.sdkWallet,
-    currentMarketId,
-    totalMarketDeposits,
-    reserveHoneyState,
-    userTotalDeposits,
-    marketData
-  ]);
+  }, [nftPrice, sdkConfig.saberHqConnection, sdkConfig.sdkWallet, marketData]);
 
   const onSearch = (searchTerm: string): LendTableRow[] => {
     if (!searchTerm) {
