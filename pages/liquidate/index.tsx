@@ -28,7 +28,9 @@ import {
   useAllPositions,
   useHoney,
   useMarket,
-  NftPosition
+  NftPosition,
+  fetchAllMarkets,
+  MarketBundle
 } from '@honey-finance/sdk';
 import { ConfigureSDK } from 'helpers/loanHelpers';
 import { useConnectedWallet } from '@saberhq/use-solana';
@@ -113,10 +115,66 @@ const Liquidate: NextPage = () => {
   const [userBalance, setUserBalance] = useState(0);
   const [fetchedSolPrice, setFetchedSolPrice] = useState(0);
   const [isMobileSidebarVisible, setShowMobileSidebar] = useState(false);
-  const [positionsObject, setPositionsObject] = useState<Array<NftPosition>>(
-    []
-  );
   const [biddingArray, setBiddingArray] = useState({});
+
+  const [marketData, setMarketData] = useState<MarketBundle[]>([]);
+
+  async function fetchAllMarketData(marketIDs: string[]) {
+    const data = await fetchAllMarkets(
+      sdkConfig.saberHqConnection,
+      sdkConfig.sdkWallet,
+      sdkConfig.honeyId,
+      marketIDs,
+      false
+    );
+
+    setMarketData(data as unknown as MarketBundle[]);
+    handleBids();
+  }
+
+  async function handleBids() {
+    if (!marketData) return;
+
+    const filteredMarketData = marketData.filter(
+      marketObject => marketObject.market.address.toString() === currentMarketId
+    );
+
+    if (filteredMarketData.length) {
+      if (filteredMarketData[0].bids) {
+        setBiddingArray(filteredMarketData[0].bids);
+        handleBiddingState(filteredMarketData[0].bids);
+      } else {
+        setBiddingArray([]);
+        handleBiddingState([]);
+      }
+    }
+  }
+
+  useEffect(() => {
+    handleBids();
+  }, [currentMarketId, marketData]);
+
+  // useEffect(() => {
+  //   if (status.bids) {
+  //     setBiddingArray(status.bids);
+  //     handleBiddingState(status.bids);
+  //   } else {
+  //     setBiddingArray([]);
+  //     handleBiddingState([]);
+  //   }
+  // }, [status.bids]);
+
+  useEffect(() => {
+    if (
+      sdkConfig.saberHqConnection &&
+      sdkConfig.sdkWallet &&
+      sdkConfig.honeyId
+    ) {
+      const marketIDs = marketCollections.map(market => market.id);
+      fetchAllMarketData(marketIDs);
+    }
+  }, [sdkConfig.saberHqConnection, sdkConfig.sdkWallet]);
+
   /**
    * @description
    * @params
@@ -169,8 +227,13 @@ const Liquidate: NextPage = () => {
    * @returns state change
    */
   async function handleBiddingState(biddingArray: any) {
-    if (biddingArray === undefined)
-      biddingArray = [{ bid: '', bidder: '', bidLimit: '' }];
+    if (!biddingArray.length) {
+      setHasPosition(false);
+      setCurrentUserBid(0);
+      setHighestBiddingValue(0);
+      setHighestBiddingAddress('');
+      return;
+    }
 
     const arrayOfBiddingAddress = await biddingArray.map(
       (obligation: any) => obligation.bidder
@@ -189,21 +252,30 @@ const Liquidate: NextPage = () => {
       setCurrentUserBid(0);
     }
 
-    if (!biddingArray.length) {
-      setHasPosition(false);
-      setCurrentUserBid(0);
-      setHighestBiddingValue(0);
-      setHighestBiddingAddress('');
-    } else {
-      let highestBid = await biddingArray
-        .sort((first: any, second: any) => first.bidLimit - second.bidLimit)
-        .reverse();
+    let highestBid = await biddingArray
+      .sort((first: any, second: any) => first.bidLimit - second.bidLimit)
+      .reverse();
 
-      if (highestBid[0]) {
-        setHighestBiddingAddress(highestBid[0].bidder);
-        setHighestBiddingValue(highestBid[0].bidLimit / LAMPORTS_PER_SOL);
-      }
+    if (highestBid[0]) {
+      setHighestBiddingAddress(highestBid[0].bidder);
+      setHighestBiddingValue(highestBid[0].bidLimit / LAMPORTS_PER_SOL);
     }
+
+    // if (!biddingArray.length) {
+    //   setHasPosition(false);
+    //   setCurrentUserBid(0);
+    //   setHighestBiddingValue(0);
+    //   setHighestBiddingAddress('');
+    // } else {
+    //   let highestBid = await biddingArray
+    //     .sort((first: any, second: any) => first.bidLimit - second.bidLimit)
+    //     .reverse();
+
+    //   if (highestBid[0]) {
+    //     setHighestBiddingAddress(highestBid[0].bidder);
+    //     setHighestBiddingValue(highestBid[0].bidLimit / LAMPORTS_PER_SOL);
+    //   }
+    // }
   }
   /**
    * @description
@@ -247,7 +319,7 @@ const Liquidate: NextPage = () => {
    */
   useEffect(() => {
     calculateNFTPrice();
-  }, [marketReserveInfo, parsedReserves, positionsObject]);
+  }, [marketReserveInfo, parsedReserves]);
 
   /**
    * @description calls upon liquidator client for placebid | revokebid | increasebid
@@ -373,21 +445,15 @@ const Liquidate: NextPage = () => {
    * @params
    * @returns
    */
-  useEffect(() => {
-    if (status.positions) {
-      setPositionsObject(status.positions);
-    } else {
-      setPositionsObject([]);
-    }
-
-    if (status.bids) {
-      setBiddingArray(status.bids);
-      handleBiddingState(status.bids);
-    } else {
-      setBiddingArray([]);
-      handleBiddingState([]);
-    }
-  }, [status.positions, status.bids]);
+  // useEffect(() => {
+  //   if (status.bids) {
+  //     setBiddingArray(status.bids);
+  //     handleBiddingState(status.bids);
+  //   } else {
+  //     setBiddingArray([]);
+  //     handleBiddingState([]);
+  //   }
+  // }, [status.bids]);
 
   const [tableData, setTableData] = useState<MarketTableRow[]>([]);
   const [tableDataFiltered, setTableDataFiltered] = useState<MarketTableRow[]>(
@@ -403,24 +469,51 @@ const Liquidate: NextPage = () => {
    * @returns
    */
   useEffect(() => {
-    if (sdkConfig.saberHqConnection && marketReserveInfo) {
+    if (sdkConfig.saberHqConnection) {
       function getData() {
         return Promise.all(
           marketCollections.map(async collection => {
-            // let obligationObject =
-            //   collection.constants.marketId === currentMarketId
-            //     ? positionsObject
-            //     : [];
-            // await populateMarketData(
-            //   collection,
-            //   sdkConfig.saberHqConnection,
-            //   sdkConfig.sdkWallet,
-            //   currentMarketId,
-            //   true,
-            //   obligationObject,
-            //   nftPrice
-            // );
-            return collection;
+            if (collection.id == '') return collection;
+
+            if (marketData.length) {
+              collection.marketData = marketData.filter(
+                marketObject =>
+                  marketObject.market.address.toString() === collection.id
+              );
+
+              const honeyUser = collection.marketData[0].user;
+              const honeyMarket = collection.marketData[0].market;
+              const honeyClient = collection.marketData[0].client;
+
+              await populateMarketData(
+                collection,
+                sdkConfig.saberHqConnection,
+                sdkConfig.sdkWallet,
+                currentMarketId,
+                true,
+                collection.marketData[0].positions,
+                nftPrice,
+                true,
+                honeyClient,
+                honeyMarket,
+                honeyUser
+              );
+
+              return collection;
+            } else {
+              await populateMarketData(
+                collection,
+                sdkConfig.saberHqConnection,
+                sdkConfig.sdkWallet,
+                currentMarketId,
+                true,
+                [],
+                nftPrice,
+                false
+              );
+
+              return collection;
+            }
           })
         );
       }
@@ -435,8 +528,7 @@ const Liquidate: NextPage = () => {
     sdkConfig.saberHqConnection,
     sdkConfig.sdkWallet,
     nftPrice,
-    positionsObject,
-    marketReserveInfo
+    marketData
   ]);
   /**
    * @description
@@ -470,7 +562,6 @@ const Liquidate: NextPage = () => {
 
     if (marketData[0].id) {
       setCurrentMarketId(marketData[0].id);
-      handleBiddingState(status.bids);
     }
   }
   /**
