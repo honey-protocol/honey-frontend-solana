@@ -148,7 +148,6 @@ const Lend: NextPage = () => {
       fetchAllMarketData(marketIDs);
     }
   }, [sdkConfig.saberHqConnection, sdkConfig.sdkWallet]);
-
   //  ************* END FETCH MARKET DATA *************
 
   //  ************* START FETCH USER BALANCE *************
@@ -178,7 +177,6 @@ const Lend: NextPage = () => {
       marketReserveInfo,
       honeyUser
     );
-    console.log('total user deposits', totalUserDeposits);
     setUserTotalDeposits(Number(totalUserDeposits));
   }
 
