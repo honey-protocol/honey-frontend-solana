@@ -395,7 +395,7 @@ const Swap: NextPage = () => {
     <LayoutRedesign>
       <HoneyContent>
         <div className={styles.pageContent}>
-          <div className={styles.pageTitle}>Swap</div>
+          {/* <div className={styles.pageTitle}>Swap</div> */}
 
           <HoneyCardYellowShadow>
             <div className={styles.swapFormContainer}>

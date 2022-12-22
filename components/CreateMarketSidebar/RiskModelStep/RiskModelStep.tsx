@@ -34,7 +34,7 @@ export const RiskModelStep = (props: RiskModelStepProps) => {
 
     if (riskModel === RiskModelTab.DEFAULT) {
       return (
-        <HoneyWarning message="DEFAULT risk: This model attempts to establishes an average income for lenders with keeping good risk management.">
+        <HoneyWarning message="DEFAULT risk: This model attempts to establish an above average income for lenders while maintaining low exposure to NFT risk.">
           <HoneyLink link="https://docs.honey.finance/lending-protocol/interest-rates/protocol-math-solana/default-risk-model" target="_blank" className={styles.marginTop}>
             Learn More
           </HoneyLink>
