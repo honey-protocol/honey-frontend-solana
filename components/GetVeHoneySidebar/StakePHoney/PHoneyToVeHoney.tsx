@@ -88,12 +88,22 @@ const PHoneyToVeHoney = (_: { onCancel: Function }) => {
   );
 
   const handleVest = useCallback(async () => {
-    if (phoneyValue2 && preToken && lockPeriod) {
+    if (phoneyValue2 && preToken && ['3', '6', '12'].includes(lockPeriod)) {
+      // mainnet
+      const date = new Date();
+      const current = Math.floor(date.getTime() / 1000);
+      date.setMonth(date.getMonth() + Number(lockPeriod));
+      const nMonthsLater = Math.floor(date.getTime() / 1000);
+      const lockPeriodInSeconds = nMonthsLater - current;
+
+      // testing on devnet
+      // const lockPeroidInSeconds = Number(lockPeriod) * 10;
+
       try {
         toast.processing();
         await vest(
           convertToBN(phoneyValue2, preToken.decimals),
-          new BN(Number(lockPeriod) * 10)
+          new BN(Number(lockPeriodInSeconds))
         );
         setPHoneyValue2(undefined);
         setHoneyValue(undefined);
