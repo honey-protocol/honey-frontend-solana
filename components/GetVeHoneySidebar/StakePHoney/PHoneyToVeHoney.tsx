@@ -75,7 +75,10 @@ const PHoneyToVeHoney = (_: { onCancel: Function }) => {
             convert(
               calculateVotingPowerWithParams(
                 convertToBN(Number(value) * honeyPrice, govToken.decimals),
-                new BN(Number(lockPeriod) * 10),
+                // devnet
+                // new BN(Number(lockPeriod) * 10),
+                // mainnet
+                new BN(Number(lockPeriod) * 2_592_000),
                 locker.params
               ),
               govToken.decimals
@@ -93,7 +96,10 @@ const PHoneyToVeHoney = (_: { onCancel: Function }) => {
         toast.processing();
         await vest(
           convertToBN(phoneyValue2, preToken.decimals),
-          new BN(Number(lockPeriod) * 10)
+          // devnet
+          // new BN(Number(lockPeriod) * 10),
+          // mainnet
+          new BN(Number(lockPeriod) * 2_592_000)
         );
         setPHoneyValue2(undefined);
         setHoneyValue(undefined);
