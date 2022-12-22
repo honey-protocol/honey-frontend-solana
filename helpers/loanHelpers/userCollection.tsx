@@ -202,6 +202,10 @@ export async function calcNFT(
 ) {
   try {
     if (marketReserveInfo && parsedReserves && honeyMarket) {
+      console.log('@@__ market res', marketReserveInfo);
+      console.log('@@__ parsed res', parsedReserves);
+      console.log('@@__ honey market', honeyMarket);
+
       let solPrice = await getOraclePrice(
         'mainnet-beta',
         connection,
@@ -359,32 +363,19 @@ const calculateRisk = async (
   obligations: any,
   nftPrice: number,
   type: boolean,
-  currentMarketId: string,
-  collectionName: string
+  collection: string
 ) => {
   if (!obligations) return 0;
+  console.log('@@-- collection', collection);
+  let sumOfDebt = await obligations.reduce((acc: number, obligation: any) => {
+    return acc + obligation.debt;
+  }, 0);
 
-  marketCollections.map(async market => {
-    if (
-      market.constants.marketId === currentMarketId &&
-      market.constants.marketName === collectionName
-    ) {
-      let sumOfDebt = await obligations.reduce(
-        (acc: number, obligation: any) => {
-          return acc + obligation.debt;
-        },
-        0
-      );
-
-      if (type === true) {
-        return sumOfDebt;
-      } else {
-        return sumOfDebt / obligations.length / nftPrice;
-      }
-    } else {
-      return 0;
-    }
-  });
+  if (type === true) {
+    return sumOfDebt;
+  } else {
+    return sumOfDebt / obligations.length / nftPrice;
+  }
 };
 /**
  * @description calculates the debt of all the obligations
@@ -456,13 +447,7 @@ async function handleFormatMarket(
       );
       collection.user = honeyUser;
       collection.risk = obligations
-        ? await calculateRisk(
-            obligations,
-            nftPrice,
-            false,
-            currentMarketId,
-            collection.name
-          )
+        ? await calculateRisk(obligations, nftPrice, false, collection)
         : 0;
       collection.totalDebt = obligations
         ? await calculateTotalDebt(obligations)
