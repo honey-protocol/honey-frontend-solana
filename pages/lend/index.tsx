@@ -22,6 +22,7 @@ import debounce from 'lodash/debounce';
 import { getColumnSortStatus } from '../../helpers/tableUtils';
 import HoneySider from '../../components/HoneySider/HoneySider';
 import HoneyContent from '../../components/HoneyContent/HoneyContent';
+import { RoundHalfDown } from 'helpers/utils';
 import {
   deposit,
   withdraw,
@@ -201,21 +202,21 @@ const Lend: NextPage = () => {
 
   //  ************* START CALCULATE NFT PRICE  *************
   // calculates nft price
-  async function calculateNFTPrice() {
-    if (marketReserveInfo && parsedReserves && honeyMarket) {
-      let nftPrice = await calcNFT(
-        marketReserveInfo,
-        parsedReserves,
-        honeyMarket,
-        sdkConfig.saberHqConnection
-      );
-      setNftPrice(Number(nftPrice));
-    }
-  }
+  // async function calculateNFTPrice() {
+  //   if (marketReserveInfo && parsedReserves && honeyMarket) {
+  //     let nftPrice = await calcNFT(
+  //       marketReserveInfo,
+  //       parsedReserves[0],
+  //       honeyMarket,
+  //       sdkConfig.saberHqConnection
+  //     );
+  //     setNftPrice(Number(nftPrice));
+  //   }
+  // }
 
-  useEffect(() => {
-    calculateNFTPrice();
-  }, [marketReserveInfo, parsedReserves, honeyMarket]);
+  // useEffect(() => {
+  //   calculateNFTPrice();
+  // }, [marketReserveInfo, parsedReserves, honeyMarket]);
   //  ************* END CALCULATE NFT PRICE  *************
 
   /**
@@ -358,6 +359,7 @@ const Lend: NextPage = () => {
               const honeyUser = collection.marketData[0].user;
               const honeyMarket = collection.marketData[0].market;
               const honeyClient = collection.marketData[0].client;
+              const parsedReserves = collection.marketData[0].reserves[0].data;
 
               await populateMarketData(
                 collection,
@@ -366,11 +368,11 @@ const Lend: NextPage = () => {
                 currentMarketId,
                 false,
                 [],
-                nftPrice,
                 true,
                 honeyClient,
                 honeyMarket,
-                honeyUser
+                honeyUser,
+                parsedReserves
               );
 
               collection.rate =
@@ -385,7 +387,8 @@ const Lend: NextPage = () => {
                 setActiveMarketSupplied(collection.value);
                 setActiveMarketAvailable(collection.available);
               }
-
+              if (currentMarketId === collection.id)
+                setNftPrice(RoundHalfDown(Number(collection.nftPrice)));
               return collection;
             } else {
               await populateMarketData(
@@ -395,7 +398,6 @@ const Lend: NextPage = () => {
                 currentMarketId,
                 false,
                 [],
-                nftPrice,
                 false
               );
 
@@ -422,7 +424,7 @@ const Lend: NextPage = () => {
         setTableDataFiltered(result);
       });
     }
-  }, [nftPrice, sdkConfig.saberHqConnection, sdkConfig.sdkWallet, marketData]);
+  }, [sdkConfig.saberHqConnection, sdkConfig.sdkWallet, marketData]);
 
   const onSearch = (searchTerm: string): LendTableRow[] => {
     if (!searchTerm) {

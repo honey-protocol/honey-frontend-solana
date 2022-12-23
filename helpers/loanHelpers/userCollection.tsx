@@ -209,7 +209,7 @@ export async function calcNFT(
       let solPrice = await getOraclePrice(
         'mainnet-beta',
         connection,
-        parsedReserves[0].switchboardPriceAggregator
+        parsedReserves.switchboardPriceAggregator
       ); //in sol
       let nftPrice = await getOraclePrice(
         'mainnet-beta',
@@ -399,15 +399,15 @@ async function handleFormatMarket(
   currentMarketId: string,
   liquidations: boolean,
   obligations: any,
-  nftPrice: number,
   honeyUser: HoneyUser,
   honeyClient: HoneyClient,
   honeyMarket: HoneyMarket,
-  connection: Connection
+  connection: Connection,
+  parsedReserves?: any
 ) {
   const reserveInfoList = honeyMarket.reserves;
 
-  let parsedReserve: TReserve | undefined = undefined;
+  let parsedReserve: TReserve | undefined = parsedReserves;
 
   for (const reserve of reserveInfoList) {
     if (reserve.reserve.equals(PublicKey.default)) {
@@ -446,14 +446,30 @@ async function handleFormatMarket(
         f(totalMarketDebt / (totalMarketDeposits + totalMarketDebt))
       );
       collection.user = honeyUser;
+      collection.nftPrice = await calcNFT(
+        honeyMarket.reserves,
+        parsedReserve,
+        honeyMarket,
+        connection
+      );
+
       collection.risk = obligations
-        ? await calculateRisk(obligations, nftPrice, false, collection)
+        ? await calculateRisk(
+            obligations,
+            collection.nftPrice,
+            false,
+            collection
+          )
         : 0;
       collection.totalDebt = obligations
         ? await calculateTotalDebt(obligations)
         : 0;
       collection.openPositions = obligations
-        ? await setObligations(obligations, currentMarketId, nftPrice)
+        ? await setObligations(
+            obligations,
+            currentMarketId,
+            collection.nftPrice
+          )
         : [];
       // if there are open positions in the collections, calculate until liquidation value
       if (collection.openPositions) {
@@ -462,11 +478,18 @@ async function handleFormatMarket(
             openPos.estimatedValue - openPos.debt / COLLATERAL_FACTOR);
         });
       }
+
       // request comes from borrow or lend - same base collection object
     } else {
       collection.available = totalMarketDeposits;
       collection.value = sumOfTotalValue;
       collection.connection = connection;
+      collection.nftPrice = await calcNFT(
+        honeyMarket.reserves,
+        parsedReserve,
+        honeyMarket,
+        connection
+      );
       collection.utilizationRate = Number(
         f(totalMarketDebt / (totalMarketDeposits + totalMarketDebt))
       );
@@ -489,11 +512,11 @@ export async function populateMarketData(
   currentMarketId: string,
   liquidations: boolean,
   obligations: any,
-  nftPrice: number,
   hasMarketData: boolean,
   honeyClient?: HoneyClient,
   honeyMarket?: HoneyMarket,
-  honeyUser?: HoneyUser
+  honeyUser?: HoneyUser,
+  parsedReserves?: any
 ) {
   // create dummy keypair if no wallet is connected to fetch values of the collections regardless of connected wallet
   let dummyWallet = wallet ? wallet : new NodeWallet(new Keypair());
@@ -505,11 +528,11 @@ export async function populateMarketData(
       currentMarketId,
       liquidations,
       obligations,
-      nftPrice,
       honeyUser,
       honeyClient,
       honeyMarket,
-      connection
+      connection,
+      parsedReserves
     );
   } else {
     const provider = new anchor.AnchorProvider(
@@ -545,7 +568,6 @@ export async function populateMarketData(
       currentMarketId,
       liquidations,
       obligations,
-      nftPrice,
       honeyUser,
       honeyClient,
       honeyMarket,

@@ -22,6 +22,7 @@ import HoneyButton from '../../components/HoneyButton/HoneyButton';
 import { formatNumber } from '../../helpers/format';
 import { LiquidateTableRow } from '../../types/liquidate';
 import { LiquidateExpandTable } from '../../components/LiquidateExpandTable/LiquidateExpandTable';
+import { RoundHalfDown } from 'helpers/utils';
 import {
   useAnchor,
   LiquidatorClient,
@@ -131,6 +132,9 @@ const Liquidate: NextPage = () => {
     );
 
     setMarketData(data as unknown as MarketBundle[]);
+
+    console.log('data', data);
+
     handleBids();
   }
 
@@ -250,25 +254,25 @@ const Liquidate: NextPage = () => {
    * @params
    * @returns
    */
-  async function calculateNFTPrice() {
-    if (marketReserveInfo && parsedReserves && honeyMarket) {
-      let nftPrice = await calcNFT(
-        marketReserveInfo,
-        parsedReserves,
-        honeyMarket,
-        sdkConfig.saberHqConnection
-      );
-      setNftPrice(Number(nftPrice));
-    }
-  }
+  // async function calculateNFTPrice() {
+  //   if (marketReserveInfo && parsedReserves && honeyMarket) {
+  //     let nftPrice = await calcNFT(
+  //       marketReserveInfo,
+  //       parsedReserves[0],
+  //       honeyMarket,
+  //       sdkConfig.saberHqConnection
+  //     );
+  //     setNftPrice(Number(nftPrice));
+  //   }
+  // }
   /**
    * @description
    * @params
    * @returns
    */
-  useEffect(() => {
-    calculateNFTPrice();
-  }, [marketReserveInfo, parsedReserves]);
+  // useEffect(() => {
+  //   calculateNFTPrice();
+  // }, [marketReserveInfo, parsedReserves]);
   //  ************* END CALC. NFT PRICE *************
 
   //  ************* START FETCH SOL PRICE *************
@@ -434,6 +438,7 @@ const Liquidate: NextPage = () => {
               const honeyUser = collection.marketData[0].user;
               const honeyMarket = collection.marketData[0].market;
               const honeyClient = collection.marketData[0].client;
+              const parsedReserves = collection.marketData[0].reserves[0].data;
 
               await populateMarketData(
                 collection,
@@ -442,13 +447,15 @@ const Liquidate: NextPage = () => {
                 currentMarketId,
                 true,
                 collection.marketData[0].positions,
-                nftPrice,
                 true,
                 honeyClient,
                 honeyMarket,
-                honeyUser
+                honeyUser,
+                parsedReserves
               );
 
+              if (currentMarketId === collection.id)
+                setNftPrice(RoundHalfDown(Number(collection.nftPrice)));
               return collection;
             } else {
               await populateMarketData(
@@ -458,7 +465,6 @@ const Liquidate: NextPage = () => {
                 currentMarketId,
                 true,
                 [],
-                nftPrice,
                 false
               );
 
@@ -477,7 +483,6 @@ const Liquidate: NextPage = () => {
     currentMarketId,
     sdkConfig.saberHqConnection,
     sdkConfig.sdkWallet,
-    nftPrice,
     marketData
   ]);
   /**

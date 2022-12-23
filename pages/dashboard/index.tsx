@@ -380,7 +380,7 @@ const Dashboard: NextPage = () => {
     if (marketReserveInfo && parsedReserves && honeyMarket) {
       let nftPrice = await calcNFT(
         marketReserveInfo,
-        parsedReserves,
+        parsedReserves[0],
         honeyMarket,
         sdkConfig.saberHqConnection
       );
