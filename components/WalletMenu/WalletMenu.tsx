@@ -1,5 +1,5 @@
 import { Dropdown, Menu, Space, Typography } from 'antd';
-import React from 'react';
+import React, { useContext } from 'react';
 import * as styles from './WalletMenu.css';
 import { DownIcon } from 'icons/DownIcon';
 import { formatAddress } from 'helpers/addressUtils';
@@ -9,7 +9,10 @@ import { useWalletKit } from '@gokiprotocol/walletkit';
 import { useConnectedWallet, useSolana } from '@saberhq/use-solana';
 import { DialectNotifications } from 'components/DialectNotifications/DialectNotifications';
 import { featureFlags } from '../../helpers/featureFlags';
-
+import { vars } from 'styles/theme.css';
+import HoneyToggle from 'components/HoneyToggle/HoneyToggle';
+import { HoneyThemeContext } from 'pages/_app';
+import { MoreOutlined } from '@ant-design/icons';
 const { Title } = Typography;
 
 const WalletMenu = () => {
@@ -17,6 +20,7 @@ const WalletMenu = () => {
   const wallet = useConnectedWallet();
   const { connect } = useWalletKit();
   const walletAddress = wallet?.publicKey.toString();
+  const { theme, setTheme } = useContext(HoneyThemeContext);
 
   function handleClick(e: any) {
     if (e.key == '4') disconnect();
@@ -35,9 +39,15 @@ const WalletMenu = () => {
     />
   );
   return !walletAddress ? (
-    <HoneyButton variant="primary" icon={<WalletIcon />} onClick={connect}>
-      CONNECT WALLET
-    </HoneyButton>
+    <Space size="small">
+      <HoneyButton variant="primary" icon={<WalletIcon />} onClick={connect}>
+        CONNECT WALLET
+      </HoneyButton>
+      <HoneyToggle
+        checked={theme === 'dark'}
+        onChange={checked => setTheme(checked ? 'dark' : 'light')}
+      />
+    </Space>
   ) : (
     <div className={styles.walletDropdownWrapper}>
       <div className={styles.dialectIconWrapper}>
@@ -52,10 +62,14 @@ const WalletMenu = () => {
                 {formatAddress(walletAddress)}
               </Title>
             </Space>
-            <DownIcon />
+            <DownIcon fill={vars.colors.textSecondary} />
           </Space>
         </a>
       </Dropdown>
+      <HoneyToggle
+        checked={theme === 'dark'}
+        onChange={checked => setTheme(checked ? 'dark' : 'light')}
+      />
     </div>
   );
 };

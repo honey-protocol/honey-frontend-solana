@@ -25,3 +25,5 @@ declare global {
 }
 
 declare var window: any;
+
+type HoneyTheme = 'dark' | 'light';

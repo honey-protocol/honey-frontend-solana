@@ -1,6 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Red+Hat+Mono:wght@500&display=swap');
 @import '../fonts/stylesheet.css';
-@import '~antd/dist/antd.css';
 
 html,
 body {
@@ -19,6 +18,7 @@ a {
 
 * {
   box-sizing: border-box;
+  transition: background 0s, colors 0s !important;
 }
 p {
   margin: 0;

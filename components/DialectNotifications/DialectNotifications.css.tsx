@@ -8,6 +8,15 @@ export const dialectNotification = style({
 
 // indicator dot style
 globalStyle(
+  `${dialectNotification} .dialect dt-relative.dt-flex.dt-items-center.dt-justify-center.dt-rounded-full button`,
+  {
+    background: vars.colors.red,
+    left: 12
+  }
+);
+
+// indicator dot style
+globalStyle(
   `${dialectNotification} .dialect .dt-absolute.dt-h-3.dt-w-3.dt-z-50.dt-rounded-full.dt-bg-accent.dt-text-white`,
   {
     background: vars.colors.brownLight,
@@ -31,6 +40,7 @@ globalStyle(`${popoverSelector}`, {
 globalStyle(`${popoverSelector} .dt-flex-row`, {
   padding: '14px 14px 16px 16px',
   border: 'none',
+  color: `${vars.colors.text} !important`,
   maxHeight: 'initial',
   minHeight: 0
 });
@@ -92,14 +102,16 @@ globalStyle(`${popoverSelector} input[type="checkbox"] + span`, {
 });
 
 globalStyle(`${popoverSelector} .dt-flex-row > .dt-text-base`, {
-  ...typography.title
+  ...typography.title,
+  color: vars.colors.text
 });
 
 globalStyle(`${popoverSelector} .dialect > .dt-flex > .dt-h-full`, {});
 
 globalStyle(`${popoverSelector} .dt-bg-white`, {
   boxShadow: `4px 4px 0px 0px ${vars.colors.brownLight}`,
-  border: `2px solid ${vars.colors.black}`
+  border: `2px solid ${vars.colors.black}`,
+  background: vars.colors.foreground
 });
 
 globalStyle(`${dialectNotification} .dialec > div`, {
