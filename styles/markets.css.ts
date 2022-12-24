@@ -1,6 +1,6 @@
 import { globalStyle, style, styleVariants } from '@vanilla-extract/css';
 import { breakpoints, typography, vars } from './theme.css';
-import { createMarketIcon, lampIcon, questionIcon} from './icons.css';
+import { createMarketIcon, lampIcon, questionIcon } from './icons.css';
 import { container } from './common.css';
 import { honeyTableExpandedRow } from '../components/HoneyTable/HoneyTable.css';
 
@@ -141,7 +141,7 @@ export const createMarketHover = style({
 export const mobileTableHeader = style({
   display: 'flex',
   alignItems: 'center',
-  background: vars.colors.grayLight,
+  // background: vars.colors.grayMiddle,
   borderRadius: 12,
   '@media': {
     [`screen and (min-width: ${breakpoints.tablet}px)`]: {
@@ -221,20 +221,20 @@ const headerCellBasic = style([
     alignItems: 'center',
     textTransform: 'uppercase',
     whiteSpace: 'nowrap',
-    color: vars.colors.black
+    color: vars.colors.text
   }
 ]);
 export const headerCell = styleVariants({
   active: [
     headerCellBasic,
     {
-      color: vars.colors.brownMiddle
+      color: vars.colors.textTertiary
     }
   ],
   disabled: [
     headerCellBasic,
     {
-      color: vars.colors.black
+      color: vars.colors.text
     }
   ]
 });
@@ -257,25 +257,14 @@ const sortIconBasic = style({
 });
 
 export const sortIcon = styleVariants({
-  disabled: [
-    sortIconBasic,
-    {
-      background: 'url(/images/sorter.svg) center no-repeat'
-    }
-  ],
+  disabled: [sortIconBasic, {}],
   ascend: [
     sortIconBasic,
     {
-      background: 'url(/images/sorter-active.svg) center no-repeat',
       transform: 'rotate(180deg)'
     }
   ],
-  descend: [
-    sortIconBasic,
-    {
-      background: 'url(/images/sorter-active.svg) center no-repeat'
-    }
-  ]
+  descend: [sortIconBasic, {}]
 });
 
 globalStyle(tcs(`.ant-table-column-sorter`), {
@@ -332,9 +321,11 @@ export const expandedRowNameCell = style([
   }
 ]);
 export const expandedRowIcon = style({
-  background: 'url(/images/direct-left.svg) center no-repeat',
   width: 40,
   height: 40,
+  display: 'flex',
+  justifyContent: 'center',
+  alignItems: 'center',
   marginRight: 11,
   flexShrink: 0,
   backgroundSize: '20px',
@@ -443,7 +434,7 @@ export const footerTitle = style([
 export const footerDescription = style([
   typography.description,
   {
-    color: vars.colors.grayTransparent,
+    color: vars.colors.textTertiary,
     '@media': {
       [`screen and (max-width: ${breakpoints.mobile}px)`]: {
         fontSize: 12
@@ -457,13 +448,13 @@ export const dashedDivider = style({
   left: 0,
   width: '100%',
   height: 2,
-  backgroundImage: `linear-gradient(to right, ${vars.colors.black} 50%, transparent 50%)`,
+  backgroundImage: `linear-gradient(to right, ${vars.colors.text} 50%, transparent 50%)`,
   backgroundRepeat: 'repeat-x, repeat-x, repeat-y, repeat-y',
   backgroundSize: '20px 1px, 20px 1px, 1px 20px, 1px 20px',
   '@media': {
     [`screen and (min-width: ${breakpoints.tablet}px)`]: {
       left: 70,
-      backgroundImage: `linear-gradient(to right, ${vars.colors.lightGrayTransparent} 50%, transparent 50%)`,
+      backgroundImage: `linear-gradient(to right, ${vars.colors.borderSecondary} 50%, transparent 50%)`,
       backgroundSize: '20px 2px, 20px 2px, 2px 20px, 2px 20px'
     }
   }
@@ -497,7 +488,7 @@ export const tableCell = style([
   {
     width: '33.3%',
     textAlign: 'center',
-    color: vars.colors.grayTransparent
+    color: vars.colors.textTertiary
   }
 ]);
 

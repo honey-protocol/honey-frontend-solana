@@ -8,6 +8,7 @@ import { useRouter } from 'next/router';
 import cs from 'classnames';
 import { DESKTOP_BP, TABLET_BP } from '../../constants/breakpoints';
 import { featureFlags } from '../../helpers/featureFlags';
+import { vars } from 'styles/theme.css';
 
 type MenuLink = {
   title: string;
@@ -186,7 +187,7 @@ const HeaderDropdownMenu = () => {
           <HoneyButton variant="textSecondary">
             <Space>
               more
-              <DownIcon />
+              <DownIcon fill={vars.colors.text} />
             </Space>
           </HoneyButton>
         </Dropdown>

@@ -7,7 +7,7 @@ export const tabs = style({
 
 export const content = style({
   borderRadius: '0 0 15px 15px',
-  background: vars.colors.white,
+  background: vars.colors.foreground,
   height: '100%',
   overflow: 'hidden'
 });
@@ -18,7 +18,7 @@ export const inactive = style({
 });
 export const active = style({
   boxShadow: `4px 4px 0px 0px ${vars.colors.brownLight}`,
-  border: `2px solid ${vars.colors.black}`,
+  border: `2px solid ${vars.colors.borderPrimary}`,
   zIndex: '10'
 });
 
@@ -103,10 +103,10 @@ export const tab = style({
     transform: 'translateX(-50%)',
     width: 'calc(100% - 36px)',
     height: 'calc(100% + 2px)',
-    background: vars.colors.white,
+    background: vars.colors.foreground,
     zIndex: -1,
     opacity: 0,
-    borderTop: `2px solid ${vars.colors.black}`
+    borderTop: `2px solid ${vars.colors.borderPrimary}`
   }
 });
 

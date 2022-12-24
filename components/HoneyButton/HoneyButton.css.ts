@@ -11,7 +11,7 @@ export const honeyButton = style([
     // display: 'inline-flex',
     border: 'none',
     gap: '10px',
-    transition: 'all .5s',
+    transition: 'all .5s, background 0s, colors 0s !important',
     justifyContent: 'center',
     alignItems: 'center',
     ':after': {
@@ -104,15 +104,6 @@ export const text = style([
       background: 'transparent',
       color: vars.colors.brownDark,
       borderColor: 'transparent'
-    },
-    ':before': {
-      content: '',
-      position: 'absolute',
-      top: '0',
-      right: '0',
-      width: '10px',
-      height: '10px',
-      background: 'red'
     }
   }
 ]);

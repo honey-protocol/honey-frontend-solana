@@ -49,10 +49,10 @@ const rowTdSelector = `.ant-table-tbody > .ant-table-row.${honeyTableRow} > td`;
 // const rowHoverTdSelector = `.ant-table-tbody > .ant-table-row.${honeyTableRow}:hover > td`;
 
 const tdStylesBase = {
-  background: vars.colors.white,
+  background: vars.colors.foreground,
   border: 'none',
-  borderTop: `2px solid ${vars.colors.black}`,
-  borderBottom: `2px solid ${vars.colors.black}`
+  borderTop: `2px solid ${vars.colors.borderPrimary}`,
+  borderBottom: `2px solid ${vars.colors.borderPrimary}`
 };
 
 globalStyle(`${bcs(rowTdSelector)}`, {
@@ -65,12 +65,12 @@ globalStyle(`${bcs(rowTdSelector)}`, {
 // });
 
 const firstCellBorderAndRadius = {
-  borderLeft: `2px solid ${vars.colors.black}`,
+  borderLeft: `2px solid ${vars.colors.borderPrimary}`,
   borderTopLeftRadius: 12,
   borderBottomLeftRadius: 12
 };
 const lastCellBorderAndRadius = {
-  borderRight: `2px solid ${vars.colors.black}`,
+  borderRight: `2px solid ${vars.colors.borderPrimary}`,
   borderTopRightRadius: 12,
   borderBottomRightRadius: 12
 };
@@ -94,7 +94,7 @@ const rowShadowTdHoverSelector = `.ant-table-tbody > .ant-table-row.${honeyTable
 const rowShadowTdSelectedSelector = `.ant-table-tbody > .ant-table-row.${honeyTableRow}.${honeyTableRowShadow}${honeyTableRowSelected} > td`;
 
 globalStyle(rowShadowTdSelector, {
-  boxShadow: `4px 4px 0px 0px ${vars.colors.black}`
+  boxShadow: `4px 4px 0px 0px ${vars.colors.borderPrimary}`
 });
 
 globalStyle(rowShadowTdHoverSelector, {
@@ -110,9 +110,9 @@ export const expandedSectionRow = style({});
 const expandedSectionRowTdSelector = `.ant-table-tbody > .ant-table-expanded-row.${expandedSectionRow} > td`;
 
 globalStyle(`${bcs(expandedSectionRowTdSelector)}`, {
-  background: vars.colors.white,
+  background: vars.colors.foreground,
   border: 'none',
-  borderBottom: `2px solid ${vars.colors.black}`,
+  borderBottom: `2px solid ${vars.colors.borderPrimary}`,
   position: 'relative',
   // additional 1px to make sure it looks good everywhere
   top: -(rowsGapSize + 1),
@@ -125,20 +125,20 @@ globalStyle(`${bcs(expandedSectionRowTdSelector)}`, {
 globalStyle(`${bcs(`${expandedSectionRowTdSelector}:first-child`)}`, {
   ...firstCellBorderAndRadius,
   borderTopLeftRadius: 0,
-  borderColor: vars.colors.black
+  borderColor: vars.colors.borderPrimary
 });
 
 globalStyle(`${bcs(`${expandedSectionRowTdSelector}:last-child`)}`, {
   ...lastCellBorderAndRadius,
   borderTopRightRadius: 0,
-  borderColor: vars.colors.black
+  borderColor: vars.colors.borderPrimary
 });
 
 // Regular row styles if row is expanded
 export const honeyTableExpandedRow = style({});
 const expandedRowTdSelector = `.ant-table-tbody > .ant-table-row.${honeyTableRow}.${honeyTableExpandedRow} > td`;
 globalStyle(bcs(expandedRowTdSelector), {
-  borderColor: `${vars.colors.black} !important`,
+  borderColor: `${vars.colors.borderPrimary} !important`,
   borderBottom: 'none'
 });
 
@@ -157,7 +157,7 @@ const inactiveRowTdSelector = `.ant-table-tbody > .ant-table-row.${honeyTableRow
 const inactiveRowHoverTdSelector = `.ant-table-tbody > .ant-table-row.${honeyTableRow}.${honeyTableInactiveRow}:hover > td`;
 
 globalStyle(bcs(inactiveRowTdSelector), {
-  color: vars.colors.grayTransparent
+  color: vars.colors.textSecondary
 });
 globalStyle(`${bcs(inactiveRowTdSelector)}`, {
   borderColor: vars.colors.grayDark

@@ -13,13 +13,13 @@ export const headerContainer = style([
 
 export const content = style({
   width: '100%',
-  background: vars.colors.white,
+  background: vars.colors.foreground,
   padding: '15px',
   zIndex: '1',
   display: 'flex',
   flexDirection: 'column',
   alignItems: 'flex-start',
-  transition: 'all 0.8s',
+  transition: 'height 0.8s,background 0s, colors 0s !important',
   height: '70px',
   borderRadius: vars.space.medium
 });
@@ -34,7 +34,7 @@ export const main = style({
 
 globalStyle(`${content}.open`, {
   height: `calc(100vh - 18px)`,
-  backgroundColor: vars.colors.white
+  backgroundColor: vars.colors.foreground
 });
 
 export const logo = style({

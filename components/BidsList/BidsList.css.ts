@@ -6,7 +6,7 @@ export const bidsList = style({
   height: '100%',
   display: 'flex',
   flexDirection: 'column',
-  background: vars.colors.white,
+  // background: vars.colors.white,
   padding: 16
 });
 

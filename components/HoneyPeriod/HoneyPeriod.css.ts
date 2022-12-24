@@ -14,13 +14,13 @@ export const value = style([
   typography.numbersLarge,
   {
     marginTop: 4,
-    color: vars.colors.black
+    color: vars.colors.text
   }
 ]);
 
 export const dateLetter = style([
   typography.numbersLarge,
   {
-    color: vars.colors.grayTransparent
+    color: vars.colors.textTertiary
   }
 ]);

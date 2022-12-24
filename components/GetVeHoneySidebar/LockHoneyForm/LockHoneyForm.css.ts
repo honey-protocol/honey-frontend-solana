@@ -6,7 +6,7 @@ export const depositForm = style({
   height: '100%',
   display: 'flex',
   flexDirection: 'column',
-  background: vars.colors.white,
+  background: vars.colors.foreground,
   padding: 16
 });
 

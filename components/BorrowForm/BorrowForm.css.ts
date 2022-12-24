@@ -6,7 +6,7 @@ export const borrowForm = style({
   height: '100%',
   display: 'flex',
   flexDirection: 'column',
-  background: vars.colors.white,
+  background: vars.colors.foreground,
   padding: 16
 });
 
@@ -47,7 +47,7 @@ export const nftName = style([typography.title, {}]);
 export const inputs = style([
   {
     paddingTop: 16,
-    backgroundImage: `linear-gradient(to right, ${vars.colors.black} 50%, transparent 50%)`,
+    backgroundImage: `linear-gradient(to right, ${vars.colors.borderPrimary} 50%, transparent 50%)`,
     backgroundPosition: 'left top, left bottom, left top, right top',
     backgroundRepeat: 'repeat-x, repeat-x, repeat-y, repeat-y',
     backgroundSize: '20px 2px, 20px 2px, 2px 20px, 2px 20px',

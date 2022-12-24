@@ -26,7 +26,7 @@ export const statBlock = style({
   padding: '24px 20px',
   borderRadius: 16,
   position: 'relative',
-  background: vars.colors.white,
+  background: vars.colors.foreground,
   width: '100%',
   display: 'flex',
   flexDirection: 'column',
@@ -83,7 +83,7 @@ export const blockTitle = style({
 export const title = style([
   typography.caption,
   {
-    color: vars.colors.grayTransparent
+    color: vars.colors.textTertiary
   }
 ]);
 
@@ -95,7 +95,7 @@ export const value = style([
   typography.numbersLarge,
   {
     marginTop: 4,
-    color: vars.colors.black
+    color: vars.colors.text
   }
 ]);
 

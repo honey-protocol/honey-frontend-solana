@@ -40,7 +40,7 @@ export const nftDescription = style({});
 export const nftName = style([
   typography.caption,
   {
-    color: vars.colors.grayTransparent,
+    color: vars.colors.textTertiary,
     marginBottom: '2px'
   }
 ]);
@@ -48,14 +48,14 @@ export const nftName = style([
 export const nftLabel = style([
   typography.numbersRegular,
   {
-    color: vars.colors.black
+    color: vars.colors.text
   }
 ]);
 
 export const hint = style([
   typography.caption,
   {
-    color: vars.colors.black
+    color: vars.colors.text
   }
 ]);
 

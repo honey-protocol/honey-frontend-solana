@@ -36,3 +36,11 @@ globalStyle(`${dialectSelector} > .dt-relative`, {
   top: 0,
   left: 0
 });
+
+globalStyle(`${dialectSelector} > .dt-relative button`, {
+  background: vars.colors.foreground
+});
+
+globalStyle(`${dialectSelector} > .dt-relative button svg path`, {
+  fill: vars.colors.text
+});

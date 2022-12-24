@@ -3,7 +3,7 @@ import { vars } from 'styles/theme.css';
 
 export const card = style({
   borderRadius: vars.space.medium,
-  border: `2px solid ${vars.colors.black}`,
+  border: `2px solid ${vars.colors.borderPrimary}`,
   boxShadow: `4px 4px 0px 0px ${vars.colors.brownLight}`,
   marginBottom: '5px',
   overflow: 'hidden',

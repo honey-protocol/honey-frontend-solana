@@ -13,9 +13,8 @@ export const honeySider = style({
   transform: 'translateX(-50%)',
   display: 'none',
   pointerEvents: 'none',
-  background: vars.colors.grayLight,
   padding: '12px 0',
-  boxShadow: `4px 0px 0px 0px ${vars.colors.grayLight}`,
+  boxShadow: `4px 0px 0px 0px ${vars.colors.background}`,
   '@media': {
     [`screen and (min-width: ${breakpoints.tablet}px)`]: {
       maxWidth: 874,

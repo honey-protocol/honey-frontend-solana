@@ -6,7 +6,7 @@ export const createMarketSidebar = style([
   {
     display: 'flex',
     flexDirection: 'column',
-    alignItems: 'stretch',
+    alignItems: 'stretch'
   },
   sidebar
 ]);
@@ -14,7 +14,6 @@ export const createMarketSidebar = style([
 export const content = style({
   borderRadius: vars.space.medium,
   overflow: 'hidden',
-  background: vars.colors.white,
   minHeight: 756,
   display: 'flex',
   justifyContent: 'center',

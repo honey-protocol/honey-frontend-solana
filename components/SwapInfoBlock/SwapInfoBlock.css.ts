@@ -1,6 +1,5 @@
 import { typography, vars } from '../../styles/theme.css';
 import { style } from '@vanilla-extract/css';
-import {PublicKey} from "@solana/web3.js";
 
 export const swapInfoBlock = style({
   display: 'flex',
@@ -35,7 +34,7 @@ export const infoBlockTitle = style([
     display: 'flex',
     justifyContent: 'flex-start',
     alignItems: 'center',
-    color: vars.colors.grayTransparent
+    color: vars.colors.textTertiary
   }
 ]);
 
