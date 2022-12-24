@@ -17,6 +17,7 @@ import { useSolBalance } from 'hooks/useSolBalance';
 import { MAX_LTV } from 'constants/loan';
 import { COLLATERAL_FACTOR } from 'helpers/marketHelpers';
 import { renderMarketImageByID } from 'helpers/marketHelpers';
+import QuestionIcon from 'icons/QuestionIcon';
 
 const {
   format: f,
@@ -166,7 +167,10 @@ const RepayForm = (props: RepayProps) => {
               valueSize="big"
               title={
                 <span className={hAlign}>
-                  Estimated value <div className={questionIcon} />
+                  Estimated value{' '}
+                  <div className={questionIcon}>
+                    <QuestionIcon />
+                  </div>
                 </span>
               }
               toolTipLabel={
@@ -189,7 +193,10 @@ const RepayForm = (props: RepayProps) => {
               value={fs(Number(frd(userAllowance)))}
               title={
                 <span className={hAlign}>
-                  Allowance <div className={questionIcon} />
+                  Allowance{' '}
+                  <div className={questionIcon}>
+                    <QuestionIcon />
+                  </div>
                 </span>
               }
               toolTipLabel={`Allowance determines how much debt is available to a borrower. This market supports no more than ${fp(
@@ -219,7 +226,9 @@ const RepayForm = (props: RepayProps) => {
               title={
                 <span className={hAlign}>
                   Loan-to-Value %
-                  <div className={questionIcon} />
+                  <div className={questionIcon}>
+                    <QuestionIcon />
+                  </div>
                 </span>
               }
             />
@@ -238,7 +247,10 @@ const RepayForm = (props: RepayProps) => {
             <InfoBlock
               title={
                 <span className={hAlign}>
-                  New LTV %<div className={questionIcon} />
+                  New LTV %
+                  <div className={questionIcon}>
+                    <QuestionIcon />
+                  </div>
                 </span>
               }
               value={fp((newDebt / (nftPrice || 0)) * 100)}
@@ -276,7 +288,9 @@ const RepayForm = (props: RepayProps) => {
               title={
                 <span className={hAlign}>
                   Debt
-                  <div className={questionIcon} />
+                  <div className={questionIcon}>
+                    <QuestionIcon />
+                  </div>
                 </span>
               }
               value={fs(userDebt)}
@@ -300,7 +314,9 @@ const RepayForm = (props: RepayProps) => {
               title={
                 <span className={hAlign}>
                   New debt
-                  <div className={questionIcon} />
+                  <div className={questionIcon}>
+                    <QuestionIcon />
+                  </div>
                 </span>
               }
               value={fs(newDebt < 0 ? 0 : newDebt)}
@@ -332,7 +348,10 @@ const RepayForm = (props: RepayProps) => {
               isDisabled={userDebt == 0 ? true : false}
               title={
                 <span className={hAlign}>
-                  Liquidation price <div className={questionIcon} />
+                  Liquidation price{' '}
+                  <div className={questionIcon}>
+                    <QuestionIcon />
+                  </div>
                 </span>
               }
               toolTipLabel={
@@ -354,7 +373,10 @@ const RepayForm = (props: RepayProps) => {
               isDisabled={userDebt == 0 ? true : false}
               title={
                 <span className={hAlign}>
-                  New Liquidation price <div className={questionIcon} />
+                  New Liquidation price{' '}
+                  <div className={questionIcon}>
+                    <QuestionIcon />
+                  </div>
                 </span>
               }
               toolTipLabel={

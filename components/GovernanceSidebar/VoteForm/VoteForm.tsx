@@ -28,6 +28,7 @@ import ProposalHistory from './Proposals/ProposalHistory/ProposalHistory';
 import cs from 'classnames';
 import { questionIcon } from 'styles/icons.css';
 import SectionTitle from '../../SectionTitle/SectionTitle';
+import QuestionIcon from 'icons/QuestionIcon';
 
 const { formatShortName: fsn } = formatNumber;
 
@@ -316,7 +317,10 @@ const VoteForm: FC<VoteFormProps> = (props: VoteFormProps) => {
               valueSize="big"
               footer={
                 <span>
-                  Min Quorum <span className={questionIcon} />
+                  Min Quorum{' '}
+                  <span className={questionIcon}>
+                    <QuestionIcon />
+                  </span>
                 </span>
               }
               toolTipLabel="Tooltip label for Min Quorum"
@@ -328,7 +332,10 @@ const VoteForm: FC<VoteFormProps> = (props: VoteFormProps) => {
               valueSize="big"
               footer={
                 <span>
-                  Min Diff <span className={questionIcon} />
+                  Min Diff{' '}
+                  <span className={questionIcon}>
+                    <QuestionIcon />
+                  </span>
                 </span>
               }
               toolTipLabel="Label for Min Diff"

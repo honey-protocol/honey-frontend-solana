@@ -23,6 +23,7 @@ import {
   BORROW_FEE,
   COLLATERAL_FACTOR
 } from 'helpers/marketHelpers';
+import QuestionIcon from 'icons/QuestionIcon';
 const { formatPercent: fp, formatSol: fs, formatRoundDown: frd } = formatNumber;
 
 interface NFT {
@@ -197,7 +198,10 @@ const BorrowForm = (props: BorrowProps) => {
               valueSize="big"
               title={
                 <span className={hAlign}>
-                  Estimated value <div className={questionIcon} />
+                  Estimated value{' '}
+                  <div className={questionIcon}>
+                    <QuestionIcon />
+                  </div>
                 </span>
               }
               toolTipLabel={
@@ -220,7 +224,10 @@ const BorrowForm = (props: BorrowProps) => {
               value={fs(Number(frd(userAllowance)))}
               title={
                 <span className={hAlign}>
-                  Allowance <div className={questionIcon} />
+                  Allowance{' '}
+                  <div className={questionIcon}>
+                    <QuestionIcon />
+                  </div>
                 </span>
               }
               toolTipLabel={`Allowance determines how much debt is available to a borrower. This market supports no more than ${fp(
@@ -249,7 +256,10 @@ const BorrowForm = (props: BorrowProps) => {
               }
               title={
                 <span className={hAlign}>
-                  Loan-to-Value %<div className={questionIcon} />
+                  Loan-to-Value %
+                  <div className={questionIcon}>
+                    <QuestionIcon />
+                  </div>
                 </span>
               }
             />
@@ -268,7 +278,9 @@ const BorrowForm = (props: BorrowProps) => {
               title={
                 <span className={hAlign}>
                   New LTV %
-                  <div className={questionIcon} />
+                  <div className={questionIcon}>
+                    <QuestionIcon />
+                  </div>
                 </span>
               }
               toolTipLabel={
@@ -304,7 +316,10 @@ const BorrowForm = (props: BorrowProps) => {
             <InfoBlock
               title={
                 <span className={hAlign}>
-                  Debt <div className={questionIcon} />
+                  Debt{' '}
+                  <div className={questionIcon}>
+                    <QuestionIcon />
+                  </div>
                 </span>
               }
               toolTipLabel={
@@ -327,7 +342,10 @@ const BorrowForm = (props: BorrowProps) => {
             <InfoBlock
               title={
                 <span className={hAlign}>
-                  New debt + fees <div className={questionIcon} />
+                  New debt + fees{' '}
+                  <div className={questionIcon}>
+                    <QuestionIcon />
+                  </div>
                 </span>
               }
               toolTipLabel={
@@ -359,7 +377,10 @@ const BorrowForm = (props: BorrowProps) => {
               isDisabled={userDebt == 0 ? true : false}
               title={
                 <span className={hAlign}>
-                  Liquidation price <div className={questionIcon} />
+                  Liquidation price{' '}
+                  <div className={questionIcon}>
+                    <QuestionIcon />
+                  </div>
                 </span>
               }
               toolTipLabel={
@@ -381,7 +402,10 @@ const BorrowForm = (props: BorrowProps) => {
               isDisabled={userDebt == 0 ? true : false}
               title={
                 <span className={hAlign}>
-                  New Liquidation price <div className={questionIcon} />
+                  New Liquidation price{' '}
+                  <div className={questionIcon}>
+                    <QuestionIcon />
+                  </div>
                 </span>
               }
               toolTipLabel={
@@ -410,7 +434,10 @@ const BorrowForm = (props: BorrowProps) => {
               <InfoBlock
                 title={
                   <span className={hAlign}>
-                    Interest Rate <div className={questionIcon} />
+                    Interest Rate{' '}
+                    <div className={questionIcon}>
+                      <QuestionIcon />
+                    </div>
                   </span>
                 }
                 toolTipLabel={
@@ -433,7 +460,10 @@ const BorrowForm = (props: BorrowProps) => {
                 isDisabled={userDebt == 0 ? true : false}
                 title={
                   <span className={hAlign}>
-                    Borrow Fee <div className={questionIcon} />
+                    Borrow Fee{' '}
+                    <div className={questionIcon}>
+                      <QuestionIcon />
+                    </div>
                   </span>
                 }
                 value={fs(valueSOL * borrowFee)}

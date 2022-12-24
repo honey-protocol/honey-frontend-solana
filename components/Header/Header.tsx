@@ -7,6 +7,7 @@ import HoneyCardYellowShadow from '../HoneyCardYellowShadow/HoneyCardYellowShado
 import cs from 'classnames';
 import MobileMenu from 'components/MobileMenu/MobileMenu';
 import Link from 'next/link';
+import Logo from 'icons/Logo';
 
 const Header: FC = () => {
   const [showMobileMenu, setShowMobileMenu] = useState(false);
@@ -26,7 +27,7 @@ const Header: FC = () => {
               />
 
               <Link href="/" passHref>
-                <div className={styles.logo} />
+                <Logo />
               </Link>
             </Space>
             <HeaderLinks />

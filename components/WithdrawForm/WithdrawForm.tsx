@@ -12,6 +12,7 @@ import { questionIcon } from 'styles/icons.css';
 import { hAlign } from 'styles/common.css';
 import useToast from 'hooks/useToast';
 import { renderMarketImageByID, renderMarketName } from 'helpers/marketHelpers';
+import QuestionIcon from 'icons/QuestionIcon';
 
 const { format: f, formatPercent: fp, formatSol: fs, parse: p } = formatNumber;
 
@@ -128,7 +129,10 @@ const WithdrawForm = (props: WithdrawFormProps) => {
               toolTipLabel="APY is measured by compounding the weekly interest rate"
               footer={
                 <span className={hAlign}>
-                  Estimated APY <div className={questionIcon} />
+                  Estimated APY{' '}
+                  <div className={questionIcon}>
+                    <QuestionIcon />
+                  </div>
                 </span>
               }
             />
@@ -140,7 +144,10 @@ const WithdrawForm = (props: WithdrawFormProps) => {
               toolTipLabel=" Amount of supplied liquidity currently being borrowed"
               footer={
                 <span className={hAlign}>
-                  Utilization rate <div className={questionIcon} />
+                  Utilization rate{' '}
+                  <div className={questionIcon}>
+                    <QuestionIcon />
+                  </div>
                 </span>
               }
             />
