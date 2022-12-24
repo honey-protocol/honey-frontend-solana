@@ -3,7 +3,7 @@ import { typography, vars } from '../styles/theme.css';
 import { logoIcon } from '../styles/icons.css';
 
 export const secPopup = style({
-  background: 'white',
+  background: vars.colors.foreground,
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
@@ -22,7 +22,7 @@ export const secPopupContainer = style({
 export const secPopupLogo = style([
   typography.title,
   {
-    color: vars.colors.black,
+    color: vars.colors.text,
     marginBottom: 24,
     display: 'flex',
     alignItems: 'center',
@@ -41,7 +41,7 @@ export const secPopupLogoIcon = style([
 export const secPopupTitle = style([
   typography.title,
   {
-    color: vars.colors.black,
+    color: vars.colors.text,
     marginBottom: 8
   }
 ]);
@@ -49,7 +49,7 @@ export const secPopupTitle = style([
 export const secPopupText = style([
   typography.description,
   {
-    color: vars.colors.grayTransparent,
+    color: vars.colors.textTertiary,
     marginBottom: 8
   }
 ]);
