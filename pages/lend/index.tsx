@@ -29,7 +29,8 @@ import {
   useMarket,
   useHoney,
   fetchAllMarkets,
-  MarketBundle
+  MarketBundle,
+  waitForConfirmation
 } from '@honey-finance/sdk';
 import { BnToDecimal, ConfigureSDK } from '../../helpers/loanHelpers/index';
 import { LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js';
@@ -75,6 +76,7 @@ const Lend: NextPage = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [isMyCollectionsFilterEnabled, setIsMyCollectionsFilterEnabled] =
     useState(false);
+  const [honeyReservesChange, setHoneyReservesChange] = useState(0);
   // Sets market ID which is used for fetching market specific data
   // each market currently is a different call and re-renders the page
   const [currentMarketId, setCurrentMarketId] = useState(
@@ -244,12 +246,20 @@ const Lend: NextPage = () => {
       );
 
       if (tx[0] == 'SUCCESS') {
+        const confirmation = tx[1];
+        const confirmationHash = confirmation[0];
+
+        await waitForConfirmation(
+          sdkConfig.saberHqConnection,
+          confirmationHash
+        );
+
         await fetchMarket();
-        await honeyUser.refresh().then((val: any) => {
-          reserveHoneyState == 0
-            ? setReserveHoneyState(1)
-            : setReserveHoneyState(0);
-        });
+        await honeyUser.refresh();
+
+        honeyReservesChange === 0
+          ? setHoneyReservesChange(1)
+          : setHoneyReservesChange(0);
 
         if (walletPK) await fetchWalletBalance(walletPK);
 
@@ -288,18 +298,22 @@ const Lend: NextPage = () => {
       );
 
       if (tx[0] == 'SUCCESS') {
+        const confirmation = tx[1];
+        const confirmationHash = confirmation[0];
+
+        await waitForConfirmation(
+          sdkConfig.saberHqConnection,
+          confirmationHash
+        );
+
         await fetchMarket();
-        await honeyUser.refresh().then((val: any) => {
-          reserveHoneyState == 0
-            ? setReserveHoneyState(1)
-            : setReserveHoneyState(0);
-        });
+        await honeyUser.refresh();
 
         if (walletPK) await fetchWalletBalance(walletPK);
 
-        // userDepositWithdraw == 0
-        //   ? setUserDepositWithdraw(1)
-        //   : setUserDepositWithdraw(0);
+        honeyReservesChange === 0
+          ? setHoneyReservesChange(1)
+          : setHoneyReservesChange(0);
 
         toast.success(
           'Withdraw success',
@@ -424,7 +438,12 @@ const Lend: NextPage = () => {
         setTableDataFiltered(result);
       });
     }
-  }, [sdkConfig.saberHqConnection, sdkConfig.sdkWallet, marketData]);
+  }, [
+    sdkConfig.saberHqConnection,
+    sdkConfig.sdkWallet,
+    marketData,
+    honeyReservesChange
+  ]);
 
   const onSearch = (searchTerm: string): LendTableRow[] => {
     if (!searchTerm) {

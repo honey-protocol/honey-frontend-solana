@@ -25,6 +25,8 @@ export type MarketTableRow = {
   untilLiquidation?: number;
   verifiedCreator: string;
   nftPrice?: number;
+  userDebt?: number;
+  ltv?: number;
   constants: {
     marketId: string;
     verifiedCreator: string;
@@ -42,6 +44,10 @@ export type MarketTablePosition = {
   symbol?: string;
   updateAuthority?: PublicKey;
   uri?: string;
+  nftPrice?: number;
+  userDebt?: number;
+  ltv?: number;
+  allowance?: number;
 };
 
 export type UserNFTs = {

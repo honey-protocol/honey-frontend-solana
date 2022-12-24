@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Image from 'next/image';
 import { InfoBlock } from '../InfoBlock/InfoBlock';
 import { InputsBlock } from '../InputsBlock/InputsBlock';
@@ -39,7 +39,8 @@ const RepayForm = (props: RepayProps) => {
     fetchedSolPrice,
     currentMarketId,
     hideMobileSidebar,
-    changeTab
+    changeTab,
+    hasNFTDeposited
   } = props;
   // state
   const [valueUSD, setValueUSD] = useState<number>();

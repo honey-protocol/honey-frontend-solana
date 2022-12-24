@@ -8,6 +8,7 @@ export type RepayProps = {
   availableNFTs: any;
   fetchedSolPrice: number; 
   currentMarketId: string;
+  hasNFTDeposited: boolean;
   executeWithdrawNFT: (mint: string, toast: any) => void;
   executeRepay: (val: number, toast: any) => void;
   hideMobileSidebar?: () => void;

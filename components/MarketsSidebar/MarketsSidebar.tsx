@@ -28,6 +28,7 @@ const MarketsSidebar = (props: MarketsSidebarProps) => {
     fetchedSolPrice,
     calculatedInterestRate,
     currentMarketId,
+    hasNftDeposited,
     hideMobileSidebar,
     executeDepositNFT,
     executeWithdrawNFT,
@@ -43,8 +44,12 @@ const MarketsSidebar = (props: MarketsSidebarProps) => {
   };
   // sets active tab based on positions
   useEffect(() => {
-    if (openPositions.length == 0) handleTabChange('borrow');
-  }, [openPositions, availableNFTs]);
+    if (hasNftDeposited === true) {
+      handleTabChange('borrow');
+    } else {
+      handleTabChange('repay');
+    }
+  }, [hasNftDeposited]);
   // passed as props for child components regarding tab click
   const items: [HoneyTabItem, HoneyTabItem] = [
     { label: 'Borrow', key: 'borrow' },
@@ -96,7 +101,7 @@ const MarketsSidebar = (props: MarketsSidebarProps) => {
             description=""
           />
         ) : (!availableNFTsInSelectedMarket ||
-          availableNFTsInSelectedMarket.length === 0) &&
+            availableNFTsInSelectedMarket.length === 0) &&
           openPositions.length === 0 ? (
           <EmptyStateDetails
             icon={<div className={styles.boltIcon} />}
@@ -132,6 +137,7 @@ const MarketsSidebar = (props: MarketsSidebarProps) => {
                 fetchedSolPrice={fetchedSolPrice}
                 calculatedInterestRate={calculatedInterestRate}
                 currentMarketId={currentMarketId}
+                hasNFTDeposited={hasNftDeposited}
               />
             )}
             {activeTab === 'repay' && Boolean(openPositions.length) && (
@@ -148,6 +154,7 @@ const MarketsSidebar = (props: MarketsSidebarProps) => {
                 changeTab={handleTabChange}
                 fetchedSolPrice={fetchedSolPrice}
                 currentMarketId={currentMarketId}
+                hasNFTDeposited={hasNftDeposited}
               />
             )}
           </>

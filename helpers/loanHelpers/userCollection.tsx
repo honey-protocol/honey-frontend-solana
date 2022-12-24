@@ -146,11 +146,12 @@ export async function fetchAllowanceLtvAndDebt(
   marketReserveInfo: any
 ) {
   try {
-    if (!collateralNFTPositions.length) return;
+    // if (!collateralNFTPositions.length) return;
 
     let totalDebt = 0;
     let userLoans = 0;
-    let nftCollateralValue = nftPrice * collateralNFTPositions?.length;
+    // let nftCollateralValue = nftPrice * collateralNFTPositions?.length;
+    let nftCollateralValue = nftPrice * collateralNFTPositions;
 
     if (honeyUser?.loans().length > 0) {
       if (honeyUser?.loans().length > 0 && marketReserveInfo) {
@@ -202,10 +203,6 @@ export async function calcNFT(
 ) {
   try {
     if (marketReserveInfo && parsedReserves && honeyMarket) {
-      console.log('@@__ market res', marketReserveInfo);
-      console.log('@@__ parsed res', parsedReserves);
-      console.log('@@__ honey market', honeyMarket);
-
       let solPrice = await getOraclePrice(
         'mainnet-beta',
         connection,
@@ -366,7 +363,6 @@ const calculateRisk = async (
   collection: string
 ) => {
   if (!obligations) return 0;
-  console.log('@@-- collection', collection);
   let sumOfDebt = await obligations.reduce((acc: number, obligation: any) => {
     return acc + obligation.debt;
   }, 0);
@@ -435,10 +431,26 @@ async function handleFormatMarket(
         .toNumber() / LAMPORTS_PER_SOL
     );
     const sumOfTotalValue = totalMarketDeposits + totalMarketDebt;
+    const nftPrice = await calcNFT(
+      honeyMarket.reserves,
+      parsedReserve,
+      honeyMarket,
+      connection
+    );
+    const calculateAllowanceAndLTV = await fetchAllowanceLtvAndDebt(
+      nftPrice,
+      1,
+      honeyUser,
+      honeyMarket.reserves
+    );
 
     // if request comes from liquidation page we need the collection object to be different
     if (liquidations) {
       collection.name;
+      collection.allowance = calculateAllowanceAndLTV?.sumOfAllowance;
+      collection.ltv = calculateAllowanceAndLTV?.sumOfLtv;
+      collection.userDebt = calculateAllowanceAndLTV?.sumOfTotalDebt;
+
       collection.available = totalMarketDeposits;
       collection.value = sumOfTotalValue;
       collection.connection = connection;
@@ -446,12 +458,7 @@ async function handleFormatMarket(
         f(totalMarketDebt / (totalMarketDeposits + totalMarketDebt))
       );
       collection.user = honeyUser;
-      collection.nftPrice = await calcNFT(
-        honeyMarket.reserves,
-        parsedReserve,
-        honeyMarket,
-        connection
-      );
+      collection.nftPrice = nftPrice;
 
       collection.risk = obligations
         ? await calculateRisk(
@@ -481,6 +488,10 @@ async function handleFormatMarket(
 
       // request comes from borrow or lend - same base collection object
     } else {
+      collection.allowance = calculateAllowanceAndLTV?.sumOfAllowance;
+      collection.ltv = calculateAllowanceAndLTV?.sumOfLtv;
+      collection.userDebt = calculateAllowanceAndLTV?.sumOfTotalDebt;
+
       collection.available = totalMarketDeposits;
       collection.value = sumOfTotalValue;
       collection.connection = connection;
