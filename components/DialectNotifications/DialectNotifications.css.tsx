@@ -40,7 +40,7 @@ globalStyle(`${popoverSelector}`, {
 globalStyle(`${popoverSelector} .dt-flex-row`, {
   padding: '14px 14px 16px 16px',
   border: 'none',
-  color: `${vars.colors.text} !important`,
+  color: vars.colors.text,
   maxHeight: 'initial',
   minHeight: 0
 });
@@ -49,7 +49,8 @@ globalStyle(`${popoverSelector} *`, {
   fontFamily: 'Scandia !important',
   fontWeight: '500',
   fontSize: '14px',
-  lineHeight: '20px'
+  lineHeight: '20px',
+  color: vars.colors.text
 });
 
 //date text style
@@ -82,7 +83,7 @@ globalStyle(`${popoverSelector} button`, {
   justifyContent: 'center',
   alignItems: 'center',
   background: vars.colors.brownLight,
-  color: vars.colors.black
+  color: `${vars.colors.black} !important`
 });
 
 globalStyle(`${popoverSelector} button:not(:has(svg))`, {
@@ -92,7 +93,7 @@ globalStyle(`${popoverSelector} button:not(:has(svg))`, {
 globalStyle(`${popoverSelector} button svg`, {
   width: 40,
   height: 'auto',
-  background: vars.colors.white,
+  background: vars.colors.foreground,
   borderRadius: 8,
   padding: 7
 });
@@ -110,7 +111,7 @@ globalStyle(`${popoverSelector} .dialect > .dt-flex > .dt-h-full`, {});
 
 globalStyle(`${popoverSelector} .dt-bg-white`, {
   boxShadow: `4px 4px 0px 0px ${vars.colors.brownLight}`,
-  border: `2px solid ${vars.colors.black}`,
+  border: `2px solid ${vars.colors.borderPrimary}`,
   background: vars.colors.foreground
 });
 
