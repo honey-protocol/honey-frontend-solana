@@ -141,7 +141,7 @@ function MyApp({ Component, pageProps }: AppProps) {
   const [showPopup, setShowPopup] = useState(true);
   const [shouldRender, setShouldRender] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
-  const [theme, setTheme] = useState<HoneyTheme>('dark');
+  const [theme, setTheme] = useState<HoneyTheme>('light');
 
   const onWindowResize = () => {
     if (window.innerWidth < 768) {
