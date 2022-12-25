@@ -90,16 +90,16 @@ globalStyle(`${bcs(`${rowTdSelector}:last-child`)}`, lastCellBorderAndRadius);
 export const honeyTableRowShadow = style({});
 export const honeyTableRowSelected = style({});
 const rowShadowTdSelector = `.ant-table-tbody > .ant-table-row.${honeyTableRow}.${honeyTableRowShadow} > td`;
-const rowShadowTdHoverSelector = `.ant-table-tbody > .ant-table-row.${honeyTableRow}.${honeyTableRowShadow}:hover > td`;
+// const rowShadowTdHoverSelector = `.ant-table-tbody > .ant-table-row.${honeyTableRow}.${honeyTableRowShadow}:hover > td`;
 const rowShadowTdSelectedSelector = `.ant-table-tbody > .ant-table-row.${honeyTableRow}.${honeyTableRowShadow}${honeyTableRowSelected} > td`;
 
 globalStyle(rowShadowTdSelector, {
   boxShadow: `4px 4px 0px 0px ${vars.colors.borderPrimary}`
 });
 
-globalStyle(rowShadowTdHoverSelector, {
-  boxShadow: `4px 4px 0px 0px ${vars.colors.brownLight}`
-});
+// globalStyle(rowShadowTdHoverSelector, {
+//   boxShadow: `4px 4px 0px 0px ${vars.colors.brownLight}`
+// });
 
 globalStyle(rowShadowTdSelectedSelector, {
   boxShadow: `4px 4px 0px 0px ${vars.colors.brownLight}`
@@ -154,7 +154,7 @@ globalStyle(bcs(`${expandedRowTdSelector}:last-child`), {
 // Styles if row is inactive
 export const honeyTableInactiveRow = style({});
 const inactiveRowTdSelector = `.ant-table-tbody > .ant-table-row.${honeyTableRow}.${honeyTableInactiveRow} > td`;
-const inactiveRowHoverTdSelector = `.ant-table-tbody > .ant-table-row.${honeyTableRow}.${honeyTableInactiveRow}:hover > td`;
+// const inactiveRowHoverTdSelector = `.ant-table-tbody > .ant-table-row.${honeyTableRow}.${honeyTableInactiveRow}:hover > td`;
 
 globalStyle(bcs(inactiveRowTdSelector), {
   color: vars.colors.textSecondary
@@ -175,14 +175,14 @@ globalStyle(`${bcs(`${inactiveRowTdSelector}:last-child`)}`, {
   borderColor: vars.colors.grayDark
 });
 
-globalStyle(`${bcs(inactiveRowHoverTdSelector)}`, {
-  borderColor: vars.colors.brownLight
-});
-globalStyle(`${bcs(`${inactiveRowHoverTdSelector}:first-child`)}`, {
-  ...firstCellBorderAndRadius,
-  borderColor: vars.colors.brownLight
-});
-globalStyle(`${bcs(`${inactiveRowHoverTdSelector}:last-child`)}`, {
-  ...lastCellBorderAndRadius,
-  borderColor: vars.colors.brownLight
-});
+// globalStyle(`${bcs(inactiveRowHoverTdSelector)}`, {
+//   borderColor: vars.colors.brownLight
+// });
+// globalStyle(`${bcs(`${inactiveRowHoverTdSelector}:first-child`)}`, {
+//   ...firstCellBorderAndRadius,
+//   borderColor: vars.colors.brownLight
+// });
+// globalStyle(`${bcs(`${inactiveRowHoverTdSelector}:last-child`)}`, {
+//   ...lastCellBorderAndRadius,
+//   borderColor: vars.colors.brownLight
+// });
