@@ -22,7 +22,7 @@ You can either clone this repo locally on your machine or contribute via GitPod:
   />
 </a>
 
-[![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)](https://gitpod.io/#https://github.com/honey-protocol/honey-frontend-solana>)
+[![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)](https://gitpod.io/#https://github.com/honey-protocol/honey-frontend-solana)
 
 In order to run this project you need to create a 
 
