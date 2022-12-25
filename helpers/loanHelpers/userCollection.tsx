@@ -71,14 +71,13 @@ export async function calculateUserDeposits(
     return;
   }
 
+  // await marketReserveInfo
+
   let depositNoteExchangeRate = BnToDecimal(
     marketReserveInfo[0].depositNoteExchangeRate,
     15,
     5
   );
-  let loanNoteExchangeRate = 0;
-  let nftPrice = 2;
-  let cRatio = 1;
 
   let depositValue = (await honeyUser.deposits().length) > 0;
 
@@ -86,13 +85,12 @@ export async function calculateUserDeposits(
     return 0;
   } else {
     let totalDeposits =
-      (honeyUser
+      ((await honeyUser
         .deposits()[0]
         .amount.div(new BN(10 ** 5))
-        .toNumber() *
+        .toNumber()) *
         depositNoteExchangeRate) /
       10 ** 4;
-
     return totalDeposits;
   }
 }
@@ -491,6 +489,10 @@ async function handleFormatMarket(
       collection.allowance = calculateAllowanceAndLTV?.sumOfAllowance;
       collection.ltv = calculateAllowanceAndLTV?.sumOfLtv;
       collection.userDebt = calculateAllowanceAndLTV?.sumOfTotalDebt;
+      // collection.userTotalDeposits = await calculateUserDeposits(
+      //   honeyMarket.reserves,
+      //   honeyUser
+      // );
 
       collection.available = totalMarketDeposits;
       collection.value = sumOfTotalValue;

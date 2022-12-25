@@ -95,10 +95,8 @@ const Lend: NextPage = () => {
    */
   async function handleMarketId(record: any) {
     const marketData = renderMarket(record.id);
-    if (marketData[0].id) {
-      setCurrentMarketId(marketData[0].id);
-      setCurrentMarketName(marketData[0].name);
-    }
+    setCurrentMarketId(marketData[0].id);
+    setCurrentMarketName(marketData[0].name);
   }
 
   /**
@@ -139,6 +137,7 @@ const Lend: NextPage = () => {
       false
     );
     setMarketData(data as unknown as MarketBundle[]);
+    console.log('@@-- data', data);
   }
 
   useEffect(() => {
@@ -202,25 +201,6 @@ const Lend: NextPage = () => {
   }, [parsedReserves, sdkConfig.saberHqConnection]);
   //  ************* END FETCH CURRENT SOL PRICE *************
 
-  //  ************* START CALCULATE NFT PRICE  *************
-  // calculates nft price
-  // async function calculateNFTPrice() {
-  //   if (marketReserveInfo && parsedReserves && honeyMarket) {
-  //     let nftPrice = await calcNFT(
-  //       marketReserveInfo,
-  //       parsedReserves[0],
-  //       honeyMarket,
-  //       sdkConfig.saberHqConnection
-  //     );
-  //     setNftPrice(Number(nftPrice));
-  //   }
-  // }
-
-  // useEffect(() => {
-  //   calculateNFTPrice();
-  // }, [marketReserveInfo, parsedReserves, honeyMarket]);
-  //  ************* END CALCULATE NFT PRICE  *************
-
   /**
    * @description deposits 1 sol
    * @params optional value from user input; amount of SOL
@@ -256,10 +236,6 @@ const Lend: NextPage = () => {
 
         await fetchMarket();
         await honeyUser.refresh();
-
-        honeyReservesChange === 0
-          ? setHoneyReservesChange(1)
-          : setHoneyReservesChange(0);
 
         if (walletPK) await fetchWalletBalance(walletPK);
 
@@ -311,10 +287,6 @@ const Lend: NextPage = () => {
 
         if (walletPK) await fetchWalletBalance(walletPK);
 
-        honeyReservesChange === 0
-          ? setHoneyReservesChange(1)
-          : setHoneyReservesChange(0);
-
         toast.success(
           'Withdraw success',
           `https://solscan.io/tx/${tx[1][0]}?cluster=${network}`
@@ -359,6 +331,7 @@ const Lend: NextPage = () => {
    */
   useEffect(() => {
     if (sdkConfig.saberHqConnection) {
+      console.log('running');
       function getData() {
         return Promise.all(
           marketCollections.map(async collection => {
@@ -396,13 +369,15 @@ const Lend: NextPage = () => {
                 )) || 0) * collection.utilizationRate;
 
               collection.stats = getPositionData();
-
               if (currentMarketId == collection.id) {
                 setActiveMarketSupplied(collection.value);
                 setActiveMarketAvailable(collection.available);
-              }
-              if (currentMarketId === collection.id)
                 setNftPrice(RoundHalfDown(Number(collection.nftPrice)));
+                // setUserTotalDeposits(
+                //   RoundHalfDown(Number(collection.userTotalDeposits))
+                // );
+              }
+
               return collection;
             } else {
               await populateMarketData(
@@ -442,7 +417,7 @@ const Lend: NextPage = () => {
     sdkConfig.saberHqConnection,
     sdkConfig.sdkWallet,
     marketData,
-    honeyReservesChange
+    userTotalDeposits
   ]);
 
   const onSearch = (searchTerm: string): LendTableRow[] => {

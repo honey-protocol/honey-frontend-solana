@@ -78,10 +78,6 @@ const WithdrawForm = (props: WithdrawFormProps) => {
     handleSliderChange(0);
   };
 
-  useEffect(() => {
-    console.log('running user total deposits');
-  }, [userTotalDeposits]);
-
   return (
     <SidebarScroll
       footer={

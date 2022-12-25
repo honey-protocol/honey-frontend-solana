@@ -27,6 +27,7 @@ export type MarketTableRow = {
   nftPrice?: number;
   userDebt?: number;
   ltv?: number;
+  userTotalDeposits?: number;
   constants: {
     marketId: string;
     verifiedCreator: string;
