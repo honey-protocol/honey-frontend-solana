@@ -9,7 +9,6 @@ export type BorrowProps = {
   fetchedSolPrice: number;
   calculatedInterestRate: number;
   currentMarketId: string;
-  hasNFTDeposited: boolean;
   executeDepositNFT: (mint: string, toast: any, name: string, creator: string) => void;
   executeBorrow: (val: number, toast: any) => void;
   hideMobileSidebar?: () => void;

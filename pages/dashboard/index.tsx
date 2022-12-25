@@ -706,7 +706,6 @@ const Dashboard: NextPage = () => {
           calculatedInterestRate={calculatedInterestRate}
           //TODO: fix market id
           currentMarketId={''}
-          hasNftDeposited={false}
         />
       ) : (
         <LendSidebar

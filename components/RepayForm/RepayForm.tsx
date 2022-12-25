@@ -39,8 +39,7 @@ const RepayForm = (props: RepayProps) => {
     fetchedSolPrice,
     currentMarketId,
     hideMobileSidebar,
-    changeTab,
-    hasNFTDeposited
+    changeTab
   } = props;
   // state
   const [valueUSD, setValueUSD] = useState<number>();

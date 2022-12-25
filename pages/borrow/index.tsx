@@ -113,10 +113,7 @@ const Markets: NextPage = () => {
    * @returns sets the market ID which re-renders page state and fetches market specific data
    */
   async function handleMarketId(record: any) {
-    const marketData = renderMarket(record.id);
-    if (marketData[0].id) {
-      setCurrentMarketId(marketData[0].id);
-    }
+    setCurrentMarketId(record.id);
   }
   /**
    * @description fetches market reserve info | parsed reserves | fetch market (func) from SDK
@@ -178,7 +175,6 @@ const Markets: NextPage = () => {
     useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [isMobileSidebarVisible, setShowMobileSidebar] = useState(false);
-  const [hasNFTDeposited, setHasNFTDeposited] = useState(false);
 
   /**
    * @description fetches all nfts in users wallet
@@ -279,7 +275,7 @@ const Markets: NextPage = () => {
     if (loading === false) {
       if (collateralNFTPositions) {
         setUserOpenPositions(collateralNFTPositions);
-        setHasNFTDeposited(true);
+        // setHasNFTDeposited(true);
       } else if (!collateralNFTPositions) {
         setUserOpenPositions([]);
       }
@@ -854,8 +850,6 @@ const Markets: NextPage = () => {
             await refreshPositions();
             refetchNfts({});
 
-            setHasNFTDeposited(true);
-
             toast.success(
               'Deposit success',
               `https://solscan.io/tx/${tx[1][0]}?cluster=${network}`
@@ -902,8 +896,6 @@ const Markets: NextPage = () => {
 
         await refreshPositions();
         refetchNfts({});
-
-        setHasNFTDeposited(false);
 
         toast.success(
           'Withdraw success',
@@ -1026,7 +1018,6 @@ const Markets: NextPage = () => {
               // TODO: call helper function include all markets
               calculatedInterestRate={activeInterestRate}
               currentMarketId={currentMarketId}
-              hasNftDeposited={hasNFTDeposited}
             />
           </HoneySider>
         );

@@ -12,6 +12,7 @@ import { mobileReturnButton } from 'styles/common.css';
 import { renderNftList } from 'helpers/marketHelpers';
 import useFetchNFTByUser from 'hooks/useNFTV2';
 import { spinner } from 'styles/common.css';
+import { active } from 'components/HoneyTabs/HoneyTabs.css';
 type Tab = 'borrow' | 'repay';
 
 const MarketsSidebar = (props: MarketsSidebarProps) => {
@@ -28,7 +29,6 @@ const MarketsSidebar = (props: MarketsSidebarProps) => {
     fetchedSolPrice,
     calculatedInterestRate,
     currentMarketId,
-    hasNftDeposited,
     hideMobileSidebar,
     executeDepositNFT,
     executeWithdrawNFT,
@@ -42,14 +42,19 @@ const MarketsSidebar = (props: MarketsSidebarProps) => {
   const handleTabChange = (tabKey: string) => {
     setActiveTab(tabKey as Tab);
   };
+
   // sets active tab based on positions
   useEffect(() => {
-    if (hasNftDeposited === true) {
+    if (activeTab === 'borrow') {
       handleTabChange('borrow');
-    } else {
-      handleTabChange('repay');
     }
-  }, [hasNftDeposited]);
+
+    if (activeTab === 'repay' && openPositions.length) {
+      handleTabChange('repay');
+    } else {
+      handleTabChange('borrow');
+    }
+  });
   // passed as props for child components regarding tab click
   const items: [HoneyTabItem, HoneyTabItem] = [
     { label: 'Borrow', key: 'borrow' },
@@ -137,7 +142,6 @@ const MarketsSidebar = (props: MarketsSidebarProps) => {
                 fetchedSolPrice={fetchedSolPrice}
                 calculatedInterestRate={calculatedInterestRate}
                 currentMarketId={currentMarketId}
-                hasNFTDeposited={hasNftDeposited}
               />
             )}
             {activeTab === 'repay' && Boolean(openPositions.length) && (
@@ -154,7 +158,6 @@ const MarketsSidebar = (props: MarketsSidebarProps) => {
                 changeTab={handleTabChange}
                 fetchedSolPrice={fetchedSolPrice}
                 currentMarketId={currentMarketId}
-                hasNFTDeposited={hasNftDeposited}
               />
             )}
           </>
