@@ -14,6 +14,14 @@ Hello and welcome 👋🏼, we are happy to see that you arrived at Honey Labs -
 
 The Honey Finance Ecosystem consists of several components this repo represents the Front-end.
 
+You can either clone this repo locally on your machine or contribute via GitPod:
+<a href="https://gitpod.io/#https://github.com/honey-protocol/honey-frontend-solana">
+  <img
+    src="https://img.shields.io/badge/Contribute%20with-Gitpod-908a85?logo=gitpod"
+    alt="Contribute with Gitpod"
+  />
+</a>
+
 In order to run this project you need to create a 
 
 ```bash
