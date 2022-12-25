@@ -1,4 +1,4 @@
-import { Dropdown, Menu, Space, Typography } from 'antd';
+import { Dropdown, Menu, MenuProps, Space, Typography } from 'antd';
 import React, { useContext } from 'react';
 import * as styles from './WalletMenu.css';
 import { DownIcon } from 'icons/DownIcon';
@@ -12,7 +12,6 @@ import { featureFlags } from '../../helpers/featureFlags';
 import { vars } from 'styles/theme.css';
 import HoneyToggle from 'components/HoneyToggle/HoneyToggle';
 import { HoneyThemeContext } from 'pages/_app';
-import { MoreOutlined } from '@ant-design/icons';
 const { Title } = Typography;
 
 const WalletMenu = () => {
@@ -33,7 +32,14 @@ const WalletMenu = () => {
       items={[
         {
           key: '4',
-          label: 'Disconnect'
+          label: 'Disconnect',
+          onClick: disconnect
+        },
+        {
+          key: '2',
+          label: theme === 'dark' ? 'Light theme' : 'Dark theme',
+          onClick:
+            theme === 'dark' ? () => setTheme('light') : () => setTheme('dark')
         }
       ]}
     />
@@ -43,10 +49,6 @@ const WalletMenu = () => {
       <HoneyButton variant="primary" icon={<WalletIcon />} onClick={connect}>
         CONNECT WALLET
       </HoneyButton>
-      <HoneyToggle
-        checked={theme === 'dark'}
-        onChange={checked => setTheme(checked ? 'dark' : 'light')}
-      />
     </Space>
   ) : (
     <div className={styles.walletDropdownWrapper}>
@@ -66,10 +68,6 @@ const WalletMenu = () => {
           </Space>
         </a>
       </Dropdown>
-      <HoneyToggle
-        checked={theme === 'dark'}
-        onChange={checked => setTheme(checked ? 'dark' : 'light')}
-      />
     </div>
   );
 };
