@@ -16,14 +16,15 @@ export const userIcon = style({
 export const walletDropdownWrapper = style({
   display: 'flex',
   alignItems: 'center',
-  position: 'relative'
-  // paddingLeft: `${48 + 16}px`
+  position: 'relative',
+  paddingLeft: `${17}px`
 });
 
 export const dialectIconWrapper = style({
   position: 'absolute',
-  right: -17,
-  top: 2
+  left: -10,
+  top: 2,
+  pointerEvents: 'none'
 });
 
 const dialectSelector = `${dialectIconWrapper} .dialect > .dt-flex`;
@@ -38,7 +39,8 @@ globalStyle(`${dialectSelector} > .dt-relative`, {
 });
 
 globalStyle(`${dialectSelector} > .dt-relative button`, {
-  background: vars.colors.foreground
+  background: vars.colors.foreground,
+  pointerEvents: 'all'
 });
 
 globalStyle(`${dialectSelector} > .dt-relative button svg path`, {
