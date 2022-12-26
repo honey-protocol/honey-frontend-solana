@@ -148,7 +148,7 @@ export async function fetchAllowanceLtvAndDebt(
 
     let totalDebt = 0;
     let userLoans = 0;
-    // let nftCollateralValue = nftPrice * collateralNFTPositions?.length;
+
     let nftCollateralValue = nftPrice * collateralNFTPositions;
 
     if (honeyUser?.loans().length > 0) {
@@ -168,19 +168,15 @@ export async function fetchAllowanceLtvAndDebt(
       }
     }
 
-    const ltv = totalDebt / nftPrice;
-
     let sumOfAllowance = RoundHalfDown(
       nftCollateralValue * MAX_LTV - userLoans,
       4
     );
 
-    let sumOfLtv = RoundHalfDown(ltv);
     let sumOfTotalDebt = RoundHalfUp(totalDebt);
 
     return {
       sumOfAllowance,
-      sumOfLtv,
       sumOfTotalDebt
     };
   } catch (error) {
@@ -435,9 +431,10 @@ async function handleFormatMarket(
       honeyMarket,
       connection
     );
+
     const calculateAllowanceAndLTV = await fetchAllowanceLtvAndDebt(
       nftPrice,
-      1,
+      obligations.length,
       honeyUser,
       honeyMarket.reserves
     );
@@ -446,7 +443,6 @@ async function handleFormatMarket(
     if (liquidations) {
       collection.name;
       collection.allowance = calculateAllowanceAndLTV?.sumOfAllowance;
-      collection.ltv = calculateAllowanceAndLTV?.sumOfLtv;
       collection.userDebt = calculateAllowanceAndLTV?.sumOfTotalDebt;
 
       collection.available = totalMarketDeposits;
@@ -457,6 +453,7 @@ async function handleFormatMarket(
       );
       collection.user = honeyUser;
       collection.nftPrice = nftPrice;
+      collection.ltv = collection.nftPrice * obligations.length;
 
       collection.risk = obligations
         ? await calculateRisk(
@@ -487,7 +484,6 @@ async function handleFormatMarket(
       // request comes from borrow or lend - same base collection object
     } else {
       collection.allowance = calculateAllowanceAndLTV?.sumOfAllowance;
-      collection.ltv = calculateAllowanceAndLTV?.sumOfLtv;
       collection.userDebt = calculateAllowanceAndLTV?.sumOfTotalDebt;
       // collection.userTotalDeposits = await calculateUserDeposits(
       //   honeyMarket.reserves,

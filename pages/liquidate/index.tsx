@@ -132,9 +132,6 @@ const Liquidate: NextPage = () => {
     );
 
     setMarketData(data as unknown as MarketBundle[]);
-
-    console.log('data', data);
-
     handleBids();
   }
 
@@ -424,6 +421,7 @@ const Liquidate: NextPage = () => {
    */
   useEffect(() => {
     if (sdkConfig.saberHqConnection) {
+      if (!marketData) return;
       function getData() {
         return Promise.all(
           marketCollections.map(async collection => {
@@ -458,16 +456,21 @@ const Liquidate: NextPage = () => {
                 setNftPrice(RoundHalfDown(Number(collection.nftPrice)));
               return collection;
             } else {
-              await populateMarketData(
-                collection,
-                sdkConfig.saberHqConnection,
-                sdkConfig.sdkWallet,
-                currentMarketId,
-                true,
-                [],
-                false
-              );
-
+              marketCollections.map(async collection => {
+                await populateMarketData(
+                  collection,
+                  sdkConfig.saberHqConnection,
+                  sdkConfig.sdkWallet,
+                  currentMarketId,
+                  true,
+                  [],
+                  true,
+                  honeyClient,
+                  honeyMarket,
+                  honeyUser,
+                  parsedReserves
+                );
+              });
               return collection;
             }
           })
@@ -679,11 +682,7 @@ const Liquidate: NextPage = () => {
         dataIndex: 'tvl',
         sorter: (a, b) => a.tvl! - b.tvl!,
         render: (value: number, market: any) => {
-          return (
-            <div className={style.valueCell}>
-              {fs(nftPrice * market.openPositions.length)}
-            </div>
-          );
+          return <div className={style.valueCell}>{fs(market.ltv)}</div>;
         }
       },
       {
