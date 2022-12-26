@@ -582,30 +582,30 @@ const Liquidate: NextPage = () => {
         }
       },
       // TODO: Once risk is fixed comment back in
-      // {
-      //   width: columnsWidth[1],
-      //   title: ({ sortColumns }) => {
-      //     const sortOrder = getColumnSortStatus(sortColumns, 'risk');
-      //     return (
-      //       <div
-      //         className={
-      //           style.headerCell[
-      //             sortOrder === 'disabled' ? 'disabled' : 'active'
-      //           ]
-      //         }
-      //         style={{ paddingLeft: 15 }}
-      //       >
-      //         <span>Risk</span>
-      //         <div className={style.sortIcon[sortOrder]} />
-      //       </div>
-      //     );
-      //   },
-      //   dataIndex: 'risk',
-      //   sorter: (a, b) => a.risk! - b.risk!,
-      //   render: (rate: number, market: any) => {
-      //     return <div className={style.rateCell}>{fp(market.risk * 100)}</div>;
-      //   }
-      // },
+      {
+        width: columnsWidth[1],
+        title: ({ sortColumns }) => {
+          const sortOrder = getColumnSortStatus(sortColumns, 'risk');
+          return (
+            <div
+              className={
+                style.headerCell[
+                  sortOrder === 'disabled' ? 'disabled' : 'active'
+                ]
+              }
+              style={{ paddingLeft: 15 }}
+            >
+              <span>Risk</span>
+              <div className={style.sortIcon[sortOrder]} />
+            </div>
+          );
+        },
+        dataIndex: 'risk',
+        sorter: (a, b) => a.risk! - b.risk!,
+        render: (rate: number, market: any) => {
+          return <div className={style.rateCell}>{fp(market.risk * 100)}</div>;
+        }
+      },
       {
         width: columnsWidth[2],
         title: ({ sortColumns }) => {
