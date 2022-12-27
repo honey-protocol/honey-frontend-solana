@@ -410,7 +410,6 @@ const Dashboard: NextPage = () => {
         ? setUserAllowance(0)
         : setUserAllowance(outcome.sumOfAllowance);
       setUserDebt(outcome.sumOfTotalDebt);
-      setLoanToValue(outcome.sumOfLtv);
     }
   }
 

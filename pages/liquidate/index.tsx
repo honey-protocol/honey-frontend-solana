@@ -31,7 +31,10 @@ import {
   useMarket,
   NftPosition,
   fetchAllMarkets,
-  MarketBundle
+  MarketBundle,
+  HoneyMarket,
+  HoneyUser,
+  HoneyClient
 } from '@honey-finance/sdk';
 import { ConfigureSDK } from 'helpers/loanHelpers';
 import { useConnectedWallet } from '@saberhq/use-solana';
@@ -109,6 +112,7 @@ const Liquidate: NextPage = () => {
    * @returns market | market reserve information | parsed reserves |
    */
   const { market, marketReserveInfo, parsedReserves, fetchMarket } = useHoney();
+
   /**
    * @description calls upon the honey sdk
    * @params  useConnection func. | useConnectedWallet func. | honeyID | marketID
@@ -132,6 +136,7 @@ const Liquidate: NextPage = () => {
     );
 
     setMarketData(data as unknown as MarketBundle[]);
+    console.log('@@-- data', data);
     handleBids();
   }
 
@@ -433,10 +438,29 @@ const Liquidate: NextPage = () => {
                   marketObject.market.address.toString() === collection.id
               );
 
-              const honeyUser = collection.marketData[0].user;
-              const honeyMarket = collection.marketData[0].market;
-              const honeyClient = collection.marketData[0].client;
+              const honeyUser: HoneyUser = collection.marketData[0].user;
+              const honeyMarket: HoneyMarket = collection.marketData[0].market;
+              const honeyClient: HoneyClient = collection.marketData[0].client;
               const parsedReserves = collection.marketData[0].reserves[0].data;
+              // const pR = collection.marketData[0].reserves[0];
+
+              // const fetchMarketOutcome = await HoneyMarket.fetchMarket(
+              //   honeyClient,
+              //   honeyMarket.address
+              // );
+              // const fetchFloorPriceOutcome =
+              //   await honeyMarket.fetchNFTFloorPrice('mainnet-beta');
+              // const fetchReserveData = await pR.fetchReserveValue(
+              //   'mainnet-beta'
+              // );
+
+              // console.log('@@-- fetch market outcome', fetchMarketOutcome);
+              // console.log(
+              //   '@@-- fetch floor price outcome',
+              //   fetchFloorPriceOutcome
+              // );
+              // console.log('@@-- fetch reserve data outcome', fetchReserveData);
+              console.log('collection pos', collection.marketData[0].positions);
 
               await populateMarketData(
                 collection,

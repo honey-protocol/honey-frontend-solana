@@ -255,7 +255,6 @@ const Markets: NextPage = () => {
           ? setUserAllowance(0)
           : setUserAllowance(outcome.sumOfAllowance);
         setUserDebt(outcome.sumOfTotalDebt);
-        setLoanToValue(outcome.sumOfLtv);
       }
       return 'SUCCESS';
     } catch (error) {
@@ -295,7 +294,6 @@ const Markets: NextPage = () => {
   // inits the markets with relevant data
   useEffect(() => {
     if (sdkConfig.saberHqConnection) {
-      console.log('@@-- running');
       function getData() {
         return Promise.all(
           marketCollections.map(async collection => {
