@@ -29,6 +29,7 @@ const popoverSelector = `${dialectNotification} .dialect .dialect > .dt-fixed`;
 globalStyle(`${popoverSelector}`, {
   maxWidth: 360,
   height: 'calc(100vh - 120px)',
+  pointerEvents: 'all',
   '@media': {
     [`screen and (max-width: ${breakpoints.mobile}px)`]: {
       maxWidth: 'unset',
