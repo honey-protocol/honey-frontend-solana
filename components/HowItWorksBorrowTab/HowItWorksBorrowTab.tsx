@@ -62,9 +62,8 @@ const HowItWorksBorrowTab: FC<HowItWorksBorrowTabProps> = ({
               </HexaBoxContainer>
             </div>
             <span className={styles.listText}>
-              Select an asset risk level. It regulates how much lenders gonna
-              earn depending on the market&apos;s assets. The higher risk — the
-              higher the rewards lenders will get.
+              Add a collection name. Add a magic eden link for the collection
+              image. Add the verified creator address.
             </span>
           </div>
 
@@ -75,13 +74,7 @@ const HowItWorksBorrowTab: FC<HowItWorksBorrowTabProps> = ({
               </HexaBoxContainer>
             </div>
             <span className={styles.listText}>
-              Draft proposals can only be activated by a DAO member with at
-              least{' '}
-              <Link href="#" className={styles.listLink}>
-                10,000 $veHONEY
-              </Link>
-              . All members of the DAO may vote to execute or reject the
-              proposal.
+              Create an Oracle on Switchboard and add it to the config.
             </span>
           </div>
 
@@ -92,12 +85,33 @@ const HowItWorksBorrowTab: FC<HowItWorksBorrowTabProps> = ({
               </HexaBoxContainer>
             </div>
             <span className={styles.listText}>
-              For a proposal to be executed there should be a minimum of{' '}
-              <Link href="#" className={styles.listLink}>
-                10,000,000 $veHONEY
-              </Link>{' '}
-              votes casted resulting in at least 2/3 of the votes for one
-              option.
+              Setup market parameters like liquidation fee, admin fee and
+              liquidation threshold to manage risks.
+            </span>
+          </div>
+
+          <div className={styles.listItem}>
+            <div className={styles.listIcon}>
+              <HexaBoxContainer>
+                <div className={styles.listIconNumber}>4</div>
+              </HexaBoxContainer>
+            </div>
+            <span className={styles.listText}>
+              Select an asset risk level. It regulates how much lenders are
+              going to earn depending on the market&apos;s assets. The higher
+              risk — the higher the rewards lenders will get.
+            </span>
+          </div>
+
+          <div className={styles.listItem}>
+            <div className={styles.listIcon}>
+              <HexaBoxContainer>
+                <div className={styles.listIconNumber}>5</div>
+              </HexaBoxContainer>
+            </div>
+            <span className={styles.listText}>
+              Deploy the market programs. Deploy SOL reserve. Create a Github
+              Pull Request to add your market to the Open Source frontend.
             </span>
           </div>
         </div>

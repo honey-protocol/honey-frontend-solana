@@ -24,8 +24,8 @@ export const RiskModelStep = (props: RiskModelStepProps) => {
   const renderWarning = () => {
     if (riskModel === RiskModelTab.LOW) {
       return (
-        <HoneyWarning message="LOW Risk Description">
-          <HoneyLink link="#" target="_blank" className={styles.marginTop}>
+        <HoneyWarning message="LOW Risk : This model is intended for low risk collaterals. It aims to maintain utilisation between 60% and 80%.">
+          <HoneyLink link="https://docs.honey.finance/lending-protocol/interest-rates/protocol-math-solana/low-risk-model" target="_blank" className={styles.marginTop}>
             Learn More
           </HoneyLink>
         </HoneyWarning>
@@ -34,8 +34,8 @@ export const RiskModelStep = (props: RiskModelStepProps) => {
 
     if (riskModel === RiskModelTab.DEFAULT) {
       return (
-        <HoneyWarning message="The Default risk model establishes an average income for lenders with keeping good risk management.">
-          <HoneyLink link="#" target="_blank" className={styles.marginTop}>
+        <HoneyWarning message="DEFAULT risk: This model attempts to establish an above average income for lenders while maintaining low exposure to NFT risk.">
+          <HoneyLink link="https://docs.honey.finance/lending-protocol/interest-rates/protocol-math-solana/default-risk-model" target="_blank" className={styles.marginTop}>
             Learn More
           </HoneyLink>
         </HoneyWarning>
@@ -44,8 +44,8 @@ export const RiskModelStep = (props: RiskModelStepProps) => {
 
     if (riskModel === RiskModelTab.HIGH) {
       return (
-        <HoneyWarning message="The High risk model establishes an average income for lenders with keeping good risk management.">
-          <HoneyLink link="#" target="_blank" className={styles.marginTop}>
+        <HoneyWarning message="HIGH risk: This model is tailored for high risk collaterals. It aims to maintain optimal utilisation between 40% and 60%, while attempting to minimise the risk of 100% utilisation. ">
+          <HoneyLink link="https://docs.honey.finance/lending-protocol/interest-rates/protocol-math-solana/high-risk-model" target="_blank" className={styles.marginTop}>
             Learn More
           </HoneyLink>
         </HoneyWarning>
