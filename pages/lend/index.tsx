@@ -349,12 +349,13 @@ const Lend: NextPage = () => {
               const parsedReserves = collection.marketData[0].reserves[0].data;
 
               await populateMarketData(
+                'LEND',
                 collection,
                 sdkConfig.saberHqConnection,
                 sdkConfig.sdkWallet,
                 currentMarketId,
                 false,
-                [],
+                collection.marketData[0].positions,
                 true,
                 honeyClient,
                 honeyMarket,
@@ -381,6 +382,7 @@ const Lend: NextPage = () => {
               return collection;
             } else {
               await populateMarketData(
+                'LEND',
                 collection,
                 sdkConfig.saberHqConnection,
                 sdkConfig.sdkWallet,

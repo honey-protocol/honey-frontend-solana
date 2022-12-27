@@ -48,12 +48,15 @@ import {
 } from '@honey-finance/sdk';
 import {
   calcNFT,
-  fetchAllowanceLtvAndDebt,
   fetchSolPrice,
   getInterestRate,
   populateMarketData,
   calculateMarketDebt,
-  calculateUserDeposits
+  calculateUserDeposits,
+  fetchAllowance,
+  fetchUserDebt,
+  fetchLTV,
+  decodeReserve
 } from 'helpers/loanHelpers/userCollection';
 import { Metadata } from '@metaplex-foundation/mpl-token-metadata';
 import { ToastProps } from 'hooks/useToast';
@@ -232,36 +235,6 @@ const Markets: NextPage = () => {
     }
   }, [parsedReserves]);
 
-  /**
-   * @description fetches allowance | user debt | loan to value
-   * @params nft price | collateral nft positions | honey user | market reserve info
-   * @returns outcome object with allowance | user debt | loan to value
-   */
-  async function fetchHelperValues(
-    nftPrice: any,
-    collateralNFTPositions: any,
-    honeyUser: any,
-    marketReserveInfo: any
-  ) {
-    try {
-      let outcome = await fetchAllowanceLtvAndDebt(
-        nftPrice,
-        collateralNFTPositions,
-        honeyUser,
-        marketReserveInfo
-      );
-      if (outcome) {
-        outcome.sumOfAllowance < 0
-          ? setUserAllowance(0)
-          : setUserAllowance(outcome.sumOfAllowance);
-        setUserDebt(outcome.sumOfTotalDebt);
-      }
-      return 'SUCCESS';
-    } catch (error) {
-      return 'ERROR';
-    }
-  }
-
   // sets cRatio, liquidationThreshold and calls fetchHelperValues
   useEffect(() => {
     if (marketReserveInfo && parsedReserves) {
@@ -310,12 +283,13 @@ const Markets: NextPage = () => {
               const parsedReserves = collection.marketData[0].reserves[0].data;
 
               await populateMarketData(
+                'BORROW',
                 collection,
                 sdkConfig.saberHqConnection,
                 sdkConfig.sdkWallet,
                 currentMarketId,
                 false,
-                [],
+                collection.marketData[0].positions,
                 true,
                 honeyClient,
                 honeyMarket,
@@ -341,9 +315,11 @@ const Markets: NextPage = () => {
                 setUserDebt(Number(collection.userDebt));
                 setLoanToValue(Number(collection.ltv));
               }
+
               return collection;
             } else {
               await populateMarketData(
+                'BORROW',
                 collection,
                 sdkConfig.saberHqConnection,
                 sdkConfig.sdkWallet,
@@ -792,17 +768,51 @@ const Markets: NextPage = () => {
     </div>
   );
   async function handleUserInteraction() {
-    marketData.map(async market => {
-      if (market.market.address.toString() === currentMarketId) {
+    marketCollections.map(async market => {
+      if (market.id === currentMarketId) {
         await fetchMarket();
         await market.user.refresh();
 
-        await fetchHelperValues(
-          nftPrice,
-          collateralNFTPositions?.length,
-          market.user,
-          market.market.reserves
-        );
+        if (market.marketData) {
+          const honeyUser = market.marketData[0].user;
+          const honeyMarket = market.marketData[0].market;
+          const honeyClient = market.marketData[0].client;
+          const parsedReserves = market.marketData[0].reserves[0].data;
+          if (parsedReserves) {
+            const { totalMarketDebt, totalMarketDeposits, parsedReserve } =
+              await decodeReserve(honeyMarket, honeyClient, parsedReserves);
+            // TODO: validate honeyMarket.conn
+            const nftPrice = await calcNFT(
+              honeyMarket.reserves,
+              parsedReserve,
+              honeyMarket,
+              honeyMarket.conn
+            );
+
+            if (nftPrice) {
+              const userAllowance = await fetchAllowance(
+                nftPrice,
+                1,
+                honeyUser,
+                marketReserveInfo
+              );
+
+              const userDebt = await fetchUserDebt(
+                honeyUser,
+                honeyMarket.reserves
+              );
+
+              const ltv = await fetchLTV(totalMarketDebt, nftPrice);
+
+              setUserAllowance(userAllowance);
+              setUserDebt(userDebt);
+              setLoanToValue(ltv);
+              reserveHoneyState === 0
+                ? setReserveHoneyState(1)
+                : setReserveHoneyState(0);
+            }
+          }
+        }
       }
     });
   }

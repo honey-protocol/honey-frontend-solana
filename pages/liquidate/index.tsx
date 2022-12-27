@@ -463,6 +463,7 @@ const Liquidate: NextPage = () => {
               console.log('collection pos', collection.marketData[0].positions);
 
               await populateMarketData(
+                'LIQUIDATIONS',
                 collection,
                 sdkConfig.saberHqConnection,
                 sdkConfig.sdkWallet,
@@ -482,6 +483,7 @@ const Liquidate: NextPage = () => {
             } else {
               marketCollections.map(async collection => {
                 await populateMarketData(
+                  'LIQUIDATIONS',
                   collection,
                   sdkConfig.saberHqConnection,
                   sdkConfig.sdkWallet,
