@@ -156,7 +156,8 @@ export async function fetchAllowance(
 }
 
 export async function fetchLTV(totalMarketDebt: number, nftPrice: number) {
-  return totalMarketDebt / nftPrice / 100;
+  if (nftPrice === 0) return 0;
+  return totalMarketDebt / nftPrice;
 }
 
 export async function fetchUserDebt(
@@ -461,8 +462,8 @@ async function handleFormatMarket(
     honeyMarket.reserves
   );
 
-  const ltv = await fetchLTV(totalMarketDebt, nftPrice ? nftPrice : 0);
   const userDebt = await fetchUserDebt(honeyUser, honeyMarket.reserves);
+  const ltv = await fetchLTV(userDebt, nftPrice ? nftPrice : 0);
   const tvl = nftPrice ? await fetchTVL(nftPrice, obligations) : 0;
 
   // if request comes from liquidation page we need the collection object to be different

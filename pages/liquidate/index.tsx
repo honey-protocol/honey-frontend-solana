@@ -134,9 +134,7 @@ const Liquidate: NextPage = () => {
       marketIDs,
       false
     );
-
     setMarketData(data as unknown as MarketBundle[]);
-    console.log('@@-- data', data);
     handleBids();
   }
 
@@ -459,8 +457,6 @@ const Liquidate: NextPage = () => {
               //   '@@-- fetch floor price outcome',
               //   fetchFloorPriceOutcome
               // );
-              // console.log('@@-- fetch reserve data outcome', fetchReserveData);
-              console.log('collection pos', collection.marketData[0].positions);
 
               await populateMarketData(
                 'LIQUIDATIONS',

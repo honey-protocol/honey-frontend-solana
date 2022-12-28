@@ -129,6 +129,7 @@ const Lend: NextPage = () => {
 
   //  ************* START FETCH MARKET DATA *************
   async function fetchAllMarketData(marketIDs: string[]) {
+    console.time();
     const data = await fetchAllMarkets(
       sdkConfig.saberHqConnection,
       sdkConfig.sdkWallet,
@@ -136,8 +137,8 @@ const Lend: NextPage = () => {
       marketIDs,
       false
     );
+    console.timeEnd();
     setMarketData(data as unknown as MarketBundle[]);
-    console.log('@@-- data', data);
   }
 
   useEffect(() => {
