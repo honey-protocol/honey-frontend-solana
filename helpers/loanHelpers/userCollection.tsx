@@ -132,12 +132,6 @@ export async function calculateMarketDebt(honeyReserves: any) {
   }
 }
 
-/**
- * @description calculates the total user debt, ltv and allowance over all collections
- * @params nftprice | collateralnftpositions | honeyuser (connected via wallet) | marketreserveinfo
- * @returns sum of allowance | sum of ltv | sum of debt
- */
-
 export async function fetchAllowance(
   nftPrice: number,
   collateralNFTPositions: number,
@@ -182,6 +176,10 @@ export async function fetchUserDebt(
   }
 
   return RoundHalfUp(totalDebt);
+}
+// filters out zero debt obligations and multiplies outstanding obl. by nft price
+export async function fetchTVL(nftPrice: number, obligations: any) {
+  return nftPrice * obligations.filter((obl: any) => obl.debt !== 0).length;
 }
 
 /**
@@ -465,6 +463,7 @@ async function handleFormatMarket(
 
   const ltv = await fetchLTV(totalMarketDebt, nftPrice ? nftPrice : 0);
   const userDebt = await fetchUserDebt(honeyUser, honeyMarket.reserves);
+  const tvl = await fetchTVL(nftPrice, obligations);
 
   // if request comes from liquidation page we need the collection object to be different
   if (origin === 'LIQUIDATIONS') {
@@ -480,6 +479,7 @@ async function handleFormatMarket(
     collection.user = honeyUser;
     collection.nftPrice = nftPrice;
     collection.ltv = ltv;
+    collection.tvl = tvl;
 
     collection.risk = obligations
       ? await calculateRisk(obligations, collection.nftPrice, false, collection)
