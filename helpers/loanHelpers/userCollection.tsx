@@ -463,7 +463,7 @@ async function handleFormatMarket(
 
   const ltv = await fetchLTV(totalMarketDebt, nftPrice ? nftPrice : 0);
   const userDebt = await fetchUserDebt(honeyUser, honeyMarket.reserves);
-  const tvl = await fetchTVL(nftPrice, obligations);
+  const tvl = nftPrice ? await fetchTVL(nftPrice, obligations) : 0;
 
   // if request comes from liquidation page we need the collection object to be different
   if (origin === 'LIQUIDATIONS') {
