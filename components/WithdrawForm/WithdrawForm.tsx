@@ -53,8 +53,6 @@ const WithdrawForm = (props: WithdrawFormProps) => {
       return;
     }
 
-    console.log('p(f(usdValue))', p(f(usdValue)));
-
     setValueUSD(usdValue);
     setValueSOL(usdValue / solPrice);
     setSliderValue(usdValue / solPrice);
@@ -74,7 +72,7 @@ const WithdrawForm = (props: WithdrawFormProps) => {
   };
 
   const handleWithdraw = async () => {
-    await executeWithdraw(valueSOL, toast);
+    executeWithdraw(valueSOL, toast);
     handleSliderChange(0);
   };
 

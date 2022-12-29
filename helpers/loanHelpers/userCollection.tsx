@@ -68,7 +68,7 @@ export async function calculateUserDeposits(
   honeyUser: any
 ) {
   if (!marketReserveInfo || !honeyUser) {
-    return;
+    return 0;
   }
 
   // await marketReserveInfo
@@ -465,6 +465,10 @@ async function handleFormatMarket(
   const userDebt = await fetchUserDebt(honeyUser, honeyMarket.reserves);
   const ltv = await fetchLTV(userDebt, nftPrice ? nftPrice : 0);
   const tvl = nftPrice ? await fetchTVL(nftPrice, obligations) : 0;
+  const userTotalDeposits = await calculateUserDeposits(
+    honeyMarket.reserves,
+    honeyUser
+  );
 
   // if request comes from liquidation page we need the collection object to be different
   if (origin === 'LIQUIDATIONS') {
@@ -520,6 +524,7 @@ async function handleFormatMarket(
     collection.value = totalMarketValue;
     collection.connection = connection;
     collection.nftPrice = nftPrice;
+    collection.userTotalDeposits = userTotalDeposits;
     collection.utilizationRate = Number(
       f(totalMarketDebt / (totalMarketDeposits + totalMarketDebt))
     );

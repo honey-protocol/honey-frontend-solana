@@ -129,7 +129,6 @@ const Lend: NextPage = () => {
 
   //  ************* START FETCH MARKET DATA *************
   async function fetchAllMarketData(marketIDs: string[]) {
-    console.time();
     const data = await fetchAllMarkets(
       sdkConfig.saberHqConnection,
       sdkConfig.sdkWallet,
@@ -137,7 +136,6 @@ const Lend: NextPage = () => {
       marketIDs,
       false
     );
-    console.timeEnd();
     setMarketData(data as unknown as MarketBundle[]);
   }
 
@@ -172,21 +170,21 @@ const Lend: NextPage = () => {
 
   //  ************* START CALC. USER DEPOSITS *************
   // calculate user deposits
-  async function calculateTotalUserDeposits(
-    marketReserveInfo: any,
-    honeyUser: any
-  ) {
-    const totalUserDeposits = await calculateUserDeposits(
-      marketReserveInfo,
-      honeyUser
-    );
-    setUserTotalDeposits(Number(totalUserDeposits));
-  }
+  // async function calculateTotalUserDeposits(
+  //   marketReserveInfo: any,
+  //   honeyUser: any
+  // ) {
+  //   const totalUserDeposits = await calculateUserDeposits(
+  //     marketReserveInfo,
+  //     honeyUser
+  //   );
+  //   setUserTotalDeposits(Number(totalUserDeposits));
+  // }
 
-  useEffect(() => {
-    if (marketReserveInfo && honeyUser)
-      calculateTotalUserDeposits(marketReserveInfo, honeyUser);
-  });
+  // useEffect(() => {
+  //   if (marketReserveInfo && honeyUser)
+  //     calculateTotalUserDeposits(marketReserveInfo, honeyUser);
+  // });
   //  ************* END CALC. USER DEPOSITS *************
 
   //  ************* START FETCH CURRENT SOL PRICE *************
@@ -332,7 +330,6 @@ const Lend: NextPage = () => {
    */
   useEffect(() => {
     if (sdkConfig.saberHqConnection) {
-      console.log('running');
       function getData() {
         return Promise.all(
           marketCollections.map(async collection => {
@@ -375,9 +372,9 @@ const Lend: NextPage = () => {
                 setActiveMarketSupplied(collection.value);
                 setActiveMarketAvailable(collection.available);
                 setNftPrice(RoundHalfDown(Number(collection.nftPrice)));
-                // setUserTotalDeposits(
-                //   RoundHalfDown(Number(collection.userTotalDeposits))
-                // );
+                collection.userTotalDeposits
+                  ? setUserTotalDeposits(collection.userTotalDeposits)
+                  : setUserTotalDeposits(0);
               }
 
               return collection;
@@ -420,7 +417,8 @@ const Lend: NextPage = () => {
     sdkConfig.saberHqConnection,
     sdkConfig.sdkWallet,
     marketData,
-    userTotalDeposits
+    userTotalDeposits,
+    currentMarketId
   ]);
 
   const onSearch = (searchTerm: string): LendTableRow[] => {

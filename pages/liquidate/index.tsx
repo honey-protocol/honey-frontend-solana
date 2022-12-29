@@ -23,6 +23,8 @@ import { formatNumber } from '../../helpers/format';
 import { LiquidateTableRow } from '../../types/liquidate';
 import { LiquidateExpandTable } from '../../components/LiquidateExpandTable/LiquidateExpandTable';
 import { RoundHalfDown } from 'helpers/utils';
+import { getOraclePrice } from '../../helpers/loanHelpers/index';
+import BN from 'bn.js';
 import {
   useAnchor,
   LiquidatorClient,
@@ -134,6 +136,7 @@ const Liquidate: NextPage = () => {
       marketIDs,
       false
     );
+
     setMarketData(data as unknown as MarketBundle[]);
     handleBids();
   }
@@ -148,6 +151,7 @@ const Liquidate: NextPage = () => {
       fetchAllMarketData(marketIDs);
     }
   }, [sdkConfig.saberHqConnection, sdkConfig.sdkWallet]);
+
   //  ************* END FETCH MARKET DATA *************
 
   //  ************* START HANDLE BIDS *************
@@ -440,22 +444,49 @@ const Liquidate: NextPage = () => {
               const honeyMarket: HoneyMarket = collection.marketData[0].market;
               const honeyClient: HoneyClient = collection.marketData[0].client;
               const parsedReserves = collection.marketData[0].reserves[0].data;
-              // const pR = collection.marketData[0].reserves[0];
+              const pR = collection.marketData[0].reserves[0];
 
-              // const fetchMarketOutcome = await HoneyMarket.fetchMarket(
-              //   honeyClient,
-              //   honeyMarket.address
+              const fetchMarketOutcome = await HoneyMarket.fetchMarket(
+                honeyClient,
+                honeyMarket.address
+              );
+
+              const fetchFloorPriceOutcome =
+                await honeyMarket.fetchNFTFloorPrice('mainnet-beta');
+
+              const fetchReserveData = await pR.fetchReserveValue(
+                'mainnet-beta'
+              );
+
+              // console.log(
+              //   '@@-- state object',
+              //   fetchMarketOutcome[2][0].state.outstandingDebt /
+              //     LAMPORTS_PER_SOL
               // );
-              // const fetchFloorPriceOutcome =
-              //   await honeyMarket.fetchNFTFloorPrice('mainnet-beta');
-              // const fetchReserveData = await pR.fetchReserveValue(
-              //   'mainnet-beta'
-              // );
+              // const calc = fetchMarketOutcome[2][0].state.outstandingDebt
+              //   .div(new BN(10 ** 9))
+              //   .toNumber();
+              // console.log('xyz calc', calc / LAMPORTS_PER_SOL);
+
+              // const outstandingDebt =
+              //   fetchMarketOutcome[2][0].state.outstandingDebt.toString();
+
+              // const totalDeposits =
+              //   fetchMarketOutcome[2][0].state.totalDeposits.toString();
+
+              // console.log('@@-- fetch outstanding debt', outstandingDebt);
+
+              // console.log('@@-- fetch total deposits', totalDeposits);
 
               // console.log('@@-- fetch market outcome', fetchMarketOutcome);
               // console.log(
               //   '@@-- fetch floor price outcome',
-              //   fetchFloorPriceOutcome
+              //   fetchFloorPriceOutcome.toNumber()
+              // );
+
+              // console.log(
+              //   '@@-- fetch reserve data outcome',
+              //   fetchReserveData.toString()
               // );
 
               await populateMarketData(
