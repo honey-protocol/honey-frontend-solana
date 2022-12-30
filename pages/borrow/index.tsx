@@ -202,7 +202,6 @@ const Markets: NextPage = () => {
   const [marketData, setMarketData] = useState<MarketBundle[]>([]);
 
   async function fetchAllMarketData(marketIDs: string[]) {
-    console.time();
     const data = await fetchAllMarkets(
       sdkConfig.saberHqConnection,
       sdkConfig.sdkWallet,
@@ -210,7 +209,6 @@ const Markets: NextPage = () => {
       marketIDs,
       false
     );
-    console.timeEnd();
 
     setMarketData(data as unknown as MarketBundle[]);
   }

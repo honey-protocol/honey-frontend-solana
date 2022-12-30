@@ -236,7 +236,6 @@ const Lend: NextPage = () => {
         await fetchMarket();
         marketCollections.map(async market => {
           if (market.marketData && market.id === currentMarketId) {
-            console.log('@@-- market', market);
             await market.marketData[0].user.refresh();
           }
         });
@@ -294,7 +293,6 @@ const Lend: NextPage = () => {
         await fetchMarket();
         marketCollections.map(async market => {
           if (market.marketData && market.id === currentMarketId) {
-            console.log('@@-- market', market);
             await market.marketData[0].user.refresh();
           }
         });
