@@ -150,7 +150,11 @@ const BidForm = (props: BidFormProps) => {
           <div className={styles.row}>
             <div className={styles.col}>
               <CurrentBid
-                value={highestBiddingValue}
+                value={
+                  highestBiddingAddress === stringyfiedWalletPK
+                    ? highestBiddingValue
+                    : userBidValue
+                }
                 title={
                   highestBiddingAddress === stringyfiedWalletPK
                     ? 'Your bid is #1'

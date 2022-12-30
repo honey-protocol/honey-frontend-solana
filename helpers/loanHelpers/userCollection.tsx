@@ -357,14 +357,15 @@ const calculateRisk = async (
   collection: string
 ) => {
   if (!obligations) return 0;
-  let sumOfDebt = await obligations.reduce((acc: number, obligation: any) => {
+  let filtered = await obligations.filter((obl: any) => obl.debt !== 0);
+  let sumOfDebt = await filtered.reduce((acc: number, obligation: any) => {
     return acc + obligation.debt;
   }, 0);
 
   if (type === true) {
     return sumOfDebt;
   } else {
-    return sumOfDebt / obligations.length / nftPrice;
+    return sumOfDebt / filtered.length / nftPrice;
   }
 };
 /**

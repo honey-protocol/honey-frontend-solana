@@ -234,7 +234,17 @@ const Lend: NextPage = () => {
         );
 
         await fetchMarket();
-        await honeyUser.refresh();
+        marketCollections.map(async market => {
+          if (market.marketData && market.id === currentMarketId) {
+            console.log('@@-- market', market);
+            await market.marketData[0].user.refresh();
+          }
+        });
+
+        honeyReservesChange === 0
+          ? setHoneyReservesChange(1)
+          : setHoneyReservesChange(0);
+        // await honeyUser.refresh();
 
         if (walletPK) await fetchWalletBalance(walletPK);
 
@@ -282,7 +292,16 @@ const Lend: NextPage = () => {
         );
 
         await fetchMarket();
-        await honeyUser.refresh();
+        marketCollections.map(async market => {
+          if (market.marketData && market.id === currentMarketId) {
+            console.log('@@-- market', market);
+            await market.marketData[0].user.refresh();
+          }
+        });
+
+        honeyReservesChange === 0
+          ? setHoneyReservesChange(1)
+          : setHoneyReservesChange(0);
 
         if (walletPK) await fetchWalletBalance(walletPK);
 
@@ -418,7 +437,8 @@ const Lend: NextPage = () => {
     sdkConfig.sdkWallet,
     marketData,
     userTotalDeposits,
-    currentMarketId
+    currentMarketId,
+    honeyReservesChange
   ]);
 
   const onSearch = (searchTerm: string): LendTableRow[] => {
