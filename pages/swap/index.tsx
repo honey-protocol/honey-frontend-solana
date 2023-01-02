@@ -177,7 +177,7 @@ const Swap: NextPage = () => {
       },
       {
         title: 'Transaction Fee',
-        value: `${f(estimatedOutAmount * 0.0025)} ${outputToken?.symbol}`
+        value: `0.25%`
         // titleAddon: (
         //   <HoneyTooltip placement={'top'} tooltipIcon label={'Mock'} />
         // )
