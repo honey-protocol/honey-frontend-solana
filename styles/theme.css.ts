@@ -66,7 +66,7 @@ export const vars = createGlobalThemeContract({
 const grayLight = '#F5F5F5';
 const white = '#FFFFFF';
 const black = '#111111';
-const darkForeground = '#141414';
+const darkForeground = '#161b22';
 createGlobalTheme('.honey-light-theme', vars, {
   colors: {
     brownLight: '#E7B400',
@@ -151,7 +151,7 @@ createGlobalTheme('.honey-dark-theme', vars, {
     white,
     black,
     foreground: darkForeground,
-    background: black,
+    background: '#0d1116',
     text: white,
     textSecondary: 'rgba(255, 255, 255, 0.85)',
     textTertiary: 'rgba(255, 255, 255, 0.4)',
