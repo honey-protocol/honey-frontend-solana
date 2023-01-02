@@ -24,6 +24,7 @@ import { LiquidateTableRow } from '../../types/liquidate';
 import { LiquidateExpandTable } from '../../components/LiquidateExpandTable/LiquidateExpandTable';
 import { RoundHalfDown } from 'helpers/utils';
 import { getOraclePrice } from '../../helpers/loanHelpers/index';
+import { BiddingPosition, TransactionType } from '../../types/liquidate';
 import BN from 'bn.js';
 import {
   useAnchor,
@@ -36,11 +37,12 @@ import {
   MarketBundle,
   HoneyMarket,
   HoneyUser,
-  HoneyClient
+  HoneyClient,
+  TReserve
 } from '@honey-finance/sdk';
 import { ConfigureSDK } from 'helpers/loanHelpers';
 import { useConnectedWallet } from '@saberhq/use-solana';
-import { LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js';
+import { LAMPORTS_PER_SOL, PublicKey, Connection } from '@solana/web3.js';
 import { calcNFT, fetchSolPrice } from 'helpers/loanHelpers/userCollection';
 import {
   HONEY_PROGRAM_ID,
@@ -62,6 +64,7 @@ import { populateMarketData } from 'helpers/loanHelpers/userCollection';
 import { MarketTableRow } from 'types/markets';
 import { renderMarket, renderMarketImageByName } from 'helpers/marketHelpers';
 import { network } from 'pages/_app';
+import { Bid } from 'components/BidForm/types';
 
 const { formatPercent: fp, formatSol: fs, formatRoundDown: fd } = formatNumber;
 const Liquidate: NextPage = () => {
@@ -205,7 +208,7 @@ const Liquidate: NextPage = () => {
    * @params array of bids
    * @returns state change
    */
-  async function handleBiddingState(biddingArray: any) {
+  async function handleBiddingState(biddingArray: BiddingPosition[]) {
     if (!biddingArray.length) {
       setHasPosition(false);
       setCurrentUserBid(0);
@@ -215,15 +218,20 @@ const Liquidate: NextPage = () => {
     }
 
     const arrayOfBiddingAddress = await biddingArray.map(
-      (obligation: any) => obligation.bidder
+      (obligation: Bid) => obligation.bidder
     );
 
-    if (arrayOfBiddingAddress.includes(stringyfiedWalletPK)) {
+    // add additional checks due to type catching undefined
+    if (
+      arrayOfBiddingAddress.length &&
+      stringyfiedWalletPK &&
+      arrayOfBiddingAddress.includes(stringyfiedWalletPK)
+    ) {
       setHasPosition(true);
 
-      biddingArray.map((obligation: any) => {
+      biddingArray.map((obligation: Bid) => {
         if (stringyfiedWalletPK && obligation.bidder === stringyfiedWalletPK) {
-          setCurrentUserBid(Number(obligation.bidLimit / LAMPORTS_PER_SOL));
+          setCurrentUserBid(Number(obligation.bidLimit) / LAMPORTS_PER_SOL);
         }
       });
     } else {
@@ -232,12 +240,15 @@ const Liquidate: NextPage = () => {
     }
 
     let highestBid = await biddingArray
-      .sort((first: any, second: any) => first.bidLimit - second.bidLimit)
+      .sort(
+        (first: Bid, second: Bid) =>
+          Number(first.bidLimit) - Number(second.bidLimit)
+      )
       .reverse();
 
     if (highestBid[0]) {
       setHighestBiddingAddress(highestBid[0].bidder);
-      setHighestBiddingValue(highestBid[0].bidLimit / LAMPORTS_PER_SOL);
+      setHighestBiddingValue(Number(highestBid[0].bidLimit) / LAMPORTS_PER_SOL);
     }
   }
   //  ************* END HANDLE BIDDING STATE *************
@@ -251,7 +262,7 @@ const Liquidate: NextPage = () => {
     setShowMobileSidebar(false);
     document.body.classList.remove('disable-scroll');
   };
-
+  // TODO: remove uncommented func.
   //  ************* START CALC. NFT PRICE *************
   /**
    * @description
@@ -285,7 +296,7 @@ const Liquidate: NextPage = () => {
    * @params
    * @returns
    */
-  async function fetchSolValue(reserves: any, connection: any) {
+  async function fetchSolValue(reserves: TReserve[], connection: Connection) {
     const slPrice = await fetchSolPrice(reserves, connection);
     setFetchedSolPrice(slPrice);
   }
@@ -323,13 +334,13 @@ const Liquidate: NextPage = () => {
           if (!currentUserBid) return;
 
           toast.processing();
-
-          let transactionOutcome: any = await liquidatorClient.revokeBid({
-            market: new PublicKey(mrktID),
-            bidder: wallet.publicKey,
-            bid_mint: NATIVE_MINT,
-            withdraw_destination: wallet.publicKey
-          });
+          let transactionOutcome: TransactionType =
+            await liquidatorClient.revokeBid({
+              market: new PublicKey(mrktID),
+              bidder: wallet.publicKey,
+              bid_mint: NATIVE_MINT,
+              withdraw_destination: wallet.publicKey
+            });
 
           if (transactionOutcome[0] == 'SUCCESS') {
             setCurrentUserBid(0);
@@ -344,13 +355,13 @@ const Liquidate: NextPage = () => {
 
           userBid = Number(userBid.toFixed(2));
           toast.processing();
-
-          let transactionOutcome: any = await liquidatorClient.placeBid({
-            bid_limit: userBid,
-            market: new PublicKey(mrktID),
-            bidder: wallet.publicKey,
-            bid_mint: NATIVE_MINT
-          });
+          let transactionOutcome: TransactionType =
+            await liquidatorClient.placeBid({
+              bid_limit: userBid,
+              market: new PublicKey(mrktID),
+              bidder: wallet.publicKey,
+              bid_mint: NATIVE_MINT
+            });
 
           if (transactionOutcome[0] == 'SUCCESS') {
             return toast.success('Bid placed, fetching chain data');
@@ -362,12 +373,13 @@ const Liquidate: NextPage = () => {
           if (!userBid) return;
 
           toast.processing();
-          let transactionOutcome: any = await liquidatorClient.increaseBid({
-            bid_increase: userBid,
-            market: new PublicKey(mrktID),
-            bidder: wallet.publicKey,
-            bid_mint: NATIVE_MINT
-          });
+          let transactionOutcome: TransactionType =
+            await liquidatorClient.increaseBid({
+              bid_increase: userBid,
+              market: new PublicKey(mrktID),
+              bidder: wallet.publicKey,
+              bid_mint: NATIVE_MINT
+            });
 
           if (transactionOutcome[0] == 'SUCCESS') {
             return toast.success('Bid increased, fetching chain data');
@@ -568,7 +580,7 @@ const Liquidate: NextPage = () => {
    * @params Honey table record - contains all info about a table (aka market)
    * @returns sets the market ID which re-renders page state and fetches market specific data
    */
-  async function handleMarketId(record: any) {
+  async function handleMarketId(record: MarketTableRow) {
     const marketData = renderMarket(record.id);
 
     if (marketData[0].id) {
@@ -637,7 +649,6 @@ const Liquidate: NextPage = () => {
           );
         }
       },
-      // TODO: Once risk is fixed comment back in
       {
         width: columnsWidth[1],
         title: ({ sortColumns }) => {
@@ -658,8 +669,12 @@ const Liquidate: NextPage = () => {
         },
         dataIndex: 'risk',
         sorter: (a, b) => a.risk! - b.risk!,
-        render: (rate: number, market: any) => {
-          return <div className={style.rateCell}>{fp(market.risk * 100)}</div>;
+        render: (rate: number, market: MarketTableRow) => {
+          return (
+            <div className={style.rateCell}>
+              {market.risk ? fp(market.risk * 100) : fp(0)}
+            </div>
+          );
         }
       },
       {
@@ -734,7 +749,7 @@ const Liquidate: NextPage = () => {
         },
         dataIndex: 'tvl',
         sorter: (a, b) => a.tvl! - b.tvl!,
-        render: (value: number, market: any) => {
+        render: (value: number, market: MarketTableRow) => {
           return <div className={style.valueCell}>{fs(market.tvl)}</div>;
         }
       },
