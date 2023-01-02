@@ -130,7 +130,7 @@ const HoneyJupiterProvider: FC<{ children: ReactNode }> = ({ children }) => {
 
 interface HoneyThemeContext {
   theme: HoneyTheme;
-  setTheme: React.Dispatch<React.SetStateAction<HoneyTheme>>;
+  setTheme: (theme: HoneyTheme) => void;
 }
 
 export const HoneyThemeContext = createContext<HoneyThemeContext>(
@@ -152,7 +152,11 @@ function MyApp({ Component, pageProps }: AppProps) {
   };
   useEffect(() => {
     const cautionAgreed = localStorage.getItem('caution-agreed');
+    const savedTheme: any = localStorage.getItem('honey-theme');
     setShowPopup(cautionAgreed === 'true' ? false : true);
+    if (savedTheme) {
+      setTheme(savedTheme);
+    }
     onWindowResize();
     window.addEventListener('resize', () => onWindowResize());
     setShouldRender(true);
@@ -170,8 +174,16 @@ function MyApp({ Component, pageProps }: AppProps) {
     //   defaultAccent={storedAccent || defaultAccent}
     // >
 
-    <HoneyThemeContext.Provider value={{ theme, setTheme }}>
-      <ThemeProvider defaultMode={theme} defaultAccent={'yellow'}>
+    <ThemeProvider defaultMode={theme} defaultAccent={'yellow'}>
+      <HoneyThemeContext.Provider
+        value={{
+          theme,
+          setTheme: (theme: HoneyTheme) => {
+            localStorage.setItem('honey-theme', theme);
+            setTheme(theme);
+          }
+        }}
+      >
         <Script
           strategy="lazyOnload"
           src={`https://www.googletagmanager.com/gtag/js?id=${process.env.NEXT_PUBLIC_GA}`}
@@ -203,14 +215,14 @@ function MyApp({ Component, pageProps }: AppProps) {
             >
               <SDKProvider>
                 {/* <GovernorProvider
-                  initialState={{
-                    governor: GOVERNOR_ADDRESS,
-                    govToken: HONEY_MINT,
-                    minter: {
-                      mintWrapper: HONEY_MINT_WRAPPER
-                    }
-                  }}
-                > */}
+                    initialState={{
+                      governor: GOVERNOR_ADDRESS,
+                      govToken: HONEY_MINT,
+                      minter: {
+                        mintWrapper: HONEY_MINT_WRAPPER
+                      }
+                    }}
+                  > */}
                 {/* {children} */}
                 <>
                   <HoneyJupiterProvider>
@@ -256,8 +268,8 @@ function MyApp({ Component, pageProps }: AppProps) {
             {/* </GovernanceProvider> */}
           </WalletKitProvider>
         </QueryClientProvider>
-      </ThemeProvider>
-    </HoneyThemeContext.Provider>
+      </HoneyThemeContext.Provider>
+    </ThemeProvider>
   );
 }
 
