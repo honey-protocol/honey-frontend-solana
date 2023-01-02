@@ -117,6 +117,126 @@ export const marketCollections: MarketTableRow[] = [
       discountedMarket: true
     }
   }
+  // {
+  //   id: 'F8rZviSSuqgkTsjMeoyrTUSNSqh7yNDCAozJkxm7eujY',
+  //   key: 'BURR',
+  //   name: 'Burrito Boyz',
+  //   verifiedCreator: '2UCkKjTHvz7qFjPZMjhWZiPmyTc6ZwZ44iYPbSpe3aVo',
+  //   rate: 0,
+  //   available: 0,
+  //   value: 0,
+  //   allowance: 0,
+  //   positions: [],
+  //   connection: undefined,
+  //   user: undefined,
+  //   debt: 0,
+  //   utilizationRate: 0,
+  //   openPositions: [],
+  //   constants: {
+  //     marketId: 'F8rZviSSuqgkTsjMeoyrTUSNSqh7yNDCAozJkxm7eujY',
+  //     verifiedCreator: '2UCkKjTHvz7qFjPZMjhWZiPmyTc6ZwZ44iYPbSpe3aVo',
+  //     marketName: 'Burrito Boyz',
+  //     marketImage:
+  //       'https://img-cdn.magiceden.dev/rs:fill:400:400:0:0/plain/https://creator-hub-prod.s3.us-east-2.amazonaws.com/burrito_boyz_pfp_1653394754301.png',
+  //     discountedMarket: false
+  //   }
+  // },
+  // {
+  //   id: 'GrKPvcdHVb4cwR5a2CCgCTvdkSqhNDRgSUiUVzXRWLk6',
+  //   key: 'Smyths',
+  //   name: 'Blocksmith Labs',
+  //   verifiedCreator: '8m2b8ar9BNZErJQgSBwY3eCe73yR4k9qHUxxGffxyw2d',
+  //   rate: 0,
+  //   available: 0,
+  //   value: 0,
+  //   allowance: 0,
+  //   positions: [],
+  //   connection: undefined,
+  //   user: undefined,
+  //   debt: 0,
+  //   utilizationRate: 0,
+  //   openPositions: [],
+  //   constants: {
+  //     marketId: 'GrKPvcdHVb4cwR5a2CCgCTvdkSqhNDRgSUiUVzXRWLk6',
+  //     verifiedCreator: '8m2b8ar9BNZErJQgSBwY3eCe73yR4k9qHUxxGffxyw2d',
+  //     marketName: 'Blocksmith Labs',
+  //     marketImage:
+  //       'https://img-cdn.magiceden.dev/rs:fill:400:400:0:0/plain/https://bafkreih3jh6bz4g5xegjz622ogjdnkwwwnx35opnenh2nzstqnczomo7ha.ipfs.dweb.link/',
+  //     discountedMarket: false
+  //   }
+  // },
+  // {
+  //   id: 'D5qrmgTLJwarfkkqktguUp5uPfj83hFHuWKLvMNSWJ5w',
+  //   key: 'Apes',
+  //   name: 'Trippin ape tribe',
+  //   verifiedCreator: 'EZcZTsLpvdisPgQy5TcCALYgmGKRMNvvyJ89t1LFWmum',
+  //   rate: 0,
+  //   available: 0,
+  //   value: 0,
+  //   allowance: 0,
+  //   positions: [],
+  //   connection: undefined,
+  //   user: undefined,
+  //   debt: 0,
+  //   utilizationRate: 0,
+  //   openPositions: [],
+  //   constants: {
+  //     marketId: 'D5qrmgTLJwarfkkqktguUp5uPfj83hFHuWKLvMNSWJ5w',
+  //     verifiedCreator: 'EZcZTsLpvdisPgQy5TcCALYgmGKRMNvvyJ89t1LFWmum',
+  //     marketName: 'Trippin ape tribe',
+  //     marketImage:
+  //       'https://img-cdn.magiceden.dev/rs:fill:400:400:0:0/plain/https://i.imgur.com/iFgvQva.png',
+  //     discountedMarket: false
+  //   }
+  // },
+  // {
+  //   id: 'GAqyPziKPwVpwKaeqPhEsxiy6MwQ2bvtodruWErpLVKo',
+  //   key: 'Droids',
+  //   name: 'Droid Capital',
+  //   verifiedCreator: 'C88kKdEmTrCh43GC1w3BUFLsW3oKMEWWBGCyweQAaEYa',
+  //   rate: 0,
+  //   available: 0,
+  //   value: 0,
+  //   allowance: 0,
+  //   positions: [],
+  //   connection: undefined,
+  //   user: undefined,
+  //   debt: 0,
+  //   utilizationRate: 0,
+  //   openPositions: [],
+  //   constants: {
+  //     marketId: 'GAqyPziKPwVpwKaeqPhEsxiy6MwQ2bvtodruWErpLVKo',
+  //     verifiedCreator: 'C88kKdEmTrCh43GC1w3BUFLsW3oKMEWWBGCyweQAaEYa',
+  //     marketName: 'Droid Capital',
+  //     marketImage:
+  //       'https://img-cdn.magiceden.dev/rs:fill:400:400:0:0/plain/https://dl.airtable.com/.attachmentThumbnails/cdd57420adfe9323b725187414504608/645229ca',
+  //     discountedMarket: false
+  //   }
+  // },
+  // {
+  //   id: '2dxJ4eMkhMxm1ZqpAhKsjunvyziuq1JRnuHaqKFRY8et',
+  //   key: 'Vandals',
+  //   name: 'Vandal City',
+  //   verifiedCreator: '8wACNDCJiPVVxfrFJRUYkJx4hQgvcoZggMXKmNvjQ6R7',
+  //   rate: 0,
+  //   available: 0,
+  //   value: 0,
+  //   allowance: 0,
+  //   positions: [],
+  //   connection: undefined,
+  //   user: undefined,
+  //   debt: 0,
+  //   utilizationRate: 0,
+  //   openPositions: [],
+  //   constants: {
+  //     marketId: '2dxJ4eMkhMxm1ZqpAhKsjunvyziuq1JRnuHaqKFRY8et',
+  //     verifiedCreator: '8wACNDCJiPVVxfrFJRUYkJx4hQgvcoZggMXKmNvjQ6R7',
+  //     marketName: 'Vandal City',
+  //     marketImage:
+  //       'https://img-cdn.magiceden.dev/rs:fill:400:400:0:0/plain/https://cdn.discordapp.com/attachments/975048153843777577/1005302647491928124/unknown.png',
+  //     discountedMarket: false
+  //   }
+  // }
 ];
 
 // fees
@@ -194,28 +314,30 @@ export const renderMarket = (marketId: string) => {
   );
 };
 
-/**
- * @description filters the nft array based on the market name being passed in
- * @params nft array market name
- * @returns filtered array of nfts scoped to specific market
- */
-function filterNfts(
-  nftArray: any,
-  verifiedCreator: string,
-  marketName: string
-) {
-  const nameFilteredArray = nftArray.filter((nft: any) =>
-    nft.name.includes(marketName)
-  );
-  const verifiedCreatorFilteredArray = nameFilteredArray.filter((nft: any) => {
-    if (nft.creators) {
-      return nft.creators.map(
-        (creator: any) => creator.address === verifiedCreator
-      );
+interface NFT {
+  creators: [
+    {
+      address: string;
+      share: number;
+      verified: number;
     }
+  ];
+  image: string;
+  mint: string;
+  name: string;
+  symbol: string;
+  tokenId: string;
+  updateAuthority: string;
+}
+/**
+ * @description filters the nft array based on the verifiedCreator
+ * @params nft array verified creator
+ * @returns filtered array of nfts scoped to active market
+ */
+function filterNfts(nftArray: any, verifiedCreator: string) {
+  return nftArray.filter((nft: NFT) => {
+    return nft.creators[0].address === verifiedCreator;
   });
-
-  return verifiedCreatorFilteredArray;
 }
 
 /**
@@ -227,11 +349,7 @@ export const renderNftList = (marketId: string, nftArray: any) => {
   const filteredMarket = marketCollections.filter(
     market => market.constants.marketId === marketId
   );
-  return filterNfts(
-    nftArray,
-    filteredMarket[0].constants.verifiedCreator,
-    filteredMarket[0].constants.marketName
-  );
+  return filterNfts(nftArray, filteredMarket[0].constants.verifiedCreator);
 };
 
 /**

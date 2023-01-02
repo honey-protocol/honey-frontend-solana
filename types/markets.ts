@@ -1,5 +1,6 @@
 import { ColumnType } from 'antd/lib/table';
 import { PublicKey } from '@solana/web3.js';
+import { MarketBundle } from '@honey-finance/sdk';
 
 export type MarketTableRow = {
   allowance: number;
@@ -23,6 +24,10 @@ export type MarketTableRow = {
   liqThreshold?: any;
   untilLiquidation?: number;
   verifiedCreator: string;
+  nftPrice?: number;
+  userDebt?: number;
+  ltv?: number;
+  userTotalDeposits?: number;
   constants: {
     marketId: string;
     verifiedCreator: string;
@@ -30,6 +35,7 @@ export type MarketTableRow = {
     marketImage: string;
     discountedMarket: boolean;
   }
+  marketData?: Array<MarketBundle>;
 };
 
 export type MarketTablePosition = {
@@ -39,6 +45,10 @@ export type MarketTablePosition = {
   symbol?: string;
   updateAuthority?: PublicKey;
   uri?: string;
+  nftPrice?: number;
+  userDebt?: number;
+  ltv?: number;
+  allowance?: number;
 };
 
 export type UserNFTs = {

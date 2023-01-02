@@ -68,7 +68,8 @@ module.exports = (phase, { defaultConfig }) => {
           'https://solscanee.net/solana.json',
           'https://api.jsonbin.it/bins/hGRzonVT',
           'i.seadn.io',
-          'ipfs.vvdny.io'
+          'ipfs.vvdny.io',
+          'storage.googleapis.com'
         ]
       }
     };
@@ -108,7 +109,8 @@ module.exports = (phase, { defaultConfig }) => {
           'https://solscanee.net/solana.json',
           'https://api.jsonbin.it/bins/hGRzonVT',
           'i.seadn.io',
-          'ipfs.vvdny.io'
+          'ipfs.vvdny.io',
+          'storage.googleapis.com'
         ]
       }
     };

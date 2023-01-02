@@ -22,13 +22,21 @@ import HoneyButton from '../../components/HoneyButton/HoneyButton';
 import { formatNumber } from '../../helpers/format';
 import { LiquidateTableRow } from '../../types/liquidate';
 import { LiquidateExpandTable } from '../../components/LiquidateExpandTable/LiquidateExpandTable';
+import { RoundHalfDown } from 'helpers/utils';
+import { getOraclePrice } from '../../helpers/loanHelpers/index';
+import BN from 'bn.js';
 import {
   useAnchor,
   LiquidatorClient,
   useAllPositions,
   useHoney,
   useMarket,
-  NftPosition
+  NftPosition,
+  fetchAllMarkets,
+  MarketBundle,
+  HoneyMarket,
+  HoneyUser,
+  HoneyClient
 } from '@honey-finance/sdk';
 import { ConfigureSDK } from 'helpers/loanHelpers';
 import { useConnectedWallet } from '@saberhq/use-solana';
@@ -51,29 +59,43 @@ import HoneyTableNameCell from 'components/HoneyTable/HoneyTableNameCell/HoneyTa
 import LiquidateExpandTableMobile from 'components/LiquidateExpandTable/LiquidateExpandTableMobile';
 import { marketCollections } from '../../helpers/marketHelpers/index';
 import { populateMarketData } from 'helpers/loanHelpers/userCollection';
-import { setMarketId } from 'pages/_app';
 import { MarketTableRow } from 'types/markets';
 import { renderMarket, renderMarketImageByName } from 'helpers/marketHelpers';
 import { network } from 'pages/_app';
-import { cp } from 'fs';
 
 const { formatPercent: fp, formatSol: fs, formatRoundDown: fd } = formatNumber;
 const Liquidate: NextPage = () => {
-  // TODO: write dynamic currentMarketId based on user interaction
+  // base state
+  const [hasPosition, setHasPosition] = useState(false);
+  const [highestBiddingAddress, setHighestBiddingAddress] = useState('');
+  const [highestBiddingValue, setHighestBiddingValue] = useState(0);
+  const [currentUserBid, setCurrentUserBid] = useState<number>();
+  const [nftPrice, setNftPrice] = useState<number>(0);
+  const [userBalance, setUserBalance] = useState(0);
+  const [fetchedSolPrice, setFetchedSolPrice] = useState(0);
+  const [isMobileSidebarVisible, setShowMobileSidebar] = useState(false);
+  const [biddingArray, setBiddingArray] = useState({});
+  const [marketData, setMarketData] = useState<MarketBundle[]>([]);
+  const [tableData, setTableData] = useState<MarketTableRow[]>([]);
+  const [expandedRowKeys, setExpandedRowKeys] = useState<readonly Key[]>([]);
+  const [isMyBidsFilterEnabled, setIsMyBidsFilterEnabled] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [tableDataFiltered, setTableDataFiltered] = useState<MarketTableRow[]>(
+    []
+  );
   const [currentMarketId, setCurrentMarketId] = useState(
     HONEY_GENESIS_MARKET_ID
   );
-  // start sdk integration
   // init anchor
   const { program } = useAnchor();
+  // init sdk config obj
+  const sdkConfig = ConfigureSDK();
   // create wallet instance for PK
   const wallet = useConnectedWallet() || null;
-  /**
-   * @description sets program | market | connection | wallet
-   * @params none
-   * @returns connection with sdk
-   */
-  const sdkConfig = ConfigureSDK();
+  let stringyfiedWalletPK = sdkConfig.sdkWallet?.publicKey.toString();
+  let walletPK = sdkConfig.sdkWallet?.publicKey;
+
+  //  ************* START HOOKS *************
   /**
    * @description fetches open nft positions
    * @params connection | wallet | honeyprogramID | honeymarketID
@@ -86,15 +108,13 @@ const Liquidate: NextPage = () => {
     currentMarketId,
     network == 'devnet' ? true : false
   );
-
-  console.log('this is status object', status);
-
   /**
    * @description calls upon markets which
    * @params none
    * @returns market | market reserve information | parsed reserves |
    */
   const { market, marketReserveInfo, parsedReserves, fetchMarket } = useHoney();
+
   /**
    * @description calls upon the honey sdk
    * @params  useConnection func. | useConnectedWallet func. | honeyID | marketID
@@ -106,41 +126,59 @@ const Liquidate: NextPage = () => {
     sdkConfig.honeyId,
     currentMarketId
   );
+  //  ************* END HOOKS *************
+  //  ************* START FETCH MARKET DATA *************
+  async function fetchAllMarketData(marketIDs: string[]) {
+    const data = await fetchAllMarkets(
+      sdkConfig.saberHqConnection,
+      sdkConfig.sdkWallet,
+      sdkConfig.honeyId,
+      marketIDs,
+      false
+    );
 
-  // base state
-  const [hasPosition, setHasPosition] = useState(false);
-  const [highestBiddingAddress, setHighestBiddingAddress] = useState('');
-  const [highestBiddingValue, setHighestBiddingValue] = useState(0);
-  const [currentUserBid, setCurrentUserBid] = useState<number>();
-  const [nftPrice, setNftPrice] = useState<number>(0);
-  const [userBalance, setUserBalance] = useState(0);
-  const [fetchedSolPrice, setFetchedSolPrice] = useState(0);
-  const [isMobileSidebarVisible, setShowMobileSidebar] = useState(false);
-  const [positionsObject, setPositionsObject] = useState<Array<NftPosition>>(
-    []
-  );
-  const [biddingArray, setBiddingArray] = useState({});
-  /**
-   * @description
-   * @params
-   * @returns
-   */
-  const showMobileSidebar = () => {
-    setShowMobileSidebar(true);
-    document.body.classList.add('disable-scroll');
-  };
-  /**
-   * @description
-   * @params
-   * @returns
-   */
-  const hideMobileSidebar = () => {
-    setShowMobileSidebar(false);
-    document.body.classList.remove('disable-scroll');
-  };
-  // create stringyfied instance of walletPK
-  let stringyfiedWalletPK = sdkConfig.sdkWallet?.publicKey.toString();
-  let walletPK = sdkConfig.sdkWallet?.publicKey;
+    setMarketData(data as unknown as MarketBundle[]);
+    handleBids();
+  }
+
+  useEffect(() => {
+    if (
+      sdkConfig.saberHqConnection &&
+      sdkConfig.sdkWallet &&
+      sdkConfig.honeyId
+    ) {
+      const marketIDs = marketCollections.map(market => market.id);
+      fetchAllMarketData(marketIDs);
+    }
+  }, [sdkConfig.saberHqConnection, sdkConfig.sdkWallet]);
+
+  //  ************* END FETCH MARKET DATA *************
+
+  //  ************* START HANDLE BIDS *************
+  async function handleBids() {
+    if (!marketData) return;
+
+    const filteredMarketData = marketData.filter(
+      marketObject => marketObject.market.address.toString() === currentMarketId
+    );
+
+    if (filteredMarketData.length) {
+      if (filteredMarketData[0].bids) {
+        setBiddingArray(filteredMarketData[0].bids);
+        handleBiddingState(filteredMarketData[0].bids);
+      } else {
+        setBiddingArray([]);
+        handleBiddingState([]);
+      }
+    }
+  }
+
+  useEffect(() => {
+    handleBids();
+  }, [currentMarketId, marketData]);
+  //  ************* END HANDLE BIDS *************
+
+  //  ************* START FETCH WALLET BALANCE *************
   /**
    * @description
    * @params
@@ -155,65 +193,93 @@ const Liquidate: NextPage = () => {
       console.log('Error', error);
     }
   }
-  /**
-   * @description
-   * @params
-   * @returns
-   */
-  useEffect(() => {
-    if (walletPK) {
-      fetchWalletBalance(walletPK);
-    }
-  }, [walletPK]);
 
+  useEffect(() => {
+    if (walletPK) fetchWalletBalance(walletPK);
+  }, [walletPK]);
+  //  ************* END FETCH WALLET BALANCE *************
+
+  //  ************* START HANDLE BIDDING STATE *************
   /**
    * @description sets the state if user has open bid
    * @params array of bids
    * @returns state change
    */
   async function handleBiddingState(biddingArray: any) {
-    if (biddingArray === undefined)
-      biddingArray = [{ bid: '', bidder: '', bidLimit: '' }];
-
-    biddingArray.map((obligation: any) => {
-      if (stringyfiedWalletPK && obligation.bidder == stringyfiedWalletPK) {
-        setHasPosition(true);
-        setCurrentUserBid(Number(obligation.bidLimit / LAMPORTS_PER_SOL));
-      }
-    });
-
     if (!biddingArray.length) {
       setHasPosition(false);
       setCurrentUserBid(0);
       setHighestBiddingValue(0);
       setHighestBiddingAddress('');
-    } else {
-      let highestBid = await biddingArray
-        .sort((first: any, second: any) => first.bidLimit - second.bidLimit)
-        .reverse();
+      return;
+    }
 
-      if (highestBid[0]) {
-        setHighestBiddingAddress(highestBid[0].bidder);
-        setHighestBiddingValue(highestBid[0].bidLimit / LAMPORTS_PER_SOL);
-      }
+    const arrayOfBiddingAddress = await biddingArray.map(
+      (obligation: any) => obligation.bidder
+    );
+
+    if (arrayOfBiddingAddress.includes(stringyfiedWalletPK)) {
+      setHasPosition(true);
+
+      biddingArray.map((obligation: any) => {
+        if (stringyfiedWalletPK && obligation.bidder === stringyfiedWalletPK) {
+          setCurrentUserBid(Number(obligation.bidLimit / LAMPORTS_PER_SOL));
+        }
+      });
+    } else {
+      setHasPosition(false);
+      setCurrentUserBid(0);
+    }
+
+    let highestBid = await biddingArray
+      .sort((first: any, second: any) => first.bidLimit - second.bidLimit)
+      .reverse();
+
+    if (highestBid[0]) {
+      setHighestBiddingAddress(highestBid[0].bidder);
+      setHighestBiddingValue(highestBid[0].bidLimit / LAMPORTS_PER_SOL);
     }
   }
+  //  ************* END HANDLE BIDDING STATE *************
+
+  const showMobileSidebar = () => {
+    setShowMobileSidebar(true);
+    document.body.classList.add('disable-scroll');
+  };
+
+  const hideMobileSidebar = () => {
+    setShowMobileSidebar(false);
+    document.body.classList.remove('disable-scroll');
+  };
+
+  //  ************* START CALC. NFT PRICE *************
   /**
    * @description
    * @params
    * @returns
    */
-  async function calculateNFTPrice() {
-    if (marketReserveInfo && parsedReserves && honeyMarket) {
-      let nftPrice = await calcNFT(
-        marketReserveInfo,
-        parsedReserves,
-        honeyMarket,
-        sdkConfig.saberHqConnection
-      );
-      setNftPrice(Number(nftPrice));
-    }
-  }
+  // async function calculateNFTPrice() {
+  //   if (marketReserveInfo && parsedReserves && honeyMarket) {
+  //     let nftPrice = await calcNFT(
+  //       marketReserveInfo,
+  //       parsedReserves[0],
+  //       honeyMarket,
+  //       sdkConfig.saberHqConnection
+  //     );
+  //     setNftPrice(Number(nftPrice));
+  //   }
+  // }
+  /**
+   * @description
+   * @params
+   * @returns
+   */
+  // useEffect(() => {
+  //   calculateNFTPrice();
+  // }, [marketReserveInfo, parsedReserves]);
+  //  ************* END CALC. NFT PRICE *************
+
+  //  ************* START FETCH SOL PRICE *************
   /**
    * @description
    * @params
@@ -233,14 +299,7 @@ const Liquidate: NextPage = () => {
       fetchSolValue(parsedReserves, sdkConfig.saberHqConnection);
     }
   }, [parsedReserves]);
-  /**
-   * @description
-   * @params
-   * @returns
-   */
-  useEffect(() => {
-    calculateNFTPrice();
-  }, [marketReserveInfo, parsedReserves, positionsObject]);
+  //  ************* END FETCH SOL PRICE *************
 
   /**
    * @description calls upon liquidator client for placebid | revokebid | increasebid
@@ -361,34 +420,6 @@ const Liquidate: NextPage = () => {
   ) {
     fetchLiquidatorClient(type, userBid!, toast, mID);
   }
-  /**
-   * @description
-   * @params
-   * @returns
-   */
-  useEffect(() => {
-    if (status.positions) {
-      setPositionsObject(status.positions);
-    } else {
-      setPositionsObject([]);
-    }
-
-    if (status.bids) {
-      setBiddingArray(status.bids);
-      handleBiddingState(status.bids);
-    } else {
-      setBiddingArray([]);
-      handleBiddingState([]);
-    }
-  }, [status.positions, status.bids]);
-
-  const [tableData, setTableData] = useState<MarketTableRow[]>([]);
-  const [tableDataFiltered, setTableDataFiltered] = useState<MarketTableRow[]>(
-    []
-  );
-  const [expandedRowKeys, setExpandedRowKeys] = useState<readonly Key[]>([]);
-  const [isMyBidsFilterEnabled, setIsMyBidsFilterEnabled] = useState(false);
-  const [searchQuery, setSearchQuery] = useState('');
 
   /**
    * @description
@@ -396,24 +427,105 @@ const Liquidate: NextPage = () => {
    * @returns
    */
   useEffect(() => {
-    if (sdkConfig.saberHqConnection && marketReserveInfo) {
+    if (sdkConfig.saberHqConnection) {
+      if (!marketData) return;
       function getData() {
         return Promise.all(
           marketCollections.map(async collection => {
-            let obligationObject =
-              collection.constants.marketId === currentMarketId
-                ? positionsObject
-                : [];
-            await populateMarketData(
-              collection,
-              sdkConfig.saberHqConnection,
-              sdkConfig.sdkWallet,
-              currentMarketId,
-              true,
-              obligationObject,
-              nftPrice
-            );
-            return collection;
+            if (collection.id == '') return collection;
+
+            if (marketData.length) {
+              collection.marketData = marketData.filter(
+                marketObject =>
+                  marketObject.market.address.toString() === collection.id
+              );
+
+              const honeyUser: HoneyUser = collection.marketData[0].user;
+              const honeyMarket: HoneyMarket = collection.marketData[0].market;
+              const honeyClient: HoneyClient = collection.marketData[0].client;
+              const parsedReserves = collection.marketData[0].reserves[0].data;
+              const pR = collection.marketData[0].reserves[0];
+
+              const fetchMarketOutcome = await HoneyMarket.fetchMarket(
+                honeyClient,
+                honeyMarket.address
+              );
+
+              const fetchFloorPriceOutcome =
+                await honeyMarket.fetchNFTFloorPrice('mainnet-beta');
+
+              const fetchReserveData = await pR.fetchReserveValue(
+                'mainnet-beta'
+              );
+
+              // console.log(
+              //   '@@-- state object',
+              //   fetchMarketOutcome[2][0].state.outstandingDebt /
+              //     LAMPORTS_PER_SOL
+              // );
+              // const calc = fetchMarketOutcome[2][0].state.outstandingDebt
+              //   .div(new BN(10 ** 9))
+              //   .toNumber();
+              // console.log('xyz calc', calc / LAMPORTS_PER_SOL);
+
+              // const outstandingDebt =
+              //   fetchMarketOutcome[2][0].state.outstandingDebt.toString();
+
+              // const totalDeposits =
+              //   fetchMarketOutcome[2][0].state.totalDeposits.toString();
+
+              // console.log('@@-- fetch outstanding debt', outstandingDebt);
+
+              // console.log('@@-- fetch total deposits', totalDeposits);
+
+              // console.log('@@-- fetch market outcome', fetchMarketOutcome);
+              // console.log(
+              //   '@@-- fetch floor price outcome',
+              //   fetchFloorPriceOutcome.toNumber()
+              // );
+
+              // console.log(
+              //   '@@-- fetch reserve data outcome',
+              //   fetchReserveData.toString()
+              // );
+
+              await populateMarketData(
+                'LIQUIDATIONS',
+                collection,
+                sdkConfig.saberHqConnection,
+                sdkConfig.sdkWallet,
+                currentMarketId,
+                true,
+                collection.marketData[0].positions,
+                true,
+                honeyClient,
+                honeyMarket,
+                honeyUser,
+                parsedReserves
+              );
+
+              if (currentMarketId === collection.id)
+                setNftPrice(RoundHalfDown(Number(collection.nftPrice)));
+              return collection;
+            } else {
+              marketCollections.map(async collection => {
+                await populateMarketData(
+                  'LIQUIDATIONS',
+                  collection,
+                  sdkConfig.saberHqConnection,
+                  sdkConfig.sdkWallet,
+                  currentMarketId,
+                  true,
+                  [],
+                  true,
+                  honeyClient,
+                  honeyMarket,
+                  honeyUser,
+                  parsedReserves
+                );
+              });
+              return collection;
+            }
           })
         );
       }
@@ -427,9 +539,7 @@ const Liquidate: NextPage = () => {
     currentMarketId,
     sdkConfig.saberHqConnection,
     sdkConfig.sdkWallet,
-    nftPrice,
-    positionsObject,
-    marketReserveInfo
+    marketData
   ]);
   /**
    * @description
@@ -463,8 +573,6 @@ const Liquidate: NextPage = () => {
 
     if (marketData[0].id) {
       setCurrentMarketId(marketData[0].id);
-      setMarketId(marketData[0].id);
-      handleBiddingState(status.bids);
     }
   }
   /**
@@ -530,30 +638,30 @@ const Liquidate: NextPage = () => {
         }
       },
       // TODO: Once risk is fixed comment back in
-      // {
-      //   width: columnsWidth[1],
-      //   title: ({ sortColumns }) => {
-      //     const sortOrder = getColumnSortStatus(sortColumns, 'risk');
-      //     return (
-      //       <div
-      //         className={
-      //           style.headerCell[
-      //             sortOrder === 'disabled' ? 'disabled' : 'active'
-      //           ]
-      //         }
-      //         style={{paddingLeft: 15}}
-      //       >
-      //         <span>Risk</span>
-      //         <div className={style.sortIcon[sortOrder]} />
-      //       </div>
-      //     );
-      //   },
-      //   dataIndex: 'risk',
-      //   sorter: (a, b) => a.risk! - b.risk!,
-      //   render: (rate: number, market: any) => {
-      //     return <div className={style.rateCell} >{fp(market.risk * 100)}</div>;
-      //   }
-      // },
+      {
+        width: columnsWidth[1],
+        title: ({ sortColumns }) => {
+          const sortOrder = getColumnSortStatus(sortColumns, 'risk');
+          return (
+            <div
+              className={
+                style.headerCell[
+                  sortOrder === 'disabled' ? 'disabled' : 'active'
+                ]
+              }
+              style={{ paddingLeft: 15 }}
+            >
+              <span>Risk</span>
+              <div className={style.sortIcon[sortOrder]} />
+            </div>
+          );
+        },
+        dataIndex: 'risk',
+        sorter: (a, b) => a.risk! - b.risk!,
+        render: (rate: number, market: any) => {
+          return <div className={style.rateCell}>{fp(market.risk * 100)}</div>;
+        }
+      },
       {
         width: columnsWidth[2],
         title: ({ sortColumns }) => {
@@ -627,11 +735,7 @@ const Liquidate: NextPage = () => {
         dataIndex: 'tvl',
         sorter: (a, b) => a.tvl! - b.tvl!,
         render: (value: number, market: any) => {
-          return (
-            <div className={style.valueCell}>
-              {fs(nftPrice * market.openPositions.length)}
-            </div>
-          );
+          return <div className={style.valueCell}>{fs(market.tvl)}</div>;
         }
       },
       {

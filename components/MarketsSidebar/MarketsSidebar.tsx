@@ -12,6 +12,7 @@ import { mobileReturnButton } from 'styles/common.css';
 import { renderNftList } from 'helpers/marketHelpers';
 import useFetchNFTByUser from 'hooks/useNFTV2';
 import { spinner } from 'styles/common.css';
+import { active } from 'components/HoneyTabs/HoneyTabs.css';
 type Tab = 'borrow' | 'repay';
 
 const MarketsSidebar = (props: MarketsSidebarProps) => {
@@ -41,10 +42,19 @@ const MarketsSidebar = (props: MarketsSidebarProps) => {
   const handleTabChange = (tabKey: string) => {
     setActiveTab(tabKey as Tab);
   };
+
   // sets active tab based on positions
   useEffect(() => {
-    if (openPositions.length == 0) handleTabChange('borrow');
-  }, [openPositions, availableNFTs]);
+    if (activeTab === 'borrow') {
+      handleTabChange('borrow');
+    }
+
+    if (activeTab === 'repay' && openPositions.length) {
+      handleTabChange('repay');
+    } else {
+      handleTabChange('borrow');
+    }
+  });
   // passed as props for child components regarding tab click
   const items: [HoneyTabItem, HoneyTabItem] = [
     { label: 'Borrow', key: 'borrow' },
@@ -96,7 +106,7 @@ const MarketsSidebar = (props: MarketsSidebarProps) => {
             description=""
           />
         ) : (!availableNFTsInSelectedMarket ||
-          availableNFTsInSelectedMarket.length === 0) &&
+            availableNFTsInSelectedMarket.length === 0) &&
           openPositions.length === 0 ? (
           <EmptyStateDetails
             icon={<div className={styles.boltIcon} />}

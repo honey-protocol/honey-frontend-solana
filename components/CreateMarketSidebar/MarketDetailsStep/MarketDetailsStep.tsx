@@ -58,7 +58,7 @@ const MarketDetailsStep = (props: MarketDetailsProps) => {
       <div className={styles.stepText}>Step 3</div>
       <div>
         To list your market, create a pull request in the Honey Labs Github
-        repository. View our instructions here
+        repository. View our instructions <a href="https://docs.honey.finance/tutorials/tutorials/create-a-market">here</a>
       </div>
       <div className={styles.spacer}></div>
 
