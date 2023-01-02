@@ -2,7 +2,7 @@ import { style } from '@vanilla-extract/css';
 import { typography, vars } from '../../../styles/theme.css';
 
 export const positionCard = style({
-  background: vars.colors.white,
+  background: vars.colors.foreground,
   padding: 12,
   paddingTop: 34,
   borderRadius: 12,
@@ -22,7 +22,7 @@ export const positionCard = style({
 });
 
 export const activeCard = style({
-  border: `2px solid ${vars.colors.black} !important`,
+  border: `2px solid ${vars.colors.borderPrimary} !important`,
   boxShadow: `2px 2px 0px ${vars.colors.brownLight}`
 });
 
@@ -39,7 +39,7 @@ export const positionName = style([
   {
     display: 'flex',
     justifyContent: 'center',
-    color: vars.colors.black,
+    color: vars.colors.text,
     alignItems: 'center',
     marginBottom: 16,
     width: '100%'

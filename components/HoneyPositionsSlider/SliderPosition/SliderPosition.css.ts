@@ -23,7 +23,7 @@ export const honeyPositionValues = style({
 export const honeyPositionName = style([
   typography.caption,
   {
-    color: vars.colors.grayTransparent,
+    color: vars.colors.textTertiary,
     marginBottom: 4,
     whiteSpace: 'nowrap',
     maxWidth: 100,
@@ -39,7 +39,7 @@ export const honeyPositionDigits = style({
 export const honeyPositionPrice = style([
   typography.numbersMini,
   {
-    color: vars.colors.black,
+    color: vars.colors.text,
     whiteSpace: 'nowrap'
   }
 ]);

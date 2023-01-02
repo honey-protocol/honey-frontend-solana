@@ -20,7 +20,7 @@ export const loan = styleVariants({
     borderBottom: `1px solid dashed`,
     selectors: {
       '&:hover': {
-        background: vars.colors.grayLight
+        background: vars.colors.background
       }
     }
   },
@@ -57,13 +57,13 @@ export const loanStats = styleVariants({
     borderRadius: 4,
     selectors: {
       '&:nth-child(even)': {
-        background: vars.colors.grayLight
+        background: vars.colors.background
       }
     }
   },
   label: {
     ...typography.caption,
-    color: vars.colors.grayTransparent
+    color: vars.colors.textTertiary
   },
   value: {
     ...typography.caption

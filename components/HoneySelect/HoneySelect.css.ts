@@ -22,7 +22,7 @@ export const rootStile = `${honeySelect}.ant-select.ant-select-single.ant-select
 export const rootDropdownStyle = `${honeySelectDropdownList} > div > .rc-virtual-list > .rc-virtual-list-holder > div > .rc-virtual-list-holder-inner`
 
 globalStyle(`${rootStile}`, {
-  border: `1px solid ${vars.colors.grayTransparent}`,
+  border: `1px solid ${vars.colors.textTertiary}`,
   borderRadius: 12,
   padding: '11px 16px',
   height: 52,

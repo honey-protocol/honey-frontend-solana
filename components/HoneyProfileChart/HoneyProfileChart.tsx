@@ -178,7 +178,7 @@ const ProfileChart: FC<ProfileChartProps> = ({ data = [], size, value }) => {
             },
             tickLabels: {
               ...typography.caption,
-              fill: vars.colors.grayTransparent,
+              fill: vars.colors.textTertiary,
               padding: 26
             }
           }}
@@ -193,7 +193,7 @@ const ProfileChart: FC<ProfileChartProps> = ({ data = [], size, value }) => {
             },
             tickLabels: {
               ...typography.caption,
-              fill: vars.colors.grayTransparent,
+              fill: vars.colors.textTertiary,
               padding: 26
             }
           }}

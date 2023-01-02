@@ -16,14 +16,20 @@ export const articleWrapper = style({
   marginBottom: 12
 })
 
-export const articleTitle = style([typography.title, {
-  color: vars.colors.black,
+export const articleTitle = style([
+  typography.title,
+  {
+    color: vars.colors.text,
   marginBottom: 2
-}])
+  }
+]);
 
-export const articleDescription = style([typography.description, {
-  color: vars.colors.grayTransparent
-}])
+export const articleDescription = style([
+  typography.description,
+  {
+    color: vars.colors.textTertiary
+  }
+]);
 
 const formSection = style([
   {
@@ -81,23 +87,32 @@ export const listItemIcon = style({
   height: 34,
   flexShrink: 0,
   marginRight: 15
-})
-export const itemCollection = style( {
-  display: "flex",
-  flexDirection: "column"
-})
-export const itemCollectionName = style( [typography.caption, {
-  color: vars.colors.grayTransparent,
+});
+export const itemCollection = style({
+  display: 'flex',
+  flexDirection: 'column'
+});
+export const itemCollectionName = style([
+  typography.caption,
+  {
+    color: vars.colors.textTertiary,
   marginBottom: 2
-}])
-export const itemCollectionValue = style( {
-  display: "flex",
-  alignItems: "flex-end"
-})
-export const itemCollectionValueCount = style( [typography.numbersRegular, {
-  color: vars.colors.black,
+  }
+]);
+export const itemCollectionValue = style({
+  display: 'flex',
+  alignItems: 'flex-end'
+});
+export const itemCollectionValueCount = style([
+  typography.numbersRegular,
+  {
+    color: vars.colors.text,
   marginRight: 4
-}])
-export const itemCollectionToken = style( [typography.caption, {
-  color: vars.colors.black
-}])
+  }
+]);
+export const itemCollectionToken = style([
+  typography.caption,
+  {
+    color: vars.colors.text
+  }
+]);

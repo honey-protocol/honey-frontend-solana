@@ -9,7 +9,7 @@ export const values = style({
 export const info = style({
   padding: '30px 8px 16px',
   position: 'relative',
-  background: vars.colors.white
+  background: vars.colors.foreground
 });
 
 export const statusBlock = style({
@@ -42,14 +42,14 @@ export const collectionCard = style({
   overflow: 'hidden',
   transition: 'all 0.2s',
   ':hover': {
-    borderColor: vars.colors.black,
-    boxShadow: `2px 2px 0px ${vars.colors.brownLight}`,
-  },
+    borderColor: vars.colors.borderPrimary,
+    boxShadow: `2px 2px 0px ${vars.colors.brownLight}`
+  }
 });
 
 export const isActive = style({
-  borderColor: vars.colors.black,
-  boxShadow: `2px 2px 0px ${vars.colors.brownLight}`,
+  borderColor: vars.colors.borderPrimary,
+  boxShadow: `2px 2px 0px ${vars.colors.brownLight}`
 });
 
 export const icon = style({
@@ -65,7 +65,7 @@ export const blur = style({
   width: '100%',
   height: 94,
   position: 'relative',
-  overflow: 'hidden',
+  overflow: 'hidden'
 });
 
 export const iconBlur = style({

@@ -130,7 +130,7 @@ export const textSecondary = style([
 
 export const disabled = style({
   background: `${vars.colors.grayMiddle} !important`,
-  color: `${vars.colors.grayTransparent} !important`,
+  color: `${vars.colors.textTertiary} !important`,
   ':hover': {
     transform: 'none',
     boxShadow: 'none'

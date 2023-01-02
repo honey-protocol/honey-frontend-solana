@@ -8,10 +8,12 @@ import { WalletIcon } from 'icons/WalletIcon';
 import { useWalletKit } from '@gokiprotocol/walletkit';
 import { useConnectedWallet, useSolana } from '@saberhq/use-solana';
 import { DialectNotifications } from 'components/DialectNotifications/DialectNotifications';
-import { featureFlags } from '../../helpers/featureFlags';
 import { vars } from 'styles/theme.css';
-import HoneyToggle from 'components/HoneyToggle/HoneyToggle';
 import { HoneyThemeContext } from 'pages/_app';
+import { SunlightIcon } from 'icons/SunlightIcon';
+import { SwitchIcon } from 'icons/SwitchIcon';
+import { NightIcon } from 'icons/NightIcon';
+import { useTheme } from 'degen';
 const { Title } = Typography;
 
 const WalletMenu = () => {
@@ -20,6 +22,7 @@ const WalletMenu = () => {
   const { connect } = useWalletKit();
   const walletAddress = wallet?.publicKey.toString();
   const { theme, setTheme } = useContext(HoneyThemeContext);
+  const degenTheme = useTheme();
 
   function handleClick(e: any) {
     if (e.key == '4') disconnect();
@@ -29,17 +32,25 @@ const WalletMenu = () => {
     <Menu
       onClick={handleClick}
       selectable
+      className={styles.userMenu}
       items={[
         {
-          key: '4',
+          key: '0',
           label: 'Disconnect',
-          onClick: disconnect
+          onClick: disconnect,
+          itemIcon: <SwitchIcon fill={theme === 'dark' ? 'white' : 'black'} />
+        },
+        {
+          type: 'divider'
         },
         {
           key: '2',
           label: theme === 'dark' ? 'Light theme' : 'Dark theme',
-          onClick:
-            theme === 'dark' ? () => setTheme('light') : () => setTheme('dark')
+          onClick: () => {
+            setTheme(theme === 'dark' ? 'light' : 'dark');
+            degenTheme.setMode(theme === 'dark' ? 'light' : 'dark');
+          },
+          itemIcon: theme === 'dark' ? <SunlightIcon /> : <NightIcon />
         }
       ]}
     />
@@ -55,7 +66,7 @@ const WalletMenu = () => {
       <div className={styles.dialectIconWrapper}>
         {<DialectNotifications />}
       </div>
-      <Dropdown overlay={menu}>
+      <Dropdown placement="bottomRight" overlay={menu}>
         <a onClick={e => e.preventDefault()}>
           <Space size="small" align="center">
             <div className={styles.userIcon} />

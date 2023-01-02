@@ -92,7 +92,7 @@ export const searchInputWrapper = style({
 });
 
 globalStyle(`${searchInputWrapper} input::placeholder`, {
-  color: vars.colors.black
+  color: vars.colors.text
 });
 
 export const cardsDivider = style({
@@ -105,7 +105,7 @@ export const cardsDivider = style({
 export const dividerText = style([
   typography.caption,
   {
-    color: vars.colors.grayTransparent,
+    color: vars.colors.textTertiary,
     margin: '0 16px',
     whiteSpace: 'nowrap'
   }

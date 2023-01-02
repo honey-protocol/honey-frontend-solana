@@ -3,7 +3,7 @@ import { typography, vars } from '../../styles/theme.css';
 
 export const notificationCard = style({
   padding: '10px 16px',
-  background: vars.colors.white,
+  background: vars.colors.foreground,
   borderRadius: 16,
   marginBottom: 4,
   position: 'relative',
@@ -24,7 +24,7 @@ export const important = style({
 export const notificationTitle = style([
   typography.body,
   {
-    color: vars.colors.black,
+    color: vars.colors.text,
     marginBottom: 4,
     whiteSpace: 'nowrap',
     overflow: 'hidden',
@@ -42,7 +42,7 @@ export const notificationDescription = style({
 export const notificationText = style([
   typography.description,
   {
-    color: vars.colors.grayTransparent,
+    color: vars.colors.textTertiary,
     whiteSpace: 'nowrap',
     overflow: 'hidden',
     textOverflow: 'ellipsis',
@@ -53,6 +53,6 @@ export const notificationText = style([
 export const notificationShow = style([
   typography.description,
   {
-    color: vars.colors.black
+    color: vars.colors.text
   }
 ]);

@@ -47,7 +47,7 @@ export const tokenSelector = style({
   cursor: 'pointer',
   borderRadius: 10,
   selectors: {
-    '&:hover, &:active': { background: vars.colors.grayLight }
+    '&:hover, &:active': { background: vars.colors.background }
   }
 });
 
@@ -106,12 +106,14 @@ globalStyle(`${buttons} .ant-tooltip-open`, {
 });
 
 export const reloadIcon = style({
-  background: 'url("/images/reload-icon.svg") center center no-repeat',
   width: 15,
   height: 15,
   marginLeft: 4,
   transform: 'translateY(-2px)',
-  cursor: 'pointer'
+  cursor: 'pointer',
+  display: 'flex',
+  justifyContent: 'center',
+  alignItems: 'center'
 });
 
 export const swapArrow = style({
