@@ -40,3 +40,7 @@ export type BiddingPosition = {
   bidLimit: string;
   bidder: string;
 };
+
+export type TransactionType = [
+  string, Array<string>
+]
