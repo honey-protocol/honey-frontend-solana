@@ -34,7 +34,6 @@ import {
   useMarket,
   NftPosition,
   fetchAllMarkets,
-  MarketBundle,
   HoneyMarket,
   HoneyUser,
   HoneyClient,
@@ -61,7 +60,7 @@ import HoneyTableNameCell from 'components/HoneyTable/HoneyTableNameCell/HoneyTa
 import LiquidateExpandTableMobile from 'components/LiquidateExpandTable/LiquidateExpandTableMobile';
 import { marketCollections } from '../../helpers/marketHelpers/index';
 import { populateMarketData } from 'helpers/loanHelpers/userCollection';
-import { MarketTableRow } from 'types/markets';
+import { MarketTableRow, MarketBundle } from 'types/markets';
 import { renderMarket, renderMarketImageByName } from 'helpers/marketHelpers';
 import { network } from 'pages/_app';
 
