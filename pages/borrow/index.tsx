@@ -94,11 +94,8 @@ import {
 import CreateMarketSidebar from '../../components/CreateMarketSidebar/CreateMarketSidebar';
 // TODO: change to dynamic value
 const network = 'mainnet-beta';
-import { featureFlags } from 'helpers/featureFlags';
-import { toast } from 'components/HoneyToast/HoneyToast.css';
 // import { network } from 'pages/_app';
 const { format: f, formatPercent: fp, formatSol: fs } = formatNumber;
-// const { toast, ToastComponent } = useToast();
 
 const Markets: NextPage = () => {
   // Sets market ID which is used for fetching market specific data
@@ -113,6 +110,7 @@ const Markets: NextPage = () => {
   const [sidebarMode, setSidebarMode] = useState<BorrowSidebarMode>(
     BorrowSidebarMode.MARKET
   );
+  const { toast, ToastComponent } = useToast();
   /**
    * @description sets the market ID based on market click
    * @params Honey table record - contains all info about a table (aka market / collection)
@@ -190,7 +188,7 @@ const Markets: NextPage = () => {
       setUserBalance(userBalance);
     } catch (error) {
       // TODO: return toast response with error
-      return console.log('Error:', error);
+      return toast.error('Balance could not be fetched');
     }
   }
 
