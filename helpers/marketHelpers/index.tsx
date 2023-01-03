@@ -22,7 +22,7 @@ export type OpenPositions = {
 // collection strucutre for the markets
 export const marketCollections: MarketTableRow[] = [
   {
-    id: '6FcJaAzQnuoA6o3sVw1GD6Ba69XuL5jinZpQTzJhd2R3',
+    id: '9Le8tqRmHfLCPfUKS6evAg8s7GYk7Xn3ubo5XcE54iw5',
     key: 'HNYG',
     name: 'Honey Genesis Bee',
     currencyName: 'HGB/BONK',
@@ -38,7 +38,7 @@ export const marketCollections: MarketTableRow[] = [
     utilizationRate: 0,
     openPositions: [],
     constants: {
-      marketId: '6FcJaAzQnuoA6o3sVw1GD6Ba69XuL5jinZpQTzJhd2R3',
+      marketId: '9Le8tqRmHfLCPfUKS6evAg8s7GYk7Xn3ubo5XcE54iw5',
       verifiedCreator: '6vRx1iVZo3xfrBHdpvuwArL2jucVj9j9nLpd2VUTTGMG',
       marketName: 'Honey Genesis Bee',
       marketImage:
@@ -246,7 +246,7 @@ export const BORROW_FEE = 0;
 
 // Honey Program ID
 export const HONEY_GENESIS_MARKET_ID =
-  '6FcJaAzQnuoA6o3sVw1GD6Ba69XuL5jinZpQTzJhd2R3';
+  '9Le8tqRmHfLCPfUKS6evAg8s7GYk7Xn3ubo5XcE54iw5';
 export const HONEY_GENESIS_BEE_MARKET_NAME = 'Honey Genesis Bee';
 export const HONEY_PROGRAM_ID = 'hNEYyRsRBVq2La65V1KjvdbTE39w36gwrdjkmcpvysk';
 
