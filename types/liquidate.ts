@@ -43,4 +43,4 @@ export type BiddingPosition = {
 
 export type TransactionType = [
   string, Array<string>
-]
+];

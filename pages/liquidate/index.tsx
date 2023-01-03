@@ -64,7 +64,6 @@ import { populateMarketData } from 'helpers/loanHelpers/userCollection';
 import { MarketTableRow } from 'types/markets';
 import { renderMarket, renderMarketImageByName } from 'helpers/marketHelpers';
 import { network } from 'pages/_app';
-import { Bid } from 'components/BidForm/types';
 
 const { formatPercent: fp, formatSol: fs, formatRoundDown: fd } = formatNumber;
 const Liquidate: NextPage = () => {
@@ -208,7 +207,7 @@ const Liquidate: NextPage = () => {
    * @params array of bids
    * @returns state change
    */
-  async function handleBiddingState(biddingArray: Bid[]) {
+  async function handleBiddingState(biddingArray: BiddingPosition[]) {
     if (!biddingArray.length) {
       setHasPosition(false);
       setCurrentUserBid(0);
@@ -218,7 +217,7 @@ const Liquidate: NextPage = () => {
     }
 
     const arrayOfBiddingAddress = await biddingArray.map(
-      (obligation: Bid) => obligation.bidder
+      (obligation: BiddingPosition) => obligation.bidder
     );
 
     // add additional checks due to type catching undefined
@@ -229,7 +228,7 @@ const Liquidate: NextPage = () => {
     ) {
       setHasPosition(true);
 
-      biddingArray.map((obligation: Bid) => {
+      biddingArray.map((obligation: BiddingPosition) => {
         if (stringyfiedWalletPK && obligation.bidder === stringyfiedWalletPK) {
           setCurrentUserBid(Number(obligation.bidLimit) / LAMPORTS_PER_SOL);
         }
@@ -241,7 +240,7 @@ const Liquidate: NextPage = () => {
 
     let highestBid = await biddingArray
       .sort(
-        (first: Bid, second: Bid) =>
+        (first: BiddingPosition, second: BiddingPosition) =>
           Number(first.bidLimit) - Number(second.bidLimit)
       )
       .reverse();

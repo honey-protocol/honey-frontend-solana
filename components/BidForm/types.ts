@@ -23,9 +23,3 @@ export type BidFormProps = {
   ) => void;
   onCancel: Function;
 };
-
-export type Bid = {
-  bid: string,
-  bidder: string,
-  bidLimit: string
-}
