@@ -24,7 +24,7 @@ import { LiquidateTableRow } from '../../types/liquidate';
 import { LiquidateExpandTable } from '../../components/LiquidateExpandTable/LiquidateExpandTable';
 import { RoundHalfDown } from 'helpers/utils';
 import { getOraclePrice } from '../../helpers/loanHelpers/index';
-import { BiddingPosition, TransactionType } from '../../types/liquidate';
+import { Bid, TransactionType } from '../../types/liquidate';
 import BN from 'bn.js';
 import {
   useAnchor,
@@ -207,7 +207,7 @@ const Liquidate: NextPage = () => {
    * @params array of bids
    * @returns state change
    */
-  async function handleBiddingState(biddingArray: BiddingPosition[]) {
+  async function handleBiddingState(biddingArray: Bid[]) {
     if (!biddingArray.length) {
       setHasPosition(false);
       setCurrentUserBid(0);
@@ -217,7 +217,7 @@ const Liquidate: NextPage = () => {
     }
 
     const arrayOfBiddingAddress = await biddingArray.map(
-      (obligation: BiddingPosition) => obligation.bidder
+      (obligation: Bid) => obligation.bidder
     );
 
     // add additional checks due to type catching undefined
@@ -228,7 +228,7 @@ const Liquidate: NextPage = () => {
     ) {
       setHasPosition(true);
 
-      biddingArray.map((obligation: BiddingPosition) => {
+      biddingArray.map((obligation: Bid) => {
         if (stringyfiedWalletPK && obligation.bidder === stringyfiedWalletPK) {
           setCurrentUserBid(Number(obligation.bidLimit) / LAMPORTS_PER_SOL);
         }
@@ -240,7 +240,7 @@ const Liquidate: NextPage = () => {
 
     let highestBid = await biddingArray
       .sort(
-        (first: BiddingPosition, second: BiddingPosition) =>
+        (first: Bid, second: Bid) =>
           Number(first.bidLimit) - Number(second.bidLimit)
       )
       .reverse();
