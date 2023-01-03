@@ -35,6 +35,7 @@ import { LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js';
 import HealthLvl from '../../components/HealthLvl/HealthLvl';
 import useFetchNFTByUser from 'hooks/useNFTV2';
 import useToast from 'hooks/useToast';
+import { MarketBundle } from 'types/markets';
 import {
   borrowAndRefresh,
   depositNFT,
@@ -43,7 +44,6 @@ import {
   useHoney,
   useMarket,
   fetchAllMarkets,
-  MarketBundle,
   waitForConfirmation,
   withdrawNFT
 } from '@honey-finance/sdk';

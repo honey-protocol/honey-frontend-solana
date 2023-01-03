@@ -29,7 +29,6 @@ import {
   useMarket,
   useHoney,
   fetchAllMarkets,
-  MarketBundle,
   waitForConfirmation
 } from '@honey-finance/sdk';
 import { BnToDecimal, ConfigureSDK } from '../../helpers/loanHelpers/index';
@@ -53,6 +52,7 @@ import { marketCollections } from '../../helpers/marketHelpers';
 import { generateMockHistoryData } from '../../helpers/chartUtils';
 import { renderMarket, renderMarketImageByName } from 'helpers/marketHelpers';
 import { calculateUserDeposits } from 'helpers/loanHelpers/userCollection';
+import { MarketBundle } from 'types/markets';
 // TODO: fetch based on config
 const network = 'mainnet-beta';
 
