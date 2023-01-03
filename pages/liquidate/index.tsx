@@ -208,7 +208,7 @@ const Liquidate: NextPage = () => {
    * @params array of bids
    * @returns state change
    */
-  async function handleBiddingState(biddingArray: BiddingPosition[]) {
+  async function handleBiddingState(biddingArray: Bid[]) {
     if (!biddingArray.length) {
       setHasPosition(false);
       setCurrentUserBid(0);
