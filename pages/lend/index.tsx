@@ -1,7 +1,7 @@
 import type { NextPage } from 'next';
 import LayoutRedesign from '../../components/LayoutRedesign/LayoutRedesign';
 import LendSidebar from '../../components/LendSidebar/LendSidebar';
-import { LendTableRow } from '../../types/lend';
+import { MarketTableRow } from '../../types/markets';
 import React, {
   ChangeEvent,
   useCallback,
@@ -68,8 +68,8 @@ const Lend: NextPage = () => {
   const [marketData, setMarketData] = useState<MarketBundle[]>([]);
   const isMock = true;
   const [isMobileSidebarVisible, setShowMobileSidebar] = useState(false);
-  const [tableData, setTableData] = useState<LendTableRow[]>([]);
-  const [tableDataFiltered, setTableDataFiltered] = useState<LendTableRow[]>(
+  const [tableData, setTableData] = useState<MarketTableRow[]>([]);
+  const [tableDataFiltered, setTableDataFiltered] = useState<MarketTableRow[]>(
     []
   );
   const [expandedRowKeys, setExpandedRowKeys] = useState<readonly Key[]>([]);
@@ -439,7 +439,7 @@ const Lend: NextPage = () => {
     honeyReservesChange
   ]);
 
-  const onSearch = (searchTerm: string): LendTableRow[] => {
+  const onSearch = (searchTerm: string): MarketTableRow[] => {
     if (!searchTerm) {
       return [...tableData];
     }
@@ -451,7 +451,7 @@ const Lend: NextPage = () => {
 
   const handleRowClick = (
     event: React.MouseEvent<Element, MouseEvent>,
-    record: LendTableRow
+    record: MarketTableRow
   ) => {
     setCurrentMarketId(record.id);
     showMobileSidebar();
@@ -496,7 +496,7 @@ const Lend: NextPage = () => {
 
   const columnsWidth: Array<number | string> = [240, 150, 150, 150, 150];
   // Render Desktop Data
-  const columns: ColumnType<LendTableRow>[] = useMemo(
+  const columns: ColumnType<MarketTableRow>[] = useMemo(
     () => [
       {
         width: columnsWidth[0],
@@ -592,7 +592,7 @@ const Lend: NextPage = () => {
       {
         width: columnsWidth[4],
         title: MyCollectionsToggle,
-        render: (_: null, row: LendTableRow) => {
+        render: (_: null, row: MarketTableRow) => {
           return (
             <div className={style.buttonsCell}>
               <HoneyButton variant="text">
@@ -612,13 +612,13 @@ const Lend: NextPage = () => {
     ]
   );
   // Render Mobile Data
-  const columnsMobile: ColumnType<LendTableRow>[] = useMemo(
+  const columnsMobile: ColumnType<MarketTableRow>[] = useMemo(
     () => [
       {
         width: columnsWidth[0],
         dataIndex: 'name',
         key: 'name',
-        render: (name: string, row: LendTableRow) => {
+        render: (name: string, row: MarketTableRow) => {
           return (
             <>
               <HoneyTableNameCell
