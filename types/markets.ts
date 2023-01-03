@@ -1,6 +1,7 @@
 import { ColumnType } from 'antd/lib/table';
 import { PublicKey } from '@solana/web3.js';
-import { MarketBundle } from '@honey-finance/sdk';
+import { HoneyClient, HoneyMarket, HoneyReserve, HoneyUser, NftPosition } from '@honey-finance/sdk';
+import { Bid } from '../types/liquidate';
 
 export type MarketTableRow = {
   allowance: number;
@@ -86,4 +87,13 @@ export interface HoneyTableColumnType<RecordType>
 export enum BorrowSidebarMode {
   MARKET = 'market',
   CREATE_MARKET = 'create_market'
+}
+
+export type MarketBundle = {
+  client: HoneyClient;
+  market: HoneyMarket;
+  reserves: HoneyReserve[];
+  user: HoneyUser;
+  positions?: NftPosition[];
+  bids?: Bid[];
 }

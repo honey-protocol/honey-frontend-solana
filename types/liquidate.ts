@@ -35,8 +35,12 @@ export type LiquidateTablePosition = {
   highestBid: number;
 };
 
-export type BiddingPosition = {
+export type Bid = {
   bid: string;
-  bidLimit: string;
   bidder: string;
+  bidLimit: string;
 };
+
+export type TransactionType = [
+  string, Array<string>
+];

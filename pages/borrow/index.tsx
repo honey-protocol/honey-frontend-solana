@@ -34,6 +34,8 @@ import { BnToDecimal, ConfigureSDK } from '../../helpers/loanHelpers/index';
 import { LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js';
 import HealthLvl from '../../components/HealthLvl/HealthLvl';
 import useFetchNFTByUser from 'hooks/useNFTV2';
+import useToast from 'hooks/useToast';
+import { MarketBundle } from 'types/markets';
 import {
   borrowAndRefresh,
   depositNFT,
@@ -42,7 +44,6 @@ import {
   useHoney,
   useMarket,
   fetchAllMarkets,
-  MarketBundle,
   waitForConfirmation,
   withdrawNFT
 } from '@honey-finance/sdk';
@@ -93,7 +94,6 @@ import {
 import CreateMarketSidebar from '../../components/CreateMarketSidebar/CreateMarketSidebar';
 // TODO: change to dynamic value
 const network = 'mainnet-beta';
-import { featureFlags } from 'helpers/featureFlags';
 // import { network } from 'pages/_app';
 const { format: f, formatPercent: fp, formatSol: fs } = formatNumber;
 
@@ -110,6 +110,7 @@ const Markets: NextPage = () => {
   const [sidebarMode, setSidebarMode] = useState<BorrowSidebarMode>(
     BorrowSidebarMode.MARKET
   );
+  const { toast, ToastComponent } = useToast();
   /**
    * @description sets the market ID based on market click
    * @params Honey table record - contains all info about a table (aka market / collection)
@@ -178,6 +179,22 @@ const Markets: NextPage = () => {
     useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [isMobileSidebarVisible, setShowMobileSidebar] = useState(false);
+  const [userBalance, setUserBalance] = useState(0);
+
+  async function fetchWalletBalance(key: PublicKey) {
+    try {
+      const userBalance =
+        (await sdkConfig.saberHqConnection.getBalance(key)) / LAMPORTS_PER_SOL;
+      setUserBalance(userBalance);
+    } catch (error) {
+      // TODO: return toast response with error
+      return toast.error('Balance could not be fetched');
+    }
+  }
+
+  useEffect(() => {
+    if (wallet) fetchWalletBalance(wallet.publicKey);
+  }, [wallet]);
 
   /**
    * @description fetches all nfts in users wallet
@@ -969,6 +986,8 @@ const Markets: NextPage = () => {
   async function executeRepay(val: any, toast: ToastProps['toast']) {
     try {
       if (!val) return toast.error('Please provide a value');
+      if (val > userBalance) return toast.error('Insufficient funds');
+
       const repayTokenMint = new PublicKey(
         'So11111111111111111111111111111111111111112'
       );

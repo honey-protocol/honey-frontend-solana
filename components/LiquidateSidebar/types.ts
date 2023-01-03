@@ -1,5 +1,5 @@
 import { ToastProps } from 'hooks/useToast';
-import { BiddingPosition } from '../../types/liquidate';
+import { Bid } from '../../types/liquidate';
 
 export type LendSidebarProps = {
   collectionId?: string;

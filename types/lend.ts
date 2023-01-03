@@ -1,5 +1,6 @@
 import { TimestampPoint } from "../components/HoneyChart/types";
-import { MarketBundle } from '@honey-finance/sdk';
+import { MarketBundle } from "./markets";
+
 export type LendTableRow = {
   allowance: number;
   available: number;
