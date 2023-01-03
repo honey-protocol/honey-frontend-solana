@@ -382,7 +382,7 @@ const RepayForm = (props: RepayProps) => {
           <div className={styles.row}>
             <div className={cs(styles.balance, styles.col)}>
               <InfoBlock
-                title={'Your SOL balance'}
+                title={'Your BONK balance'}
                 value={fs(Number(frd(SOLBalance, 3)))}
               ></InfoBlock>
             </div>

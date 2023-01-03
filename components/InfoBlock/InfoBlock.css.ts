@@ -1,4 +1,4 @@
-import { style, styleVariants } from '@vanilla-extract/css';
+import { globalStyle, style, styleVariants } from '@vanilla-extract/css';
 import { typography, vars } from '../../styles/theme.css';
 
 export const infoBlockContainer = style({
@@ -21,6 +21,11 @@ export const value = styleVariants({
   big: typography.numbersLarge
 });
 
+export const wrapThis = style({
+  display: 'flex',
+  alignItems: 'center'
+})
+
 export const label = style([
   typography.caption,
   {
@@ -37,3 +42,19 @@ export const green = style({
 });
 
 export const footer = style([label]);
+
+export const logoWrapper = style({
+  marginRight: 12,
+  display: 'flex'
+});
+
+export const collectionLogo = style({
+  width: '34px',
+  height: '34px',
+  minWidth: '34px',
+  flexShrink: 0
+});
+
+export const mainWrapper = style({
+  display: 'none !important'
+})

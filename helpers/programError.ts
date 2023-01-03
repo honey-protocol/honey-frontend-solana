@@ -256,7 +256,7 @@ export const handlers: Record<
     displayMessage: (code: number): string | undefined => {
       switch (code) {
         case 1:
-          return 'Insufficient token balance (need more SOL)';
+          return 'Insufficient token balance (need more BONK)';
       }
     }
   },
@@ -265,7 +265,7 @@ export const handlers: Record<
     displayMessage: (code: number): string | undefined => {
       switch (code) {
         case 1:
-          return 'Insufficient token balance (need more SOL)';
+          return 'Insufficient token balance (need more BONK)';
       }
     }
   }

@@ -25,6 +25,7 @@ export const marketCollections: MarketTableRow[] = [
     id: '6FcJaAzQnuoA6o3sVw1GD6Ba69XuL5jinZpQTzJhd2R3',
     key: 'HNYG',
     name: 'Honey Genesis Bee',
+    currencyName: 'HGB/BONK',
     verifiedCreator: '6vRx1iVZo3xfrBHdpvuwArL2jucVj9j9nLpd2VUTTGMG',
     rate: 0,
     available: 0,
@@ -44,79 +45,79 @@ export const marketCollections: MarketTableRow[] = [
         'https://img-cdn.magiceden.dev/rs:fill:400:400:0:0/plain/https://dl.airtable.com/.attachmentThumbnails/6b6c8954aed777a74de52fd70f8751ab/46b325db',
       discountedMarket: false
     }
-  },
-  {
-    id: 'Bw77MGpg189EaATjN67WXcnp3c4544LhKoV4Ftmdg4C',
-    key: 'NOOT',
-    name: 'Pesky Penguin',
-    verifiedCreator: 'A6XTVFiwGVsG6b6LsvQTGnV5LH3Pfa3qW3TGz8RjToLp',
-    rate: 0,
-    available: 0,
-    value: 0,
-    allowance: 0,
-    positions: [],
-    connection: undefined,
-    user: undefined,
-    debt: 0,
-    utilizationRate: 0,
-    openPositions: [],
-    constants: {
-      marketId: 'Bw77MGpg189EaATjN67WXcnp3c4544LhKoV4Ftmdg4C',
-      verifiedCreator: 'A6XTVFiwGVsG6b6LsvQTGnV5LH3Pfa3qW3TGz8RjToLp',
-      marketName: 'Pesky Penguin',
-      marketImage:
-        'https://img-cdn.magiceden.dev/rs:fill:400:400:0:0/plain/https://i.imgur.com/37nsjBZ.png',
-      discountedMarket: false
-    }
-  },
-  {
-    id: 'H2H2pJuccdvpET9A75ajB3GgdYdCUL4T3kiwUMA6DJ7q',
-    key: 'LIFINITY',
-    name: 'LIFINITY Flares',
-    verifiedCreator: 'EWyWxSkxWHWGzxfCd9kG7zGrKTUDbZGiV6VbFJF8YfqN',
-    rate: 0,
-    available: 0,
-    value: 0,
-    allowance: 0,
-    positions: [],
-    connection: undefined,
-    user: undefined,
-    debt: 0,
-    utilizationRate: 0,
-    openPositions: [],
-    constants: {
-      marketId: 'H2H2pJuccdvpET9A75ajB3GgdYdCUL4T3kiwUMA6DJ7q',
-      verifiedCreator: 'EWyWxSkxWHWGzxfCd9kG7zGrKTUDbZGiV6VbFJF8YfqN',
-      marketName: 'LIFINITY Flares',
-      marketImage:
-        'https://img-cdn.magiceden.dev/rs:fill:400:400:0:0/plain/https://dl.airtable.com/.attachmentThumbnails/6972d5c2efb77d49be97b07ccf4fbc69/e9572fb8',
-      discountedMarket: true
-    }
-  },
-  {
-    id: 'Bxk1JQCbVjpeFnjzvH5n9bepnZeHjRADUFwZiVC7L5Gq',
-    key: 'ATD',
-    name: 'OG Atadians',
-    verifiedCreator: '4pi2MRDQgGVFwV1Hv8ka7hSSu9TgdFmafk6jtQhrB9HN',
-    rate: 0,
-    available: 0,
-    value: 0,
-    allowance: 0,
-    positions: [],
-    connection: undefined,
-    user: undefined,
-    debt: 0,
-    utilizationRate: 0,
-    openPositions: [],
-    constants: {
-      marketId: 'Bxk1JQCbVjpeFnjzvH5n9bepnZeHjRADUFwZiVC7L5Gq',
-      verifiedCreator: '4pi2MRDQgGVFwV1Hv8ka7hSSu9TgdFmafk6jtQhrB9HN',
-      marketName: 'OG Atadians',
-      marketImage:
-        'https://i.seadn.io/gae/O8GK9vCJ5Cdtjz9aP3x7M4Bc4Z5HNgcsP0AcZFRjhC8p8fU4icgv2ecfNfZhMBjcYycVgJ2gpvCae_1TfXdbGOg2d6pKCdXRPlSsfQ?auto=format&w=384',
-      discountedMarket: true
-    }
   }
+  // {
+  //   id: 'Bw77MGpg189EaATjN67WXcnp3c4544LhKoV4Ftmdg4C',
+  //   key: 'NOOT',
+  //   name: 'Pesky Penguin',
+  //   verifiedCreator: 'A6XTVFiwGVsG6b6LsvQTGnV5LH3Pfa3qW3TGz8RjToLp',
+  //   rate: 0,
+  //   available: 0,
+  //   value: 0,
+  //   allowance: 0,
+  //   positions: [],
+  //   connection: undefined,
+  //   user: undefined,
+  //   debt: 0,
+  //   utilizationRate: 0,
+  //   openPositions: [],
+  //   constants: {
+  //     marketId: 'Bw77MGpg189EaATjN67WXcnp3c4544LhKoV4Ftmdg4C',
+  //     verifiedCreator: 'A6XTVFiwGVsG6b6LsvQTGnV5LH3Pfa3qW3TGz8RjToLp',
+  //     marketName: 'Pesky Penguin',
+  //     marketImage:
+  //       'https://img-cdn.magiceden.dev/rs:fill:400:400:0:0/plain/https://i.imgur.com/37nsjBZ.png',
+  //     discountedMarket: false
+  //   }
+  // },
+  // {
+  //   id: 'H2H2pJuccdvpET9A75ajB3GgdYdCUL4T3kiwUMA6DJ7q',
+  //   key: 'LIFINITY',
+  //   name: 'LIFINITY Flares',
+  //   verifiedCreator: 'EWyWxSkxWHWGzxfCd9kG7zGrKTUDbZGiV6VbFJF8YfqN',
+  //   rate: 0,
+  //   available: 0,
+  //   value: 0,
+  //   allowance: 0,
+  //   positions: [],
+  //   connection: undefined,
+  //   user: undefined,
+  //   debt: 0,
+  //   utilizationRate: 0,
+  //   openPositions: [],
+  //   constants: {
+  //     marketId: 'H2H2pJuccdvpET9A75ajB3GgdYdCUL4T3kiwUMA6DJ7q',
+  //     verifiedCreator: 'EWyWxSkxWHWGzxfCd9kG7zGrKTUDbZGiV6VbFJF8YfqN',
+  //     marketName: 'LIFINITY Flares',
+  //     marketImage:
+  //       'https://img-cdn.magiceden.dev/rs:fill:400:400:0:0/plain/https://dl.airtable.com/.attachmentThumbnails/6972d5c2efb77d49be97b07ccf4fbc69/e9572fb8',
+  //     discountedMarket: true
+  //   }
+  // },
+  // {
+  //   id: 'Bxk1JQCbVjpeFnjzvH5n9bepnZeHjRADUFwZiVC7L5Gq',
+  //   key: 'ATD',
+  //   name: 'OG Atadians',
+  //   verifiedCreator: '4pi2MRDQgGVFwV1Hv8ka7hSSu9TgdFmafk6jtQhrB9HN',
+  //   rate: 0,
+  //   available: 0,
+  //   value: 0,
+  //   allowance: 0,
+  //   positions: [],
+  //   connection: undefined,
+  //   user: undefined,
+  //   debt: 0,
+  //   utilizationRate: 0,
+  //   openPositions: [],
+  //   constants: {
+  //     marketId: 'Bxk1JQCbVjpeFnjzvH5n9bepnZeHjRADUFwZiVC7L5Gq',
+  //     verifiedCreator: '4pi2MRDQgGVFwV1Hv8ka7hSSu9TgdFmafk6jtQhrB9HN',
+  //     marketName: 'OG Atadians',
+  //     marketImage:
+  //       'https://i.seadn.io/gae/O8GK9vCJ5Cdtjz9aP3x7M4Bc4Z5HNgcsP0AcZFRjhC8p8fU4icgv2ecfNfZhMBjcYycVgJ2gpvCae_1TfXdbGOg2d6pKCdXRPlSsfQ?auto=format&w=384',
+  //     discountedMarket: true
+  //   }
+  // }
   // {
   //   id: 'F8rZviSSuqgkTsjMeoyrTUSNSqh7yNDCAozJkxm7eujY',
   //   key: 'BURR',

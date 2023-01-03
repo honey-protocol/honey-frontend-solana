@@ -126,7 +126,7 @@ export const formatNumber = {
    * @param val
    */
   formatSol: (val?: number) => {
-    return `◎ ${formatNumber.format(val)}`;
+    return `${formatNumber.format(val)}`;
   },
 
   /**

@@ -10,6 +10,7 @@ export type MarketTableRow = {
   id: string;
   key: string;
   name: string;
+  currencyName: string;
   rate: number;
   user: any;
   utilizationRate: number;

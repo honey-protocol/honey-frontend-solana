@@ -2,6 +2,8 @@ import { ReactElement, FC, Fragment, ReactNode } from 'react';
 import * as styles from './InfoBlock.css';
 import c from 'classnames';
 import HoneyTooltip from 'components/HoneyTooltip/HoneyTooltip';
+import Image from 'next/image';
+import HexaBoxContainer from '../HexaBoxContainer/HexaBoxContainer';
 
 interface InfoBlockProps {
   title?: string | ReactElement;
@@ -50,9 +52,23 @@ export const InfoBlock: FC<InfoBlockProps> = ({
         <div
           className={c(
             styles.value[valueSize],
-            valueColor ? styles[valueColor] : ''
+            valueColor ? styles[valueColor] : '',
+            styles.wrapThis
           )}
         >
+          <div className={styles.logoWrapper}>
+            <div className={styles.collectionLogo}>
+              <HexaBoxContainer>
+                <Image
+                  src={
+                    'https://quei6zhlcfsxdfyes577gy7bkxmuz7qqakyt72xlbkyh7fysmoza.arweave.net/hQiPZOsRZXGXBJd_82PhVdlM_hACsT_q6wqwf5cSY7I'
+                  }
+                  alt={`BONK NFT image`}
+                  layout="fill"
+                />
+              </HexaBoxContainer>
+            </div>
+          </div>
           {value}
         </div>
         {footer && <div className={styles.footer}>{footer}</div>}

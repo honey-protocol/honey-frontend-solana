@@ -13,6 +13,7 @@ import React, {
   useState
 } from 'react';
 import { Key } from 'antd/lib/table/interface';
+import Image from 'next/image';
 import debounce from 'lodash/debounce';
 import SearchInput from '../../components/SearchInput/SearchInput';
 import { ColumnType } from 'antd/lib/table';
@@ -622,7 +623,7 @@ const Liquidate: NextPage = () => {
         title: SearchForm,
         dataIndex: 'name',
         key: 'name',
-        render: (name: string) => {
+        render: (name: string, row) => {
           return (
             <div className={style.nameCell}>
               <div className={style.logoWrapper}>
@@ -632,7 +633,7 @@ const Liquidate: NextPage = () => {
                   </HexaBoxContainer>
                 </div>
               </div>
-              <div className={style.collectionName}>{name}</div>
+              <div className={style.collectionName}>{row.currencyName}</div>
             </div>
           );
         }
@@ -710,7 +711,28 @@ const Liquidate: NextPage = () => {
         sorter: (a, b) => a.totalDebt! - b.totalDebt!,
         render: (available: number, market) => {
           return (
-            <div className={style.availableCell}>{fs(market.totalDebt)}</div>
+            <>
+              <div className={style.containerWrapper}>
+                <div className={style.logoWrapper}>
+                  <div className={style.collectionLogo}>
+                    <HexaBoxContainer>
+                      <Image
+                        src={
+                          'https://quei6zhlcfsxdfyes577gy7bkxmuz7qqakyt72xlbkyh7fysmoza.arweave.net/hQiPZOsRZXGXBJd_82PhVdlM_hACsT_q6wqwf5cSY7I'
+                        }
+                        alt={`BONK NFT image`}
+                        layout="fill"
+                      />
+                    </HexaBoxContainer>
+                  </div>
+                </div>
+                <div className={style.nameCellMobile}>
+                  <div className={style.collectionName}>
+                    {fs(market.totalDebt)}
+                  </div>
+                </div>
+              </div>
+            </>
           );
         }
       },
@@ -735,7 +757,28 @@ const Liquidate: NextPage = () => {
         dataIndex: 'tvl',
         sorter: (a, b) => a.tvl! - b.tvl!,
         render: (value: number, market: any) => {
-          return <div className={style.valueCell}>{fs(market.tvl)}</div>;
+          return (
+            <>
+              <div className={style.containerWrapper}>
+                <div className={style.logoWrapper}>
+                  <div className={style.collectionLogo}>
+                    <HexaBoxContainer>
+                      <Image
+                        src={
+                          'https://quei6zhlcfsxdfyes577gy7bkxmuz7qqakyt72xlbkyh7fysmoza.arweave.net/hQiPZOsRZXGXBJd_82PhVdlM_hACsT_q6wqwf5cSY7I'
+                        }
+                        alt={`BONK NFT image`}
+                        layout="fill"
+                      />
+                    </HexaBoxContainer>
+                  </div>
+                </div>
+                <div className={style.nameCellMobile}>
+                  <div className={style.collectionName}>{fs(market.tvl)}</div>
+                </div>
+              </div>
+            </>
+          );
         }
       },
       {
@@ -784,7 +827,9 @@ const Liquidate: NextPage = () => {
                       </div>
                     </div>
                     <div className={style.nameCellMobile}>
-                      <div className={style.collectionName}>{name}</div>
+                      <div className={style.collectionName}>
+                        {row.currencyName}
+                      </div>
                     </div>
                   </>
                 }

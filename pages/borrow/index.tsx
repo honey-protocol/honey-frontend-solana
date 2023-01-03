@@ -437,7 +437,9 @@ const Markets: NextPage = () => {
                         </HexaBoxContainer>
                       </div>
                     </div>
-                    <div className={style.collectionName}>{name}</div>
+                    <div className={style.collectionName}>
+                      {data.currencyName}
+                    </div>
                   </div>
                 );
               }

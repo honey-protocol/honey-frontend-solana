@@ -73,7 +73,9 @@ export const RepayP2PTab = ({ position, onClose }: RepayP2PTabProps) => {
 
         <div className={styles.userBalance.section}>
           <div className={styles.userBalance.wrapper}>
-            <div className={styles.userBalance.title}>{`Your SOL balance`}</div>
+            <div
+              className={styles.userBalance.title}
+            >{`Your BONK balance`}</div>
             <div className={styles.userBalance.price}>{fs(solBalance)}</div>
           </div>
         </div>

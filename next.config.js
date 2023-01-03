@@ -69,7 +69,8 @@ module.exports = (phase, { defaultConfig }) => {
           'https://api.jsonbin.it/bins/hGRzonVT',
           'i.seadn.io',
           'ipfs.vvdny.io',
-          'storage.googleapis.com'
+          'storage.googleapis.com',
+          'quei6zhlcfsxdfyes577gy7bkxmuz7qqakyt72xlbkyh7fysmoza.arweave.net'
         ]
       }
     };
@@ -110,7 +111,8 @@ module.exports = (phase, { defaultConfig }) => {
           'https://api.jsonbin.it/bins/hGRzonVT',
           'i.seadn.io',
           'ipfs.vvdny.io',
-          'storage.googleapis.com'
+          'storage.googleapis.com',
+          'quei6zhlcfsxdfyes577gy7bkxmuz7qqakyt72xlbkyh7fysmoza.arweave.net'
         ]
       }
     };

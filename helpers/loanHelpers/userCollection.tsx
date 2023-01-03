@@ -47,7 +47,8 @@ import NodeWallet from '@project-serum/anchor/dist/cjs/nodewallet';
 import {
   renderMarketName,
   marketCollections,
-  COLLATERAL_FACTOR
+  COLLATERAL_FACTOR,
+  HONEY_GENESIS_MARKET_ID
 } from 'helpers/marketHelpers';
 
 /**

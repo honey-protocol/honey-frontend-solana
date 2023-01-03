@@ -4,6 +4,7 @@ import { MarketTableRow } from './markets';
 export type LiquidateTableRow = {
   key: string;
   name: string;
+  currencyName: string;
   risk: number;
   liqThreshold: number;
   totalDebt: number;

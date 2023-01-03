@@ -196,7 +196,7 @@ const BidForm = (props: BidFormProps) => {
             <InfoBlock
               value={fs(userBalance)}
               valueSize="big"
-              title="Your SOL balance"
+              title="Your BONK balance"
             />
           </div>
         </div>

@@ -148,7 +148,7 @@ const onTxError = (error: SailTransactionError) => {
 
   if (/(.+)?: custom program error: 0x1$/.exec(err.message.toString())) {
     toast.warn({
-      message: `Insufficient SOL (need more SOL)`,
+      message: `Insufficient BONK (need more BONK)`,
       description: error.message,
       env: error.network
     });

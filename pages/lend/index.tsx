@@ -23,6 +23,7 @@ import { getColumnSortStatus } from '../../helpers/tableUtils';
 import HoneySider from '../../components/HoneySider/HoneySider';
 import HoneyContent from '../../components/HoneyContent/HoneyContent';
 import { RoundHalfDown } from 'helpers/utils';
+import Image from 'next/image';
 import {
   deposit,
   withdraw,
@@ -445,7 +446,7 @@ const Lend: NextPage = () => {
     }
     const r = new RegExp(searchTerm, 'mi');
     return [...tableData].filter(row => {
-      return r.test(row.name);
+      return r.test(row.currencyName);
     });
   };
 
@@ -503,7 +504,7 @@ const Lend: NextPage = () => {
         title: SearchForm,
         dataIndex: 'name',
         key: 'name',
-        render: (name: string) => {
+        render: (name: string, row) => {
           return (
             <div className={style.nameCell}>
               <div className={style.logoWrapper}>
@@ -513,7 +514,7 @@ const Lend: NextPage = () => {
                   </HexaBoxContainer>
                 </div>
               </div>
-              <div className={style.collectionName}>{name}</div>
+              <div className={style.collectionName}>{row.currencyName}</div>
             </div>
           );
         }

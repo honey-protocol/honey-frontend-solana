@@ -1,7 +1,7 @@
 import { ChangeEvent, FC } from 'react';
 import * as styles from './InputsBlock.css';
 import Image from 'next/image';
-import SOLIcon from './assets/SOL.svg';
+import BONKIcon from './assets/bonk.webp';
 import { formatNumber } from '../../helpers/format';
 import EqualIcon from './assets/equalIcon.svg';
 import HoneyFormattedNumericInput from '../HoneyFormattedNumericInput/HoneyFormattedInput';
@@ -34,7 +34,7 @@ export const InputsBlock: FC<InputsBlockProps> = ({
   ),
   firstInputAddon = (
     <>
-      <Image src={SOLIcon} /> <span>SOL</span>
+      <span>BONK</span>
     </>
   ),
   secondInputAddon = <> USD </>

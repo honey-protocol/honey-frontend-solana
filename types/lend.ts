@@ -8,6 +8,7 @@ export type LendTableRow = {
   id: string;
   key: string;
   name: string;
+  currencyName: string;
   rate: number;
   user: any;
   utilizationRate: number;
