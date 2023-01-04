@@ -56,19 +56,6 @@ export const InfoBlock: FC<InfoBlockProps> = ({
             styles.wrapThis
           )}
         >
-          <div className={styles.logoWrapper}>
-            <div className={styles.collectionLogo}>
-              <HexaBoxContainer>
-                <Image
-                  src={
-                    'https://quei6zhlcfsxdfyes577gy7bkxmuz7qqakyt72xlbkyh7fysmoza.arweave.net/hQiPZOsRZXGXBJd_82PhVdlM_hACsT_q6wqwf5cSY7I'
-                  }
-                  alt={`BONK NFT image`}
-                  layout="fill"
-                />
-              </HexaBoxContainer>
-            </div>
-          </div>
           {value}
         </div>
         {footer && <div className={styles.footer}>{footer}</div>}
