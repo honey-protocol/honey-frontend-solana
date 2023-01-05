@@ -66,7 +66,6 @@ export const vars = createGlobalThemeContract({
 const grayLight = '#F5F5F5';
 const white = '#FFFFFF';
 const black = '#111111';
-const darkForeground = '#161b22';
 createGlobalTheme('.honey-light-theme', vars, {
   colors: {
     brownLight: '#E7B400',
@@ -121,6 +120,60 @@ createGlobalTheme('.honey-light-theme', vars, {
   }
 });
 
+createGlobalTheme('.honey-dusk-theme', vars, {
+  colors: {
+    brownLight: '#E7B400',
+    brownMiddle: '#BE9200',
+    brownDark: '#AA8300',
+
+    secondaryBrownLight: '#524B32',
+    secondaryBrownMiddle: '#ECDFAF',
+
+    grayLight,
+    grayMiddle: '#3A3A3A',
+    grayDark: '#D9D9D9',
+
+    green: '#02AF00',
+    greenDark: '#007700',
+    greenDarkest: '#008800',
+
+    blue: '#009EE7',
+
+    red: '#CF4536',
+    redDark: '#A62B1E',
+    lightRedTransparent: 'rgba(166, 43, 30, 0.1)',
+
+    grayTransparent: 'rgba(17, 17, 17, 0.4)',
+    lightGrayTransparent: 'rgba(0, 0, 0, 0.12)',
+    whiteTransparent: 'rgba(255, 255, 255, 0.7)',
+
+    white,
+    black,
+    foreground: '#161b22',
+    background: '#0d1116',
+    text: white,
+    textSecondary: 'rgba(255, 255, 255, 0.85)',
+    textTertiary: 'rgba(255, 255, 255, 0.4)',
+    borderPrimary: grayLight,
+    borderSecondary: 'rgba(255, 255, 255, 0.5)'
+  },
+  space: {
+    none: '0',
+    small: '8px',
+    medium: '16px',
+    large: '32px'
+  },
+  width: {
+    ['1/2']: '50%',
+    full: '100%'
+  },
+  shadow: {
+    yellow: {
+      boxShadow: `4px 4px 0px 0px #FBF3D6`
+    }
+  }
+});
+
 createGlobalTheme('.honey-dark-theme', vars, {
   colors: {
     brownLight: '#E7B400',
@@ -150,8 +203,8 @@ createGlobalTheme('.honey-dark-theme', vars, {
 
     white,
     black,
-    foreground: darkForeground,
-    background: '#0d1116',
+    foreground: '#1A1A1A',
+    background: '#111111',
     text: white,
     textSecondary: 'rgba(255, 255, 255, 0.85)',
     textTertiary: 'rgba(255, 255, 255, 0.4)',

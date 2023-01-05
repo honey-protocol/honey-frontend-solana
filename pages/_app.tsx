@@ -57,12 +57,6 @@ const networkConfiguration = () => {
 
 const queryClient = new QueryClient();
 
-const defaultAccent: ThemeAccent = accentSequence[0];
-const storedAccent =
-  typeof window !== 'undefined'
-    ? (localStorage.getItem('accent') as ThemeAccent)
-    : undefined;
-
 const OnChainProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const wallet = useConnectedWallet();
   const connection = useConnection();
@@ -174,7 +168,10 @@ function MyApp({ Component, pageProps }: AppProps) {
     //   defaultAccent={storedAccent || defaultAccent}
     // >
 
-    <ThemeProvider defaultMode={theme} defaultAccent={'yellow'}>
+    <ThemeProvider
+      defaultMode={['dark', 'dusk'].includes(theme) ? 'dark' : 'light'}
+      defaultAccent={'yellow'}
+    >
       <HoneyThemeContext.Provider
         value={{
           theme,
@@ -215,14 +212,14 @@ function MyApp({ Component, pageProps }: AppProps) {
             >
               <SDKProvider>
                 {/* <GovernorProvider
-                    initialState={{
-                      governor: GOVERNOR_ADDRESS,
-                      govToken: HONEY_MINT,
-                      minter: {
-                        mintWrapper: HONEY_MINT_WRAPPER
-                      }
-                    }}
-                  > */}
+                      initialState={{
+                        governor: GOVERNOR_ADDRESS,
+                        govToken: HONEY_MINT,
+                        minter: {
+                          mintWrapper: HONEY_MINT_WRAPPER
+                        }
+                      }}
+                    > */}
                 {/* {children} */}
                 <>
                   <HoneyJupiterProvider>
@@ -235,7 +232,7 @@ function MyApp({ Component, pageProps }: AppProps) {
                             type="text/css"
                             href="/css/antdLightTheme.css"
                           />
-                          {theme === 'dark' && (
+                          {['dark', 'dusk'].includes(theme) && (
                             <link
                               id="theme"
                               rel="stylesheet"
@@ -248,6 +245,8 @@ function MyApp({ Component, pageProps }: AppProps) {
                           className={
                             theme === 'dark'
                               ? 'honey-dark-theme'
+                              : theme === 'dusk'
+                              ? 'honey-dusk-theme'
                               : 'honey-light-theme'
                           }
                         >
