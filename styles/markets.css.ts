@@ -242,7 +242,7 @@ export const headerCell = styleVariants({
 export const createMarketLauncherCell = style({
   position: 'relative',
   padding: 0,
-  zIndex: 10,
+  // zIndex: 10,
   cursor: 'pointer'
 });
 
