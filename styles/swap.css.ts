@@ -4,7 +4,8 @@ import { questionIcon, swapIcon } from './icons.css';
 
 export const pageContent = style({
   maxWidth: '398px',
-  margin: 'auto'
+  margin: 'auto',
+  paddingTop: 40
 });
 
 export const pageTitle = style([
