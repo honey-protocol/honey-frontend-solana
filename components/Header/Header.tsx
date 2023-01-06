@@ -8,6 +8,8 @@ import cs from 'classnames';
 import MobileMenu from 'components/MobileMenu/MobileMenu';
 import Link from 'next/link';
 import Logo from 'icons/Logo';
+import { MenuCloseIcon } from 'icons/MenuCloseIcon';
+import { MenuOpenIcon } from 'icons/MenuOpenIcon';
 
 const Header: FC = () => {
   const [showMobileMenu, setShowMobileMenu] = useState(false);
@@ -20,11 +22,10 @@ const Header: FC = () => {
             <Space size="small">
               <div
                 onClick={() => setShowMobileMenu(!showMobileMenu)}
-                className={cs(
-                  styles.menuToggle,
-                  showMobileMenu ? styles.menuClose : styles.menuOpen
-                )}
-              />
+                className={cs(styles.menuToggle)}
+              >
+                {showMobileMenu ? <MenuCloseIcon /> : <MenuOpenIcon />}
+              </div>
 
               <Link href="/" passHref>
                 <Logo />

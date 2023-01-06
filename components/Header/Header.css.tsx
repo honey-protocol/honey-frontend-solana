@@ -59,11 +59,3 @@ export const menuToggle = style({
     }
   }
 });
-
-export const menuOpen = style({
-  background: 'url("/images/menuIcon.svg") center center no-repeat'
-});
-
-export const menuClose = style({
-  background: 'url("/images/menu-close.svg") center center no-repeat'
-});
