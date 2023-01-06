@@ -10,8 +10,8 @@ import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { PartialNetworkConfigMap } from '@saberhq/use-solana/src/utils/useConnectionInternal';
 import SecPopup from 'components/SecPopup';
-import { AnchorProvider, HoneyProvider } from '@honey-finance/sdk';
 import { useConnectedWallet, useConnection } from '@saberhq/use-solana';
+import { AnchorProvider, HoneyProvider } from '@honey-finance/sdk';
 import React, {
   createContext,
   FC,
