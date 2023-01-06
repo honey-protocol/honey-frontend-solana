@@ -20,8 +20,8 @@ import React, {
   useState
 } from 'react';
 
-import { AccountsProvider } from 'contexts/AccountsProvider';
 import { GovernanceProvider } from 'contexts/GovernanceProvider';
+import { AccountsProvider } from 'contexts/AccountsProvider';
 import Script from 'next/script';
 import { SailProvider } from '@saberhq/sail';
 import { onSailError } from 'helpers/error';
