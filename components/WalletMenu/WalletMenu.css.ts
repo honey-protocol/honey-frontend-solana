@@ -94,41 +94,6 @@ export const divider = style({
   width: '100%'
 });
 
-export const settingsDropdown = style({
-  width: 'unset',
-  marginRight: 30
-});
-
 export const mr5 = style({
-  marginRight: 5
-});
-
-export const settingTitle = style([typography.description]);
-
-export const dropdownSelect = style({
-  // background: 'red'
-});
-
-globalStyle(`${dropdownSelect} .ant-select-selector`, {
-  borderRadius: '10px !important'
-});
-
-globalStyle(`${dropdownSelect} .ant-space-item `, {
-  display: 'flex'
-});
-
-globalStyle(`${dropdownSelect} .ant-select-selector svg`, {
-  width: 20,
-  height: 20
-});
-
-globalStyle(`${dropdownSelect} .ant-select-selector svg path`, {
-  fill: 'var(--colors-text)'
-});
-
-export const selectDropdownList = style({});
-
-globalStyle(`${selectDropdownList} svg`, {
-  width: 20,
-  height: 20
+  marginRight: '5px !important'
 });
