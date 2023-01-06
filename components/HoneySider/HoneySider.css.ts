@@ -18,7 +18,7 @@ export const honeySider = style({
   '@media': {
     [`screen and (min-width: ${breakpoints.tablet}px)`]: {
       maxWidth: 874,
-      minHeight: 'calc(100vh - 90px)'
+      minHeight: 'calc(100vh - 100px)'
     },
     [`screen and (min-width: ${breakpoints.desktop}px)`]: {
       maxWidth: 1216,

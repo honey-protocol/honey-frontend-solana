@@ -18,11 +18,14 @@ export const container = style({
 
 export const sidebar = style({
   width: '100%',
+  background: vars.colors.background,
   height: 'calc(100vh - 160px)',
   pointerEvents: 'all',
+  paddingTop: 15,
   '@media': {
     [`screen and (min-width: ${breakpoints.desktop}px)`]: {
-      maxWidth: 360
+      maxWidth: 360,
+      height: 'calc(100vh - 180px)'
     }
   }
 });
