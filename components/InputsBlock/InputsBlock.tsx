@@ -1,12 +1,12 @@
 import { ChangeEvent, FC } from 'react';
 import * as styles from './InputsBlock.css';
 import Image from 'next/image';
-import SOLIcon from './assets/SOL.svg';
 import { formatNumber } from '../../helpers/format';
 import EqualIcon from './assets/equalIcon.svg';
 import HoneyFormattedNumericInput from '../HoneyFormattedNumericInput/HoneyFormattedInput';
 import { ValueType } from 'rc-input-number/lib/utils/MiniDecimal';
 import { isNil } from '../../helpers/utils';
+import SOLIcon from './assets/SOLIcon';
 
 interface InputsBlockProps {
   firstInputValue: number | undefined;
@@ -34,7 +34,7 @@ export const InputsBlock: FC<InputsBlockProps> = ({
   ),
   firstInputAddon = (
     <>
-      <Image src={SOLIcon} /> <span>SOL</span>
+      <SOLIcon /> <span>SOL</span>
     </>
   ),
   secondInputAddon = <> USD </>

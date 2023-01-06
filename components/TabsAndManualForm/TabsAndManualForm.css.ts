@@ -14,11 +14,11 @@ export const tab = style([
     border: `2px solid ${vars.colors.grayDark}`,
     boxShadow: `2px 2px 0px ${vars.colors.grayDark}`,
     borderRadius: 12,
-    background: vars.colors.white,
+    background: vars.colors.foreground,
     padding: 10,
     textAlign: 'center',
     cursor: 'pointer',
-    color: vars.colors.grayTransparent
+    color: vars.colors.textTertiary
   }
 ]);
 
@@ -28,7 +28,7 @@ export const manualInput = style({
   border: `2px solid ${vars.colors.grayDark}`,
   boxShadow: `2px 2px 0px ${vars.colors.grayDark}`,
   borderRadius: 12,
-  background: vars.colors.white,
+  background: vars.colors.foreground,
   cursor: 'pointer'
 });
 
@@ -53,18 +53,18 @@ export const manual = style([
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    color: vars.colors.grayTransparent
+    color: vars.colors.textTertiary
   }
 ]);
 
 export const isActive = style({
-  border: `2px solid ${vars.colors.black}`,
+  border: `2px solid ${vars.colors.borderPrimary}`,
   boxShadow: `2px 2px 0px ${vars.colors.brownLight}`,
-  color: vars.colors.black
+  color: vars.colors.text
 });
 
 export const isError = style({
-  border: `2px solid ${vars.colors.black}`,
+  border: `2px solid ${vars.colors.borderPrimary}`,
   boxShadow: `2px 2px 0px ${vars.colors.redDark}`
 });
 

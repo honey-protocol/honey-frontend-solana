@@ -16,7 +16,7 @@ export const equalSignContainer = style({
   left: '50%',
   top: '50%',
   transform: 'translate(-50%,-50%)',
-  background: vars.colors.white,
+  background: vars.colors.foreground,
   minWidth: 20,
   minHeight: 20
 });
@@ -48,7 +48,7 @@ export const input = style([
         boxShadow: 'none'
       },
       '&::placeholder': {
-        color: vars.colors.grayTransparent
+        color: vars.colors.textTertiary
       }
     }
   }
@@ -70,7 +70,9 @@ export const inputAddon = style([
     height: 20,
     display: 'flex',
     justifyContent: 'center',
-    color: vars.colors.grayTransparent
+    alignItems: 'center',
+    gap: 6,
+    color: vars.colors.textTertiary
   }
 ]);
 

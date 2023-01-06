@@ -14,6 +14,10 @@ globalStyle(`${inputSelector} .ant-input-prefix`, {
   marginRight: 24
 });
 
+globalStyle(`${inputSelector} svg *`, {
+  fill: vars.colors.text
+});
+
 globalStyle(`${inputSelector} .ant-input`, {
   ...typography.button,
   border: 'none',

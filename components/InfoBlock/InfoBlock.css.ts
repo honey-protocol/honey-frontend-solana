@@ -24,7 +24,7 @@ export const value = styleVariants({
 export const label = style([
   typography.caption,
   {
-    color: vars.colors.grayTransparent,
+    color: vars.colors.textTertiary,
     selectors: {
       '&:not(:last-child)': { marginBottom: '4px' },
       '&:last-child': { marginTop: '4px' }

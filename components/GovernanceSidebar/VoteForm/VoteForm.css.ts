@@ -6,7 +6,6 @@ export const depositForm = style({
   height: '100%',
   display: 'flex',
   flexDirection: 'column',
-  background: vars.colors.white,
   padding: 16
 });
 
@@ -18,7 +17,7 @@ export const voted = style([
 ]);
 
 export const votedGreen = style({
-  color: vars.colors.green,
+  color: vars.colors.green
 });
 
 const formSection = style([

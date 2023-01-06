@@ -12,7 +12,7 @@ const borderSlideIn = keyframes({
 
 export const toast = style({
   borderRadius: vars.space.small,
-  border: '2px solid black',
+  border: `2px solid ${vars.colors.borderPrimary}`,
   padding: '12px',
   display: 'flex',
   flexDirection: 'column',
@@ -54,7 +54,7 @@ const getStylesForMovingBorder = (color: string) => {
   const className = style({
     position: 'relative',
     zIndex: 1,
-    background: 'white',
+    background: vars.colors.foreground,
     border: `2px solid ${vars.colors.grayDark}`,
     ':before': {
       background: color,
@@ -65,7 +65,7 @@ const getStylesForMovingBorder = (color: string) => {
       animation: `${borderSlideIn} 5s ease-out`
     },
     ':after': {
-      background: vars.colors.white,
+      background: vars.colors.foreground,
       left: '0',
       top: '0',
       width: '100%',

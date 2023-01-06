@@ -21,11 +21,12 @@ export const prevPage = style([
   {
     marginBottom: 16,
     display: 'inline-flex',
-    alignItems: 'center'
+    alignItems: 'center',
+    cursor: 'pointer'
   }
 ]);
 globalStyle(`.ant-typography${prevPage}`, {
-  color: vars.colors.grayTransparent
+  color: vars.colors.textTertiary
 });
 
 export const name = style([

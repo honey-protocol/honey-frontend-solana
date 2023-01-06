@@ -37,10 +37,10 @@ globalStyle(scs(`> .ant-slider-step > .ant-slider-dot`), {
 });
 globalStyle(scs(`> .ant-slider-mark`), {
   fontSize: 14,
-  color: vars.colors.black
+  color: vars.colors.text
 });
 globalStyle(scs(`> .ant-slider-mark > .ant-slider-mark-text`), {
-  color: vars.colors.black
+  color: vars.colors.text
 });
 globalStyle(scs(`> .ant-slider-rail`), {
   backgroundColor: `${vars.colors.grayMiddle} !important`

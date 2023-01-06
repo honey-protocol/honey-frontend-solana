@@ -6,7 +6,7 @@ export const depositForm = style({
   height: '100%',
   display: 'flex',
   flexDirection: 'column',
-  background: vars.colors.white,
+  background: vars.colors.foreground,
   padding: 16
 });
 
@@ -47,7 +47,7 @@ export const bigCol = style([
 ]);
 
 export const divider = style({
-  backgroundImage: `linear-gradient(to right, ${vars.colors.black} 50%, transparent 50%)`,
+  backgroundImage: `linear-gradient(to right, ${vars.colors.borderPrimary} 50%, transparent 50%)`,
   backgroundPosition: 'left bottom, left bottom, left top, right top',
   backgroundRepeat: 'repeat-x, repeat-x, repeat-y, repeat-y',
   backgroundSize: '20px 1px, 20px 1px, 1px 20px, 1px 20px',
@@ -58,7 +58,7 @@ export const divider = style({
 
 export const inputsDelimiter = style({
   padding: '8px 7px',
-  border: `1px dashed ${vars.colors.black}`,
+  border: `1px dashed ${vars.colors.borderPrimary}`,
   opacity: 0.4,
   borderRadius: 40,
   fontWeight: 500,

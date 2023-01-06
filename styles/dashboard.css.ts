@@ -26,7 +26,7 @@ export const chartContainer = style({
   paddingBottom: 0,
   width: '100%',
   height: 'auto',
-  background: vars.colors.white,
+  background: vars.colors.foreground,
   borderRadius: 16,
   marginRight: 16,
   marginBottom: 8,

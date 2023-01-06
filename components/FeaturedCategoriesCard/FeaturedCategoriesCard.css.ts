@@ -8,20 +8,20 @@ export const featuredCategoriesCard = style({
   width: '100%',
   maxWidth: 395,
   padding: '16px 26px',
-  background: vars.colors.white,
+  background: vars.colors.foreground,
   borderRadius: 16,
   cursor: 'pointer',
   selectors: {
     '&:not(:last-child)': {
-      marginRight: 16,
+      marginRight: 16
     }
   }
-})
+});
 
 export const description = style([
   typography.caption,
   {
-    color: vars.colors.grayTransparent
+    color: vars.colors.textTertiary
   }
 ])
 

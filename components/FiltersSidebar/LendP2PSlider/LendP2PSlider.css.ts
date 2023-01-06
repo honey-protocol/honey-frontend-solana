@@ -37,15 +37,15 @@ globalStyle(scs(`> .ant-slider-step > .ant-slider-dot`), {
 });
 globalStyle(scs(`> .ant-slider-mark`), {
   fontSize: 14,
-  color: vars.colors.black
+  color: vars.colors.text
 });
 globalStyle(scs(`> .ant-slider-mark > .ant-slider-mark-text:last-child`), {
   display: 'flex',
   justifyContent: 'flex-end',
-
+  color: vars.colors.text
 });
 globalStyle(scs(`> .ant-slider-mark > .ant-slider-mark-text`), {
-  color: vars.colors.black
+  color: vars.colors.text
 });
 globalStyle(scs(`> .ant-slider-rail`), {
   backgroundColor: `${vars.colors.grayMiddle} !important`
@@ -56,7 +56,7 @@ globalStyle(scs(`> .ant-slider-handle:focus`), {
 
 export const disabledBackgroundSlider = style({});
 globalStyle(`${disabledBackgroundSlider} > .ant-slider-rail`, {
-  background: `linear-gradient(-45deg, rgba(0, 0, 0, 0) 49.9%, ${vars.colors.black} 49.9%, ${vars.colors.black} 77%, rgba(0, 0, 0, 0) 43% ), linear-gradient(-45deg, red 10%, rgba(0, 0, 0, 0) 10% )`,
+  background: `linear-gradient(-45deg, rgba(0, 0, 0, 0) 49.9%, ${vars.colors.borderPrimary} 49.9%, ${vars.colors.borderPrimary} 77%, rgba(0, 0, 0, 0) 43% ), linear-gradient(-45deg, red 10%, rgba(0, 0, 0, 0) 10% )`,
   backgroundSize: '8px 6px'
 });
 
@@ -82,9 +82,9 @@ export const sliderHeader = styleVariants({
   secondary: [
     typography.numbersRegular,
     {
-      color: vars.colors.grayTransparent,
+      color: vars.colors.textTertiary,
       textAlign: 'right',
-      whiteSpace: 'nowrap',
+      whiteSpace: 'nowrap'
     }
   ]
 });
@@ -92,5 +92,5 @@ export const sliderHeader = styleVariants({
 export const sliderHeaderWrapper = style({
   display: 'flex',
   justifyContent: 'space-between',
-  width: '100%',
-})
+  width: '100%'
+});

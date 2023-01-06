@@ -6,7 +6,6 @@ export const createMarketTab = style({
   height: '100%',
   display: 'flex',
   flexDirection: 'column',
-  background: vars.colors.white,
   padding: '24px 16px 16px 16px'
 });
 

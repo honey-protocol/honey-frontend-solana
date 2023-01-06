@@ -4,9 +4,9 @@ import { typography, vars } from '../../styles/theme.css';
 export const depositForm = style({
   width: '100%',
   height: 'auto',
-  background: vars.colors.white,
+  // background: vars.colors.white,
   padding: '16px 16px 36px',
-  borderRadius: '0 0 15px 15px',
+  borderRadius: '0 0 15px 15px'
 });
 
 const formSection = style([

@@ -13,14 +13,14 @@ globalStyle(`${tooltip} .ant-tooltip-arrow`, {
   display: 'none'
 });
 
-globalStyle(`${tooltip} .ant-tooltip-inner`, {
+globalStyle(`${tooltip} .ant-tooltip-content`, {
   ...typography.description,
-  background: 'white',
+  background: vars.colors.red,
   transition: 'all .5s',
   borderRadius: vars.space.medium,
-  border: `2px solid ${vars.colors.black}`,
+  border: `2px solid ${vars.colors.borderPrimary}`,
   boxShadow: `4px 4px 0px 0px ${vars.colors.brownLight}`,
-  color: `${vars.colors.black} !important`,
+  color: `${vars.colors.text} !important`,
   fontWeight: '500',
   width: 'max-content',
   maxWidth: '300px',
@@ -31,7 +31,7 @@ export const label = style([
   typography.description,
   {
     fontWeight: '500',
-    color: vars.colors.black
+    color: vars.colors.text
   }
 ]);
 

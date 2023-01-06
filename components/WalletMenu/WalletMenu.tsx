@@ -1,5 +1,5 @@
 import { Dropdown, Menu, Space, Typography } from 'antd';
-import React from 'react';
+import React, { useContext } from 'react';
 import * as styles from './WalletMenu.css';
 import { DownIcon } from 'icons/DownIcon';
 import { formatAddress } from 'helpers/addressUtils';
@@ -8,8 +8,11 @@ import { WalletIcon } from 'icons/WalletIcon';
 import { useWalletKit } from '@gokiprotocol/walletkit';
 import { useConnectedWallet, useSolana } from '@saberhq/use-solana';
 import { DialectNotifications } from 'components/DialectNotifications/DialectNotifications';
-import { featureFlags } from '../../helpers/featureFlags';
-
+import { vars } from 'styles/theme.css';
+import { HoneyThemeContext } from 'pages/_app';
+import { SwitchIcon } from 'icons/SwitchIcon';
+import { useTheme } from 'degen';
+import SettingsDropdown from 'components/SetttingsDropdown/SetttingsDropdown';
 const { Title } = Typography;
 
 const WalletMenu = () => {
@@ -17,46 +20,60 @@ const WalletMenu = () => {
   const wallet = useConnectedWallet();
   const { connect } = useWalletKit();
   const walletAddress = wallet?.publicKey.toString();
-
-  function handleClick(e: any) {
-    if (e.key == '4') disconnect();
-  }
+  const { theme } = useContext(HoneyThemeContext);
 
   const menu = (
     <Menu
-      onClick={handleClick}
       selectable
+      className={styles.userMenu}
       items={[
         {
-          key: '4',
-          label: 'Disconnect'
+          key: '0',
+          label: 'Disconnect',
+          onClick: disconnect,
+          itemIcon: (
+            <SwitchIcon
+              fill={['dark', 'dusk'].includes(theme) ? 'white' : 'black'}
+            />
+          )
         }
       ]}
     />
   );
+
   return !walletAddress ? (
-    <HoneyButton variant="primary" icon={<WalletIcon />} onClick={connect}>
-      CONNECT WALLET
-    </HoneyButton>
+    <Space size="small">
+      <SettingsDropdown className={styles.mr5} />
+      <HoneyButton variant="primary" icon={<WalletIcon />} onClick={connect}>
+        CONNECT WALLET
+      </HoneyButton>
+    </Space>
   ) : (
-    <div className={styles.walletDropdownWrapper}>
-      <div className={styles.dialectIconWrapper}>
-        {<DialectNotifications />}
-      </div>
-      <Dropdown overlay={menu}>
-        <a onClick={e => e.preventDefault()}>
-          <Space size="small" align="center">
-            <div className={styles.userIcon} />
-            <Space size={0} direction="vertical">
-              <Title level={4} className={styles.title}>
-                {formatAddress(walletAddress)}
-              </Title>
+    <>
+      {/* <SettingsModal
+        visible={showSettingsModal}
+        onClose={() => setShowSettingsModal(false)}
+      /> */}
+      <div className={styles.walletDropdownWrapper}>
+        <SettingsDropdown />
+        <div className={styles.dialectIconWrapper}>
+          {<DialectNotifications />}
+        </div>
+        <Dropdown placement="bottomRight" overlay={menu}>
+          <a onClick={e => e.preventDefault()}>
+            <Space size="small" align="center">
+              <div className={styles.userIcon} />
+              <Space size={0} direction="vertical">
+                <Title level={4} className={styles.title}>
+                  {formatAddress(walletAddress)}
+                </Title>
+              </Space>
+              <DownIcon fill={vars.colors.textSecondary} />
             </Space>
-            <DownIcon />
-          </Space>
-        </a>
-      </Dropdown>
-    </div>
+          </a>
+        </Dropdown>
+      </div>
+    </>
   );
 };
 

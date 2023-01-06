@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-css-tags */
 import type { AppProps } from 'next/app';
 import { ThemeProvider } from 'degen';
 import 'degen/styles';
@@ -12,7 +13,14 @@ import { PartialNetworkConfigMap } from '@saberhq/use-solana/src/utils/useConnec
 import SecPopup from 'components/SecPopup';
 import { AnchorProvider, HoneyProvider } from '@honey-finance/sdk';
 import { useConnectedWallet, useConnection } from '@saberhq/use-solana';
-import React, { FC, ReactNode, useEffect, useState } from 'react';
+import React, {
+  createContext,
+  FC,
+  ReactNode,
+  useContext,
+  useEffect,
+  useState
+} from 'react';
 // import { GovernorProvider } from 'hooks/tribeca/useGovernor';
 // import { GovernanceProvider } from 'contexts/GovernanceProvider';
 import Script from 'next/script';
@@ -35,6 +43,7 @@ import {
 } from '../helpers/marketHelpers/index';
 import { DialectProviders } from 'contexts/DialectProvider';
 import { PublicKey } from '@solana/web3.js';
+import Head from 'next/head';
 // top level function that injects the app with a new market ID - being called from pages where interaction with markets is possible. Currently: borrow | lend | liquidate
 // export const setMarketId = (marketID: string) => marketID;
 
@@ -47,12 +56,6 @@ const networkConfiguration = () => {
 };
 
 const queryClient = new QueryClient();
-
-const defaultAccent: ThemeAccent = accentSequence[0];
-const storedAccent =
-  typeof window !== 'undefined'
-    ? (localStorage.getItem('accent') as ThemeAccent)
-    : undefined;
 
 const OnChainProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const wallet = useConnectedWallet();
@@ -119,10 +122,20 @@ const HoneyJupiterProvider: FC<{ children: ReactNode }> = ({ children }) => {
   );
 };
 
+interface HoneyThemeContext {
+  theme: HoneyTheme;
+  setTheme: (theme: HoneyTheme) => void;
+}
+
+export const HoneyThemeContext = createContext<HoneyThemeContext>(
+  {} as HoneyThemeContext
+);
+
 function MyApp({ Component, pageProps }: AppProps) {
   const [showPopup, setShowPopup] = useState(true);
   const [shouldRender, setShouldRender] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
+  const [theme, setTheme] = useState<HoneyTheme>('light');
 
   const onWindowResize = () => {
     if (window.innerWidth < 768) {
@@ -133,7 +146,11 @@ function MyApp({ Component, pageProps }: AppProps) {
   };
   useEffect(() => {
     const cautionAgreed = localStorage.getItem('caution-agreed');
+    const savedTheme: any = localStorage.getItem('honey-theme');
     setShowPopup(cautionAgreed === 'true' ? false : true);
+    if (savedTheme) {
+      setTheme(savedTheme);
+    }
     onWindowResize();
     window.addEventListener('resize', () => onWindowResize());
     setShouldRender(true);
@@ -150,13 +167,26 @@ function MyApp({ Component, pageProps }: AppProps) {
     //   defaultMode="dark"
     //   defaultAccent={storedAccent || defaultAccent}
     // >
-    <ThemeProvider defaultMode="light" defaultAccent={'yellow'}>
-      <Script
-        strategy="lazyOnload"
-        src={`https://www.googletagmanager.com/gtag/js?id=${process.env.NEXT_PUBLIC_GA}`}
-      />
-      <Script id="gtm-script" strategy="lazyOnload">
-        {`
+
+    <ThemeProvider
+      defaultMode={['dark', 'dusk'].includes(theme) ? 'dark' : 'light'}
+      defaultAccent={'yellow'}
+    >
+      <HoneyThemeContext.Provider
+        value={{
+          theme,
+          setTheme: (theme: HoneyTheme) => {
+            localStorage.setItem('honey-theme', theme);
+            setTheme(theme);
+          }
+        }}
+      >
+        <Script
+          strategy="lazyOnload"
+          src={`https://www.googletagmanager.com/gtag/js?id=${process.env.NEXT_PUBLIC_GA}`}
+        />
+        <Script id="gtm-script" strategy="lazyOnload">
+          {`
           window.dataLayer = window.dataLayer || [];
           function gtag(){dataLayer.push(arguments);}
           gtag('js', new Date());
@@ -164,53 +194,80 @@ function MyApp({ Component, pageProps }: AppProps) {
           gtag('config', '${process.env.NEXT_PUBLIC_GA}');
 
          `}
-      </Script>
-      <QueryClientProvider client={queryClient}>
-        {/* <ReactQueryDevtools initialIsOpen={false} /> */}
-        <WalletKitProvider
-          defaultNetwork={network}
-          app={{
-            name: 'Honey Finance'
-          }}
-          networkConfigs={networkConfiguration()}
-        >
-          {/* <GovernanceProvider> */}
-          <SailProvider
-            initialState={{
-              onSailError
+        </Script>
+        <QueryClientProvider client={queryClient}>
+          {/* <ReactQueryDevtools initialIsOpen={false} /> */}
+          <WalletKitProvider
+            defaultNetwork={network}
+            app={{
+              name: 'Honey Finance'
             }}
+            networkConfigs={networkConfiguration()}
           >
-            <SDKProvider>
-              {/* <GovernorProvider
-                  initialState={{
-                    governor: GOVERNOR_ADDRESS,
-                    govToken: HONEY_MINT,
-                    minter: {
-                      mintWrapper: HONEY_MINT_WRAPPER
-                    }
-                  }}
-                > */}
-              {/* {children} */}
-              {showPopup ? (
-                <SecPopup setShowPopup={setShowPopup} />
-              ) : (
+            {/* <GovernanceProvider> */}
+            <SailProvider
+              initialState={{
+                onSailError
+              }}
+            >
+              <SDKProvider>
+                {/* <GovernorProvider
+                      initialState={{
+                        governor: GOVERNOR_ADDRESS,
+                        govToken: HONEY_MINT,
+                        minter: {
+                          mintWrapper: HONEY_MINT_WRAPPER
+                        }
+                      }}
+                    > */}
+                {/* {children} */}
                 <>
                   <HoneyJupiterProvider>
                     <DialectProviders>
                       <OnChainProvider>
-                        <Component {...pageProps} />
+                        <Head>
+                          <link
+                            id="theme"
+                            rel="stylesheet"
+                            type="text/css"
+                            href="/css/antdLightTheme.css"
+                          />
+                          {['dark', 'dusk'].includes(theme) && (
+                            <link
+                              id="theme"
+                              rel="stylesheet"
+                              type="text/css"
+                              href="/css/antdDarkTheme.css"
+                            />
+                          )}
+                        </Head>
+                        <div
+                          className={
+                            theme === 'dark'
+                              ? 'honey-dark-theme'
+                              : theme === 'dusk'
+                              ? 'honey-dusk-theme'
+                              : 'honey-light-theme'
+                          }
+                        >
+                          {showPopup ? (
+                            <SecPopup setShowPopup={setShowPopup} />
+                          ) : (
+                            <Component {...pageProps} />
+                          )}
+                        </div>
                         <ToastContainer theme="dark" position="bottom-right" />
                       </OnChainProvider>
                     </DialectProviders>
                   </HoneyJupiterProvider>
                 </>
-              )}
-              {/* </GovernorProvider> */}
-            </SDKProvider>
-          </SailProvider>
-          {/* </GovernanceProvider> */}
-        </WalletKitProvider>
-      </QueryClientProvider>
+                {/* </GovernorProvider> */}
+              </SDKProvider>
+            </SailProvider>
+            {/* </GovernanceProvider> */}
+          </WalletKitProvider>
+        </QueryClientProvider>
+      </HoneyThemeContext.Provider>
     </ThemeProvider>
   );
 }

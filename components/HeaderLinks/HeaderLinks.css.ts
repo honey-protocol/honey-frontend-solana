@@ -24,28 +24,40 @@ export const submenu = style([
   }
 ]);
 
-globalStyle(`.ant-menu-submenu${submenu} .ant-menu-submenu-title .ant-menu-title-content`, {
-  color: vars.colors.grayTransparent,
-  gap: 8,
-  display: 'flex',
-  alignItems: 'center'
-});
+globalStyle(
+  `.ant-menu-submenu${submenu} .ant-menu-submenu-title .ant-menu-title-content`,
+  {
+    color: vars.colors.grayTransparent,
+    gap: 8,
+    display: 'flex',
+    alignItems: 'center'
+  }
+);
 
-globalStyle(`.ant-menu-submenu${submenu} .ant-menu-submenu-title .ant-menu-title-content svg path`, {
-  fill: vars.colors.grayTransparent,
-  transition: 'all .5s'
-});
+globalStyle(
+  `.ant-menu-submenu${submenu} .ant-menu-submenu-title .ant-menu-title-content svg path`,
+  {
+    fill: vars.colors.grayTransparent,
+    transition: 'all .5s'
+  }
+);
 
-globalStyle(`.ant-menu-submenu${submenu} .ant-menu-submenu-title:hover .ant-menu-title-content`, {
-  color: vars.colors.black,
-});
+globalStyle(
+  `.ant-menu-submenu${submenu} .ant-menu-submenu-title:hover .ant-menu-title-content`,
+  {
+    color: vars.colors.black
+  }
+);
 
-globalStyle(`.ant-menu-submenu${submenu} .ant-menu-submenu-title:hover .ant-menu-title-content svg path`, {
-  fill: vars.colors.black,
-});
+globalStyle(
+  `.ant-menu-submenu${submenu} .ant-menu-submenu-title:hover .ant-menu-title-content svg path`,
+  {
+    fill: vars.colors.black
+  }
+);
 
 globalStyle(`.ant-menu-submenu${submenu} .ant-menu-submenu-title`, {
-  padding: 0,
+  padding: 0
 });
 
 export const item = style([typography.button]);
@@ -56,11 +68,11 @@ globalStyle(`.ant-menu-item${item}`, {
   margin: '0',
   height: '30px',
   lineHeight: '16px',
-  background: 'transparent!important',
+  background: 'transparent!important'
 });
 
 globalStyle(`.ant-menu-item${subItem}`, {
-  padding: '0 10px',
+  padding: '0 10px'
 });
 
 globalStyle(`.ant-menu-item${subItem} .ant-btn`, {
@@ -68,11 +80,11 @@ globalStyle(`.ant-menu-item${subItem} .ant-btn`, {
 });
 
 globalStyle(`.ant-menu-vertical .ant-menu-item${item}:not(:last-child)`, {
-  margin: '0',
+  margin: '0'
 });
 
 globalStyle(`.ant-menu-item${item} a:hover`, {
-  color: `${vars.colors.black}`
+  color: `${vars.colors.text}`
 });
 
 globalStyle(`.ant-menu-item${item} .ant-menu-submenu-arrow`, {
@@ -84,9 +96,8 @@ globalStyle(`${container} li`, {
   alignItems: 'center'
 });
 
-globalStyle(`${container} li`, {
-  display: 'flex',
-  alignItems: 'center'
+globalStyle(`${container}.ant-menu`, {
+  background: 'none'
 });
 
 export const title = style({

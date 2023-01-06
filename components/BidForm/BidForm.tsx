@@ -14,6 +14,7 @@ import { hAlign } from 'styles/common.css';
 import { questionIcon } from 'styles/icons.css';
 import useToast from 'hooks/useToast';
 import { renderMarketImageByID, renderMarketName } from 'helpers/marketHelpers';
+import QuestionIcon from 'icons/QuestionIcon';
 
 const {
   format: f,
@@ -174,7 +175,10 @@ const BidForm = (props: BidFormProps) => {
               valueSize="big"
               title={
                 <span className={hAlign}>
-                  Highest bid <div className={questionIcon} />
+                  Highest bid{' '}
+                  <div className={questionIcon}>
+                    <QuestionIcon />
+                  </div>
                 </span>
               }
             />
