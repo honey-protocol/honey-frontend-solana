@@ -14,7 +14,7 @@ export const swapFooter = style({
 export const footerTitle = style([
   typography.caption,
   {
-    color: vars.colors.grayTransparent,
+    color: vars.colors.textTertiary
   }
 ])
 

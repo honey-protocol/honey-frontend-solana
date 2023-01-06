@@ -5,6 +5,7 @@ import { Typography } from 'antd';
 import HexaBoxContainer from '../HexaBoxContainer/HexaBoxContainer';
 import Image from 'next/image';
 import honeyGenesisBee from '/public/images/imagePlaceholder.png';
+import { LeftOutlined } from '@ant-design/icons';
 const { Text } = Typography;
 
 export const P2PPageTitle: FC<P2PPageTitleProps> = ({
@@ -15,7 +16,7 @@ export const P2PPageTitle: FC<P2PPageTitleProps> = ({
   return (
     <>
       <Text className={styles.prevPage} onClick={onGetBack}>
-        <div className={styles.iconPrev} />
+        <LeftOutlined />
         Back to all collections
       </Text>
 

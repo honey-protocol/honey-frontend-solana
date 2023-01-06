@@ -16,8 +16,8 @@ const slideIn = keyframes({
 export const honeyPositionsSlider = style({
   width: '100%',
   borderRadius: 16,
-  background: vars.colors.white,
-  overflow: 'hidden',
+  background: vars.colors.foreground,
+  overflow: 'hidden'
 });
 
 export const honeyAnimationSlider = style({

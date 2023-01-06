@@ -12,7 +12,6 @@ import { VoteFormProps } from './types';
 import ProposalVote, { VoteType } from './Proposals/ProposalVote/ProposalVote';
 import ProposalQueue from './Proposals/ProposalQueue/ProposalQueue';
 import ProposalActivate from './Proposals/ProposalActivate/ProposalActivate';
-import SectionTitle from 'components/SectionTitle/SectionTitle';
 
 import { InfoBlock } from 'components/InfoBlock/InfoBlock';
 import HoneyButton, {
@@ -28,6 +27,8 @@ import { questionIcon } from 'styles/icons.css';
 import * as styles from './VoteForm.css';
 import ProposalHistory from './Proposals/ProposalHistory/ProposalHistory';
 import { Space } from 'antd';
+import SectionTitle from '../../SectionTitle/SectionTitle';
+import QuestionIcon from 'icons/QuestionIcon';
 
 const { formatShortName: fsn } = formatNumber;
 
@@ -245,9 +246,12 @@ const VoteForm: FC<VoteFormProps> = (props: VoteFormProps) => {
               value={fsn(10000000)}
               valueSize="big"
               footer={
-                <Space>
-                  Min Quorum <div className={questionIcon} />
-                </Space>
+                <span>
+                  Min Quorum{' '}
+                  <span className={questionIcon}>
+                    <QuestionIcon />
+                  </span>
+                </span>
               }
               toolTipLabel="Tooltip label for Min Quorum"
             />
@@ -257,9 +261,12 @@ const VoteForm: FC<VoteFormProps> = (props: VoteFormProps) => {
               value={fsn(5000000)}
               valueSize="big"
               footer={
-                <Space>
-                  Min Diff <div className={questionIcon} />
-                </Space>
+                <span>
+                  Min Diff{' '}
+                  <span className={questionIcon}>
+                    <QuestionIcon />
+                  </span>
+                </span>
               }
               toolTipLabel="Label for Min Diff"
             />

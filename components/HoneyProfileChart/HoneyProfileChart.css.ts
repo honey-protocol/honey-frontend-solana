@@ -28,7 +28,7 @@ export const chartTitle = style({
 export const chartTitleText = style([
   typography.caption,
   {
-    color: vars.colors.grayTransparent,
+    color: vars.colors.textTertiary,
     marginBottom: 4,
     display: 'flex'
   }
@@ -37,7 +37,7 @@ export const chartTitleText = style([
 export const chartTitleValue = style([
   typography.numbersLarge,
   {
-    color: vars.colors.black
+    color: vars.colors.text
   }
 ]);
 
@@ -51,8 +51,8 @@ export const titleTooltipIcon = style({
 export const tooltip = style({
   background: vars.colors.brownLight,
   padding: '6px 8px',
-  border: `2px solid ${vars.colors.black}`,
-  boxShadow: `2px 2px 0px ${vars.colors.black}`,
+  border: `2px solid ${vars.colors.borderPrimary}`,
+  boxShadow: `2px 2px 0px ${vars.colors.borderPrimary}`,
   borderRadius: 12,
   position: 'relative',
   textAlign: 'center',
@@ -66,7 +66,7 @@ export const tooltip = style({
       content: '',
       width: 0,
       height: 0,
-      borderTop: `solid 9px ${vars.colors.black}`,
+      borderTop: `solid 9px ${vars.colors.borderPrimary}`,
       borderLeft: 'solid 14px transparent',
       borderRight: 'solid 14px transparent'
     }
@@ -76,7 +76,7 @@ export const tooltip = style({
 export const tooltipTitle = style([
   typography.caption,
   {
-    color: vars.colors.grayTransparent,
+    color: vars.colors.textTertiary,
     marginBottom: 2
   }
 ]);
@@ -86,6 +86,6 @@ export const tooltipDot = style({
   width: 6,
   height: 6,
   border: `2px solid ${vars.colors.brownLight}`,
-  background: vars.colors.white,
+  background: vars.colors.foreground,
   borderRadius: '50%'
 });

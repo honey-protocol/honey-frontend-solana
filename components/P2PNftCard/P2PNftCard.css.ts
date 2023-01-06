@@ -9,14 +9,14 @@ export const nftCard = style({
   overflow: 'hidden',
   transition: 'all 0.2s',
   ':hover': {
-    borderColor: vars.colors.black,
+    borderColor: vars.colors.borderPrimary,
     boxShadow: `4px 4px 0px ${vars.colors.brownLight}`
   },
   cursor: 'pointer'
 });
 
 export const isActive = style({
-  borderColor: vars.colors.black,
+  borderColor: vars.colors.borderPrimary,
   boxShadow: `4px 4px 0px ${vars.colors.brownLight}`
 });
 
@@ -28,7 +28,7 @@ export const values = style({
 export const info = style({
   padding: '30px 8px 16px',
   position: 'relative',
-  background: vars.colors.white
+  background: vars.colors.foreground
 });
 
 export const statusBlock = style({

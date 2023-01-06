@@ -26,7 +26,7 @@ export const dropdownSelect = style({
   top: 'calc(100% + 5px)',
   width: '100%',
   listStyle: 'none',
-  background: vars.colors.white,
+  background: vars.colors.foreground,
   borderRadius: 12,
   border: `2px solid ${vars.colors.grayDark}`,
   margin: '0',

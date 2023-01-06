@@ -21,7 +21,7 @@ export const inputsAddons = styleVariants({
   title: [
     typography.body,
     {
-      color: vars.colors.grayTransparent,
+      color: vars.colors.textTertiary,
       transform: 'translate(-25px, 0)'
     }
   ],
@@ -70,7 +70,7 @@ export const loanInfo = styleVariants({
   description: [
     typography.caption,
     {
-      color: vars.colors.grayTransparent
+      color: vars.colors.textTertiary
     }
   ]
 });
@@ -84,7 +84,7 @@ export const userBalance = styleVariants({
     flexDirection: 'column',
     justifyContent: 'center',
     alignItems: 'center',
-    background: vars.colors.grayLight,
+    background: vars.colors.background,
     width: '100%',
     padding: `8px 16px`,
     height: 52,
@@ -93,7 +93,7 @@ export const userBalance = styleVariants({
   title: [
     typography.caption,
     {
-      color: vars.colors.grayTransparent,
+      color: vars.colors.textTertiary,
       marginBottom: 4
     }
   ],

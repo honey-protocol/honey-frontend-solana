@@ -6,43 +6,48 @@ export const howItWorksTab = style({
   height: '100%',
   display: 'flex',
   flexDirection: 'column',
-  background: vars.colors.white,
   padding: 16,
-  justifyContent: "space-between"
+  justifyContent: 'space-between'
 });
 
 export const contentWrapper = style({
-  display: "flex",
-  flexDirection: "column",
+  display: 'flex',
+  flexDirection: 'column',
   marginBottom: 24
-})
+});
 
-export const listItem = style([typography.description, {
-  color: vars.colors.black,
-  display: "flex",
-  alignItems: "center",
-  marginBottom: 12
-}])
+export const listItem = style([
+  typography.description,
+  {
+    color: vars.colors.text,
+    display: 'flex',
+    alignItems: 'center',
+    marginBottom: 12
+  }
+]);
 
 export const listIcon = style({
   width: 36,
   height: 36,
   flexShrink: 0,
   marginRight: 18
-})
+});
 
-export const listIconNumber = style([typography.body, {
-  background: 'white',
-  width: '100%',
-  height: '100%',
-  display: "flex",
-  justifyContent: "center",
-  alignItems: "center",
-  color: vars.colors.black,
-}])
+export const listIconNumber = style([
+  typography.body,
+  {
+    background: 'white',
+    width: '100%',
+    height: '100%',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    color: vars.colors.black
+  }
+]);
 
 export const divider = style({
-  backgroundImage: `linear-gradient(to right, ${vars.colors.black} 50%, transparent 50%)`,
+  backgroundImage: `linear-gradient(to right, ${vars.colors.text} 50%, transparent 50%)`,
   backgroundPosition: 'left bottom, left bottom, left top, right top',
   backgroundRepeat: 'repeat-x, repeat-x, repeat-y, repeat-y',
   backgroundSize: '20px 1px, 20px 1px, 1px 20px, 1px 20px',
@@ -71,18 +76,24 @@ export const bigCol = style([
 ]);
 
 export const toggle = style({
-  display: "flex",
-  flexDirection: "column",
+  display: 'flex',
+  flexDirection: 'column',
   marginBottom: 28
 });
 
-export const toggleText = style([typography.button, {
-  color: vars.colors.black,
-  marginLeft: 8
-}]);
+export const toggleText = style([
+  typography.button,
+  {
+    color: vars.colors.text,
+    marginLeft: 8
+  }
+]);
 
-export const listLink = style([typography.description, {
-  color: `${vars.colors.brownMiddle}!important`,
-}]);
+export const listLink = style([
+  typography.description,
+  {
+    color: `${vars.colors.brownMiddle}!important`
+  }
+]);
 
 export const listText = style([typography.description]);

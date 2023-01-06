@@ -6,7 +6,6 @@ export const governanceDescription = style({
   height: '100%',
   display: 'flex',
   flexDirection: 'column',
-  background: vars.colors.white,
   padding: 16
 });
 
@@ -22,14 +21,14 @@ globalStyle(
   `${markdown} h1, ${markdown} h2, ${markdown} h3, ${markdown} h4, ${markdown} h5`,
   {
     ...typography.title,
-    color: vars.colors.black,
+    color: vars.colors.text,
     marginBottom: 12
   }
 );
 
 globalStyle(`${markdown} p`, {
   ...typography.description,
-  color: vars.colors.black
+  color: vars.colors.text
 });
 
 globalStyle(`${markdown} a`, {

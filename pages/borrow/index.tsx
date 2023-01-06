@@ -94,6 +94,8 @@ import CreateMarketSidebar from '../../components/CreateMarketSidebar/CreateMark
 // TODO: change to dynamic value
 const network = 'mainnet-beta';
 import { featureFlags } from 'helpers/featureFlags';
+import SorterIcon from 'icons/Sorter';
+import ExpandedRowIcon from 'icons/ExpandedRowIcon';
 // import { network } from 'pages/_app';
 const { format: f, formatPercent: fp, formatSol: fs } = formatNumber;
 
@@ -457,7 +459,9 @@ const Markets: NextPage = () => {
                 }
               >
                 <span>Interest rate</span>
-                <div className={style.sortIcon[sortOrder]} />
+                <div className={style.sortIcon[sortOrder]}>
+                  <SorterIcon active={sortOrder !== 'disabled'} />
+                </div>
               </div>
             );
           },
@@ -492,7 +496,9 @@ const Markets: NextPage = () => {
                 }
               >
                 <span>Supplied</span>{' '}
-                <div className={style.sortIcon[sortOrder]} />
+                <div className={style.sortIcon[sortOrder]}>
+                  <SorterIcon active={sortOrder !== 'disabled'} />
+                </div>
               </div>
             );
           },
@@ -523,7 +529,9 @@ const Markets: NextPage = () => {
                 }
               >
                 <span>Available</span>
-                <div className={style.sortIcon[sortOrder]} />
+                <div className={style.sortIcon[sortOrder]}>
+                  <SorterIcon active={sortOrder !== 'disabled'} />
+                </div>
               </div>
             );
           },
@@ -627,7 +635,9 @@ const Markets: NextPage = () => {
       render: (name, record) => {
         return (
           <div className={style.expandedRowNameCell}>
-            <div className={style.expandedRowIcon} />
+            <div className={style.expandedRowIcon}>
+              <ExpandedRowIcon />
+            </div>
             <div className={style.collectionLogo}>
               <HexaBoxContainer>
                 {
@@ -694,7 +704,9 @@ const Markets: NextPage = () => {
       dataIndex: 'name',
       render: (name, record) => (
         <div className={style.expandedRowNameCell}>
-          <div className={style.expandedRowIcon} />
+          <div className={style.expandedRowIcon}>
+            <ExpandedRowIcon />
+          </div>
           <div className={style.collectionLogo}>
             <HexaBoxContainer>
               {renderMarketImageByID(currentMarketId)}
@@ -739,7 +751,9 @@ const Markets: NextPage = () => {
   const ExpandedTableFooter = () => (
     <div className={style.expandedSection}>
       <div className={style.expandedSectionFooter}>
-        <div className={style.expandedRowIcon} />
+        <div className={style.expandedRowIcon}>
+          <ExpandedRowIcon />
+        </div>
         <div className={style.collectionLogo}>
           <HexaBoxContainer borderColor="gray">
             <div className={style.lampIconStyle} />
@@ -1223,7 +1237,7 @@ const Markets: NextPage = () => {
         {
           <div
             className={style.createMarketLauncherCell}
-            style={{ width: launchAreaWidth }}
+            // style={{ width: launchAreaWidth }}
             onClick={() => setSidebarMode(BorrowSidebarMode.CREATE_MARKET)}
           >
             <div className={style.createMarket}>

@@ -85,7 +85,7 @@ export const BorrowPositionCardSlider: FC<BorrowPositionCardSliderProps> = ({
                   }}
                 />
               </div>
-              { maxAvailableValue > 0 &&
+          {maxAvailableValue > 0 && (
                   <div
                   className={styles.sliderWrapper}
                   style={{ width: `${maxAvailableValue * 100}%` }}
@@ -100,10 +100,11 @@ export const BorrowPositionCardSlider: FC<BorrowPositionCardSliderProps> = ({
                       value={100}
                       handleStyle={{display: 'none'}}
                       trackStyle={{
-                        backgroundColor: vars.colors.black
+                  backgroundColor: vars.colors.borderPrimary
                       }}
                   />
-              </div> }
+            </div>
+          )}
 
               <div
                 className={styles.sliderWrapperSafeZone}

@@ -34,6 +34,8 @@ import { useWalletKit } from '@gokiprotocol/walletkit';
 import Decimal from 'decimal.js';
 import debounce from 'lodash/debounce';
 import useToast from 'hooks/useToast';
+import { ReloadIcon } from 'icons/ReloadIcon';
+import SwapIcon from 'icons/SwapIcon';
 
 const {
   formatTokenAllDecimals: ftad,
@@ -164,7 +166,9 @@ const Swap: NextPage = () => {
             onClick={refreshJupiter}
             role={'button'}
             className={styles.reloadIcon}
-          />
+          >
+            <ReloadIcon />
+          </div>
         )
       },
       {
@@ -456,7 +460,7 @@ const Swap: NextPage = () => {
 
                 <div className={styles.swapArrow}>
                   <HoneyButton variant="text" onClick={reverseInputs}>
-                    <div className={styles.swapArrowIcon} />
+                    <SwapIcon />
                   </HoneyButton>
                 </div>
 

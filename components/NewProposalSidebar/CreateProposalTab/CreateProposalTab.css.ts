@@ -6,7 +6,6 @@ export const createProposalTab = style({
   height: '100%',
   display: 'flex',
   flexDirection: 'column',
-  background: vars.colors.white,
   padding: 16
 });
 

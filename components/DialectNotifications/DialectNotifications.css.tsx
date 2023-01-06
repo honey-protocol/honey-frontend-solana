@@ -8,6 +8,15 @@ export const dialectNotification = style({
 
 // indicator dot style
 globalStyle(
+  `${dialectNotification} .dialect dt-relative.dt-flex.dt-items-center.dt-justify-center.dt-rounded-full button`,
+  {
+    background: vars.colors.red,
+    left: 12
+  }
+);
+
+// indicator dot style
+globalStyle(
   `${dialectNotification} .dialect .dt-absolute.dt-h-3.dt-w-3.dt-z-50.dt-rounded-full.dt-bg-accent.dt-text-white`,
   {
     background: vars.colors.brownLight,
@@ -20,6 +29,7 @@ const popoverSelector = `${dialectNotification} .dialect .dialect > .dt-fixed`;
 globalStyle(`${popoverSelector}`, {
   maxWidth: 360,
   height: 'calc(100vh - 120px)',
+  pointerEvents: 'all',
   '@media': {
     [`screen and (max-width: ${breakpoints.mobile}px)`]: {
       maxWidth: 'unset',
@@ -31,6 +41,7 @@ globalStyle(`${popoverSelector}`, {
 globalStyle(`${popoverSelector} .dt-flex-row`, {
   padding: '14px 14px 16px 16px',
   border: 'none',
+  color: vars.colors.text,
   maxHeight: 'initial',
   minHeight: 0
 });
@@ -39,7 +50,8 @@ globalStyle(`${popoverSelector} *`, {
   fontFamily: 'Scandia !important',
   fontWeight: '500',
   fontSize: '14px',
-  lineHeight: '20px'
+  lineHeight: '20px',
+  color: vars.colors.text
 });
 
 //date text style
@@ -72,7 +84,7 @@ globalStyle(`${popoverSelector} button`, {
   justifyContent: 'center',
   alignItems: 'center',
   background: vars.colors.brownLight,
-  color: vars.colors.black
+  color: `${vars.colors.black} !important`
 });
 
 globalStyle(`${popoverSelector} button:not(:has(svg))`, {
@@ -82,7 +94,7 @@ globalStyle(`${popoverSelector} button:not(:has(svg))`, {
 globalStyle(`${popoverSelector} button svg`, {
   width: 40,
   height: 'auto',
-  background: vars.colors.white,
+  background: vars.colors.foreground,
   borderRadius: 8,
   padding: 7
 });
@@ -92,14 +104,16 @@ globalStyle(`${popoverSelector} input[type="checkbox"] + span`, {
 });
 
 globalStyle(`${popoverSelector} .dt-flex-row > .dt-text-base`, {
-  ...typography.title
+  ...typography.title,
+  color: vars.colors.text
 });
 
 globalStyle(`${popoverSelector} .dialect > .dt-flex > .dt-h-full`, {});
 
 globalStyle(`${popoverSelector} .dt-bg-white`, {
   boxShadow: `4px 4px 0px 0px ${vars.colors.brownLight}`,
-  border: `2px solid ${vars.colors.black}`
+  border: `2px solid ${vars.colors.borderPrimary}`,
+  background: vars.colors.foreground
 });
 
 globalStyle(`${dialectNotification} .dialec > div`, {

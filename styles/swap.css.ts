@@ -4,7 +4,8 @@ import { questionIcon, swapIcon } from './icons.css';
 
 export const pageContent = style({
   maxWidth: '398px',
-  margin: 'auto'
+  margin: 'auto',
+  paddingTop: 40
 });
 
 export const pageTitle = style([
@@ -23,7 +24,7 @@ export const section = style({
 });
 
 export const swapFormContainer = style({
-  background: `${vars.colors.white}`,
+  background: `${vars.colors.foreground}`,
   padding: `24px 24px 12px 24px`
 });
 
@@ -47,7 +48,7 @@ export const tokenSelector = style({
   cursor: 'pointer',
   borderRadius: 10,
   selectors: {
-    '&:hover, &:active': { background: vars.colors.grayLight }
+    '&:hover, &:active': { background: vars.colors.background }
   }
 });
 
@@ -72,7 +73,7 @@ export const inputStats = style({
 export const balance = style([
   typography.caption,
   {
-    color: vars.colors.black,
+    color: vars.colors.textSecondary,
     opacity: 0.4
   }
 ]);
@@ -106,12 +107,14 @@ globalStyle(`${buttons} .ant-tooltip-open`, {
 });
 
 export const reloadIcon = style({
-  background: 'url("/images/reload-icon.svg") center center no-repeat',
   width: 15,
   height: 15,
   marginLeft: 4,
   transform: 'translateY(-2px)',
-  cursor: 'pointer'
+  cursor: 'pointer',
+  display: 'flex',
+  justifyContent: 'center',
+  alignItems: 'center'
 });
 
 export const swapArrow = style({

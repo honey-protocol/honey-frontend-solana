@@ -13,10 +13,12 @@ import { useLocker } from 'hooks/useVeHoney';
 
 // import { generateMockHistoryData } from 'helpers/chartUtils';
 
-import { questionIcon, questionIconYellow } from 'styles/icons.css';
 import * as styles from './GovernanceStats.css';
 import { useConnectedWallet } from '@saberhq/use-solana';
 import { useAccountByMint } from 'hooks/useAccounts';
+import { questionIcon } from 'styles/icons.css';
+import { HoneyLockedStatus } from '../HoneyLockedStatus/HoneyLockedStatus';
+import QuestionIcon from 'icons/QuestionIcon';
 
 const { format: f, formatShortName: fsn } = formatNumber;
 
@@ -90,7 +92,9 @@ export const GovernanceStats: FC<GoveranceStatsProps> = ({
           <HoneyTooltip title="Honey tokens can be bought on the open market or earned by staking Honey Gensis Bees on the farm page.">
             <Space size="small" className={c(styles.title, styles.yellow)}>
               HONEY balance
-              <div className={questionIconYellow} />
+              <div className={questionIcon}>
+                <QuestionIcon />
+              </div>
             </Space>
           </HoneyTooltip>
           <div className={styles.value}>{f(honeyAmount?.asNumber)}</div>
@@ -120,7 +124,10 @@ export const GovernanceStats: FC<GoveranceStatsProps> = ({
         <div className={styles.blockTitle}>
           <HoneyTooltip title="veHONEY is the Governance token of the Honey Ecosystem. It is used to create and vote on DAO proposals.">
             <Space className={styles.title}>
-              veHONEY || Voting power <div className={questionIcon} />
+              veHONEY || Voting power{' '}
+              <div className={questionIcon}>
+                <QuestionIcon />
+              </div>
             </Space>
           </HoneyTooltip>
           <div className={styles.value}>{f(votingPower?.asNumber ?? 0)}</div>
@@ -144,7 +151,10 @@ export const GovernanceStats: FC<GoveranceStatsProps> = ({
         <div className={styles.blockTitle}>
           <HoneyTooltip title="A countdown until your veHONEY can be unlocked. When you unlock your veHONEY you will be able to claim your previously locked HONEY tokens. This countdown is pushed back each time more HONEY is vested.">
             <Space className={styles.title} size="small">
-              Lock period <div className={questionIcon} />
+              Lock period{' '}
+              <div className={questionIcon}>
+                <QuestionIcon />
+              </div>
             </Space>
           </HoneyTooltip>
           <div className={c(styles.value, styles.lockPeriodValue)}>

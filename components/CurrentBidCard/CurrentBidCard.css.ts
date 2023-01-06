@@ -38,7 +38,7 @@ export const bidCardLeft = style({
 export const bidCardDate = style([
   typography.caption,
   {
-    color: vars.colors.grayTransparent,
+    color: vars.colors.textTertiary,
     marginBottom: 0,
     textTransform: 'lowercase'
   }
@@ -47,7 +47,7 @@ export const bidCardDate = style([
 export const bidCardAddress = style([
   typography.numbersRegular,
   {
-    color: vars.colors.black,
+    color: vars.colors.text,
     whiteSpace: 'nowrap',
     overflow: 'hidden',
     textOverflow: 'ellipsis',
@@ -70,7 +70,7 @@ export const bidCardPrice = style([
 export const bidCardUsdcCounts = style([
   typography.numbersMini,
   {
-    color: vars.colors.grayTransparent,
+    color: vars.colors.textTertiary,
     whiteSpace: 'nowrap',
     marginBottom: 0
   }

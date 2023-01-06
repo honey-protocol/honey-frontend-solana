@@ -2,12 +2,12 @@ import { style } from '@vanilla-extract/css';
 import { typography, vars } from '../../styles/theme.css';
 
 export const depositForm = style({
-    width: '100%',
-    height: '100%',
-    display: 'flex',
-    flexDirection: 'column',
-    background: vars.colors.white,
-    padding: 16
+  width: '100%',
+  height: '100%',
+  display: 'flex',
+  flexDirection: 'column',
+  // background: vars.colors.white,
+  padding: 16
 });
 
 const formSection = style([

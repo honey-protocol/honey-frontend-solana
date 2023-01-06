@@ -1,6 +1,5 @@
 import { typography, vars } from '../../styles/theme.css';
 import { style } from '@vanilla-extract/css';
-import {PublicKey} from "@solana/web3.js";
 
 export const swapInfoBlock = style({
   display: 'flex',
@@ -8,10 +7,13 @@ export const swapInfoBlock = style({
 });
 
 export const borderInfoBlock = style({
-  background: 'url("/images/swap-info-block-line.svg") center center',
+  backgroundImage: `linear-gradient(to right, ${vars.colors.borderPrimary} 50%, transparent 50%)`,
+  backgroundPosition: 'left bottom, left bottom, left top, right top',
+  backgroundRepeat: 'repeat-x, repeat-x, repeat-y, repeat-y',
+  backgroundSize: '20px 1px, 20px 1px, 1px 20px, 1px 20px',
   width: '100%',
   height: 2,
-  marginBottom: 14
+  marginBottom: 16
 });
 
 export const infoBlockWrapper = style({
@@ -35,7 +37,7 @@ export const infoBlockTitle = style([
     display: 'flex',
     justifyContent: 'flex-start',
     alignItems: 'center',
-    color: vars.colors.grayTransparent
+    color: vars.colors.textTertiary
   }
 ]);
 
