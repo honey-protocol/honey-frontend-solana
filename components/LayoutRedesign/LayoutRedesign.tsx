@@ -10,7 +10,7 @@ import * as styles from './LayoutRedesign.css';
 interface Props {
   children: ReactNode;
 }
-const alertMsg = 'This product is in beta ⚠️ Please use at your own risk';
+const alertMsg = 'This product is in beta ! Please use at your own risk';
 const LayoutRedesign: FC<Props> = ({ children }) => {
   // const [isMobileSidebarVisible, setShowMobileSidebar] = useState(false);
   return (
@@ -26,7 +26,7 @@ const LayoutRedesign: FC<Props> = ({ children }) => {
       {alertMsg && (
         <div className={styles.alertBox}>
           <div className={styles.alertContent}>
-            This product is in beta ⚠️ Please use at your own risk
+            This product is in beta ! Please use at your own risk
           </div>
         </div>
       )}
