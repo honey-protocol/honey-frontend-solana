@@ -209,9 +209,7 @@ function MyApp({ Component, pageProps }: AppProps) {
                 }}
               > */}
                 {/* {children} */}
-                {showPopup ? (
-                  <SecPopup setShowPopup={setShowPopup} />
-                ) : (
+                {
                   <>
                     <HoneyJupiterProvider>
                       <DialectProviders>
@@ -257,7 +255,7 @@ function MyApp({ Component, pageProps }: AppProps) {
                       </DialectProviders>
                     </HoneyJupiterProvider>
                   </>
-                )}
+                }
               </SailProvider>
             </AccountsProvider>
           </WalletKitProvider>
