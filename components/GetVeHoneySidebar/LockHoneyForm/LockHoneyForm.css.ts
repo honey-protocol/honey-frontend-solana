@@ -16,6 +16,9 @@ const formSection = style([
   }
 ]);
 
+export const mb10 = style({
+  marginBottom: 10
+});
 export const row = style([
   formSection,
   {
@@ -29,14 +32,14 @@ export const col = style({
 
 export const buttons = style([
   {
-    display: 'flex'
+    display: 'flex',
+    gap: 10
   }
 ]);
 
 export const smallCol = style([
   {
-    flex: '0 0 auto',
-    marginRight: '12px'
+    flex: '0 0 auto'
   }
 ]);
 

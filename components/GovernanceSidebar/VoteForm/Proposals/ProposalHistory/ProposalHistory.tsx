@@ -1,27 +1,27 @@
 import React from 'react';
-import { Typography } from 'antd';
-import { InfoBlock } from 'components/InfoBlock/InfoBlock';
-import * as styles from '../../VoteForm.css';
-import { ProposalInfo } from 'hooks/tribeca/useProposals';
-import type { SmartWalletTransactionData } from '@gokiprotocol/client';
+import { startCase } from 'lodash';
+import { BN } from '@project-serum/anchor';
 import type { ProgramAccount } from '@saberhq/token-utils';
-import type { ProposalData } from 'helpers/dao';
+import type { SmartWalletTransactionData } from '@gokiprotocol/client';
 import {
+  ProposalData,
   getProposalState,
   PROPOSAL_STATE_LABELS,
   ProposalState
-} from 'helpers/dao';
-import BN from 'bn.js';
-import { startCase } from 'lodash';
-import Link from 'next/link';
+} from '@tribecahq/tribeca-sdk';
+
+import { InfoBlock } from 'components/InfoBlock/InfoBlock';
+import { Proposal } from 'contexts/GovernanceProvider';
 import { useGokiTransactionData } from 'helpers/parser';
-import SectionTitle from '../../../../SectionTitle/SectionTitle';
+import SectionTitle from 'components/SectionTitle/SectionTitle';
+
+import * as styles from '../../VoteForm.css';
 
 const ZERO = new BN(0);
 
 interface Props {
   className?: string;
-  proposalInfo?: ProposalInfo | null;
+  proposalInfo?: Proposal | null;
 }
 
 interface ProposalEvent {
@@ -34,7 +34,7 @@ export const makeDate = (num: BN): Date => new Date(num.toNumber() * 1_000);
 
 const extractEvents = (
   proposalData: ProposalData,
-  tx: ProgramAccount<SmartWalletTransactionData>
+  tx?: ProgramAccount<SmartWalletTransactionData>
 ): ProposalEvent[] => {
   const events: ProposalEvent[] = [];
   if (!proposalData.canceledAt.eq(ZERO)) {
@@ -85,19 +85,16 @@ const extractEvents = (
   return events.sort((a, b) => (a.date < b.date ? -1 : 1));
 };
 
-const ProposalHistory: React.FC<Props> = ({
-  className,
-  proposalInfo
-}: Props) => {
+const ProposalHistory: React.FC<Props> = ({ proposalInfo }: Props) => {
   const { data: tx } = useGokiTransactionData(
-    !proposalInfo?.proposalData.queuedAt.eq(ZERO)
-      ? proposalInfo?.proposalData.queuedTransaction
+    !proposalInfo?.data.queuedAt.eq(ZERO)
+      ? proposalInfo?.data.queuedTransaction
       : null
   );
-  const events =
-    proposalInfo && tx ? extractEvents(proposalInfo.proposalData, tx) : [];
+  const events = proposalInfo
+    ? extractEvents(proposalInfo.data, tx ?? undefined)
+    : [];
 
-  console.log({ events });
   return (
     <div>
       <SectionTitle title="History" />

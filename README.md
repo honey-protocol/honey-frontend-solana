@@ -25,10 +25,10 @@ You can either clone this repo locally on your machine or contribute via GitPod:
 [![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)](https://gitpod.io/#https://github.com/honey-protocol/honey-frontend-solana)
 
 In order to run this project you need to create a 
-
 ```bash
 .env #you can use the .env.example file as silver lining
 ```
+
 
 The RPC_URL which is required is the standard mainnet RPC. You should replace this with a custom one if you are in need of better performance. We currently do not have farm listed on devnet, however we will add instructions to add farm to devnet in the future.
 
@@ -54,5 +54,6 @@ To learn more about Honey Finance and the software it uses, take a look at the f
 Your feedback and contributions are welcome! Feel free to reach out through <a href="https://discord.com/invite/T7RQ8hMamB">Discord</a> and take a look at the current [Issues](https://github.com/honey-labs/honey-frontend/issues).
 
 ## <span style="color: rgb(235, 85, 69); font-weight: 900">Deploy on Vercel</span>
+
 
 The easiest way to deploy your Next.JS app is by using the <a href="https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme" target="blank">Vercel Platform</a> from the creators of Next.JS. Check out the <a href="https://nextjs.org/docs/deployment" target="blank">Next.JS Deployment Documentation</a> for more details. <a href="https://nextjs.org/learn/foundations/about-nextjs" target="blank">Learn Next.JS</a> - an interactive Next.JS tutorial.

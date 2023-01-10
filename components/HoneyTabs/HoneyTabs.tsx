@@ -1,7 +1,7 @@
-import { Table, Tabs, Typography } from 'antd';
 import classNames from 'classnames';
 import React, { ReactNode } from 'react';
 import * as styles from './HoneyTabs.css';
+import { Typography } from 'antd';
 import TabBgLeft from './TabBgLeft';
 import TabBgRight from './TabBgRight';
 
@@ -52,7 +52,9 @@ const HoneyTabs = (props: {
         className={classNames(
           styles.content,
           props.active ? styles.active : styles.inactive,
-          props.activeKey === props.items[0].key ? styles.activeBorderLeft : styles.activeBorderRight
+          props.activeKey === props.items[0].key
+            ? styles.activeBorderLeft
+            : styles.activeBorderRight
         )}
       >
         {props.children}

@@ -9,7 +9,6 @@ import { PublicKey } from '@solana/web3.js';
 import { mapValues } from 'lodash';
 import { toast } from 'react-toastify';
 import { parseIdlErrors, ProgramError } from './programError';
-import { ProgramKey } from './sdk';
 
 const programErrors = mapValues(
   {
@@ -17,6 +16,8 @@ const programErrors = mapValues(
   },
   prog => parseIdlErrors(prog)
 );
+
+export type ProgramKey = keyof typeof GOKI_ADDRESSES;
 
 const programIDs = Object.entries({
   ...GOKI_ADDRESSES

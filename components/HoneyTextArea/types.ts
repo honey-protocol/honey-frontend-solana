@@ -1,7 +1,9 @@
-import {TextAreaProps} from "antd/lib/input/TextArea";
+import { TextAreaProps } from 'antd/lib/input/TextArea';
 
 export type HoneyTextAreaProps = TextAreaProps & {
-  isShowCounter?: boolean
-  value: string
-  title: string
-}
+  isShowCounter?: boolean;
+  value: string;
+  title: string;
+  isValueInvalid?: boolean;
+  error?: string;
+};

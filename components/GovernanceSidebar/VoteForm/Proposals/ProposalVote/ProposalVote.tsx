@@ -1,49 +1,45 @@
+import React, { useMemo } from 'react';
+import { TokenAmount } from '@saberhq/token-utils';
+
 import { HoneyButtonTabs } from 'components/HoneyButtonTabs/HoneyButtonTabs';
 import { HoneySlider } from 'components/HoneySlider/HoneySlider';
 import { InfoBlock } from 'components/InfoBlock/InfoBlock';
+import { Proposal } from 'contexts/GovernanceProvider';
+import { useLocker } from 'hooks/useVeHoney';
+import c from 'classnames';
+
 import * as styles from '../../VoteForm.css';
-import React from 'react';
-import { ProposalInfo } from 'hooks/tribeca/useProposals';
-import { TokenAmount } from '@saberhq/token-utils';
-import { useGovernor } from 'hooks/tribeca/useGovernor';
-import { Spin } from 'antd';
-import { VoteSide } from 'helpers/dao';
-import { Fraction } from '@saberhq/token-utils';
-import BN from 'bn.js';
+import Countdown from 'react-countdown';
 
 export type VoteType = 'vote_for' | 'vote_against';
 interface ProposalVoteProps {
-  proposalInfo: ProposalInfo;
+  proposal?: Proposal;
   voteType: VoteType;
   setVoteType: Function;
-  vePower: TokenAmount | null;
 }
-const ProposalVote = (props: ProposalVoteProps) => {
-  const { proposalInfo, voteType, setVoteType, vePower } = props;
-  const totalDeterminingVotes = proposalInfo?.proposalData.forVotes.add(
-    proposalInfo.proposalData.againstVotes
-  );
-  const { veToken } = useGovernor();
+const ProposalVote = ({
+  voteType,
+  setVoteType,
+  proposal
+}: ProposalVoteProps) => {
+  const { govToken, votingPower } = useLocker();
 
-  const getVoteCountFmt = (side: VoteSide) => {
-    const voteCount =
-      side === VoteSide.For
-        ? proposalInfo.proposalData.forVotes
-        : side === VoteSide.Against
-        ? proposalInfo.proposalData.againstVotes
-        : new BN(0);
+  const votes = useMemo(() => {
+    if (proposal && govToken) {
+      return {
+        for: new TokenAmount(govToken, proposal.data.forVotes),
+        against: new TokenAmount(govToken, proposal.data.againstVotes),
+        total: new TokenAmount(
+          govToken,
+          proposal.data.forVotes.add(proposal.data.againstVotes)
+        )
+      };
+    }
+    return null;
+  }, [govToken, proposal]);
 
-    return veToken && voteCount !== null ? (
-      new Fraction(voteCount, 10 ** veToken.decimals).asNumber.toLocaleString(
-        undefined,
-        {
-          maximumFractionDigits: 0
-        }
-      )
-    ) : (
-      <Spin />
-    );
-  };
+  const votingEndsAt = proposal?.data.votingEndsAt.toNumber();
+
   return (
     <div style={{ width: '100%' }}>
       <div className={styles.row}>
@@ -61,38 +57,46 @@ const ProposalVote = (props: ProposalVoteProps) => {
       <div className={styles.grid}>
         <div className={styles.gridCell}>
           <InfoBlock
-            value={proposalInfo?.proposalData.forVotes.toString() || ''}
+            value={votes?.for.asNumber.toString() ?? '-'}
             footer={<span>Voted for</span>}
           />
           <HoneySlider
-            currentValue={proposalInfo?.proposalData.forVotes.toNumber() || 0}
-            maxValue={totalDeterminingVotes?.toNumber() || 1000}
+            currentValue={votes?.for.asNumber ?? 0}
+            maxValue={votes?.total.asNumber ?? 1000}
             minAvailableValue={0}
             isReadonly
           />
         </div>
         <div className={styles.gridCell}>
           <InfoBlock
-            value={proposalInfo?.proposalData.againstVotes.toString() || ''}
+            value={votes?.against.asNumber.toString() ?? '-'}
             footer={<span>Voted against</span>}
           />
           <HoneySlider
-            currentValue={
-              proposalInfo?.proposalData.againstVotes.toNumber() || 0
-            }
-            maxValue={totalDeterminingVotes?.toNumber() || 0}
+            currentValue={votes?.against.asNumber ?? 0}
+            maxValue={votes?.total.asNumber ?? 0}
             minAvailableValue={0}
             maxSafePosition={0}
             dangerPosition={0}
             isReadonly
           />
         </div>
-        <div className={styles.gridCell}>
+        <div className={c(styles.gridCell, styles.span2Cell)}>
           <InfoBlock
-            value={vePower?.asNumber.toString() || '--'}
+            center
+            value={votingPower?.asNumber.toString() ?? '--'}
             footer={<span>Your voting power</span>}
+            className={styles.votingPowerInfo}
           />
         </div>
+      </div>
+      <div className={c(styles.gridCell, styles.span2Cell)}>
+        <InfoBlock
+          center
+          value={<Countdown date={Number(votingEndsAt) * 1000} />}
+          title="Voting ends in"
+          className=""
+        />
       </div>
     </div>
   );

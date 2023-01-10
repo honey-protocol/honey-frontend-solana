@@ -54,6 +54,16 @@ export const gridCell = style({
   marginBottom: 24
 });
 
+export const span2Cell = style({
+  gridColumnStart: 'span 2'
+});
+
+export const votingPowerInfo = style({
+  background: vars.colors.grayLight,
+  borderRadius: 12,
+  padding: '8px 16px'
+});
+
 export const buttons = style([
   {
     display: 'flex'

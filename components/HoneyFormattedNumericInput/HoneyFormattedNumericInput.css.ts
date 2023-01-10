@@ -10,7 +10,6 @@ export const honeyFormattedInput = style([
 
     background: 'transparent',
     margin: 0,
-    border: 'none',
     selectors: {
       '&::placeholder': {
         color: vars.colors.grayTransparent
@@ -20,13 +19,10 @@ export const honeyFormattedInput = style([
 ]);
 const honeyFormattedInputBorderedSelector = `${honeyFormattedInput}:not(.ant-input-number-borderless)`;
 
-globalStyle(
-  `${honeyFormattedInputBorderedSelector} .ant-input-number-input-wrap`,
-  {
-    border: `2px solid ${vars.colors.grayDark}`,
-    borderRadius: 11
-  }
-);
+globalStyle(`${honeyFormattedInputBorderedSelector}`, {
+  border: `2px solid ${vars.colors.grayDark}`,
+  borderRadius: 11
+});
 
 globalStyle(`${honeyFormattedInput} .ant-input-number-out-of-range input`, {
   color: 'inherit'
@@ -54,3 +50,13 @@ globalStyle(`${honeyFormattedInputBorderedSelector}.ant-input-number:active`, {
   borderRight: 'none',
   borderColor: 'transparent'
 });
+
+globalStyle(
+  `${honeyFormattedInputBorderedSelector} .ant-input-number-group-addon:last-child`,
+  {
+    ...typography.body,
+    background: 'transparent',
+    border: 'none',
+    opacity: 0.5
+  }
+);

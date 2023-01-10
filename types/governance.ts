@@ -1,4 +1,7 @@
+import { PublicKey } from '@solana/web3.js';
+
 export type GovernanceTableRow = {
+  pubkey: PublicKey;
   id: number;
   name: string;
   votes: number;

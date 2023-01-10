@@ -28,7 +28,6 @@ import {
   getNFTAssociatedMetadata,
   HoneyClient,
   HoneyMarket,
-  HoneyMarketReserveInfo,
   HoneyReserve,
   HoneyUser,
   LoanPosition,

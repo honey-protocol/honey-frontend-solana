@@ -1,42 +1,33 @@
-import React, { FC, useMemo, useState } from 'react';
-import * as styles from './CreateProposalTab.css';
-import { formatNumber } from '../../../helpers/format';
-import HoneyButton from 'components/HoneyButton/HoneyButton';
-import SidebarScroll from '../../SidebarScroll/SidebarScroll';
-import { HoneyTextArea } from '../../HoneyTextArea/HoneyTextArea';
-import invariant from 'tiny-invariant';
-import { useSDK } from 'helpers/sdk';
-import { GovernorWrapper } from 'helpers/dao';
-import { useGovernor, useGovernorParams } from 'hooks/tribeca/useGovernor';
-import { extractErrorMessage, useSail } from '@saberhq/sail';
+import React, { useCallback, useMemo, useState } from 'react';
 import { Transaction } from '@solana/web3.js';
-import CustomDropdown from 'components/CustomDropdown/CustomDropdown';
-import { ACTIONS, ActionType } from 'actions/types';
-import { HelperCard } from 'components/common/HelperCard';
-import { Spinner, Text } from 'degen';
-import { useExecutiveCouncil } from 'hooks/tribeca/useExecutiveCouncil';
-import useToast from 'hooks/useToast';
-import HoneyWarning from 'components/HoneyWarning/HoneyWarning';
-import cs from 'classnames';
-import SectionTitle from '../../SectionTitle/SectionTitle';
+import { extractErrorMessage } from '@saberhq/sail';
 
-const { format: f, formatPercent: fp, formatUsd: fu } = formatNumber;
+import SectionTitle from 'components/SectionTitle/SectionTitle';
+import HoneyButton from 'components/HoneyButton/HoneyButton';
+import SidebarScroll from 'components/SidebarScroll/SidebarScroll';
+import { HoneyTextArea } from 'components/HoneyTextArea/HoneyTextArea';
+import useToast from 'hooks/useToast';
+import { useProposals } from 'hooks/useVeHoney';
+
+import * as styles from './CreateProposalTab.css';
+import CustomDropdown from 'components/CustomDropdown/CustomDropdown';
+import cs from 'classnames';
+import { ACTIONS } from 'actions/types';
 
 const CreateProposalTab = (props: { onCancel: Function }) => {
+  const { toast, ToastComponent } = useToast();
+
   const [titleValue, setTitleValue] = useState('');
   const [descriptionValue, setDescriptionValue] = useState('');
   const [discussionLinkValue, setDiscussionLinkValue] = useState('');
 
-  const { tribecaMut } = useSDK();
-  const { handleTX } = useSail();
-  const [txRaw, setTxRaw] = useState<string>('');
-  const [actionType, setActionType] = useState<ActionType>('Memo');
-  const [theError, setError] = useState<string | null>(null);
-  const { smartWallet, lockerData, governor, minter } = useGovernor();
-  const { ownerInvokerKey } = useExecutiveCouncil();
-  const { toast, ToastComponent } = useToast();
+  const { createProposal, createProposalMeta } = useProposals();
 
-  const { tx, error: parseError } = useMemo(() => {
+  const [txRaw, _setTxRaw] = useState<string>('');
+  // const [actionType, setActionType] = useState<ActionType>('Memo');
+  // const [theError, setError] = useState<string | null>(null);
+
+  const { tx } = useMemo(() => {
     try {
       const buffer = Buffer.from(txRaw, 'base64');
       const tx = Transaction.from(buffer);
@@ -51,58 +42,45 @@ const CreateProposalTab = (props: { onCancel: Function }) => {
     }
   }, [txRaw]);
 
-  if (!smartWallet || !ownerInvokerKey) {
-    return <Spinner />;
-  }
+  // if (!smartWallet || !ownerInvokerKey) {
+  //   return <Spinner />;
+  // }
 
   // Put your validators here
   const isCreateProposalButtonDisabled = () => {
     return false;
   };
 
-  const ctx = { locker: lockerData?.publicKey, governor, minter };
+  // const ctx = { locker: lockerData?.publicKey, governor, minter };
 
-  const proposal = {
-    title: titleValue,
-    description: discussionLinkValue
-      ? `${descriptionValue}\n\n[View Discussion](${discussionLinkValue})`
-      : descriptionValue,
-    instructions: tx?.instructions ?? []
-  };
-
-  const doProposeTransaction = async () => {
-    try {
+  const handleCreateProposal = useCallback(async () => {
+    if (titleValue && descriptionValue) {
       toast.processing();
-      invariant(tribecaMut);
-      const gov = new GovernorWrapper(tribecaMut, governor!);
-      const createProposal = await gov.createProposal({
-        instructions: proposal.instructions
-      });
-      const createProposalMetaTX = await gov.createProposalMeta({
-        proposal: createProposal.proposal,
-        title: proposal.title,
-        descriptionLink: proposal.description
-      });
-      for (const txEnv of [createProposal.tx, createProposalMetaTX]) {
-        const { pending, success } = await handleTX(txEnv, 'Create Proposal');
-        if (!success || !pending) {
-          return;
-        }
-        await pending.wait();
+      try {
+        const { proposal: proposalKey } = await createProposal(
+          tx?.instructions ?? []
+        );
+        await createProposalMeta(
+          proposalKey,
+          titleValue,
+          discussionLinkValue
+            ? `${descriptionValue}\n\n[View Discussion](${discussionLinkValue})`
+            : descriptionValue
+        );
+        toast.success('New proposal created');
+        setTimeout(() => {
+          props.onCancel();
+        }, 4000);
+      } catch (_) {
+        toast.error('Error creating new proposal');
       }
-      toast.success('New proposal created');
-      // notify({
-      //   message: `Proposal ${`000${createProposal.index.toString()}`.slice(
-      //     -4
-      //   )} created`
-      // // });
-    } catch (error) {
-      toast.error('Error creating new proposal');
+    } else {
+      toast.error('Title and Descroption fields must be filled');
     }
-  };
+  }, [tx, titleValue, descriptionValue, discussionLinkValue, toast]);
 
-  const actor = smartWallet;
-  const currentAction = ACTIONS.find(action => action.title === actionType);
+  // const actor = smartWallet;
+  // const currentAction = ACTIONS.find(action => action.title === actionType);
 
   return (
     <SidebarScroll
@@ -121,7 +99,7 @@ const CreateProposalTab = (props: { onCancel: Function }) => {
                 variant="primary"
                 disabled={isCreateProposalButtonDisabled()}
                 block
-                onClick={doProposeTransaction}
+                onClick={handleCreateProposal}
               >
                 Create proposal
               </HoneyButton>
@@ -161,6 +139,20 @@ const CreateProposalTab = (props: { onCancel: Function }) => {
             placeholder="https://forum.honey.finance/t"
             value={discussionLinkValue}
             onChange={e => setDiscussionLinkValue(e.target.value)}
+            isValueInvalid={Boolean(
+              discussionLinkValue &&
+                !discussionLinkValue.startsWith('https://forum.honey.finance/t')
+            )}
+            error={
+              Boolean(
+                discussionLinkValue &&
+                  !discussionLinkValue.startsWith(
+                    'https://forum.honey.finance/t'
+                  )
+              )
+                ? 'URL must start with https://forum.honey.finance/t'
+                : ''
+            }
           />
         </div>
 
@@ -168,15 +160,16 @@ const CreateProposalTab = (props: { onCancel: Function }) => {
 
         <div className={cs(styles.row, styles.mb12)}>
           <CustomDropdown
-            onChange={value => {
-              setActionType(value as ActionType);
-              setError(null);
-              setTxRaw('');
-            }}
+            onChange={() => {}}
+            // onChange={value => {
+            //   setActionType(value as ActionType);
+            //   setError(null);
+            //   setTxRaw('');
+            // }}
             options={ACTIONS.map(({ title, isEnabled }) => {
-              if (isEnabled && ctx && !isEnabled(ctx)) {
-                return { title: '', value: '' };
-              }
+              // if (isEnabled && ctx && !isEnabled(ctx)) {
+              //   return { title: '', value: '' };
+              // }
               return {
                 title,
                 value: title
@@ -185,7 +178,7 @@ const CreateProposalTab = (props: { onCancel: Function }) => {
           />
         </div>
 
-        {currentAction && (
+        {/* {currentAction && (
           <>
             {currentAction.description && (
               <div className={styles.row}>
@@ -194,14 +187,14 @@ const CreateProposalTab = (props: { onCancel: Function }) => {
             )}
             <currentAction.Renderer
               actor={actor}
-              payer={ownerInvokerKey}
+              // payer={ownerInvokerKey}
               ctx={ctx}
               txRaw={txRaw}
               setError={setError}
               setTxRaw={setTxRaw}
             />
           </>
-        )}
+        )} */}
       </div>
     </SidebarScroll>
   );
