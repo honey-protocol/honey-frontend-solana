@@ -27,7 +27,7 @@ const GetVeHoneySidebar = (props: { onCancel: Function }) => {
   const [burnNftMode, setBurnNftMode] = useState('burn_nfts');
 
   const handleTabChange = (tabKey: string) => {
-    if (tabKey === 'burn_nfts') return;
+    // if (tabKey === 'burn_nfts') return;
     setActiveTab(tabKey as Tab);
   };
   return (
