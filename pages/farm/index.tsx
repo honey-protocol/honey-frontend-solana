@@ -123,15 +123,6 @@ const Farm: NextPage = (props: any) => {
               Stake your NFTs for governance tokens{' '}
             </Typography.Text>
           </div>
-          <Button
-            href="https://github.com/honey-protocol/honey-frontend-solana/blob/release/redesign/constants/new-farms.tsx"
-            as="a"
-            target="_blank"
-            variant="secondary"
-            size="small"
-          >
-            Add market
-          </Button>
         </Stack>
       </div>
       <Box display={'flex'} flexDirection="column" flex={1}>
@@ -180,6 +171,15 @@ const Farm: NextPage = (props: any) => {
                 prefix={<IconSearch />}
               />
             </Box>
+            <Button
+              href="https://github.com/honey-protocol/honey-frontend-solana/blob/release/redesign/constants/new-farms.tsx"
+              as="a"
+              target="_blank"
+              variant="secondary"
+              size="small"
+            >
+              Add market
+            </Button>
           </Stack>
         </Box>
         {isLoading ? (
