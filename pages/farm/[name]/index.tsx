@@ -66,7 +66,7 @@ const Nft: NextPage = () => {
         ogTwitterImage={siteMetadata.siteLogoSquare}
         ogType={'website'}
       />
-      <div>
+      <div style={{ marginTop: '30px' }}>
         <Typography.Title className={pageTitle}>{name}</Typography.Title>
         <Typography.Text className={pageDescription}>
           Stake your {name} NFTs for {rewardTokenName} governance tokens{' '}
