@@ -6,7 +6,8 @@ import {
   fetchFarm,
   fetchFarmer,
   getGemStakedInFarm,
-  tokenAccountResult
+  tokenAccountResult,
+  withdrawTokensInBank
 } from 'helpers/gemFarm';
 import { BN, parseIdlErrors } from '@project-serum/anchor';
 import { convertArrayToObject } from 'helpers/utils';
@@ -17,8 +18,11 @@ import React, { ReactNode, useCallback, useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 import { blockchainWaitTime } from 'constants/timeouts';
 import { connected } from 'process';
-import { IDL } from "@gemworks/gem-farm-ts/dist/types/gem_farm"
-import { sendInstructions, sendMultipleInstructions } from '@strata-foundation/spl-utils';
+import { IDL } from '@gemworks/gem-farm-ts/dist/types/gem_farm';
+import {
+  sendInstructions,
+  sendMultipleInstructions
+} from '@strata-foundation/spl-utils';
 
 // import useWalletNFTs, { NFT } from "hooks/useWalletNFTs"
 const SPL_ASSOCIATED_TOKEN_ACCOUNT_PROGRAM_ID: PublicKey = new PublicKey(
@@ -68,7 +72,6 @@ const useGemFarm = () => {
 
   const [selectedWalletNFTs, setSelectedWalletNFTs] = useState<NFT[]>([]);
   const [selectedVaultNFTs, setSelectedVaultNFTs] = useState<NFT[]>([]);
-
 
   // Get farm and bank addresses from router
   const router = useRouter();
@@ -218,7 +221,6 @@ const useGemFarm = () => {
     }
   }, [isStartingGemFarm, setNFTs]);
 
-
   const onRefreshNFTs = async () => {
     if (!gb) return;
     const results = await Promise.all([
@@ -318,7 +320,7 @@ const useGemFarm = () => {
   async function stakeSingleTx() {
     if (!gf || !gb) throw new Error('No Gem Bank client has been initialized.');
 
-    const ixs : TransactionInstruction[] = [];
+    const ixs: TransactionInstruction[] = [];
     if (vaultAcc?.locked) {
       // Unlock vault
       ixs.push(await gf.unstakeWalletIx(new PublicKey(farmAddress!)));
@@ -351,7 +353,7 @@ const useGemFarm = () => {
 
     ixs.push(await gf.stakeWalletIx(new PublicKey(farmAddress!)));
 
-    await sendInstructions(idlErrors, gf.provider, ixs, [])
+    await sendInstructions(idlErrors, gf.provider, ixs, []);
   }
 
   const MAX_DEPOSIT_IX_PER_BATCH = 3;
@@ -392,7 +394,12 @@ const useGemFarm = () => {
         instructionGroups.push(instructions);
         signerGroups.push([]);
       }
-      await sendMultipleInstructions(idlErrors, gf!.provider, instructionGroups, signerGroups)
+      await sendMultipleInstructions(
+        idlErrors,
+        gf!.provider,
+        instructionGroups,
+        signerGroups
+      );
     }
 
     await lockVault();
@@ -420,7 +427,7 @@ const useGemFarm = () => {
   async function unstakeSingleTx() {
     if (!gf || !gb) throw new Error('No Gem Bank client has been initialized.');
 
-    const ixs : TransactionInstruction[] = [];
+    const ixs: TransactionInstruction[] = [];
     // Unlock vault
     ixs.push(await gf.unstakeWalletIx(new PublicKey(farmAddress!)));
     // End cooldown
@@ -443,7 +450,7 @@ const useGemFarm = () => {
       ixs.push(await gf.stakeWalletIx(new PublicKey(farmAddress!)));
     }
 
-    await sendInstructions(idlErrors, gf.provider, ixs, [])
+    await sendInstructions(idlErrors, gf.provider, ixs, []);
   }
 
   const MAX_WITHDRAW_IX_PER_BATCH = 4;
@@ -455,7 +462,7 @@ const useGemFarm = () => {
 
     for (let i = 0; i < selectedVaultNFTs.length; i += MAX_IX_PER_SEND_ALL) {
       const instructionGroups: TransactionInstruction[][] = [];
-      const signerGroups: Signer[][] = []
+      const signerGroups: Signer[][] = [];
       const sendAllBatch = selectedVaultNFTs.slice(i, i + MAX_IX_PER_SEND_ALL);
 
       for (let j = 0; j < sendAllBatch.length; j += MAX_WITHDRAW_IX_PER_BATCH) {
@@ -474,7 +481,12 @@ const useGemFarm = () => {
         instructionGroups.push(instructions);
         signerGroups.push([]);
       }
-      await sendMultipleInstructions(idlErrors, gf!.provider, instructionGroups, signerGroups)
+      await sendMultipleInstructions(
+        idlErrors,
+        gf!.provider,
+        instructionGroups,
+        signerGroups
+      );
     }
 
     if (selectedVaultNFTs.length < farmerAcc.gemsStaked.toNumber()) {
@@ -510,7 +522,6 @@ const useGemFarm = () => {
       );
     }
   };
-
 
   const claimRewards = async () => {
     console.log({ availableA });
@@ -551,6 +562,22 @@ const useGemFarm = () => {
     await refreshNFTsWithLoadingIcon();
   };
 
+  const claimAirdroppedBonk = async () => {
+    if (!gb) return;
+    console.log(vaultAcc.owner.toString());
+    try {
+      await withdrawTokensInBank(
+        gb,
+        new PublicKey(bankAddress),
+        new PublicKey(farmerAcc.vault),
+        vaultAcc.owner,
+        new PublicKey('DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263')
+      );
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   const availableToClaimA = farmerAcc?.rewardA
     ? farmerAcc.rewardA.accruedReward
         .sub(farmerAcc.rewardA.paidOutReward)
@@ -580,6 +607,7 @@ const useGemFarm = () => {
     handleRefreshRewardsButtonClick,
     handleStakeButtonClick,
     handleUnstakeButtonClick,
+    claimAirdroppedBonk,
     availableToClaimA,
     availableToClaimB,
     collectionTotalNumber,
