@@ -27,6 +27,7 @@ const Nft: NextPage = () => {
     initializeFarmerAcc,
     handleStakeButtonClick,
     handleUnstakeButtonClick,
+    claimAirdroppedBonk,
     isFetching,
     stakedNFTsInFarm,
     walletNFTsInFarm,
@@ -102,6 +103,7 @@ const Nft: NextPage = () => {
             farmerVaultLocked={farmerVaultLocked}
             lockVault={lockVault}
           />
+          <Button onClick={claimAirdroppedBonk}>Claim bonk</Button>
         </Stack>
       </Box>
       <Box display="flex" height="full" className={styles.cardsContainer}>
