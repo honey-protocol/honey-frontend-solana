@@ -5,20 +5,21 @@ import useGemFarm from 'hooks/useGemFarm';
 
 interface FarmHeaderComponentProps {
   farmerState: string;
-  stakedNFTsInFarm: { [tokenId: string]: NFT; };
+  stakedNFTsInFarm: { [tokenId: string]: NFT };
   farmerVaultLocked: boolean;
   lockVault: () => Promise<void>;
 }
 
 const FarmHeaderComponent = (props: FarmHeaderComponentProps) => {
-  const { farmerState,stakedNFTsInFarm, farmerVaultLocked, lockVault } = props;
+  const { farmerState, stakedNFTsInFarm, farmerVaultLocked, lockVault } = props;
   const {
     farmerAcc,
     farmAcc,
     collectionTotalNumber,
     rewardTokenName,
     handleRefreshRewardsButtonClick,
-    claimRewards
+    claimRewards,
+    claimAirdroppedBonk
   } = useGemFarm();
 
   const [txLoading, setTxLoading] = useState({
@@ -143,7 +144,6 @@ const FarmHeaderComponent = (props: FarmHeaderComponentProps) => {
           >
             <IconRefresh />
           </Button>
-
           <Button
             onClick={() => withTxLoading(claimRewards, 'claim')}
             loading={txLoading.value && txLoading.txName === 'claim'}
@@ -151,8 +151,14 @@ const FarmHeaderComponent = (props: FarmHeaderComponentProps) => {
           >
             {`Claim $${rewardTokenName}`}
           </Button>
-          {(Object.values(stakedNFTsInFarm).length > 0 &&
-            !farmerVaultLocked) && (
+          <Button
+            onClick={() => withTxLoading(claimAirdroppedBonk, 'claim')}
+            loading={txLoading.value && txLoading.txName === 'claim'}
+            size="small"
+          >
+            {`Claim $BONK`}
+          </Button>{' '}
+          {Object.values(stakedNFTsInFarm).length > 0 && !farmerVaultLocked && (
             <Button
               onClick={() => withTxLoading(lockVault, 'stake')}
               loading={txLoading.value && txLoading.txName === 'stake'}
