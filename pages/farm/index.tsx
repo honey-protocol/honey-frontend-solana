@@ -18,7 +18,7 @@ import SmallToggleSwitch from 'components/SmallToggleSwitch/SmallToggleSwitch';
 // new imports for testing
 import LayoutRedesign from '../../components/LayoutRedesign/LayoutRedesign';
 import { pageDescription, pageTitle } from 'styles/common.css';
-import { Typography } from 'antd';
+import { Space, Typography } from 'antd';
 
 /**
  * @params collection and i
@@ -115,11 +115,15 @@ const Farm: NextPage = (props: any) => {
         ogTwitterImage={siteMetadata.siteLogoSquare}
         ogType={'website'}
       />
-      <div>
-        <Typography.Title className={pageTitle}>Farms</Typography.Title>
-        <Typography.Text className={pageDescription}>
-          Stake your NFTs for governance tokens{' '}
-        </Typography.Text>
+      <div style={{ marginTop: '30px' }}>
+        <Stack direction="horizontal" justify="space-between">
+          <div>
+            <Typography.Title className={pageTitle}>Farms</Typography.Title>
+            <Typography.Text className={pageDescription}>
+              Stake your NFTs for governance tokens{' '}
+            </Typography.Text>
+          </div>
+        </Stack>
       </div>
       <Box display={'flex'} flexDirection="column" flex={1}>
         <Box minWidth="full" gap="3" paddingTop="4">
@@ -167,6 +171,15 @@ const Farm: NextPage = (props: any) => {
                 prefix={<IconSearch />}
               />
             </Box>
+            <Button
+              href="https://github.com/honey-protocol/honey-frontend-solana/blob/release/redesign/constants/new-farms.tsx"
+              as="a"
+              target="_blank"
+              variant="secondary"
+              size="small"
+            >
+              Add market
+            </Button>
           </Stack>
         </Box>
         {isLoading ? (
