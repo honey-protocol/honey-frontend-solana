@@ -120,7 +120,7 @@ export const newFarmCollections: TGFarm[] = [
     allocation: '5',
     totalStakedByUser: '-',
     eventStartDate: '2022-03-04T14:50Z',
-    eventDuration: '∞',
+    eventDuration: '1',
     updateAuthority: 'e6JhrUkGTm1ts7F1LVAFmZ6s2Mnzjg6W4TYSgZRvRwN',
     rewardTokenName: 'ZION',
     farmAddress: 'GA3FqVoGY1mL6JeTVm27i4cHoD9Ma6gusCcT8ndjff6y',
