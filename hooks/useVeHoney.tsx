@@ -264,10 +264,16 @@ export const useLocker = () => {
       if (lockerWrapper) {
         const tx = await lockerWrapper.lockNFT(nft);
         setIsProcessing?.(true);
-        const receipt = await tx.confirm();
+        // const receipt = await tx.confirm();
+        try {
+          const receipt = await tx.simulate();
+          console.log(receipt);
+        } catch (e) {
+          console.log(e)
+        }
         setIsProcessing?.(false);
 
-        return { receipt };
+        // return { receipt };
       }
     },
     [lockerWrapper, setIsProcessing]
