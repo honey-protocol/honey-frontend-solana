@@ -14,7 +14,7 @@ import { useLocker } from 'hooks/useVeHoney';
 import useToast from 'hooks/useToast';
 import { useAccountByMint } from 'hooks/useAccounts';
 import { formatNumber } from 'helpers/format';
-import { convertToBN } from 'helpers/utils';
+import { calcMonthShift, convertToBN } from 'helpers/utils';
 
 import * as styles from './LockHoneyForm.css';
 import { hAlign } from 'styles/common.css';
@@ -92,11 +92,7 @@ const LockHoneyForm = (props: { onCancel: Function }) => {
       ['1', '3', '6', '12', '48'].includes(lockPeriod)
     ) {
       // mainnet
-      const date = new Date();
-      const current = Math.floor(date.getTime() / 1000);
-      date.setMonth(date.getMonth() + Number(lockPeriod));
-      const nMonthsLater = Math.floor(date.getTime() / 1000);
-      const lockPeroidInSeconds = nMonthsLater - current;
+      const lockPeroidInSeconds = calcMonthShift(Number(lockPeriod));
 
       // testing on devnet
       // const lockPeroidInSeconds = Number(lockPeriod) * 10;
