@@ -5,7 +5,7 @@ import { BN } from '@project-serum/anchor';
 
 import { useLocker } from 'hooks/useVeHoney';
 import { useAccountByMint } from 'hooks/useAccounts';
-import { convertToBN } from 'helpers/utils';
+import { calcMonthShift, convertToBN } from 'helpers/utils';
 
 import * as styles from './HoneyModal.css';
 
@@ -19,12 +19,7 @@ const HoneyModal = () => {
 
   const vestingPeriodInSeconds = useMemo(() => {
     if ([1, 3, 6, 12, 48].includes(vestingPeriod)) {
-      const date = new Date();
-      const current = Math.floor(date.getTime() / 1000);
-      date.setMonth(date.getMonth() + vestingPeriod);
-      const nMonthsLater = Math.floor(date.getTime() / 1000);
-
-      return nMonthsLater - current;
+      return calcMonthShift(vestingPeriod);
     }
     return 0;
   }, [vestingPeriod]);

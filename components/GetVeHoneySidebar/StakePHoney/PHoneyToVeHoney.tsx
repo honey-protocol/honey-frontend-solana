@@ -12,7 +12,7 @@ import { HoneyButtonTabs } from 'components/HoneyButtonTabs/HoneyButtonTabs';
 import { useAccountByMint, useAccounts } from 'hooks/useAccounts';
 import { useStake, useLocker } from 'hooks/useVeHoney';
 import { formatNumber } from 'helpers/format';
-import { convert, convertToBN, isNil } from 'helpers/utils';
+import { convert, convertToBN, isNil, calcMonthShift } from 'helpers/utils';
 import * as styles from '../LockHoneyForm/LockHoneyForm.css';
 import { hAlign } from 'styles/common.css';
 import { TokenAmount } from '@saberhq/token-utils';
@@ -78,7 +78,7 @@ const PHoneyToVeHoney = (_: { onCancel: Function }) => {
                 // devnet
                 // new BN(Number(lockPeriod) * 10),
                 // mainnet
-                new BN(Number(lockPeriod) * 2_592_000),
+                new BN(calcMonthShift(Number(lockPeriod))),
                 locker.params
               ),
               govToken.decimals
@@ -99,7 +99,7 @@ const PHoneyToVeHoney = (_: { onCancel: Function }) => {
           // devnet
           // new BN(Number(lockPeriod) * 10),
           // mainnet
-          new BN(Number(lockPeriod) * 2_592_000)
+          new BN(calcMonthShift(Number(lockPeriod)))
         );
         setPHoneyValue2(undefined);
         setHoneyValue(undefined);
