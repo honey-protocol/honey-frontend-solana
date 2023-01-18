@@ -65,7 +65,8 @@ const LockHoneyForm = (props: { onCancel: Function }) => {
     return new Date(escrow.data.escrowEndsAt.toNumber() * 1000);
   }, [escrow]);
 
-  const newLockPeriodEnds = Date.now() + Number(lockPeriod) * ONE_MONTH_IN_MS;
+  const newLockPeriodEnds =
+    Date.now() + calcMonthShift(Number(lockPeriod)) * 1000;
 
   const honeyAmount = useMemo(() => {
     if (!govToken || !honeyAccount) return null;
