@@ -1,14 +1,16 @@
-import React, { useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import * as styles from './LendingSidebar.css';
 import { LendingSidebarProps } from './types';
 import HoneyTabs, { HoneyTabItem } from '../HoneyTabs/HoneyTabs';
 import EmptyStateDetails from '../EmptyStateDetails/EmptyStateDetails';
-import { useConnectedWallet } from '@saberhq/use-solana';
+import { useConnectedWallet, useConnection } from '@saberhq/use-solana';
 import { useWalletKit } from '@gokiprotocol/walletkit';
 import { mobileReturnButton } from 'styles/common.css';
 import { CounterOfferTab } from '../CounterOfferTab/CounterOfferTab';
 import { OfferItem } from '../CounterOfferTab/types';
 import LendForm from '../LendForm/LendForm';
+import { LAMPORTS_PER_SOL } from '@solana/web3.js';
+import { extractMetaData } from 'helpers/utils';
 
 const items: [HoneyTabItem, HoneyTabItem] = [
   { label: 'Lend', key: 'lend' },
@@ -45,28 +47,36 @@ const mockOffersArray: OfferItem[] = [
 ];
 
 const LendingSidebar = (props: LendingSidebarProps) => {
-  const {
-    collectionId,
-    onCancel,
-    name,
-    imageUrl,
-    collectionName,
-    borrowerTelegram,
-    borrowerDiscord,
-    duePeriod,
-    loanStart,
-    walletAddress,
-    ir,
-    request,
-    total
-  } = props;
+  const { collectionId, collectionName, onCancel, loan } = props;
   const wallet = useConnectedWallet();
   const { connect } = useWalletKit();
   const [activeTab, setActiveTab] = useState<Tab>('lend');
+  const [isLoadingDetails, setIsLoadingDetails] = useState(true);
+  const [nftDetails, setNFTDetails] = useState<NFT>();
+  const connection = useConnection();
+
+  const fetchLoanMetadata = useCallback(async () => {
+    if (!loan) return;
+    try {
+      setIsLoadingDetails(true);
+      const nftDetails = await extractMetaData(loan.nftMint, connection);
+      setNFTDetails(nftDetails);
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setIsLoadingDetails(false);
+    }
+  }, [connection, loan]);
+  useEffect(() => {
+    fetchLoanMetadata();
+  }, [fetchLoanMetadata]);
 
   const handleTabChange = (tabKey: string) => {
     setActiveTab(tabKey as Tab);
   };
+
+  console.log({ loan });
+
   return (
     <div className={styles.lendingSidebarContainer}>
       <HoneyTabs
@@ -94,7 +104,7 @@ const LendingSidebar = (props: LendingSidebarProps) => {
               }
             ]}
           />
-        ) : !collectionId ? (
+        ) : !collectionId || !loan ? (
           <EmptyStateDetails
             icon={<div className={styles.boltIcon} />}
             title="Manage panel"
@@ -104,17 +114,12 @@ const LendingSidebar = (props: LendingSidebarProps) => {
           <>
             {activeTab === 'lend' && (
               <LendForm
-                name={name}
-                imageUrl={imageUrl}
+                name={nftDetails?.name ?? ''}
+                imageUrl={nftDetails?.image}
                 collectionName={collectionName}
-                request={request}
-                ir={ir}
-                total={total}
-                duePeriod={duePeriod}
-                loanStart={loanStart}
-                walletAddress={walletAddress}
-                borrowerTelegram={borrowerTelegram}
-                borrowerDiscord={borrowerDiscord}
+                loan={loan}
+                borrowerTelegram={'sak'}
+                borrowerDiscord={'ad'}
               />
             )}
             {activeTab === 'counter_offer' && (

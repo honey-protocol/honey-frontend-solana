@@ -1,5 +1,5 @@
 import type { NextPage } from 'next';
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import LayoutRedesign from '../../../components/LayoutRedesign/LayoutRedesign';
 import HoneyContent from '../../../components/HoneyContent/HoneyContent';
 import HoneySider from '../../../components/HoneySider/HoneySider';
@@ -9,26 +9,36 @@ import { pageDescription, pageTitle } from 'styles/common.css';
 import { LendFormProps } from '../../../components/LendForm/types';
 import { FiltersSidebar } from '../../../components/FiltersSidebar/FiltersSidebar';
 import { CategoryCards } from '../../../components/CategoryCards/CategoryCards';
-import { P2PPosition, P2PCollection, PageMode } from '../../../types/p2p';
+import {
+  P2PPosition,
+  P2PCollection,
+  PageMode,
+  P2PLoans,
+  P2PLoan
+} from '../../../types/p2p';
 import { P2PPageTitle } from '../../../components/P2PPagesTitle/P2PPageTitle';
 import { CollectionsCards } from '../../../components/CollectionsCards/CollectionsCards';
 import { P2PLendingMainList } from 'components/P2PLendingMainList/P2PLendingMainList';
 import { DefaultOptionType } from 'rc-select/es/Select';
 import { FeaturedCategory } from '../../../components/FeaturedCategories/types';
 import { FeaturedCategories } from '../../../components/FeaturedCategories/FeaturedCategories';
+import { getProgram } from 'helpers/p2p/getProgram';
+import { Connection } from '@solana/web3.js';
+import {
+  ConnectedWallet,
+  useConnectedWallet,
+  useConnection
+} from '@saberhq/use-solana';
+import {
+  convertLoanResultToLoanObj,
+  getDiscoverScreenLoanOrders
+} from 'helpers/p2p/filterLoans';
+import FEATURED_COLLECTIONS from 'constants/p2p';
 
-const mockData: LendFormProps = {
+const mockData = {
   name: 'Doodle #1290',
   imageUrl: '/images/mock-collection-image@2x.png',
-  collectionName: 'Doodles',
-  request: 123,
-  ir: 2,
-  total: 300,
-  duePeriod: 1667557681931,
-  loanStart: 1667395278840,
-  walletAddress: '2ijWvdsnOP1vnjds8ыvkd12',
-  borrowerTelegram: '#',
-  borrowerDiscord: '#'
+  collectionName: 'Doodles'
 };
 
 const featuredCategoriesMock: FeaturedCategory[] = [
@@ -79,48 +89,47 @@ const rulesFilters: DefaultOptionType[] = [
   { label: 'Rule #6', value: 'rule_6', rule: 'mock rule#6' }
 ];
 
-function getCollectionsListMock() {
-  const preparedPositions: P2PCollection[] = [];
-  for (let i = 0; i < 20; i++) {
-    preparedPositions.push({
-      name: `User #${i + 1000}`,
-      tag: `tag #${i + 1000}`,
-      total: Math.random() * 1000,
-      items: Math.random() * 1000,
-      requested: Math.random(),
-      imageUrl: '/images/mock-collection-image@2x.png',
-      id: i.toString() + '_lend'
-    });
-  }
-  return preparedPositions;
-}
+export const getLoans = async (
+  walletAddress: string,
+  connection: Connection,
+  wallet: ConnectedWallet
+) => {
+  const program = await getProgram(connection, wallet as any);
+  let loansData = await program.account.loanMetadata.all();
+  const appliedLoans: P2PLoans = {};
+  const lentLoans: P2PLoans = {};
 
-function getNftListMock() {
-  const preparedPositions: P2PPosition[] = [];
-  for (let i = 0; i < 20; i++) {
-    preparedPositions.push({
-      name: `User #${i + 1000}`,
-      collectionName: `tag #${i + 1000}`,
-      request: Math.random() * 1000,
-      ir: Math.random() * 1000,
-      total: Math.random(),
-      imageUrl: '/images/mock-collection-image@2x.png',
-      end: 1667557681931,
-      start: 1667395278840,
-      walletAddress: '2ijWvdsnOP1vnjds8ыvkd12',
-      borrowerTelegram: '#',
-      borrowerDiscord: '#',
-      address: i.toString() + '_lend'
-    });
-  }
-  return preparedPositions;
-}
+  const loans: P2PLoans = {};
+  loansData.map(loan => {
+    loans[loan.publicKey.toString()] = convertLoanResultToLoanObj(loan);
+  });
+
+  const filtered = getDiscoverScreenLoanOrders(loans);
+  return filtered;
+};
 
 const Lending: NextPage = () => {
+  const wallet = useConnectedWallet();
+  const connection = useConnection();
   const [isMobileSidebarVisible, setShowMobileSidebar] = useState(false);
   const [pageMode, setPageMode] = useState<PageMode>(PageMode.INITIAL_STATE);
   const [selectedCategory, setSelectedCategory] = useState<FeaturedCategory>();
   const [selected, setSelected] = useState<string | undefined>();
+  const [selectedLoan, setSelectedLoan] = useState<P2PLoan>();
+  const [displayedLoans, setDisplayedLoans] = useState<P2PLoans>({});
+
+  useEffect(() => {
+    if (!wallet) return;
+    const getAppliedAndActiveLoans = async () => {
+      const loans = await getLoans(
+        wallet?.publicKey.toString(),
+        connection,
+        wallet
+      );
+      setDisplayedLoans(loans ?? {});
+    };
+    getAppliedAndActiveLoans();
+  }, [wallet, connection]);
 
   const showMobileSidebar = () => {
     setShowMobileSidebar(true);
@@ -146,9 +155,6 @@ const Lending: NextPage = () => {
     setSelected(id);
     setPageMode(PageMode.COLLECTION_SELECTED);
   };
-
-  const mockCollectionsList = useMemo(() => getCollectionsListMock(), []);
-  const mockNftList = useMemo(() => getNftListMock(), []);
 
   const lendingSidebar = () => {
     switch (pageMode) {
@@ -176,18 +182,9 @@ const Lending: NextPage = () => {
         return (
           <HoneySider isMobileSidebarVisible={isMobileSidebarVisible}>
             <LendingSidebar
-              name={mockData.name}
-              imageUrl={mockData.imageUrl}
-              collectionName={mockData.collectionName}
-              request={mockData.request}
-              ir={mockData.ir}
-              total={mockData.total}
-              duePeriod={mockData.duePeriod}
-              loanStart={mockData.loanStart}
-              walletAddress={mockData.walletAddress}
-              borrowerTelegram={mockData.borrowerTelegram}
-              borrowerDiscord={mockData.borrowerDiscord}
-              collectionId={'s'}
+              collectionId="a"
+              collectionName="collection name"
+              loan={selectedLoan}
               onCancel={hideMobileSidebar}
             />
           </HoneySider>
@@ -202,7 +199,7 @@ const Lending: NextPage = () => {
           <CategoryCards
             onSelect={handleCollectionSelect}
             selected={selected}
-            data={mockCollectionsList}
+            data={FEATURED_COLLECTIONS}
           />
         );
       case PageMode.CATEGORY_SELECTED:
@@ -210,11 +207,17 @@ const Lending: NextPage = () => {
           <CollectionsCards
             onSelect={handleCollectionSelect}
             selected={selected}
-            data={mockCollectionsList}
+            data={FEATURED_COLLECTIONS}
           />
         );
       case PageMode.COLLECTION_SELECTED:
-        return <P2PLendingMainList data={mockNftList} />;
+        return (
+          <P2PLendingMainList
+            data={displayedLoans}
+            selected={selectedLoan}
+            onSelect={loan => setSelectedLoan(loan)}
+          />
+        );
     }
   };
 
@@ -247,7 +250,7 @@ const Lending: NextPage = () => {
       case PageMode.COLLECTION_SELECTED:
         return (
           <P2PPageTitle
-            onGetBack={() => setPageMode(PageMode.CATEGORY_SELECTED)}
+            onGetBack={() => setPageMode(PageMode.INITIAL_STATE)}
             name={mockData.name}
             img={mockData.imageUrl}
           />

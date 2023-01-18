@@ -60,6 +60,7 @@
     "classnames": "^2.3.1",
     "decimal.js": "^10.3.1",
     "degen": "^0.0.69",
+    "firebase": "^9.8.4",
     "fs": "^0.0.1-security",
     "js-sha3": "^0.8.0",
     "jsbi": "^4.3.0",

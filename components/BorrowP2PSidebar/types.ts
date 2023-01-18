@@ -1,6 +1,6 @@
 import { NftCardProps } from '../NftCard/types';
 import { UserNFTs } from '../../types/markets';
-import { P2PPosition } from '../../types/p2p';
+import { P2PLoans, P2PPosition } from '../../types/p2p';
 import HoneyButton, { HoneyButtonProps } from '../HoneyButton/HoneyButton';
 
 export type ChooseNFTsTabProps = {
@@ -11,10 +11,10 @@ export type ChooseNFTsTabProps = {
 };
 
 export type BorrowP2PSidebarProps = {
-  // existing loans that user has to repay
-  userBorrowedPositions: P2PPosition[];
+  // requested loans by user that are not active
+  userAppliedLoans: P2PLoans;
   // selected position
-  selectedPosition?: P2PPosition;
+  selectedPosition?: NFT;
   onClose: () => void;
 };
 
@@ -41,11 +41,10 @@ export type BorrowP2PSidebarFooterProps = {
 };
 
 export type BorrowP2PRequestFormTabProps = {
-  NFTName: string;
   collectionName: string;
-  NFTLogo: string;
   isVerifiedCollection?: boolean;
   onClose: () => void;
+  NFT: NFT;
 };
 
 export type AvailableNFTsListSidebarProps = {

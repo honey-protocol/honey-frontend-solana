@@ -1,5 +1,10 @@
-import type { NextPage } from 'next';
-import React, { useMemo, useState } from 'react';
+import type {
+  GetServerSideProps,
+  GetServerSidePropsContext,
+  InferGetServerSidePropsType,
+  NextPage
+} from 'next';
+import React, { useEffect, useMemo, useState } from 'react';
 import { Typography } from 'antd';
 import { pageDescription, pageTitle } from 'styles/common.css';
 import LayoutRedesign from '../../../components/LayoutRedesign/LayoutRedesign';
@@ -9,45 +14,90 @@ import {
   BorrowPageMode,
   P2PBorrowSidebarMode,
   PageMode,
-  P2PPosition
+  P2PPosition,
+  P2PLoans
 } from '../../../types/p2p';
 import { BorrowP2PSidebar } from '../../../components/BorrowP2PSidebar/BorrowP2PSidebar';
-import { P2PLendingMainList } from '../../../components/P2PLendingMainList/P2PLendingMainList';
-import { P2PPageTitle } from '../../../components/P2PPagesTitle/P2PPageTitle';
-import { P2PBorrowingMainList } from '../../../components/P2PBorrowingMainList/P2PBorrowingMainList';
+import { HoneyButtonTabs } from 'components/HoneyButtonTabs/HoneyButtonTabs';
+import { P2PBorrowMainList } from 'components/P2PBorrowMainLists/P2PBorrowMainList';
+import { P2PRepayMainList } from 'components/P2PBorrowMainLists/P2PRepayMainList';
+import useFetchNFTByUser from 'hooks/useNFTV2';
+import {
+  ConnectedWallet,
+  useConnectedWallet,
+  useConnection
+} from '@saberhq/use-solana';
+import { getProgram } from 'helpers/p2p/getProgram';
+import BN from 'bn.js';
+import { Connection } from '@solana/web3.js';
+import { Wallet } from '@project-serum/anchor';
 
-function getNftListMock() {
-  const preparedPositions: P2PPosition[] = [];
-  for (let i = 0; i < 20; i++) {
-    preparedPositions.push({
-      name: `User #${i + 1000}`,
-      collectionName: `tag #${i + 1000}`,
-      request: Math.random() * 1000,
-      ir: Math.random() * 1000,
-      total: Math.random(),
-      imageUrl: '/images/mock-collection-image@2x.png',
-      end: 1667557681931,
-      start: 1667395278840,
-      walletAddress: '2ijWvdsnOP1vnjds8ыvkd12',
-      borrowerTelegram: '#',
-      borrowerDiscord: '#',
-      address: i.toString() + '_lend'
-    });
-  }
-  return preparedPositions;
-}
+export const getUserAppliedAndActiveLoans = async (
+  walletAddress: string,
+  connection: Connection,
+  wallet: ConnectedWallet
+) => {
+  const program = await getProgram(connection, wallet as any);
+  let loansData = await program.account.loanMetadata.all();
+  const appliedLoans: P2PLoans = {};
+  const lentLoans: P2PLoans = {};
+
+  loansData.map(loan => {
+    if (loan.account.borrower.toString() === walletAddress) {
+      appliedLoans[loan.publicKey.toString()] = {
+        ...loan.account,
+        id: loan.publicKey.toString(),
+        requestedAmount: new BN(loan.account.requestedAmount).toString(),
+        interest: new BN(loan.account.interest).toString(),
+        period: new BN(loan.account.period).toString()
+      };
+    } else if (loan.account.lender.toString() === walletAddress) {
+      lentLoans[loan.publicKey.toString()] = {
+        ...loan.account,
+        id: loan.publicKey.toString(),
+        requestedAmount: new BN(loan.account.requestedAmount).toString(),
+        interest: new BN(loan.account.interest).toString(),
+        period: new BN(loan.account.period).toString()
+      };
+    }
+  });
+
+  return {
+    appliedLoans: JSON.parse(JSON.stringify(appliedLoans)),
+    lentLoans: JSON.parse(JSON.stringify(lentLoans))
+  };
+};
 
 const Borrowing: NextPage = () => {
   const [pageMode, setPageMode] = useState<BorrowPageMode>(
-    BorrowPageMode.INITIAL_STATE
+    BorrowPageMode.NEW_BORROW
   );
 
-  const [selectedNFT, setSelectedNFT] = useState<P2PPosition>();
+  const wallet = useConnectedWallet();
+  const connection = useConnection();
+  const [selectedNFT, setSelectedNFT] = useState<NFT>();
   const [isMobileSidebarVisible, setShowMobileSidebar] = useState(false);
 
   // const mockCollectionsList = useMemo(() => getCollectionsListMock(), []);
-  const nftListMock = useMemo(() => getNftListMock(), []);
-  const userBorrowedPositionsMock = nftListMock.slice(0, 5);
+  const [NFTs, isFetchingNFTs, refetchNFTs] = useFetchNFTByUser(wallet);
+  const [appliedLoans, setAppliedLoans] = useState<P2PLoans>([]);
+  const [activeLoans, setActiveLoans] = useState<P2PLoans>([]);
+
+  useEffect(() => {
+    if (!wallet) return;
+    const getAppliedAndActiveLoans = async () => {
+      const { appliedLoans, lentLoans } = await getUserAppliedAndActiveLoans(
+        wallet?.publicKey.toString(),
+        connection,
+        wallet
+      );
+      setAppliedLoans(appliedLoans);
+      setActiveLoans(lentLoans);
+    };
+    getAppliedAndActiveLoans();
+  }, [wallet, connection]);
+
+  console.log({ appliedLoans, activeLoans });
 
   const showMobileSidebar = () => {
     setShowMobileSidebar(true);
@@ -67,7 +117,7 @@ const Borrowing: NextPage = () => {
     return (
       <HoneySider isMobileSidebarVisible={isMobileSidebarVisible}>
         <BorrowP2PSidebar
-          userBorrowedPositions={userBorrowedPositionsMock}
+          userAppliedLoans={appliedLoans}
           selectedPosition={selectedNFT}
           onClose={handleOnCloseSidebar}
         />
@@ -76,27 +126,41 @@ const Borrowing: NextPage = () => {
   };
 
   const handleNftSelect = (address: string) => {
-    debugger;
-    const selected = nftListMock.find(item => item.address === address);
+    const selected = NFTs.find(item => item.mint === address);
     setSelectedNFT(selected);
+  };
+
+  const PageModeSwitchTab = () => {
+    return (
+      <HoneyButtonTabs
+        items={[
+          { name: 'NEW BORROW', slug: BorrowPageMode.NEW_BORROW },
+          { name: 'REPAY LOAN', slug: BorrowPageMode.REPAY_BORROWED }
+        ]}
+        activeItemSlug={pageMode}
+        onClick={(slug: any) => setPageMode(slug)}
+      />
+    );
   };
 
   const renderTable = (pageMode: BorrowPageMode) => {
     switch (pageMode) {
-      case BorrowPageMode.INITIAL_STATE:
+      case BorrowPageMode.NEW_BORROW:
         return (
-          <P2PBorrowingMainList
-            data={nftListMock}
+          <P2PBorrowMainList
+            data={NFTs}
             onSelect={handleNftSelect}
-            selected={selectedNFT?.address}
+            selected={selectedNFT?.mint}
+            PageModeSwitchTab={PageModeSwitchTab}
           />
         );
-      case BorrowPageMode.NFT_SELECTED:
+      case BorrowPageMode.REPAY_BORROWED:
         return (
-          <P2PBorrowingMainList
-            data={nftListMock}
+          <P2PRepayMainList
+            data={activeLoans}
             onSelect={handleNftSelect}
-            selected={selectedNFT?.address}
+            selected={selectedNFT?.mint}
+            PageModeSwitchTab={PageModeSwitchTab}
           />
         );
     }
@@ -104,28 +168,28 @@ const Borrowing: NextPage = () => {
 
   const renderTitle = (pagesMode: BorrowPageMode) => {
     switch (pagesMode) {
-      case BorrowPageMode.INITIAL_STATE:
+      case BorrowPageMode.NEW_BORROW:
         return (
           <>
             <Typography.Title className={pageTitle}>
               P2P Borrow
             </Typography.Title>
             <Typography.Text className={pageDescription}>
-              Lorem Ipsum is simply dummy text of the printing and typesetting
-              industry. Lorem Ipsum has
+              Select a collateral and fill in your desired borrow params
             </Typography.Text>
           </>
         );
-      case BorrowPageMode.NFT_SELECTED:
-        if (selectedNFT) {
-          return (
-            <P2PPageTitle
-              onGetBack={() => setPageMode(BorrowPageMode.INITIAL_STATE)}
-              name={selectedNFT.name}
-              img={selectedNFT.imageUrl}
-            />
-          );
-        }
+      case BorrowPageMode.REPAY_BORROWED:
+        return (
+          <>
+            <Typography.Title className={pageTitle}>
+              Repay P2P Loan
+            </Typography.Title>
+            <Typography.Text className={pageDescription}>
+              Select a loan to repay.
+            </Typography.Text>
+          </>
+        );
         return null;
     }
   };

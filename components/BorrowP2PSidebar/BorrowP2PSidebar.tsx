@@ -4,20 +4,21 @@ import React, { useState } from 'react';
 import { BorrowP2PRequestFormTab } from './BorrowP2PRequestTab/BorrowP2PRequestFormTab';
 import { RepayP2PTab } from './RepayP2PTab/RepayP2PTab';
 import { BorrowP2PSidebarProps, Tab } from './types';
-import { P2PPosition } from '../../types/p2p';
+import { P2PLoan, P2PPosition } from '../../types/p2p';
 import { LoansListTab } from './LoansListTab/LoansListTab';
 import EmptyStateDetails from '../EmptyStateDetails/EmptyStateDetails';
-import { useConnectedWallet } from '@saberhq/use-solana';
+import { useConnectedWallet, useConnection } from '@saberhq/use-solana';
 import { useWalletKit } from '@gokiprotocol/walletkit';
 import { mobileReturnButton } from '../../styles/common.css';
+import { requestLoan } from 'helpers/p2p/apiServices';
 
 const tabs: [HoneyTabItem, HoneyTabItem] = [
   { label: 'borrow', key: 'borrow' },
-  { label: 'Your Loans', key: 'repay' }
+  { label: 'applied borrow', key: 'applied_borrow' }
 ];
 
 export const BorrowP2PSidebar = ({
-  userBorrowedPositions,
+  userAppliedLoans,
   selectedPosition,
   onClose
 }: BorrowP2PSidebarProps) => {
@@ -25,13 +26,7 @@ export const BorrowP2PSidebar = ({
   const { connect } = useWalletKit();
 
   const [activeTab, setActiveTab] = useState<Tab>('borrow');
-  const [selectedUserPosition, setSelectedUserPosition] =
-    useState<P2PPosition>();
-
-  const handleOpenedPositionsSelect = (address: string) => {
-    const userPosition = userBorrowedPositions.find(p => p.address === address);
-    setSelectedUserPosition(userPosition);
-  };
+  const [selectedUserPosition, setSelectedUserPosition] = useState<P2PLoan>();
 
   const onCancel = () => {
     setSelectedUserPosition(undefined);
@@ -69,10 +64,9 @@ export const BorrowP2PSidebar = ({
     if (selectedPosition) {
       return (
         <BorrowP2PRequestFormTab
-          collectionName={selectedPosition.collectionName}
-          NFTName={selectedPosition.name}
-          NFTLogo={selectedPosition.imageUrl}
-          isVerifiedCollection={selectedPosition.verified}
+          collectionName={selectedPosition.name}
+          NFT={selectedPosition}
+          isVerifiedCollection={true} //get verified status
           onClose={onCancel}
         />
       );
@@ -87,7 +81,7 @@ export const BorrowP2PSidebar = ({
     }
   };
 
-  const renderRepayTab = () => {
+  const renderAppliedBorrowTab = () => {
     if (!wallet || !wallet.connected) {
       return renderConnectWallet();
     }
@@ -96,7 +90,7 @@ export const BorrowP2PSidebar = ({
       return <RepayP2PTab position={selectedUserPosition} onClose={onCancel} />;
     }
 
-    if (!userBorrowedPositions || !userBorrowedPositions.length) {
+    if (!Object.keys(userAppliedLoans).length) {
       return (
         <EmptyStateDetails
           icon={<div className={styles.boltIcon} />}
@@ -104,15 +98,8 @@ export const BorrowP2PSidebar = ({
           description=""
         />
       );
-    }
-
-    if (userBorrowedPositions && userBorrowedPositions.length) {
-      return (
-        <LoansListTab
-          loans={userBorrowedPositions}
-          onSelect={handleOpenedPositionsSelect}
-        />
-      );
+    } else {
+      return <LoansListTab loans={userAppliedLoans} onSelect={() => {}} />;
     }
   };
 
@@ -124,7 +111,7 @@ export const BorrowP2PSidebar = ({
         active={true}
         onTabChange={setActiveTab}
       >
-        {activeTab === 'borrow' ? renderBorrowTab() : renderRepayTab()}
+        {activeTab === 'borrow' ? renderBorrowTab() : renderAppliedBorrowTab()}
       </HoneyTabs>
     </div>
   );

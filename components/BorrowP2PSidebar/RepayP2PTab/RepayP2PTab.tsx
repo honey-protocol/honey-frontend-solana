@@ -6,7 +6,7 @@ import { RepayP2PSlider } from '../RepayP2PSlider/RepayP2PSlider';
 import { BorrowP2PSidebarHeader } from '../BorrowP2PSidebarHeader/BorrowP2PSidebarHeader';
 import { BorrowP2PSidebarFooter } from '../BorrowP2PSidebarFooter/BorrowP2PSidebarFooter';
 import { useSolBalance } from '../../../hooks/useSolBalance';
-import { P2PPosition } from '../../../types/p2p';
+import { P2PLoan, P2PPosition } from '../../../types/p2p';
 import SectionTitle from '../../SectionTitle/SectionTitle';
 import { InfoBlock } from '../../InfoBlock/InfoBlock';
 import { differenceInDays, format } from 'date-fns';
@@ -16,7 +16,7 @@ import Decimal from 'decimal.js';
 const { formatSol: fs, formatPercentRounded: fpr } = formatNumber;
 
 export interface RepayP2PTabProps {
-  position: P2PPosition;
+  position: P2PLoan;
   onClose: () => void;
 }
 

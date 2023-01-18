@@ -1,8 +1,8 @@
-import { P2PPosition } from '../../types/p2p';
+import { P2PLoan, P2PLoans, P2PPosition } from '../../types/p2p';
 
 export interface P2PLendingMainListProps {
   isFilterOpened?: boolean;
-  data: P2PPosition[];
-  onSelect?: (address: string) => void;
-  selected?: string | undefined;
+  data: P2PLoans;
+  onSelect?: (loan: P2PLoan) => void;
+  selected?: P2PLoan;
 }

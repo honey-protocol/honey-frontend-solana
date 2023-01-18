@@ -1,5 +1,5 @@
 import React, { ChangeEvent, FC, useCallback, useState } from 'react';
-import { P2PBorrowingMainListProps } from './types';
+import { P2PRepayMainListProps } from './types';
 import SearchInput from '../SearchInput/SearchInput';
 import {
   cardsContainer,
@@ -12,9 +12,12 @@ import { P2PNftCard } from '../P2PNftCard/P2PNftCard';
 import { InfoBlock } from '../InfoBlock/InfoBlock';
 import { formatNumber } from '../../helpers/format';
 import { noop } from 'lodash';
+import { P2PLoan } from 'types/p2p';
+import { P2PLoanCard } from 'components/P2PNftCard/P2PLoanCard';
 
-export const P2PBorrowingMainList: FC<P2PBorrowingMainListProps> = ({
+export const P2PRepayMainList: FC<P2PRepayMainListProps> = ({
   data,
+  PageModeSwitchTab,
   selected,
   onSelect = noop
 }) => {
@@ -33,6 +36,7 @@ export const P2PBorrowingMainList: FC<P2PBorrowingMainListProps> = ({
   return (
     <div className={cardsContainer}>
       <div className={gridFilters}>
+        {PageModeSwitchTab && <PageModeSwitchTab />}
         <div className={searchInputWrapper}>
           <SearchInput
             value={searchValue}
@@ -44,15 +48,19 @@ export const P2PBorrowingMainList: FC<P2PBorrowingMainListProps> = ({
 
       <div className={cardsGrid}>
         {data &&
-          data.map((item, index) => (
-            <P2PNftCard
-              isActive={selected === item.address}
-              onClick={() => onSelect(item.address)}
+          Object.values(data).map((item: P2PLoan, index) => (
+            <P2PLoanCard
+              isActive={selected === Object.keys(data)[index]}
+              onClick={() => onSelect()}
               key={index}
               {...item}
               footer={
                 <div className={footer}>
-                  <InfoBlock title="Value" center value={fs(item.request)} />
+                  <InfoBlock
+                    title="Value"
+                    center
+                    value={fs(item.requestedAmount.toNumber())}
+                  />
                 </div>
               }
             />

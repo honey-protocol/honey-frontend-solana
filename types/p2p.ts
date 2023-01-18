@@ -1,3 +1,6 @@
+import { PublicKey } from '@solana/web3.js';
+import BN from 'bn.js';
+
 export enum P2PBorrowSidebarMode {
   NEW_BORROW = 'new_borrow',
   BORROW = 'borrow'
@@ -10,8 +13,8 @@ export enum PageMode {
 }
 
 export enum BorrowPageMode {
-  INITIAL_STATE = 'initial_state',
-  NFT_SELECTED = 'nft_selected'
+  NEW_BORROW = 'new_borrow',
+  REPAY_BORROWED = 'repay_borrowed'
 }
 
 export interface P2PCollection {
@@ -23,6 +26,7 @@ export interface P2PCollection {
   tag: string;
   verified?: boolean;
   id: string;
+  verifiedCreator: string;
 }
 
 export interface P2PPosition {
@@ -41,3 +45,33 @@ export interface P2PPosition {
   tag?: string;
   address: string;
 }
+
+export type P2PLoan = {
+  id: string;
+  borrower: PublicKey;
+  borrowerNftAccount: PublicKey;
+  borrowerTokenAccount: PublicKey;
+  bump: number;
+  createdAt: BN;
+  interest: BN;
+  lender: PublicKey;
+  lenderNftAccount: PublicKey;
+  lenderTokenAccount: PublicKey;
+  loanStartTime: BN;
+  nftMetadata: PublicKey;
+  nftMint: PublicKey;
+  nftVault: PublicKey;
+  nftVerifiedCreator: string;
+  paidBackAt: BN;
+  period: BN;
+  requestedAmount: BN;
+  status: boolean;
+  tokenMint: PublicKey;
+  vaultAuthority: PublicKey;
+  vaultAuthorityBump: number;
+  withdrewAt: BN;
+};
+
+export type P2PLoans = {
+  [loanId: string]: any;
+};

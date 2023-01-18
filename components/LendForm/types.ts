@@ -1,13 +1,10 @@
+import { P2PLoan } from 'types/p2p';
+
 export type LendFormProps = {
   name: string;
   imageUrl?: string;
   collectionName: string;
-  request: number;
-  ir: number;
-  total: number;
-  duePeriod: number;
-  loanStart: number;
-  walletAddress: string;
+  loan: P2PLoan;
   borrowerTelegram?: string;
   borrowerDiscord?: string;
 };

@@ -12,12 +12,12 @@ const { Text } = Typography;
 
 export const P2PNftCard: FC<P2PNftCardProps> = ({
   name,
-  verified,
+  // verified,
   footer,
   isActive,
   onClick = noop,
-  imageUrl,
-  collectionName
+  image
+  // collectionName
 }) => {
   return (
     <div
@@ -25,16 +25,13 @@ export const P2PNftCard: FC<P2PNftCardProps> = ({
       onClick={onClick}
     >
       <div className={styles.img}>
-        <Image
-          src={imageUrl || honeyGenesisBee}
-          alt={`${name}`}
-          layout="fill"
-        />
+        <Image src={image || honeyGenesisBee} alt={`${name}`} layout="fill" />
       </div>
 
       <div className={styles.info}>
         <div className={styles.statusBlock}>
-          <StatusCard status={collectionName} isVerified={verified} />
+          {/* get collection name and verify status */}
+          <StatusCard status={'collectionName'} isVerified={true} />
         </div>
 
         <Text className={styles.name}>{name}</Text>

@@ -69,7 +69,10 @@ module.exports = (phase, { defaultConfig }) => {
           'https://api.jsonbin.it/bins/hGRzonVT',
           'i.seadn.io',
           'ipfs.vvdny.io',
-          'storage.googleapis.com'
+          'ipfs.io',
+          'shdw-drive.genesysgo.net',
+          'storage.googleapis.com',
+          'i.imgur.com'
         ]
       }
     };
@@ -110,7 +113,10 @@ module.exports = (phase, { defaultConfig }) => {
           'https://api.jsonbin.it/bins/hGRzonVT',
           'i.seadn.io',
           'ipfs.vvdny.io',
-          'storage.googleapis.com'
+          'ipfs.io',
+          'shdw-drive.genesysgo.net',
+          'storage.googleapis.com',
+          'i.imgur.com'
         ]
       }
     };

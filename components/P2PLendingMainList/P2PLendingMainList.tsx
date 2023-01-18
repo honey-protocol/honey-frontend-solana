@@ -21,6 +21,11 @@ import { InfoBlock } from '../InfoBlock/InfoBlock';
 import { formatNumber } from '../../helpers/format';
 import { differenceInDays } from 'date-fns';
 import { noop } from 'lodash';
+import { getProgram } from 'helpers/p2p/getProgram';
+import { Connection, LAMPORTS_PER_SOL } from '@solana/web3.js';
+import { P2PLoan, P2PLoans } from 'types/p2p';
+import BN from 'bn.js';
+import { P2PLoanCard } from 'components/P2PNftCard/P2PLoanCard';
 const { Text } = Typography;
 
 export const P2PLendingMainList: FC<P2PLendingMainListProps> = ({
@@ -42,6 +47,8 @@ export const P2PLendingMainList: FC<P2PLendingMainListProps> = ({
       diff > 1 ? 's' : ''
     }`;
   };
+
+  console.log(data);
 
   const handleSearchInputChange = useCallback(
     (e: ChangeEvent<HTMLInputElement>) => {
@@ -69,24 +76,35 @@ export const P2PLendingMainList: FC<P2PLendingMainListProps> = ({
       </div>
 
       <div className={cardsGrid}>
-        {data &&
-          data.map((item, index) => (
-            <P2PNftCard
-              isActive={selected === item.address}
-              onClick={() => onSelect(item.address)}
+        {Object.values(data).length &&
+          Object.values(data).map((item: P2PLoan, index) => (
+            <P2PLoanCard
+              isActive={
+                selected?.nftMint?.toString() === item.nftMint.toString()
+              }
+              onClick={() => onSelect(item)}
               key={index}
               {...item}
               footer={
                 <>
-                  <InfoBlock title="Request" center value={fs(item.request)} />
-                  <InfoBlock title="IR" center value={fp(item.ir)} />
+                  <InfoBlock
+                    title="Request"
+                    center
+                    value={fs(Number(item.requestedAmount) / LAMPORTS_PER_SOL)}
+                  />
+                  <InfoBlock
+                    title="IR"
+                    center
+                    value={fp(Number(item.interest))}
+                  />
                   <InfoBlock
                     title="Period"
                     center
-                    value={`${getPositionPeriodFormatted(
-                      item.end,
-                      item.start
-                    )}`}
+                    // value={`${getPositionPeriodFormatted(
+                    //   item.end,
+                    //   item.start
+                    // )}`}
+                    value={item.period.toString()}
                   />
                 </>
               }

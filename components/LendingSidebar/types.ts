@@ -1,15 +1,8 @@
+import { P2PLoan } from 'types/p2p';
+
 export type LendingSidebarProps = {
-  collectionId?: string;
   onCancel: Function;
-  name: string;
-  imageUrl?: string;
+  loan?: P2PLoan;
+  collectionId: string;
   collectionName: string;
-  request: number;
-  ir: number;
-  total: number;
-  duePeriod: number;
-  loanStart: number;
-  walletAddress: string;
-  borrowerTelegram?: string;
-  borrowerDiscord?: string;
 };

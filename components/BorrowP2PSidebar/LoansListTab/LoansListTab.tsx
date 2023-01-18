@@ -1,14 +1,15 @@
 import * as styles from './LoansListTab.css';
-import { P2PPosition } from '../../../types/p2p';
+import { P2PLoan, P2PLoans, P2PPosition } from '../../../types/p2p';
 import c from 'classnames';
 import HexaBoxContainer from '../../HexaBoxContainer/HexaBoxContainer';
 import Image from 'next/image';
 import React from 'react';
 import { formatNumber } from '../../../helpers/format';
 import { differenceInDays, differenceInHours } from 'date-fns';
+import LoansListCard from './LoansListCard';
 
 type LoansListTabProps = {
-  loans: P2PPosition[];
+  loans: P2PLoans;
   onSelect: (address: string) => void;
   selected?: string;
 };
@@ -35,44 +36,14 @@ export const LoansListTab = ({
 
   return (
     <div className={styles.LoansList}>
-      {loans.map(loan => {
+      {Object.values(loans).map((loan: P2PLoan) => {
         return (
-          <div
-            key={loan.address}
-            className={c(styles.loan.section, { [styles.selected]: selected })}
-            onClick={() => onSelect(loan.address)}
-          >
-            <div className={styles.loan.image}>
-              <HexaBoxContainer>
-                <Image src={loan.imageUrl} alt={loan.name} layout="fill" />
-              </HexaBoxContainer>
-            </div>
-
-            <div className={styles.loan.info}>
-              <div className={styles.loan.title}>{loan.name}</div>
-              <div className={styles.loanStats.section}>
-                <div className={styles.loanStats.row}>
-                  <div className={styles.loanStats.label}>Value: </div>
-                  <div className={styles.loanStats.value}>
-                    {fs(loan.request)}
-                  </div>
-                </div>
-
-                <div className={styles.loanStats.row}>
-                  <div className={styles.loanStats.label}>Interest Ratio: </div>
-                  <div className={styles.loanStats.value}>{fpr(loan.ir)}</div>
-                </div>
-
-                <div className={styles.loanStats.row}>
-                  <div className={styles.loanStats.label}>Time left: </div>
-                  <div className={styles.loanStats.value}>
-                    {formatLoanPeriod(loan.start, loan.end)}
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div className={styles.loan.arrow}></div>
-          </div>
+          <LoansListCard
+            loan={loan}
+            key={loan.nftMint.toString()}
+            selected={selected}
+            onSelect={onSelect}
+          />
         );
       })}
     </div>
