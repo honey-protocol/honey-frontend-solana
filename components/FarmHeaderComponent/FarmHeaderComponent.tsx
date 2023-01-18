@@ -2,6 +2,7 @@ import { Box, Button, IconRefresh, Stack, Text } from 'degen';
 import React, { useMemo, useState } from 'react';
 import { LAMPORTS_PER_SOL } from '@solana/web3.js';
 import useGemFarm from 'hooks/useGemFarm';
+import { useRouter } from 'next/router';
 
 interface FarmHeaderComponentProps {
   farmerState: string;
@@ -21,6 +22,7 @@ const FarmHeaderComponent = (props: FarmHeaderComponentProps) => {
     claimRewards,
     claimAirdroppedBonk
   } = useGemFarm();
+  const router = useRouter();
 
   const [txLoading, setTxLoading] = useState({
     value: false,
@@ -151,13 +153,15 @@ const FarmHeaderComponent = (props: FarmHeaderComponentProps) => {
           >
             {`Claim $${rewardTokenName}`}
           </Button>
-          <Button
-            onClick={() => withTxLoading(claimAirdroppedBonk, 'claim')}
-            loading={txLoading.value && txLoading.txName === 'claim'}
-            size="small"
-          >
-            {`Claim $BONK`}
-          </Button>{' '}
+          {router.query.name?.includes('Atadians') && (
+            <Button
+              onClick={() => withTxLoading(claimAirdroppedBonk, 'claim')}
+              loading={txLoading.value && txLoading.txName === 'claim'}
+              size="small"
+            >
+              {`Claim $BONK`}
+            </Button>
+          )}{' '}
           {Object.values(stakedNFTsInFarm).length > 0 && !farmerVaultLocked && (
             <Button
               onClick={() => withTxLoading(lockVault, 'stake')}
