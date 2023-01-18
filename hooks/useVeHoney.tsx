@@ -262,16 +262,16 @@ export const useLocker = () => {
   const lockNft = useCallback(
     async (nft: PublicKey) => {
       if (lockerWrapper) {
+        try {
         const tx = await lockerWrapper.lockNFT(nft);
         setIsProcessing?.(true);
         // const receipt = await tx.confirm();
-        try {
           const receipt = await tx.simulate();
           console.log(receipt);
+          setIsProcessing?.(false);
         } catch (e) {
           console.log(e)
         }
-        setIsProcessing?.(false);
 
         // return { receipt };
       }

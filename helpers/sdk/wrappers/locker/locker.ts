@@ -157,10 +157,12 @@ export class LockerWrapper {
     const { escrow, instruction: initEscrowIx } = await this.getOrCreateEscrow(
       authority
     );
+    console.log("init escrow ix: ", initEscrowIx);
     const { lockedToken, instructions } = await this.getOrCreateGovTokenATA(
       authority,
       escrow
     );
+    console.log("create ata ixs", instructions);
     if (initEscrowIx) {
       instructions.push(initEscrowIx);
     }
@@ -171,6 +173,7 @@ export class LockerWrapper {
         owner: authority,
         payer: this.walletKey
       });
+    console.log("create wl ata ix: ", createWlATAIx);
     if (createWlATAIx) {
       instructions.push(createWlATAIx);
     }
