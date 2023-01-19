@@ -107,7 +107,7 @@ const HoneyJupiterProvider: FC<{ children: ReactNode }> = ({ children }) => {
       feeAccounts: platformFeeAccounts
     };
   }
-  console.log('platformFeeAndAccounts', platformFeeAndAccounts);
+  // console.log('platformFeeAndAccounts', platformFeeAndAccounts);
 
   return (
     <JupiterProvider
