@@ -1,8 +1,9 @@
 // import { Nft } from '@metaplex-foundation/js';
 import * as anchor from '@project-serum/anchor';
-import { web3 } from '@project-serum/anchor';
+import { Program, web3 } from '@project-serum/anchor';
 import {
   ASSOCIATED_TOKEN_PROGRAM_ID,
+  createSyncNativeInstruction,
   TOKEN_PROGRAM_ID
 } from '@solana/spl-token';
 import {
@@ -26,33 +27,33 @@ import {
   SOL_TOKEN,
   SPL_ASSOCIATED_TOKEN_ACCOUNT_PROGRAM_ID
 } from 'constants/p2p';
-import { ConnectedWallet } from '@saberhq/use-solana';
 import { ToastProps } from 'hooks/useToast';
+import { HoneyP2p } from 'types/p2p_program';
 
 const programID = HONEY_P2P_PROGRAM;
 
-async function getProvider(connection: Connection, wallet: ConnectedWallet) {
-  const provider = new anchor.AnchorProvider(
-    connection,
-    wallet,
-    anchor.AnchorProvider.defaultOptions()
-  );
+async function getProvider(connection: Connection, wallet: any) {
+  const provider = new anchor.AnchorProvider(connection, wallet, {
+    commitment: 'processed'
+  });
   return provider;
 }
 
-async function loadP2PProgram(
-  connection: Connection,
-  userWallet: ConnectedWallet
-) {
+async function loadP2PProgram(connection: Connection, userWallet: any) {
   const provider = await getProvider(connection, userWallet);
   const idl = require('./idl/honey_p2p.json');
-  return new anchor.Program(idl!, HONEY_P2P_PROGRAM, provider);
+  return new anchor.Program(
+    idl!,
+    HONEY_P2P_PROGRAM,
+    provider
+  ) as Program<HoneyP2p>;
 }
 
 async function getOrCreateAssociatedTokenAddress(
   connection: anchor.web3.Connection,
-  userWallet: ConnectedWallet,
-  associatedToken: anchor.web3.PublicKey
+  userWallet: any,
+  associatedToken: anchor.web3.PublicKey,
+  transaction: Transaction
 ) {
   let associatedTokenAddress = await getATAAddressSync({
     mint: associatedToken,
@@ -78,9 +79,7 @@ async function getOrCreateAssociatedTokenAddress(
   }
 
   if (!associatedTokenAccountInfo) {
-    const instructions = [];
-
-    instructions.push(
+    transaction.add(
       createATAInstruction({
         address: userWallet.publicKey,
         mint: associatedTokenAddress,
@@ -88,20 +87,6 @@ async function getOrCreateAssociatedTokenAddress(
         payer: associatedToken
       })
     );
-
-    const transaction = new web3.Transaction().add(...instructions);
-    transaction.feePayer = userWallet.publicKey;
-    transaction.recentBlockhash = (
-      await connection.getRecentBlockhash()
-    ).blockhash;
-
-    const signed = await userWallet.signTransaction(transaction);
-
-    const transactionSignature = await connection.sendRawTransaction(
-      signed.serialize()
-    );
-
-    await connection.confirmTransaction(transactionSignature);
   }
 
   return associatedTokenAddress;
@@ -109,7 +94,7 @@ async function getOrCreateAssociatedTokenAddress(
 
 export const fetchLoan = async (
   connection: anchor.web3.Connection,
-  userWallet: ConnectedWallet,
+  userWallet: any,
   loanPubKey: anchor.Address
 ) => {
   const program = await loadP2PProgram(connection, userWallet);
@@ -121,7 +106,7 @@ export const fetchLoan = async (
 
 export const fetchAllLoans = async (
   connection: anchor.web3.Connection,
-  userWallet: ConnectedWallet
+  userWallet: any
 ) => {
   const program = await loadP2PProgram(connection, userWallet);
 
@@ -137,7 +122,7 @@ export const fetchAllLoans = async (
 
 export const requestLoan = async (
   connection: anchor.web3.Connection,
-  userWallet: ConnectedWallet,
+  userWallet: any,
   toast: ToastProps['toast'],
   requestAmount: string | number | anchor.BN | Buffer | Uint8Array | number[],
   interest: string | number | anchor.BN | Buffer | Uint8Array | number[],
@@ -161,7 +146,7 @@ export const requestLoan = async (
   const nftMint = new PublicKey(nftData.mint);
 
   const nftVerifiedCreatorAddress = (nftData.creators ?? []).filter(
-    (creator: any) => creator.verified
+    creator => creator.verified
   )[0].address;
   if (!nftVerifiedCreatorAddress) {
     console.log('no verified creator found');
@@ -203,20 +188,23 @@ export const requestLoan = async (
 
   //@ts-ignore
   let bumps = {
-    vaultAuthority: new anchor.BN(vaultAuthorityBump),
-    loanMetadata: new anchor.BN(loanMetadataBump)
+    vaultAuthority: vaultAuthorityBump,
+    loanMetadata: loanMetadataBump
   };
 
+  const tx = new Transaction();
   const borrowerTokenAccount = await getOrCreateAssociatedTokenAddress(
     connection,
     userWallet,
-    LOAN_CURRENCY_TOKEN
+    LOAN_CURRENCY_TOKEN,
+    tx
   );
 
   const borrowerNftAccount = await getOrCreateAssociatedTokenAddress(
     connection,
     userWallet,
-    nftMint
+    nftMint,
+    tx
   );
 
   requestAmount = new anchor.BN(requestAmount).mul(
@@ -235,30 +223,34 @@ export const requestLoan = async (
   console.log('borrower', userWallet.publicKey.toString());
 
   try {
-    await program.rpc.borrowRequest(
-      bumps,
-      new anchor.BN(requestAmount),
-      new anchor.BN(interest),
-      new anchor.BN(period),
-      {
-        accounts: {
+    tx.add(
+      await program.methods
+        .borrowRequest(
+          bumps,
+          new anchor.BN(requestAmount),
+          new anchor.BN(interest),
+          new anchor.BN(period)
+        )
+        .accounts({
           loanMetadata: loanMetadata,
           vaultAuthority: vaultAuthority,
-          nftMint: new PublicKey(nftMint),
+          nftMint: nftMint,
           nftMetadata: nft_metadata,
           nftVerifiedCreator: nftVerifiedCreator,
           nftVault: nftVault,
           borrower: userWallet.publicKey,
-          tokenMint: new PublicKey(LOAN_CURRENCY_TOKEN),
+          tokenMint: LOAN_CURRENCY_TOKEN,
           borrowerNftAccount: borrowerNftAccount,
           borrowerTokenAccount: borrowerTokenAccount,
           associatedTokenProgram: SPL_ASSOCIATED_TOKEN_ACCOUNT_PROGRAM_ID,
           tokenProgram: TOKEN_PROGRAM_ID,
           systemProgram: web3.SystemProgram.programId,
           rent: web3.SYSVAR_RENT_PUBKEY
-        }
-      }
+        })
+        .instruction()
     );
+
+    await (await getProvider(connection, userWallet)).sendAndConfirm(tx);
     toast.success('Loan order created successfully ');
   } catch (error) {
     console.log('Promise rejected!', error);
@@ -272,11 +264,12 @@ export const requestLoan = async (
   return requestedLoan;
 };
 
-const wrapSol = async (
+const addWrapSolIx = async (
   connection: Connection,
-  userWallet: ConnectedWallet,
+  userWallet: any,
   loanObj: { requestedAmount: any },
-  tokenAccount: anchor.web3.PublicKey
+  tokenAccount: anchor.web3.PublicKey,
+  transaction: Transaction
 ) => {
   const { requestedAmount } = loanObj;
 
@@ -285,7 +278,7 @@ const wrapSol = async (
 
   console.log(`tokenAccountInfo: ${tokenAccountInfo}`);
 
-  let solTransferTransaction = new Transaction().add(
+  transaction.add(
     // trasnfer SOL
     SystemProgram.transfer({
       fromPubkey: userWallet.publicKey,
@@ -295,24 +288,11 @@ const wrapSol = async (
     // sync wrapped SOL balance
     createSyncNativeInstruction(tokenAccount)
   );
-
-  solTransferTransaction.feePayer = userWallet.publicKey;
-  solTransferTransaction.recentBlockhash = (
-    await connection.getRecentBlockhash()
-  ).blockhash;
-
-  const signed = await userWallet.signTransaction(solTransferTransaction);
-
-  const transactionSignature = await connection.sendRawTransaction(
-    signed.serialize()
-  );
-
-  await connection.confirmTransaction(transactionSignature);
 };
 
 export const acceptRequest = async (
   connection: anchor.web3.Connection,
-  userWallet: ConnectedWallet,
+  userWallet: any,
   toast: ToastProps['toast'],
   loanPublicKey: anchor.web3.PublicKeyData,
   loanObj: {
@@ -339,20 +319,29 @@ export const acceptRequest = async (
       tokenMint
     } = loanObj;
 
+    const tx = new Transaction();
     const lenderTokenAccount = await getOrCreateAssociatedTokenAddress(
       connection,
       userWallet,
-      LOAN_CURRENCY_TOKEN
+      LOAN_CURRENCY_TOKEN,
+      tx
     );
 
     if (new PublicKey(tokenMint).toBase58() == SOL_TOKEN.toBase58()) {
-      await wrapSol(connection, userWallet, loanObj, lenderTokenAccount);
+      await addWrapSolIx(
+        connection,
+        userWallet,
+        loanObj,
+        lenderTokenAccount,
+        tx
+      );
     }
 
     const lenderNftAccount = await getOrCreateAssociatedTokenAddress(
       connection,
       userWallet,
-      new PublicKey(nftMint)
+      new PublicKey(nftMint),
+      tx
     );
 
     // console.log({ lenderNftAccount });
@@ -369,28 +358,32 @@ export const acceptRequest = async (
     console.log('lenderNftAccount', lenderNftAccount.toString());
     console.log('tokenProgram', TOKEN_PROGRAM_ID);
 
-    const res = await program.rpc.acceptRequest({
-      accounts: {
-        loanMetadata: new PublicKey(loanPublicKey),
-        vaultAuthority: new PublicKey(vaultAuthority),
-        nftMint: new PublicKey(nftMint),
-        nftVerifiedCreator: new PublicKey(nftVerifiedCreator),
-        borrower: new PublicKey(borrower),
-        borrowerTokenAccount: new PublicKey(borrowerTokenAccount),
-        tokenMint: new PublicKey(tokenMint),
-        lender: userWallet.publicKey,
-        lenderTokenAccount: new PublicKey(lenderTokenAccount),
-        lenderNftAccount: new PublicKey(lenderNftAccount),
-        feeTokenAccount: new PublicKey(
-          'CtuqTd8V78QPAxcdDwFpFZ2EfeZZuwTVNUQStq2KSnJU'
-        ),
-        associatedTokenProgram: SPL_ASSOCIATED_TOKEN_ACCOUNT_PROGRAM_ID,
-        tokenProgram: TOKEN_PROGRAM_ID,
-        systemProgram: web3.SystemProgram.programId,
-        rent: web3.SYSVAR_RENT_PUBKEY
-      }
-    });
+    tx.add(
+      await program.methods
+        .acceptRequest()
+        .accounts({
+          loanMetadata: new PublicKey(loanPublicKey),
+          vaultAuthority: new PublicKey(vaultAuthority),
+          nftMint: new PublicKey(nftMint),
+          nftVerifiedCreator: new PublicKey(nftVerifiedCreator),
+          borrower: new PublicKey(borrower),
+          borrowerTokenAccount: new PublicKey(borrowerTokenAccount),
+          tokenMint: new PublicKey(tokenMint),
+          lender: userWallet.publicKey,
+          lenderTokenAccount: new PublicKey(lenderTokenAccount),
+          lenderNftAccount: new PublicKey(lenderNftAccount),
+          feeTokenAccount: new PublicKey(
+            '8aiMHRciCXHoYrGE7sGQ8f3cN5bxY6neTQUzUAoSY2ye'
+          ),
+          associatedTokenProgram: SPL_ASSOCIATED_TOKEN_ACCOUNT_PROGRAM_ID,
+          tokenProgram: TOKEN_PROGRAM_ID,
+          systemProgram: web3.SystemProgram.programId,
+          rent: web3.SYSVAR_RENT_PUBKEY
+        })
+        .instruction()
+    );
 
+    await (await getProvider(connection, userWallet)).sendAndConfirm(tx);
     toast.success('Lend successful');
   } catch (error) {
     console.log('Promise rejected!', error);
@@ -407,7 +400,7 @@ export const acceptRequest = async (
 
 export const liquidate = async (
   connection: anchor.web3.Connection,
-  userWallet: ConnectedWallet,
+  userWallet: any,
   toast: ToastProps['toast'],
   loanPubKey: anchor.Address,
   loanObj: {
@@ -439,8 +432,7 @@ export const liquidate = async (
         lender: userWallet.publicKey,
         nftVault: nftVault,
         lenderNftAccount: lenderNftAccount,
-        tokenProgram: TOKEN_PROGRAM_ID,
-        nftMint: nftMint
+        tokenProgram: TOKEN_PROGRAM_ID
       }
     });
     toast.success('Liquidate successful');
@@ -456,7 +448,7 @@ export const liquidate = async (
 
 export const payback = async (
   connection: anchor.web3.Connection,
-  userWallet: ConnectedWallet,
+  userWallet: any,
   toast: ToastProps['toast'],
   loanPublicKey: anchor.web3.PublicKeyData,
   loanObj: {
@@ -487,37 +479,50 @@ export const payback = async (
 
   // console.log(TOKEN_PROGRAM_ID);
 
+  const tx = new Transaction();
   const borrowerTokenAccount = await getOrCreateAssociatedTokenAddress(
     connection,
     userWallet,
-    LOAN_CURRENCY_TOKEN
+    LOAN_CURRENCY_TOKEN,
+    tx
   );
 
   if (new PublicKey(tokenMint).toBase58() == SOL_TOKEN.toBase58()) {
-    await wrapSol(connection, userWallet, loanObj, borrowerTokenAccount);
+    await addWrapSolIx(
+      connection,
+      userWallet,
+      loanObj,
+      borrowerTokenAccount,
+      tx
+    );
   }
 
   try {
-    const res = await program.rpc.paybackLoan({
-      accounts: {
-        loanMetadata: new PublicKey(loanPublicKey),
-        vaultAuthority: vaultAuthority,
-        borrower: userWallet.publicKey,
-        borrowerNftAccount: new PublicKey(borrowerNftAccount),
-        tokenMint: new PublicKey(tokenMint),
-        lender: new PublicKey(lender),
-        nftVault: nftVault,
-        borrowerTokenAccount: borrowerTokenAccount,
-        lenderTokenAccount: new PublicKey(lenderTokenAccount),
-        feeTokenAccount: new PublicKey(
-          'CtuqTd8V78QPAxcdDwFpFZ2EfeZZuwTVNUQStq2KSnJU'
-        ),
-        tokenProgram: TOKEN_PROGRAM_ID,
-        associatedTokenProgram: SPL_ASSOCIATED_TOKEN_ACCOUNT_PROGRAM_ID,
-        systemProgram: web3.SystemProgram.programId,
-        rent: web3.SYSVAR_RENT_PUBKEY
-      }
-    });
+    tx.add(
+      await program.methods
+        .paybackLoan()
+        .accounts({
+          loanMetadata: new PublicKey(loanPublicKey),
+          vaultAuthority: vaultAuthority,
+          borrower: userWallet.publicKey,
+          borrowerNftAccount: new PublicKey(borrowerNftAccount),
+          tokenMint: new PublicKey(tokenMint),
+          lender: new PublicKey(lender),
+          nftVault: nftVault,
+          borrowerTokenAccount: borrowerTokenAccount,
+          lenderTokenAccount: new PublicKey(lenderTokenAccount),
+          feeTokenAccount: new PublicKey(
+            '8aiMHRciCXHoYrGE7sGQ8f3cN5bxY6neTQUzUAoSY2ye'
+          ),
+          tokenProgram: TOKEN_PROGRAM_ID,
+          associatedTokenProgram: SPL_ASSOCIATED_TOKEN_ACCOUNT_PROGRAM_ID,
+          systemProgram: web3.SystemProgram.programId,
+          rent: web3.SYSVAR_RENT_PUBKEY
+        })
+        .instruction()
+    );
+
+    await (await getProvider(connection, userWallet)).sendAndConfirm(tx);
     toast.success('payback successful');
   } catch (error) {
     console.log('Promise rejected!', error);
@@ -537,26 +542,46 @@ export const payback = async (
 
 export const cancelRequest = async (
   connection: anchor.web3.Connection,
-  userWallet: ConnectedWallet,
+  userWallet: any,
   toast: ToastProps['toast'],
   loanPublicKey: anchor.web3.PublicKeyInitData,
-  loanObj: { vaultAuthority: any; nftVault: any; borrowerNftAccount: any }
+  loanObj: {
+    vaultAuthority: any;
+    nftVault: any;
+    borrowerNftAccount: any;
+    nftMint: any;
+  }
 ) => {
-  const { vaultAuthority, nftVault, borrowerNftAccount } = loanObj;
+  const { vaultAuthority, nftVault, borrowerNftAccount, nftMint } = loanObj;
 
   const program = await loadP2PProgram(connection, userWallet);
 
-  toast.processing();
   console.log('cancel request...');
+  console.log({
+    loanMetadata: new PublicKey(loanPublicKey),
+    vaultAuthority: vaultAuthority.toString(),
+    borrower: userWallet.publicKey.toString(),
+    nftMint: nftMint.toString(),
+    borrowerNftAccount: new PublicKey(borrowerNftAccount).toBase58(),
+    nftVault: nftVault.toString(),
+    tokenProgram: TOKEN_PROGRAM_ID,
+    associatedTokenProgram: SPL_ASSOCIATED_TOKEN_ACCOUNT_PROGRAM_ID,
+    systemProgram: web3.SystemProgram.programId,
+    rent: web3.SYSVAR_RENT_PUBKEY
+  });
   try {
     const res = await program.rpc.cancelRequest({
       accounts: {
         loanMetadata: new PublicKey(loanPublicKey),
         vaultAuthority: vaultAuthority,
         borrower: userWallet.publicKey,
+        nftMint: new PublicKey(nftMint),
         borrowerNftAccount: new PublicKey(borrowerNftAccount),
         nftVault: nftVault,
-        tokenProgram: TOKEN_PROGRAM_ID
+        tokenProgram: TOKEN_PROGRAM_ID,
+        associatedTokenProgram: SPL_ASSOCIATED_TOKEN_ACCOUNT_PROGRAM_ID,
+        systemProgram: web3.SystemProgram.programId,
+        rent: web3.SYSVAR_RENT_PUBKEY
       }
     });
     toast.success('Loan request successfully deleted ');
