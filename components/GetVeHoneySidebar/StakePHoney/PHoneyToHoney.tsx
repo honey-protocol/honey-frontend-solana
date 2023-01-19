@@ -18,7 +18,7 @@ import { HoneyButtonTabs } from 'components/HoneyButtonTabs/HoneyButtonTabs';
 
 const { format: f, formatPercent: fp, formatUsd: fu, parse: p } = formatNumber;
 
-const PHoneyToHoney = (_: { onCancel: Function }) => {
+const PHoneyToHoney = (props: { onClose: Function }) => {
   const { toast, ToastComponent } = useToast();
   const [phoneyValue1, setPHoneyValue1] = useState<number>();
   const { preToken, govToken, user, claimableAmount, deposit, claim } =
@@ -84,8 +84,8 @@ const PHoneyToHoney = (_: { onCancel: Function }) => {
         ) : (
           <div className={styles.buttons}>
             <div className={styles.smallCol}>
-              <HoneyButton variant="secondary" onClick={() => {}}>
-                Cancel
+              <HoneyButton variant="secondary" onClick={() => props.onClose()}>
+                Close
               </HoneyButton>
             </div>
 

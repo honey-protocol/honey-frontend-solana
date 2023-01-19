@@ -299,7 +299,7 @@ const Governance: NextPage = () => {
       case 'vote':
         return (
           <GovernanceSidebar
-            onCancel={() => {
+            onClose={() => {
               hideMobileSidebar();
               setSidebarMode('get_vehoney');
             }}
@@ -310,14 +310,14 @@ const Governance: NextPage = () => {
       case 'new_proposal':
         return (
           <NewProposalSidebar
-            onCancel={() => {
+            onClose={() => {
               hideMobileSidebar();
               setSidebarMode('get_vehoney');
             }}
           />
         );
       case 'get_vehoney':
-        return <GetVeHoneySidebar onCancel={hideMobileSidebar} />;
+        return <GetVeHoneySidebar onClose={hideMobileSidebar} />;
       default:
         return null;
     }

@@ -33,7 +33,7 @@ const ONE_MONTH_IN_MS = 2_629_746_000;
 
 type LockPeriod = typeof PERIODS[number]['slug'];
 
-const LockHoneyForm = (props: { onCancel: Function }) => {
+const LockHoneyForm = (props: { onClose: Function }) => {
   const [lockPeriod, setLockPeriod] = useState<LockPeriod>('1');
   const [valueHONEY, setValueHONEY] = useState<number>(0);
   const [valueVeHONEY, setValueVeHONEY] = useState<number>(0);
@@ -160,11 +160,7 @@ const LockHoneyForm = (props: { onCancel: Function }) => {
         ) : (
           <div className={styles.buttons}>
             <div className={styles.smallCol}>
-              <HoneyButton
-                onClick={closeEscrow}
-                disabled={!closable}
-                variant="secondary"
-              >
+              <HoneyButton variant="secondary" onClick={() => props.onClose()}>
                 Close
               </HoneyButton>
             </div>

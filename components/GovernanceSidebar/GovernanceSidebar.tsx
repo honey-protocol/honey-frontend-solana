@@ -15,7 +15,7 @@ import { mobileReturnButton } from '../../styles/common.css';
 type GovernanceSidebarProps = {
   selectedProposalKey: PublicKey;
   setSidebarMode: Function;
-  onCancel: Function;
+  onClose: Function;
 };
 
 const items: [HoneyTabItem, HoneyTabItem] = [
@@ -28,7 +28,7 @@ type Tab = 'vote' | 'description';
 const GovernanceSidebar = ({
   selectedProposalKey,
   setSidebarMode,
-  onCancel
+  onClose
 }: GovernanceSidebarProps) => {
   const wallet = useConnectedWallet();
   const { connect } = useWalletKit();
@@ -60,7 +60,7 @@ const GovernanceSidebar = ({
               },
               {
                 title: 'RETURN',
-                onClick: () => onCancel(),
+                onClick: () => onClose(),
                 variant: 'secondary',
                 className: mobileReturnButton
               }
@@ -78,7 +78,7 @@ const GovernanceSidebar = ({
               <VoteForm
                 setSidebarMode={setSidebarMode}
                 proposalInfo={proposalInfo}
-                onCancel={onCancel}
+                onClose={onClose}
               />
             )}
             {activeTab === 'description' && (
