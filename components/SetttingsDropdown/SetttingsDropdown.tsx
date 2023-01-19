@@ -42,7 +42,7 @@ const SettingsDropdown = (props: { className?: string }) => {
                 label: (
                   <Space align="center">
                     <PolygonIcon />
-                    <span>Polygon</span>
+                    <span>Testnet</span>
                   </Space>
                 )
               }

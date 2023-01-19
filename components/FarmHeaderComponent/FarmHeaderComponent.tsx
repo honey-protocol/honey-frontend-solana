@@ -2,24 +2,27 @@ import { Box, Button, IconRefresh, Stack, Text } from 'degen';
 import React, { useMemo, useState } from 'react';
 import { LAMPORTS_PER_SOL } from '@solana/web3.js';
 import useGemFarm from 'hooks/useGemFarm';
+import { useRouter } from 'next/router';
 
 interface FarmHeaderComponentProps {
   farmerState: string;
-  stakedNFTsInFarm: { [tokenId: string]: NFT; };
+  stakedNFTsInFarm: { [tokenId: string]: NFT };
   farmerVaultLocked: boolean;
   lockVault: () => Promise<void>;
 }
 
 const FarmHeaderComponent = (props: FarmHeaderComponentProps) => {
-  const { farmerState,stakedNFTsInFarm, farmerVaultLocked, lockVault } = props;
+  const { farmerState, stakedNFTsInFarm, farmerVaultLocked, lockVault } = props;
   const {
     farmerAcc,
     farmAcc,
     collectionTotalNumber,
     rewardTokenName,
     handleRefreshRewardsButtonClick,
-    claimRewards
+    claimRewards,
+    claimAirdroppedBonk
   } = useGemFarm();
+  const router = useRouter();
 
   const [txLoading, setTxLoading] = useState({
     value: false,
@@ -143,7 +146,6 @@ const FarmHeaderComponent = (props: FarmHeaderComponentProps) => {
           >
             <IconRefresh />
           </Button>
-
           <Button
             onClick={() => withTxLoading(claimRewards, 'claim')}
             loading={txLoading.value && txLoading.txName === 'claim'}
@@ -151,8 +153,16 @@ const FarmHeaderComponent = (props: FarmHeaderComponentProps) => {
           >
             {`Claim $${rewardTokenName}`}
           </Button>
-          {(Object.values(stakedNFTsInFarm).length > 0 &&
-            !farmerVaultLocked) && (
+          {router.query.name?.includes('Atadians') && (
+            <Button
+              onClick={() => withTxLoading(claimAirdroppedBonk, 'claim')}
+              loading={txLoading.value && txLoading.txName === 'claim'}
+              size="small"
+            >
+              {`Claim $BONK`}
+            </Button>
+          )}{' '}
+          {Object.values(stakedNFTsInFarm).length > 0 && !farmerVaultLocked && (
             <Button
               onClick={() => withTxLoading(lockVault, 'stake')}
               loading={txLoading.value && txLoading.txName === 'stake'}

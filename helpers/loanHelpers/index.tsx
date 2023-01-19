@@ -1,7 +1,4 @@
-import {
-  useConnection,
-  useConnectedWallet
-} from '@saberhq/use-solana';
+import { useConnection, useConnectedWallet } from '@saberhq/use-solana';
 import { HONEY_PROGRAM_ID } from 'helpers/marketHelpers/index';
 import { toast } from 'react-toastify';
 import BN from 'bn.js';
@@ -96,7 +93,7 @@ export async function toastResponse(
 }
 /**
  * @description custom async timeout which returns a promise
- * @params miliseconds 
+ * @params miliseconds
  * @returns promise
  */
 export const asyncTimeout = (ms: number) => {
@@ -108,7 +105,7 @@ export const asyncTimeout = (ms: number) => {
 /**
  * @description converts bn to decimal
  * @params value as in BN, amount of decimals required, amount of precision
- * @returns number with requested decimals 
+ * @returns number with requested decimals
  */
 export function BnToDecimal(
   val: BN | undefined,
@@ -135,8 +132,7 @@ export async function getOraclePrice(
   aggregatorKey: PublicKey | undefined
 ): Promise<any> {
   // load the switchboard program
-  if(!aggregatorKey)
-    return 0;
+  if (!aggregatorKey) return 0;
   const program = await loadSwitchboardProgram(
     cluster,
     connection,
@@ -151,7 +147,7 @@ export async function getOraclePrice(
 
   // get the result
   const result = await aggregator.getLatestValue();
-  console.log(`Switchboard Result: ${result}`);
+  // console.log(`Switchboard Result: ${result}`);
   if (result) {
     let val = new Big(result).toNumber();
 

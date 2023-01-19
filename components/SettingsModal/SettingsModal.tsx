@@ -21,7 +21,7 @@ const SettingsModal = (props: { visible: boolean; onClose: Function }) => {
             <div>Select chain</div>
             <HoneySelect
               options={[
-                { value: 'polygon', label: 'Polygon' },
+                { value: 'polygon', label: 'Testnet' },
                 { value: 'solana', label: 'Solana' }
               ]}
               defaultValue="solana"

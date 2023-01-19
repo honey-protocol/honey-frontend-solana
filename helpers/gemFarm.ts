@@ -12,6 +12,8 @@ import { BN } from '@project-serum/anchor';
 import { TOKEN_PROGRAM_ID } from '@solana/spl-token-v-0.1.8';
 import { extractMetaData } from './utils';
 import { TGFarm } from 'constants/new-farms';
+import { Token } from '@solana/spl-token';
+import { getATAAddressSync } from '@saberhq/token-utils';
 
 const SPL_ASSOCIATED_TOKEN_ACCOUNT_PROGRAM_ID: PublicKey = new PublicKey(
   'ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL'
@@ -195,4 +197,41 @@ export const getFarmsStakedIn = async (
   } catch (error) {
     console.log(error);
   }
+};
+
+export const withdrawTokensInBank = async (
+  gb: GemBank,
+  bankAddress: PublicKey,
+  vaultAddress: PublicKey,
+  vaultOwner: PublicKey,
+  tokenMint: PublicKey
+) => {
+  console.log(
+    bankAddress.toString(),
+    vaultAddress.toString(),
+    vaultOwner.toString()
+  );
+
+  const walletBonkATA = getATAAddressSync({
+    mint: tokenMint,
+    owner: vaultOwner
+  });
+  const vaultBonkATA = getATAAddressSync({
+    mint: tokenMint,
+    owner: vaultAddress
+  });
+
+  const initialWalletBonk = null;
+  const initialVaultBonk = null;
+
+  const result = await gb.withdrawTokensAuth(
+    bankAddress,
+    vaultAddress,
+    vaultOwner,
+    tokenMint
+  );
+
+  console.log(result);
+
+  await result.builder.rpc();
 };
