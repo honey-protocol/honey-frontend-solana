@@ -29,7 +29,7 @@ const PERIODS = [
 
 type LockPeriod = typeof PERIODS[number]['slug'];
 
-const PHoneyToVeHoney = (_: { onCancel: Function }) => {
+const PHoneyToVeHoney = (props: { onClose: Function }) => {
   const [lockPeriod, setLockPeriod] = useState<LockPeriod>('3');
   const [phoneyValue2, setPHoneyValue2] = useState<number>();
   const [honeyValue, setHoneyValue] = useState<number>();
@@ -119,8 +119,8 @@ const PHoneyToVeHoney = (_: { onCancel: Function }) => {
         ) : (
           <div className={styles.buttons}>
             <div className={styles.smallCol}>
-              <HoneyButton variant="secondary" onClick={() => {}}>
-                Cancel
+              <HoneyButton variant="secondary" onClick={() => props.onClose()}>
+                Close
               </HoneyButton>
             </div>
             <div className={styles.bigCol}>

@@ -14,7 +14,7 @@ import CustomDropdown from 'components/CustomDropdown/CustomDropdown';
 import cs from 'classnames';
 import { ACTIONS } from 'actions/types';
 
-const CreateProposalTab = (props: { onCancel: Function }) => {
+const CreateProposalTab = (props: { onClose: Function }) => {
   const { toast, ToastComponent } = useToast();
 
   const [titleValue, setTitleValue] = useState('');
@@ -69,7 +69,7 @@ const CreateProposalTab = (props: { onCancel: Function }) => {
         );
         toast.success('New proposal created');
         setTimeout(() => {
-          props.onCancel();
+          props.onClose();
         }, 4000);
       } catch (_) {
         toast.error('Error creating new proposal');
@@ -90,7 +90,7 @@ const CreateProposalTab = (props: { onCancel: Function }) => {
         ) : (
           <div className={styles.buttons}>
             <div className={styles.smallCol}>
-              <HoneyButton variant="secondary" onClick={() => props.onCancel()}>
+              <HoneyButton variant="secondary" onClick={() => props.onClose()}>
                 Cancel
               </HoneyButton>
             </div>
