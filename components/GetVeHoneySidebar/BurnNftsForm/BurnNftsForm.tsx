@@ -105,9 +105,11 @@ const BurnNftsForm = (props: { onCancel: Function }) => {
       try {
         toast.processing();
         await lockNft(new PublicKey(selected));
-        toast.success('Successfully burnt NFT');
+        // toast.success('Successfully burnt NFT');
+        toast.success('Successfully Simulated');
       } catch (error) {
-        toast.error('Error. Failed to burn NFT');
+        // toast.error('Error. Failed to burn NFT');
+        toast.error('Error. Failed to Simulate');
       }
     }
   }, [lockNft, selected, toast]);
