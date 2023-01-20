@@ -69,7 +69,8 @@ module.exports = (phase, { defaultConfig }) => {
           'https://api.jsonbin.it/bins/hGRzonVT',
           'i.seadn.io',
           'ipfs.vvdny.io',
-          'storage.googleapis.com'
+          'storage.googleapis.com',
+          'shdw-drive.genesysgo.net'
         ]
       }
     };
@@ -110,7 +111,8 @@ module.exports = (phase, { defaultConfig }) => {
           'https://api.jsonbin.it/bins/hGRzonVT',
           'i.seadn.io',
           'ipfs.vvdny.io',
-          'storage.googleapis.com'
+          'storage.googleapis.com',
+          'shdw-drive.genesysgo.net'
         ]
       }
     };
