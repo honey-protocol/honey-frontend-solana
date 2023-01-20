@@ -58,7 +58,7 @@ const ListItem: FC<ListItemProps> = ({
   );
 };
 
-const BurnNftsForm = (props: { onCancel: Function }) => {
+const BurnNftsForm = (props: { onClose: Function }) => {
   const [selected, setSelected] = useState<string>();
   const { nfts } = useAccounts();
   const { proofs } = useGovernance();
@@ -122,7 +122,7 @@ const BurnNftsForm = (props: { onCancel: Function }) => {
         ) : (
           <div className={styles.buttons}>
             <div className={styles.smallCol}>
-              <HoneyButton onClick={() => props.onCancel()} variant="secondary">
+              <HoneyButton onClick={() => props.onClose()} variant="secondary">
                 Close
               </HoneyButton>
             </div>

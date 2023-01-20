@@ -33,7 +33,7 @@ import QuestionIcon from 'icons/QuestionIcon';
 const { formatShortName: fsn } = formatNumber;
 
 const VoteForm: FC<VoteFormProps> = (props: VoteFormProps) => {
-  const { proposalInfo, setSidebarMode, onCancel } = props;
+  const { proposalInfo, setSidebarMode, onClose } = props;
 
   const {
     votingPower,
@@ -189,7 +189,7 @@ const VoteForm: FC<VoteFormProps> = (props: VoteFormProps) => {
             )}
             <div className={styles.buttons}>
               <div className={styles.smallCol}>
-                <HoneyButton onClick={() => onCancel()} variant="secondary">
+                <HoneyButton onClick={() => onClose()} variant="secondary">
                   Close
                 </HoneyButton>
               </div>

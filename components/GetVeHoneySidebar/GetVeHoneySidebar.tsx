@@ -19,7 +19,7 @@ const items: [HoneyTabItem, HoneyTabItem] = [
 
 type Tab = 'lock_honey' | 'burn_nfts';
 
-const GetVeHoneySidebar = (props: { onCancel: Function }) => {
+const GetVeHoneySidebar = (props: { onClose: Function }) => {
   const wallet = useConnectedWallet();
   const { connect } = useWalletKit();
   const [activeTab, setActiveTab] = useState<Tab>('lock_honey');
@@ -27,7 +27,7 @@ const GetVeHoneySidebar = (props: { onCancel: Function }) => {
   const [burnNftMode, setBurnNftMode] = useState('burn_nfts');
 
   const handleTabChange = (tabKey: string) => {
-    // if (tabKey === 'burn_nfts') return;
+    if (tabKey === 'burn_nfts') return;
     setActiveTab(tabKey as Tab);
   };
   return (
@@ -51,7 +51,7 @@ const GetVeHoneySidebar = (props: { onCancel: Function }) => {
               },
               {
                 title: 'RETURN',
-                onClick: () => props.onCancel(),
+                onClick: () => props.onClose(),
                 variant: 'secondary',
                 className: mobileReturnButton
               }
@@ -96,11 +96,11 @@ const GetVeHoneySidebar = (props: { onCancel: Function }) => {
                 </div>
                 <div className={styles.formContainer}>
                   {lockHoneyMode === 'lock_honey' ? (
-                    <LockHoneyForm onCancel={props.onCancel} />
+                    <LockHoneyForm onClose={props.onClose} />
                   ) : lockHoneyMode === 'pHoneyToHoney' ? (
-                    <PHoneyToHoney onCancel={props.onCancel} />
+                    <PHoneyToHoney onClose={props.onClose} />
                   ) : (
-                    <PHoneyToVeHoney onCancel={props.onCancel} />
+                    <PHoneyToVeHoney onClose={props.onClose} />
                   )}
                 </div>
               </div>
@@ -120,9 +120,9 @@ const GetVeHoneySidebar = (props: { onCancel: Function }) => {
                 </div>
                 <div className={styles.formContainer}>
                   {burnNftMode == 'burn_nfts' ? (
-                    <BurnNftsForm onCancel={props.onCancel} />
+                    <BurnNftsForm onClose={props.onClose} />
                   ) : (
-                    <ClaimRewards onCancel={props.onCancel} />
+                    <ClaimRewards onClose={props.onClose} />
                   )}
                 </div>
               </div>

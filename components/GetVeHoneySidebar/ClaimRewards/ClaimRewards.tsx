@@ -41,7 +41,7 @@ const ListItem = ({
   );
 };
 
-const ClaimRewards = (props: { onCancel: Function }) => {
+const ClaimRewards = (props: { onClose: Function }) => {
   const [selected, setSelected] = useState<BN>();
   const { toast, ToastComponent } = useToast();
   const { escrow, locker, claim, closeReceipt } = useLocker();
@@ -107,10 +107,11 @@ const ClaimRewards = (props: { onCancel: Function }) => {
           <div className={styles.buttons}>
             <div className={styles.smallCol}>
               <HoneyButton
-                onClick={() => (selected ? handleClose(selected) : {})}
+                // onClick={() => (selected ? handleClose(selected) : {})}
+                onClick={() => props.onClose()}
                 variant="secondary"
               >
-                Cancel
+                Close
               </HoneyButton>
             </div>
             <div className={styles.bigCol}>
