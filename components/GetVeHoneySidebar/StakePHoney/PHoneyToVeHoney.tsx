@@ -146,7 +146,7 @@ const PHoneyToVeHoney = (props: { onClose: Function }) => {
         />
         <div className={styles.row}>
           <div className={styles.col}>
-            <HoneyWarning message="Deposit and burn $pHoney tokens to step to lock $Honey (multiplied by locking period) and get $veHoney to hold voting power of the governance." />
+            <HoneyWarning message="Deposit and burn $pHoney tokens to lock $Honey (multiplied by locking period) and get $veHoney to hold voting power for governance." />
           </div>
         </div>
         <div className={styles.row}>

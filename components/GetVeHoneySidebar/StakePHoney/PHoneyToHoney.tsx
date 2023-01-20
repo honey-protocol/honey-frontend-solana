@@ -122,7 +122,7 @@ const PHoneyToHoney = (props: { onClose: Function }) => {
         />
         <div className={styles.row}>
           <div className={styles.col}>
-            <HoneyWarning message="Deposit and burn $pHoney tokens to claim the same amount of $Honey daily basis for 21 days." />
+            <HoneyWarning message="Deposit and burn $pHoney tokens to claim the same amount of $Honey tokens after 21 days." />
           </div>
         </div>
         <div className={styles.row}>
