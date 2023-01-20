@@ -40,9 +40,11 @@ export const lightIcon = style({
 
 export const secTabsContainer = style({
   padding: 20,
-  paddingBottom: 0
+  paddingBottom: 0,
+  height: 100
 });
 
 export const formContainer = style({
-  flex: 1
+  flex: 1,
+  height: 'calc(100% - 100px)'
 });
