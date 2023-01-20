@@ -3,7 +3,9 @@ import { vars } from 'styles/theme.css';
 
 export const SidebarScroll = style({
   height: '100%',
-  position: 'relative'
+  position: 'relative',
+  display: 'flex',
+  flexDirection: 'column'
 });
 
 export const content = style({
@@ -14,16 +16,10 @@ export const content = style({
 });
 
 export const footer = style({
-  position: 'absolute',
-  bottom: 0,
-  left: 0,
   width: '100%',
+  flex: 'auto',
   padding: '16px 16px 12px',
   background: vars.colors.foreground,
   borderRadius: '0 0 15px 15px',
   zIndex: 9
-});
-
-export const hasFooter = style({
-  height: 'calc(100% - 90px)'
 });
