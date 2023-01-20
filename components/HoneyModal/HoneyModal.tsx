@@ -1,25 +1,17 @@
 import React, { useCallback, useMemo, useState } from 'react';
 import { Box, Button, Input, Stack, Text, Tag } from 'degen';
-import { PublicKey } from '@solana/web3.js';
-import * as anchor from '@project-serum/anchor';
+import { TokenAmount } from '@saberhq/token-utils';
+import { BN } from '@project-serum/anchor';
+
+import { useLocker } from 'hooks/useVeHoney';
+import { useAccountByMint } from 'hooks/useAccounts';
+import { calcMonthShift, convertToBN } from 'helpers/utils';
+
 import * as styles from './HoneyModal.css';
-import { useStake } from 'hooks/useStake';
-import { HONEY_DECIMALS } from 'helpers/sdk/constant';
-import { convertToBN } from 'helpers/utils';
-import { useGovernance } from 'contexts/GovernanceProvider';
-import config from '../../config';
 
 const HoneyModal = () => {
   const [amount, setAmount] = useState<number>(0);
   const [vestingPeriod, setVestingPeriod] = useState<number>(12);
-
-  const {
-    veHoneyAmount,
-    lockedAmount,
-    lockedPeriodEnd,
-    honeyAmount,
-    lockPeriodHasEnded
-  } = useGovernance();
 
   const handleOnChange = (event: any) => {
     setAmount(event.target.value);
@@ -27,32 +19,34 @@ const HoneyModal = () => {
 
   const vestingPeriodInSeconds = useMemo(() => {
     if ([1, 3, 6, 12, 48].includes(vestingPeriod)) {
-      const date = new Date();
-      const current = Math.floor(date.getTime() / 1000);
-      date.setMonth(date.getMonth() + vestingPeriod);
-      const nMonthsLater = Math.floor(date.getTime() / 1000);
-
-      return nMonthsLater - current;
+      return calcMonthShift(vestingPeriod);
     }
     return 0;
   }, [vestingPeriod]);
 
-  const STAKE_POOL_ADDRESS = new PublicKey(
-    config.NEXT_PUBLIC_STAKE_POOL_ADDRESS
-  );
-  const LOCKER_ADDRESS = new PublicKey(config.NEXT_PUBLIC_LOCKER_ADDR);
+  const { lock, unlock, escrow, lockedAmount, votingPower, govToken } =
+    useLocker();
+  const govTokenAccount = useAccountByMint(govToken?.mintAccount);
 
-  const { lock, unlock, escrow } = useStake(STAKE_POOL_ADDRESS, LOCKER_ADDRESS);
+  const lockEndsTime = useMemo(() => {
+    if (!escrow) return null;
+    return new Date(escrow.data.escrowEndsAt.toNumber() * 1000);
+  }, [escrow]);
+
+  const honeyAmount = useMemo(() => {
+    if (!govTokenAccount || !govToken) return null;
+
+    return new TokenAmount(govToken, govTokenAccount.data.amount);
+  }, [govTokenAccount, govToken]);
 
   const handleLock = useCallback(async () => {
-    if (!amount || !vestingPeriodInSeconds) return;
+    if (!amount || !vestingPeriodInSeconds || !govToken) return;
 
-    // await lock(
-    //   convertToBN(amount, HONEY_DECIMALS),
-    //   new anchor.BN(vestingPeriodInSeconds),
-    //   !!escrow
-    // );
-  }, [lock, escrow, amount, vestingPeriodInSeconds]);
+    await lock(
+      convertToBN(amount, govToken.decimals),
+      new BN(vestingPeriodInSeconds)
+    );
+  }, [lock, govToken, amount, vestingPeriodInSeconds]);
 
   return (
     <Box width="96">
@@ -77,13 +71,17 @@ const HoneyModal = () => {
               <Text variant="small" color="textSecondary">
                 veHoney (locked)
               </Text>
-              <Text variant="small">{veHoneyAmount}</Text>
+              <Text variant="small">{votingPower?.asNumber ?? '-'}</Text>
             </Stack>
             <Stack direction="horizontal" justify="space-between">
               <Text variant="small" color="textSecondary">
                 Lock period ends
               </Text>
-              <Text variant="small">{lockedPeriodEnd}</Text>
+              <Text variant="small">
+                {lockEndsTime?.toLocaleString(undefined, {
+                  timeZoneName: 'short'
+                }) ?? '-'}
+              </Text>
             </Stack>
             <Stack direction="horizontal" justify="space-between">
               <Text variant="small" color="textSecondary">
@@ -110,11 +108,11 @@ const HoneyModal = () => {
           <Input
             type="number"
             label="Amount"
-            labelSecondary={<Tag>{honeyAmount} pHONEY max</Tag>}
-            max={honeyAmount || ''}
+            labelSecondary={<Tag>{honeyAmount?.asNumber ?? '-'} HONEY max</Tag>}
+            max={honeyAmount?.asNumber ?? ''}
             min={0}
             value={amount || ''}
-            disabled={!honeyAmount}
+            disabled={!honeyAmount?.asNumber}
             hideLabel
             units="HONEY"
             placeholder="0"
@@ -128,7 +126,11 @@ const HoneyModal = () => {
           >
             {amount ? 'Deposit' : 'Enter amount'}
           </Button>
-          <Button onClick={unlock} disabled={lockPeriodHasEnded} width="full">
+          <Button
+            onClick={unlock}
+            disabled={!!(lockEndsTime && lockEndsTime < new Date())}
+            width="full"
+          >
             Unlock
           </Button>
         </Stack>

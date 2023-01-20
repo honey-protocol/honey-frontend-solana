@@ -1,17 +1,19 @@
-import React, { FC } from 'react';
-import * as styles from './HowItWorksTab.css';
-import SidebarScroll from '../../SidebarScroll/SidebarScroll';
-import HexaBoxContainer from '../../HexaBoxContainer/HexaBoxContainer';
-import HoneyButton from '../../HoneyButton/HoneyButton';
-import HoneyToggle from '../../HoneyToggle/HoneyToggle';
+import React from 'react';
 import Link from 'antd/lib/typography/Link';
+
+import SidebarScroll from 'components/SidebarScroll/SidebarScroll';
+import HexaBoxContainer from 'components/HexaBoxContainer/HexaBoxContainer';
+import HoneyButton from 'components/HoneyButton/HoneyButton';
+import HoneyToggle from 'components/HoneyToggle/HoneyToggle';
 import SectionTitle from '../../SectionTitle/SectionTitle';
+
+import * as styles from './HowItWorksTab.css';
 
 interface HowItWorksTabProps {
   setActiveTab: Function;
   setHasReadHowItWorks: Function;
   hasReadHowItWorks: boolean;
-  onCancel: Function;
+  onClose: Function;
 }
 
 const HowItWorksTab = (props: HowItWorksTabProps) => {
@@ -36,7 +38,7 @@ const HowItWorksTab = (props: HowItWorksTabProps) => {
           </div>
           <div className={styles.buttons}>
             <div className={styles.smallCol}>
-              <HoneyButton variant="secondary" onClick={() => props.onCancel()}>
+              <HoneyButton variant="secondary" onClick={() => props.onClose()}>
                 Cancel
               </HoneyButton>
             </div>

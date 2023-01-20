@@ -1,106 +1,79 @@
-import React, { FC, useEffect, useMemo, useState } from 'react';
-import { InfoBlock } from '../../InfoBlock/InfoBlock';
-import { HoneySlider } from '../../HoneySlider/HoneySlider';
-import * as styles from './VoteForm.css';
-import { formatDurationSeconds, formatNumber } from '../../../helpers/format';
-import HoneyButton from 'components/HoneyButton/HoneyButton';
-import SidebarScroll from '../../SidebarScroll/SidebarScroll';
-import { HoneyButtonTabs } from '../../HoneyButtonTabs/HoneyButtonTabs';
-import HoneyWarning from '../../HoneyWarning/HoneyWarning';
-import { VoteFormProps } from './types';
-import { useGovernor } from 'hooks/tribeca/useGovernor';
-import { useUserEscrow } from 'hooks/tribeca/useEscrow';
-import { sleep, TokenAmount } from '@saberhq/token-utils';
-import invariant from 'tiny-invariant';
-import { createMemoInstruction } from '@saberhq/solana-contrib';
-import { useSail, useTXHandlers } from '@saberhq/sail';
-import { ProposalState, PROPOSAL_STATE_LABELS, VoteSide } from 'helpers/dao';
-import useToast from 'hooks/useToast';
-import { useVote } from 'hooks/tribeca/useVote';
-import { useSDK } from 'helpers/sdk';
-import ProposalVote, { VoteType } from './Proposals/ProposalVote/ProposalVote';
-import BN from 'bn.js';
-import { noop } from 'lodash';
-import ProposalQueue from './Proposals/ProposalQueue/ProposalQueue';
-import ProposalExecute from './Proposals/ProposalExecute/ProposalExecute';
-import ProposalActivate from './Proposals/ProposalActivate/ProposalActivate';
-import ProposalHistory from './Proposals/ProposalHistory/ProposalHistory';
+import React, { FC, useCallback, useEffect, useMemo, useState } from 'react';
 import cs from 'classnames';
+import { noop } from 'lodash';
+import { sleep } from '@saberhq/token-utils';
+import {
+  ProposalState,
+  PROPOSAL_STATE_LABELS,
+  VoteSide
+} from '@tribecahq/tribeca-sdk';
+
+import { VoteFormProps } from './types';
+import ProposalVote, { VoteType } from './Proposals/ProposalVote/ProposalVote';
+import ProposalQueue from './Proposals/ProposalQueue/ProposalQueue';
+import ProposalActivate from './Proposals/ProposalActivate/ProposalActivate';
+
+import { InfoBlock } from 'components/InfoBlock/InfoBlock';
+import HoneyButton, {
+  HoneyButtonProps
+} from 'components/HoneyButton/HoneyButton';
+import SidebarScroll from 'components/SidebarScroll/SidebarScroll';
+import HoneyWarning from 'components/HoneyWarning/HoneyWarning';
+import useToast from 'hooks/useToast';
+import { useLocker, useProposalWithKey, useVote } from 'hooks/useVeHoney';
+import { formatNumber } from 'helpers/format';
+
 import { questionIcon } from 'styles/icons.css';
+import * as styles from './VoteForm.css';
+import ProposalHistory from './Proposals/ProposalHistory/ProposalHistory';
+import { Space } from 'antd';
 import SectionTitle from '../../SectionTitle/SectionTitle';
 import QuestionIcon from 'icons/QuestionIcon';
 
 const { formatShortName: fsn } = formatNumber;
 
 const VoteForm: FC<VoteFormProps> = (props: VoteFormProps) => {
-  const [voteType, setVoteType] = useState<VoteType>('vote_for');
-  const { proposalInfo, setSidebarMode, onCancel } = props;
-  const { veToken, governorData, minActivationThreshold, governorW } =
-    useGovernor();
-  const { data: escrow, veBalance, refetch } = useUserEscrow();
-  const [reason, setReason] = useState<string>('');
-  const { handleTX } = useSail();
-  const { sdkMut } = useSDK();
-  const { signAndConfirmTX } = useTXHandlers();
+  const { proposalInfo, setSidebarMode, onClose } = props;
+
+  const {
+    votingPower,
+    minActivationThreshold,
+    isActivatiable,
+    activateProposal,
+    castVote
+  } = useLocker();
+  const { vote } = useVote(proposalInfo.pubkey);
+  const { earliestActivationTime } = useProposalWithKey(proposalInfo.pubkey);
   const { toast, ToastComponent } = useToast();
 
-  const { data: myVote } = useVote(
-    proposalInfo?.proposalKey,
-    sdkMut?.provider.wallet.publicKey
-  );
-  const [hasVoted, setHasVoted] = useState<boolean>(
-    myVote?.accountInfo.data.side !== undefined ? true : false
-  );
+  const [voteType, setVoteType] = useState<VoteType>('vote_for');
+  const [hasVoted, setHasVoted] = useState<boolean>(!!vote?.side);
 
-  const side: VoteSide =
-    myVote?.accountInfo.data.side ||
-    (voteType === 'vote_for' ? VoteSide.For : VoteSide.Against);
-
-  const totalDeterminingVotes = proposalInfo?.proposalData.forVotes.add(
-    proposalInfo.proposalData.againstVotes
-  );
-
-  const vePower =
-    veToken && escrow
-      ? new TokenAmount(
-          veToken,
-          escrow.calculateVotingPower(
-            proposalInfo?.proposalData.votingEndsAt.toNumber() || 0
-          )
-        )
-      : null;
-
-  //FOR ACTIVATING A DRAFT PROPOSAL
-  const earliestActivationTime = useMemo(
+  const side = useMemo(
     () =>
-      governorData && proposalInfo
-        ? new Date(
-            proposalInfo?.proposalData.createdAt
-              .add(governorData.account.params.votingDelay)
-              .toNumber() * 1_000
-          )
-        : null,
-    [governorData, proposalInfo]
+      vote?.side || (voteType === 'vote_for' ? VoteSide.For : VoteSide.Against),
+    [vote, voteType]
   );
 
   useEffect(() => {
-    if (!earliestActivationTime) return;
-    const remainingTime = earliestActivationTime.getTime() - Date.now();
-    const timeout = setTimeout(() => {
-      void refetch();
-    }, remainingTime + 1);
-    return () => clearTimeout(timeout);
-  }, [earliestActivationTime, refetch]);
+    setHasVoted(!!vote?.side);
+  }, [proposalInfo, vote]);
 
-  const activateProposal = async () => {
+  // useEffect(() => {
+  //   if (!earliestActivationTime) return;
+  //   const remainingTime = earliestActivationTime.getTime() - Date.now();
+  //   const timeout = setTimeout(() => {
+  //     void reload?.();
+  //   }, remainingTime + 1);
+  //   return () => clearTimeout(timeout);
+  // }, [earliestActivationTime]);
+
+  const handleActivateProposal = useCallback(async () => {
     try {
       if (!proposalInfo) return;
       toast.processing();
-      invariant(escrow);
-      const tx = escrow.escrowW.activateProposal(proposalInfo?.proposalKey);
-      await signAndConfirmTX(tx, 'Activate Proposal');
+      await activateProposal(proposalInfo.pubkey);
       await sleep(1_000);
-      await refetch();
       noop();
       toast.success('Successfully activated proposal');
     } catch (error) {
@@ -109,114 +82,75 @@ const VoteForm: FC<VoteFormProps> = (props: VoteFormProps) => {
     } finally {
       toast.clear();
     }
-  };
-
-  const cancelProposal = async () => {
-    if (
-      governorW &&
-      proposalInfo &&
-      proposalInfo.proposalData.proposer.equals(
-        governorW.provider.wallet.publicKey
-      )
-    ) {
-      const tx = governorW.cancelProposal({
-        proposal: proposalInfo.proposalKey
-      });
-      const handle = await handleTX(tx, 'Cancel Proposal');
-      if (!handle.pending) {
-        return;
-      }
-      await handle.pending.wait();
-    }
-  };
+  }, [proposalInfo, toast]);
 
   // FOR VOTING
-  const vote = async () => {
+  const handleVote = useCallback(async () => {
     try {
       toast.processing();
       if (!proposalInfo) return toast.error('No proposal info');
-
-      invariant(escrow && side);
-      const tx = await escrow.escrowW.castVote({
-        proposal: proposalInfo.proposalKey,
-        side
-      });
-      const memoIX = createMemoInstruction(reason, [
-        escrow.escrowW.provider.wallet.publicKey
-      ]);
-      tx.append(memoIX);
-      const { pending } = await handleTX(
-        tx,
-        `Vote ${voteType === 'vote_for' ? 'For' : 'Against'}`
-      );
-      if (!pending) {
-        return;
-      }
-      await pending.wait();
+      await castVote(proposalInfo.pubkey, side);
       setHasVoted(true);
       toast.success('Vote Success');
     } catch (error) {
-      console.log(error);
       toast.error('Vote error');
     }
+  }, [toast, proposalInfo, side]);
+
+  // TODO: FOR QUEUING
+  const handleQueueProposal = async () => {
+    // if (!proposalInfo) return;
+    // invariant(governorW);
+    // const tx = await governorW.queueProposal({
+    //   index: new BN(proposalInfo.index)
+    // });
+    // const { pending, success } = await handleTX(tx, 'Queue Proposal');
+    // if (!pending || !success) {
+    //   return;
+    // }
+    // await pending.wait();
+    // noop();
   };
 
-  // FOR QUEUING
-  const queueProposal = async () => {
-    if (!proposalInfo) return;
-    invariant(governorW);
-    const tx = await governorW.queueProposal({
-      index: new BN(proposalInfo.index)
-    });
-    const { pending, success } = await handleTX(tx, 'Queue Proposal');
-    if (!pending || !success) {
-      return;
-    }
-    await pending.wait();
-    noop();
-  };
+  // TODO: FOR EXECUTING PROPOSAL
+  const handleExecuteProposal = async () => {};
 
-  // FOR EXECUTING PROPOSAL
-  const executeProposal = async () => {};
+  const votingPowerNeededMore = useMemo(() => {
+    if (!minActivationThreshold) return 0;
 
-  const getBtnDetails = (): {
-    title: string;
-    onClick: Function;
-    disabled?: boolean;
-  } => {
+    if (!votingPower) return minActivationThreshold.asNumber;
+
+    if (votingPower.greaterThan(minActivationThreshold)) return 0;
+
+    return minActivationThreshold.asNumber - votingPower.asNumber;
+  }, [minActivationThreshold, votingPower]);
+
+  const buttonDetails: HoneyButtonProps = useMemo(() => {
     if (!proposalInfo) return { title: '', onClick: () => {} };
-    switch (proposalInfo?.status.state) {
+    switch (proposalInfo.status) {
       case ProposalState.Draft:
         return {
-          title:
-            minActivationThreshold &&
-            veBalance?.greaterThan(minActivationThreshold)
-              ? 'Activate'
-              : 'Not enough vehoney',
-          onClick:
-            minActivationThreshold &&
-            veBalance?.greaterThan(minActivationThreshold)
-              ? activateProposal
-              : () => {},
+          title: isActivatiable ? 'Activate' : 'Not enough vehoney',
+          onClick: isActivatiable ? handleActivateProposal : () => {},
           disabled: Boolean(
             (earliestActivationTime && earliestActivationTime > new Date()) ||
-              !veBalance?.greaterThan(minActivationThreshold || 0)
+              !isActivatiable
           )
         };
       case ProposalState.Active:
         return {
           title: `Vote ${voteType === 'vote_for' ? 'for' : 'against'}`,
-          onClick: vote
+          onClick: handleVote
         };
       case ProposalState.Succeeded:
         return {
           title: 'Queue proposal',
-          onClick: queueProposal
+          onClick: handleQueueProposal
         };
       case ProposalState.Queued:
         return {
           title: 'Execute proposal',
-          onClick: executeProposal,
+          onClick: handleExecuteProposal,
           disabled: true
         };
       default:
@@ -226,18 +160,15 @@ const VoteForm: FC<VoteFormProps> = (props: VoteFormProps) => {
           disabled: true
         };
     }
-  };
-
-  // console.log({
-  //   proposalInfo,
-  //   minActivationThreshold,
-  //   veToken,
-  //   earliestActivationTime,
-  //   vePower,
-  //   escrow,
-  //   side,
-  //   hasVoted
-  // });
+  }, [
+    proposalInfo,
+    isActivatiable,
+    earliestActivationTime,
+    handleActivateProposal,
+    handleExecuteProposal,
+    handleQueueProposal,
+    handleVote
+  ]);
 
   return (
     <SidebarScroll
@@ -246,33 +177,30 @@ const VoteForm: FC<VoteFormProps> = (props: VoteFormProps) => {
           <ToastComponent />
         ) : (
           <div>
-            {proposalInfo?.status.state === ProposalState.Draft &&
-              !veBalance?.greaterThan(minActivationThreshold || 0) && (
-                <div
-                  onClick={() => setSidebarMode('get_vehoney')}
-                  className={styles.row}
-                >
-                  <HoneyWarning
-                    message={`You need ${
-                      10000 - (veBalance?.asNumber || 0)
-                    } more veHONEY to activate this proposal. Lock more HONEY to earn them!`}
-                  />
-                </div>
-              )}
+            {proposalInfo.status === ProposalState.Draft && !isActivatiable && (
+              <div
+                onClick={() => setSidebarMode('get_vehoney')}
+                className={styles.row}
+              >
+                <HoneyWarning
+                  message={`You need ${votingPowerNeededMore} more veHONEY to activate this proposal. Lock more HONEY to earn them!`}
+                />
+              </div>
+            )}
             <div className={styles.buttons}>
               <div className={styles.smallCol}>
-                <HoneyButton onClick={() => onCancel()} variant="secondary">
+                <HoneyButton onClick={() => onClose()} variant="secondary">
                   Close
                 </HoneyButton>
               </div>
               <div className={styles.bigCol}>
                 <HoneyButton
                   variant="primary"
-                  disabled={getBtnDetails().disabled}
+                  disabled={buttonDetails.disabled}
                   block
-                  onClick={() => getBtnDetails().onClick()}
+                  onClick={buttonDetails.onClick}
                 >
-                  {getBtnDetails().title}
+                  {buttonDetails.title}
                 </HoneyButton>
               </div>
             </div>
@@ -281,11 +209,11 @@ const VoteForm: FC<VoteFormProps> = (props: VoteFormProps) => {
       }
     >
       <div className={styles.depositForm}>
-        <SectionTitle title={proposalInfo?.proposalMetaData?.title || '--'} />
+        <SectionTitle title={proposalInfo?.meta?.title || '--'} />
         <div className={styles.row}>
           <HoneyWarning
             message="Discuss about this proposal on forum"
-            link={proposalInfo?.proposalMetaData?.descriptionLink
+            link={proposalInfo.meta?.descriptionLink
               .split('(')
               .pop()
               ?.slice(0, -1)}
@@ -300,13 +228,15 @@ const VoteForm: FC<VoteFormProps> = (props: VoteFormProps) => {
           <div className={styles.col}>
             <InfoBlock
               value={
-                proposalInfo?.status.executed
-                  ? 'Executed'
-                  : proposalInfo?.status.state === ProposalState.Active
+                proposalInfo.status === ProposalState.Active
                   ? 'Voting'
-                  : PROPOSAL_STATE_LABELS[proposalInfo?.status.state || 0]
+                  : PROPOSAL_STATE_LABELS[proposalInfo.status || 0]
               }
-              valueColor={proposalInfo?.status.executed ? 'green' : undefined}
+              valueColor={
+                proposalInfo.status === ProposalState.Succeeded
+                  ? 'green'
+                  : undefined
+              }
               valueSize="normal"
               footer={<span>Status</span>}
             />
@@ -343,26 +273,27 @@ const VoteForm: FC<VoteFormProps> = (props: VoteFormProps) => {
           </div>
         </div>
 
-        {!proposalInfo?.status.executed && <div className={styles.divider} />}
+        {proposalInfo.status !== ProposalState.Succeeded && (
+          <div className={styles.divider} />
+        )}
         <div className={styles.row}>
-          {proposalInfo?.status.state === ProposalState.Draft && (
+          {proposalInfo.status === ProposalState.Draft && (
             <ProposalActivate proposalInfo={proposalInfo} />
           )}
-          {proposalInfo?.status.state === ProposalState.Active && (
+          {proposalInfo.status === ProposalState.Active && (
             <ProposalVote
-              proposalInfo={proposalInfo}
+              proposal={proposalInfo}
               voteType={voteType}
               setVoteType={setVoteType}
-              vePower={vePower}
             />
           )}
-          {proposalInfo?.status.state === ProposalState.Succeeded && (
+          {proposalInfo.status === ProposalState.Succeeded && (
             <ProposalQueue proposalInfo={proposalInfo} />
           )}
-          {proposalInfo?.status.state === ProposalState.Queued &&
-            !proposalInfo.status.executed && (
+          {/* {proposalInfo.status === ProposalState.Queued &&
+            !proposalInfo.status && (
               <ProposalExecute proposalInfo={proposalInfo} />
-            )}
+            )} */}
         </div>
         <div className={styles.divider} />
         <ProposalHistory proposalInfo={proposalInfo} />

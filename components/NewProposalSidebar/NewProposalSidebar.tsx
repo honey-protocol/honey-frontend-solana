@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from 'react';
-import * as styles from './NewProposalSidebar.css';
-import HoneyTabs, { HoneyTabItem } from '../HoneyTabs/HoneyTabs';
-import EmptyStateDetails from '../EmptyStateDetails/EmptyStateDetails';
+import { useWalletKit } from '@gokiprotocol/walletkit';
+import { useConnectedWallet } from '@saberhq/use-solana';
+
 import CreateProposalTab from './CreateProposalTab/CreateProposalTab';
 import HowItWorksTab from './HowItWorksTab/HowItWorksTab';
-import { useConnectedWallet } from '@saberhq/use-solana';
-import { useWalletKit } from '@gokiprotocol/walletkit';
+import HoneyTabs, { HoneyTabItem } from 'components/HoneyTabs/HoneyTabs';
+import EmptyStateDetails from 'components/EmptyStateDetails/EmptyStateDetails';
+
+import * as styles from './NewProposalSidebar.css';
 import { mobileReturnButton } from 'styles/common.css';
 
 const items: [HoneyTabItem, HoneyTabItem] = [
@@ -15,7 +17,7 @@ const items: [HoneyTabItem, HoneyTabItem] = [
 
 type Tab = 'how_it_works' | 'create';
 
-const NewProposalSidebar = (props: { onCancel: Function }) => {
+const NewProposalSidebar = (props: { onClose: Function }) => {
   const [hasReadHowItWorks, setHasReadHowItWorks] = useState(false);
   const [activeTab, setActiveTab] = useState<Tab>();
   const wallet = useConnectedWallet();
@@ -60,7 +62,7 @@ const NewProposalSidebar = (props: { onCancel: Function }) => {
               },
               {
                 title: 'RETURN',
-                onClick: () => props.onCancel(),
+                onClick: () => props.onClose(),
                 variant: 'secondary',
                 className: mobileReturnButton
               }
@@ -73,11 +75,11 @@ const NewProposalSidebar = (props: { onCancel: Function }) => {
                 hasReadHowItWorks={hasReadHowItWorks}
                 setHasReadHowItWorks={setHasReadHowItWorks}
                 setActiveTab={setActiveTab}
-                onCancel={props.onCancel}
+                onClose={props.onClose}
               />
             )}
             {activeTab === 'create' && (
-              <CreateProposalTab onCancel={props.onCancel} />
+              <CreateProposalTab onClose={props.onClose} />
             )}
           </>
         )}

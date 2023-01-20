@@ -1,3 +1,4 @@
+import { GOKI_ADDRESSES } from '@gokiprotocol/client';
 import type { Idl } from '@project-serum/anchor';
 import type { AnchorError } from '@saberhq/anchor-contrib';
 import type { TransactionEnvelope } from '@saberhq/solana-contrib';
@@ -7,7 +8,7 @@ import {
 } from '@saberhq/token-utils';
 import type { PublicKey, TransactionInstruction } from '@solana/web3.js';
 
-import type { ProgramKey } from 'helpers/sdk';
+export type ProgramKey = keyof typeof GOKI_ADDRESSES;
 
 export class IdlError extends Error {}
 

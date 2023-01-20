@@ -19,9 +19,18 @@ import * as anchor from '@project-serum/anchor';
 import type { Network } from '@saberhq/solana-contrib';
 import type { Cluster, TransactionInstruction } from '@solana/web3.js';
 import { Fraction, Token, TokenInfo } from '@saberhq/token-utils';
-import { VoteSide } from 'helpers/dao';
+import { VoteSide } from '@tribecahq/tribeca-sdk';
 import { SmartWalletTransactionData } from '@gokiprotocol/client';
 import BN from 'bn.js';
+
+export function calcMonthShift(m: number): number {
+  const date = new Date();
+  const current = Math.floor(date.getTime() / 1000);
+  date.setMonth(date.getMonth() + m);
+  const nMonthsLater = Math.floor(date.getTime() / 1000);
+
+  return nMonthsLater - current;
+}
 
 export const RoundHalfDown = (val: number, decimals: number = 2): number => {
   return Math.floor(val * 10 ** decimals) / 10 ** decimals;

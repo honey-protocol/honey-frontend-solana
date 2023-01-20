@@ -24,9 +24,8 @@ export const FiltersSidebar = ({ tags, rules, initParams }: FiltersSidebarProps)
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
 
   const tabs: [HoneyTabItem, HoneyTabItem?] = [
-    {label: 'Filters', key: 'filters'},
+    { label: 'Filters', key: 'filters' }
   ];
-  
 
   const handleTabChange = (tabKey: string) => {
     setActiveTab(tabKey as Tab);

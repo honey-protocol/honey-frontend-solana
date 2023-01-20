@@ -181,6 +181,8 @@ const Swap: NextPage = () => {
       },
       {
         title: 'Transaction Fee',
+        // TODO: below needs some checking, state seems to mess it up, hardcoded fee for now
+        // value: `${f(estimatedOutAmount * 0.0025)} ${outputToken?.symbol}`
         value: `0.25%`
         // titleAddon: (
         //   <HoneyTooltip placement={'top'} tooltipIcon label={'Mock'} />
@@ -415,6 +417,7 @@ const Swap: NextPage = () => {
                       tokenInputFormatter(value, inputToken?.decimals)
                     }
                     onChange={value => setSwapAmount(Number(value))}
+                    addonAfter=""
                   />
                   <div
                     className={styles.tokenSelector}
@@ -473,6 +476,7 @@ const Swap: NextPage = () => {
                     }
                     value={estimatedOutAmount}
                     onChange={debouncedHandleOutputInput}
+                    addonAfter=""
                   />
                   <div
                     className={styles.tokenSelector}

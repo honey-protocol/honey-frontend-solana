@@ -4,9 +4,13 @@ import HoneyTabs, { HoneyTabItem } from '../HoneyTabs/HoneyTabs';
 import EmptyStateDetails from '../EmptyStateDetails/EmptyStateDetails';
 import LockHoneyForm from './LockHoneyForm/LockHoneyForm';
 import BurnNftsForm from './BurnNftsForm/BurnNftsForm';
+import ClaimRewards from './ClaimRewards/ClaimRewards';
 import { useConnectedWallet } from '@saberhq/use-solana';
 import { useWalletKit } from '@gokiprotocol/walletkit';
 import { mobileReturnButton } from 'styles/common.css';
+import { HoneyButtonTabs } from 'components/HoneyButtonTabs/HoneyButtonTabs';
+import PHoneyToHoney from './StakePHoney/PHoneyToHoney';
+import PHoneyToVeHoney from './StakePHoney/PHoneyToVeHoney';
 
 const items: [HoneyTabItem, HoneyTabItem] = [
   { label: 'Lock Honey', key: 'lock_honey' },
@@ -15,10 +19,12 @@ const items: [HoneyTabItem, HoneyTabItem] = [
 
 type Tab = 'lock_honey' | 'burn_nfts';
 
-const GetVeHoneySidebar = (props: { onCancel: Function }) => {
+const GetVeHoneySidebar = (props: { onClose: Function }) => {
   const wallet = useConnectedWallet();
   const { connect } = useWalletKit();
   const [activeTab, setActiveTab] = useState<Tab>('lock_honey');
+  const [lockHoneyMode, setLockHoneyMode] = useState('lock_honey');
+  const [burnNftMode, setBurnNftMode] = useState('burn_nfts');
 
   const handleTabChange = (tabKey: string) => {
     if (tabKey === 'burn_nfts') return;
@@ -45,7 +51,7 @@ const GetVeHoneySidebar = (props: { onCancel: Function }) => {
               },
               {
                 title: 'RETURN',
-                onClick: () => props.onCancel(),
+                onClick: () => props.onClose(),
                 variant: 'secondary',
                 className: mobileReturnButton
               }
@@ -54,10 +60,72 @@ const GetVeHoneySidebar = (props: { onCancel: Function }) => {
         ) : (
           <>
             {activeTab === 'lock_honey' && (
-              <LockHoneyForm onCancel={props.onCancel} />
+              <div className={styles.container}>
+                <div className={styles.secTabsContainer}>
+                  <HoneyButtonTabs
+                    items={[
+                      {
+                        name: (
+                          <>
+                            <div>Honey</div>↓<div>veHoney</div>
+                          </>
+                        ),
+                        slug: 'lock_honey'
+                      },
+                      {
+                        name: (
+                          <>
+                            <div>pHoney</div>↓<div>Honey</div>
+                          </>
+                        ),
+                        slug: 'pHoneyToHoney'
+                      },
+                      {
+                        name: (
+                          <>
+                            <div>pHoney</div>↓<div>veHoney</div>
+                          </>
+                        ),
+                        slug: 'stake_pHoney'
+                      }
+                    ]}
+                    activeItemSlug={lockHoneyMode}
+                    isFullWidth
+                    onClick={setLockHoneyMode}
+                  />
+                </div>
+                <div className={styles.formContainer}>
+                  {lockHoneyMode === 'lock_honey' ? (
+                    <LockHoneyForm onClose={props.onClose} />
+                  ) : lockHoneyMode === 'pHoneyToHoney' ? (
+                    <PHoneyToHoney onClose={props.onClose} />
+                  ) : (
+                    <PHoneyToVeHoney onClose={props.onClose} />
+                  )}
+                </div>
+              </div>
             )}
             {activeTab === 'burn_nfts' && (
-              <BurnNftsForm onCancel={props.onCancel} />
+              <div className={styles.container}>
+                <div className={styles.secTabsContainer}>
+                  <HoneyButtonTabs
+                    items={[
+                      { name: 'Burn Nfts', slug: 'burn_nfts' },
+                      { name: 'Claim Rewards', slug: 'claim_rewards' }
+                    ]}
+                    activeItemSlug={burnNftMode}
+                    isFullWidth
+                    onClick={setBurnNftMode}
+                  />
+                </div>
+                <div className={styles.formContainer}>
+                  {burnNftMode == 'burn_nfts' ? (
+                    <BurnNftsForm onClose={props.onClose} />
+                  ) : (
+                    <ClaimRewards onClose={props.onClose} />
+                  )}
+                </div>
+              </div>
             )}
           </>
         )}

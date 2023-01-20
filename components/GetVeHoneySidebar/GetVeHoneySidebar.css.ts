@@ -6,11 +6,16 @@ export const getVeHoneySidebar = style([
   {
     display: 'flex',
     flexDirection: 'column',
-    alignItems: 'stretch',
+    alignItems: 'stretch'
   },
   sidebar
 ]);
 
+export const container = style({
+  display: 'flex',
+  flexDirection: 'column',
+  height: '100%'
+});
 export const content = style({
   borderRadius: vars.space.medium,
   overflow: 'hidden',
@@ -31,4 +36,15 @@ export const lightIcon = style({
   width: 52,
   height: 52,
   background: 'url("/images/lightIcon.svg") center center no-repeat'
+});
+
+export const secTabsContainer = style({
+  padding: 20,
+  paddingBottom: 0,
+  height: 100
+});
+
+export const formContainer = style({
+  flex: 1,
+  height: 'calc(100% - 100px)'
 });

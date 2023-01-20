@@ -44,8 +44,7 @@ export const links: MenuLink[] = [
   },
   {
     title: 'GOVERNANCE',
-    href: '/governance',
-    disabled: true
+    href: '/governance'
   },
   {
     title: 'FARM',

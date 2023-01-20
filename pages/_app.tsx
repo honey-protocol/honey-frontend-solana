@@ -8,32 +8,23 @@ import '../styles/globals.css';
 import { Network } from '@saberhq/solana-contrib';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { accentSequence, ThemeAccent } from 'helpers/theme-utils';
 import { PartialNetworkConfigMap } from '@saberhq/use-solana/src/utils/useConnectionInternal';
 import SecPopup from 'components/SecPopup';
-import { AnchorProvider, HoneyProvider } from '@honey-finance/sdk';
 import { useConnectedWallet, useConnection } from '@saberhq/use-solana';
+import { AnchorProvider, HoneyProvider } from '@honey-finance/sdk';
 import React, {
   createContext,
   FC,
   ReactNode,
-  useContext,
   useEffect,
   useState
 } from 'react';
-// import { GovernorProvider } from 'hooks/tribeca/useGovernor';
-// import { GovernanceProvider } from 'contexts/GovernanceProvider';
-import Script from 'next/script';
-// import NoMobilePopup from 'components/NoMobilePopup/NoMobilePopup';
-import { SailProvider } from '@saberhq/sail';
-import { onSailError } from '../helpers/error';
 
-import {
-  GOVERNOR_ADDRESS,
-  HONEY_MINT,
-  HONEY_MINT_WRAPPER,
-  SDKProvider
-} from 'helpers/sdk';
+import { GovernanceProvider } from 'contexts/GovernanceProvider';
+import { AccountsProvider } from 'contexts/AccountsProvider';
+import Script from 'next/script';
+import { SailProvider } from '@saberhq/sail';
+import { onSailError } from 'helpers/error';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { getPlatformFeeAccounts, JupiterProvider } from '@jup-ag/react-hook';
 export const network = (process.env.NETWORK as Network) || 'mainnet-beta';
@@ -199,72 +190,74 @@ function MyApp({ Component, pageProps }: AppProps) {
           {/* <ReactQueryDevtools initialIsOpen={false} /> */}
           <WalletKitProvider
             defaultNetwork={network}
-            app={{
-              name: 'Honey Finance'
-            }}
+            app={{ name: 'Honey Finance' }}
             networkConfigs={networkConfiguration()}
           >
-            {/* <GovernanceProvider> */}
-            <SailProvider
-              initialState={{
-                onSailError
-              }}
-            >
-              <SDKProvider>
+            <AccountsProvider>
+              <SailProvider
+                initialState={{
+                  onSailError
+                }}
+              >
                 {/* <GovernorProvider
-                      initialState={{
-                        governor: GOVERNOR_ADDRESS,
-                        govToken: HONEY_MINT,
-                        minter: {
-                          mintWrapper: HONEY_MINT_WRAPPER
-                        }
-                      }}
-                    > */}
+                initialState={{
+                  governor: GOVERNOR_ADDRESS,
+                  govToken: HONEY_MINT,
+                  minter: {
+                    mintWrapper: HONEY_MINT_WRAPPER
+                  }
+                }}
+              > */}
                 {/* {children} */}
-                <>
-                  <HoneyJupiterProvider>
-                    <DialectProviders>
-                      <OnChainProvider>
-                        <Head>
-                          <link
-                            id="theme"
-                            rel="stylesheet"
-                            type="text/css"
-                            href="/css/antdLightTheme.css"
-                          />
-                          {['dark', 'dusk'].includes(theme) && (
-                            <link
-                              id="theme"
-                              rel="stylesheet"
-                              type="text/css"
-                              href="/css/antdDarkTheme.css"
+                {
+                  <>
+                    <HoneyJupiterProvider>
+                      <DialectProviders>
+                        <OnChainProvider>
+                          <GovernanceProvider>
+                            <Head>
+                              <link
+                                id="theme"
+                                rel="stylesheet"
+                                type="text/css"
+                                href="/css/antdLightTheme.css"
+                              />
+                              {['dark', 'dusk'].includes(theme) && (
+                                <link
+                                  id="theme"
+                                  rel="stylesheet"
+                                  type="text/css"
+                                  href="/css/antdDarkTheme.css"
+                                />
+                              )}
+                            </Head>
+                            <div
+                              className={
+                                theme === 'dark'
+                                  ? 'honey-dark-theme'
+                                  : theme === 'dusk'
+                                  ? 'honey-dusk-theme'
+                                  : 'honey-light-theme'
+                              }
+                            >
+                              {showPopup ? (
+                                <SecPopup setShowPopup={setShowPopup} />
+                              ) : (
+                                <Component {...pageProps} />
+                              )}
+                            </div>
+                            <ToastContainer
+                              theme="dark"
+                              position="bottom-right"
                             />
-                          )}
-                        </Head>
-                        <div
-                          className={
-                            theme === 'dark'
-                              ? 'honey-dark-theme'
-                              : theme === 'dusk'
-                              ? 'honey-dusk-theme'
-                              : 'honey-light-theme'
-                          }
-                        >
-                          {showPopup ? (
-                            <SecPopup setShowPopup={setShowPopup} />
-                          ) : (
-                            <Component {...pageProps} />
-                          )}
-                        </div>
-                        <ToastContainer theme="dark" position="bottom-right" />
-                      </OnChainProvider>
-                    </DialectProviders>
-                  </HoneyJupiterProvider>
-                </>
-                {/* </GovernorProvider> */}
-              </SDKProvider>
-            </SailProvider>
-            {/* </GovernanceProvider> */}
+                          </GovernanceProvider>
+                        </OnChainProvider>
+                      </DialectProviders>
+                    </HoneyJupiterProvider>
+                  </>
+                }
+              </SailProvider>
+            </AccountsProvider>
           </WalletKitProvider>
         </QueryClientProvider>
       </HoneyThemeContext.Provider>
