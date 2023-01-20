@@ -96,13 +96,10 @@ export const getLoans = async (
 ) => {
   const program = await getProgram(connection, wallet as any);
   let loansData = await program.account.loanMetadata.all();
-  const appliedLoans: P2PLoans = {};
-  const lentLoans: P2PLoans = {};
 
-  const loans: P2PLoans = {};
-  loansData.map(loan => {
-    loans[loan.publicKey.toString()] = convertLoanResultToLoanObj(loan);
-  });
+  const loans: P2PLoans = loansData.map(loan =>
+    convertLoanResultToLoanObj(loan)
+  );
 
   const filtered = getDiscoverScreenLoanOrders(loans);
   return filtered;
@@ -116,7 +113,7 @@ const Lending: NextPage = () => {
   const [selectedCategory, setSelectedCategory] = useState<FeaturedCategory>();
   const [selected, setSelected] = useState<string | undefined>();
   const [selectedLoan, setSelectedLoan] = useState<P2PLoan>();
-  const [displayedLoans, setDisplayedLoans] = useState<P2PLoans>({});
+  const [displayedLoans, setDisplayedLoans] = useState<P2PLoans>([]);
 
   useEffect(() => {
     if (!wallet) return;
@@ -126,7 +123,7 @@ const Lending: NextPage = () => {
         connection,
         wallet
       );
-      setDisplayedLoans(loans ?? {});
+      setDisplayedLoans(loans ?? []);
     };
     getAppliedAndActiveLoans();
   }, [wallet, connection]);

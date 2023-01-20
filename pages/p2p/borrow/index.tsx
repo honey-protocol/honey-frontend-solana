@@ -15,7 +15,8 @@ import {
   P2PBorrowSidebarMode,
   PageMode,
   P2PPosition,
-  P2PLoans
+  P2PLoans,
+  P2PLoan
 } from '../../../types/p2p';
 import { BorrowP2PSidebar } from '../../../components/BorrowP2PSidebar/BorrowP2PSidebar';
 import { HoneyButtonTabs } from 'components/HoneyButtonTabs/HoneyButtonTabs';
@@ -39,32 +40,32 @@ export const getUserAppliedAndActiveLoans = async (
 ) => {
   const program = await getProgram(connection, wallet as any);
   let loansData = await program.account.loanMetadata.all();
-  const appliedLoans: P2PLoans = {};
-  const lentLoans: P2PLoans = {};
+  const appliedLoans: P2PLoans = [];
+  const lentLoans: P2PLoans = [];
 
-  loansData.map(loan => {
+  loansData.forEach(loan => {
     if (loan.account.borrower.toString() === walletAddress) {
-      appliedLoans[loan.publicKey.toString()] = {
+      appliedLoans.push({
         ...loan.account,
         id: loan.publicKey.toString(),
-        requestedAmount: new BN(loan.account.requestedAmount).toString(),
-        interest: new BN(loan.account.interest).toString(),
-        period: new BN(loan.account.period).toString()
-      };
+        requestedAmount: new BN(loan.account.requestedAmount),
+        interest: new BN(loan.account.interest),
+        period: new BN(loan.account.period)
+      } as P2PLoan);
     } else if (loan.account.lender.toString() === walletAddress) {
-      lentLoans[loan.publicKey.toString()] = {
+      lentLoans.push({
         ...loan.account,
         id: loan.publicKey.toString(),
-        requestedAmount: new BN(loan.account.requestedAmount).toString(),
-        interest: new BN(loan.account.interest).toString(),
-        period: new BN(loan.account.period).toString()
-      };
+        requestedAmount: new BN(loan.account.requestedAmount),
+        interest: new BN(loan.account.interest),
+        period: new BN(loan.account.period)
+      } as P2PLoan);
     }
   });
 
   return {
-    appliedLoans: JSON.parse(JSON.stringify(appliedLoans)),
-    lentLoans: JSON.parse(JSON.stringify(lentLoans))
+    appliedLoans,
+    lentLoans
   };
 };
 

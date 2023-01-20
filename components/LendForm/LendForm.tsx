@@ -84,28 +84,28 @@ const LendForm = (props: LendFormProps) => {
   const onLend = async () => {
     if (wallet) {
       await acceptRequest(connection, wallet, toast, loan.id, loan);
-      router.reload();
+      // router.reload();
     }
   };
 
   const onRepay = async () => {
     if (wallet) {
       await payback(connection, wallet, toast, loan.id, loan);
-      router.reload();
+      // router.reload();
     }
   };
 
   const onCancelRequest = async () => {
     if (wallet) {
       await cancelRequest(connection, wallet, toast, loan.id, loan);
-      router.replace('/lend');
+      // router.replace('/lend');
     }
   };
 
   const onLiquidate = async () => {
     if (wallet) {
       await liquidate(connection, wallet, toast, loan.id, loan);
-      router.replace('/lend');
+      // router.replace('/lend');
     }
   };
 

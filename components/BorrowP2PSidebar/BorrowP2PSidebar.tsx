@@ -90,7 +90,7 @@ export const BorrowP2PSidebar = ({
       return <RepayP2PTab position={selectedUserPosition} onClose={onCancel} />;
     }
 
-    if (!Object.keys(userAppliedLoans).length) {
+    if (!userAppliedLoans.length) {
       return (
         <EmptyStateDetails
           icon={<div className={styles.boltIcon} />}

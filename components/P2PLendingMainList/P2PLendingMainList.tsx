@@ -23,7 +23,7 @@ import { differenceInDays } from 'date-fns';
 import { noop } from 'lodash';
 import { getProgram } from 'helpers/p2p/getProgram';
 import { Connection, LAMPORTS_PER_SOL } from '@solana/web3.js';
-import { P2PLoan, P2PLoans } from 'types/p2p';
+import { P2PLoan } from 'types/p2p';
 import BN from 'bn.js';
 import { P2PLoanCard } from 'components/P2PNftCard/P2PLoanCard';
 const { Text } = Typography;
@@ -76,8 +76,8 @@ export const P2PLendingMainList: FC<P2PLendingMainListProps> = ({
       </div>
 
       <div className={cardsGrid}>
-        {Object.values(data).length &&
-          Object.values(data).map((item: P2PLoan, index) => (
+        {data.length &&
+          data.map((item: P2PLoan, index) => (
             <P2PLoanCard
               isActive={
                 selected?.nftMint?.toString() === item.nftMint.toString()

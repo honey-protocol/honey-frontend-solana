@@ -36,7 +36,7 @@ export const LoansListTab = ({
 
   return (
     <div className={styles.LoansList}>
-      {Object.values(loans).map((loan: P2PLoan) => {
+      {loans.map((loan: P2PLoan) => {
         return (
           <LoansListCard
             loan={loan}

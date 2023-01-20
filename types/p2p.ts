@@ -72,6 +72,4 @@ export type P2PLoan = {
   withdrewAt: BN;
 };
 
-export type P2PLoans = {
-  [loanId: string]: any;
-};
+export type P2PLoans = P2PLoan[];

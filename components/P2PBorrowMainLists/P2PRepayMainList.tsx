@@ -47,8 +47,8 @@ export const P2PRepayMainList: FC<P2PRepayMainListProps> = ({
       </div>
 
       <div className={cardsGrid}>
-        {data &&
-          Object.values(data).map((item: P2PLoan, index) => (
+        {data.length &&
+          data.map((item: P2PLoan, index) => (
             <P2PLoanCard
               isActive={selected === Object.keys(data)[index]}
               onClick={() => onSelect()}
