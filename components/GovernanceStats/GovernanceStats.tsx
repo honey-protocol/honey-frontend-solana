@@ -106,7 +106,7 @@ export const GovernanceStats: FC<GoveranceStatsProps> = ({
 
         <div className={styles.buttonWrapper}>
           <a
-            href="https://jup.ag/swap/SOL-$HONEY"
+            href="https://beta.honey.finance/swap/"
             target="_blank"
             rel="noreferrer"
           >
