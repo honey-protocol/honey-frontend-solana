@@ -312,9 +312,11 @@ const Markets: NextPage = () => {
               if (currentMarketId === collection.id)
                 setActiveInterestRate(collection.rate);
               if (currentMarketId === collection.id) {
-                setNftPrice(RoundHalfDown(Number(collection.nftPrice)));
+                // @ts-ignore
+                setNftPrice(RoundHalfDown(collection.nftPrice));
                 setUserAllowance(collection.allowance);
-                setUserDebt(Number(collection.userDebt));
+                // @ts-ignore
+                setUserDebt(collection.userDebt);
                 setLoanToValue(Number(collection.ltv));
               }
 
