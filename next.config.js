@@ -70,7 +70,8 @@ module.exports = (phase, { defaultConfig }) => {
           'i.seadn.io',
           'ipfs.vvdny.io',
           'storage.googleapis.com',
-          'shdw-drive.genesysgo.net'
+          'shdw-drive.genesysgo.net',
+          'bafybeiay5mjlq3geafi2ci6dlelqpsfii764lxeuvl2ccrpm7hf2duvmsm.ipfs.nftstorage.link'
         ]
       }
     };
@@ -112,7 +113,8 @@ module.exports = (phase, { defaultConfig }) => {
           'i.seadn.io',
           'ipfs.vvdny.io',
           'storage.googleapis.com',
-          'shdw-drive.genesysgo.net'
+          'shdw-drive.genesysgo.net',
+          'bafybeiay5mjlq3geafi2ci6dlelqpsfii764lxeuvl2ccrpm7hf2duvmsm.ipfs.nftstorage.link'
         ]
       }
     };
