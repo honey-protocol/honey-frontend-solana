@@ -19,7 +19,7 @@ const MarketsSidebar = (props: MarketsSidebarProps) => {
   const wallet = useConnectedWallet() || null;
   const { disconnect } = useSolana();
   const [NFTs, isLoadingNfts, refetchNfts] = useFetchNFTByUser(wallet);
-  const availableNFTs = NFTs;
+
   const {
     openPositions,
     nftPrice,
@@ -33,8 +33,10 @@ const MarketsSidebar = (props: MarketsSidebarProps) => {
     executeDepositNFT,
     executeWithdrawNFT,
     executeBorrow,
-    executeRepay
+    executeRepay,
+    availableNFTS
   } = props;
+  const availableNFTs = availableNFTS;
   // tab state
   const [activeTab, setActiveTab] = useState<Tab>('borrow');
   const { connect } = useWalletKit();
