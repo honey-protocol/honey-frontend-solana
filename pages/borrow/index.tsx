@@ -6,6 +6,7 @@ import { ColumnType } from 'antd/lib/table';
 import * as style from '../../styles/markets.css';
 import c from 'classnames';
 import classNames from 'classnames';
+import BN from 'bn.js';
 import {
   BorrowSidebarMode,
   HoneyTableColumnType,
@@ -44,20 +45,10 @@ import {
   fetchAllMarkets,
   MarketBundle,
   waitForConfirmation,
+  fetchReservePrice,
   withdrawNFT
 } from '@honey-finance/sdk';
-import {
-  calcNFT,
-  fetchSolPrice,
-  getInterestRate,
-  populateMarketData,
-  calculateMarketDebt,
-  calculateUserDeposits,
-  fetchAllowance,
-  fetchUserDebt,
-  fetchLTV,
-  decodeReserve
-} from 'helpers/loanHelpers/userCollection';
+import { populateMarketData } from 'helpers/loanHelpers/userCollection';
 import { Metadata } from '@metaplex-foundation/mpl-token-metadata';
 import { ToastProps } from 'hooks/useToast';
 import { RoundHalfDown } from 'helpers/utils';
@@ -97,7 +88,12 @@ import { featureFlags } from 'helpers/featureFlags';
 import SorterIcon from 'icons/Sorter';
 import ExpandedRowIcon from 'icons/ExpandedRowIcon';
 // import { network } from 'pages/_app';
-const { format: f, formatPercent: fp, formatSol: fs } = formatNumber;
+const {
+  format: f,
+  formatPercent: fp,
+  formatSol: fs,
+  formatShortName: fsn
+} = formatNumber;
 
 const Markets: NextPage = () => {
   // Sets market ID which is used for fetching market specific data
@@ -146,7 +142,6 @@ const Markets: NextPage = () => {
     loading,
     collateralNFTPositions,
     loanPositions,
-    fungibleCollateralPosition,
     refreshPositions,
     error
   } = useBorrowPositions(
@@ -197,9 +192,20 @@ const Markets: NextPage = () => {
   // fetches the sol price
   // TODO: create type for reserves and connection
   async function fetchSolValue(reserves: any, connection: any) {
-    const slPrice = await fetchSolPrice(reserves, connection);
+    const slPrice = await fetchReservePrice(reserves, connection);
     setFetchedSolPrice(slPrice);
   }
+
+  /**
+   * @description sets state of marketValue by parsing lamports outstanding debt amount to SOL
+   * @params none, requires parsedReserves
+   * @returns updates marketValue
+   */
+  useEffect(() => {
+    if (parsedReserves) {
+      fetchSolValue(parsedReserves[0], sdkConfig.saberHqConnection);
+    }
+  }, [parsedReserves]);
 
   const [marketData, setMarketData] = useState<MarketBundle[]>([]);
 
@@ -226,35 +232,15 @@ const Markets: NextPage = () => {
     }
   }, [sdkConfig.saberHqConnection, sdkConfig.sdkWallet]);
 
-  /**
-   * @description sets state of marketValue by parsing lamports outstanding debt amount to SOL
-   * @params none, requires parsedReserves
-   * @returns updates marketValue
-   */
-  useEffect(() => {
-    if (parsedReserves && sdkConfig.saberHqConnection) {
-      fetchSolValue(parsedReserves, sdkConfig.saberHqConnection);
-    }
-  }, [parsedReserves]);
-
-  // sets cRatio, liquidationThreshold and calls fetchHelperValues
-  useEffect(() => {
-    if (marketReserveInfo && parsedReserves) {
-      setCRatio(BnToDecimal(marketReserveInfo[0].minCollateralRatio, 15, 5));
-    }
-  }, [marketReserveInfo, parsedReserves]);
-
   // if there are open positions for the user -> set the open positions
   useEffect(() => {
-    if (loading === false) {
-      if (collateralNFTPositions) {
-        setUserOpenPositions(collateralNFTPositions);
-        // setHasNFTDeposited(true);
-      } else if (!collateralNFTPositions) {
-        setUserOpenPositions([]);
-      }
+    if (collateralNFTPositions && collateralNFTPositions.length) {
+      setUserOpenPositions(collateralNFTPositions);
+    } else {
+      setUserOpenPositions([]);
     }
-  }, [loading]);
+  }, [collateralNFTPositions]);
+
   // function is setup to handle an array for all markets and return based on specific market by verified creator
   async function handlePositions(
     verifiedCreator: string,
@@ -283,6 +269,7 @@ const Markets: NextPage = () => {
               const honeyMarket = collection.marketData[0].market;
               const honeyClient = collection.marketData[0].client;
               const parsedReserves = collection.marketData[0].reserves[0].data;
+              const mData = collection.marketData[0].reserves[0];
 
               await populateMarketData(
                 'BORROW',
@@ -296,57 +283,29 @@ const Markets: NextPage = () => {
                 honeyClient,
                 honeyMarket,
                 honeyUser,
-                parsedReserves
+                parsedReserves,
+                mData
               );
 
               collection.positions = await handlePositions(
                 collection.verifiedCreator,
                 userOpenPositions
               );
-              collection.rate =
-                (await getInterestRate(
-                  collection.utilizationRate,
-                  collection.id
-                )) || 0;
 
-              if (currentMarketId === collection.id)
-                setActiveInterestRate(collection.rate);
               if (currentMarketId === collection.id) {
+                setActiveInterestRate(collection.rate);
                 // @ts-ignore
-                setNftPrice(RoundHalfDown(collection.nftPrice));
+                setNftPrice(RoundHalfDown(Number(collection.nftPrice)));
                 setUserAllowance(collection.allowance);
                 // @ts-ignore
                 setUserDebt(collection.userDebt);
                 setLoanToValue(Number(collection.ltv));
+                console.log('@@-- collection', collection);
               }
 
               return collection;
-            } else {
-              await populateMarketData(
-                'BORROW',
-                collection,
-                sdkConfig.saberHqConnection,
-                sdkConfig.sdkWallet,
-                currentMarketId,
-                false,
-                [],
-                false
-              );
-
-              collection.positions = await handlePositions(
-                collection.verifiedCreator,
-                userOpenPositions
-              );
-              collection.rate =
-                (await getInterestRate(
-                  collection.utilizationRate,
-                  collection.id
-                )) || 0;
-
-              if (currentMarketId === collection.id)
-                setActiveInterestRate(collection.rate);
-              return collection;
             }
+            return collection;
           })
         );
       }
@@ -356,7 +315,16 @@ const Markets: NextPage = () => {
         setTableDataFiltered(result);
       });
     }
-  }, [currentMarketId, marketData, reserveHoneyState, userOpenPositions]);
+  }, [
+    reserveHoneyState,
+    userOpenPositions,
+    // honeyUser,
+    // honeyClient,
+    // honeyMarket,
+    // parsedReserves,
+    marketData,
+    NFTs
+  ]);
 
   const showMobileSidebar = () => {
     setShowMobileSidebar(true);
@@ -511,7 +479,7 @@ const Markets: NextPage = () => {
               key: 'value',
               hidden: windowWidth < TABLET_BP,
               render: (value: number) => {
-                return <div className={style.valueCell}>{fs(value)}</div>;
+                return <div className={style.valueCell}>{fsn(value)}</div>;
               }
             }
           ],
@@ -544,14 +512,14 @@ const Markets: NextPage = () => {
               key: 'available',
               render: (available: number, data: MarketTableRow) => {
                 return (
-                  <div className={style.availableCell}>{fs(available)}</div>
+                  <div className={style.availableCell}>{fsn(available)}</div>
                 );
               }
             }
           ],
           sorter: (a: MarketTableRow, b: MarketTableRow) => a.value - b.value,
           render: (value: number, data: MarketTableRow) => {
-            return <div className={style.valueCell}>{fs(value)}</div>;
+            return <div className={style.valueCell}>{fsn(value)}</div>;
           }
         },
 
@@ -618,8 +586,8 @@ const Markets: NextPage = () => {
               />
               <HoneyTableRow>
                 <div className={style.rateCell}>{fp(row.rate)}</div>
-                <div className={style.availableCell}>{fs(row.value)}</div>
-                <div className={style.availableCell}>{fs(row.available)}</div>
+                <div className={style.availableCell}>{fsn(row.value)}</div>
+                <div className={style.availableCell}>{fsn(row.available)}</div>
               </HoneyTableRow>
             </>
           );
@@ -666,7 +634,7 @@ const Markets: NextPage = () => {
       width: columnsWidth[1],
       render: debt => (
         <div className={style.expandedRowCell}>
-          <InfoBlock title={'Debt:'} value={fs(userDebt)} />
+          <InfoBlock title={'Debt:'} value={fsn(userDebt)} />
         </div>
       )
     },
@@ -675,7 +643,7 @@ const Markets: NextPage = () => {
       width: columnsWidth[2],
       render: allowance => (
         <div className={style.expandedRowCell}>
-          <InfoBlock title={'Allowance:'} value={fs(userAllowance)} />
+          <InfoBlock title={'Allowance:'} value={fsn(userAllowance)} />
         </div>
       )
     },
@@ -684,7 +652,7 @@ const Markets: NextPage = () => {
       width: columnsWidth[3],
       render: value => (
         <div className={style.expandedRowCell}>
-          <InfoBlock title={'Value:'} value={fs(nftPrice)} />
+          <InfoBlock title={'Value:'} value={fsn(nftPrice)} />
         </div>
       )
     },
@@ -783,55 +751,7 @@ const Markets: NextPage = () => {
       </div>
     </div>
   );
-  async function handleUserInteraction() {
-    marketCollections.map(async market => {
-      if (market.id === currentMarketId) {
-        await fetchMarket();
-        await market.user.refresh();
 
-        if (market.marketData) {
-          const honeyUser = market.marketData[0].user;
-          const honeyMarket = market.marketData[0].market;
-          const honeyClient = market.marketData[0].client;
-          const parsedReserves = market.marketData[0].reserves[0].data;
-          if (parsedReserves) {
-            const { totalMarketDebt, totalMarketDeposits, parsedReserve } =
-              await decodeReserve(honeyMarket, honeyClient, parsedReserves);
-            // TODO: validate honeyMarket.conn
-            const nftPrice = await calcNFT(
-              honeyMarket.reserves,
-              parsedReserve,
-              honeyMarket,
-              honeyMarket.conn
-            );
-
-            if (nftPrice) {
-              const userAllowance = await fetchAllowance(
-                nftPrice,
-                1,
-                honeyUser,
-                marketReserveInfo
-              );
-
-              const userDebt = await fetchUserDebt(
-                honeyUser,
-                honeyMarket.reserves
-              );
-
-              const ltv = await fetchLTV(totalMarketDebt, nftPrice);
-
-              setUserAllowance(userAllowance);
-              setUserDebt(userDebt);
-              setLoanToValue(ltv);
-              reserveHoneyState === 0
-                ? setReserveHoneyState(1)
-                : setReserveHoneyState(0);
-            }
-          }
-        }
-      }
-    });
-  }
   /**
    * @description executes Deposit NFT (SDK helper)
    * @params mint of the NFT | toast | name | verified creator
@@ -961,8 +881,6 @@ const Markets: NextPage = () => {
           confirmationHash
         );
 
-        await handleUserInteraction();
-
         toast.success(
           'Borrow success',
           `https://solscan.io/tx/${tx[1][0]}?cluster=${network}`
@@ -991,7 +909,7 @@ const Markets: NextPage = () => {
       toast.processing();
       const tx = await repayAndRefresh(
         honeyUser,
-        val * LAMPORTS_PER_SOL,
+        new BN(val * LAMPORTS_PER_SOL),
         repayTokenMint,
         honeyReserves
       );
@@ -1004,8 +922,6 @@ const Markets: NextPage = () => {
           sdkConfig.saberHqConnection,
           confirmationHash
         );
-
-        await handleUserInteraction();
 
         toast.success(
           'Repay success',

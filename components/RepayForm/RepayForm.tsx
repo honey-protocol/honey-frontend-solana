@@ -24,7 +24,8 @@ const {
   formatPercent: fp,
   formatSol: fs,
   parse: p,
-  formatRoundDown: frd
+  formatRoundDown: frd,
+  formatShortName: fsn
 } = formatNumber;
 
 const RepayForm = (props: RepayProps) => {
@@ -163,7 +164,7 @@ const RepayForm = (props: RepayProps) => {
         <div className={styles.row}>
           <div className={styles.col}>
             <InfoBlock
-              value={fs(nftPrice)}
+              value={fsn(nftPrice ?? 0)}
               valueSize="big"
               title={
                 <span className={hAlign}>
@@ -190,7 +191,7 @@ const RepayForm = (props: RepayProps) => {
           </div>
           <div className={styles.col}>
             <InfoBlock
-              value={fs(Number(frd(userAllowance)))}
+              value={fsn(Number(frd(userAllowance)))}
               title={
                 <span className={hAlign}>
                   Allowance{' '}
@@ -293,7 +294,7 @@ const RepayForm = (props: RepayProps) => {
                   </div>
                 </span>
               }
-              value={fs(userDebt)}
+              value={fsn(userDebt)}
               toolTipLabel={
                 <span>
                   Value borrowed from the lending pool, upon which interest
@@ -319,7 +320,7 @@ const RepayForm = (props: RepayProps) => {
                   </div>
                 </span>
               }
-              value={fs(newDebt < 0 ? 0 : newDebt)}
+              value={fsn(newDebt < 0 ? 0 : newDebt)}
               isDisabled={userDebt == 0 ? true : false}
               toolTipLabel={
                 <span>
@@ -341,7 +342,7 @@ const RepayForm = (props: RepayProps) => {
         <div className={styles.row}>
           <div className={styles.col}>
             <InfoBlock
-              value={`${fs(liquidationPrice)} ${
+              value={`${fsn(liquidationPrice)} ${
                 userDebt ? `(-${liqPercent.toFixed(0)}%)` : ''
               }`}
               valueSize="normal"
@@ -392,7 +393,7 @@ const RepayForm = (props: RepayProps) => {
                   after the requested changes to the loan are approved.
                 </span>
               }
-              value={`${fs(newLiquidationPrice)} ${
+              value={`${fsn(newLiquidationPrice)} ${
                 userDebt ? `(-${newLiqPercent?.toFixed(0)}%)` : ''
               }`}
               valueSize="normal"
@@ -405,14 +406,14 @@ const RepayForm = (props: RepayProps) => {
             <div className={cs(styles.balance, styles.col)}>
               <InfoBlock
                 title={'Your SOL balance'}
-                value={fs(Number(frd(SOLBalance, 3)))}
+                value={fsn(Number(frd(SOLBalance, 3)))}
               ></InfoBlock>
             </div>
             <div className={cs(styles.balance, styles.col)}>
               <InfoBlock
                 isDisabled={userDebt == 0 ? true : false}
                 title={'NEW SOL balance'}
-                value={fs(Number(frd(SOLBalance - (valueSOL || 0), 3)))}
+                value={fsn(Number(frd(SOLBalance - (valueSOL || 0), 3)))}
               ></InfoBlock>
             </div>
           </div>

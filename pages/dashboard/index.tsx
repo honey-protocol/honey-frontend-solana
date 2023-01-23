@@ -242,7 +242,6 @@ const Dashboard: NextPage = () => {
     loading,
     collateralNFTPositions,
     loanPositions,
-    fungibleCollateralPosition,
     refreshPositions,
     error
   } = useBorrowPositions(
@@ -620,7 +619,7 @@ const Dashboard: NextPage = () => {
       toast.processing();
       const tx = await repay(
         honeyUser,
-        val * LAMPORTS_PER_SOL,
+        new BN(val * LAMPORTS_PER_SOL),
         repayTokenMint,
         honeyReserves
       );
