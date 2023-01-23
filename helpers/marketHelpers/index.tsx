@@ -116,7 +116,7 @@ export const marketCollections: MarketTableRow[] = [
         'https://i.seadn.io/gae/O8GK9vCJ5Cdtjz9aP3x7M4Bc4Z5HNgcsP0AcZFRjhC8p8fU4icgv2ecfNfZhMBjcYycVgJ2gpvCae_1TfXdbGOg2d6pKCdXRPlSsfQ?auto=format&w=384',
       discountedMarket: true
     }
-  }
+  },
   // {
   //   id: '5UKRRSxbi4PgPnQU2ZqtukUxd1fyN6ydn1hoxivP46A8',
   //   key: 'OLV',
@@ -213,30 +213,30 @@ export const marketCollections: MarketTableRow[] = [
   //     discountedMarket: false
   //   }
   // },
-  // {
-  //   id: 'GAqyPziKPwVpwKaeqPhEsxiy6MwQ2bvtodruWErpLVKo',
-  //   key: 'Droids',
-  //   name: 'Droid Capital',
-  //   verifiedCreator: 'C88kKdEmTrCh43GC1w3BUFLsW3oKMEWWBGCyweQAaEYa',
-  //   rate: 0,
-  //   available: 0,
-  //   value: 0,
-  //   allowance: 0,
-  //   positions: [],
-  //   connection: undefined,
-  //   user: undefined,
-  //   debt: 0,
-  //   utilizationRate: 0,
-  //   openPositions: [],
-  //   constants: {
-  //     marketId: 'GAqyPziKPwVpwKaeqPhEsxiy6MwQ2bvtodruWErpLVKo',
-  //     verifiedCreator: 'C88kKdEmTrCh43GC1w3BUFLsW3oKMEWWBGCyweQAaEYa',
-  //     marketName: 'Droid Capital',
-  //     marketImage:
-  //       'https://img-cdn.magiceden.dev/rs:fill:400:400:0:0/plain/https://dl.airtable.com/.attachmentThumbnails/cdd57420adfe9323b725187414504608/645229ca',
-  //     discountedMarket: false
-  //   }
-  // },
+  {
+    id: 'GAqyPziKPwVpwKaeqPhEsxiy6MwQ2bvtodruWErpLVKo',
+    key: 'Droids',
+    name: 'Droid Capital',
+    verifiedCreator: 'C88kKdEmTrCh43GC1w3BUFLsW3oKMEWWBGCyweQAaEYa',
+    rate: 0,
+    available: 0,
+    value: 0,
+    allowance: 0,
+    positions: [],
+    connection: undefined,
+    user: undefined,
+    debt: 0,
+    utilizationRate: 0,
+    openPositions: [],
+    constants: {
+      marketId: 'GAqyPziKPwVpwKaeqPhEsxiy6MwQ2bvtodruWErpLVKo',
+      verifiedCreator: 'C88kKdEmTrCh43GC1w3BUFLsW3oKMEWWBGCyweQAaEYa',
+      marketName: 'Droid Capital',
+      marketImage:
+        'https://img-cdn.magiceden.dev/rs:fill:400:400:0:0/plain/https://dl.airtable.com/.attachmentThumbnails/cdd57420adfe9323b725187414504608/645229ca',
+      discountedMarket: false
+    }
+  }
   // {
   //   id: '2dxJ4eMkhMxm1ZqpAhKsjunvyziuq1JRnuHaqKFRY8et',
   //   key: 'Vandals',
