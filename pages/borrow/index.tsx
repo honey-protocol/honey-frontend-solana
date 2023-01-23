@@ -265,6 +265,7 @@ const Markets: NextPage = () => {
                 marketObject =>
                   marketObject.market.address.toString() === collection.id
               );
+
               const honeyUser = collection.marketData[0].user;
               const honeyMarket = collection.marketData[0].market;
               const honeyClient = collection.marketData[0].client;
