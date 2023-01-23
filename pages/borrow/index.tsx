@@ -96,10 +96,13 @@ const network = 'mainnet-beta';
 import { featureFlags } from 'helpers/featureFlags';
 import SorterIcon from 'icons/Sorter';
 import ExpandedRowIcon from 'icons/ExpandedRowIcon';
+import useToast from 'hooks/useToast';
+import { toast } from 'components/HoneyToast/HoneyToast.css';
 // import { network } from 'pages/_app';
 const { format: f, formatPercent: fp, formatSol: fs } = formatNumber;
 
 const Markets: NextPage = () => {
+  const { toast, ToastComponent } = useToast();
   // Sets market ID which is used for fetching market specific data
   // each market currently is a different call and re-renders the page
   const [currentMarketId, setCurrentMarketId] = useState(
@@ -172,6 +175,7 @@ const Markets: NextPage = () => {
   // interface related constants
   const { width: windowWidth } = useWindowSize();
   const [tableData, setTableData] = useState<MarketTableRow[]>([]);
+  const [fetchedDataObject, setFetchedDataObject] = useState<MarketBundle>();
   const [tableDataFiltered, setTableDataFiltered] = useState<MarketTableRow[]>(
     []
   );
@@ -309,8 +313,6 @@ const Markets: NextPage = () => {
                   collection.id
                 )) || 0;
 
-              if (currentMarketId === collection.id)
-                setActiveInterestRate(collection.rate);
               if (currentMarketId === collection.id) {
                 // @ts-ignore
                 setNftPrice(RoundHalfDown(collection.nftPrice));
@@ -318,6 +320,8 @@ const Markets: NextPage = () => {
                 // @ts-ignore
                 setUserDebt(collection.userDebt);
                 setLoanToValue(Number(collection.ltv));
+                setActiveInterestRate(collection.rate);
+                setFetchedDataObject(collection.marketData[0]);
               }
 
               return collection;
@@ -356,7 +360,14 @@ const Markets: NextPage = () => {
         setTableDataFiltered(result);
       });
     }
-  }, [currentMarketId, marketData, reserveHoneyState, userOpenPositions]);
+  }, [
+    currentMarketId,
+    marketData,
+    reserveHoneyState,
+    userOpenPositions,
+    NFTs,
+    userOpenPositions
+  ]);
 
   const showMobileSidebar = () => {
     setShowMobileSidebar(true);
@@ -783,55 +794,7 @@ const Markets: NextPage = () => {
       </div>
     </div>
   );
-  async function handleUserInteraction() {
-    marketCollections.map(async market => {
-      if (market.id === currentMarketId) {
-        await fetchMarket();
-        await market.user.refresh();
 
-        if (market.marketData) {
-          const honeyUser = market.marketData[0].user;
-          const honeyMarket = market.marketData[0].market;
-          const honeyClient = market.marketData[0].client;
-          const parsedReserves = market.marketData[0].reserves[0].data;
-          if (parsedReserves) {
-            const { totalMarketDebt, totalMarketDeposits, parsedReserve } =
-              await decodeReserve(honeyMarket, honeyClient, parsedReserves);
-            // TODO: validate honeyMarket.conn
-            const nftPrice = await calcNFT(
-              honeyMarket.reserves,
-              parsedReserve,
-              honeyMarket,
-              honeyMarket.conn
-            );
-
-            if (nftPrice) {
-              const userAllowance = await fetchAllowance(
-                nftPrice,
-                1,
-                honeyUser,
-                marketReserveInfo
-              );
-
-              const userDebt = await fetchUserDebt(
-                honeyUser,
-                honeyMarket.reserves
-              );
-
-              const ltv = await fetchLTV(totalMarketDebt, nftPrice);
-
-              setUserAllowance(userAllowance);
-              setUserDebt(userDebt);
-              setLoanToValue(ltv);
-              reserveHoneyState === 0
-                ? setReserveHoneyState(1)
-                : setReserveHoneyState(0);
-            }
-          }
-        }
-      }
-    });
-  }
   /**
    * @description executes Deposit NFT (SDK helper)
    * @params mint of the NFT | toast | name | verified creator
@@ -868,14 +831,26 @@ const Markets: NextPage = () => {
               sdkConfig.saberHqConnection,
               confirmationHash
             );
+            if (collection.marketData) {
+              await collection.marketData[0].reserves[0].refresh();
+              await collection.marketData[0].user.refresh();
 
-            await refreshPositions();
-            refetchNfts({});
+              await refreshPositions();
+              refetchNfts({});
 
-            toast.success(
-              'Deposit success',
-              `https://solscan.io/tx/${tx[1][0]}?cluster=${network}`
-            );
+              toast.success(
+                'Deposit success',
+                `https://solscan.io/tx/${tx[1][0]}?cluster=${network}`
+              );
+            } else {
+              await refreshPositions();
+              refetchNfts({});
+
+              toast.success(
+                'Deposit success',
+                `https://solscan.io/tx/${tx[1][0]}?cluster=${network}`
+              );
+            }
           }
         }
       });
@@ -916,13 +891,26 @@ const Markets: NextPage = () => {
           confirmationHash
         );
 
-        await refreshPositions();
-        refetchNfts({});
+        if (fetchedDataObject) {
+          await fetchedDataObject.reserves[0].refresh();
+          await fetchedDataObject.user.refresh();
 
-        toast.success(
-          'Withdraw success',
-          `https://solscan.io/tx/${tx[1][0]}?cluster=${network}`
-        );
+          await refreshPositions();
+          refetchNfts({});
+
+          toast.success(
+            'Withdraw success',
+            `https://solscan.io/tx/${tx[1][0]}?cluster=${network}`
+          );
+        } else {
+          await refreshPositions();
+          refetchNfts({});
+
+          toast.success(
+            'Withdraw success',
+            `https://solscan.io/tx/${tx[1][0]}?cluster=${network}`
+          );
+        }
       }
 
       return true;
@@ -961,12 +949,30 @@ const Markets: NextPage = () => {
           confirmationHash
         );
 
-        await handleUserInteraction();
+        if (fetchedDataObject) {
+          await fetchedDataObject.reserves[0].refresh();
+          await fetchedDataObject.user.refresh();
 
-        toast.success(
-          'Borrow success',
-          `https://solscan.io/tx/${tx[1][0]}?cluster=${network}`
-        );
+          await refreshPositions();
+          refetchNfts({});
+
+          reserveHoneyState === 0
+            ? setReserveHoneyState(1)
+            : setReserveHoneyState(0);
+
+          toast.success(
+            'Withdraw success',
+            `https://solscan.io/tx/${tx[1][0]}?cluster=${network}`
+          );
+        } else {
+          await refreshPositions();
+          refetchNfts({});
+
+          toast.success(
+            'Withdraw success',
+            `https://solscan.io/tx/${tx[1][0]}?cluster=${network}`
+          );
+        }
       } else {
         return toast.error('Borrow failed');
       }
@@ -1005,12 +1011,30 @@ const Markets: NextPage = () => {
           confirmationHash
         );
 
-        await handleUserInteraction();
+        if (fetchedDataObject) {
+          await fetchedDataObject.reserves[0].refresh();
+          await fetchedDataObject.user.refresh();
 
-        toast.success(
-          'Repay success',
-          `https://solscan.io/tx/${tx[1][0]}?cluster=${network}`
-        );
+          await refreshPositions();
+          refetchNfts({});
+
+          reserveHoneyState === 0
+            ? setReserveHoneyState(1)
+            : setReserveHoneyState(0);
+
+          toast.success(
+            'Withdraw success',
+            `https://solscan.io/tx/${tx[1][0]}?cluster=${network}`
+          );
+        } else {
+          await refreshPositions();
+          refetchNfts({});
+
+          toast.success(
+            'Withdraw success',
+            `https://solscan.io/tx/${tx[1][0]}?cluster=${network}`
+          );
+        }
       } else {
         return toast.error('Repay failed');
       }
@@ -1040,6 +1064,7 @@ const Markets: NextPage = () => {
               // TODO: call helper function include all markets
               calculatedInterestRate={activeInterestRate}
               currentMarketId={currentMarketId}
+              availableNFTS={NFTs}
             />
           </HoneySider>
         );
