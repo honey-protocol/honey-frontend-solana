@@ -693,6 +693,7 @@ const Dashboard: NextPage = () => {
           calculatedInterestRate={calculatedInterestRate}
           //TODO: fix market id
           currentMarketId={''}
+          availableNFTS={[]}
         />
       ) : (
         <LendSidebar
