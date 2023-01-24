@@ -56,6 +56,15 @@ export const mobileReturnButton = style({
 
 export const spinner = style({});
 
+export const pageLoadingSpinner = style({
+  height: '300px',
+  display: 'flex',
+  justifyContent: 'center',
+  alignItems: 'center'
+});
+
+export const emptyPageContainer = pageLoadingSpinner;
+
 globalStyle(`${spinner} .ant-spin-dot-item`, {
   background: vars.colors.brownDark
 });
