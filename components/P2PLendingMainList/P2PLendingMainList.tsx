@@ -26,6 +26,7 @@ import { Connection, LAMPORTS_PER_SOL } from '@solana/web3.js';
 import { P2PLoan } from 'types/p2p';
 import BN from 'bn.js';
 import { P2PLoanCard } from 'components/P2PNftCard/P2PLoanCard';
+import { LOAN_CURRENCY_LAMPORTS, ONE_DAY_IN_SECONDS } from 'constants/p2p';
 const { Text } = Typography;
 
 export const P2PLendingMainList: FC<P2PLendingMainListProps> = ({
@@ -36,7 +37,7 @@ export const P2PLendingMainList: FC<P2PLendingMainListProps> = ({
 }) => {
   const [searchValue, setSearchValue] = useState<string | undefined>();
 
-  const { formatPercent: fp, formatSol: fs } = formatNumber;
+  const { formatPercent: fp, formatSol: fs, formatUsd: fd } = formatNumber;
 
   const getPositionPeriodFormatted = (
     dateLeft: number,
@@ -90,12 +91,14 @@ export const P2PLendingMainList: FC<P2PLendingMainListProps> = ({
                   <InfoBlock
                     title="Request"
                     center
-                    value={fs(Number(item.requestedAmount) / LAMPORTS_PER_SOL)}
+                    value={fd(
+                      Number(item.requestedAmount) / LOAN_CURRENCY_LAMPORTS
+                    )}
                   />
                   <InfoBlock
                     title="IR"
                     center
-                    value={fp(Number(item.interest))}
+                    value={Number(item.interest).toFixed() + '%'}
                   />
                   <InfoBlock
                     title="Period"
@@ -104,7 +107,10 @@ export const P2PLendingMainList: FC<P2PLendingMainListProps> = ({
                     //   item.end,
                     //   item.start
                     // )}`}
-                    value={item.period.toString()}
+                    value={
+                      (Number(item?.period) / ONE_DAY_IN_SECONDS).toString() +
+                      'D'
+                    }
                   />
                 </>
               }

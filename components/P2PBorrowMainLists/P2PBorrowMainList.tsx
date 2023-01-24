@@ -12,6 +12,7 @@ import { P2PNftCard } from '../P2PNftCard/P2PNftCard';
 import { InfoBlock } from '../InfoBlock/InfoBlock';
 import { formatNumber } from '../../helpers/format';
 import { noop } from 'lodash';
+import EmptyStateDetails from 'components/EmptyStateDetails/EmptyStateDetails';
 
 export const P2PBorrowMainList: FC<P2PBorrowMainListProps> = ({
   data,
@@ -19,34 +20,13 @@ export const P2PBorrowMainList: FC<P2PBorrowMainListProps> = ({
   selected,
   onSelect = noop
 }) => {
-  const [searchValue, setSearchValue] = useState<string | undefined>();
-
   const { formatSol: fs } = formatNumber;
-
-  const handleSearchInputChange = useCallback(
-    (e: ChangeEvent<HTMLInputElement>) => {
-      const value = e.target.value;
-      setSearchValue(value);
-    },
-    []
-  );
 
   return (
     <div className={cardsContainer}>
-      <div className={gridFilters}>
-        {PageModeSwitchTab && <PageModeSwitchTab />}
-        <div className={searchInputWrapper}>
-          <SearchInput
-            value={searchValue}
-            onChange={handleSearchInputChange}
-            placeholder="Search by name"
-          />
-        </div>
-      </div>
-
-      <div className={cardsGrid}>
-        {data &&
-          data.map((item, index) => (
+      {data.length ? (
+        <div className={cardsGrid}>
+          {data.map((item, index) => (
             <P2PNftCard
               isActive={selected === item.mint}
               onClick={() => onSelect(item.mint)}
@@ -59,7 +39,10 @@ export const P2PBorrowMainList: FC<P2PBorrowMainListProps> = ({
               }
             />
           ))}
-      </div>
+        </div>
+      ) : (
+        <EmptyStateDetails icon="" title="No NFTs found" description="" />
+      )}
     </div>
   );
 };

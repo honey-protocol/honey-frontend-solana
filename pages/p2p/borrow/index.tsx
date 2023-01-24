@@ -1,23 +1,16 @@
-import type {
-  GetServerSideProps,
-  GetServerSidePropsContext,
-  InferGetServerSidePropsType,
-  NextPage
-} from 'next';
-import React, { useEffect, useMemo, useState } from 'react';
-import { Typography } from 'antd';
-import { pageDescription, pageTitle } from 'styles/common.css';
+import type { NextPage } from 'next';
+import React, { ChangeEvent, useCallback, useEffect, useState } from 'react';
+import { Spin, Typography } from 'antd';
+import {
+  pageDescription,
+  pageTitle,
+  spinner,
+  pageLoadingSpinner
+} from 'styles/common.css';
 import LayoutRedesign from '../../../components/LayoutRedesign/LayoutRedesign';
 import HoneyContent from '../../../components/HoneyContent/HoneyContent';
 import HoneySider from '../../../components/HoneySider/HoneySider';
-import {
-  BorrowPageMode,
-  P2PBorrowSidebarMode,
-  PageMode,
-  P2PPosition,
-  P2PLoans,
-  P2PLoan
-} from '../../../types/p2p';
+import { BorrowPageMode, P2PLoans, P2PLoan } from '../../../types/p2p';
 import { BorrowP2PSidebar } from '../../../components/BorrowP2PSidebar/BorrowP2PSidebar';
 import { HoneyButtonTabs } from 'components/HoneyButtonTabs/HoneyButtonTabs';
 import { P2PBorrowMainList } from 'components/P2PBorrowMainLists/P2PBorrowMainList';
@@ -31,7 +24,9 @@ import {
 import { getProgram } from 'helpers/p2p/getProgram';
 import BN from 'bn.js';
 import { Connection } from '@solana/web3.js';
-import { Wallet } from '@project-serum/anchor';
+import c from 'classnames';
+import { gridFilters, searchInputWrapper } from 'styles/p2p.css';
+import SearchInput from 'components/SearchInput/SearchInput';
 
 export const getUserAppliedAndActiveLoans = async (
   walletAddress: string,
@@ -79,14 +74,26 @@ const Borrowing: NextPage = () => {
   const [selectedNFT, setSelectedNFT] = useState<NFT>();
   const [isMobileSidebarVisible, setShowMobileSidebar] = useState(false);
 
+  const [searchValue, setSearchValue] = useState<string | undefined>();
+
   // const mockCollectionsList = useMemo(() => getCollectionsListMock(), []);
   const [NFTs, isFetchingNFTs, refetchNFTs] = useFetchNFTByUser(wallet);
+  const [isFetchingLoans, setIsFetchingLoans] = useState(true);
   const [appliedLoans, setAppliedLoans] = useState<P2PLoans>([]);
   const [activeLoans, setActiveLoans] = useState<P2PLoans>([]);
+
+  const handleSearchInputChange = useCallback(
+    (e: ChangeEvent<HTMLInputElement>) => {
+      const value = e.target.value;
+      setSearchValue(value);
+    },
+    []
+  );
 
   useEffect(() => {
     if (!wallet) return;
     const getAppliedAndActiveLoans = async () => {
+      setIsFetchingLoans(true);
       const { appliedLoans, lentLoans } = await getUserAppliedAndActiveLoans(
         wallet?.publicKey.toString(),
         connection,
@@ -94,6 +101,7 @@ const Borrowing: NextPage = () => {
       );
       setAppliedLoans(appliedLoans);
       setActiveLoans(lentLoans);
+      setIsFetchingLoans(false);
     };
     getAppliedAndActiveLoans();
   }, [wallet, connection]);
@@ -119,7 +127,7 @@ const Borrowing: NextPage = () => {
       <HoneySider isMobileSidebarVisible={isMobileSidebarVisible}>
         <BorrowP2PSidebar
           userAppliedLoans={appliedLoans}
-          selectedPosition={selectedNFT}
+          selectedNFT={selectedNFT}
           onClose={handleOnCloseSidebar}
         />
       </HoneySider>
@@ -147,7 +155,11 @@ const Borrowing: NextPage = () => {
   const renderTable = (pageMode: BorrowPageMode) => {
     switch (pageMode) {
       case BorrowPageMode.NEW_BORROW:
-        return (
+        return isFetchingNFTs ? (
+          <div className={c(spinner, pageLoadingSpinner)}>
+            <Spin size="large" />
+          </div>
+        ) : (
           <P2PBorrowMainList
             data={NFTs}
             onSelect={handleNftSelect}
@@ -156,7 +168,11 @@ const Borrowing: NextPage = () => {
           />
         );
       case BorrowPageMode.REPAY_BORROWED:
-        return (
+        return isFetchingLoans ? (
+          <div className={c(spinner, pageLoadingSpinner)}>
+            <Spin size="large" />
+          </div>
+        ) : (
           <P2PRepayMainList
             data={activeLoans}
             onSelect={handleNftSelect}
@@ -199,6 +215,16 @@ const Borrowing: NextPage = () => {
     <LayoutRedesign>
       <HoneyContent>{renderTitle(pageMode)}</HoneyContent>
       <HoneyContent sidebar={borrowingSidebar()}>
+        <div className={gridFilters}>
+          {PageModeSwitchTab && <PageModeSwitchTab />}
+          <div className={searchInputWrapper}>
+            <SearchInput
+              value={searchValue}
+              onChange={handleSearchInputChange}
+              placeholder="Search by name"
+            />
+          </div>
+        </div>
         {renderTable(pageMode)}
       </HoneyContent>
     </LayoutRedesign>

@@ -56,7 +56,6 @@ export const BorrowP2PRequestFormTab = ({
       discordInputValue,
       telegramInputValue
     );
-    router.push('/lend');
   };
 
   const handleSOLInputChange = (solValue: number | undefined) => {
