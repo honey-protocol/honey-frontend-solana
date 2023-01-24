@@ -257,7 +257,7 @@ export const marketCollections: MarketTableRow[] = [
       verifiedCreator: '8wACNDCJiPVVxfrFJRUYkJx4hQgvcoZggMXKmNvjQ6R7',
       marketName: 'Vandal City',
       marketImage:
-        'https://pbs.twimg.com/profile_images/1592211797687271424/nHy5AR3v_400x400.jpg',
+        'https://i.seadn.io/gae/BgIPqBsvXBIoT-7IFHqAMbUJn9yU1Ngcdc5p1ItIQlderHXU5HuQX1SNWV4zqGpe_GWGcZwO88FFwpOdJMU7a5o4RMULdxmPr4TAlY4?auto=format&w=256',
       discountedMarket: false
     }
   }

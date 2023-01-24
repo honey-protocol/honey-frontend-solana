@@ -73,7 +73,7 @@ module.exports = (phase, { defaultConfig }) => {
           'shdw-drive.genesysgo.net',
           'bafybeiay5mjlq3geafi2ci6dlelqpsfii764lxeuvl2ccrpm7hf2duvmsm.ipfs.nftstorage.link',
           'cdn.pesky-penguins.com',
-          'https://pbs.twimg.com'
+          'i.seadn.io'
         ]
       }
     };
@@ -118,7 +118,7 @@ module.exports = (phase, { defaultConfig }) => {
           'shdw-drive.genesysgo.net',
           'bafybeiay5mjlq3geafi2ci6dlelqpsfii764lxeuvl2ccrpm7hf2duvmsm.ipfs.nftstorage.link',
           'cdn.pesky-penguins.com',
-          'https://pbs.twimg.com'
+          'i.seadn.io'
         ]
       }
     };
