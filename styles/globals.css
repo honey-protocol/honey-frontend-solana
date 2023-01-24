@@ -9,6 +9,9 @@ body {
     Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
   min-height: 100vh;
 }
+body {
+  zoom: 0.9;
+}
 
 a {
   color: inherit;
