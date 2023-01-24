@@ -14,7 +14,7 @@ export type BorrowP2PSidebarProps = {
   // requested loans by user that are not active
   userAppliedLoans: P2PLoans;
   // selected position
-  selectedPosition?: NFT;
+  selectedNFT?: NFT;
   onClose: () => void;
 };
 

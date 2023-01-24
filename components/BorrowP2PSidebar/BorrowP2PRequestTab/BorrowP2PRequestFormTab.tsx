@@ -13,6 +13,7 @@ import { useRouter } from 'next/router';
 import useToast from 'hooks/useToast';
 import HoneyButton from 'components/HoneyButton/HoneyButton';
 import SidebarScroll from 'components/SidebarScroll/SidebarScroll';
+import { useSolPrice } from 'hooks/useSolPrice';
 
 export const BorrowP2PRequestFormTab = ({
   collectionName,
@@ -24,11 +25,10 @@ export const BorrowP2PRequestFormTab = ({
   const router = useRouter();
   const connection = useConnection();
   const { toast, ToastComponent } = useToast();
+  const solPrice = useSolPrice() ?? 25; //remove 25 when solPrice works
 
-  const [firstInputValue, setFirstInputValue] = useState<number | undefined>();
-  const [secondInputValue, setSecondInputValue] = useState<
-    number | undefined
-  >();
+  const [solInputValue, setSolInputValue] = useState<number | undefined>();
+  const [usdcInputValue, setUsdcInputValue] = useState<number | undefined>();
   const [periodInputValue, setPeriodInputValue] = useState<string>('');
   const [interestRateInputValue, setInterestRateInputValue] =
     useState<string>('');
@@ -46,7 +46,7 @@ export const BorrowP2PRequestFormTab = ({
       connection,
       wallet,
       toast,
-      firstInputValue ?? 0,
+      solInputValue ?? 0,
       interestRateInputValue,
       Number(periodInputValue) * ONE_DAY_IN_SECONDS,
       NFT
@@ -57,6 +57,28 @@ export const BorrowP2PRequestFormTab = ({
       telegramInputValue
     );
     router.push('/lend');
+  };
+
+  const handleSOLInputChange = (solValue: number | undefined) => {
+    if (!solValue) {
+      setUsdcInputValue(0);
+      setSolInputValue(0);
+      return;
+    }
+
+    setUsdcInputValue(solValue * solPrice);
+    setSolInputValue(solValue);
+  };
+
+  const handleUSDCInputChange = (usdcValue: number | undefined) => {
+    if (!usdcValue) {
+      setUsdcInputValue(0);
+      setSolInputValue(0);
+      return;
+    }
+
+    setUsdcInputValue(usdcInputValue);
+    setSolInputValue(usdcValue / solPrice);
   };
 
   const renderFooter = () => {
@@ -96,10 +118,10 @@ export const BorrowP2PRequestFormTab = ({
           <div className={styles.amountSection}>
             <div className={styles.sectionsTitle}>Amount</div>
             <InputsBlock
-              firstInputValue={firstInputValue}
-              onChangeFirstInput={setFirstInputValue}
-              onChangeSecondInput={setSecondInputValue}
-              secondInputValue={secondInputValue}
+              firstInputValue={solInputValue}
+              onChangeFirstInput={handleSOLInputChange}
+              onChangeSecondInput={handleUSDCInputChange}
+              secondInputValue={usdcInputValue}
               firstInputAddon={
                 <div className={styles.inputsAddonsPriceTitle}>SOL</div>
               }
