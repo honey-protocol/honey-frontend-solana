@@ -7,4 +7,5 @@ export type LendFormProps = {
   loan: P2PLoan;
   borrowerTelegram?: string;
   borrowerDiscord?: string;
+  onClose: () => void;
 };

@@ -22,12 +22,17 @@ import {
   payback
 } from 'helpers/p2p/apiServices';
 import { formatAddress } from 'helpers/addressUtils';
-import { ORDER_STATUS } from 'constants/p2p';
+import {
+  LOAN_CURRENCY_LAMPORTS,
+  ONE_DAY_IN_SECONDS,
+  ONE_DAY_MS,
+  ORDER_STATUS
+} from 'constants/p2p';
 import { getOrderStatus } from 'helpers/p2p/filterLoans';
 import { useRouter } from 'next/router';
-import { LAMPORTS_PER_SOL } from '@solana/web3.js';
+import BN from 'bn.js';
 
-const { formatPercent: fp, formatSol: fs } = formatNumber;
+const { formatPercent: fp, formatSol: fs, formatUsd: fd } = formatNumber;
 
 const todaysDate = new Date();
 
@@ -38,7 +43,8 @@ const LendForm = (props: LendFormProps) => {
     collectionName,
     borrowerTelegram,
     borrowerDiscord,
-    loan
+    loan,
+    onClose
   } = props;
 
   const connection = useConnection();
@@ -162,7 +168,8 @@ const LendForm = (props: LendFormProps) => {
       } else {
         return {
           title: 'Lend',
-          onClick: onLend
+          onClick: onLend,
+          textRight: '"Borrow fees USDC 3.04'
         };
       }
     }
@@ -176,12 +183,14 @@ const LendForm = (props: LendFormProps) => {
         ) : (
           <div className={styles.buttons}>
             <div className={styles.smallCol}>
-              <HoneyButton variant="secondary">Cancel</HoneyButton>
+              <HoneyButton onClick={onClose} variant="secondary">
+                Cancel
+              </HoneyButton>
             </div>
             <div className={styles.bigCol}>
               <HoneyButton
                 variant="primary"
-                textRight="Borrow fees USDC 3.04"
+                textRight={getBtnTitleAndAction()?.textRight}
                 block
                 disabled={getBtnTitleAndAction()?.disabled}
                 onClick={getBtnTitleAndAction()?.onClick}
@@ -216,7 +225,7 @@ const LendForm = (props: LendFormProps) => {
         <div className={styles.row}>
           <div className={styles.col}>
             <InfoBlock
-              value={fs(Number(loan.requestedAmount) / LAMPORTS_PER_SOL)}
+              value={fd(Number(loan.requestedAmount) / LOAN_CURRENCY_LAMPORTS)}
               valueSize="big"
               footer={<>Request</>}
             />
@@ -230,7 +239,11 @@ const LendForm = (props: LendFormProps) => {
           </div>
           <div className={styles.col}>
             <InfoBlock
-              value={fs(1000)}
+              value={new BN(loan.requestedAmount)
+                .mul(new BN(loan.interest))
+                .div(new BN(100))
+                .div(new BN(LOAN_CURRENCY_LAMPORTS))
+                .toString()}
               valueSize="big"
               footer={<>Total interest</>}
             />
@@ -287,38 +300,53 @@ const LendForm = (props: LendFormProps) => {
         <SectionTitle className={styles.title} title="Period" />
 
         <InfoBlock
-          value={`${getPositionPeriodFormatted(
-            Number(loan.loanStartTime) + Number(loan.period),
-            Number(loan.loanStartTime)
-          )}`}
+          value={
+            (Number(loan?.period) / ONE_DAY_IN_SECONDS).toString() + ' days'
+          }
           title="Total period"
           valueSize="big"
           className={styles.periodBlock}
         />
 
         <InfoBlock
-          value={<>{getDateFormatted(Number(loan.loanStartTime))}</>}
+          value={
+            <>
+              {loan.loanStartTime.gt(new BN(0))
+                ? getDateFormatted(Number(loan.loanStartTime))
+                : '--'}
+            </>
+          }
           title="Loan start"
           valueSize="big"
-          footer={<>{getTimeFormatted(Number(loan.loanStartTime))}</>}
+          footer={
+            <>
+              {loan.loanStartTime.gt(new BN(0))
+                ? getTimeFormatted(Number(loan.loanStartTime) * 1000)
+                : '--'}
+            </>
+          }
           className={styles.periodBlock}
         />
 
         <InfoBlock
           value={
             <>
-              {getDateFormatted(
-                Number(loan.loanStartTime) + Number(loan.period)
-              )}
+              {loan.loanStartTime.gt(new BN(0))
+                ? getDateFormatted(
+                    Number(loan.loanStartTime) + Number(loan.period)
+                  )
+                : '--'}
             </>
           }
           title="Loan due"
           valueSize="big"
           footer={
             <>
-              {getTimeFormatted(
-                Number(loan.loanStartTime) + Number(loan.period)
-              )}
+              {loan.loanStartTime.gt(new BN(0))
+                ? getTimeFormatted(
+                    Number(loan.loanStartTime) + Number(loan.period)
+                  )
+                : '--'}
             </>
           }
           className={styles.periodBlock}

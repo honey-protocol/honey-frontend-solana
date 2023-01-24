@@ -7,7 +7,6 @@ export const lendForm = style({
   height: '100%',
   display: 'flex',
   flexDirection: 'column',
-  background: vars.colors.white,
   padding: 16
 });
 
@@ -46,11 +45,14 @@ export const nftImage = style([
 
 export const nftName = style([typography.title, {}]);
 
-export const collectionName = style([typography.caption, {
-  color: vars.colors.brownMiddle,
-  display: 'flex',
-  alignItems: 'center'
-}]);
+export const collectionName = style([
+  typography.caption,
+  {
+    color: vars.colors.brownMiddle,
+    display: 'flex',
+    alignItems: 'center'
+  }
+]);
 
 export const nftNameBlock = style({});
 
@@ -113,7 +115,7 @@ export const borrowerAddress = style([
     whiteSpace: 'nowrap',
     overflow: 'hidden',
     textOverflow: 'ellipsis',
-    color: vars.colors.grayTransparent
+    color: vars.colors.textTertiary
   }
 ]);
 
@@ -128,62 +130,62 @@ export const bidCardCopyIcon = style([
   }
 ]);
 
-export const contactsBlock = style( {
+export const contactsBlock = style({
   marginBottom: 16,
   display: 'flex',
   justifyContent: 'space-between',
   alignItems: 'center'
 });
 
-export const contacts = style( {});
+export const contacts = style({});
 
-export const contactsLink = style( [
+export const contactsLink = style([
   typography.numbersRegular,
   {
-    color: vars.colors.grayTransparent,
+    color: vars.colors.textTertiary,
     transition: 'all 0.3s'
   }
 ]);
 
 globalStyle(`${contactsBlock}:hover svg path`, {
   stroke: vars.colors.brownMiddle
-})
+});
 
 globalStyle(`${contactsBlock}:hover ${contactsLink}`, {
   color: vars.colors.brownMiddle
-})
+});
 
 globalStyle(`${contactsBlock} svg`, {
   width: 20,
   height: 20,
   flexShrink: 0,
   marginLeft: 8
-})
+});
 
 globalStyle(`${contactsBlock} svg path`, {
-  stroke: vars.colors.grayTransparent,
+  stroke: vars.colors.textTertiary,
   transition: 'all 0.3s'
-})
+});
 
-export const contactsTitle = style( [
+export const contactsTitle = style([
   typography.caption,
   {
-    color: vars.colors.grayTransparent
+    color: vars.colors.textTertiary
   }
 ]);
 
 globalStyle(`.ant-typography ${contactsTitle}`, {
   marginBottom: 4
-})
+});
 
 globalStyle(`.ant-typography ${contactsLink}`, {
   marginBottom: 0
-})
+});
 
-export const title = style( {
+export const title = style({
   marginBottom: 12
 });
 
-export const periodBlock = style( {
+export const periodBlock = style({
   marginBottom: 16
 });
