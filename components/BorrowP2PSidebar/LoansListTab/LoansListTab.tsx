@@ -10,7 +10,7 @@ import LoansListCard from './LoansListCard';
 
 type LoansListTabProps = {
   loans: P2PLoans;
-  onSelect: (address: string) => void;
+  onSelect: (loan: P2PLoan) => void;
   selected?: string;
 };
 

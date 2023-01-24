@@ -7,12 +7,14 @@ import { P2PLoan } from 'types/p2p';
 import * as styles from './LoansListTab.css';
 import { formatNumber } from '../../../helpers/format';
 import c from 'classnames';
+import { Spin } from 'antd';
+import { spinner } from 'styles/common.css';
 
 const { formatPercentRounded: fpr, formatSol: fs } = formatNumber;
 
 type LoansListCardProps = {
   loan: P2PLoan;
-  onSelect: (address: string) => void;
+  onSelect: (loan: P2PLoan) => void;
   selected?: string;
 };
 
@@ -38,14 +40,18 @@ const LoansListCard = (props: LoansListCardProps) => {
   }, [fetchLoanMetadata]);
 
   if (!nftDetails || isLoadingDetails) {
-    return <div>No nfts</div>;
+    return (
+      <div className={c(spinner, styles.spinnerContainer)}>
+        <Spin />
+      </div>
+    );
   }
 
   return (
     <div
       key={loan.nftMint.toString()}
       className={c(styles.loan.section, { [styles.selected]: selected })}
-      onClick={() => onSelect(loan.nftMint.toString())}
+      onClick={() => onSelect(loan)}
     >
       <div className={styles.loan.image}>
         <HexaBoxContainer>

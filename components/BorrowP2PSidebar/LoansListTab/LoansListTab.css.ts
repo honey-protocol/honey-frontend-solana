@@ -71,3 +71,11 @@ export const loanStats = styleVariants({
 });
 
 export const selected = style([{}]);
+
+export const spinnerContainer = style({
+  padding: '10px',
+  display: 'flex',
+  height: 130,
+  alignItems: 'center',
+  justifyContent: 'center'
+});
