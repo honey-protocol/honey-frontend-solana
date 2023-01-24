@@ -961,7 +961,7 @@ const Markets: NextPage = () => {
             : setReserveHoneyState(0);
 
           toast.success(
-            'Withdraw success',
+            'Borrow success',
             `https://solscan.io/tx/${tx[1][0]}?cluster=${network}`
           );
         } else {
@@ -969,7 +969,7 @@ const Markets: NextPage = () => {
           refetchNfts({});
 
           toast.success(
-            'Withdraw success',
+            'Borrow success',
             `https://solscan.io/tx/${tx[1][0]}?cluster=${network}`
           );
         }
@@ -1023,7 +1023,7 @@ const Markets: NextPage = () => {
             : setReserveHoneyState(0);
 
           toast.success(
-            'Withdraw success',
+            'Repay success',
             `https://solscan.io/tx/${tx[1][0]}?cluster=${network}`
           );
         } else {
@@ -1031,7 +1031,7 @@ const Markets: NextPage = () => {
           refetchNfts({});
 
           toast.success(
-            'Withdraw success',
+            'Repay success',
             `https://solscan.io/tx/${tx[1][0]}?cluster=${network}`
           );
         }
