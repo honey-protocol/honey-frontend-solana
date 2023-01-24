@@ -571,45 +571,44 @@ export async function populateMarketData(
       parsedReserves
     );
   } else {
-    return collection;
-    // const provider = new anchor.AnchorProvider(
-    //   connection,
-    //   dummyWallet,
-    //   anchor.AnchorProvider.defaultOptions()
-    // );
+    const provider = new anchor.AnchorProvider(
+      connection,
+      dummyWallet,
+      anchor.AnchorProvider.defaultOptions()
+    );
 
-    // const honeyClient = await HoneyClient.connect(
-    //   provider,
-    //   collection.id,
-    //   false
-    // );
-    // const honeyMarket = await HoneyMarket.load(
-    //   honeyClient,
-    //   new PublicKey(collection.id)
-    // );
-    // // init reserves
-    // const honeyReserves: HoneyReserve[] = honeyMarket.reserves.map(
-    //   reserve => new HoneyReserve(honeyClient, honeyMarket, reserve.reserve)
-    // );
+    const honeyClient = await HoneyClient.connect(
+      provider,
+      collection.id,
+      false
+    );
+    const honeyMarket = await HoneyMarket.load(
+      honeyClient,
+      new PublicKey(collection.id)
+    );
+    // init reserves
+    const honeyReserves: HoneyReserve[] = honeyMarket.reserves.map(
+      reserve => new HoneyReserve(honeyClient, honeyMarket, reserve.reserve)
+    );
 
-    // const honeyUser = await HoneyUser.load(
-    //   honeyClient,
-    //   honeyMarket,
-    //   // @ts-ignore
-    //   dummyWallet,
-    //   honeyReserves
-    // );
+    const honeyUser = await HoneyUser.load(
+      honeyClient,
+      honeyMarket,
+      // @ts-ignore
+      dummyWallet,
+      honeyReserves
+    );
 
-    // return await handleFormatMarket(
-    //   origin,
-    //   collection,
-    //   currentMarketId,
-    //   liquidations,
-    //   obligations,
-    //   honeyUser,
-    //   honeyClient,
-    //   honeyMarket,
-    //   connection
-    // );
+    return await handleFormatMarket(
+      origin,
+      collection,
+      currentMarketId,
+      liquidations,
+      obligations,
+      honeyUser,
+      honeyClient,
+      honeyMarket,
+      connection
+    );
   }
 }
