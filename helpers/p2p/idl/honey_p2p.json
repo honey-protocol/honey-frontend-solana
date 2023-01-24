@@ -200,6 +200,11 @@
           "isSigner": true
         },
         {
+          "name": "nftMint",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
           "name": "borrowerNftAccount",
           "isMut": true,
           "isSigner": false
@@ -211,6 +216,21 @@
         },
         {
           "name": "tokenProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "associatedTokenProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "rent",
           "isMut": false,
           "isSigner": false
         }
@@ -409,6 +429,208 @@
         }
       ],
       "args": []
+    },
+    {
+      "name": "createCounterOffer",
+      "accounts": [
+        {
+          "name": "creator",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "loanMetadata",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "offerMetadata",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "offerEscrow",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "tokenMint",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "creatorTokenAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "tokenProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "rent",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "bump",
+          "type": {
+            "defined": "CounterOfferBumpSeeds"
+          }
+        },
+        {
+          "name": "interest",
+          "type": "u64"
+        },
+        {
+          "name": "period",
+          "type": "u64"
+        }
+      ]
+    },
+    {
+      "name": "cancelCounterOffer",
+      "accounts": [
+        {
+          "name": "creator",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "loanMetadata",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "offerMetadata",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "offerEscrow",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "creatorTokenAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "tokenProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "bump",
+          "type": {
+            "defined": "CounterOfferBumpSeeds"
+          }
+        }
+      ]
+    },
+    {
+      "name": "acceptCounterOffer",
+      "accounts": [
+        {
+          "name": "borrower",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "creator",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "tokenMint",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "nftMint",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "loanMetadata",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "offerMetadata",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "borrowerTokenAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "lenderNftAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "offerEscrow",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "creatorTokenAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "feeTokenAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "tokenProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "associatedTokenProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "rent",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "bump",
+          "type": {
+            "defined": "CounterOfferBumpSeeds"
+          }
+        }
+      ]
     }
   ],
   "accounts": [
@@ -507,6 +729,30 @@
           }
         ]
       }
+    },
+    {
+      "name": "OfferMetadata",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "creator",
+            "type": "publicKey"
+          },
+          {
+            "name": "creatorTokenAccount",
+            "type": "publicKey"
+          },
+          {
+            "name": "interest",
+            "type": "u64"
+          },
+          {
+            "name": "period",
+            "type": "u64"
+          }
+        ]
+      }
     }
   ],
   "types": [
@@ -521,6 +767,22 @@
           },
           {
             "name": "loanMetadata",
+            "type": "u8"
+          }
+        ]
+      }
+    },
+    {
+      "name": "CounterOfferBumpSeeds",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "offerMetadata",
+            "type": "u8"
+          },
+          {
+            "name": "escrowAuthority",
             "type": "u8"
           }
         ]
@@ -588,8 +850,5 @@
       "name": "InvalidFeeTokenAccount",
       "msg": "invalid fee token account"
     }
-  ],
-  "metadata": {
-    "address": "CdrpDgFwTYSzHzUXSVN2MMXyXwm7ESDAjyFPprNU77p4"
-  }
+  ]
 }
