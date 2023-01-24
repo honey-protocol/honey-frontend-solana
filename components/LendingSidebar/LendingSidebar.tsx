@@ -120,6 +120,7 @@ const LendingSidebar = (props: LendingSidebarProps) => {
                 loan={loan}
                 borrowerTelegram={'sak'}
                 borrowerDiscord={'ad'}
+                onClose={() => {}}
               />
             )}
             {activeTab === 'counter_offer' && (

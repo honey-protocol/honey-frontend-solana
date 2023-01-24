@@ -46,66 +46,67 @@ export const RepayP2PTab = ({ position, onClose }: RepayP2PTabProps) => {
   };
 
   return (
-    <div className={styles.repayP2PTab}>
-      <div className={styles.infoSection}>
-        <BorrowP2PSidebarHeader
-          NFTName={position.name}
-          NFTLogo={position.imageUrl}
-          collectionName={position.collectionName}
-          isVerifiedCollection={position.verified}
-        />
-        <div className={styles.loanInfo.wrapper}>
-          <div className={styles.loanInfo.section}>
-            <div className={styles.loanInfo.title}>{fs(position.request)}</div>
-            <div className={styles.loanInfo.description}>Your loan</div>
-          </div>
-          <div className={styles.loanInfo.section}>
-            <div
-              className={styles.loanInfo.title}
-            >{`${getPositionPeriodFormatted(position.end, Date.now())}`}</div>
-            <div className={styles.loanInfo.description}>Days left</div>
-          </div>
-          <div className={styles.loanInfo.section}>
-            <div className={styles.loanInfo.title}>{fpr(position.ir, 2)}</div>
-            <div className={styles.loanInfo.description}>Interest Rate</div>
-          </div>
-        </div>
+    // <div className={styles.repayP2PTab}>
+    //   <div className={styles.infoSection}>
+    //     <BorrowP2PSidebarHeader
+    //       NFTName={position.name}
+    //       NFTLogo={position.imageUrl}
+    //       collectionName={position.collectionName}
+    //       isVerifiedCollection={position.verified}
+    //     />
+    //     <div className={styles.loanInfo.wrapper}>
+    //       <div className={styles.loanInfo.section}>
+    //         <div className={styles.loanInfo.title}>{fs(position.request)}</div>
+    //         <div className={styles.loanInfo.description}>Your loan</div>
+    //       </div>
+    //       <div className={styles.loanInfo.section}>
+    //         <div
+    //           className={styles.loanInfo.title}
+    //         >{`${getPositionPeriodFormatted(position.end, Date.now())}`}</div>
+    //         <div className={styles.loanInfo.description}>Days left</div>
+    //       </div>
+    //       <div className={styles.loanInfo.section}>
+    //         <div className={styles.loanInfo.title}>{fpr(position.ir, 2)}</div>
+    //         <div className={styles.loanInfo.description}>Interest Rate</div>
+    //       </div>
+    //     </div>
 
-        <div className={styles.userBalance.section}>
-          <div className={styles.userBalance.wrapper}>
-            <div className={styles.userBalance.title}>{`Your SOL balance`}</div>
-            <div className={styles.userBalance.price}>{fs(solBalance)}</div>
-          </div>
-        </div>
+    //     <div className={styles.userBalance.section}>
+    //       <div className={styles.userBalance.wrapper}>
+    //         <div className={styles.userBalance.title}>{`Your SOL balance`}</div>
+    //         <div className={styles.userBalance.price}>{fs(solBalance)}</div>
+    //       </div>
+    //     </div>
 
-        <SectionTitle className={styles.title} title="Period" />
+    //     <SectionTitle className={styles.title} title="Period" />
 
-        <InfoBlock
-          value={<>{getDateFormatted(position.start)}</>}
-          title="Loan start"
-          valueSize="big"
-          footer={<>{getTimeFormatted(position.start)}</>}
-          className={styles.periodBlock}
-        />
+    //     <InfoBlock
+    //       value={<>{getDateFormatted(position.start)}</>}
+    //       title="Loan start"
+    //       valueSize="big"
+    //       footer={<>{getTimeFormatted(position.start)}</>}
+    //       className={styles.periodBlock}
+    //     />
 
-        <InfoBlock
-          value={<>{getDateFormatted(position.end)}</>}
-          title="Loan due"
-          valueSize="big"
-          footer={<>{getTimeFormatted(position.end)}</>}
-          className={styles.periodBlock}
-        />
-      </div>
-      <BorrowP2PSidebarFooter
-        firstButtonTitle={'Close'}
-        secondButtonTitle={'Repay'}
-        isActionButtonDisabled={isDisableCreateButton}
-        onClose={onClose}
-        actionButtonProps={{
-          solAmount: position.request,
-          usdcValue: new Decimal(position.request).mul(solPrice || 0).toNumber()
-        }}
-      />
-    </div>
+    //     <InfoBlock
+    //       value={<>{getDateFormatted(position.end)}</>}
+    //       title="Loan due"
+    //       valueSize="big"
+    //       footer={<>{getTimeFormatted(position.end)}</>}
+    //       className={styles.periodBlock}
+    //     />
+    //   </div>
+    //   <BorrowP2PSidebarFooter
+    //     firstButtonTitle={'Close'}
+    //     secondButtonTitle={'Repay'}
+    //     isActionButtonDisabled={isDisableCreateButton}
+    //     onClose={onClose}
+    //     actionButtonProps={{
+    //       solAmount: position.request,
+    //       usdcValue: new Decimal(position.request).mul(solPrice || 0).toNumber()
+    //     }}
+    //   />
+    // </div>
+    <></>
   );
 };

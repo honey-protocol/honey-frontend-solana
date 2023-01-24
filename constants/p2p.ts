@@ -29,7 +29,7 @@ export const USDC_TOKEN = new PublicKey(
 );
 
 export const LOAN_CURRENCY_TOKEN = new PublicKey(
-  'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v'
+  'So11111111111111111111111111111111111111112'
 );
 
 export const LOAN_CURRENCY_LAMPORTS =
@@ -43,15 +43,7 @@ export const HONEY_P2P_PROGRAM = new PublicKey(
   'CdrpDgFwTYSzHzUXSVN2MMXyXwm7ESDAjyFPprNU77p4' // updated program id for fixed double borrow request
 );
 
-export type FeaturedCollection = {
-  image: string;
-  title: string;
-  tag: string;
-  totalListed?: string;
-  verifiedCreator: string;
-};
-
-const FEATURED_COLLECTIONS: P2PCollection[] = [
+export const FEATURED_COLLECTIONS: P2PCollection[] = [
   {
     name: 'Honey Genesis',
     imageUrl: 'https://i.imgur.com/aDEvZgO.png',
@@ -75,5 +67,3 @@ const FEATURED_COLLECTIONS: P2PCollection[] = [
     verifiedCreator: '6vRx1iVZo3xfrBHdpvuwArL2jucVj9j9nLpd2VUTTGMG'
   }
 ];
-
-export default FEATURED_COLLECTIONS;
