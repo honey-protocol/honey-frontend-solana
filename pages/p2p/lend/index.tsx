@@ -95,9 +95,14 @@ const rulesFilters: DefaultOptionType[] = [
 export const getLoans = async (
   walletAddress: string,
   connection: Connection,
-  wallet: ConnectedWallet
+  wallet: ConnectedWallet | null
 ) => {
-  const program = await getProgram(connection, wallet as any);
+  const readOnlyKeypair = new Keypair();
+  const readonlyWallet = new NodeWallet(readOnlyKeypair);
+  const program = await getProgram(
+    connection,
+    (wallet as any) ?? readonlyWallet
+  );
   let loansData = await program.account.loanMetadata.all();
 
   const loans: P2PLoans = loansData.map(loan =>
@@ -120,17 +125,17 @@ const Lending: NextPage = () => {
   const [isLoadingLoans, setIsLoadingLoans] = useState<boolean>(true);
 
   useEffect(() => {
-    if (!wallet) return;
     const getAppliedAndActiveLoans = async () => {
       try {
         setIsLoadingLoans(true);
         const loans = await getLoans(
-          wallet?.publicKey.toString(),
+          wallet?.publicKey.toString() ?? '',
           connection,
           wallet
         );
         setDisplayedLoans(loans ?? []);
       } catch (error) {
+        console.log(error);
       } finally {
         setIsLoadingLoans(false);
       }
