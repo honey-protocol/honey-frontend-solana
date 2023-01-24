@@ -4,7 +4,7 @@ import LayoutRedesign from '../../../components/LayoutRedesign/LayoutRedesign';
 import HoneyContent from '../../../components/HoneyContent/HoneyContent';
 import HoneySider from '../../../components/HoneySider/HoneySider';
 import LendingSidebar from '../../../components/LendingSidebar/LendingSidebar';
-import { Typography } from 'antd';
+import { Spin, Typography } from 'antd';
 import { pageDescription, pageTitle } from 'styles/common.css';
 import { LendFormProps } from '../../../components/LendForm/types';
 import { FiltersSidebar } from '../../../components/FiltersSidebar/FiltersSidebar';
@@ -23,7 +23,8 @@ import { DefaultOptionType } from 'rc-select/es/Select';
 import { FeaturedCategory } from '../../../components/FeaturedCategories/types';
 import { FeaturedCategories } from '../../../components/FeaturedCategories/FeaturedCategories';
 import { getProgram } from 'helpers/p2p/getProgram';
-import { Connection } from '@solana/web3.js';
+import { Connection, Keypair } from '@solana/web3.js';
+import c from 'classnames';
 import {
   ConnectedWallet,
   useConnectedWallet,
@@ -33,7 +34,9 @@ import {
   convertLoanResultToLoanObj,
   getDiscoverScreenLoanOrders
 } from 'helpers/p2p/filterLoans';
-import FEATURED_COLLECTIONS from 'constants/p2p';
+import { FEATURED_COLLECTIONS } from 'constants/p2p';
+import { spinner, pageLoadingSpinner } from 'styles/common.css';
+import NodeWallet from '@project-serum/anchor/dist/cjs/nodewallet';
 
 const mockData = {
   name: 'Doodle #1290',
@@ -111,19 +114,26 @@ const Lending: NextPage = () => {
   const [isMobileSidebarVisible, setShowMobileSidebar] = useState(false);
   const [pageMode, setPageMode] = useState<PageMode>(PageMode.INITIAL_STATE);
   const [selectedCategory, setSelectedCategory] = useState<FeaturedCategory>();
-  const [selected, setSelected] = useState<string | undefined>();
+  const [selectedCollection, setSelectedCollection] = useState<P2PCollection>();
   const [selectedLoan, setSelectedLoan] = useState<P2PLoan>();
   const [displayedLoans, setDisplayedLoans] = useState<P2PLoans>([]);
+  const [isLoadingLoans, setIsLoadingLoans] = useState<boolean>(true);
 
   useEffect(() => {
     if (!wallet) return;
     const getAppliedAndActiveLoans = async () => {
-      const loans = await getLoans(
-        wallet?.publicKey.toString(),
-        connection,
-        wallet
-      );
-      setDisplayedLoans(loans ?? []);
+      try {
+        setIsLoadingLoans(true);
+        const loans = await getLoans(
+          wallet?.publicKey.toString(),
+          connection,
+          wallet
+        );
+        setDisplayedLoans(loans ?? []);
+      } catch (error) {
+      } finally {
+        setIsLoadingLoans(false);
+      }
     };
     getAppliedAndActiveLoans();
   }, [wallet, connection]);
@@ -149,7 +159,10 @@ const Lending: NextPage = () => {
   };
 
   const handleCollectionSelect = (id: string) => {
-    setSelected(id);
+    const collection = FEATURED_COLLECTIONS.find(
+      collection => collection.id === id
+    );
+    setSelectedCollection(collection);
     setPageMode(PageMode.COLLECTION_SELECTED);
   };
 
@@ -189,26 +202,32 @@ const Lending: NextPage = () => {
     }
   };
 
+  console.log({ selectedCategory });
+
   const cards = (pageMode: PageMode) => {
     switch (pageMode) {
       case PageMode.INITIAL_STATE:
         return (
           <CategoryCards
             onSelect={handleCollectionSelect}
-            selected={selected}
+            selected={selectedCollection}
             data={FEATURED_COLLECTIONS}
           />
         );
       case PageMode.CATEGORY_SELECTED:
         return (
           <CollectionsCards
-            onSelect={handleCollectionSelect}
-            selected={selected}
+            onCollectionSelect={handleCollectionSelect}
+            selectedCollectionId={selectedCollection?.id}
             data={FEATURED_COLLECTIONS}
           />
         );
       case PageMode.COLLECTION_SELECTED:
-        return (
+        return isLoadingLoans ? (
+          <div className={c(spinner, pageLoadingSpinner)}>
+            <Spin size="large" />
+          </div>
+        ) : (
           <P2PLendingMainList
             data={displayedLoans}
             selected={selectedLoan}
@@ -240,16 +259,16 @@ const Lending: NextPage = () => {
         return (
           <P2PPageTitle
             onGetBack={() => setPageMode(PageMode.INITIAL_STATE)}
-            name={mockData.name}
-            img={mockData.imageUrl}
+            name={selectedCategory?.title ?? ''}
+            img={selectedCategory?.icon}
           />
         );
       case PageMode.COLLECTION_SELECTED:
         return (
           <P2PPageTitle
             onGetBack={() => setPageMode(PageMode.INITIAL_STATE)}
-            name={mockData.name}
-            img={mockData.imageUrl}
+            name={selectedCollection?.name ?? ''}
+            img={selectedCollection?.imageUrl}
           />
         );
     }

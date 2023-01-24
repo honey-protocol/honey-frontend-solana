@@ -62,7 +62,7 @@ export const CategoryCards: FC<CategoryCardProps> = ({
         {data &&
           data.map((items, index) => (
             <CollectionCard
-              isActive={selected === items.id}
+              isActive={selected?.id === items.id}
               onSelect={onSelect}
               key={index}
               {...items}

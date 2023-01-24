@@ -12,8 +12,8 @@ import {
 
 export const CollectionsCards: FC<CollectionsCardsProps> = ({
   data,
-  selected,
-  onSelect
+  selectedCollectionId,
+  onCollectionSelect
 }) => {
   const [collectionsStatusType, setCollectionsStatusType] =
     useState<statusType>('verified');
@@ -63,8 +63,8 @@ export const CollectionsCards: FC<CollectionsCardsProps> = ({
         {data &&
           data.map((items, index) => (
             <CollectionCard
-              isActive={selected === items.id}
-              onSelect={onSelect}
+              isActive={selectedCollectionId === items.id}
+              onSelect={onCollectionSelect}
               key={index}
               {...items}
             />

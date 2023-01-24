@@ -5,6 +5,6 @@ export type categorySortType = 'top' | 'trending' | 'newcomers';
 
 export interface CollectionsCardsProps {
   data: P2PCollection[];
-  onSelect: (id: string) => void;
-  selected: string | undefined;
+  onCollectionSelect: (id: string) => void;
+  selectedCollectionId: string | undefined;
 }

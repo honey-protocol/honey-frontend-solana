@@ -6,5 +6,5 @@ export type collectionsSortType = 'collections' | 'assets';
 export interface CategoryCardProps {
   data: P2PCollection[];
   onSelect: (id: string) => void;
-  selected: string | undefined;
+  selected: P2PCollection | undefined;
 }
