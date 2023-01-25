@@ -70,7 +70,8 @@ module.exports = (phase, { defaultConfig }) => {
           'i.seadn.io',
           'ipfs.vvdny.io',
           'storage.googleapis.com',
-          'shdw-drive.genesysgo.net'
+          'shdw-drive.genesysgo.net',
+          'cdn.pesky-penguins.com'
         ]
       }
     };
@@ -112,7 +113,8 @@ module.exports = (phase, { defaultConfig }) => {
           'i.seadn.io',
           'ipfs.vvdny.io',
           'storage.googleapis.com',
-          'shdw-drive.genesysgo.net'
+          'shdw-drive.genesysgo.net',
+          'cdn.pesky-penguins.com'
         ]
       }
     };

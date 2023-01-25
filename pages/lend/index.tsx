@@ -30,14 +30,15 @@ import {
   useHoney,
   fetchAllMarkets,
   MarketBundle,
-  waitForConfirmation
+  waitForConfirmation,
+  fetchReservePrice,
+  TReserve
 } from '@honey-finance/sdk';
 import { BnToDecimal, ConfigureSDK } from '../../helpers/loanHelpers/index';
-import { LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js';
+import { Connection, LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js';
 import BN from 'bn.js';
 import {
   calcNFT,
-  getInterestRate,
   fetchSolPrice,
   populateMarketData
 } from 'helpers/loanHelpers/userCollection';
@@ -52,7 +53,6 @@ import { HONEY_GENESIS_MARKET_ID } from '../../helpers/marketHelpers/index';
 import { marketCollections } from '../../helpers/marketHelpers';
 import { generateMockHistoryData } from '../../helpers/chartUtils';
 import { renderMarket, renderMarketImageByName } from 'helpers/marketHelpers';
-import { calculateUserDeposits } from 'helpers/loanHelpers/userCollection';
 // TODO: fetch based on config
 const network = 'mainnet-beta';
 
@@ -68,6 +68,7 @@ const Lend: NextPage = () => {
   const [marketData, setMarketData] = useState<MarketBundle[]>([]);
   const isMock = true;
   const [isMobileSidebarVisible, setShowMobileSidebar] = useState(false);
+  const [activeInterestRate, setActiveInterestRate] = useState(0);
   const [tableData, setTableData] = useState<LendTableRow[]>([]);
   const [tableDataFiltered, setTableDataFiltered] = useState<LendTableRow[]>(
     []
@@ -168,41 +169,28 @@ const Lend: NextPage = () => {
   }, [walletPK]);
   //  ************* END FETCH USER BALANCE *************
 
-  //  ************* START CALC. USER DEPOSITS *************
-  // calculate user deposits
-  // async function calculateTotalUserDeposits(
-  //   marketReserveInfo: any,
-  //   honeyUser: any
-  // ) {
-  //   const totalUserDeposits = await calculateUserDeposits(
-  //     marketReserveInfo,
-  //     honeyUser
-  //   );
-  //   setUserTotalDeposits(Number(totalUserDeposits));
-  // }
-
-  // useEffect(() => {
-  //   if (marketReserveInfo && honeyUser)
-  //     calculateTotalUserDeposits(marketReserveInfo, honeyUser);
-  // });
-  //  ************* END CALC. USER DEPOSITS *************
-
   //  ************* START FETCH CURRENT SOL PRICE *************
   // fetches the current sol price
-  async function fetchSolValue(reserves: any, connection: any) {
-    const slPrice = await fetchSolPrice(reserves, connection);
+  async function fetchSolValue(reserves: TReserve, connection: Connection) {
+    const slPrice = await fetchReservePrice(reserves, connection);
     setFetchedSolPrice(slPrice);
   }
 
+  /**
+   * @description sets state of marketValue by parsing lamports outstanding debt amount to SOL
+   * @params none, requires parsedReserves
+   * @returns updates marketValue
+   */
   useEffect(() => {
-    if (parsedReserves && sdkConfig.saberHqConnection)
-      fetchSolValue(parsedReserves, sdkConfig.saberHqConnection);
-  }, [parsedReserves, sdkConfig.saberHqConnection]);
+    if (parsedReserves) {
+      fetchSolValue(parsedReserves[0], sdkConfig.saberHqConnection);
+    }
+  }, [parsedReserves]);
   //  ************* END FETCH CURRENT SOL PRICE *************
 
   /**
-   * @description deposits 1 sol
-   * @params optional value from user input; amount of SOL
+   * @description deposits X amount of SOL from market
+   * @params value: being amount to withdraw | toast: notifications
    * @returns succes | failure
    */
   async function executeDeposit(value?: number, toast?: ToastProps['toast']) {
@@ -259,8 +247,8 @@ const Lend: NextPage = () => {
     }
   }
   /**
-   * @description withdraws 1 sol
-   * @params optional value from user input; amount of SOL
+   * @description withdraws X amount of SOL from market
+   * @params value: being amount to withdraw | toast: notifications
    * @returns succes | failure
    */
   async function executeWithdraw(value: number, toast?: ToastProps['toast']) {
@@ -362,6 +350,7 @@ const Lend: NextPage = () => {
               const honeyMarket = collection.marketData[0].market;
               const honeyClient = collection.marketData[0].client;
               const parsedReserves = collection.marketData[0].reserves[0].data;
+              const mData = collection.marketData[0].reserves[0];
 
               await populateMarketData(
                 'LEND',
@@ -375,17 +364,14 @@ const Lend: NextPage = () => {
                 honeyClient,
                 honeyMarket,
                 honeyUser,
-                parsedReserves
+                parsedReserves,
+                mData
               );
 
-              collection.rate =
-                ((await getInterestRate(
-                  collection.utilizationRate,
-                  collection.id
-                )) || 0) * collection.utilizationRate;
-
               collection.stats = getPositionData();
+
               if (currentMarketId == collection.id) {
+                setActiveInterestRate(collection.rate);
                 setActiveMarketSupplied(collection.value);
                 setActiveMarketAvailable(collection.available);
                 setNftPrice(RoundHalfDown(Number(collection.nftPrice)));
@@ -393,34 +379,9 @@ const Lend: NextPage = () => {
                   ? setUserTotalDeposits(collection.userTotalDeposits)
                   : setUserTotalDeposits(0);
               }
-
-              return collection;
-            } else {
-              await populateMarketData(
-                'LEND',
-                collection,
-                sdkConfig.saberHqConnection,
-                sdkConfig.sdkWallet,
-                currentMarketId,
-                false,
-                [],
-                false
-              );
-
-              collection.rate =
-                ((await getInterestRate(
-                  collection.utilizationRate,
-                  collection.id
-                )) || 0) * collection.utilizationRate;
-
-              collection.stats = getPositionData();
-
-              if (currentMarketId == collection.id) {
-                setActiveMarketSupplied(collection.value);
-                setActiveMarketAvailable(collection.available);
-              }
               return collection;
             }
+            return collection;
           })
         );
       }
@@ -539,7 +500,9 @@ const Lend: NextPage = () => {
         sorter: (a: any = 0, b: any = 0) => a.rate - b.rate,
         render: (rate: number, market: any) => {
           return (
-            <div className={c(style.rateCell, style.lendRate)}>{fp(rate)}</div>
+            <div className={c(style.rateCell, style.lendRate)}>
+              {fp(activeInterestRate)}
+            </div>
           );
         }
       },

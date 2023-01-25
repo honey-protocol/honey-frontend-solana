@@ -176,7 +176,7 @@ const setObligations = async (
         highestBid: obligation.highest_bid
       };
     })
-    .filter((obl: any) => obl.debt !== 0);
+    .filter((obl: any) => obl.debt.toString() != 0);
 };
 /**
  * @description calculates the risk of a market
@@ -190,88 +190,22 @@ const calculateRisk = async (
   collection: string
 ) => {
   if (!obligations) return 0;
-  let filtered = await obligations.filter((obl: any) => obl.debt !== 0);
-  let sumOfDebt = await filtered.reduce((acc: number, obligation: any) => {
-    return acc + obligation.debt;
-  }, 0);
+  let filtered = await obligations.filter(
+    (obl: any) => obl.debt.toString() != 0
+  );
+
+  let sumOfDebt = await filtered.reduce((acc: BN, obligation: any) => {
+    return new BN(acc.add(obligation.debt));
+  }, new BN(0));
 
   if (type === true) {
     return sumOfDebt;
   } else {
-    return sumOfDebt / filtered.length / nftPrice;
+    const sum = (sumOfDebt / filtered.length / nftPrice) * 100;
+    console.log('this is sum', sum);
+    return sum;
   }
 };
-/**
- * @description calculates the debt of all the obligations
- * @params obligation array
- * @returns debt of market of all obligations
- */
-async function calculateTotalDebt(obligations: any) {
-  if (obligations.length) {
-    const sumOfMarketDebt = await obligations.reduce(
-      (acc: number, obl: any) => {
-        return acc + obl.debt;
-      },
-      0
-    );
-    return sumOfMarketDebt;
-  }
-}
-// calculate total market debt for collection
-// async function calculateTotalMarketDebt(parsedReserve: TReserve) {
-//   return RoundHalfDown(
-//     parsedReserve.reserveState.outstandingDebt
-//       .div(new BN(10 ** 15))
-//       .toNumber() / BONK_DECIMAL_DIVIDER
-//   );
-// }
-// sets total market debt, total market deposits, decodes parsed reserve
-// export async function decodeReserve(
-//   honeyMarket: HoneyMarket,
-//   honeyClient: HoneyClient,
-//   parsedReserves: TReserve
-// ) {
-//   try {
-//     // set reserve data
-//     const reserveInfoList = honeyMarket.reserves;
-//     let parsedReserve: TReserve = parsedReserves;
-//     let totalMarketDeposits = 0;
-
-//     for (const reserve of reserveInfoList) {
-//       if (reserve.reserve.equals(PublicKey.default)) {
-//         continue;
-//       }
-
-//       const { ...data } = await HoneyReserve.decodeReserve(
-//         honeyClient,
-//         reserve.reserve
-//       );
-
-//       parsedReserve = data;
-//       break;
-//     }
-
-//     if (parsedReserve !== undefined) {
-//       totalMarketDeposits = BnToDecimal(
-//         parsedReserve.reserveState.totalDeposits,
-//         9,
-//         2
-//       );
-//     }
-
-//     const totalMarketDebt = await calculateTotalMarketDebt(parsedReserve);
-//     return {
-//       totalMarketDebt,
-//       totalMarketDeposits,
-//       parsedReserve
-//     };
-//   } catch (error) {
-//     return {
-//       totalMarketDebt: 0,
-//       totalMarketDeposits: 0
-//     };
-//   }
-// }
 
 async function handleFormatMarket(
   origin: string,
@@ -313,7 +247,6 @@ async function handleFormatMarket(
     'mainnet-beta'
   );
 
-  // const ltv = sumOfTotalDebt.div(new BN(nftPrice));
   const tvl = new BN(nftPrice * (await fetchTVL(obligations)));
   const ltv = allowanceAndDebt.ltv.toString();
 
@@ -322,8 +255,7 @@ async function handleFormatMarket(
   // if request comes from liquidation page we need the collection object to be different
   if (origin === 'LIQUIDATIONS') {
     collection.name;
-
-    collection.allowance = allowanceAndDebt.allowance.toString();
+    collection.allowance = allowanceAndDebt.allowance;
     collection.userDebt = allowanceAndDebt.debt.toString();
     collection.available = totalMarketDeposits;
     collection.value = totalMarketValue;
@@ -336,7 +268,7 @@ async function handleFormatMarket(
     collection.ltv = ltv;
     collection.tvl = tvl;
 
-    collection.risk = obligations
+    collection.risk = obligations.length
       ? await calculateRisk(obligations, collection.nftPrice, false, collection)
       : 0;
     collection.totalDebt = totalMarketDebt;
@@ -354,9 +286,7 @@ async function handleFormatMarket(
 
     // request comes from borrow or lend - same base collection object
   } else if (origin === 'BORROW') {
-    collection.allowance = allowanceAndDebt
-      ? allowanceAndDebt.allowance.toString()
-      : 0;
+    collection.allowance = allowanceAndDebt ? allowanceAndDebt.allowance : 0;
     collection.userDebt = allowanceAndDebt
       ? allowanceAndDebt.debt.toString()
       : 0;
@@ -365,6 +295,7 @@ async function handleFormatMarket(
     collection.value = totalMarketValue;
     collection.connection = connection;
     collection.nftPrice = nftPrice;
+    collection.rate = interestRate;
     // TODO: fix util rate based off object coming in
     collection.utilizationRate =
       honeyUser.market.reserveList[0].config.utilizationRate1;
@@ -372,9 +303,7 @@ async function handleFormatMarket(
     collection.name;
     return collection;
   } else if (origin === 'LEND') {
-    collection.allowance = allowanceAndDebt
-      ? allowanceAndDebt.allowance.toString()
-      : 0;
+    collection.allowance = allowanceAndDebt ? allowanceAndDebt.allowance : 0;
     collection.userDebt = allowanceAndDebt
       ? allowanceAndDebt.debt.toString()
       : 0;
@@ -385,8 +314,8 @@ async function handleFormatMarket(
     collection.nftPrice = nftPrice;
     collection.userTotalDeposits = userTotalDeposits.toString();
     // TODO: fix util rate based off object coming in
-    collection.utilizationRate =
-      honeyUser.market.reserveList[0].config.utilizationRate1;
+    collection.utilizationRate = utilization;
+    collection.rate = interestRate * utilization;
     collection.user = honeyUser;
     collection.name;
     return collection;

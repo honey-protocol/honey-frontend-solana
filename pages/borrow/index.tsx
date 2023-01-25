@@ -252,7 +252,11 @@ const Markets: NextPage = () => {
   const healthPercent =
     ((nftPrice - userDebt / COLLATERAL_FACTOR) / nftPrice) * 100;
 
-  // inits the markets with relevant data
+  /**
+   * @description inits each market with their data | happening in userCollection.tsx
+   * @params none
+   * @returns market object filled with data
+   */
   useEffect(() => {
     if (sdkConfig.saberHqConnection) {
       function getData() {
@@ -301,9 +305,7 @@ const Markets: NextPage = () => {
                 // @ts-ignore
                 setUserDebt(collection.userDebt);
                 setLoanToValue(Number(collection.ltv));
-                console.log('@@-- collection', collection);
               }
-
               return collection;
             }
             return collection;
@@ -644,7 +646,7 @@ const Markets: NextPage = () => {
       width: columnsWidth[2],
       render: allowance => (
         <div className={style.expandedRowCell}>
-          <InfoBlock title={'Allowance:'} value={fsn(userAllowance)} />
+          <InfoBlock title={'Allowance:'} value={fsn(allowance)} />
         </div>
       )
     },

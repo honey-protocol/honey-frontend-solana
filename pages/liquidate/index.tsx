@@ -36,12 +36,13 @@ import {
   MarketBundle,
   HoneyMarket,
   HoneyUser,
-  HoneyClient
+  HoneyClient,
+  fetchReservePrice,
+  TReserve
 } from '@honey-finance/sdk';
 import { ConfigureSDK } from 'helpers/loanHelpers';
 import { useConnectedWallet } from '@saberhq/use-solana';
-import { LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js';
-import { calcNFT, fetchSolPrice } from 'helpers/loanHelpers/userCollection';
+import { Connection, LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js';
 import {
   HONEY_PROGRAM_ID,
   HONEY_GENESIS_MARKET_ID,
@@ -252,41 +253,14 @@ const Liquidate: NextPage = () => {
     document.body.classList.remove('disable-scroll');
   };
 
-  //  ************* START CALC. NFT PRICE *************
-  /**
-   * @description
-   * @params
-   * @returns
-   */
-  // async function calculateNFTPrice() {
-  //   if (marketReserveInfo && parsedReserves && honeyMarket) {
-  //     let nftPrice = await calcNFT(
-  //       marketReserveInfo,
-  //       parsedReserves[0],
-  //       honeyMarket,
-  //       sdkConfig.saberHqConnection
-  //     );
-  //     setNftPrice(Number(nftPrice));
-  //   }
-  // }
-  /**
-   * @description
-   * @params
-   * @returns
-   */
-  // useEffect(() => {
-  //   calculateNFTPrice();
-  // }, [marketReserveInfo, parsedReserves]);
-  //  ************* END CALC. NFT PRICE *************
-
   //  ************* START FETCH SOL PRICE *************
   /**
    * @description
    * @params
    * @returns
    */
-  async function fetchSolValue(reserves: any, connection: any) {
-    const slPrice = await fetchSolPrice(reserves, connection);
+  async function fetchSolValue(reserves: TReserve, connection: Connection) {
+    const slPrice = await fetchReservePrice(reserves, connection);
     setFetchedSolPrice(slPrice);
   }
   /**
@@ -295,8 +269,8 @@ const Liquidate: NextPage = () => {
    * @returns
    */
   useEffect(() => {
-    if (parsedReserves && sdkConfig.saberHqConnection) {
-      fetchSolValue(parsedReserves, sdkConfig.saberHqConnection);
+    if (parsedReserves) {
+      fetchSolValue(parsedReserves[0], sdkConfig.saberHqConnection);
     }
   }, [parsedReserves]);
   //  ************* END FETCH SOL PRICE *************
@@ -444,50 +418,7 @@ const Liquidate: NextPage = () => {
               const honeyMarket: HoneyMarket = collection.marketData[0].market;
               const honeyClient: HoneyClient = collection.marketData[0].client;
               const parsedReserves = collection.marketData[0].reserves[0].data;
-              const pR = collection.marketData[0].reserves[0];
-
-              const fetchMarketOutcome = await HoneyMarket.fetchMarket(
-                honeyClient,
-                honeyMarket.address
-              );
-
-              const fetchFloorPriceOutcome =
-                await honeyMarket.fetchNFTFloorPrice('mainnet-beta');
-
-              const fetchReserveData = await pR.fetchReserveValue(
-                'mainnet-beta'
-              );
-
-              // console.log(
-              //   '@@-- state object',
-              //   fetchMarketOutcome[2][0].state.outstandingDebt /
-              //     LAMPORTS_PER_SOL
-              // );
-              // const calc = fetchMarketOutcome[2][0].state.outstandingDebt
-              //   .div(new BN(10 ** 9))
-              //   .toNumber();
-              // console.log('xyz calc', calc / LAMPORTS_PER_SOL);
-
-              // const outstandingDebt =
-              //   fetchMarketOutcome[2][0].state.outstandingDebt.toString();
-
-              // const totalDeposits =
-              //   fetchMarketOutcome[2][0].state.totalDeposits.toString();
-
-              // console.log('@@-- fetch outstanding debt', outstandingDebt);
-
-              // console.log('@@-- fetch total deposits', totalDeposits);
-
-              // console.log('@@-- fetch market outcome', fetchMarketOutcome);
-              // console.log(
-              //   '@@-- fetch floor price outcome',
-              //   fetchFloorPriceOutcome.toNumber()
-              // );
-
-              // console.log(
-              //   '@@-- fetch reserve data outcome',
-              //   fetchReserveData.toString()
-              // );
+              const mData = collection.marketData[0].reserves[0];
 
               await populateMarketData(
                 'LIQUIDATIONS',
@@ -501,31 +432,16 @@ const Liquidate: NextPage = () => {
                 honeyClient,
                 honeyMarket,
                 honeyUser,
-                parsedReserves
+                parsedReserves,
+                mData
               );
+              console.log('@@-- risk', collection);
 
               if (currentMarketId === collection.id)
                 setNftPrice(RoundHalfDown(Number(collection.nftPrice)));
               return collection;
-            } else {
-              marketCollections.map(async collection => {
-                await populateMarketData(
-                  'LIQUIDATIONS',
-                  collection,
-                  sdkConfig.saberHqConnection,
-                  sdkConfig.sdkWallet,
-                  currentMarketId,
-                  true,
-                  [],
-                  true,
-                  honeyClient,
-                  honeyMarket,
-                  honeyUser,
-                  parsedReserves
-                );
-              });
-              return collection;
             }
+            return collection;
           })
         );
       }
@@ -658,8 +574,8 @@ const Liquidate: NextPage = () => {
         },
         dataIndex: 'risk',
         sorter: (a, b) => a.risk! - b.risk!,
-        render: (rate: number, market: any) => {
-          return <div className={style.rateCell}>{fp(market.risk * 100)}</div>;
+        render: (risk: number, market: any) => {
+          return <div className={style.rateCell}>{fp(risk)}</div>;
         }
       },
       {
@@ -909,6 +825,7 @@ const Liquidate: NextPage = () => {
                 setExpandedRowKeys(expanded ? [row.key] : []),
               expandedRowKeys,
               expandedRowRender: record => {
+                console.log('@@-- record', record);
                 return (
                   <div
                     className={style.expandSection}
