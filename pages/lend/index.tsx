@@ -70,6 +70,7 @@ const Lend: NextPage = () => {
   const [isMobileSidebarVisible, setShowMobileSidebar] = useState(false);
   const [activeInterestRate, setActiveInterestRate] = useState(0);
   const [tableData, setTableData] = useState<LendTableRow[]>([]);
+  const [fetchedDataObject, setFetchedDataObject] = useState<MarketBundle>();
   const [tableDataFiltered, setTableDataFiltered] = useState<LendTableRow[]>(
     []
   );
@@ -329,9 +330,9 @@ const Lend: NextPage = () => {
   };
 
   /**
-   * @description
-   * @params
-   * @returns
+   * @description inits each market with their data | happening in userCollection.tsx
+   * @params none
+   * @returns market object filled with data
    */
   useEffect(() => {
     if (sdkConfig.saberHqConnection) {
@@ -375,6 +376,7 @@ const Lend: NextPage = () => {
                 setActiveMarketSupplied(collection.value);
                 setActiveMarketAvailable(collection.available);
                 setNftPrice(RoundHalfDown(Number(collection.nftPrice)));
+                setFetchedDataObject(collection.marketData[0]);
                 collection.userTotalDeposits
                   ? setUserTotalDeposits(collection.userTotalDeposits)
                   : setUserTotalDeposits(0);

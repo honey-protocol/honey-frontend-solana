@@ -207,6 +207,121 @@ const calculateRisk = async (
   }
 };
 
+async function configureCollectionObjecet(
+  origin: String,
+  collection: any,
+  dataObject: {
+    allowance: any;
+    userDebt: any;
+    ltv: any;
+    tvl: BN;
+    totalMarketDeposits: any;
+    totalMarketValue: any;
+    connection: any;
+    honeyUser: HoneyUser;
+    nftPrice: any;
+    obligations: any;
+    totalMarketDebt: any;
+    currentMarketId: string;
+    utilization: any;
+    interestRate: any;
+    userTotalDeposits: any;
+  }
+) {
+  const {
+    allowance,
+    userDebt,
+    ltv,
+    tvl,
+    totalMarketDeposits,
+    totalMarketValue,
+    connection,
+    honeyUser,
+    nftPrice,
+    obligations,
+    totalMarketDebt,
+    currentMarketId,
+    utilization,
+    interestRate,
+    userTotalDeposits
+  } = dataObject;
+  switch (origin) {
+    case 'LIQUIDATIONS':
+      console.log('Inside liquidations');
+      collection.name;
+      collection.allowance = allowance;
+      collection.userDebt = userDebt.toString();
+      collection.available = totalMarketDeposits;
+      collection.value = totalMarketValue;
+      collection.connection = connection;
+      collection.user = honeyUser;
+      collection.nftPrice = nftPrice;
+      collection.ltv = ltv;
+      collection.tvl = tvl;
+      collection.totalDebt = totalMarketDebt;
+
+      collection.utilizationRate =
+        honeyUser.market.reserveList[0].config.utilizationRate1;
+
+      collection.risk = obligations.length
+        ? await calculateRisk(
+            obligations,
+            collection.nftPrice,
+            false,
+            collection
+          )
+        : 0;
+
+      collection.openPositions = obligations
+        ? await setObligations(
+            obligations,
+            currentMarketId,
+            collection.nftPrice
+          )
+        : [];
+      // if there are open positions in the collections, calculate until liquidation value
+      if (collection.openPositions) {
+        collection.openPositions.map((openPos: any) => {
+          return (openPos.untilLiquidation =
+            // TODO: use collateral factor from SDK config object
+            openPos.estimatedValue - openPos.debt / COLLATERAL_FACTOR);
+        });
+      }
+      return collection;
+    case 'BORROW':
+      console.log('Inside Borrow');
+      collection.allowance = allowance;
+      collection.userDebt = userDebt.toString();
+      collection.ltv = ltv.toString();
+      collection.available = totalMarketDeposits;
+      collection.value = totalMarketValue;
+      collection.connection = connection;
+      collection.nftPrice = nftPrice;
+      collection.rate = interestRate;
+      collection.user = honeyUser;
+      // collection.name;
+      collection.utilizationRate =
+        honeyUser.market.reserveList[0].config.utilizationRate1;
+      return collection;
+    case 'LEND':
+      console.log('Inside Lend');
+      collection.allowance = allowance;
+      collection.userDebt = userDebt.toString();
+      collection.ltv = ltv.toString();
+      collection.available = totalMarketDeposits;
+      collection.value = totalMarketValue;
+      collection.connection = connection;
+      collection.nftPrice = nftPrice;
+      collection.userTotalDeposits = userTotalDeposits.toString();
+      // TODO: fix util rate based off object coming in
+      collection.utilizationRate = utilization;
+      collection.rate = interestRate * utilization;
+      collection.user = honeyUser;
+      collection.name;
+      return collection;
+  }
+}
+
 async function handleFormatMarket(
   origin: string,
   collection: any,
@@ -251,6 +366,24 @@ async function handleFormatMarket(
   const ltv = allowanceAndDebt.ltv.toString();
 
   const userTotalDeposits = await honeyUser.fetchUserDeposits(0);
+
+  return await configureCollectionObjecet(origin, collection, {
+    allowance: allowanceAndDebt.allowance,
+    userDebt: allowanceAndDebt.debt,
+    ltv: allowanceAndDebt.ltv,
+    tvl,
+    totalMarketDeposits,
+    totalMarketValue,
+    connection,
+    honeyUser,
+    nftPrice,
+    obligations,
+    totalMarketDebt,
+    currentMarketId,
+    utilization,
+    interestRate,
+    userTotalDeposits
+  });
 
   // if request comes from liquidation page we need the collection object to be different
   if (origin === 'LIQUIDATIONS') {

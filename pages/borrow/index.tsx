@@ -164,6 +164,7 @@ const Markets: NextPage = () => {
   const [launchAreaWidth, setLaunchAreaWidth] = useState<number>(840);
   const [fetchedSolPrice, setFetchedSolPrice] = useState(0);
   const [activeInterestRate, setActiveInterestRate] = useState(0);
+  const [fetchedDataObject, setFetchedDataObject] = useState<MarketBundle>();
   // interface related constants
   const { width: windowWidth } = useWindowSize();
   const [tableData, setTableData] = useState<MarketTableRow[]>([]);
@@ -305,6 +306,7 @@ const Markets: NextPage = () => {
                 // @ts-ignore
                 setUserDebt(collection.userDebt);
                 setLoanToValue(Number(collection.ltv));
+                setFetchedDataObject(collection.marketData[0]);
               }
               return collection;
             }
@@ -769,7 +771,7 @@ const Markets: NextPage = () => {
     try {
       if (!mintID) return;
       toast.processing();
-      // loop through collections -> verified creator is used for validation
+      // TODO: set verified creator of active market along with currentMarketId
       marketCollections.map(async collection => {
         if (collection.verifiedCreator === creator) {
           const metadata = await Metadata.findByMint(
@@ -792,13 +794,26 @@ const Markets: NextPage = () => {
               confirmationHash
             );
 
-            await refreshPositions();
-            refetchNfts({});
+            if (collection.marketData) {
+              await collection.marketData[0].reserves[0].refresh();
+              await collection.marketData[0].user.refresh();
 
-            toast.success(
-              'Deposit success',
-              `https://solscan.io/tx/${tx[1][0]}?cluster=${network}`
-            );
+              await refreshPositions();
+              refetchNfts({});
+
+              toast.success(
+                'Deposit success',
+                `https://solscan.io/tx/${tx[1][0]}?cluster=${network}`
+              );
+            } else {
+              await refreshPositions();
+              refetchNfts({});
+
+              toast.success(
+                'Deposit success',
+                `https://solscan.io/tx/${tx[1][0]}?cluster=${network}`
+              );
+            }
           }
         }
       });
@@ -839,13 +854,26 @@ const Markets: NextPage = () => {
           confirmationHash
         );
 
-        await refreshPositions();
-        refetchNfts({});
+        if (fetchedDataObject) {
+          await fetchedDataObject.reserves[0].refresh();
+          await fetchedDataObject.user.refresh();
 
-        toast.success(
-          'Withdraw success',
-          `https://solscan.io/tx/${tx[1][0]}?cluster=${network}`
-        );
+          await refreshPositions();
+          refetchNfts({});
+
+          toast.success(
+            'Withdraw success',
+            `https://solscan.io/tx/${tx[1][0]}?cluster=${network}`
+          );
+        } else {
+          await refreshPositions();
+          refetchNfts({});
+
+          toast.success(
+            'Withdraw success',
+            `https://solscan.io/tx/${tx[1][0]}?cluster=${network}`
+          );
+        }
       }
 
       return true;
@@ -879,15 +907,30 @@ const Markets: NextPage = () => {
         const confirmation = tx[1];
         const confirmationHash = confirmation[1];
 
-        await waitForConfirmation(
-          sdkConfig.saberHqConnection,
-          confirmationHash
-        );
+        if (fetchedDataObject) {
+          await fetchedDataObject.reserves[0].refresh();
+          await fetchedDataObject.user.refresh();
 
-        toast.success(
-          'Borrow success',
-          `https://solscan.io/tx/${tx[1][0]}?cluster=${network}`
-        );
+          await refreshPositions();
+          refetchNfts({});
+
+          reserveHoneyState === 0
+            ? setReserveHoneyState(1)
+            : setReserveHoneyState(0);
+
+          toast.success(
+            'Borrow success',
+            `https://solscan.io/tx/${tx[1][0]}?cluster=${network}`
+          );
+        } else {
+          await refreshPositions();
+          refetchNfts({});
+
+          toast.success(
+            'Borrow success',
+            `https://solscan.io/tx/${tx[1][0]}?cluster=${network}`
+          );
+        }
       } else {
         return toast.error('Borrow failed');
       }
@@ -926,10 +969,30 @@ const Markets: NextPage = () => {
           confirmationHash
         );
 
-        toast.success(
-          'Repay success',
-          `https://solscan.io/tx/${tx[1][0]}?cluster=${network}`
-        );
+        if (fetchedDataObject) {
+          await fetchedDataObject.reserves[0].refresh();
+          await fetchedDataObject.user.refresh();
+
+          await refreshPositions();
+          refetchNfts({});
+
+          reserveHoneyState === 0
+            ? setReserveHoneyState(1)
+            : setReserveHoneyState(0);
+
+          toast.success(
+            'Repay success',
+            `https://solscan.io/tx/${tx[1][0]}?cluster=${network}`
+          );
+        } else {
+          await refreshPositions();
+          refetchNfts({});
+
+          toast.success(
+            'Repay success',
+            `https://solscan.io/tx/${tx[1][0]}?cluster=${network}`
+          );
+        }
       } else {
         return toast.error('Repay failed');
       }
