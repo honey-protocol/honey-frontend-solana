@@ -202,7 +202,6 @@ const calculateRisk = async (
     return sumOfDebt;
   } else {
     const sum = (sumOfDebt / filtered.length / nftPrice) * 100;
-    console.log('this is sum', sum);
     return sum;
   }
 };
@@ -248,7 +247,6 @@ async function configureCollectionObjecet(
 
   switch (origin) {
     case 'LIQUIDATIONS':
-      console.log('Inside liquidations');
       collection.name;
       collection.allowance = allowance;
       collection.userDebt = userDebt.toString();
@@ -290,7 +288,6 @@ async function configureCollectionObjecet(
       }
       return collection;
     case 'BORROW':
-      console.log('Inside Borrow');
       collection.allowance = allowance;
       collection.userDebt = userDebt.toString();
       collection.ltv = ltv.toString();
@@ -305,7 +302,6 @@ async function configureCollectionObjecet(
         honeyUser.market.reserveList[0].config.utilizationRate1;
       return collection;
     case 'LEND':
-      console.log('Inside Lend');
       collection.allowance = allowance;
       collection.userDebt = userDebt.toString();
       collection.ltv = ltv.toString();
