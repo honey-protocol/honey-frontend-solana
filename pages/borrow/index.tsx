@@ -186,7 +186,6 @@ const Markets: NextPage = () => {
    * [2] reFetch function which can be called after deposit or withdraw and updates nft list
    */
   const [NFTs, isLoadingNfts, refetchNfts] = useFetchNFTByUser(wallet);
-
   const [isCreateMarketAreaOnHover, setIsCreateMarketAreaOnHover] =
     useState<boolean>(false);
 
@@ -1021,6 +1020,7 @@ const Markets: NextPage = () => {
               // TODO: call helper function include all markets
               calculatedInterestRate={activeInterestRate}
               currentMarketId={currentMarketId}
+              availableNFTS={NFTs}
             />
           </HoneySider>
         );
