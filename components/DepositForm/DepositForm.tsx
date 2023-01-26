@@ -19,7 +19,8 @@ const {
   formatPercent: fp,
   formatSol: fs,
   parse: p,
-  formatRoundDown: frd
+  formatRoundDown: frd,
+  formatShortName: fsn
 } = formatNumber;
 
 const DepositForm = (props: DepositFormProps) => {
