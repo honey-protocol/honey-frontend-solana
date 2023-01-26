@@ -891,14 +891,13 @@ const Markets: NextPage = () => {
   async function executeBorrow(val: any, toast: ToastProps['toast']) {
     try {
       if (!val) return toast.error('Please provide a value');
-      // if (val == 1.6) val = val - 0.01;
       const borrowTokenMint = new PublicKey(
         'So11111111111111111111111111111111111111112'
       );
       toast.processing();
       const tx = await borrowAndRefresh(
         honeyUser,
-        val * LAMPORTS_PER_SOL,
+        new BN(val * LAMPORTS_PER_SOL),
         borrowTokenMint,
         honeyReserves
       );

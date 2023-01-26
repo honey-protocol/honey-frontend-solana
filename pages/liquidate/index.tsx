@@ -435,7 +435,6 @@ const Liquidate: NextPage = () => {
                 parsedReserves,
                 mData
               );
-              console.log('@@-- risk', collection);
 
               if (currentMarketId === collection.id)
                 setNftPrice(RoundHalfDown(Number(collection.nftPrice)));

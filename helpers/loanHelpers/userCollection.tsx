@@ -245,6 +245,7 @@ async function configureCollectionObjecet(
     interestRate,
     userTotalDeposits
   } = dataObject;
+
   switch (origin) {
     case 'LIQUIDATIONS':
       console.log('Inside liquidations');
@@ -297,7 +298,7 @@ async function configureCollectionObjecet(
       collection.value = totalMarketValue;
       collection.connection = connection;
       collection.nftPrice = nftPrice;
-      collection.rate = interestRate;
+      collection.rate = interestRate * 100;
       collection.user = honeyUser;
       // collection.name;
       collection.utilizationRate =
@@ -315,7 +316,7 @@ async function configureCollectionObjecet(
       collection.userTotalDeposits = userTotalDeposits.toString();
       // TODO: fix util rate based off object coming in
       collection.utilizationRate = utilization;
-      collection.rate = interestRate * utilization;
+      collection.rate = interestRate * 100 * utilization;
       collection.user = honeyUser;
       collection.name;
       return collection;
@@ -346,10 +347,6 @@ async function handleFormatMarket(
   const { utilization, interestRate } =
     collection.marketData[0].reserves[0].getUtilizationAndInterestRate();
 
-  collection.rate = interestRate * 100;
-  collection.utilizationRate = utilization;
-
-  // add totalMarketDebt tot totalMarketValue
   const totalMarketValue = new BN(totalMarketDeposits)
     .add(new BN(totalMarketDebt))
     .toString();
@@ -363,14 +360,12 @@ async function handleFormatMarket(
   );
 
   const tvl = new BN(nftPrice * (await fetchTVL(obligations)));
-  const ltv = allowanceAndDebt.ltv.toString();
-
   const userTotalDeposits = await honeyUser.fetchUserDeposits(0);
 
   return await configureCollectionObjecet(origin, collection, {
     allowance: allowanceAndDebt.allowance,
     userDebt: allowanceAndDebt.debt,
-    ltv: allowanceAndDebt.ltv,
+    ltv: allowanceAndDebt.ltv.toString(),
     tvl,
     totalMarketDeposits,
     totalMarketValue,
@@ -384,75 +379,6 @@ async function handleFormatMarket(
     interestRate,
     userTotalDeposits
   });
-
-  // if request comes from liquidation page we need the collection object to be different
-  if (origin === 'LIQUIDATIONS') {
-    collection.name;
-    collection.allowance = allowanceAndDebt.allowance;
-    collection.userDebt = allowanceAndDebt.debt.toString();
-    collection.available = totalMarketDeposits;
-    collection.value = totalMarketValue;
-    collection.connection = connection;
-    // TODO: fix util rate based off object coming in
-    collection.utilizationRate =
-      honeyUser.market.reserveList[0].config.utilizationRate1;
-    collection.user = honeyUser;
-    collection.nftPrice = nftPrice;
-    collection.ltv = ltv;
-    collection.tvl = tvl;
-
-    collection.risk = obligations.length
-      ? await calculateRisk(obligations, collection.nftPrice, false, collection)
-      : 0;
-    collection.totalDebt = totalMarketDebt;
-    collection.openPositions = obligations
-      ? await setObligations(obligations, currentMarketId, collection.nftPrice)
-      : [];
-    // if there are open positions in the collections, calculate until liquidation value
-    if (collection.openPositions) {
-      collection.openPositions.map((openPos: any) => {
-        return (openPos.untilLiquidation =
-          // TODO: use collateral factor from SDK config object
-          openPos.estimatedValue - openPos.debt / COLLATERAL_FACTOR);
-      });
-    }
-
-    // request comes from borrow or lend - same base collection object
-  } else if (origin === 'BORROW') {
-    collection.allowance = allowanceAndDebt ? allowanceAndDebt.allowance : 0;
-    collection.userDebt = allowanceAndDebt
-      ? allowanceAndDebt.debt.toString()
-      : 0;
-    collection.ltv = allowanceAndDebt.ltv.toString();
-    collection.available = totalMarketDeposits;
-    collection.value = totalMarketValue;
-    collection.connection = connection;
-    collection.nftPrice = nftPrice;
-    collection.rate = interestRate;
-    // TODO: fix util rate based off object coming in
-    collection.utilizationRate =
-      honeyUser.market.reserveList[0].config.utilizationRate1;
-    collection.user = honeyUser;
-    collection.name;
-    return collection;
-  } else if (origin === 'LEND') {
-    collection.allowance = allowanceAndDebt ? allowanceAndDebt.allowance : 0;
-    collection.userDebt = allowanceAndDebt
-      ? allowanceAndDebt.debt.toString()
-      : 0;
-    collection.ltv = allowanceAndDebt.ltv.toString();
-    collection.available = totalMarketDeposits;
-    collection.value = totalMarketValue;
-    collection.connection = connection;
-    collection.nftPrice = nftPrice;
-    collection.userTotalDeposits = userTotalDeposits.toString();
-    // TODO: fix util rate based off object coming in
-    collection.utilizationRate = utilization;
-    collection.rate = interestRate * utilization;
-    collection.user = honeyUser;
-    collection.name;
-    return collection;
-  }
 }
 
 /**
