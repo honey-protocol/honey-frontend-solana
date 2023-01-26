@@ -19,7 +19,7 @@ const MarketsSidebar = (props: MarketsSidebarProps) => {
   const wallet = useConnectedWallet() || null;
   const { disconnect } = useSolana();
   const [NFTs, isLoadingNfts, refetchNfts] = useFetchNFTByUser(wallet);
-  const availableNFTs = NFTs;
+
   const {
     openPositions,
     nftPrice,
@@ -33,7 +33,8 @@ const MarketsSidebar = (props: MarketsSidebarProps) => {
     executeDepositNFT,
     executeWithdrawNFT,
     executeBorrow,
-    executeRepay
+    executeRepay,
+    availableNFTS
   } = props;
   // tab state
   const [activeTab, setActiveTab] = useState<Tab>('borrow');
@@ -63,7 +64,7 @@ const MarketsSidebar = (props: MarketsSidebarProps) => {
   // fetches available nfts in current market
   const availableNFTsInSelectedMarket = renderNftList(
     currentMarketId,
-    availableNFTs
+    availableNFTS
   );
 
   return (
@@ -132,7 +133,7 @@ const MarketsSidebar = (props: MarketsSidebarProps) => {
               <BorrowForm
                 userDebt={userDebt}
                 executeBorrow={executeBorrow}
-                availableNFTs={availableNFTs}
+                availableNFTs={availableNFTsInSelectedMarket}
                 openPositions={openPositions}
                 nftPrice={nftPrice}
                 executeDepositNFT={executeDepositNFT}
@@ -148,7 +149,7 @@ const MarketsSidebar = (props: MarketsSidebarProps) => {
               <RepayForm
                 executeRepay={executeRepay}
                 openPositions={openPositions}
-                availableNFTs={availableNFTs}
+                availableNFTs={availableNFTsInSelectedMarket}
                 nftPrice={nftPrice}
                 executeWithdrawNFT={executeWithdrawNFT}
                 userDebt={userDebt}
