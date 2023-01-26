@@ -198,7 +198,6 @@ const Lend: NextPage = () => {
     if (!toast) return;
     try {
       if (!value) return toast.error('Deposit failed');
-
       const tokenAmount = new BN(value * LAMPORTS_PER_SOL);
       toast.processing();
 
@@ -393,7 +392,9 @@ const Lend: NextPage = () => {
               collection.stats = getPositionData();
 
               if (currentMarketId == collection.id) {
-                setActiveInterestRate(collection.rate);
+                setActiveInterestRate(
+                  collection.rate * collection.utilizationRate
+                );
                 setActiveMarketSupplied(collection.value);
                 setActiveMarketAvailable(collection.available);
                 setNftPrice(RoundHalfDown(Number(collection.nftPrice)));
