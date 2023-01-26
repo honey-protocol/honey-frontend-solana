@@ -21,11 +21,11 @@ type MenuLink = {
 };
 
 export const links: MenuLink[] = [
-  {
-    title: 'DASHBOARD',
-    href: '/dashboard',
-    disabled: true
-  },
+  // {
+  //   title: 'DASHBOARD',
+  //   href: '/dashboard',
+  //   disabled: true
+  // },
   {
     title: 'BORROW',
     href: '/borrow'
@@ -61,15 +61,15 @@ export const links: MenuLink[] = [
   {
     title: 'BLOG',
     href: 'https://blog.honey.finance'
-  },
-  {
-    title: 'LEGACY WEBSITE',
-    href: 'https://honeylend.netlify.app/farm'
-  },
-  {
-    title: 'V1',
-    href: 'https://app.honey.finance'
   }
+  // {
+  //   title: 'LEGACY WEBSITE',
+  //   href: 'https://honeylend.netlify.app/farm'
+  // },
+  // {
+  //   title: 'V1',
+  //   href: 'https://app.honey.finance'
+  // }
 ];
 
 if (featureFlags.isP2PPageEnabled) {
