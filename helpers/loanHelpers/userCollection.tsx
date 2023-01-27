@@ -333,11 +333,11 @@ async function handleFormatMarket(
   mData?: any
 ) {
   const totalMarketDebt = mData
-    ? await mData.getReserveState().outstandingDebt.toString()
+    ? await mData.getReserveState().outstandingDebt
     : 0;
 
   const totalMarketDeposits = mData
-    ? await mData.getReserveState().totalDeposits.toString()
+    ? await mData.getReserveState().totalDeposits
     : 0;
 
   const { utilization, interestRate } =
@@ -345,9 +345,7 @@ async function handleFormatMarket(
 
   console.log('@@-- util | interest', utilization, interestRate);
 
-  const totalMarketValue = new BN(totalMarketDeposits)
-    .add(new BN(totalMarketDebt))
-    .toString();
+  const totalMarketValue = totalMarketDeposits + totalMarketDebt;
 
   const nftPrice = await honeyMarket.fetchNFTFloorPriceInReserve(0);
   collection.nftPrice = nftPrice;
