@@ -392,9 +392,7 @@ const Lend: NextPage = () => {
               collection.stats = getPositionData();
 
               if (currentMarketId == collection.id) {
-                setActiveInterestRate(
-                  collection.rate * collection.utilizationRate
-                );
+                setActiveInterestRate(collection.rate);
                 setActiveMarketSupplied(collection.value);
                 setActiveMarketAvailable(collection.available);
                 setNftPrice(RoundHalfDown(Number(collection.nftPrice)));
@@ -524,9 +522,7 @@ const Lend: NextPage = () => {
         sorter: (a: any = 0, b: any = 0) => a.rate - b.rate,
         render: (rate: number, market: any) => {
           return (
-            <div className={c(style.rateCell, style.lendRate)}>
-              {fp(activeInterestRate)}
-            </div>
+            <div className={c(style.rateCell, style.lendRate)}>{fp(rate)}</div>
           );
         }
       },

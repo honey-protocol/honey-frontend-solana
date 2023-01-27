@@ -332,7 +332,6 @@ async function handleFormatMarket(
   parsedReserves: TReserve,
   mData?: any
 ) {
-  console.log('@@-- this is mdata', mData);
   const totalMarketDebt = mData
     ? await mData.getReserveState().outstandingDebt.toString()
     : 0;
@@ -343,6 +342,8 @@ async function handleFormatMarket(
 
   const { utilization, interestRate } =
     await collection.marketData[0].reserves[0].getUtilizationAndInterestRate();
+
+  console.log('@@-- util | interest', utilization, interestRate);
 
   const totalMarketValue = new BN(totalMarketDeposits)
     .add(new BN(totalMarketDebt))
@@ -356,7 +357,8 @@ async function handleFormatMarket(
     'mainnet-beta'
   );
 
-  console.log('@@-- allowance', allowanceAndDebt.debt.toString());
+  console.log('@@-- tot. market depo', collection.name, totalMarketDeposits);
+  console.log('@@-- tot. market val', collection.name, totalMarketValue);
 
   const tvl = new BN(nftPrice * (await fetchTVL(obligations)));
   const userTotalDeposits = await honeyUser.fetchUserDeposits(0);
