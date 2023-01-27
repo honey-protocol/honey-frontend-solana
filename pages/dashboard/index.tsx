@@ -601,6 +601,7 @@ const Dashboard: NextPage = () => {
           nftPrice={nftPrice}
           executeDepositNFT={executeDepositNFT}
           executeWithdrawNFT={executeWithdrawNFT}
+          availableNFTS={[]}
           executeBorrow={executeBorrow}
           executeRepay={executeRepay}
           userDebt={userDebt}
@@ -629,6 +630,7 @@ const Dashboard: NextPage = () => {
           onCancel={hideMobileSidebar}
           //TODO: fix market id
           currentMarketId={''}
+          activeInterestRate={0}
           marketImage={''}
         />
       )}
