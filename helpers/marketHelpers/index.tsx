@@ -260,6 +260,30 @@ export const marketCollections: MarketTableRow[] = [
         'https://i.seadn.io/gae/BgIPqBsvXBIoT-7IFHqAMbUJn9yU1Ngcdc5p1ItIQlderHXU5HuQX1SNWV4zqGpe_GWGcZwO88FFwpOdJMU7a5o4RMULdxmPr4TAlY4?auto=format&w=256',
       discountedMarket: false
     }
+  },
+  {
+    id: 'FTBLaLcrx1aXALW2UEpu8a6HLRVFATezkK12wCABPAiA',
+    key: 'Ukiyo',
+    name: 'Ukiyo',
+    verifiedCreator: '9dQhwT67yaTk3YKhTN7f4jKFEAYtNtMotyVmVswmAQKe',
+    rate: 0,
+    available: 0,
+    value: 0,
+    allowance: 0,
+    positions: [],
+    connection: undefined,
+    user: undefined,
+    debt: 0,
+    utilizationRate: 0,
+    openPositions: [],
+    constants: {
+      marketId: 'FTBLaLcrx1aXALW2UEpu8a6HLRVFATezkK12wCABPAiA',
+      verifiedCreator: '9dQhwT67yaTk3YKhTN7f4jKFEAYtNtMotyVmVswmAQKe',
+      marketName: 'Ukiyo',
+      marketImage:
+        'https://img-cdn.magiceden.dev/rs:fill:400:400:0:0/plain/https://creator-hub-prod.s3.us-east-2.amazonaws.com/ukiyo_pfp_1663178207810.jpeg',
+      discountedMarket: false
+    }
   }
 ];
 
