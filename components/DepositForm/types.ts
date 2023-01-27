@@ -6,6 +6,7 @@ export type DepositFormProps = {
   fetchedSolPrice: number;
   marketImage: any;
   currentMarketId: string;
+  activeInterestRate: number;
   executeDeposit: (val: number, toast: any) => void;
   onCancel: Function;
 };

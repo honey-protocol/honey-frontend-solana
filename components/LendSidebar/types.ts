@@ -7,6 +7,7 @@ export type LendSidebarProps = {
   fetchedSolPrice: number;
   marketImage: any;
   currentMarketId: string;
+  activeInterestRate: number;
   executeDeposit: (val: number) => void;
   executeWithdraw: (val: number) => void;
   onCancel: Function;

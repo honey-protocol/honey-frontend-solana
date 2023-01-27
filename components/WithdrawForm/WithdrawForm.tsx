@@ -25,7 +25,8 @@ const WithdrawForm = (props: WithdrawFormProps) => {
     fetchedSolPrice,
     marketImage,
     currentMarketId,
-    onCancel
+    onCancel,
+    activeInterestRate
   } = props;
   const [valueUSD, setValueUSD] = useState<number>(0);
   const [valueSOL, setValueSOL] = useState<number>(0);
@@ -124,12 +125,12 @@ const WithdrawForm = (props: WithdrawFormProps) => {
           </div>
           <div className={styles.col}>
             <InfoBlock
-              value={fp()}
+              value={fp(activeInterestRate)}
               valueSize="big"
-              toolTipLabel="APY is measured by compounding the weekly interest rate"
+              toolTipLabel="Variable interest rate, based on Utilization rate."
               footer={
                 <span className={hAlign}>
-                  Estimated APY{' '}
+                  Interest rate{' '}
                   <div className={questionIcon}>
                     <QuestionIcon />
                   </div>

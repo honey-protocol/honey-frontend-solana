@@ -304,6 +304,7 @@ const Markets: NextPage = () => {
                 setUserAllowance(collection.allowance);
                 // @ts-ignore
                 setUserDebt(collection.userDebt);
+                console.log('@@-- user debt', collection.userDebt);
                 setLoanToValue(Number(collection.ltv));
                 setFetchedDataObject(collection.marketData[0]);
               }

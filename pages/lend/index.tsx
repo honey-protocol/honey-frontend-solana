@@ -661,6 +661,7 @@ const Lend: NextPage = () => {
         onCancel={hideMobileSidebar}
         marketImage={renderMarketImageByName(currentMarketName)}
         currentMarketId={currentMarketId}
+        activeInterestRate={activeInterestRate}
       />
     </HoneySider>
   );

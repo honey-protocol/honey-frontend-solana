@@ -5,6 +5,7 @@ export type WithdrawFormProps = {
   fetchedSolPrice: number;
   marketImage: any;
   currentMarketId: string;
+  activeInterestRate: number;
   executeWithdraw: (val: number, toast: any) => void;
   onCancel: Function;
 };

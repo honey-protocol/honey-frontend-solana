@@ -33,7 +33,8 @@ const DepositForm = (props: DepositFormProps) => {
     fetchedSolPrice,
     marketImage,
     currentMarketId,
-    onCancel
+    onCancel,
+    activeInterestRate
   } = props;
   // state declarations
   const [valueUSD, setValueUSD] = useState<number>(0);
@@ -140,12 +141,12 @@ const DepositForm = (props: DepositFormProps) => {
           </div>
           <div className={styles.col}>
             <InfoBlock
-              value={fp()}
+              value={fp(activeInterestRate)}
               valueSize="big"
-              toolTipLabel="APY is measured by compounding the weekly interest rate"
+              toolTipLabel="Variable interest rate, based on Utilization rate."
               footer={
                 <span className={hAlign}>
-                  Estimated APY{' '}
+                  Interest rate{' '}
                   <div className={questionIcon}>
                     <QuestionIcon />
                   </div>
