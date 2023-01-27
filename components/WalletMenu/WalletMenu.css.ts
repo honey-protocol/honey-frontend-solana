@@ -102,3 +102,12 @@ export const divider = style({
 export const mr5 = style({
   marginRight: '5px !important'
 });
+
+export const mobileHidden = style({
+  display: 'none !important',
+  '@media': {
+    [`screen and (min-width: ${breakpoints.mobile}px)`]: {
+      display: 'flex !important'
+    }
+  }
+});

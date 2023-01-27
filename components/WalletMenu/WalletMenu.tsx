@@ -44,8 +44,16 @@ const WalletMenu = () => {
   return !walletAddress ? (
     <Space size="small">
       <SettingsDropdown className={styles.mr5} />
-      <HoneyButton variant="primary" icon={<WalletIcon />} onClick={connect}>
-        CONNECT WALLET
+      <HoneyButton
+        variant="primary"
+        icon={
+          <span className={styles.mobileHidden}>
+            <WalletIcon />
+          </span>
+        }
+        onClick={connect}
+      >
+        CONNECT <span className={styles.mobileHidden}>WALLET</span>
       </HoneyButton>
     </Space>
   ) : (
