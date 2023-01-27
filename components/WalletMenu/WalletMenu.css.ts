@@ -4,12 +4,7 @@ import { breakpoints, typography, vars } from '../../styles/theme.css';
 export const title = style({
   ...typography.body,
   margin: '0px !important',
-  fontSize: '16px !important',
-  '@media': {
-    [`screen and (max-width: ${breakpoints.mobile}px)`]: {
-      display: 'none'
-    }
-  }
+  fontSize: '16px !important'
 });
 
 export const userIcon = style({
@@ -23,7 +18,12 @@ export const walletDropdownWrapper = style({
   alignItems: 'center',
   position: 'relative',
   paddingLeft: 17,
-  gap: 10
+  gap: 10,
+  '@media': {
+    [`screen and (max-width: ${breakpoints.mobile}px)`]: {
+      paddingLeft: 0
+    }
+  }
 });
 
 export const dialectIconWrapper = style({
@@ -31,7 +31,12 @@ export const dialectIconWrapper = style({
   left: 50,
   top: 2,
   width: 20,
-  pointerEvents: 'none'
+  pointerEvents: 'none',
+  '@media': {
+    [`screen and (max-width: ${breakpoints.mobile}px)`]: {
+      left: 30
+    }
+  }
 });
 
 const dialectSelector = `${dialectIconWrapper} .dialect > .dt-flex`;
@@ -52,34 +57,6 @@ globalStyle(`${dialectSelector} > .dt-relative button`, {
 
 globalStyle(`${dialectSelector} > .dt-relative button svg path`, {
   fill: vars.colors.text
-});
-
-export const userMenu = style({
-  right: 0,
-  borderRadius: 12,
-  padding: 10
-});
-
-globalStyle(`${userMenu} .ant-dropdown-menu-item-divider`, {
-  height: 2,
-  width: '100%'
-});
-
-globalStyle(`${userMenu} ul`, {
-  listStyle: 'none',
-  padding: '0'
-});
-
-globalStyle(`${userMenu} ul li `, {
-  display: 'flex',
-  justifyContent: 'space-between',
-  cursor: 'pointer',
-  flexDirection: 'row-reverse'
-});
-
-globalStyle(`${userMenu} .ant-dropdown-menu-item-selected`, {
-  color: vars.colors.text,
-  background: 'rgba(0, 0, 0, 0.05)'
 });
 
 export const row = style({
