@@ -88,3 +88,9 @@ export const mobileHidden = style({
     }
   }
 });
+
+export const settingsIcon = style({
+  cursor: 'pointer',
+  width: 'unset',
+  marginRight: 30
+});

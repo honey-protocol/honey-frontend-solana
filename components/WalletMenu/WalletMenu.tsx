@@ -1,5 +1,5 @@
 import { Dropdown, Menu, Space, Typography } from 'antd';
-import React from 'react';
+import React, { useState } from 'react';
 import * as styles from './WalletMenu.css';
 import { DownIcon } from 'icons/DownIcon';
 import { formatAddress } from 'helpers/addressUtils';
@@ -9,17 +9,24 @@ import { useWalletKit } from '@gokiprotocol/walletkit';
 import { useConnectedWallet } from '@saberhq/use-solana';
 import { DialectNotifications } from 'components/DialectNotifications/DialectNotifications';
 import { vars } from 'styles/theme.css';
-import SettingsDropdown from 'components/SetttingsDropdown/SetttingsDropdown';
+import SettingsModal from 'components/SettingsModal/SettingsModal';
+import { SettingsIcon } from 'icons/SettingsIcon';
 const { Title } = Typography;
 
 const WalletMenu = (props: { menu: JSX.Element }) => {
   const wallet = useConnectedWallet();
   const { connect } = useWalletKit();
+  const [showSettingsModal, setShowSettingsModal] = useState(true);
   const walletAddress = wallet?.publicKey.toString();
 
   return !walletAddress ? (
     <Space size="small">
-      <SettingsDropdown className={styles.mr5} />
+      <div
+        className={styles.settingsIcon}
+        onClick={() => setShowSettingsModal(true)}
+      >
+        <SettingsIcon />
+      </div>
       <HoneyButton
         variant="primary"
         icon={
@@ -34,12 +41,17 @@ const WalletMenu = (props: { menu: JSX.Element }) => {
     </Space>
   ) : (
     <>
-      {/* <SettingsModal
+      <SettingsModal
         visible={showSettingsModal}
         onClose={() => setShowSettingsModal(false)}
-      /> */}
+      />
       <div className={styles.walletDropdownWrapper}>
-        <SettingsDropdown />
+        <div
+          className={styles.settingsIcon}
+          onClick={() => setShowSettingsModal(true)}
+        >
+          <SettingsIcon />
+        </div>
         <div className={styles.dialectIconWrapper}>
           {<DialectNotifications />}
         </div>
