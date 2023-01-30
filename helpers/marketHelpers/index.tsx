@@ -285,6 +285,30 @@ export const marketCollections: MarketTableRow[] = [
       discountedMarket: false
     }
   }
+  // {
+  //   id: '',
+  //   key: 'Marshies',
+  //   name: 'Marshies',
+  //   verifiedCreator: 'ACBrgk19WYp6oT4VLHQZhAgDPJo8HNoCfDZW6iTpJSjS',
+  //   rate: 0,
+  //   available: 0,
+  //   value: 0,
+  //   allowance: 0,
+  //   positions: [],
+  //   connection: undefined,
+  //   user: undefined,
+  //   debt: 0,
+  //   utilizationRate: 0,
+  //   openPositions: [],
+  //   constants: {
+  //     marketId: '',
+  //     verifiedCreator: 'ACBrgk19WYp6oT4VLHQZhAgDPJo8HNoCfDZW6iTpJSjS',
+  //     marketName: 'Marshies',
+  //     marketImage:
+  //       'https://img-cdn.magiceden.dev/rs:fill:400:400:0:0/plain/https://bafybeieyxm5xdd6t2tunj64s6gq3c33sy3v7ja6z5tb7qyzqvapym5x4km.ipfs.nftstorage.link/',
+  //     discountedMarket: false
+  //   }
+  // }
 ];
 
 // fees
