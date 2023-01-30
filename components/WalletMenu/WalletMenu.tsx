@@ -16,7 +16,7 @@ const { Title } = Typography;
 const WalletMenu = (props: { menu: JSX.Element }) => {
   const wallet = useConnectedWallet();
   const { connect } = useWalletKit();
-  const [showSettingsModal, setShowSettingsModal] = useState(true);
+  const [showSettingsModal, setShowSettingsModal] = useState(false);
   const walletAddress = wallet?.publicKey.toString();
 
   return !walletAddress ? (
