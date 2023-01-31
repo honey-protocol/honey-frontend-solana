@@ -203,6 +203,7 @@ export const GovernanceProvider: React.FC<React.ReactNode> = ({ children }) => {
       // Load stake pool user
       try {
         const user = await stakeWrapper.fetchPoolUser();
+
         setUser(user);
       } catch (e) {
         // setUser(undefined);
