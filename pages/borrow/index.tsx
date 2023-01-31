@@ -6,6 +6,7 @@ import { ColumnType } from 'antd/lib/table';
 import * as style from '../../styles/markets.css';
 import c from 'classnames';
 import classNames from 'classnames';
+import BN from 'bn.js';
 import {
   BorrowSidebarMode,
   HoneyTableColumnType,
@@ -149,7 +150,6 @@ const Markets: NextPage = () => {
     loading,
     collateralNFTPositions,
     loanPositions,
-    fungibleCollateralPosition,
     refreshPositions,
     error
   } = useBorrowPositions(
@@ -303,7 +303,7 @@ const Markets: NextPage = () => {
                 parsedReserves
               );
 
-              collection.positions = await handlePositions(
+              collection.openPositions = await handlePositions(
                 collection.verifiedCreator,
                 userOpenPositions
               );
@@ -337,7 +337,7 @@ const Markets: NextPage = () => {
                 false
               );
 
-              collection.positions = await handlePositions(
+              collection.openPositions = await handlePositions(
                 collection.verifiedCreator,
                 userOpenPositions
               );
@@ -1149,11 +1149,11 @@ const Markets: NextPage = () => {
                           tableLayout="fixed"
                           className={style.expandContentTable}
                           columns={expandColumns}
-                          dataSource={record.positions}
+                          dataSource={record.openPositions}
                           pagination={false}
                           showHeader={false}
                           footer={
-                            record.positions.length
+                            record.openPositions.length
                               ? ExpandedTableFooter
                               : undefined
                           }
@@ -1221,11 +1221,11 @@ const Markets: NextPage = () => {
                         <HoneyTable
                           className={style.expandContentTable}
                           columns={expandColumnsMobile}
-                          dataSource={record.positions}
+                          dataSource={record.openPositions}
                           pagination={false}
                           showHeader={false}
                           footer={
-                            record.positions.length
+                            record.openPositions.length
                               ? ExpandedTableFooter
                               : () => (
                                   <HoneyButton variant="secondary" block>

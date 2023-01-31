@@ -30,7 +30,6 @@ export const marketCollections: MarketTableRow[] = [
     available: 0,
     value: 0,
     allowance: 0,
-    positions: [],
     connection: undefined,
     user: undefined,
     debt: 0,
@@ -54,7 +53,6 @@ export const marketCollections: MarketTableRow[] = [
     available: 0,
     value: 0,
     allowance: 0,
-    positions: [],
     connection: undefined,
     user: undefined,
     debt: 0,
@@ -78,7 +76,6 @@ export const marketCollections: MarketTableRow[] = [
     available: 0,
     value: 0,
     allowance: 0,
-    positions: [],
     connection: undefined,
     user: undefined,
     debt: 0,
@@ -102,7 +99,6 @@ export const marketCollections: MarketTableRow[] = [
     available: 0,
     value: 0,
     allowance: 0,
-    positions: [],
     connection: undefined,
     user: undefined,
     debt: 0,
@@ -126,7 +122,6 @@ export const marketCollections: MarketTableRow[] = [
   //   available: 0,
   //   value: 0,
   //   allowance: 0,
-  //   positions: [],
   //   connection: undefined,
   //   user: undefined,
   //   debt: 0,
@@ -150,7 +145,6 @@ export const marketCollections: MarketTableRow[] = [
   //   available: 0,
   //   value: 0,
   //   allowance: 0,
-  //   positions: [],
   //   connection: undefined,
   //   user: undefined,
   //   debt: 0,
@@ -174,7 +168,6 @@ export const marketCollections: MarketTableRow[] = [
   //   available: 0,
   //   value: 0,
   //   allowance: 0,
-  //   positions: [],
   //   connection: undefined,
   //   user: undefined,
   //   debt: 0,
@@ -198,7 +191,6 @@ export const marketCollections: MarketTableRow[] = [
   //   available: 0,
   //   value: 0,
   //   allowance: 0,
-  //   positions: [],
   //   connection: undefined,
   //   user: undefined,
   //   debt: 0,
@@ -222,7 +214,6 @@ export const marketCollections: MarketTableRow[] = [
     available: 0,
     value: 0,
     allowance: 0,
-    positions: [],
     connection: undefined,
     user: undefined,
     debt: 0,
@@ -246,7 +237,6 @@ export const marketCollections: MarketTableRow[] = [
     available: 0,
     value: 0,
     allowance: 0,
-    positions: [],
     connection: undefined,
     user: undefined,
     debt: 0,
@@ -270,7 +260,6 @@ export const marketCollections: MarketTableRow[] = [
     available: 0,
     value: 0,
     allowance: 0,
-    positions: [],
     connection: undefined,
     user: undefined,
     debt: 0,
@@ -284,31 +273,30 @@ export const marketCollections: MarketTableRow[] = [
         'https://img-cdn.magiceden.dev/rs:fill:400:400:0:0/plain/https://creator-hub-prod.s3.us-east-2.amazonaws.com/ukiyo_pfp_1663178207810.jpeg',
       discountedMarket: false
     }
+  },
+  {
+    id: 'Dmngi1MDEQU9fm6sX39EuyT3EpYEmXYuyg56uEjVCkD6',
+    key: 'Marshies',
+    name: 'Marshies',
+    verifiedCreator: 'ACBrgk19WYp6oT4VLHQZhAgDPJo8HNoCfDZW6iTpJSjS',
+    rate: 0,
+    available: 0,
+    value: 0,
+    allowance: 0,
+    connection: undefined,
+    user: undefined,
+    debt: 0,
+    utilizationRate: 0,
+    openPositions: [],
+    constants: {
+      marketId: 'Dmngi1MDEQU9fm6sX39EuyT3EpYEmXYuyg56uEjVCkD6',
+      verifiedCreator: 'ACBrgk19WYp6oT4VLHQZhAgDPJo8HNoCfDZW6iTpJSjS',
+      marketName: 'Marshies',
+      marketImage:
+        'https://pbs.twimg.com/profile_images/1610792754388570113/LXrVtzAE_400x400.jpg',
+      discountedMarket: false
+    }
   }
-  // {
-  //   id: '',
-  //   key: 'Marshies',
-  //   name: 'Marshies',
-  //   verifiedCreator: 'ACBrgk19WYp6oT4VLHQZhAgDPJo8HNoCfDZW6iTpJSjS',
-  //   rate: 0,
-  //   available: 0,
-  //   value: 0,
-  //   allowance: 0,
-  //   positions: [],
-  //   connection: undefined,
-  //   user: undefined,
-  //   debt: 0,
-  //   utilizationRate: 0,
-  //   openPositions: [],
-  //   constants: {
-  //     marketId: '',
-  //     verifiedCreator: 'ACBrgk19WYp6oT4VLHQZhAgDPJo8HNoCfDZW6iTpJSjS',
-  //     marketName: 'Marshies',
-  //     marketImage:
-  //       'https://img-cdn.magiceden.dev/rs:fill:400:400:0:0/plain/https://bafybeieyxm5xdd6t2tunj64s6gq3c33sy3v7ja6z5tb7qyzqvapym5x4km.ipfs.nftstorage.link/',
-  //     discountedMarket: false
-  //   }
-  // }
 ];
 
 // fees
