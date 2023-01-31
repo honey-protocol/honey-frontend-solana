@@ -292,7 +292,7 @@ const Markets: NextPage = () => {
                 mData
               );
 
-              collection.positions = await handlePositions(
+              collection.openPositions = await handlePositions(
                 collection.verifiedCreator,
                 userOpenPositions
               );
@@ -304,7 +304,6 @@ const Markets: NextPage = () => {
                 setUserAllowance(collection.allowance);
                 // @ts-ignore
                 setUserDebt(collection.userDebt);
-                console.log('@@-- user debt', collection.userDebt);
                 setLoanToValue(Number(collection.ltv));
                 setFetchedDataObject(collection.marketData[0]);
               }
@@ -931,10 +930,11 @@ const Markets: NextPage = () => {
           );
         }
       } else {
-        return toast.error('Borrow failed');
+        console.log('error tx', tx);
+        return toast.error('Borrow failed', tx);
       }
     } catch (error) {
-      return toast.error('An error occurred');
+      return toast.error('An error occurred', error);
     }
   }
 
@@ -1106,11 +1106,11 @@ const Markets: NextPage = () => {
                           tableLayout="fixed"
                           className={style.expandContentTable}
                           columns={expandColumns}
-                          dataSource={record.positions}
+                          dataSource={record.openPositions}
                           pagination={false}
                           showHeader={false}
                           footer={
-                            record.positions.length
+                            record.openPositions.length
                               ? ExpandedTableFooter
                               : undefined
                           }
@@ -1178,11 +1178,11 @@ const Markets: NextPage = () => {
                         <HoneyTable
                           className={style.expandContentTable}
                           columns={expandColumnsMobile}
-                          dataSource={record.positions}
+                          dataSource={record.openPositions}
                           pagination={false}
                           showHeader={false}
                           footer={
-                            record.positions.length
+                            record.openPositions.length
                               ? ExpandedTableFooter
                               : () => (
                                   <HoneyButton variant="secondary" block>

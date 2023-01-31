@@ -438,6 +438,7 @@ const Liquidate: NextPage = () => {
 
               if (currentMarketId === collection.id)
                 setNftPrice(RoundHalfDown(Number(collection.nftPrice)));
+
               return collection;
             }
             return collection;
@@ -824,7 +825,6 @@ const Liquidate: NextPage = () => {
                 setExpandedRowKeys(expanded ? [row.key] : []),
               expandedRowKeys,
               expandedRowRender: record => {
-                console.log('@@-- record', record);
                 return (
                   <div
                     className={style.expandSection}

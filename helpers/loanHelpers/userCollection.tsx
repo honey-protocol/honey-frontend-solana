@@ -278,6 +278,7 @@ async function configureCollectionObjecet(
             collection.nftPrice
           )
         : [];
+
       // if there are open positions in the collections, calculate until liquidation value
       if (collection.openPositions) {
         collection.openPositions.map((openPos: any) => {
@@ -343,8 +344,6 @@ async function handleFormatMarket(
   const { utilization, interestRate } =
     await collection.marketData[0].reserves[0].getUtilizationAndInterestRate();
 
-  console.log('@@-- util | interest', utilization, interestRate);
-
   const totalMarketValue = totalMarketDeposits + totalMarketDebt;
 
   const nftPrice = await honeyMarket.fetchNFTFloorPriceInReserve(0);
@@ -354,9 +353,6 @@ async function handleFormatMarket(
     0,
     'mainnet-beta'
   );
-
-  console.log('@@-- tot. market depo', collection.name, totalMarketDeposits);
-  console.log('@@-- tot. market val', collection.name, totalMarketValue);
 
   const tvl = new BN(nftPrice * (await fetchTVL(obligations)));
   const userTotalDeposits = await honeyUser.fetchUserDeposits(0);
