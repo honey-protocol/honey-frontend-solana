@@ -95,3 +95,7 @@ export const hideOnMobile = style({
     }
   }
 });
+
+export const textUnderline = style({
+  textDecoration: 'underline'
+});

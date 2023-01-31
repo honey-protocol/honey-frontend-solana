@@ -9,10 +9,11 @@ import HexaBoxContainer from '../HexaBoxContainer/HexaBoxContainer';
 import SidebarScroll from '../SidebarScroll/SidebarScroll';
 import { DepositFormProps } from './types';
 import { questionIcon } from 'styles/icons.css';
-import { hAlign } from 'styles/common.css';
+import { hAlign, textUnderline } from 'styles/common.css';
 import useToast from 'hooks/useToast';
 import { renderMarketImageByID, renderMarketName } from 'helpers/marketHelpers';
 import QuestionIcon from 'icons/QuestionIcon';
+import HoneyWarning from 'components/HoneyWarning/HoneyWarning';
 
 const {
   format: f,
@@ -130,13 +131,12 @@ const DepositForm = (props: DepositFormProps) => {
           </div>
         </div>
         <div className={styles.row}>
-          <div className={styles.col}>
-            <InfoBlock
-              value={fs(userTotalDeposits)}
-              valueSize="big"
-              footer={<span>Your Deposits</span>}
-            />
-          </div>
+          <HoneyWarning
+            message="To learn more about the risks of lending, make sure to explore our Protocol Risk documentation"
+            link="https://docs.honey.finance/lending-protocol/risk/protocol-risks"
+          />
+        </div>
+        <div className={styles.row}>
           <div className={styles.col}>
             <InfoBlock
               value={fp()}
@@ -144,7 +144,7 @@ const DepositForm = (props: DepositFormProps) => {
               toolTipLabel="APY is measured by compounding the weekly interest rate"
               footer={
                 <span className={hAlign}>
-                  Estimated APY{' '}
+                  Estimated <span className={textUnderline}>APY</span>
                   <div className={questionIcon}>
                     <QuestionIcon />
                   </div>
@@ -169,6 +169,15 @@ const DepositForm = (props: DepositFormProps) => {
           </div>
         </div>
 
+        <div className={styles.row}>
+          <div className={styles.col}>
+            <InfoBlock
+              value={fs(userTotalDeposits)}
+              valueSize="big"
+              footer={<span>Your Deposits</span>}
+            />
+          </div>
+        </div>
         <div className={styles.inputs}>
           <InputsBlock
             firstInputValue={valueSOL}
@@ -178,7 +187,6 @@ const DepositForm = (props: DepositFormProps) => {
             maxValue={maxValue}
           />
         </div>
-
         <HoneySlider
           currentValue={sliderValue}
           maxValue={Number(frd(maxValue))}
