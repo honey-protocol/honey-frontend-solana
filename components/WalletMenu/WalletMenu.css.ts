@@ -1,6 +1,29 @@
 import { globalStyle, style } from '@vanilla-extract/css';
 import { breakpoints, typography, vars } from '../../styles/theme.css';
 
+export const noAuthWalletMenu = style({
+  '@media': {
+    [`screen and (max-width: ${breakpoints.mobile}px)`]: {
+      gap: '0 !important'
+    }
+  }
+});
+
+export const settingsIcon = style({
+  cursor: 'pointer',
+  width: 'unset',
+  marginRight: 30
+});
+
+globalStyle(`${noAuthWalletMenu} ${settingsIcon}`, {
+  marginRight: 0,
+  '@media': {
+    [`screen and (max-width: ${breakpoints.mobile}px)`]: {
+      display: 'none'
+    }
+  }
+});
+
 export const title = style({
   ...typography.body,
   margin: '0px !important',
@@ -87,10 +110,4 @@ export const mobileHidden = style({
       display: 'flex !important'
     }
   }
-});
-
-export const settingsIcon = style({
-  cursor: 'pointer',
-  width: 'unset',
-  marginRight: 30
 });

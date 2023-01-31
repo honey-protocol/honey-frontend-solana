@@ -20,7 +20,7 @@ const WalletMenu = (props: { menu: JSX.Element }) => {
   const walletAddress = wallet?.publicKey.toString();
 
   return !walletAddress ? (
-    <Space size="small">
+    <Space size="small" className={styles.noAuthWalletMenu}>
       <div
         className={styles.settingsIcon}
         onClick={() => setShowSettingsModal(true)}
