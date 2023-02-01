@@ -3,7 +3,7 @@ import HoneyToast, {
   toastRemoveDelay,
   ToastState
 } from 'components/HoneyToast/HoneyToast';
-import React, { createContext, useState } from 'react';
+import React, { useMemo, useState } from 'react';
 
 export interface ToastProps {
   toast: {
@@ -19,7 +19,7 @@ export interface ToastProps {
 const useToast = () => {
   const [toast, setToast] = useState<HoneyToastProps | null>(null);
 
-  const ToastComponent = () => {
+  const ToastComponent = useMemo(() => {
     if (!toast?.state) return null;
     return (
       <HoneyToast
@@ -28,7 +28,7 @@ const useToast = () => {
         secondaryLink={toast.secondaryLink}
       />
     );
-  };
+  }, [toast?.state]);
 
   const clearToast = () => {
     setTimeout(() => {

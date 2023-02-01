@@ -62,7 +62,8 @@ export const alertBox = style([
     paddingRight: 8,
     '@media': {
       [`screen and (max-width: ${breakpoints.mobile}px)`]: {
-        paddingRight: 10
+        paddingRight: 10,
+        display: 'none'
       }
     }
   }

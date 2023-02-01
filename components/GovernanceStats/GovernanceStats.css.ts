@@ -14,7 +14,7 @@ export const governanceGraphs = style({
   },
   '@media': {
     [`screen and (max-width: ${breakpoints.mobile}px)`]: {
-      margin: '0 -12px 24px',
+      margin: '0 -12px 10px',
       width: 'calc(100% + 24px)',
       padding: '0 12px'
     }

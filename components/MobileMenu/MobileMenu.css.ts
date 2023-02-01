@@ -50,7 +50,7 @@ export const linkOrder = createVar();
 export const link = style({
   animationFillMode: 'both',
   animationTimingFunction: 'ease-in-out',
-  animationDelay: `calc(${linkOrder} * 70ms)`,
+  animationDelay: `calc(${linkOrder} * 40ms)`,
   opacity: '0',
   display: 'flex',
   justifyContent: 'center'
@@ -63,7 +63,7 @@ globalStyle(`${visible} ${link}`, {
 
 globalStyle(`${hidden} ${link}`, {
   animationName: animateOut,
-  animationDuration: '100ms'
+  animationDuration: '70ms'
 });
 
 export const activeLink = style({});

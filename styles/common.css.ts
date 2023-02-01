@@ -77,3 +77,25 @@ export const extLink = style({
     borderColor: 'transparent'
   }
 });
+
+export const showOnMobile = style({
+  display: 'none',
+  '@media': {
+    [`screen and (max-width: ${breakpoints.tablet}px)`]: {
+      display: 'flex'
+    }
+  }
+});
+
+export const hideOnMobile = style({
+  display: 'none',
+  '@media': {
+    [`screen and (min-width: ${breakpoints.tablet}px)`]: {
+      display: 'flex'
+    }
+  }
+});
+
+export const textUnderline = style({
+  textDecoration: 'underline'
+});

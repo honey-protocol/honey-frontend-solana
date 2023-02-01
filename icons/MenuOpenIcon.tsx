@@ -3,17 +3,15 @@ import { vars } from 'styles/theme.css';
 export const MenuOpenIcon = () => (
   <svg
     width="20"
-    height="20"
-    viewBox="0 0 20 20"
+    height="18"
+    viewBox="0 0 20 18"
     fill="none"
     xmlns="http://www.w3.org/2000/svg"
   >
     <path
-      d="M3.33325 5H16.6666M3.33325 10H16.6666M3.33325 15H16.6666"
+      d="M0 1.3125H20M0 8.81249H20M0 16.3125H20"
       stroke={vars.colors.text}
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
+      strokeWidth="1.5"
     />
   </svg>
 );

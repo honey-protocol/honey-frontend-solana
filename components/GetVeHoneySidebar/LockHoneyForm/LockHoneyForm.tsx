@@ -156,7 +156,7 @@ const LockHoneyForm = (props: { onClose: Function }) => {
     <SidebarScroll
       footer={
         toast.state ? (
-          <ToastComponent />
+          ToastComponent
         ) : (
           <div className={styles.buttons}>
             <div className={styles.smallCol}>

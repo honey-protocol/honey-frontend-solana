@@ -8,7 +8,7 @@ export const tabs = style({
 export const content = style({
   borderRadius: '0 0 15px 15px',
   background: vars.colors.foreground,
-  height: '100%',
+  height: 'calc(100% - 40px)',
   overflow: 'hidden'
 });
 

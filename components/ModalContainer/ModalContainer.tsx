@@ -1,4 +1,3 @@
-import { Box, Card } from 'degen';
 import React, { ReactNode, useCallback, useEffect, useRef } from 'react';
 import * as styles from './ModalContainer.css';
 
@@ -62,15 +61,9 @@ const ModalContainer = (props: {
   }, [modalRef, closeModal]);
 
   return (
-    <Box
-      ref={modalRef}
-      id="modal-container"
-      className={styles.modalContainer}
-      height="viewHeight"
-      width="viewWidth"
-    >
-      <Card borderRadius="extraLarge">{props.children}</Card>
-    </Box>
+    <div ref={modalRef} id="modal-container" className={styles.modalContainer}>
+      <div className={styles.modalContent}>{props.children}</div>
+    </div>
   );
 };
 

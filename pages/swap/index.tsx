@@ -523,7 +523,7 @@ const Swap: NextPage = () => {
                 <SwapInfoBlock data={swapStats} />
               </div>
               {toast.state ? (
-                <ToastComponent />
+                ToastComponent
               ) : (
                 <div className={styles.buttons}>
                   {!wallet || !wallet.connected ? (
