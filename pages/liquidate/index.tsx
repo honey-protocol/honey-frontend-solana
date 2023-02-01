@@ -307,7 +307,7 @@ const Liquidate: NextPage = () => {
 
           if (transactionOutcome[0] == 'SUCCESS') {
             setCurrentUserBid(0);
-
+            if (walletPK) await fetchWalletBalance(walletPK);
             return toast.success('Bid revoked, fetching chain data');
           } else {
             return toast.error('Revoke bid failed');
@@ -327,6 +327,7 @@ const Liquidate: NextPage = () => {
           });
 
           if (transactionOutcome[0] == 'SUCCESS') {
+            if (walletPK) await fetchWalletBalance(walletPK);
             return toast.success('Bid placed, fetching chain data');
           } else {
             return toast.error('Bid failed');
@@ -344,6 +345,7 @@ const Liquidate: NextPage = () => {
           });
 
           if (transactionOutcome[0] == 'SUCCESS') {
+            if (walletPK) await fetchWalletBalance(walletPK);
             return toast.success('Bid increased, fetching chain data');
           } else {
             return toast.error('Bid increase failed');

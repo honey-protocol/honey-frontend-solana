@@ -398,7 +398,6 @@ export async function populateMarketData(
 ) {
   // create dummy keypair if no wallet is connected to fetch values of the collections regardless of connected wallet
   let dummyWallet = wallet ? wallet : new NodeWallet(new Keypair());
-  // since we inject the market id at top level (app.tsx) we need to create a new provider, init new honeyClient and market, for each market
 
   if (
     hasMarketData &&
@@ -420,5 +419,7 @@ export async function populateMarketData(
       parsedReserves,
       mData
     );
+  } else {
+    return collection;
   }
 }
