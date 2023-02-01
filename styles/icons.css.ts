@@ -17,8 +17,11 @@ export const createMarketIcon = style({
 });
 
 export const questionIcon = style({
-  width: 12,
-  height: 12
+  width: 15,
+  height: 15,
+  display: 'inline-flex',
+  justifyContent: 'center',
+  alignItems: 'center'
 });
 
 export const arrowRightIcon = style({

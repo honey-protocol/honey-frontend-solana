@@ -18,6 +18,7 @@ import { MAX_LTV } from 'constants/loan';
 import { COLLATERAL_FACTOR } from 'helpers/marketHelpers';
 import { renderMarketImageByID } from 'helpers/marketHelpers';
 import QuestionIcon from 'icons/QuestionIcon';
+import HoneyWarning from 'components/HoneyWarning/HoneyWarning';
 
 const {
   format: f,
@@ -118,7 +119,7 @@ const RepayForm = (props: RepayProps) => {
       footer={
         <>
           {toast?.state ? (
-            <ToastComponent />
+            ToastComponent
           ) : (
             <div className={styles.buttons}>
               <div className={styles.smallCol}>
@@ -416,20 +417,25 @@ const RepayForm = (props: RepayProps) => {
               ></InfoBlock>
             </div>
           </div>
-          <InputsBlock
-            firstInputValue={valueSOL}
-            secondInputValue={valueUSD}
-            onChangeFirstInput={handleSolInputChange}
-            onChangeSecondInput={handleUsdInputChange}
-          />
+          {userDebt !== 0 && (
+            <InputsBlock
+              firstInputValue={valueSOL}
+              secondInputValue={valueUSD}
+              onChangeFirstInput={handleSolInputChange}
+              onChangeSecondInput={handleUsdInputChange}
+            />
+          )}
         </div>
-
-        <HoneySlider
-          currentValue={sliderValue}
-          maxValue={maxValue}
-          minAvailableValue={0}
-          onChange={handleSliderChange}
-        />
+        {userDebt !== 0 ? (
+          <HoneySlider
+            currentValue={sliderValue}
+            maxValue={maxValue}
+            minAvailableValue={0}
+            onChange={handleSliderChange}
+          />
+        ) : (
+          <HoneyWarning message="Your have no outstanding debt. You can claim your collateral" />
+        )}
       </div>
     </SidebarScroll>
   );

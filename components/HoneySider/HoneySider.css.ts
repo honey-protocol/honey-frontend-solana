@@ -3,11 +3,12 @@ import { breakpoints, vars } from '../../styles/theme.css';
 
 export const honeySider = style({
   width: '100%',
-  minHeight: 'calc(100vh - 80px)',
-  height: 'auto',
+  height: '100vh',
+  // height: 'auto',
   maxWidth: 564,
+  background: vars.colors.background,
   position: 'absolute',
-  zIndex: 1,
+  zIndex: 10,
   top: 0,
   left: '50%',
   transform: 'translateX(-50%)',
@@ -18,7 +19,8 @@ export const honeySider = style({
   '@media': {
     [`screen and (min-width: ${breakpoints.tablet}px)`]: {
       maxWidth: 874,
-      minHeight: 'calc(100vh - 100px)'
+      height: 'calc(100vh - 100px)',
+      zIndex: 1
     },
     [`screen and (min-width: ${breakpoints.desktop}px)`]: {
       maxWidth: 1216,
@@ -30,11 +32,15 @@ export const honeySider = style({
   }
 });
 
+globalStyle(`${honeySider} > div:first-of-type`, {
+  height: 'calc(100% - 15px)'
+});
+
 export const isVisible = style({
   display: 'block',
   position: 'fixed',
   bottom: '-10px',
-  top: 'initial',
+  top: '0',
   padding: '12px 12px',
   '@media': {
     [`screen and (min-width: ${breakpoints.desktop}px)`]: {
@@ -48,12 +54,13 @@ export const isVisible = style({
 
 globalStyle(`.sidebar.is-sticky`, {
   position: 'fixed',
-  top: 'initial',
+  top: '0',
   bottom: '-10px',
   padding: '12px 12px',
   '@media': {
     [`screen and (min-width: ${breakpoints.desktop}px)`]: {
-      padding: '12px 0'
+      padding: '12px 0',
+      top: 'initial'
     }
   }
 });

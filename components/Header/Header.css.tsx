@@ -50,12 +50,53 @@ export const leftContainer = style({
 });
 
 export const menuToggle = style({
-  display: 'none',
   width: 20,
-  height: 20,
+  height: 20
+});
+
+export const walletMenuBox = style({
   '@media': {
-    [`screen and (max-width: ${breakpoints.tablet}px)`]: {
-      display: 'block'
+    [`screen and (max-width: ${breakpoints.mobile}px)`]: {
+      order: -2
     }
   }
+});
+
+export const userIcon = style({
+  width: 24,
+  height: 24,
+  background: 'url("/images/userIcon.svg") center center no-repeat'
+});
+
+export const userMenu = style({
+  right: 0,
+  borderRadius: 12,
+  padding: 10
+});
+
+globalStyle(`${userMenu} .ant-dropdown-menu-item-divider`, {
+  height: 2,
+  width: '100%'
+});
+
+globalStyle(`${userMenu} ul`, {
+  listStyle: 'none',
+  padding: '0'
+});
+
+globalStyle(`${userMenu} ul li `, {
+  display: 'flex',
+  justifyContent: 'space-between',
+  cursor: 'pointer',
+  flexDirection: 'row-reverse'
+});
+
+globalStyle(`${userMenu} .ant-dropdown-menu-item-selected`, {
+  color: vars.colors.text,
+  background: 'rgba(0, 0, 0, 0.05)'
+});
+
+export const menuIconContainer = style({
+  marginLeft: 20,
+  display: 'flex'
 });

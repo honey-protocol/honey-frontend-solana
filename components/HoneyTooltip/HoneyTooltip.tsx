@@ -12,6 +12,7 @@ const HoneyTooltip = (props: HoneyTooltipProps) => {
   const { children, placement, ...rest } = props;
   return (
     <Tooltip
+      trigger={['click']}
       placement={placement ? placement : 'bottom'}
       overlayClassName={styles.tooltip}
       {...rest}

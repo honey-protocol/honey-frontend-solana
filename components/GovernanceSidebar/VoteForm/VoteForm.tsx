@@ -174,7 +174,7 @@ const VoteForm: FC<VoteFormProps> = (props: VoteFormProps) => {
     <SidebarScroll
       footer={
         toast.state ? (
-          <ToastComponent />
+          ToastComponent
         ) : (
           <div>
             {proposalInfo.status === ProposalState.Draft && !isActivatiable && (

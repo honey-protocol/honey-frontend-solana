@@ -9,11 +9,9 @@ export const MenuCloseIcon = () => (
     xmlns="http://www.w3.org/2000/svg"
   >
     <path
-      d="M5 5L15 15M15 5L5 15"
+      d="M1 1.25L19 19.25M19 1.25L1 19.25"
       stroke={vars.colors.text}
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
+      strokeWidth="1.8"
     />
   </svg>
 );

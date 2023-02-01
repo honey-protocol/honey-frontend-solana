@@ -1,5 +1,3 @@
-import { vars } from 'styles/theme.css';
-
 export const SwitchIcon = (props: { fill: string }) => (
   <svg
     width="17"
