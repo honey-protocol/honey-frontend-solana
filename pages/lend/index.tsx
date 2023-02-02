@@ -142,15 +142,9 @@ const Lend: NextPage = () => {
   }
 
   useEffect(() => {
-    if (
-      sdkConfig.saberHqConnection &&
-      sdkConfig.sdkWallet &&
-      sdkConfig.honeyId
-    ) {
-      const marketIDs = marketCollections.map(market => market.id);
-      fetchAllMarketData(marketIDs);
-    }
-  }, [sdkConfig.saberHqConnection, sdkConfig.sdkWallet]);
+    const marketIDs = marketCollections.map(market => market.id);
+    fetchAllMarketData(marketIDs);
+  }, []);
   //  ************* END FETCH MARKET DATA *************
 
   //  ************* START FETCH USER BALANCE *************

@@ -222,15 +222,9 @@ const Markets: NextPage = () => {
   }
 
   useEffect(() => {
-    if (
-      sdkConfig.saberHqConnection &&
-      sdkConfig.sdkWallet &&
-      sdkConfig.honeyId
-    ) {
-      const marketIDs = marketCollections.map(market => market.id);
-      fetchAllMarketData(marketIDs);
-    }
-  }, [sdkConfig.saberHqConnection, sdkConfig.sdkWallet]);
+    const marketIDs = marketCollections.map(market => market.id);
+    fetchAllMarketData(marketIDs);
+  }, []);
 
   // if there are open positions for the user -> set the open positions
   useEffect(() => {
