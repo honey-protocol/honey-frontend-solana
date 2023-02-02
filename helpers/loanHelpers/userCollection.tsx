@@ -194,9 +194,9 @@ const calculateRisk = async (
     (obl: any) => obl.debt.toString() != 0
   );
 
-  let sumOfDebt = await filtered.reduce((acc: BN, obligation: any) => {
-    return new BN(acc.add(obligation.debt));
-  }, new BN(0));
+  let sumOfDebt = await filtered.reduce((acc: number, obligation: any) => {
+    return (acc += obligation.debt);
+  }, 0);
 
   if (type === true) {
     return sumOfDebt;
