@@ -73,7 +73,11 @@ module.exports = (phase, { defaultConfig }) => {
           'shdw-drive.genesysgo.net',
           'bafybeiay5mjlq3geafi2ci6dlelqpsfii764lxeuvl2ccrpm7hf2duvmsm.ipfs.nftstorage.link',
           'cdn.pesky-penguins.com',
-          'i.seadn.io'
+          'i.seadn.io',
+          'bafybeiaphrtdzdrepr2vfrokmqivrxnod23v7dradslncqcwfu63yqjzbm.ipfs.dweb.link',
+          'ipfs.dweb.link',
+          'heavenland.io',
+          'bafybeihszwjxj6q7wlpj2k256in5je26ttkztpbsqpvyv6377l3v4evccq.ipfs.dweb.link'
         ]
       }
     };
@@ -118,7 +122,10 @@ module.exports = (phase, { defaultConfig }) => {
           'shdw-drive.genesysgo.net',
           'bafybeiay5mjlq3geafi2ci6dlelqpsfii764lxeuvl2ccrpm7hf2duvmsm.ipfs.nftstorage.link',
           'cdn.pesky-penguins.com',
-          'i.seadn.io'
+          'i.seadn.io',
+          'bafybeiaphrtdzdrepr2vfrokmqivrxnod23v7dradslncqcwfu63yqjzbm.ipfs.dweb.link',
+          'heavenland.io',
+          'bafybeihszwjxj6q7wlpj2k256in5je26ttkztpbsqpvyv6377l3v4evccq.ipfs.dweb.link'
         ]
       }
     };
