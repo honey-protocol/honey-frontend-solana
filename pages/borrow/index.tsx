@@ -307,6 +307,7 @@ const Markets: NextPage = () => {
                 collection.verifiedCreator,
                 userOpenPositions
               );
+
               collection.rate =
                 (await getInterestRate(
                   collection.utilizationRate,
@@ -323,7 +324,6 @@ const Markets: NextPage = () => {
                 setActiveInterestRate(collection.rate);
                 setFetchedDataObject(collection.marketData[0]);
               }
-
               return collection;
             } else {
               await populateMarketData(

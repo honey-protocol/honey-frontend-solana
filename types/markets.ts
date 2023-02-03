@@ -15,6 +15,7 @@ export type MarketTableRow = {
   utilizationRate: number;
   value: number;
   openPositions: Array<MarketTablePosition>; 
+  positions: Array<MarketTablePosition>; 
   stats?: any;
   risk?: number;
   liquidationThreshold?: number;
