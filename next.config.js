@@ -77,7 +77,12 @@ module.exports = (phase, { defaultConfig }) => {
           'bafybeiaphrtdzdrepr2vfrokmqivrxnod23v7dradslncqcwfu63yqjzbm.ipfs.dweb.link',
           'ipfs.dweb.link',
           'heavenland.io',
-          'bafybeihszwjxj6q7wlpj2k256in5je26ttkztpbsqpvyv6377l3v4evccq.ipfs.dweb.link'
+          'bafybeihszwjxj6q7wlpj2k256in5je26ttkztpbsqpvyv6377l3v4evccq.ipfs.dweb.link',
+          'https://pbs.twimg.com/',
+          'bafybeibvse543mqa5berzk453ylajms7ro5ef5246uunelc2aipnib5k4q.ipfs.nftstorage.link',
+          'pbs.twimg.com',
+          'ipfs.nftstorage.link',
+          'bafybeifqffkzbxzlxbwkklx3pekyg5i2cu7vlcepmphups2m7b4w7segly.ipfs.nftstorage.link'
         ]
       }
     };
@@ -125,7 +130,12 @@ module.exports = (phase, { defaultConfig }) => {
           'i.seadn.io',
           'bafybeiaphrtdzdrepr2vfrokmqivrxnod23v7dradslncqcwfu63yqjzbm.ipfs.dweb.link',
           'heavenland.io',
-          'bafybeihszwjxj6q7wlpj2k256in5je26ttkztpbsqpvyv6377l3v4evccq.ipfs.dweb.link'
+          'bafybeihszwjxj6q7wlpj2k256in5je26ttkztpbsqpvyv6377l3v4evccq.ipfs.dweb.link',
+          'https://pbs.twimg.com/',
+          'bafybeibvse543mqa5berzk453ylajms7ro5ef5246uunelc2aipnib5k4q.ipfs.nftstorage.link',
+          'pbs.twimg.com',
+          'ipfs.nftstorage.link',
+          'bafybeifqffkzbxzlxbwkklx3pekyg5i2cu7vlcepmphups2m7b4w7segly.ipfs.nftstorage.link'
         ]
       }
     };

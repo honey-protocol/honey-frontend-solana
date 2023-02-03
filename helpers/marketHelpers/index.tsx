@@ -126,7 +126,7 @@ export const marketCollections: MarketTableRow[] = [
   //   available: 0,
   //   value: 0,
   //   allowance: 0,
-  //   positions: [],
+  // positions: [],
   //   connection: undefined,
   //   user: undefined,
   //   debt: 0,
@@ -150,7 +150,7 @@ export const marketCollections: MarketTableRow[] = [
   //   available: 0,
   //   value: 0,
   //   allowance: 0,
-  //   positions: [],
+  // positions: [],
   //   connection: undefined,
   //   user: undefined,
   //   debt: 0,
@@ -174,7 +174,7 @@ export const marketCollections: MarketTableRow[] = [
   //   available: 0,
   //   value: 0,
   //   allowance: 0,
-  //   positions: [],
+  // positions: [],
   //   connection: undefined,
   //   user: undefined,
   //   debt: 0,
@@ -198,7 +198,7 @@ export const marketCollections: MarketTableRow[] = [
   //   available: 0,
   //   value: 0,
   //   allowance: 0,
-  //   positions: [],
+  // positions: [],
   //   connection: undefined,
   //   user: undefined,
   //   debt: 0,
@@ -306,6 +306,30 @@ export const marketCollections: MarketTableRow[] = [
       marketName: 'Heavenland',
       marketImage:
         'https://img-cdn.magiceden.dev/rs:fill:400:400:0:0/plain/https://dl.airtable.com/.attachmentThumbnails/9d1ed55dcb8a3f2a73d514c1e5fdc3e0/cecf9ba3',
+      discountedMarket: false
+    }
+  },
+  {
+    id: 'Dmngi1MDEQU9fm6sX39EuyT3EpYEmXYuyg56uEjVCkD6',
+    key: 'Marshies',
+    name: 'Marshies',
+    verifiedCreator: 'ACBrgk19WYp6oT4VLHQZhAgDPJo8HNoCfDZW6iTpJSjS',
+    rate: 0,
+    available: 0,
+    value: 0,
+    allowance: 0,
+    positions: [],
+    connection: undefined,
+    user: undefined,
+    debt: 0,
+    utilizationRate: 0,
+    openPositions: [],
+    constants: {
+      marketId: 'Dmngi1MDEQU9fm6sX39EuyT3EpYEmXYuyg56uEjVCkD6',
+      verifiedCreator: 'ACBrgk19WYp6oT4VLHQZhAgDPJo8HNoCfDZW6iTpJSjS',
+      marketName: 'Marshies',
+      marketImage:
+        'https://pbs.twimg.com/profile_images/1610792754388570113/LXrVtzAE_400x400.jpg',
       discountedMarket: false
     }
   }
