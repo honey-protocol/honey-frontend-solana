@@ -12,14 +12,21 @@ const {
 } = formatNumber;
 
 const CurrentBidCard = (props: CurrentBidCardProps) => {
-  const {fetchedSolPrice, date, usdcValue, solAmount, walletAddress, hasBorder = true } = props;
+  const {
+    fetchedSolPrice,
+    date,
+    usdcValue,
+    solAmount,
+    walletAddress,
+    hasBorder = true
+  } = props;
   // TODO: add SOL/USDC conversion?
   return (
     <div className={c(styles.bidCard, { [styles.hasBorder]: hasBorder })}>
       <div className={styles.bidCardLeft}>
         <div className={styles.bidCardCopy}>
           <p className={styles.bidCardAddress}>{walletAddress}</p>
-          <p className={styles.bidCardDate}>{dateFromTimestamp(date)}</p>
+          {/* <p className={styles.bidCardDate}>{dateFromTimestamp(date)}</p> */}
         </div>
 
         <div
