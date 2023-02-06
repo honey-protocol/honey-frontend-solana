@@ -37,8 +37,8 @@ import {
   HoneyMarket,
   HoneyUser,
   HoneyClient,
-  fetchReservePrice,
-  TReserve
+  TReserve,
+  fetchReservePrice
 } from '@honey-finance/sdk';
 import { ConfigureSDK } from 'helpers/loanHelpers';
 import { useConnectedWallet } from '@saberhq/use-solana';
@@ -247,12 +247,6 @@ const Liquidate: NextPage = () => {
     document.body.classList.remove('disable-scroll');
   };
 
-  //  ************* START FETCH SOL PRICE *************
-  /**
-   * @description
-   * @params
-   * @returns
-   */
   async function fetchSolValue(reserves: TReserve, connection: Connection) {
     const slPrice = await fetchReservePrice(reserves, connection);
     setFetchedSolPrice(slPrice);

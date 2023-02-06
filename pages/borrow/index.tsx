@@ -32,7 +32,7 @@ import EmptyStateDetails from 'components/EmptyStateDetails/EmptyStateDetails';
 import { getColumnSortStatus } from '../../helpers/tableUtils';
 import { useConnectedWallet, useSolana } from '@saberhq/use-solana';
 import { BnToDecimal, ConfigureSDK } from '../../helpers/loanHelpers/index';
-import { LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js';
+import { Connection, LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js';
 import HealthLvl from '../../components/HealthLvl/HealthLvl';
 import useFetchNFTByUser from 'hooks/useNFTV2';
 import {
@@ -46,7 +46,8 @@ import {
   MarketBundle,
   waitForConfirmation,
   fetchReservePrice,
-  withdrawNFT
+  withdrawNFT,
+  TReserve
 } from '@honey-finance/sdk';
 import { populateMarketData } from 'helpers/loanHelpers/userCollection';
 import { Metadata } from '@metaplex-foundation/mpl-token-metadata';
@@ -191,7 +192,7 @@ const Markets: NextPage = () => {
 
   // fetches the sol price
   // TODO: create type for reserves and connection
-  async function fetchSolValue(reserves: any, connection: any) {
+  async function fetchSolValue(reserves: TReserve, connection: Connection) {
     const slPrice = await fetchReservePrice(reserves, connection);
     setFetchedSolPrice(slPrice);
   }
