@@ -314,16 +314,7 @@ const Markets: NextPage = () => {
         setTableDataFiltered(result);
       });
     }
-  }, [
-    reserveHoneyState,
-    userOpenPositions,
-    // honeyUser,
-    // honeyClient,
-    // honeyMarket,
-    // parsedReserves,
-    marketData,
-    NFTs
-  ]);
+  }, [reserveHoneyState, userOpenPositions, marketData, NFTs]);
 
   const showMobileSidebar = () => {
     setShowMobileSidebar(true);
@@ -885,6 +876,7 @@ const Markets: NextPage = () => {
   async function executeBorrow(val: any, toast: ToastProps['toast']) {
     try {
       if (!val) return toast.error('Please provide a value');
+      // TODO: make the token mint dynamic by importing it from marketcollection / fetchAllMarkets
       const borrowTokenMint = new PublicKey(
         'So11111111111111111111111111111111111111112'
       );
@@ -943,6 +935,9 @@ const Markets: NextPage = () => {
   async function executeRepay(val: any, toast: ToastProps['toast']) {
     try {
       if (!val) return toast.error('Please provide a value');
+      // add additional value if user wants to repay 100% of loan due to interest rate not being included
+      if (val == userDebt) val += 1;
+      // TODO: make dynamic - marketCollections or fetchAllMarkets
       const repayTokenMint = new PublicKey(
         'So11111111111111111111111111111111111111112'
       );
