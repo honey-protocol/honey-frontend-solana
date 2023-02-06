@@ -304,8 +304,7 @@ export const marketCollections: MarketTableRow[] = [
       marketId: '5ZxAjKpbYje5fCxhvnRYxbMh6XSZm5Cd7RA9mMGb1DLY',
       verifiedCreator: 'C4ki5erQ54EWDwuHYeD3m8xMrF6YXL9tV9dYpaf4idkS',
       marketName: 'Heavenland',
-      marketImage:
-        'https://img-cdn.magiceden.dev/rs:fill:400:400:0:0/plain/https://dl.airtable.com/.attachmentThumbnails/9d1ed55dcb8a3f2a73d514c1e5fdc3e0/cecf9ba3',
+      marketImage: 'https://i.imgur.com/vUqGhky.png',
       discountedMarket: false
     }
   },

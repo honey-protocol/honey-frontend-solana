@@ -82,7 +82,8 @@ module.exports = (phase, { defaultConfig }) => {
           'bafybeibvse543mqa5berzk453ylajms7ro5ef5246uunelc2aipnib5k4q.ipfs.nftstorage.link',
           'pbs.twimg.com',
           'ipfs.nftstorage.link',
-          'bafybeifqffkzbxzlxbwkklx3pekyg5i2cu7vlcepmphups2m7b4w7segly.ipfs.nftstorage.link'
+          'bafybeifqffkzbxzlxbwkklx3pekyg5i2cu7vlcepmphups2m7b4w7segly.ipfs.nftstorage.link',
+          'i.imgur.com'
         ]
       }
     };
@@ -135,7 +136,8 @@ module.exports = (phase, { defaultConfig }) => {
           'bafybeibvse543mqa5berzk453ylajms7ro5ef5246uunelc2aipnib5k4q.ipfs.nftstorage.link',
           'pbs.twimg.com',
           'ipfs.nftstorage.link',
-          'bafybeifqffkzbxzlxbwkklx3pekyg5i2cu7vlcepmphups2m7b4w7segly.ipfs.nftstorage.link'
+          'bafybeifqffkzbxzlxbwkklx3pekyg5i2cu7vlcepmphups2m7b4w7segly.ipfs.nftstorage.link',
+          'i.imgur.com'
         ]
       }
     };
