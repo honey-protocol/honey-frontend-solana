@@ -32,7 +32,12 @@ import EmptyStateDetails from 'components/EmptyStateDetails/EmptyStateDetails';
 import { getColumnSortStatus } from '../../helpers/tableUtils';
 import { useConnectedWallet, useSolana } from '@saberhq/use-solana';
 import { BnToDecimal, ConfigureSDK } from '../../helpers/loanHelpers/index';
-import { Connection, LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js';
+import {
+  Connection,
+  LAMPORTS_PER_SOL,
+  PublicKey,
+  clusterApiUrl
+} from '@solana/web3.js';
 import HealthLvl from '../../components/HealthLvl/HealthLvl';
 import useFetchNFTByUser from 'hooks/useNFTV2';
 import {
@@ -62,7 +67,9 @@ import { pageDescription, pageTitle } from 'styles/common.css';
 import HoneyTableRow from 'components/HoneyTable/HoneyTableRow/HoneyTableRow';
 import HoneyTableNameCell from '../../components/HoneyTable/HoneyTableNameCell/HoneyTableNameCell';
 import {
+  HONEY_PROGRAM_ID,
   marketCollections,
+  marketIDs,
   OpenPositions
 } from '../../helpers/marketHelpers/index';
 import HoneyTooltip from '../../components/HoneyTooltip/HoneyTooltip';
@@ -88,6 +95,7 @@ const network = 'mainnet-beta';
 import { featureFlags } from 'helpers/featureFlags';
 import SorterIcon from 'icons/Sorter';
 import ExpandedRowIcon from 'icons/ExpandedRowIcon';
+import { BorrowProps } from './types';
 // import { network } from 'pages/_app';
 const {
   format: f,
@@ -96,7 +104,29 @@ const {
   formatShortName: fsn
 } = formatNumber;
 
-const Markets: NextPage = () => {
+export async function getStaticProps() {
+  const createConnection = () => {
+    // @ts-ignore
+    return new Connection(process.env.NEXT_PUBLIC_RPC_NODE, 'mainnet-beta');
+  };
+
+  const ssrMarketData = await fetchAllMarkets(
+    createConnection(),
+    null,
+    HONEY_PROGRAM_ID,
+    marketIDs,
+    false
+  );
+  console.log(ssrMarketData);
+
+  // @ts-ignore
+  const res = await ssrMarketData.json();
+  return { props: { ssrMarketData }, revalidate: 30 };
+}
+// @ts-ignore
+const Markets: NextPage = (props: BorrowProps) => {
+  const { ssrMarketData } = props;
+  if (ssrMarketData) console.log('this is ssr', ssrMarketData);
   // Sets market ID which is used for fetching market specific data
   // each market currently is a different call and re-renders the page
   const [currentMarketId, setCurrentMarketId] = useState(
@@ -218,7 +248,6 @@ const Markets: NextPage = () => {
       marketIDs,
       false
     );
-
     setMarketData(data as unknown as MarketBundle[]);
   }
 
