@@ -19,6 +19,16 @@ export type OpenPositions = {
   uri: string;
 };
 
+export const marketIDs = [
+  '6FcJaAzQnuoA6o3sVw1GD6Ba69XuL5jinZpQTzJhd2R3',
+  'Bw77MGpg189EaATjN67WXcnp3c4544LhKoV4Ftmdg4C',
+  'H2H2pJuccdvpET9A75ajB3GgdYdCUL4T3kiwUMA6DJ7q',
+  'Bxk1JQCbVjpeFnjzvH5n9bepnZeHjRADUFwZiVC7L5Gq',
+  'FTBLaLcrx1aXALW2UEpu8a6HLRVFATezkK12wCABPAiA',
+  'GAqyPziKPwVpwKaeqPhEsxiy6MwQ2bvtodruWErpLVKo',
+  '2dxJ4eMkhMxm1ZqpAhKsjunvyziuq1JRnuHaqKFRY8et'
+];
+
 // collection strucutre for the markets
 export const marketCollections: MarketTableRow[] = [
   {
