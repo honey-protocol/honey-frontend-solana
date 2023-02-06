@@ -298,7 +298,7 @@ const Liquidate: NextPage = () => {
             if (walletPK) await fetchWalletBalance(walletPK);
             return toast.success('Bid revoked, fetching chain data');
           } else {
-            return toast.error('Revoke bid failed');
+            return toast.error('Revoke bid failed', transactionOutcome[0]);
           }
         } else if (type == 'place_bid') {
           // if no user bid terminate action
