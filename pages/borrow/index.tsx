@@ -104,29 +104,8 @@ const {
   formatShortName: fsn
 } = formatNumber;
 
-export async function getStaticProps() {
-  const createConnection = () => {
-    // @ts-ignore
-    return new Connection(process.env.NEXT_PUBLIC_RPC_NODE, 'mainnet-beta');
-  };
-
-  const ssrMarketData = await fetchAllMarkets(
-    createConnection(),
-    null,
-    HONEY_PROGRAM_ID,
-    marketIDs,
-    false
-  );
-  console.log(ssrMarketData);
-
-  // @ts-ignore
-  const res = await ssrMarketData.json();
-  return { props: { ssrMarketData }, revalidate: 30 };
-}
 // @ts-ignore
-const Markets: NextPage = (props: BorrowProps) => {
-  const { ssrMarketData } = props;
-  if (ssrMarketData) console.log('this is ssr', ssrMarketData);
+const Markets: NextPage = () => {
   // Sets market ID which is used for fetching market specific data
   // each market currently is a different call and re-renders the page
   const [currentMarketId, setCurrentMarketId] = useState(
