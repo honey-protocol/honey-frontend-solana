@@ -185,7 +185,7 @@ const Markets: NextPage = () => {
     useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [isMobileSidebarVisible, setShowMobileSidebar] = useState(false);
-  const [showWeeklyRates, setShowWeeklyRates] = useState(false);
+  const [showWeeklyRates, setShowWeeklyRates] = useState(true);
 
   /**
    * @description fetches all nfts in users wallet
