@@ -389,6 +389,7 @@ const Markets: NextPage = () => {
     <div className={style.headerCell['disabled']}>
       <Space direction="horizontal">
         <HoneyToggle
+          defaultChecked
           onChange={value => {
             setShowWeeklyRates(value);
           }}
@@ -648,7 +649,9 @@ const Markets: NextPage = () => {
                 }
               />
               <HoneyTableRow>
-                <div className={style.rateCell}>{fp(row.rate)}</div>
+                <div className={style.rateCell}>
+                  {fp(row.rate / (showWeeklyRates ? 52 : 1))}
+                </div>
                 <div className={style.availableCell}>{fs(row.value)}</div>
                 <div className={style.availableCell}>{fs(row.available)}</div>
               </HoneyTableRow>
@@ -657,7 +660,7 @@ const Markets: NextPage = () => {
         }
       }
     ],
-    [isMyCollectionsFilterEnabled, tableData, searchQuery]
+    [isMyCollectionsFilterEnabled, tableData, searchQuery, showWeeklyRates]
   );
 
   // position in each market
@@ -1193,10 +1196,10 @@ const Markets: NextPage = () => {
               style.mobileSearchAndToggleContainer
             )}
           >
-            <div className={style.mobileRow}>
+            <div className={c(style.mobileRow, style.mobileSearchContainer)}>
               <SearchForm />
             </div>
-            <div className={style.mobileRow}>
+            <div className={c(style.mobileToggleContainer)}>
               <WeeklyToggle />
             </div>
           </div>
