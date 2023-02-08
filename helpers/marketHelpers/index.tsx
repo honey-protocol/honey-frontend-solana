@@ -146,29 +146,29 @@ export const marketCollections: MarketTableRow[] = [
       discountedMarket: false
     }
   },
-  // {
-  //   id: '5UKRRSxbi4PgPnQU2ZqtukUxd1fyN6ydn1hoxivP46A8',
-  //   key: 'OLV',
-  //   name: 'Elixir: Ovols',
-  //   verifiedCreator: 'ovo1kT7RqrAZwFtgSGEgNfa7nHjeZoK6ykg1GknJEXG',
-  //   rate: 0,
-  //   available: 0,
-  //   value: 0,
-  //   allowance: 0,
-  //   connection: undefined,
-  //   user: undefined,
-  //   debt: 0,
-  //   utilizationRate: 0,
-  //   openPositions: [],
-  //   constants: {
-  //     marketId: '5UKRRSxbi4PgPnQU2ZqtukUxd1fyN6ydn1hoxivP46A8',
-  //     verifiedCreator: 'ovo1kT7RqrAZwFtgSGEgNfa7nHjeZoK6ykg1GknJEXG',
-  //     marketName: 'Elixir: Ovols',
-  //     marketImage:
-  //       'https://img-cdn.magiceden.dev/rs:fill:400:400:0:0/plain/https://creator-hub-prod.s3.us-east-2.amazonaws.com/elixir_ovols_pfp_1668964852701.png',
-  //     discountedMarket: true
-  //   }
-  // }
+  {
+    id: '5UKRRSxbi4PgPnQU2ZqtukUxd1fyN6ydn1hoxivP46A8',
+    key: 'OLV',
+    name: 'Elixir: Ovols',
+    verifiedCreator: 'ovo1kT7RqrAZwFtgSGEgNfa7nHjeZoK6ykg1GknJEXG',
+    rate: 0,
+    available: 0,
+    value: 0,
+    allowance: 0,
+    connection: undefined,
+    user: undefined,
+    debt: 0,
+    utilizationRate: 0,
+    openPositions: [],
+    constants: {
+      marketId: '5UKRRSxbi4PgPnQU2ZqtukUxd1fyN6ydn1hoxivP46A8',
+      verifiedCreator: 'ovo1kT7RqrAZwFtgSGEgNfa7nHjeZoK6ykg1GknJEXG',
+      marketName: 'Elixir: Ovols',
+      marketImage:
+        'https://img-cdn.magiceden.dev/rs:fill:400:400:0:0/plain/https://creator-hub-prod.s3.us-east-2.amazonaws.com/elixir_ovols_pfp_1668964852701.png',
+      discountedMarket: true
+    }
+  },
   // {
   //   id: 'F8rZviSSuqgkTsjMeoyrTUSNSqh7yNDCAozJkxm7eujY',
   //   key: 'BURR',
