@@ -280,7 +280,7 @@ export const marketCollections: MarketTableRow[] = [
       verifiedCreator: '8wACNDCJiPVVxfrFJRUYkJx4hQgvcoZggMXKmNvjQ6R7',
       marketName: 'Vandal City',
       marketImage:
-        'https://img-cdn.magiceden.dev/rs:fill:400:400:0:0/plain/https://cdn.discordapp.com/attachments/975048153843777577/1005302647491928124/unknown.png',
+        'https://i.seadn.io/gae/BgIPqBsvXBIoT-7IFHqAMbUJn9yU1Ngcdc5p1ItIQlderHXU5HuQX1SNWV4zqGpe_GWGcZwO88FFwpOdJMU7a5o4RMULdxmPr4TAlY4?auto=format&w=256',
       discountedMarket: false
     }
   },
