@@ -919,6 +919,10 @@ const Markets: NextPage = () => {
           await refreshPositions();
           refetchNfts({});
 
+          reserveHoneyState === 0
+            ? setReserveHoneyState(1)
+            : setReserveHoneyState(0);
+
           toast.success(
             'Borrow success',
             `https://solscan.io/tx/${tx[1][0]}?cluster=${network}`
