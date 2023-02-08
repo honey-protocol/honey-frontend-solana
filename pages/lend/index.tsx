@@ -247,7 +247,7 @@ const Lend: NextPage = () => {
         return toast.error('Deposit failed');
       }
     } catch (error) {
-      return toast.error('Deposit failed', error);
+      return toast.error('Deposit failed');
     }
   }
   /**
@@ -314,7 +314,7 @@ const Lend: NextPage = () => {
         return toast.error('Withdraw failed ');
       }
     } catch (error) {
-      return toast.error('Withdraw failed ', error);
+      return toast.error('Withdraw failed ');
     }
   }
 

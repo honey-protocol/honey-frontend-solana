@@ -932,7 +932,7 @@ const Markets: NextPage = () => {
         return toast.error('Borrow failed', tx);
       }
     } catch (error) {
-      return toast.error('An error occurred', error);
+      return toast.error('An error occurred');
     }
   }
 
