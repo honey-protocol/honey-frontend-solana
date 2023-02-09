@@ -259,8 +259,7 @@ async function configureCollectionObjecet(
       collection.tvl = tvl;
       collection.totalDebt = totalMarketDebt;
 
-      collection.utilizationRate =
-        honeyUser.market.reserveList[0].config.utilizationRate1;
+      collection.utilizationRate = utilization;
 
       collection.risk = obligations.length
         ? await calculateRisk(
