@@ -317,6 +317,7 @@ const Markets: NextPage = () => {
       }
 
       getData().then(result => {
+        console.log('@@-- result', result);
         setTableData(result);
         setTableDataFiltered(result);
       });
