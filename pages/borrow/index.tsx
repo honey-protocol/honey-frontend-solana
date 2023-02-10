@@ -390,6 +390,7 @@ const Markets: NextPage = () => {
       <Space direction="horizontal">
         <HoneyToggle
           defaultChecked
+          checked={showWeeklyRates}
           onChange={value => {
             setShowWeeklyRates(value);
           }}
