@@ -43,8 +43,8 @@ import {
   populateMarketData
 } from 'helpers/loanHelpers/userCollection';
 import { ToastProps } from 'hooks/useToast';
-import { Typography } from 'antd';
-import { pageDescription, pageTitle } from 'styles/common.css';
+import { Skeleton, Typography } from 'antd';
+import { pageDescription, pageTitle, center } from 'styles/common.css';
 import HoneyTableNameCell from 'components/HoneyTable/HoneyTableNameCell/HoneyTableNameCell';
 import HoneyTableRow from 'components/HoneyTable/HoneyTableRow/HoneyTableRow';
 
@@ -53,6 +53,7 @@ import { HONEY_GENESIS_MARKET_ID } from '../../helpers/marketHelpers/index';
 import { marketCollections } from '../../helpers/marketHelpers';
 import { generateMockHistoryData } from '../../helpers/chartUtils';
 import { renderMarket, renderMarketImageByName } from 'helpers/marketHelpers';
+import SorterIcon from 'icons/Sorter';
 // TODO: fetch based on config
 const network = 'mainnet-beta';
 
@@ -69,11 +70,11 @@ const Lend: NextPage = () => {
   const isMock = true;
   const [isMobileSidebarVisible, setShowMobileSidebar] = useState(false);
   const [activeInterestRate, setActiveInterestRate] = useState(0);
-  const [tableData, setTableData] = useState<LendTableRow[]>([]);
+  const [tableData, setTableData] = useState<LendTableRow[]>(marketCollections);
   const [fetchedDataObject, setFetchedDataObject] = useState<MarketBundle>();
-  const [tableDataFiltered, setTableDataFiltered] = useState<LendTableRow[]>(
-    []
-  );
+  const [tableDataFiltered, setTableDataFiltered] =
+    useState<LendTableRow[]>(marketCollections);
+  const [isFetchingData, setIsFetchingData] = useState(true);
   const [expandedRowKeys, setExpandedRowKeys] = useState<readonly Key[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [isMyCollectionsFilterEnabled, setIsMyCollectionsFilterEnabled] =
@@ -403,6 +404,7 @@ const Lend: NextPage = () => {
       }
 
       getData().then(result => {
+        setIsFetchingData(false);
         setTableData(result);
         setTableDataFiltered(result);
       });
@@ -508,17 +510,22 @@ const Lend: NextPage = () => {
               }
             >
               <span>Interest rate</span>{' '}
-              <div className={style.sortIcon[sortOrder]} />
+              <div className={style.sortIcon[sortOrder]}>
+                <SorterIcon active={sortOrder !== 'disabled'} />
+              </div>
             </div>
           );
         },
         dataIndex: 'rate',
         sorter: (a: any = 0, b: any = 0) => a.rate - b.rate,
-        render: (rate: number, market: any) => {
-          return (
+        render: (rate: number, market: any) =>
+          isFetchingData ? (
+            <div className={center}>
+              <Skeleton.Button size="small" active />
+            </div>
+          ) : (
             <div className={c(style.rateCell, style.lendRate)}>{fp(rate)}</div>
-          );
-        }
+          )
       },
       {
         width: columnsWidth[3],
@@ -533,15 +540,22 @@ const Lend: NextPage = () => {
               }
             >
               <span>Supplied</span>{' '}
-              <div className={style.sortIcon[sortOrder]} />
+              <div className={style.sortIcon[sortOrder]}>
+                <SorterIcon active={sortOrder !== 'disabled'} />
+              </div>
             </div>
           );
         },
         dataIndex: 'value',
         sorter: (a, b) => a.value - b.value,
-        render: (value: number, market: any) => {
-          return <div className={style.valueCell}>{fs(value)}</div>;
-        }
+        render: (value: number, market: any) =>
+          isFetchingData ? (
+            <div className={center}>
+              <Skeleton.Button size="small" active />
+            </div>
+          ) : (
+            <div className={style.valueCell}>{fs(value)}</div>
+          )
       },
       {
         width: columnsWidth[2],
@@ -556,15 +570,22 @@ const Lend: NextPage = () => {
               }
             >
               <span>Available</span>{' '}
-              <div className={style.sortIcon[sortOrder]} />
+              <div className={style.sortIcon[sortOrder]}>
+                <SorterIcon active={sortOrder !== 'disabled'} />
+              </div>
             </div>
           );
         },
         dataIndex: 'available',
         sorter: (a, b) => a.available - b.available,
-        render: (available: number, market: any) => {
-          return <div className={style.availableCell}>{fs(available)}</div>;
-        }
+        render: (available: number, market: any) =>
+          isFetchingData ? (
+            <div className={center}>
+              <Skeleton.Button size="small" active />
+            </div>
+          ) : (
+            <div className={style.availableCell}>{fs(available)}</div>
+          )
       },
       {
         width: columnsWidth[4],
@@ -585,7 +606,8 @@ const Lend: NextPage = () => {
       isMyCollectionsFilterEnabled,
       searchQuery,
       tableDataFiltered,
-      currentMarketId
+      currentMarketId,
+      isFetchingData
     ]
   );
   // Render Mobile Data
