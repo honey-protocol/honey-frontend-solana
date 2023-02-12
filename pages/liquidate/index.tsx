@@ -430,6 +430,9 @@ const Liquidate: NextPage = () => {
 
               if (currentMarketId === collection.id)
                 setNftPrice(RoundHalfDown(Number(collection.nftPrice)));
+              setTimeout(() => {
+                setIsFetchingData(false);
+              }, 2000); // shows 0 for some values for a second before showing values so delay for 2 sec
               return collection;
             }
             return collection;
@@ -437,11 +440,14 @@ const Liquidate: NextPage = () => {
         );
       }
 
-      getData().then(result => {
-        setIsFetchingData(false);
-        setTableData(result);
-        setTableDataFiltered(result);
-      });
+      getData()
+        .then(result => {
+          setTableData(result);
+          setTableDataFiltered(result);
+        })
+        .catch(() => {
+          setIsFetchingData(false);
+        });
     }
   }, [
     currentMarketId,
@@ -574,7 +580,7 @@ const Liquidate: NextPage = () => {
               <Skeleton.Button size="small" active />
             </div>
           ) : (
-            <div className={style.rateCell}>{fp(risk * 100)}</div>
+            <div className={style.rateCell}>{fp(risk)}</div>
           )
       },
       {
@@ -729,7 +735,7 @@ const Liquidate: NextPage = () => {
 
               <HoneyTableRow>
                 {/* <div className={style.rateCell}>{fp(row.risk * 100)}</div> */}
-                <div className={style.rateCell}>{}</div>
+                <div className={style.rateCell}>{fp(row.risk)}</div>
                 <div className={style.rateCell}>{fs(row.totalDebt)}</div>
                 <div className={style.availableCell}>{fs(row.value)}</div>
               </HoneyTableRow>

@@ -355,7 +355,6 @@ const Lend: NextPage = () => {
         return Promise.all(
           marketCollections.map(async collection => {
             if (collection.id == '') return collection;
-
             if (marketData.length) {
               collection.marketData = marketData.filter(
                 marketObject =>
@@ -396,6 +395,9 @@ const Lend: NextPage = () => {
                   ? setUserTotalDeposits(collection.userTotalDeposits)
                   : setUserTotalDeposits(0);
               }
+              setTimeout(() => {
+                setIsFetchingData(false);
+              }, 2000); // shows 0 for some values for a second before showing values so delay for 2 sec
               return collection;
             }
             return collection;
@@ -403,11 +405,12 @@ const Lend: NextPage = () => {
         );
       }
 
-      getData().then(result => {
-        setIsFetchingData(false);
-        setTableData(result);
-        setTableDataFiltered(result);
-      });
+      getData()
+        .then(result => {
+          setTableData(result);
+          setTableDataFiltered(result);
+        })
+        .catch(() => setIsFetchingData(false));
     }
   }, [
     sdkConfig.saberHqConnection,

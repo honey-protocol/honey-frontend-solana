@@ -311,6 +311,7 @@ const Markets: NextPage = () => {
                 setLoanToValue(Number(collection.ltv));
                 setFetchedDataObject(collection.marketData[0]);
               }
+              setIsFetchingData(false);
               return collection;
             }
             return collection;
@@ -318,12 +319,13 @@ const Markets: NextPage = () => {
         );
       }
 
-      getData().then(result => {
-        console.log('@@-- result', result);
-        setIsFetchingData(false);
-        setTableData(result);
-        setTableDataFiltered(result);
-      });
+      getData()
+        .then(result => {
+          console.log('@@-- result', result);
+          setTableData(result);
+          setTableDataFiltered(result);
+        })
+        .catch(() => setIsFetchingData(false));
     }
   }, [reserveHoneyState, userOpenPositions, marketData, NFTs]);
 
