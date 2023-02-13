@@ -581,10 +581,10 @@
     "@types/chai-as-promised" "^7.1.5"
     "@types/mocha" "^9.1.0"
 
-"@honey-finance/sdk@^1.1.91":
-  version "1.1.91"
-  resolved "https://registry.yarnpkg.com/@honey-finance/sdk/-/sdk-1.1.91.tgz#c98be0a96b7811ede0e318e1ac493d48f6d32021"
-  integrity sha512-ntHzd3+7haaVr2uJesThGo+j377uXPtugX5nJrnTnxS+u1oHkH0ZODahNYHpeH/a5bn7Kl4VwhCs7XSONXC14A==
+"@honey-finance/sdk@^1.1.93":
+  version "1.1.93"
+  resolved "https://registry.yarnpkg.com/@honey-finance/sdk/-/sdk-1.1.93.tgz#21e28674ff63debc839c9e79ec622ab1c3ec0934"
+  integrity sha512-WRaZmkiWhaQh6YD+nXvBcPs5jzOMdhyU0IQk7b2CIFEp8yCQ8hXR8ppf5PBBiFFTWcrUg3/38dIlWuqCBikfFg==
   dependencies:
     "@honey-finance/sdk" "^1.1.48"
     "@metaplex-foundation/mpl-token-metadata" "^1.2.0"
