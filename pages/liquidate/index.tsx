@@ -277,8 +277,7 @@ const Liquidate: NextPage = () => {
     try {
       const liquidatorClient = await LiquidatorClient.connect(
         program.provider,
-        HONEY_PROGRAM_ID,
-        true
+        HONEY_PROGRAM_ID
       );
       if (wallet) {
         if (type == 'revoke_bid') {
@@ -318,12 +317,12 @@ const Liquidate: NextPage = () => {
             if (walletPK) await fetchWalletBalance(walletPK);
             return toast.success('Bid placed, fetching chain data');
           } else {
-            return toast.error('Bid failed');
+            return toast.error('Bid failed', transactionOutcome);
           }
         } else if (type == 'increase_bid') {
           // if no user bid terminate action
           if (!userBid) return;
-
+          userBid = Number(userBid.toFixed(2));
           toast.processing();
           let transactionOutcome: any = await liquidatorClient.increaseBid({
             bid_increase: userBid,
@@ -343,6 +342,7 @@ const Liquidate: NextPage = () => {
         return;
       }
     } catch (error) {
+      console.log('Error: ', error);
       return toast.error('Bid failed');
     }
   }
