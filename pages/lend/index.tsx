@@ -549,7 +549,9 @@ const Lend: NextPage = () => {
                 ]
               }
             >
-              <span>Interest rate</span>{' '}
+              {showWeeklyRates ? 
+              <> <span>Weekly rate</span>{' '} </> :
+               <> <span>Yearly rate</span>{' '} </>}
               <div className={style.sortIcon[sortOrder]} />
             </div>
           );
