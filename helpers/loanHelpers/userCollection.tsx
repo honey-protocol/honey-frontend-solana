@@ -249,7 +249,7 @@ async function configureCollectionObjecet(
     case 'LIQUIDATIONS':
       collection.name;
       collection.allowance = allowance;
-      collection.userDebt = userDebt.toString();
+      collection.userDebt = userDebt;
       collection.available = totalMarketDeposits;
       collection.value = totalMarketValue;
       collection.connection = connection;
@@ -289,8 +289,8 @@ async function configureCollectionObjecet(
       return collection;
     case 'BORROW':
       collection.allowance = allowance;
-      collection.userDebt = userDebt.toString();
-      collection.ltv = ltv.toString();
+      collection.userDebt = userDebt;
+      collection.ltv = ltv;
       collection.available = totalMarketDeposits;
       collection.value = totalMarketValue;
       collection.connection = connection;
@@ -303,13 +303,13 @@ async function configureCollectionObjecet(
       return collection;
     case 'LEND':
       collection.allowance = allowance;
-      collection.userDebt = userDebt.toString();
-      collection.ltv = ltv.toString();
+      collection.userDebt = userDebt;
+      collection.ltv = ltv;
       collection.available = totalMarketDeposits;
       collection.value = totalMarketValue;
       collection.connection = connection;
       collection.nftPrice = nftPrice;
-      collection.userTotalDeposits = userTotalDeposits.toString();
+      collection.userTotalDeposits = userTotalDeposits;
       // TODO: fix util rate based off object coming in
       collection.utilizationRate = utilization;
       collection.rate = interestRate * 100 * utilization;
@@ -359,7 +359,7 @@ async function handleFormatMarket(
   return await configureCollectionObjecet(origin, collection, {
     allowance: allowanceAndDebt.allowance,
     userDebt: allowanceAndDebt.debt,
-    ltv: allowanceAndDebt.ltv.toString(),
+    ltv: allowanceAndDebt.ltv,
     tvl,
     totalMarketDeposits,
     totalMarketValue,
