@@ -21,6 +21,7 @@ const MarketsSidebar = (props: MarketsSidebarProps) => {
   const [NFTs, isLoadingNfts, refetchNfts] = useFetchNFTByUser(wallet);
 
   const {
+    isFetchingData,
     openPositions,
     nftPrice,
     userAllowance,
@@ -131,6 +132,7 @@ const MarketsSidebar = (props: MarketsSidebarProps) => {
           <>
             {activeTab === 'borrow' && (
               <BorrowForm
+                isFetchingData={isFetchingData}
                 userDebt={userDebt}
                 executeBorrow={executeBorrow}
                 availableNFTs={availableNFTsInSelectedMarket}
@@ -159,6 +161,7 @@ const MarketsSidebar = (props: MarketsSidebarProps) => {
                 changeTab={handleTabChange}
                 fetchedSolPrice={fetchedSolPrice}
                 currentMarketId={currentMarketId}
+                isFetchingData={isFetchingData}
               />
             )}
           </>

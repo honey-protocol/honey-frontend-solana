@@ -763,6 +763,7 @@ const Liquidate: NextPage = () => {
         fetchedSolPrice={fetchedSolPrice}
         onCancel={hideMobileSidebar}
         currentMarketId={currentMarketId}
+        isFetchingData={isFetchingData}
       />
     </HoneySider>
   );
@@ -783,6 +784,7 @@ const Liquidate: NextPage = () => {
             columns={columns}
             dataSource={tableDataFiltered}
             pagination={false}
+            isLoading={isFetchingData}
             className={classNames(style.table, {
               [style.emptyTable]: !tableDataFiltered.length
             })}

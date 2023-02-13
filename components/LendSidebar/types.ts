@@ -11,4 +11,5 @@ export type LendSidebarProps = {
   executeDeposit: (val: number) => void;
   executeWithdraw: (val: number) => void;
   onCancel: Function;
+  isFetchingData?: boolean;
 };

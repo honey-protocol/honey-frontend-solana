@@ -11,7 +11,12 @@ export type LendSidebarProps = {
   currentMarketId: string;
   highestBiddingAddress: string;
   stringyfiedWalletPK?: string;
-  handleRevokeBid: (type: string, toast: ToastProps['toast'], mID: string) => void;
+  isFetchingData?: boolean;
+  handleRevokeBid: (
+    type: string,
+    toast: ToastProps['toast'],
+    mID: string
+  ) => void;
   handleIncreaseBid: (
     type: string,
     userBid: number,

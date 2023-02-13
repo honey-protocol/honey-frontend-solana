@@ -1068,6 +1068,7 @@ const Markets: NextPage = () => {
               calculatedInterestRate={activeInterestRate}
               currentMarketId={currentMarketId}
               availableNFTS={NFTs}
+              isFetchingData={isFetchingData}
             />
           </HoneySider>
         );
@@ -1113,6 +1114,7 @@ const Markets: NextPage = () => {
             columns={columns}
             dataSource={tableDataFiltered}
             pagination={false}
+            isLoading={isFetchingData}
             onRow={(record, rowIndex) => {
               return {
                 onClick: event => {

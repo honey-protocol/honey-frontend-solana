@@ -26,6 +26,7 @@ const LiquidateSidebar = (props: LendSidebarProps) => {
     fetchedSolPrice,
     currentMarketId,
     stringyfiedWalletPK,
+    isFetchingData,
     handleRevokeBid,
     handleIncreaseBid,
     handlePlaceBid,
@@ -85,10 +86,12 @@ const LiquidateSidebar = (props: LendSidebarProps) => {
                 fetchedSolPrice={fetchedSolPrice}
                 onCancel={onCancel}
                 currentMarketId={currentMarketId}
+                isFetchingData={isFetchingData}
               />
             )}
             {activeTab === 'current' && (
               <BidsList
+                isFetchingData={isFetchingData}
                 biddingArray={biddingArray}
                 fetchedSolPrice={fetchedSolPrice}
               />

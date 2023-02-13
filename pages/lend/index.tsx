@@ -677,6 +677,7 @@ const Lend: NextPage = () => {
         marketImage={renderMarketImageByName(currentMarketName)}
         currentMarketId={currentMarketId}
         activeInterestRate={activeInterestRate}
+        isFetchingData={isFetchingData}
       />
     </HoneySider>
   );
@@ -708,6 +709,7 @@ const Lend: NextPage = () => {
             columns={columns}
             dataSource={tableDataFiltered}
             pagination={false}
+            isLoading={isFetchingData}
             className={style.table}
             onRow={(record, rowIndex) => {
               return {

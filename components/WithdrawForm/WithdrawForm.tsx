@@ -13,6 +13,7 @@ import { hAlign } from 'styles/common.css';
 import useToast from 'hooks/useToast';
 import { renderMarketImageByID, renderMarketName } from 'helpers/marketHelpers';
 import QuestionIcon from 'icons/QuestionIcon';
+import { Skeleton } from 'antd';
 
 const { format: f, formatPercent: fp, formatSol: fs, parse: p } = formatNumber;
 
@@ -26,7 +27,8 @@ const WithdrawForm = (props: WithdrawFormProps) => {
     marketImage,
     currentMarketId,
     onCancel,
-    activeInterestRate
+    activeInterestRate,
+    isFetchingData
   } = props;
   const [valueUSD, setValueUSD] = useState<number>(0);
   const [valueSOL, setValueSOL] = useState<number>(0);
@@ -38,6 +40,7 @@ const WithdrawForm = (props: WithdrawFormProps) => {
 
   // Put your validators here
   const isWithdrawButtonDisabled = () => {
+    if (isFetchingData) return true;
     return false;
   };
 
@@ -118,14 +121,26 @@ const WithdrawForm = (props: WithdrawFormProps) => {
         <div className={styles.row}>
           <div className={styles.col}>
             <InfoBlock
-              value={fs(userTotalDeposits)}
+              value={
+                isFetchingData ? (
+                  <Skeleton.Button size="small" active />
+                ) : (
+                  fs(userTotalDeposits)
+                )
+              }
               valueSize="big"
               footer={<span>Your Deposits</span>}
             />
           </div>
           <div className={styles.col}>
             <InfoBlock
-              value={fp(activeInterestRate)}
+              value={
+                isFetchingData ? (
+                  <Skeleton.Button size="small" active />
+                ) : (
+                  fp(activeInterestRate)
+                )
+              }
               valueSize="big"
               toolTipLabel="Variable interest rate, based on Utilization rate."
               footer={
@@ -140,7 +155,13 @@ const WithdrawForm = (props: WithdrawFormProps) => {
           </div>
           <div className={styles.col}>
             <InfoBlock
-              value={fp(((value - available) / value) * 100)}
+              value={
+                isFetchingData ? (
+                  <Skeleton.Button size="small" active />
+                ) : (
+                  fp(((value - available) / value) * 100)
+                )
+              }
               valueSize="big"
               toolTipLabel=" Amount of supplied liquidity currently being borrowed"
               footer={
