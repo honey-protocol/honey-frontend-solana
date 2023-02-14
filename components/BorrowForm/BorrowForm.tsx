@@ -13,7 +13,7 @@ import { BorrowProps } from './types';
 import { toastResponse } from 'helpers/loanHelpers';
 import SidebarScroll from '../SidebarScroll/SidebarScroll';
 import * as stylesRepay from '../RepayForm/RepayForm.css';
-import { hAlign, extLink } from 'styles/common.css';
+import { hAlign, extLink, center } from 'styles/common.css';
 import { questionIcon } from 'styles/icons.css';
 import useToast from 'hooks/useToast';
 import cs from 'classnames';
@@ -24,6 +24,7 @@ import {
   COLLATERAL_FACTOR
 } from 'helpers/marketHelpers';
 import QuestionIcon from 'icons/QuestionIcon';
+import { Skeleton } from 'antd';
 const {
   formatPercent: fp,
   formatSol: fs,
@@ -51,7 +52,8 @@ const BorrowForm = (props: BorrowProps) => {
     hideMobileSidebar,
     fetchedSolPrice,
     calculatedInterestRate,
-    currentMarketId
+    currentMarketId,
+    isFetchingData
   } = props;
   // state declarations
   const [valueUSD, setValueUSD] = useState<number>(0);
@@ -199,7 +201,13 @@ const BorrowForm = (props: BorrowProps) => {
         <div className={styles.row}>
           <div className={styles.col}>
             <InfoBlock
-              value={fsn(nftPrice)}
+              value={
+                isFetchingData ? (
+                  <Skeleton.Button size="small" active />
+                ) : (
+                  fsn(nftPrice)
+                )
+              }
               valueSize="big"
               title={
                 <span className={hAlign}>
@@ -226,7 +234,13 @@ const BorrowForm = (props: BorrowProps) => {
           </div>
           <div className={styles.col}>
             <InfoBlock
-              value={fsn(userAllowance)}
+              value={
+                isFetchingData ? (
+                  <Skeleton.Button size="small" active />
+                ) : (
+                  fsn(userAllowance)
+                )
+              }
               // value={fs(Number(frd(userAllowance)))}
               title={
                 <span className={hAlign}>
@@ -246,7 +260,13 @@ const BorrowForm = (props: BorrowProps) => {
         <div className={styles.row}>
           <div className={styles.col}>
             <InfoBlock
-              value={fp(loanToValue * 100)}
+              value={
+                isFetchingData ? (
+                  <Skeleton.Button size="small" active />
+                ) : (
+                  fp(loanToValue * 100)
+                )
+              }
               toolTipLabel={
                 <span>
                   <a
@@ -302,7 +322,13 @@ const BorrowForm = (props: BorrowProps) => {
                   after the requested changes to the loan are approved.
                 </span>
               }
-              value={fp((loanToValue + newAdditionalDebt / nftPrice) * 100)}
+              value={
+                isFetchingData ? (
+                  <Skeleton.Button size="small" active />
+                ) : (
+                  fp((loanToValue + newAdditionalDebt / nftPrice) * 100)
+                )
+              }
               isDisabled={userDebt == 0 ? true : false}
             />
             <HoneySlider
@@ -341,7 +367,13 @@ const BorrowForm = (props: BorrowProps) => {
                   </a>
                 </span>
               }
-              value={fsn(userDebt)}
+              value={
+                isFetchingData ? (
+                  <Skeleton.Button size="small" active />
+                ) : (
+                  fsn(userDebt)
+                )
+              }
             />
           </div>
           <div className={styles.col}>
@@ -367,7 +399,13 @@ const BorrowForm = (props: BorrowProps) => {
                   after the requested changes to the loan are approved.
                 </span>
               }
-              value={fsn(newTotalDebt < 0 ? 0 : newTotalDebt)}
+              value={
+                isFetchingData ? (
+                  <Skeleton.Button size="small" active />
+                ) : (
+                  fsn(newTotalDebt < 0 ? 0 : newTotalDebt)
+                )
+              }
               isDisabled={userDebt == 0 ? true : false}
             />
           </div>
@@ -376,9 +414,15 @@ const BorrowForm = (props: BorrowProps) => {
         <div className={styles.row}>
           <div className={styles.col}>
             <InfoBlock
-              value={`${fsn(liquidationPrice)} ${
-                userDebt ? `(-${liqPercent.toFixed(0)}%)` : ''
-              }`}
+              value={
+                isFetchingData ? (
+                  <Skeleton.Button size="small" active />
+                ) : (
+                  `${fsn(liquidationPrice)} ${
+                    userDebt ? `(-${liqPercent.toFixed(0)}%)` : ''
+                  }`
+                )
+              }
               valueSize="normal"
               isDisabled={userDebt == 0 ? true : false}
               title={
@@ -427,9 +471,15 @@ const BorrowForm = (props: BorrowProps) => {
                   after the requested changes to the loan are approved.
                 </span>
               }
-              value={`${fsn(newLiquidationPrice)} ${
-                userDebt ? `(-${newLiqPercent.toFixed(0)}%)` : ''
-              }`}
+              value={
+                isFetchingData ? (
+                  <Skeleton.Button size="small" active />
+                ) : (
+                  `${fsn(newLiquidationPrice)} ${
+                    userDebt ? `(-${newLiqPercent.toFixed(0)}%)` : ''
+                  }`
+                )
+              }
               valueSize="normal"
             />
           </div>
@@ -458,7 +508,13 @@ const BorrowForm = (props: BorrowProps) => {
                     </a>
                   </span>
                 }
-                value={fp(calculatedInterestRate)}
+                value={
+                  isFetchingData ? (
+                    <Skeleton.Button size="small" active />
+                  ) : (
+                    fp(calculatedInterestRate)
+                  )
+                }
               ></InfoBlock>
             </div>
             <div className={cs(stylesRepay.balance, styles.col)}>
@@ -472,7 +528,13 @@ const BorrowForm = (props: BorrowProps) => {
                     </div>
                   </span>
                 }
-                value={fsn(valueSOL * borrowFee)}
+                value={
+                  isFetchingData ? (
+                    <Skeleton.Button size="small" active />
+                  ) : (
+                    fsn(valueSOL * borrowFee)
+                  )
+                }
                 //TODO: add link to docs
                 toolTipLabel={
                   <span>

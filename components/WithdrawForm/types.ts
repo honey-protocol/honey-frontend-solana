@@ -8,4 +8,5 @@ export type WithdrawFormProps = {
   activeInterestRate: number;
   executeWithdraw: (val: number, toast: any) => void;
   onCancel: Function;
+  isFetchingData?: boolean;
 };

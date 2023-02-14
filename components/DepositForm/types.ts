@@ -9,4 +9,5 @@ export type DepositFormProps = {
   activeInterestRate: number;
   executeDeposit: (val: number, toast: any) => void;
   onCancel: Function;
+  isFetchingData?: boolean;
 };

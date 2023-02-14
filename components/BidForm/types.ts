@@ -8,7 +8,12 @@ export type BidFormProps = {
   currentMarketId: string;
   highestBiddingAddress: string;
   stringyfiedWalletPK?: string;
-  handleRevokeBid: (type: string, toast: ToastProps['toast'], mID: string) => void;
+  isFetchingData?: boolean;
+  handleRevokeBid: (
+    type: string,
+    toast: ToastProps['toast'],
+    mID: string
+  ) => void;
   handleIncreaseBid: (
     type: string,
     userBid: number,
@@ -25,7 +30,7 @@ export type BidFormProps = {
 };
 
 export type Bid = {
-  bid: string,
-  bidder: string,
-  bidLimit: string
-}
+  bid: string;
+  bidder: string;
+  bidLimit: string;
+};

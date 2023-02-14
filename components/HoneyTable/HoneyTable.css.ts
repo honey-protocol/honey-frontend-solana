@@ -45,6 +45,10 @@ export const honeyTableRow = style({
   cursor: 'pointer'
 });
 
+export const loadingCursor = style({
+  cursor: 'progress'
+});
+
 const rowTdSelector = `.ant-table-tbody > .ant-table-row.${honeyTableRow} > td`;
 // const rowHoverTdSelector = `.ant-table-tbody > .ant-table-row.${honeyTableRow}:hover > td`;
 

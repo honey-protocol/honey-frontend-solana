@@ -62,8 +62,8 @@ import HoneyContent from '../../components/HoneyContent/HoneyContent';
 import HoneySider from '../../components/HoneySider/HoneySider';
 import { TABLET_BP } from '../../constants/breakpoints';
 import useWindowSize from '../../hooks/useWindowSize';
-import { Typography } from 'antd';
-import { pageDescription, pageTitle } from 'styles/common.css';
+import { Skeleton, Typography } from 'antd';
+import { pageDescription, pageTitle, center } from 'styles/common.css';
 import HoneyTableRow from 'components/HoneyTable/HoneyTableRow/HoneyTableRow';
 import HoneyTableNameCell from '../../components/HoneyTable/HoneyTableNameCell/HoneyTableNameCell';
 import {
@@ -176,15 +176,16 @@ const Markets: NextPage = () => {
   const [fetchedDataObject, setFetchedDataObject] = useState<MarketBundle>();
   // interface related constants
   const { width: windowWidth } = useWindowSize();
-  const [tableData, setTableData] = useState<MarketTableRow[]>([]);
-  const [tableDataFiltered, setTableDataFiltered] = useState<MarketTableRow[]>(
-    []
-  );
+  const [tableData, setTableData] =
+    useState<MarketTableRow[]>(marketCollections);
+  const [tableDataFiltered, setTableDataFiltered] =
+    useState<MarketTableRow[]>(marketCollections);
   const [expandedRowKeys, setExpandedRowKeys] = useState<readonly Key[]>([]);
   const [isMyCollectionsFilterEnabled, setIsMyCollectionsFilterEnabled] =
     useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [isMobileSidebarVisible, setShowMobileSidebar] = useState(false);
+  const [isFetchingData, setIsFetchingData] = useState(true);
 
   /**
    * @description fetches all nfts in users wallet
@@ -262,6 +263,7 @@ const Markets: NextPage = () => {
   useEffect(() => {
     if (sdkConfig.saberHqConnection) {
       function getData() {
+        setIsFetchingData(true);
         return Promise.all(
           marketCollections.map(async collection => {
             if (collection.id == '') return collection;
@@ -309,6 +311,7 @@ const Markets: NextPage = () => {
                 setLoanToValue(Number(collection.ltv));
                 setFetchedDataObject(collection.marketData[0]);
               }
+              setIsFetchingData(false);
               return collection;
             }
             return collection;
@@ -316,11 +319,13 @@ const Markets: NextPage = () => {
         );
       }
 
-      getData().then(result => {
-        console.log('@@-- result', result);
-        setTableData(result);
-        setTableDataFiltered(result);
-      });
+      getData()
+        .then(result => {
+          console.log('@@-- result', result);
+          setTableData(result);
+          setTableDataFiltered(result);
+        })
+        .catch(() => setIsFetchingData(false));
     }
   }, [reserveHoneyState, userOpenPositions, marketData, NFTs]);
 
@@ -440,13 +445,16 @@ const Markets: NextPage = () => {
               key: 'rate',
               hidden: windowWidth < TABLET_BP,
               ellipsis: true,
-              render: (rate: number) => {
-                return (
+              render: (rate: number) =>
+                isFetchingData ? (
+                  <div className={center}>
+                    <Skeleton.Button size="small" active />
+                  </div>
+                ) : (
                   <div className={c(style.rateCell, style.borrowRate)}>
                     {fp(rate)}
                   </div>
-                );
-              }
+                )
             }
           ],
           sorter: (a: MarketTableRow, b: MarketTableRow) => a.rate - b.rate
@@ -476,9 +484,14 @@ const Markets: NextPage = () => {
               dataIndex: 'value',
               key: 'value',
               hidden: windowWidth < TABLET_BP,
-              render: (value: number) => {
-                return <div className={style.valueCell}>{fsn(value)}</div>;
-              }
+              render: (value: number) =>
+                isFetchingData ? (
+                  <div className={center}>
+                    <Skeleton.Button size="small" active />
+                  </div>
+                ) : (
+                  <div className={style.valueCell}>{fs(value)}</div>
+                )
             }
           ],
           sorter: (a: MarketTableRow, b: MarketTableRow) =>
@@ -508,11 +521,14 @@ const Markets: NextPage = () => {
             {
               dataIndex: 'available',
               key: 'available',
-              render: (available: number, data: MarketTableRow) => {
-                return (
-                  <div className={style.availableCell}>{fsn(available)}</div>
-                );
-              }
+              render: (available: number, data: MarketTableRow) =>
+                isFetchingData ? (
+                  <div className={center}>
+                    <Skeleton.Button size="small" active />
+                  </div>
+                ) : (
+                  <div className={style.availableCell}>{fs(available)}</div>
+                )
             }
           ],
           sorter: (a: MarketTableRow, b: MarketTableRow) => a.value - b.value,
@@ -583,9 +599,33 @@ const Markets: NextPage = () => {
                 }
               />
               <HoneyTableRow>
-                <div className={style.rateCell}>{fp(row.rate)}</div>
-                <div className={style.availableCell}>{fsn(row.value)}</div>
-                <div className={style.availableCell}>{fsn(row.available)}</div>
+                <div className={style.rateCell}>
+                  {isFetchingData ? (
+                    <div className={center}>
+                      <Skeleton.Button size="small" active />
+                    </div>
+                  ) : (
+                    fp(row.rate)
+                  )}
+                </div>
+                <div className={style.availableCell}>
+                  {isFetchingData ? (
+                    <div className={center}>
+                      <Skeleton.Button size="small" active />
+                    </div>
+                  ) : (
+                    fs(row.value)
+                  )}
+                </div>
+                <div className={style.availableCell}>
+                  {isFetchingData ? (
+                    <div className={center}>
+                      <Skeleton.Button size="small" active />
+                    </div>
+                  ) : (
+                    fs(row.available)
+                  )}
+                </div>
               </HoneyTableRow>
             </>
           );
@@ -1028,6 +1068,7 @@ const Markets: NextPage = () => {
               calculatedInterestRate={activeInterestRate}
               currentMarketId={currentMarketId}
               availableNFTS={NFTs}
+              isFetchingData={isFetchingData}
             />
           </HoneySider>
         );
@@ -1073,6 +1114,7 @@ const Markets: NextPage = () => {
             columns={columns}
             dataSource={tableDataFiltered}
             pagination={false}
+            isLoading={isFetchingData}
             onRow={(record, rowIndex) => {
               return {
                 onClick: event => {
@@ -1096,7 +1138,9 @@ const Markets: NextPage = () => {
               // we use our own custom expand column
               showExpandColumn: false,
               onExpand: (expanded, row) => {
-                setExpandedRowKeys(expanded ? [row.key] : []);
+                setExpandedRowKeys(
+                  expanded && !isFetchingData ? [row.key] : []
+                );
               },
               expandedRowKeys,
               expandedRowRender: record => {
@@ -1170,7 +1214,9 @@ const Markets: NextPage = () => {
               // we use our own custom expand column
               showExpandColumn: false,
               onExpand: (expanded, row) =>
-                setExpandedRowKeys(expanded ? [row.key] : []),
+                setExpandedRowKeys(
+                  expanded && !isFetchingData ? [row.key] : []
+                ),
               expandedRowKeys,
               expandedRowRender: record => {
                 return (
