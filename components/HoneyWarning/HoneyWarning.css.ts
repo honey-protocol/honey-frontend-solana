@@ -47,9 +47,9 @@ export const warningLink = style({
 });
 
 export const warningLinkIcon = style({
-  width: 12,
-  height: 12,
-  background: 'no-repeat center/contain url("/images/newPage.svg")',
+  width: 20,
+  height: 20,
+  background: 'no-repeat center/contain url("/images/newPageBig.svg")',
   flexShrink: 0,
   marginLeft: 8
 });

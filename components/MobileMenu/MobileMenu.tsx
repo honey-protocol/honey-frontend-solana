@@ -63,7 +63,7 @@ const MobileMenu = (props: MobileMenuProps) => {
         })}
       >
         <a href="https://discord.gg/honeydefi" target="_blank" rel="noreferrer">
-          <DiscordIcon color={vars.colors.black} />
+          <DiscordIcon color={vars.colors.text} />
         </a>
 
         <a
@@ -71,11 +71,11 @@ const MobileMenu = (props: MobileMenuProps) => {
           target="_blank"
           rel="noreferrer"
         >
-          <TwitterIcon color={vars.colors.black} />
+          <TwitterIcon color={vars.colors.text} />
         </a>
 
         <a href="https://blog.honey.finance" target="_blank" rel="noreferrer">
-          <MediumIcon color={vars.colors.black} />
+          <MediumIcon color={vars.colors.text} />
         </a>
 
         <a
@@ -83,7 +83,7 @@ const MobileMenu = (props: MobileMenuProps) => {
           target="_blank"
           rel="noreferrer"
         >
-          <GithubIcon color={vars.colors.black} />
+          <GithubIcon color={vars.colors.text} />
         </a>
       </li>
     </ul>

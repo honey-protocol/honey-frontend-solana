@@ -16,5 +16,11 @@ export const modalContainer = style({
   transform: 'translateZ(0px)',
   justifyContent: 'center',
   alignItems: 'center',
-  transition: 'all .3s'
+  transition: 'all .3s',
+  height: '100vh',
+  width: '100vw'
+});
+
+export const modalContent = style({
+  // background: 'red'
 });

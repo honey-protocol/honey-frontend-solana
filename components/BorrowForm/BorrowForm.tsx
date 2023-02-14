@@ -578,7 +578,7 @@ const BorrowForm = (props: BorrowProps) => {
 
   const renderFooter = () => {
     return toast?.state ? (
-      <ToastComponent />
+      ToastComponent
     ) : hasOpenPosition ? (
       <div className={styles.buttons}>
         <div className={styles.smallCol}>

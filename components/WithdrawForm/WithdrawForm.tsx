@@ -9,11 +9,12 @@ import HexaBoxContainer from '../HexaBoxContainer/HexaBoxContainer';
 import SidebarScroll from '../SidebarScroll/SidebarScroll';
 import { WithdrawFormProps } from './types';
 import { questionIcon } from 'styles/icons.css';
-import { hAlign } from 'styles/common.css';
+import { hAlign, textUnderline } from 'styles/common.css';
 import useToast from 'hooks/useToast';
 import { renderMarketImageByID, renderMarketName } from 'helpers/marketHelpers';
 import QuestionIcon from 'icons/QuestionIcon';
 import { Skeleton } from 'antd';
+import HoneyWarning from 'components/HoneyWarning/HoneyWarning';
 
 const { format: f, formatPercent: fp, formatSol: fs, parse: p } = formatNumber;
 
@@ -85,7 +86,7 @@ const WithdrawForm = (props: WithdrawFormProps) => {
     <SidebarScroll
       footer={
         toast?.state ? (
-          <ToastComponent />
+          ToastComponent
         ) : (
           <div className={styles.buttons}>
             <div className={styles.smallCol}>
@@ -132,6 +133,12 @@ const WithdrawForm = (props: WithdrawFormProps) => {
               footer={<span>Your Deposits</span>}
             />
           </div>
+          <HoneyWarning
+            message="To learn more about the risks of lending, make sure to explore our Protocol Risk documentation"
+            link="https://docs.honey.finance/lending-protocol/risk/protocol-risks"
+          />
+        </div>
+        <div className={styles.row}>
           <div className={styles.col}>
             <InfoBlock
               value={
@@ -145,7 +152,8 @@ const WithdrawForm = (props: WithdrawFormProps) => {
               toolTipLabel="Variable interest rate, based on Utilization rate."
               footer={
                 <span className={hAlign}>
-                  Interest rate{' '}
+                  Interest rate Estimated{' '}
+                  <span className={textUnderline}>APY</span>
                   <div className={questionIcon}>
                     <QuestionIcon />
                   </div>
@@ -172,6 +180,15 @@ const WithdrawForm = (props: WithdrawFormProps) => {
                   </div>
                 </span>
               }
+            />
+          </div>
+        </div>
+        <div className={styles.row}>
+          <div className={styles.col}>
+            <InfoBlock
+              value={fs(userTotalDeposits)}
+              valueSize="big"
+              footer={<span>Your Deposits</span>}
             />
           </div>
         </div>

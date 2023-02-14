@@ -37,6 +37,7 @@ const MarketsSidebar = (props: MarketsSidebarProps) => {
     executeRepay,
     availableNFTS
   } = props;
+  const availableNFTs = availableNFTS;
   // tab state
   const [activeTab, setActiveTab] = useState<Tab>('borrow');
   const { connect } = useWalletKit();

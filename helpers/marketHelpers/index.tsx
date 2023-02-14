@@ -26,7 +26,11 @@ export const marketIDs = [
   'Bxk1JQCbVjpeFnjzvH5n9bepnZeHjRADUFwZiVC7L5Gq',
   'FTBLaLcrx1aXALW2UEpu8a6HLRVFATezkK12wCABPAiA',
   'GAqyPziKPwVpwKaeqPhEsxiy6MwQ2bvtodruWErpLVKo',
-  '2dxJ4eMkhMxm1ZqpAhKsjunvyziuq1JRnuHaqKFRY8et'
+  '2dxJ4eMkhMxm1ZqpAhKsjunvyziuq1JRnuHaqKFRY8et',
+  '5UKRRSxbi4PgPnQU2ZqtukUxd1fyN6ydn1hoxivP46A8',
+  '5ZxAjKpbYje5fCxhvnRYxbMh6XSZm5Cd7RA9mMGb1DLY',
+  'Dmngi1MDEQU9fm6sX39EuyT3EpYEmXYuyg56uEjVCkD6',
+  ''
 ];
 
 // collection strucutre for the markets
@@ -169,75 +173,6 @@ export const marketCollections: MarketTableRow[] = [
       discountedMarket: true
     }
   },
-  // {
-  //   id: 'F8rZviSSuqgkTsjMeoyrTUSNSqh7yNDCAozJkxm7eujY',
-  //   key: 'BURR',
-  //   name: 'Burrito Boyz',
-  //   verifiedCreator: '2UCkKjTHvz7qFjPZMjhWZiPmyTc6ZwZ44iYPbSpe3aVo',
-  //   rate: 0,
-  //   available: 0,
-  //   value: 0,
-  //   allowance: 0,
-  //   connection: undefined,
-  //   user: undefined,
-  //   debt: 0,
-  //   utilizationRate: 0,
-  //   openPositions: [],
-  //   constants: {
-  //     marketId: 'F8rZviSSuqgkTsjMeoyrTUSNSqh7yNDCAozJkxm7eujY',
-  //     verifiedCreator: '2UCkKjTHvz7qFjPZMjhWZiPmyTc6ZwZ44iYPbSpe3aVo',
-  //     marketName: 'Burrito Boyz',
-  //     marketImage:
-  //       'https://img-cdn.magiceden.dev/rs:fill:400:400:0:0/plain/https://creator-hub-prod.s3.us-east-2.amazonaws.com/burrito_boyz_pfp_1653394754301.png',
-  //     discountedMarket: false
-  //   }
-  // },
-  // {
-  //   id: 'GrKPvcdHVb4cwR5a2CCgCTvdkSqhNDRgSUiUVzXRWLk6',
-  //   key: 'Smyths',
-  //   name: 'Blocksmith Labs',
-  //   verifiedCreator: '8m2b8ar9BNZErJQgSBwY3eCe73yR4k9qHUxxGffxyw2d',
-  //   rate: 0,
-  //   available: 0,
-  //   value: 0,
-  //   allowance: 0,
-  //   connection: undefined,
-  //   user: undefined,
-  //   debt: 0,
-  //   utilizationRate: 0,
-  //   openPositions: [],
-  //   constants: {
-  //     marketId: 'GrKPvcdHVb4cwR5a2CCgCTvdkSqhNDRgSUiUVzXRWLk6',
-  //     verifiedCreator: '8m2b8ar9BNZErJQgSBwY3eCe73yR4k9qHUxxGffxyw2d',
-  //     marketName: 'Blocksmith Labs',
-  //     marketImage:
-  //       'https://img-cdn.magiceden.dev/rs:fill:400:400:0:0/plain/https://bafkreih3jh6bz4g5xegjz622ogjdnkwwwnx35opnenh2nzstqnczomo7ha.ipfs.dweb.link/',
-  //     discountedMarket: false
-  //   }
-  // },
-  // {
-  //   id: 'D5qrmgTLJwarfkkqktguUp5uPfj83hFHuWKLvMNSWJ5w',
-  //   key: 'Apes',
-  //   name: 'Trippin ape tribe',
-  //   verifiedCreator: 'EZcZTsLpvdisPgQy5TcCALYgmGKRMNvvyJ89t1LFWmum',
-  //   rate: 0,
-  //   available: 0,
-  //   value: 0,
-  //   allowance: 0,
-  //   connection: undefined,
-  //   user: undefined,
-  //   debt: 0,
-  //   utilizationRate: 0,
-  //   openPositions: [],
-  //   constants: {
-  //     marketId: 'D5qrmgTLJwarfkkqktguUp5uPfj83hFHuWKLvMNSWJ5w',
-  //     verifiedCreator: 'EZcZTsLpvdisPgQy5TcCALYgmGKRMNvvyJ89t1LFWmum',
-  //     marketName: 'Trippin ape tribe',
-  //     marketImage:
-  //       'https://img-cdn.magiceden.dev/rs:fill:400:400:0:0/plain/https://i.imgur.com/iFgvQva.png',
-  //     discountedMarket: false
-  //   }
-  // },
   {
     id: 'GAqyPziKPwVpwKaeqPhEsxiy6MwQ2bvtodruWErpLVKo',
     key: 'Droids',
@@ -257,7 +192,7 @@ export const marketCollections: MarketTableRow[] = [
       verifiedCreator: 'C88kKdEmTrCh43GC1w3BUFLsW3oKMEWWBGCyweQAaEYa',
       marketName: 'Droid Capital',
       marketImage:
-        'https://img-cdn.magiceden.dev/rs:fill:400:400:0:0/plain/https://dl.airtable.com/.attachmentThumbnails/cdd57420adfe9323b725187414504608/645229ca',
+        'https://i.seadn.io/gae/c5CkCKH28E2hKPnY2Tgj2H_maWZ06yqfeV4aQqkH00q1egB54S4BAc-6yCJsyHdQ716vp5amA1NPg-cyNzVjH1AR4HkBvimd_xq7Gw?auto=format&w=256',
       discountedMarket: false
     }
   },
@@ -285,6 +220,29 @@ export const marketCollections: MarketTableRow[] = [
     }
   },
   {
+    id: 'FTBLaLcrx1aXALW2UEpu8a6HLRVFATezkK12wCABPAiA',
+    key: 'Ukiyo',
+    name: 'Ukiyo',
+    verifiedCreator: '9dQhwT67yaTk3YKhTN7f4jKFEAYtNtMotyVmVswmAQKe',
+    rate: 0,
+    available: 0,
+    value: 0,
+    allowance: 0,
+    connection: undefined,
+    user: undefined,
+    debt: 0,
+    utilizationRate: 0,
+    openPositions: [],
+    constants: {
+      marketId: 'FTBLaLcrx1aXALW2UEpu8a6HLRVFATezkK12wCABPAiA',
+      verifiedCreator: '9dQhwT67yaTk3YKhTN7f4jKFEAYtNtMotyVmVswmAQKe',
+      marketName: 'Ukiyo',
+      marketImage:
+        'https://img-cdn.magiceden.dev/rs:fill:400:400:0:0/plain/https://creator-hub-prod.s3.us-east-2.amazonaws.com/ukiyo_pfp_1663178207810.jpeg',
+      discountedMarket: false
+    }
+  },
+  {
     id: '5ZxAjKpbYje5fCxhvnRYxbMh6XSZm5Cd7RA9mMGb1DLY',
     key: 'Heavenland',
     name: 'Heavenland',
@@ -302,7 +260,8 @@ export const marketCollections: MarketTableRow[] = [
       marketId: '5ZxAjKpbYje5fCxhvnRYxbMh6XSZm5Cd7RA9mMGb1DLY',
       verifiedCreator: 'C4ki5erQ54EWDwuHYeD3m8xMrF6YXL9tV9dYpaf4idkS',
       marketName: 'Heavenland',
-      marketImage: 'https://i.imgur.com/vUqGhky.png',
+      marketImage:
+        'https://img-cdn.magiceden.dev/rs:fill:400:400:0:0/plain/https://dl.airtable.com/.attachmentThumbnails/9d1ed55dcb8a3f2a73d514c1e5fdc3e0/cecf9ba3',
       discountedMarket: false
     }
   },
@@ -329,6 +288,102 @@ export const marketCollections: MarketTableRow[] = [
       discountedMarket: false
     }
   }
+  // {
+  //   id: '5UKRRSxbi4PgPnQU2ZqtukUxd1fyN6ydn1hoxivP46A8',
+  //   key: 'OLV',
+  //   name: 'Elixir: Ovols',
+  //   verifiedCreator: 'ovo1kT7RqrAZwFtgSGEgNfa7nHjeZoK6ykg1GknJEXG',
+  //   rate: 0,
+  //   available: 0,
+  //   value: 0,
+  //   allowance: 0,
+  // positions: [],
+  //   connection: undefined,
+  //   user: undefined,
+  //   debt: 0,
+  //   utilizationRate: 0,
+  //   openPositions: [],
+  //   constants: {
+  //     marketId: '5UKRRSxbi4PgPnQU2ZqtukUxd1fyN6ydn1hoxivP46A8',
+  //     verifiedCreator: 'ovo1kT7RqrAZwFtgSGEgNfa7nHjeZoK6ykg1GknJEXG',
+  //     marketName: 'Elixir: Ovols',
+  //     marketImage:
+  //       'https://img-cdn.magiceden.dev/rs:fill:400:400:0:0/plain/https://creator-hub-prod.s3.us-east-2.amazonaws.com/elixir_ovols_pfp_1668964852701.png',
+  //     discountedMarket: true
+  //   }
+  // }
+  // {
+  //   id: 'F8rZviSSuqgkTsjMeoyrTUSNSqh7yNDCAozJkxm7eujY',
+  //   key: 'BURR',
+  //   name: 'Burrito Boyz',
+  //   verifiedCreator: '2UCkKjTHvz7qFjPZMjhWZiPmyTc6ZwZ44iYPbSpe3aVo',
+  //   rate: 0,
+  //   available: 0,
+  //   value: 0,
+  //   allowance: 0,
+  // positions: [],
+  //   connection: undefined,
+  //   user: undefined,
+  //   debt: 0,
+  //   utilizationRate: 0,
+  //   openPositions: [],
+  //   constants: {
+  //     marketId: 'F8rZviSSuqgkTsjMeoyrTUSNSqh7yNDCAozJkxm7eujY',
+  //     verifiedCreator: '2UCkKjTHvz7qFjPZMjhWZiPmyTc6ZwZ44iYPbSpe3aVo',
+  //     marketName: 'Burrito Boyz',
+  //     marketImage:
+  //       'https://img-cdn.magiceden.dev/rs:fill:400:400:0:0/plain/https://creator-hub-prod.s3.us-east-2.amazonaws.com/burrito_boyz_pfp_1653394754301.png',
+  //     discountedMarket: false
+  //   }
+  // },
+  // {
+  //   id: 'GrKPvcdHVb4cwR5a2CCgCTvdkSqhNDRgSUiUVzXRWLk6',
+  //   key: 'Smyths',
+  //   name: 'Blocksmith Labs',
+  //   verifiedCreator: '8m2b8ar9BNZErJQgSBwY3eCe73yR4k9qHUxxGffxyw2d',
+  //   rate: 0,
+  //   available: 0,
+  //   value: 0,
+  //   allowance: 0,
+  // positions: [],
+  //   connection: undefined,
+  //   user: undefined,
+  //   debt: 0,
+  //   utilizationRate: 0,
+  //   openPositions: [],
+  //   constants: {
+  //     marketId: 'GrKPvcdHVb4cwR5a2CCgCTvdkSqhNDRgSUiUVzXRWLk6',
+  //     verifiedCreator: '8m2b8ar9BNZErJQgSBwY3eCe73yR4k9qHUxxGffxyw2d',
+  //     marketName: 'Blocksmith Labs',
+  //     marketImage:
+  //       'https://img-cdn.magiceden.dev/rs:fill:400:400:0:0/plain/https://bafkreih3jh6bz4g5xegjz622ogjdnkwwwnx35opnenh2nzstqnczomo7ha.ipfs.dweb.link/',
+  //     discountedMarket: false
+  //   }
+  // },
+  // {
+  //   id: 'D5qrmgTLJwarfkkqktguUp5uPfj83hFHuWKLvMNSWJ5w',
+  //   key: 'Apes',
+  //   name: 'Trippin ape tribe',
+  //   verifiedCreator: 'EZcZTsLpvdisPgQy5TcCALYgmGKRMNvvyJ89t1LFWmum',
+  //   rate: 0,
+  //   available: 0,
+  //   value: 0,
+  //   allowance: 0,
+  // positions: [],
+  //   connection: undefined,
+  //   user: undefined,
+  //   debt: 0,
+  //   utilizationRate: 0,
+  //   openPositions: [],
+  //   constants: {
+  //     marketId: 'D5qrmgTLJwarfkkqktguUp5uPfj83hFHuWKLvMNSWJ5w',
+  //     verifiedCreator: 'EZcZTsLpvdisPgQy5TcCALYgmGKRMNvvyJ89t1LFWmum',
+  //     marketName: 'Trippin ape tribe',
+  //     marketImage:
+  //       'https://img-cdn.magiceden.dev/rs:fill:400:400:0:0/plain/https://i.imgur.com/iFgvQva.png',
+  //     discountedMarket: false
+  //   }
+  // },
 ];
 
 // fees

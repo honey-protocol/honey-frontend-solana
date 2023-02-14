@@ -9,11 +9,12 @@ import HexaBoxContainer from '../HexaBoxContainer/HexaBoxContainer';
 import SidebarScroll from '../SidebarScroll/SidebarScroll';
 import { DepositFormProps } from './types';
 import { questionIcon } from 'styles/icons.css';
-import { hAlign } from 'styles/common.css';
+import { hAlign, textUnderline } from 'styles/common.css';
 import useToast from 'hooks/useToast';
 import { renderMarketImageByID, renderMarketName } from 'helpers/marketHelpers';
 import QuestionIcon from 'icons/QuestionIcon';
 import { Skeleton } from 'antd';
+import HoneyWarning from 'components/HoneyWarning/HoneyWarning';
 
 const {
   format: f,
@@ -101,7 +102,7 @@ const DepositForm = (props: DepositFormProps) => {
     <SidebarScroll
       footer={
         toast?.state ? (
-          <ToastComponent />
+          ToastComponent
         ) : (
           <div className={styles.buttons}>
             <div className={styles.smallCol}>
@@ -192,6 +193,15 @@ const DepositForm = (props: DepositFormProps) => {
           </div>
         </div>
 
+        <div className={styles.row}>
+          <div className={styles.col}>
+            <InfoBlock
+              value={fs(userTotalDeposits)}
+              valueSize="big"
+              footer={<span>Your Deposits</span>}
+            />
+          </div>
+        </div>
         <div className={styles.inputs}>
           <InputsBlock
             firstInputValue={valueSOL}
@@ -201,7 +211,6 @@ const DepositForm = (props: DepositFormProps) => {
             maxValue={maxValue}
           />
         </div>
-
         <HoneySlider
           currentValue={sliderValue}
           maxValue={Number(frd(maxValue))}

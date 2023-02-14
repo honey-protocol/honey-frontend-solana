@@ -106,7 +106,7 @@ const BidForm = (props: BidFormProps) => {
     <SidebarScroll
       footer={
         toast.state ? (
-          <ToastComponent />
+          ToastComponent
         ) : (
           <div className={styles.buttons}>
             <div className={styles.smallCol}>

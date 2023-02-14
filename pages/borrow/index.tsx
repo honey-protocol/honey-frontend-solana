@@ -62,7 +62,7 @@ import HoneyContent from '../../components/HoneyContent/HoneyContent';
 import HoneySider from '../../components/HoneySider/HoneySider';
 import { TABLET_BP } from '../../constants/breakpoints';
 import useWindowSize from '../../hooks/useWindowSize';
-import { Skeleton, Typography } from 'antd';
+import { Skeleton, Typography, Space } from 'antd';
 import { pageDescription, pageTitle, center } from 'styles/common.css';
 import HoneyTableRow from 'components/HoneyTable/HoneyTableRow/HoneyTableRow';
 import HoneyTableNameCell from '../../components/HoneyTable/HoneyTableNameCell/HoneyTableNameCell';
@@ -95,6 +95,9 @@ const network = 'mainnet-beta';
 import { featureFlags } from 'helpers/featureFlags';
 import SorterIcon from 'icons/Sorter';
 import ExpandedRowIcon from 'icons/ExpandedRowIcon';
+import useToast from 'hooks/useToast';
+import { toast } from 'components/HoneyToast/HoneyToast.css';
+import HoneyToggle from 'components/HoneyToggle/HoneyToggle';
 // import { network } from 'pages/_app';
 const {
   format: f,
@@ -105,6 +108,7 @@ const {
 
 // @ts-ignore
 const Markets: NextPage = () => {
+  const { toast, ToastComponent } = useToast();
   // Sets market ID which is used for fetching market specific data
   // each market currently is a different call and re-renders the page
   const [currentMarketId, setCurrentMarketId] = useState(
@@ -173,19 +177,20 @@ const Markets: NextPage = () => {
   const [launchAreaWidth, setLaunchAreaWidth] = useState<number>(840);
   const [fetchedSolPrice, setFetchedSolPrice] = useState(0);
   const [activeInterestRate, setActiveInterestRate] = useState(0);
-  const [fetchedDataObject, setFetchedDataObject] = useState<MarketBundle>();
   // interface related constants
   const { width: windowWidth } = useWindowSize();
   const [tableData, setTableData] =
     useState<MarketTableRow[]>(marketCollections);
   const [tableDataFiltered, setTableDataFiltered] =
     useState<MarketTableRow[]>(marketCollections);
+  const [fetchedDataObject, setFetchedDataObject] = useState<MarketBundle>();
   const [expandedRowKeys, setExpandedRowKeys] = useState<readonly Key[]>([]);
   const [isMyCollectionsFilterEnabled, setIsMyCollectionsFilterEnabled] =
     useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [isMobileSidebarVisible, setShowMobileSidebar] = useState(false);
   const [isFetchingData, setIsFetchingData] = useState(true);
+  const [showWeeklyRates, setShowWeeklyRates] = useState(true);
 
   /**
    * @description fetches all nfts in users wallet
@@ -309,10 +314,13 @@ const Markets: NextPage = () => {
                 // @ts-ignore
                 setUserDebt(collection.userDebt);
                 setLoanToValue(Number(collection.ltv));
+
                 setFetchedDataObject(collection.marketData[0]);
               }
               setIsFetchingData(false);
-              return collection;
+
+              setActiveInterestRate(collection.rate);
+              setFetchedDataObject(collection.marketData[0]);
             }
             return collection;
           })
@@ -321,7 +329,6 @@ const Markets: NextPage = () => {
 
       getData()
         .then(result => {
-          console.log('@@-- result', result);
           setTableData(result);
           setTableDataFiltered(result);
         })
@@ -343,7 +350,21 @@ const Markets: NextPage = () => {
     setIsMyCollectionsFilterEnabled(checked);
   };
 
-  const MyCollectionsToggle = () => null;
+  const WeeklyToggle = () => (
+    <div className={style.headerCell['disabled']}>
+      <Space direction="horizontal">
+        <HoneyToggle
+          defaultChecked
+          checked={showWeeklyRates}
+          onChange={value => {
+            setShowWeeklyRates(value);
+          }}
+          title="Weekly"
+        />{' '}
+        WEEKLY
+      </Space>
+    </div>
+  );
 
   const onSearch = (searchTerm: string): MarketTableRow[] => {
     if (!searchTerm) {
@@ -431,7 +452,17 @@ const Markets: NextPage = () => {
                   ]
                 }
               >
-                <span>Interest rate</span>
+                {showWeeklyRates ? (
+                  <>
+                    {' '}
+                    <span>Weekly rate</span>{' '}
+                  </>
+                ) : (
+                  <>
+                    {' '}
+                    <span>Yearly rate</span>{' '}
+                  </>
+                )}
                 <div className={style.sortIcon[sortOrder]}>
                   <SorterIcon active={sortOrder !== 'disabled'} />
                 </div>
@@ -452,7 +483,7 @@ const Markets: NextPage = () => {
                   </div>
                 ) : (
                   <div className={c(style.rateCell, style.borrowRate)}>
-                    {fp(rate)}
+                    {fp(rate / (showWeeklyRates ? 52 : 1))}
                   </div>
                 )
             }
@@ -539,7 +570,7 @@ const Markets: NextPage = () => {
 
         {
           width: columnsWidth[4],
-          title: MyCollectionsToggle,
+          title: WeeklyToggle,
           render: (_: null, row: MarketTableRow) => {
             return (
               <div className={style.buttonsCell}>
@@ -558,7 +589,13 @@ const Markets: NextPage = () => {
         }
         return !column.hidden;
       }),
-    [isMyCollectionsFilterEnabled, tableData, searchQuery, windowWidth]
+    [
+      isMyCollectionsFilterEnabled,
+      tableData,
+      showWeeklyRates,
+      searchQuery,
+      windowWidth
+    ]
   );
   // Render func. for mobile
   const columnsMobile: ColumnType<MarketTableRow>[] = useMemo(
@@ -605,7 +642,7 @@ const Markets: NextPage = () => {
                       <Skeleton.Button size="small" active />
                     </div>
                   ) : (
-                    fp(row.rate)
+                    fp(row.rate / (showWeeklyRates ? 52 : 1))
                   )}
                 </div>
                 <div className={style.availableCell}>
@@ -632,7 +669,7 @@ const Markets: NextPage = () => {
         }
       }
     ],
-    [isMyCollectionsFilterEnabled, tableData, searchQuery]
+    [isMyCollectionsFilterEnabled, tableData, searchQuery, showWeeklyRates]
   );
 
   // position in each market
@@ -825,22 +862,21 @@ const Markets: NextPage = () => {
               sdkConfig.saberHqConnection,
               confirmationHash
             );
+            if (collection.marketData) {
+              await collection.marketData[0].reserves[0].refresh();
+              await collection.marketData[0].user.refresh();
 
-            await collection.user.reserves[0].refresh();
-            await collection.user.refresh();
+              await collection.user.reserves[0].refresh();
+              await collection.user.refresh();
 
-            await refreshPositions();
-            refetchNfts({});
+              await refreshPositions();
+              refetchNfts({});
 
-            toast.success(
-              'Deposit success',
-              `https://solscan.io/tx/${tx[1][0]}?cluster=${network}`
-            );
-          } else {
-            toast.error(
-              'Deposit failed',
-              `https://solscan.io/tx/${tx[1][0]}?cluster=${network}`
-            );
+              toast.success(
+                'Deposit success',
+                `https://solscan.io/tx/${tx[1][0]}?cluster=${network}`
+              );
+            }
           }
         }
       });
@@ -1180,11 +1216,11 @@ const Markets: NextPage = () => {
               style.mobileSearchAndToggleContainer
             )}
           >
-            <div className={style.mobileRow}>
+            <div className={c(style.mobileRow, style.mobileSearchContainer)}>
               <SearchForm />
             </div>
-            <div className={style.mobileRow}>
-              <MyCollectionsToggle />
+            <div className={c(style.mobileToggleContainer)}>
+              <WeeklyToggle />
             </div>
           </div>
           <div className={c(style.mobileTableHeader)}>

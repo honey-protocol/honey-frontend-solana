@@ -495,13 +495,20 @@ export const tableCell = style([
 
 export const mobileSearchAndToggleContainer = style({
   marginBottom: vars.space.medium,
+  justifyContent: 'space-between',
+  paddingRight: '10px',
+  gap: 15
+});
+
+export const mobileSearchContainer = style({
+  background: vars.colors.grayMiddle,
   borderRadius: '12px',
   minHeight: '40px',
-  background: vars.colors.grayMiddle,
-  paddingRight: '10px',
   display: 'flex',
   alignItems: 'center'
 });
+
+export const mobileToggleContainer = style({});
 
 export const createMarketTitle = style([
   typography.body,

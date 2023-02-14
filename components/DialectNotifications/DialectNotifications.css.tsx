@@ -33,7 +33,8 @@ globalStyle(`${popoverSelector}`, {
   '@media': {
     [`screen and (max-width: ${breakpoints.mobile}px)`]: {
       maxWidth: 'unset',
-      height: '100vh'
+      height: '100vh',
+      left: 0
     }
   }
 });
