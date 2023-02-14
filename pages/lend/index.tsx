@@ -86,7 +86,7 @@ const Lend: NextPage = () => {
   const [currentMarketName, setCurrentMarketName] = useState(
     HONEY_GENESIS_BEE_MARKET_NAME
   );
-  const [showWeeklyRates, setShowWeeklyRates] = useState(true);
+  const [showWeeklyRates, setShowWeeklyRates] = useState(false);
 
   // init wallet and sdkConfiguration file
   const sdkConfig = ConfigureSDK();
