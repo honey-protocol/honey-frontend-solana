@@ -35,6 +35,7 @@ import {
 import { DialectProviders } from 'contexts/DialectProvider';
 import { PublicKey } from '@solana/web3.js';
 import Head from 'next/head';
+import { HoneyIcon } from 'icons/HoneyIcon';
 // top level function that injects the app with a new market ID - being called from pages where interaction with markets is possible. Currently: borrow | lend | liquidate
 // export const setMarketId = (marketID: string) => marketID;
 
@@ -190,7 +191,10 @@ function MyApp({ Component, pageProps }: AppProps) {
           {/* <ReactQueryDevtools initialIsOpen={false} /> */}
           <WalletKitProvider
             defaultNetwork={network}
-            app={{ name: 'Honey Finance' }}
+            app={{
+              name: 'Honey Finance',
+              icon: <HoneyIcon />
+            }}
             networkConfigs={networkConfiguration()}
           >
             <AccountsProvider>

@@ -66,7 +66,7 @@ import HoneyContent from '../../components/HoneyContent/HoneyContent';
 import HoneySider from '../../components/HoneySider/HoneySider';
 import { TABLET_BP } from '../../constants/breakpoints';
 import useWindowSize from '../../hooks/useWindowSize';
-import { Typography } from 'antd';
+import { Space, Typography } from 'antd';
 import { pageDescription, pageTitle } from 'styles/common.css';
 import HoneyTableRow from 'components/HoneyTable/HoneyTableRow/HoneyTableRow';
 import HoneyTableNameCell from '../../components/HoneyTable/HoneyTableNameCell/HoneyTableNameCell';
@@ -99,6 +99,7 @@ import SorterIcon from 'icons/Sorter';
 import ExpandedRowIcon from 'icons/ExpandedRowIcon';
 import useToast from 'hooks/useToast';
 import { toast } from 'components/HoneyToast/HoneyToast.css';
+import HoneyToggle from 'components/HoneyToggle/HoneyToggle';
 // import { network } from 'pages/_app';
 const { format: f, formatPercent: fp, formatSol: fs } = formatNumber;
 
@@ -184,6 +185,7 @@ const Markets: NextPage = () => {
     useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [isMobileSidebarVisible, setShowMobileSidebar] = useState(false);
+  const [showWeeklyRates, setShowWeeklyRates] = useState(true);
 
   /**
    * @description fetches all nfts in users wallet
@@ -383,7 +385,21 @@ const Markets: NextPage = () => {
     setIsMyCollectionsFilterEnabled(checked);
   };
 
-  const MyCollectionsToggle = () => null;
+  const WeeklyToggle = () => (
+    <div className={style.headerCell['disabled']}>
+      <Space direction="horizontal">
+        <HoneyToggle
+          defaultChecked
+          checked={showWeeklyRates}
+          onChange={value => {
+            setShowWeeklyRates(value);
+          }}
+          title="Weekly"
+        />{' '}
+        WEEKLY
+      </Space>
+    </div>
+  );
 
   const onSearch = (searchTerm: string): MarketTableRow[] => {
     if (!searchTerm) {
@@ -471,7 +487,9 @@ const Markets: NextPage = () => {
                   ]
                 }
               >
-                <span>Interest rate</span>
+              {showWeeklyRates ? 
+              <> <span>Weekly rate</span>{' '} </> :
+               <> <span>Yearly rate</span>{' '} </>}
                 <div className={style.sortIcon[sortOrder]}>
                   <SorterIcon active={sortOrder !== 'disabled'} />
                 </div>
@@ -488,7 +506,7 @@ const Markets: NextPage = () => {
               render: (rate: number) => {
                 return (
                   <div className={c(style.rateCell, style.borrowRate)}>
-                    {fp(rate)}
+                    {fp(rate / (showWeeklyRates ? 52 : 1))}
                   </div>
                 );
               }
@@ -568,7 +586,7 @@ const Markets: NextPage = () => {
 
         {
           width: columnsWidth[4],
-          title: MyCollectionsToggle,
+          title: WeeklyToggle,
           render: (_: null, row: MarketTableRow) => {
             return (
               <div className={style.buttonsCell}>
@@ -587,7 +605,13 @@ const Markets: NextPage = () => {
         }
         return !column.hidden;
       }),
-    [isMyCollectionsFilterEnabled, tableData, searchQuery, windowWidth]
+    [
+      isMyCollectionsFilterEnabled,
+      tableData,
+      showWeeklyRates,
+      searchQuery,
+      windowWidth
+    ]
   );
   // Render func. for mobile
   const columnsMobile: ColumnType<MarketTableRow>[] = useMemo(
@@ -628,7 +652,9 @@ const Markets: NextPage = () => {
                 }
               />
               <HoneyTableRow>
-                <div className={style.rateCell}>{fp(row.rate)}</div>
+                <div className={style.rateCell}>
+                  {fp(row.rate / (showWeeklyRates ? 52 : 1))}
+                </div>
                 <div className={style.availableCell}>{fs(row.value)}</div>
                 <div className={style.availableCell}>{fs(row.available)}</div>
               </HoneyTableRow>
@@ -637,7 +663,7 @@ const Markets: NextPage = () => {
         }
       }
     ],
-    [isMyCollectionsFilterEnabled, tableData, searchQuery]
+    [isMyCollectionsFilterEnabled, tableData, searchQuery, showWeeklyRates]
   );
 
   // position in each market
@@ -1173,11 +1199,11 @@ const Markets: NextPage = () => {
               style.mobileSearchAndToggleContainer
             )}
           >
-            <div className={style.mobileRow}>
+            <div className={c(style.mobileRow, style.mobileSearchContainer)}>
               <SearchForm />
             </div>
-            <div className={style.mobileRow}>
-              <MyCollectionsToggle />
+            <div className={c(style.mobileToggleContainer)}>
+              <WeeklyToggle />
             </div>
           </div>
           <div className={c(style.mobileTableHeader)}>
