@@ -213,7 +213,7 @@ async function configureCollectionObjecet(
     allowance: any;
     userDebt: any;
     ltv: any;
-    tvl: BN;
+    tvl: any;
     totalMarketDeposits: any;
     totalMarketValue: any;
     connection: any;
@@ -353,7 +353,7 @@ async function handleFormatMarket(
     'mainnet-beta'
   );
 
-  const tvl = new BN(nftPrice * (await fetchTVL(obligations)));
+  const tvl = nftPrice * (await fetchTVL(obligations));
   const userTotalDeposits = await honeyUser.fetchUserDeposits(0);
 
   return await configureCollectionObjecet(origin, collection, {
