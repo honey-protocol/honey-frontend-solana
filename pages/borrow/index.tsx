@@ -69,7 +69,6 @@ import HoneyTableNameCell from '../../components/HoneyTable/HoneyTableNameCell/H
 import {
   HONEY_PROGRAM_ID,
   marketCollections,
-  marketIDs,
   OpenPositions
 } from '../../helpers/marketHelpers/index';
 import HoneyTooltip from '../../components/HoneyTooltip/HoneyTooltip';
