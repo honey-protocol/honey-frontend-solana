@@ -168,8 +168,8 @@ const Lend: NextPage = () => {
   }, [walletPK]);
   //  ************* END FETCH USER BALANCE *************
 
-  //  ************* START FETCH CURRENT SOL PRICE *************
-  // fetches the current sol price
+  //  ************* START FETCH CURRENT RESERVE PRICE *************
+  // fetches the current reserve price
   async function fetchReserveValue(reserves: TReserve, connection: Connection) {
     const reservePrice = await fetchReservePrice(reserves, connection);
     setFetchedReservePrice(reservePrice);
@@ -185,10 +185,10 @@ const Lend: NextPage = () => {
       fetchReserveValue(parsedReserves[0], sdkConfig.saberHqConnection);
     }
   }, [parsedReserves]);
-  //  ************* END FETCH CURRENT SOL PRICE *************
+  //  ************* END FETCH CURRENT RESERVE PRICE *************
 
   /**
-   * @description deposits X amount of SOL from market
+   * @description deposits X amount of SPL from market
    * @params value: being amount to withdraw | toast: notifications
    * @returns succes | failure
    */
@@ -255,7 +255,7 @@ const Lend: NextPage = () => {
     }
   }
   /**
-   * @description withdraws X amount of SOL from market
+   * @description withdraws X amount of SPL token from market
    * @params value: being amount to withdraw | toast: notifications
    * @returns succes | failure
    */
