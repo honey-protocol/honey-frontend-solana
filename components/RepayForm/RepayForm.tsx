@@ -40,7 +40,7 @@ const RepayForm = (props: RepayProps) => {
     userAllowance,
     userDebt,
     loanToValue,
-    fetchedSolPrice,
+    fetchedReservePrice,
     currentMarketId,
     hideMobileSidebar,
     changeTab,
@@ -53,7 +53,7 @@ const RepayForm = (props: RepayProps) => {
   const { toast, ToastComponent } = useToast();
   // constants && calculations
   const maxValue = userDebt != 0 ? userDebt : userAllowance;
-  const solPrice = fetchedSolPrice;
+  const solPrice = fetchedReservePrice;
   const liquidationThreshold = COLLATERAL_FACTOR;
   const SOLBalance = useSolBalance();
   const newDebt = userDebt - (valueSOL ? valueSOL : 0);

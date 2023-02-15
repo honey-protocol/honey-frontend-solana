@@ -50,7 +50,7 @@ const BorrowForm = (props: BorrowProps) => {
     userDebt,
     loanToValue,
     hideMobileSidebar,
-    fetchedSolPrice,
+    fetchedReservePrice,
     calculatedInterestRate,
     currentMarketId,
     isFetchingData
@@ -66,7 +66,7 @@ const BorrowForm = (props: BorrowProps) => {
   // constants && calculations
   const borrowedValue = userDebt;
   const maxValue = userAllowance;
-  const solPrice = fetchedSolPrice;
+  const solPrice = fetchedReservePrice;
   const liquidationThreshold = COLLATERAL_FACTOR; // TODO: change where relevant, currently set to 65% on mainnet
   const borrowFee = BORROW_FEE; // TODO: 1,5% later but 0% for now
   const newAdditionalDebt = valueSOL * (1 + borrowFee);

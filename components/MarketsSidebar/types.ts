@@ -6,7 +6,7 @@ export type MarketsSidebarProps = {
   userAllowance: number;
   userDebt: number;
   loanToValue: number;
-  fetchedSolPrice: number;
+  fetchedReservePrice: number;
   calculatedInterestRate: number;
   currentMarketId: string;
   availableNFTS: any;
