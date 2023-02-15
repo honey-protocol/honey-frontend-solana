@@ -133,7 +133,12 @@ const allowedCollections = [
   'honey genesis bee',
   'elixir: ovols',
   'blocksmith labs',
-  "Trippin' Ape Tribe"
+  "Trippin' Ape Tribe",
+  'og atadians',
+  'Ukiyo',
+  'Droid Capital',
+  'Heavenland',
+  'Marshies'
 ];
 
 async function getNFTImgURI(uri: string, name: string) {
