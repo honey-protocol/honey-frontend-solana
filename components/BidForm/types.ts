@@ -4,7 +4,7 @@ export type BidFormProps = {
   highestBiddingValue: number;
   userBalance: number;
   currentUserBid?: number;
-  fetchedSolPrice: number;
+  fetchedReservePrice: number;
   currentMarketId: string;
   highestBiddingAddress: string;
   stringyfiedWalletPK?: string;

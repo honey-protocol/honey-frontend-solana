@@ -7,7 +7,7 @@ export type LendSidebarProps = {
   biddingArray: any;
   highestBiddingValue: number;
   currentUserBid?: number;
-  fetchedSolPrice: number;
+  fetchedReservePrice: number;
   currentMarketId: string;
   highestBiddingAddress: string;
   stringyfiedWalletPK?: string;

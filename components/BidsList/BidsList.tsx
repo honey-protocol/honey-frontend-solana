@@ -8,7 +8,7 @@ import { LAMPORTS_PER_SOL } from '@solana/web3.js';
 import { Spin } from 'antd';
 
 const BidsList = (props: BidListProps) => {
-  const { biddingArray, fetchedSolPrice, isFetchingData } = props;
+  const { biddingArray, fetchedReservePrice, isFetchingData } = props;
   const [convertedBiddingArray, setConvertedBiddingArray] = useState([]);
 
   // Put your validators here
@@ -49,7 +49,7 @@ const BidsList = (props: BidListProps) => {
           {currentBidCardData.length ? (
             <CurrentBidList
               data={currentBidCardData}
-              fetchedSolPrice={fetchedSolPrice}
+              fetchedReservePrice={fetchedReservePrice}
             />
           ) : (
             'No open bids'

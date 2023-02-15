@@ -1,5 +1,5 @@
 export type BidListProps = {
   biddingArray: any;
-  fetchedSolPrice: number;
+  fetchedReservePrice: number;
   isFetchingData?: boolean;
 };

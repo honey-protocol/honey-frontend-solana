@@ -32,7 +32,7 @@ const DepositForm = (props: DepositFormProps) => {
     value,
     available,
     userWalletBalance,
-    fetchedSolPrice,
+    fetchedReservePrice,
     marketImage,
     currentMarketId,
     onCancel,
@@ -54,7 +54,7 @@ const DepositForm = (props: DepositFormProps) => {
   }, [value, available]);
   // constants
   const maxValue = userWalletBalance;
-  const solPrice = fetchedSolPrice;
+  const solPrice = fetchedReservePrice;
 
   // Put your validators here
   const isDepositButtonDisabled = () => {

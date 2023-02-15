@@ -74,7 +74,7 @@ const Liquidate: NextPage = () => {
   const [currentUserBid, setCurrentUserBid] = useState<number>();
   const [nftPrice, setNftPrice] = useState<number>(0);
   const [userBalance, setUserBalance] = useState(0);
-  const [fetchedSolPrice, setFetchedSolPrice] = useState(0);
+  const [fetchedReservePrice, setFetchedReservePrice] = useState(0);
   const [isMobileSidebarVisible, setShowMobileSidebar] = useState(false);
   const [biddingArray, setBiddingArray] = useState({});
   const [marketData, setMarketData] = useState<MarketBundle[]>([]);
@@ -249,9 +249,9 @@ const Liquidate: NextPage = () => {
     document.body.classList.remove('disable-scroll');
   };
 
-  async function fetchSolValue(reserves: TReserve, connection: Connection) {
-    const slPrice = await fetchReservePrice(reserves, connection);
-    setFetchedSolPrice(slPrice);
+  async function fetchReserveValue(reserves: TReserve, connection: Connection) {
+    const reservePrice = await fetchReservePrice(reserves, connection);
+    setFetchedReservePrice(reservePrice);
   }
   /**
    * @description
@@ -260,7 +260,7 @@ const Liquidate: NextPage = () => {
    */
   useEffect(() => {
     if (parsedReserves) {
-      fetchSolValue(parsedReserves[0], sdkConfig.saberHqConnection);
+      fetchReserveValue(parsedReserves[0], sdkConfig.saberHqConnection);
     }
   }, [parsedReserves]);
   //  ************* END FETCH SOL PRICE *************
@@ -299,7 +299,7 @@ const Liquidate: NextPage = () => {
             if (walletPK) await fetchWalletBalance(walletPK);
             return toast.success('Bid revoked, fetching chain data');
           } else {
-            return toast.error('Revoke bid failed', transactionOutcome[0]);
+            return toast.error('Revoke bid failed');
           }
         } else if (type == 'place_bid') {
           // if no user bid terminate action
@@ -319,7 +319,7 @@ const Liquidate: NextPage = () => {
             if (walletPK) await fetchWalletBalance(walletPK);
             return toast.success('Bid placed, fetching chain data');
           } else {
-            return toast.error('Bid failed', transactionOutcome);
+            return toast.error('Bid failed');
           }
         } else if (type == 'increase_bid') {
           // if no user bid terminate action
@@ -760,7 +760,7 @@ const Liquidate: NextPage = () => {
         handleRevokeBid={handleRevokeBid}
         handleIncreaseBid={handleIncreaseBid}
         handlePlaceBid={handlePlaceBid}
-        fetchedSolPrice={fetchedSolPrice}
+        fetchedReservePrice={fetchedReservePrice}
         onCancel={hideMobileSidebar}
         currentMarketId={currentMarketId}
         isFetchingData={isFetchingData}
@@ -895,7 +895,7 @@ const Liquidate: NextPage = () => {
       {/*    handleRevokeBid={handleRevokeBid}*/}
       {/*    handleIncreaseBid={handleIncreaseBid}*/}
       {/*    handlePlaceBid={handlePlaceBid}*/}
-      {/*    fetchedSolPrice={fetchedSolPrice}*/}
+      {/*    fetchedReservePrice={fetchedReservePrice}*/}
       {/*  />*/}
       {/*</HoneySider>*/}
     </LayoutRedesign>
