@@ -64,7 +64,7 @@ const Lend: NextPage = () => {
   const [reserveHoneyState, setReserveHoneyState] = useState(0);
   const [nftPrice, setNftPrice] = useState(0);
   const [userWalletBalance, setUserWalletBalance] = useState<number>(0);
-  const [fetchedSolPrice, setFetchedSolPrice] = useState(0);
+  const [fetchedReservePrice, setFetchedReservePrice] = useState(0);
   const [activeMarketSupplied, setActiveMarketSupplied] = useState(0);
   const [activeMarketAvailable, setActiveMarketAvailable] = useState(0);
   const [marketData, setMarketData] = useState<MarketBundle[]>([]);
@@ -170,9 +170,9 @@ const Lend: NextPage = () => {
 
   //  ************* START FETCH CURRENT SOL PRICE *************
   // fetches the current sol price
-  async function fetchSolValue(reserves: TReserve, connection: Connection) {
-    const slPrice = await fetchReservePrice(reserves, connection);
-    setFetchedSolPrice(slPrice);
+  async function fetchReserveValue(reserves: TReserve, connection: Connection) {
+    const reservePrice = await fetchReservePrice(reserves, connection);
+    setFetchedReservePrice(reservePrice);
   }
 
   /**
@@ -182,7 +182,7 @@ const Lend: NextPage = () => {
    */
   useEffect(() => {
     if (parsedReserves) {
-      fetchSolValue(parsedReserves[0], sdkConfig.saberHqConnection);
+      fetchReserveValue(parsedReserves[0], sdkConfig.saberHqConnection);
     }
   }, [parsedReserves]);
   //  ************* END FETCH CURRENT SOL PRICE *************
@@ -710,7 +710,7 @@ const Lend: NextPage = () => {
         available={activeMarketAvailable}
         value={activeMarketSupplied}
         userWalletBalance={userWalletBalance}
-        fetchedSolPrice={fetchedSolPrice}
+        fetchedReservePrice={fetchedReservePrice}
         onCancel={hideMobileSidebar}
         marketImage={renderMarketImageByName(currentMarketName)}
         currentMarketId={currentMarketId}

@@ -24,7 +24,7 @@ const WithdrawForm = (props: WithdrawFormProps) => {
     userTotalDeposits,
     value,
     available,
-    fetchedSolPrice,
+    fetchedReservePrice,
     marketImage,
     currentMarketId,
     onCancel,
@@ -37,7 +37,7 @@ const WithdrawForm = (props: WithdrawFormProps) => {
   const { toast, ToastComponent } = useToast();
 
   const maxValue = userTotalDeposits;
-  const solPrice = fetchedSolPrice;
+  const reservePrice = fetchedReservePrice;
 
   // Put your validators here
   const isWithdrawButtonDisabled = () => {
@@ -47,7 +47,7 @@ const WithdrawForm = (props: WithdrawFormProps) => {
 
   const handleSliderChange = (value: number) => {
     setSliderValue(value);
-    setValueUSD(value * solPrice);
+    setValueUSD(value * reservePrice);
     setValueSOL(value);
   };
 
@@ -60,8 +60,8 @@ const WithdrawForm = (props: WithdrawFormProps) => {
     }
 
     setValueUSD(usdValue);
-    setValueSOL(usdValue / solPrice);
-    setSliderValue(usdValue / solPrice);
+    setValueSOL(usdValue / reservePrice);
+    setSliderValue(usdValue / reservePrice);
   };
 
   const handleSolInputChange = (solValue: number | undefined) => {
@@ -72,7 +72,7 @@ const WithdrawForm = (props: WithdrawFormProps) => {
       return;
     }
 
-    setValueUSD(solValue * solPrice);
+    setValueUSD(solValue * reservePrice);
     setValueSOL(solValue);
     setSliderValue(solValue);
   };

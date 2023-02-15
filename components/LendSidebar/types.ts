@@ -4,7 +4,7 @@ export type LendSidebarProps = {
   available: number;
   value: number;
   userWalletBalance: number;
-  fetchedSolPrice: number;
+  fetchedReservePrice: number;
   marketImage: any;
   currentMarketId: string;
   activeInterestRate: number;

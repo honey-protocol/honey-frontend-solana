@@ -25,7 +25,7 @@ const LendSidebar = (props: LendSidebarProps) => {
     available,
     value,
     userWalletBalance,
-    fetchedSolPrice,
+    fetchedReservePrice,
     marketImage,
     currentMarketId,
     onCancel,
@@ -81,7 +81,7 @@ const LendSidebar = (props: LendSidebarProps) => {
                 available={available}
                 value={value}
                 userWalletBalance={userWalletBalance}
-                fetchedSolPrice={fetchedSolPrice}
+                fetchedReservePrice={fetchedReservePrice}
                 marketImage={marketImage}
                 currentMarketId={currentMarketId}
                 onCancel={onCancel}
@@ -95,7 +95,7 @@ const LendSidebar = (props: LendSidebarProps) => {
                 userTotalDeposits={userTotalDeposits}
                 available={available}
                 value={value}
-                fetchedSolPrice={fetchedSolPrice}
+                fetchedReservePrice={fetchedReservePrice}
                 marketImage={marketImage}
                 currentMarketId={currentMarketId}
                 onCancel={onCancel}
