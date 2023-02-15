@@ -353,6 +353,8 @@ async function handleFormatMarket(
     'mainnet-beta'
   );
 
+  console.log('@@-- allowance and debt', collection.name, allowanceAndDebt);
+
   const tvl = nftPrice * (await fetchTVL(obligations));
   const userTotalDeposits = await honeyUser.fetchUserDeposits(0);
 

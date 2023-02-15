@@ -81,6 +81,7 @@ const Lend: NextPage = () => {
   const [isMyCollectionsFilterEnabled, setIsMyCollectionsFilterEnabled] =
     useState(false);
   const [honeyReservesChange, setHoneyReservesChange] = useState(0);
+  const [initState, setInitState] = useState(false);
   // Sets market ID which is used for fetching market specific data
   // each market currently is a different call and re-renders the page
   const [currentMarketId, setCurrentMarketId] = useState(
@@ -357,7 +358,11 @@ const Lend: NextPage = () => {
       function getData() {
         return Promise.all(
           marketCollections.map(async collection => {
-            if (collection.id == '') return collection;
+            if (
+              collection.id == '' ||
+              (initState === true && collection.id !== currentMarketId)
+            )
+              return collection;
             if (marketData.length) {
               collection.marketData = marketData.filter(
                 marketObject =>
@@ -410,6 +415,7 @@ const Lend: NextPage = () => {
 
       getData()
         .then(result => {
+          if (marketData.length) setInitState(true);
           setTableData(result);
           setTableDataFiltered(result);
         })
@@ -531,10 +537,6 @@ const Lend: NextPage = () => {
                 ]
               }
             >
-              <span>Interest rate</span>{' '}
-              <div className={style.sortIcon[sortOrder]}>
-                <SorterIcon active={sortOrder !== 'disabled'} />
-              </div>
               {showWeeklyRates ? (
                 <>
                   {' '}

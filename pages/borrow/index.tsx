@@ -190,6 +190,7 @@ const Markets: NextPage = () => {
   const [isMobileSidebarVisible, setShowMobileSidebar] = useState(false);
   const [isFetchingData, setIsFetchingData] = useState(true);
   const [showWeeklyRates, setShowWeeklyRates] = useState(true);
+  const [initState, setInitState] = useState(false);
 
   /**
    * @description fetches all nfts in users wallet
@@ -270,14 +271,17 @@ const Markets: NextPage = () => {
         setIsFetchingData(true);
         return Promise.all(
           marketCollections.map(async collection => {
-            if (collection.id == '') return collection;
+            if (
+              collection.id == '' ||
+              (initState === true && collection.id !== currentMarketId)
+            )
+              return collection;
 
             if (marketData.length) {
               collection.marketData = marketData.filter(
                 marketObject =>
                   marketObject.market.address.toString() === collection.id
               );
-
               const honeyUser = collection.marketData[0].user;
               const honeyMarket = collection.marketData[0].market;
               const honeyClient = collection.marketData[0].client;
@@ -315,13 +319,9 @@ const Markets: NextPage = () => {
                 // @ts-ignore
                 setUserDebt(collection.userDebt);
                 setLoanToValue(Number(collection.ltv));
-
                 setFetchedDataObject(collection.marketData[0]);
               }
               setIsFetchingData(false);
-
-              setActiveInterestRate(collection.rate);
-              setFetchedDataObject(collection.marketData[0]);
             }
             return collection;
           })
@@ -330,6 +330,8 @@ const Markets: NextPage = () => {
 
       getData()
         .then(result => {
+          if (marketData.length) setInitState(true);
+
           setTableData(result);
           setTableDataFiltered(result);
         })
@@ -867,9 +869,6 @@ const Markets: NextPage = () => {
               await collection.marketData[0].reserves[0].refresh();
               await collection.marketData[0].user.refresh();
 
-              await collection.user.reserves[0].refresh();
-              await collection.user.refresh();
-
               await refreshPositions();
               refetchNfts({});
 
@@ -921,8 +920,8 @@ const Markets: NextPage = () => {
             );
 
             if (collection.marketData) {
-              await collection.user.reserves[0].refresh();
-              await collection.user.refresh();
+              await collection.marketData[0].reserves[0].refresh();
+              await collection.marketData[0].user.refresh();
 
               await refreshPositions();
               refetchNfts({});
@@ -968,41 +967,46 @@ const Markets: NextPage = () => {
         'So11111111111111111111111111111111111111112'
       );
       toast.processing();
-      marketCollections.map(async collection => {
-        if (collection.id === currentMarketId) {
-          const tx = await borrowAndRefresh(
-            honeyUser,
-            new BN(val * LAMPORTS_PER_SOL),
-            borrowTokenMint,
-            honeyReserves
-          );
+      console.log('@@-- fetched', fetchedDataObject);
+      if (!fetchedDataObject) return;
 
-          if (tx[0] == 'SUCCESS') {
-            const confirmation = tx[1];
+      const tx = await borrowAndRefresh(
+        fetchedDataObject.user,
+        new BN(val * LAMPORTS_PER_SOL),
+        borrowTokenMint,
+        fetchedDataObject.reserves
+      );
 
-            await collection.user.reserves[0].refresh();
-            await collection.user.refresh();
+      if (tx[0] == 'SUCCESS') {
+        const confirmation = tx[1];
+        const confirmationHash = confirmation[1];
+        console.log('@@-- tx', confirmation);
+        await waitForConfirmation(
+          sdkConfig.saberHqConnection,
+          confirmationHash
+        );
 
-            await refreshPositions();
-            refetchNfts({});
+        await fetchedDataObject.reserves[0].refresh();
+        await fetchedDataObject.user.refresh();
 
-            reserveHoneyState === 0
-              ? setReserveHoneyState(1)
-              : setReserveHoneyState(0);
+        await refreshPositions();
+        refetchNfts({});
 
-            toast.success(
-              'Borrow success',
-              `https://solscan.io/tx/${tx[1][0]}?cluster=${network}`
-            );
-          } else {
-            console.log('@@-- tx error', tx);
-            return toast.error(
-              'Borrow failed',
-              `https://solscan.io/tx/${tx[1][0]}?cluster=${network}`
-            );
-          }
-        }
-      });
+        reserveHoneyState === 0
+          ? setReserveHoneyState(1)
+          : setReserveHoneyState(0);
+
+        toast.success(
+          'Borrow success',
+          `https://solscan.io/tx/${tx[1][0]}?cluster=${network}`
+        );
+      } else {
+        console.log('@@-- tx error', tx);
+        return toast.error(
+          'Borrow failed',
+          `https://solscan.io/tx/${tx[1][0]}?cluster=${network}`
+        );
+      }
     } catch (error) {
       console.log('Error: ', error);
       return toast.error('An error occurred');
@@ -1026,57 +1030,45 @@ const Markets: NextPage = () => {
         'So11111111111111111111111111111111111111112'
       );
       toast.processing();
-      marketCollections.map(async collection => {
-        if (collection.id === currentMarketId) {
-          const tx = await repayAndRefresh(
-            honeyUser,
-            new BN(val * LAMPORTS_PER_SOL),
-            repayTokenMint,
-            honeyReserves
-          );
+      if (!fetchedDataObject) return;
+      const tx = await repayAndRefresh(
+        fetchedDataObject.user,
+        new BN(val * LAMPORTS_PER_SOL),
+        repayTokenMint,
+        fetchedDataObject.reserves
+      );
 
-          if (tx[0] == 'SUCCESS') {
-            const confirmation = tx[1];
-            const confirmationHash = confirmation[1];
+      if (tx[0] == 'SUCCESS') {
+        const confirmation = tx[1];
+        console.log('@@-- tx', confirmation);
+        const confirmationHash = confirmation[1];
 
-            await waitForConfirmation(
-              sdkConfig.saberHqConnection,
-              confirmationHash
-            );
+        await waitForConfirmation(
+          sdkConfig.saberHqConnection,
+          confirmationHash
+        );
 
-            if (collection.marketData) {
-              await collection.user.reserves[0].refresh();
-              await collection.user.refresh();
+        await fetchedDataObject.reserves[0].refresh();
+        await fetchedDataObject.user.refresh();
 
-              await refreshPositions();
-              refetchNfts({});
+        await refreshPositions();
+        refetchNfts({});
 
-              reserveHoneyState === 0
-                ? setReserveHoneyState(1)
-                : setReserveHoneyState(0);
+        reserveHoneyState === 0
+          ? setReserveHoneyState(1)
+          : setReserveHoneyState(0);
 
-              toast.success(
-                'Repay success',
-                `https://solscan.io/tx/${tx[1][0]}?cluster=${network}`
-              );
-            } else {
-              await refreshPositions();
-              refetchNfts({});
-
-              toast.success(
-                'Repay success',
-                `https://solscan.io/tx/${tx[1][0]}?cluster=${network}`
-              );
-            }
-          } else {
-            console.log('Repay failed', tx);
-            return toast.error(
-              'Repay failed',
-              `https://solscan.io/tx/${tx[1][0]}?cluster=${network}`
-            );
-          }
-        }
-      });
+        toast.success(
+          'Repay success',
+          `https://solscan.io/tx/${tx[1][0]}?cluster=${network}`
+        );
+      } else {
+        console.log('Repay failed', tx);
+        return toast.error(
+          'Repay failed',
+          `https://solscan.io/tx/${tx[1][0]}?cluster=${network}`
+        );
+      }
     } catch (error) {
       console.error('Error: ', error);
       return toast.error('An error occurred');

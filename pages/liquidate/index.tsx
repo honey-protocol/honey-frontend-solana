@@ -85,6 +85,7 @@ const Liquidate: NextPage = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [tableDataFiltered, setTableDataFiltered] =
     useState<MarketTableRow[]>(marketCollections);
+  const [initState, setInitState] = useState(false);
   const [currentMarketId, setCurrentMarketId] = useState(
     HONEY_GENESIS_MARKET_ID
   );
@@ -398,7 +399,11 @@ const Liquidate: NextPage = () => {
       function getData() {
         return Promise.all(
           marketCollections.map(async collection => {
-            if (collection.id == '') return collection;
+            if (
+              collection.id == '' ||
+              (initState === true && collection.id !== currentMarketId)
+            )
+              return collection;
 
             if (marketData.length) {
               collection.marketData = marketData.filter(
@@ -442,6 +447,7 @@ const Liquidate: NextPage = () => {
 
       getData()
         .then(result => {
+          if (marketData.length) setInitState(true);
           setTableData(result);
           setTableDataFiltered(result);
         })
