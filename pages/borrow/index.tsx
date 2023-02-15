@@ -174,7 +174,7 @@ const Markets: NextPage = () => {
   const [cRatio, setCRatio] = useState(0);
   const [reserveHoneyState, setReserveHoneyState] = useState(0);
   const [launchAreaWidth, setLaunchAreaWidth] = useState<number>(840);
-  const [fetchedSolPrice, setFetchedSolPrice] = useState(0);
+  const [fetchedReservePrice, setFetchedReservePrice] = useState(0);
   const [activeInterestRate, setActiveInterestRate] = useState(0);
   // interface related constants
   const { width: windowWidth } = useWindowSize();
@@ -205,9 +205,9 @@ const Markets: NextPage = () => {
 
   // fetches the sol price
   // TODO: create type for reserves and connection
-  async function fetchSolValue(reserves: TReserve, connection: Connection) {
-    const slPrice = await fetchReservePrice(reserves, connection);
-    setFetchedSolPrice(slPrice);
+  async function fetchReserveValue(reserves: TReserve, connection: Connection) {
+    const reservePrice = await fetchReservePrice(reserves, connection);
+    setFetchedReservePrice(reservePrice);
   }
 
   /**
@@ -217,7 +217,7 @@ const Markets: NextPage = () => {
    */
   useEffect(() => {
     if (parsedReserves) {
-      fetchSolValue(parsedReserves[0], sdkConfig.saberHqConnection);
+      fetchReserveValue(parsedReserves[0], sdkConfig.saberHqConnection);
     }
   }, [parsedReserves]);
 
@@ -308,7 +308,9 @@ const Markets: NextPage = () => {
               if (currentMarketId === collection.id) {
                 setActiveInterestRate(collection.rate);
                 // @ts-ignore
-                setNftPrice(RoundHalfDown(Number(collection.nftPrice)));
+                collection.nftPrice
+                  ? setNftPrice(RoundHalfDown(collection.nftPrice))
+                  : 0;
                 setUserAllowance(collection.allowance);
                 // @ts-ignore
                 setUserDebt(collection.userDebt);
@@ -1018,7 +1020,7 @@ const Markets: NextPage = () => {
     try {
       if (!val) return toast.error('Please provide a value');
       // add additional value if user wants to repay 100% of loan due to interest rate not being included
-      if (val == userDebt) val += 1;
+      if (val == userDebt) val += 0.1;
       // TODO: make dynamic - marketCollections or fetchAllMarkets
       const repayTokenMint = new PublicKey(
         'So11111111111111111111111111111111111111112'
@@ -1098,7 +1100,7 @@ const Markets: NextPage = () => {
               userAllowance={userAllowance}
               loanToValue={loanToValue}
               hideMobileSidebar={hideMobileSidebar}
-              fetchedSolPrice={fetchedSolPrice}
+              fetchedReservePrice={fetchedReservePrice}
               // TODO: call helper function include all markets
               calculatedInterestRate={activeInterestRate}
               currentMarketId={currentMarketId}
