@@ -124,7 +124,7 @@ const Dashboard: NextPage = () => {
   const [dataArray, setDataArray] = useState<NotificationCardProps[]>([]);
 
   const userWalletBalance = 50;
-  const [fetchedSolPrice, setFetchedSolPrice] = useState(0);
+  const [fetchedReservePrice, setFetchedSolPrice] = useState(0);
 
   useEffect(() => {
     if (width >= TABLET_BP) {
@@ -608,7 +608,7 @@ const Dashboard: NextPage = () => {
           userAllowance={userAllowance}
           loanToValue={loanToValue}
           hideMobileSidebar={hideMobileSidebar}
-          fetchedSolPrice={fetchedSolPrice}
+          fetchedReservePrice={fetchedReservePrice}
           calculatedInterestRate={calculatedInterestRate}
           //TODO: fix market id
           currentMarketId={''}
@@ -626,7 +626,7 @@ const Dashboard: NextPage = () => {
           available={totalMarketDeposits}
           value={totalMarketDeposits + totalMarketDebt}
           userWalletBalance={userWalletBalance}
-          fetchedSolPrice={fetchedSolPrice}
+          fetchedReservePrice={fetchedReservePrice}
           onCancel={hideMobileSidebar}
           //TODO: fix market id
           currentMarketId={''}
