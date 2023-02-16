@@ -319,7 +319,6 @@ const Markets: NextPage = () => {
                 // @ts-ignore
                 setUserDebt(collection.userDebt);
                 setLoanToValue(Number(collection.ltv));
-                // TODO: set to honey
                 setFetchedDataObject(collection.marketData[0]);
               }
               setIsFetchingData(false);
@@ -915,7 +914,8 @@ const Markets: NextPage = () => {
 
             if (tx[0] == 'SUCCESS') {
               const confirmation = tx[1];
-              const confirmationHash = confirmation[0];
+              let counter = confirmation.length - 1;
+              const confirmationHash = confirmation[counter];
 
               await waitForConfirmation(
                 sdkConfig.saberHqConnection,
@@ -970,7 +970,8 @@ const Markets: NextPage = () => {
 
             if (tx[0] == 'SUCCESS') {
               const confirmation = tx[1];
-              const confirmationHash = confirmation[0];
+              let counter = confirmation.length - 1;
+              const confirmationHash = confirmation[counter];
 
               await waitForConfirmation(
                 sdkConfig.saberHqConnection,
@@ -1027,7 +1028,10 @@ const Markets: NextPage = () => {
 
       if (tx[0] == 'SUCCESS') {
         const confirmation = tx[1];
-        const confirmationHash = confirmation[1];
+        let counter = confirmation.length - 1;
+        const confirmationHash = confirmation[counter];
+
+        console.log('@@-- confirmation hash', confirmationHash);
 
         await waitForConfirmation(
           sdkConfig.saberHqConnection,
@@ -1038,6 +1042,7 @@ const Markets: NextPage = () => {
         await fetchedDataObject.user.refresh();
 
         await refreshPositions();
+
         refetchNfts({});
 
         reserveHoneyState === 0
@@ -1088,8 +1093,8 @@ const Markets: NextPage = () => {
 
       if (tx[0] == 'SUCCESS') {
         const confirmation = tx[1];
-        console.log('@@-- tx', confirmation);
-        const confirmationHash = confirmation[1];
+        let counter = confirmation.length - 1;
+        const confirmationHash = confirmation[counter];
 
         await waitForConfirmation(
           sdkConfig.saberHqConnection,
