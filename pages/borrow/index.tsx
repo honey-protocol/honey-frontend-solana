@@ -324,57 +324,66 @@ const Markets: NextPage = () => {
               setIsFetchingData(false);
               return collection;
             } else if (marketData.length && initState === true) {
-              collection.marketData = marketData.filter(
-                marketObject =>
-                  marketObject.market.address.toString() === collection.id
-              );
+              // collection.marketData = marketData.filter(
+              //   marketObject =>
+              //     marketObject.market.address.toString() === collection.id
+              // );
 
-              if (
-                collection.marketData[0].market.address.toString() !==
-                currentMarketId
-              )
+              // if (
+              //   collection.marketData[0].market.address.toString() !==
+              //   currentMarketId
+              // )
+              //   return collection;
+              if (collection.id === currentMarketId) {
+                collection.marketData = marketData.filter(
+                  marketObject =>
+                    marketObject.market.address.toString() === collection.id
+                );
+                const honeyUser = collection.marketData[0].user;
+                const honeyMarket = collection.marketData[0].market;
+                const honeyClient = collection.marketData[0].client;
+                const parsedReserves =
+                  collection.marketData[0].reserves[0].data;
+                const mData = collection.marketData[0].reserves[0];
+
+                await populateMarketData(
+                  'BORROW',
+                  collection,
+                  sdkConfig.saberHqConnection,
+                  sdkConfig.sdkWallet,
+                  currentMarketId,
+                  false,
+                  collection.marketData[0].positions,
+                  true,
+                  honeyClient,
+                  honeyMarket,
+                  honeyUser,
+                  parsedReserves,
+                  mData
+                );
+
+                collection.openPositions = await handlePositions(
+                  collection.verifiedCreator,
+                  userOpenPositions
+                );
+
+                setActiveInterestRate(collection.rate);
+                // @ts-ignore
+                collection.nftPrice
+                  ? setNftPrice(RoundHalfDown(collection.nftPrice))
+                  : 0;
+                setUserAllowance(collection.allowance);
+                // @ts-ignore
+                setUserDebt(collection.userDebt);
+                setLoanToValue(Number(collection.ltv));
+                setFetchedDataObject(collection.marketData[0]);
+                setIsFetchingData(false);
+                console.log(
+                  '@@-- running inside single market loop',
+                  collection
+                );
                 return collection;
-
-              const honeyUser = collection.marketData[0].user;
-              const honeyMarket = collection.marketData[0].market;
-              const honeyClient = collection.marketData[0].client;
-              const parsedReserves = collection.marketData[0].reserves[0].data;
-              const mData = collection.marketData[0].reserves[0];
-
-              await populateMarketData(
-                'BORROW',
-                collection,
-                sdkConfig.saberHqConnection,
-                sdkConfig.sdkWallet,
-                currentMarketId,
-                false,
-                collection.marketData[0].positions,
-                true,
-                honeyClient,
-                honeyMarket,
-                honeyUser,
-                parsedReserves,
-                mData
-              );
-
-              collection.openPositions = await handlePositions(
-                collection.verifiedCreator,
-                userOpenPositions
-              );
-
-              setActiveInterestRate(collection.rate);
-              // @ts-ignore
-              collection.nftPrice
-                ? setNftPrice(RoundHalfDown(collection.nftPrice))
-                : 0;
-              setUserAllowance(collection.allowance);
-              // @ts-ignore
-              setUserDebt(collection.userDebt);
-              setLoanToValue(Number(collection.ltv));
-              setFetchedDataObject(collection.marketData[0]);
-              setIsFetchingData(false);
-              console.log('@@-- running inside single market loop', collection);
-              return collection;
+              }
             }
             return collection;
           })
