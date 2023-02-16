@@ -332,6 +332,13 @@ async function handleFormatMarket(
   parsedReserves: TReserve,
   mData?: any
 ) {
+  console.log(
+    '@@-- honey user',
+    collection.name,
+    collection.id,
+    // honeyMarket.address.toString(),
+    honeyUser.market.address.toString()
+  );
   const totalMarketDebt = mData
     ? await mData.getReserveState().outstandingDebt
     : 0;
