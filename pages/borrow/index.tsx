@@ -236,9 +236,10 @@ const Markets: NextPage = () => {
   }
 
   useEffect(() => {
+    if (!sdkConfig.sdkWallet) return;
     const marketIDs = marketCollections.map(market => market.id);
     fetchAllMarketData(marketIDs);
-  }, []);
+  }, [sdkConfig.sdkWallet]);
 
   // if there are open positions for the user -> set the open positions
   useEffect(() => {
