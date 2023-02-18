@@ -323,7 +323,28 @@ const Markets: NextPage = () => {
                 setFetchedDataObject(collection.marketData[0]);
               }
               setIsFetchingData(false);
+            } else {
+              await populateMarketData(
+                'BORROW',
+                collection,
+                sdkConfig.saberHqConnection,
+                sdkConfig.sdkWallet,
+                currentMarketId,
+                false,
+                [],
+                false
+              );
+
+              collection.openPositions = await handlePositions(
+                collection.verifiedCreator,
+                userOpenPositions
+              );
+
+              if (currentMarketId === collection.id)
+                setActiveInterestRate(collection.rate);
+              setIsFetchingData(false);
             }
+            setIsFetchingData(false);
             return collection;
           })
         );

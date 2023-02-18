@@ -329,7 +329,6 @@ async function handleFormatMarket(
   honeyClient: HoneyClient,
   honeyMarket: HoneyMarket,
   connection: Connection,
-  parsedReserves: TReserve,
   mData?: any
 ) {
   const totalMarketDebt = mData
@@ -417,9 +416,57 @@ export async function populateMarketData(
       honeyClient,
       honeyMarket,
       connection,
-      parsedReserves,
       mData
     );
+  } else {
+    const provider = new anchor.AnchorProvider(
+      connection,
+      dummyWallet,
+      anchor.AnchorProvider.defaultOptions()
+    );
+
+    const honeyClient = await HoneyClient.connect(
+      provider,
+      collection.id,
+      false
+    );
+    const honeyMarket = await HoneyMarket.load(
+      honeyClient,
+      new PublicKey(collection.id)
+    );
+    console.log('@@-- honey client', honeyClient);
+    console.log('@@-- honey market', honeyMarket);
+    // init reserves
+    const honeyReserves: HoneyReserve[] = honeyMarket.market.reserves.map(
+      reserve => {
+        console.log('@@-- reserve', honeyMarket);
+
+        return new HoneyReserve(
+          honeyClient,
+          honeyMarket,
+          new PublicKey(honeyMarket.address)
+        );
+      }
+    );
+
+    const honeyUser = await HoneyUser.load(
+      honeyClient,
+      honeyMarket,
+      // @ts-ignore
+      dummyWallet,
+      honeyReserves
+    );
+    return await handleFormatMarket(
+      origin,
+      collection,
+      currentMarketId,
+      liquidations,
+      obligations,
+      honeyUser,
+      honeyClient,
+      honeyMarket,
+      connection,
+      []
+    );
   }
-  return collection;
 }
