@@ -323,6 +323,7 @@ const Markets: NextPage = () => {
                 setFetchedDataObject(collection.marketData[0]);
               }
               setIsFetchingData(false);
+              return collection;
             } else {
               await populateMarketData(
                 'BORROW',

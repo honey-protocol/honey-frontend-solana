@@ -331,6 +331,7 @@ async function handleFormatMarket(
   connection: Connection,
   mData?: any
 ) {
+  console.log('@@-- mData', mData[0]);
   const totalMarketDebt = mData
     ? await mData.getReserveState().outstandingDebt
     : 0;
@@ -352,7 +353,7 @@ async function handleFormatMarket(
     'mainnet-beta'
   );
 
-  console.log('@@-- allowance and debt', collection.name, allowanceAndDebt);
+  console.log('@@-- total market', totalMarketDeposits);
 
   const tvl = nftPrice * (await fetchTVL(obligations));
   const userTotalDeposits = await honeyUser.fetchUserDeposits(0);
@@ -435,17 +436,18 @@ export async function populateMarketData(
       new PublicKey(collection.id)
     );
     console.log('@@-- honey client', honeyClient);
-    console.log('@@-- honey market', honeyMarket);
+    console.log(
+      '@@-- honey market',
+      honeyMarket.reserveList[0].vault.toString(),
+      honeyMarket.address.toString()
+    );
     // init reserves
+    const res = new PublicKey('5V6H5BPtTLyESrQhfALyWvfG4yahxH4ySXcAJpPHbhTg');
     const honeyReserves: HoneyReserve[] = honeyMarket.market.reserves.map(
       reserve => {
-        console.log('@@-- reserve', honeyMarket);
+        // console.log('@@-- honeymarket', honeyMarket);
 
-        return new HoneyReserve(
-          honeyClient,
-          honeyMarket,
-          new PublicKey(honeyMarket.address)
-        );
+        return new HoneyReserve(honeyClient, honeyMarket, res);
       }
     );
 
@@ -456,6 +458,8 @@ export async function populateMarketData(
       dummyWallet,
       honeyReserves
     );
+
+    console.log('@@-- honeyUser', honeyUser);
     return await handleFormatMarket(
       origin,
       collection,
@@ -466,7 +470,7 @@ export async function populateMarketData(
       honeyClient,
       honeyMarket,
       connection,
-      []
+      honeyReserves
     );
   }
 }
