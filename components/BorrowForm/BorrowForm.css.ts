@@ -32,17 +32,54 @@ export const nftInfo = style([
   formSection,
   row,
   {
-    alignItems: 'center'
+    alignItems: 'center',
+    cursor: 'pointer',
+    borderBottom: `2px solid ${vars.colors.borderSecondary}`,
+    paddingBottom: 10
   }
 ]);
 export const nftImage = style([
   {
-    width: 46,
+    minWidth: 46,
     height: 46,
     marginRight: 15
   }
 ]);
-export const nftName = style([typography.title, {}]);
+
+export const nftNameContainer = style({
+  flex: 'auto',
+  display: 'grid'
+});
+export const nftName = style([
+  typography.title,
+  {
+    fontSize: 20,
+    textOverflow: 'ellipsis',
+    whiteSpace: 'nowrap',
+    overflow: 'hidden'
+  }
+]);
+
+export const collateralDetails = style([
+  typography.caption,
+  {
+    color: vars.colors.textTertiary
+  }
+]);
+
+export const arrowRightIcon = style({
+  marginLeft: 'auto',
+  background: 'url(/images/arrow-right.svg) center no-repeat',
+  width: 20,
+  height: 20
+});
+
+export const cancelIcon = style({
+  background:
+    'url("/images/close-notification-icon.svg") center center no-repeat',
+  width: 20,
+  height: 20
+});
 
 export const inputs = style([
   {
@@ -81,3 +118,8 @@ export const newBorrowingTitle = style([
     marginBottom: 18
   }
 ]);
+
+export const collateralList = style({
+  display: 'flex',
+  flexDirection: 'column'
+});

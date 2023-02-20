@@ -21,9 +21,12 @@ import {
   renderMarketImageByID,
   renderNftList,
   BORROW_FEE,
-  COLLATERAL_FACTOR
+  COLLATERAL_FACTOR,
+  marketCollections
 } from 'helpers/marketHelpers';
 import QuestionIcon from 'icons/QuestionIcon';
+import { HoneyButtonTabs } from 'components/HoneyButtonTabs/HoneyButtonTabs';
+import NFTSelectListItem from 'components/NFTSelectListItem/NFTSelectListItem';
 const { formatPercent: fp, formatSol: fs, formatRoundDown: frd } = formatNumber;
 
 interface NFT {
@@ -39,6 +42,7 @@ const BorrowForm = (props: BorrowProps) => {
     openPositions,
     nftPrice,
     executeDepositNFT,
+    executeWithdrawNFT,
     executeBorrow,
     userAllowance,
     userDebt,
@@ -51,11 +55,17 @@ const BorrowForm = (props: BorrowProps) => {
   // state declarations
   const [valueUSD, setValueUSD] = useState<number>(0);
   const [valueSOL, setValueSOL] = useState<number>(0);
-  const [isNftSelected, setIsNftSelected] = useState(false);
   const [selectedNft, setSelectedNft] = useState<NFT | null>(null);
+  const [isBulkLoan, setIsBulkLoan] = useState(true);
+  const [selectedMultipleNFTs, setSelectedMultipleNFTs] = useState<NFT[]>();
+  const [collateralMenuMode, setCollateralMenuMode] = useState<
+    'new_collaterals' | 'collaterals'
+  >('collaterals');
+  const [showCollateralMenu, setShowCollateralMenu] = useState(false);
   const [hasOpenPosition, setHasOpenPosition] = useState(false);
   const [sliderValue, setSliderValue] = useState(0);
   const { toast, ToastComponent } = useToast();
+
   // constants && calculations
   const borrowedValue = userDebt;
   const maxValue = userAllowance;
@@ -72,7 +82,10 @@ const BorrowForm = (props: BorrowProps) => {
   const newLiqPercent = nftPrice
     ? ((nftPrice - newLiquidationPrice) / nftPrice) * 100
     : 0;
-
+  const selectedMarket = marketCollections.find(
+    market => market.constants.marketId === currentMarketId
+  );
+  const currentBulkCollaterals: NFT[] = []; // MOCK
   // Put your validators here
   const isBorrowButtonDisabled = () => {
     return userAllowance == 0 ? true : false;
@@ -118,7 +131,6 @@ const BorrowForm = (props: BorrowProps) => {
       setSelectedNft({ name, img, mint, creator: creators[0].address });
     } else {
       setSelectedNft({ name, img, mint, creator: creators[0].address });
-      setIsNftSelected(true);
     }
   };
 
@@ -127,10 +139,8 @@ const BorrowForm = (props: BorrowProps) => {
     if (openPositions?.length) {
       const { name, image, mint, verifiedCreator } = openPositions[0];
       setSelectedNft({ name, img: image, mint, creator: verifiedCreator });
-      setIsNftSelected(true);
       setHasOpenPosition(true);
     } else if (openPositions.length == 0) {
-      setIsNftSelected(false);
       setHasOpenPosition(false);
     }
   }, [openPositions, availableNFTs]);
@@ -147,6 +157,35 @@ const BorrowForm = (props: BorrowProps) => {
       );
     handleSliderChange(0);
   };
+
+  //Handle deposit multiple NFTs as collateral
+  const handleDepositMultipleNFTs = async () => {
+    if (selectedMultipleNFTs?.length && selectedMultipleNFTs[0].mint.length < 1)
+      return toastResponse('ERROR', 'Please select an NFT', 'ERROR');
+    if (selectedMultipleNFTs?.length && selectedMultipleNFTs[0].mint.length > 1)
+      await executeDepositNFT(
+        selectedMultipleNFTs[0].mint,
+        toast,
+        selectedMultipleNFTs[0].name,
+        selectedMultipleNFTs[0].creator
+      );
+
+    //Reset selected NFTs
+    setSelectedMultipleNFTs([]);
+  };
+
+  const handleClaimMultipleCollateral = async () => {
+    if (
+      selectedMultipleNFTs?.length &&
+      selectedMultipleNFTs[0].mint.length < 1
+    ) {
+      return toastResponse('ERROR', 'Please select an NFT', 'ERROR');
+    }
+
+    await executeWithdrawNFT(openPositions[0].mint, toast);
+    //Reset selected NFTs
+    setSelectedMultipleNFTs([]);
+  };
   // executes the borrow function
   const handleBorrow = async () => {
     executeBorrow(valueSOL, toast);
@@ -157,25 +196,156 @@ const BorrowForm = (props: BorrowProps) => {
     currentMarketId,
     availableNFTs
   );
+
+  const handleSelectMultipleNFTsItem = (event: any, nft: NFT) => {
+    const isCurrentlySelected = Boolean(
+      selectedMultipleNFTs?.some(item => item.mint === nft.mint)
+    );
+    if (isCurrentlySelected && !event.target.checked) {
+      //unselect
+      const newSelectedNFTs = selectedMultipleNFTs?.filter(
+        item => item.mint != nft.mint
+      );
+      setSelectedMultipleNFTs(newSelectedNFTs);
+    } else {
+      // select
+      // Uncomment when multiple deposit/claim allowed
+      // if (selectedMultipleNFTs && selectedMultipleNFTs?.length) {
+      //   setSelectedMultipleNFTs([...selectedMultipleNFTs, nft]);
+      // } else {
+      //   setSelectedMultipleNFTs([nft]);
+      // }
+      setSelectedMultipleNFTs([nft]);
+    }
+  };
+
   // renders nft list is no nft is selected
   const renderContent = () => {
-    if (isNftSelected == false) {
+    if (!hasOpenPosition) {
+      //Remove false when multiple deposits is possible
+      if (isBulkLoan && false) {
+        return (
+          <>
+            <div className={styles.newBorrowingTitle}>Choose Multiple NFTs</div>
+            {availableNFTs.map((nft: NFT) => {
+              const isSelected = Boolean(
+                selectedMultipleNFTs?.some(item => item.mint === nft.mint)
+              );
+              const disabled =
+                Boolean(selectedMultipleNFTs?.length) && !isSelected;
+              return (
+                <NFTSelectListItem
+                  key={nft.mint}
+                  id={nft.mint}
+                  name={nft.name}
+                  image={nft.img}
+                  value={fs(10)}
+                  isSelected={isSelected}
+                  onChange={e => {
+                    handleSelectMultipleNFTsItem(event, nft);
+                  }}
+                  tokenName="SOL"
+                  disabled={disabled} //remove disabled when multiple selction becomes allowed
+                />
+              );
+            })}
+          </>
+        );
+      } else {
+        return (
+          <>
+            <div className={styles.newBorrowingTitle}>Choose NFT</div>
+            <NftList
+              data={availableNFTsInSelectedMarket}
+              selectNFT={selectNFT}
+              nftPrice={nftPrice}
+              selectedNFTMint={selectedNft?.mint}
+            />
+          </>
+        );
+      }
+    }
+
+    if (showCollateralMenu) {
       return (
         <>
-          <div className={styles.newBorrowingTitle}>Choose NFT</div>
-          <NftList
-            data={availableNFTsInSelectedMarket}
-            selectNFT={selectNFT}
-            nftPrice={nftPrice}
-            selectedNFTMint={selectedNft?.mint}
+          <div
+            className={styles.nftInfo}
+            onClick={() => setShowCollateralMenu(false)}
+          >
+            <div className={styles.nftImage}>
+              <HexaBoxContainer>
+                {openPositions.length ? (
+                  <Image
+                    src={openPositions[0].image}
+                    alt="Honey NFT image"
+                    layout="fill"
+                  />
+                ) : (
+                  renderMarketImageByID(currentMarketId)
+                )}
+              </HexaBoxContainer>
+            </div>
+            <div className={styles.nftNameContainer}>
+              <div className={styles.nftName}>{selectedMarket?.name}</div>
+              <div className={styles.collateralDetails}>
+                3 collaterals on this loan
+              </div>
+            </div>
+            <div className={styles.cancelIcon} />
+          </div>
+          <HoneyButtonTabs
+            items={[
+              {
+                name: 'Collaterals',
+                slug: 'collaterals'
+              },
+              {
+                name: 'New collaterals ',
+                slug: 'new_collaterals'
+              }
+            ]}
+            activeItemSlug={collateralMenuMode}
+            isFullWidth
+            onClick={slug => {
+              setCollateralMenuMode(slug as any);
+              setSelectedMultipleNFTs([]);
+            }}
           />
+          <div className={styles.collateralList}>
+            {(collateralMenuMode === 'collaterals'
+              ? currentBulkCollaterals
+              : availableNFTsInSelectedMarket
+            ).map((nft: NFT) => {
+              const isSelected = Boolean(
+                selectedMultipleNFTs?.some(item => item.mint === nft.mint)
+              );
+              return (
+                <NFTSelectListItem
+                  key={nft.mint}
+                  id={nft.mint}
+                  name={nft.name}
+                  image={nft.img}
+                  value={fs(10)}
+                  isSelected={isSelected}
+                  onChange={e => {
+                    handleSelectMultipleNFTsItem(event, nft);
+                  }}
+                  tokenName="SOL"
+                />
+              );
+            })}
+          </div>
         </>
       );
     }
 
     return (
       <>
-        <div className={styles.nftInfo}>
+        <div
+          className={styles.nftInfo}
+          onClick={() => setShowCollateralMenu(true)}
+        >
           <div className={styles.nftImage}>
             <HexaBoxContainer>
               {openPositions.length ? (
@@ -189,7 +359,13 @@ const BorrowForm = (props: BorrowProps) => {
               )}
             </HexaBoxContainer>
           </div>
-          <div className={styles.nftName}>{selectedNft?.name}</div>
+          <div className={styles.nftNameContainer}>
+            <div className={styles.nftName}>{selectedMarket?.name}</div>
+            <div className={styles.collateralDetails}>
+              3 collaterals on this loan
+            </div>
+          </div>
+          <div className={styles.arrowRightIcon} />
         </div>
         <div className={styles.row}>
           <div className={styles.col}>
@@ -503,49 +679,78 @@ const BorrowForm = (props: BorrowProps) => {
   };
 
   const handleCancel = () => {
+    if (showCollateralMenu) {
+      setShowCollateralMenu(false);
+    }
     if (typeof hideMobileSidebar === 'function') {
       hideMobileSidebar();
     }
   };
 
+  const getBtnDetails = () => {
+    if (showCollateralMenu) {
+      return {
+        cancelTxt: 'Return',
+        onCancel: handleCancel,
+        title:
+          collateralMenuMode === 'collaterals'
+            ? 'Claim collaterals'
+            : 'Add collaterals',
+        onClick:
+          collateralMenuMode === 'collaterals'
+            ? handleClaimMultipleCollateral
+            : handleDepositMultipleNFTs,
+        disabled: Boolean(!selectedMultipleNFTs?.length)
+      };
+    }
+
+    if (hasOpenPosition) {
+      return {
+        cancelTxt: 'Cancel',
+        onCancel: handleCancel,
+        title: 'Borrow',
+        onClick: handleBorrow,
+        disabled: isBorrowButtonDisabled(),
+        solAmount: valueSOL || 0,
+        usdcValue: valueUSD || 0
+      };
+    } else {
+      //Uncomment when multiple deposits allowed
+      // if (isBulkLoan) {
+      //   return {
+      //     cancelTxt: 'Cancel',
+      //     onCancel: handleCancel,
+      //     title: 'Deposit Selected NFT',
+      //     onClick: handleDepositMultipleNFTs,
+      //     disabled: !selectedMultipleNFTs?.length
+      //   };
+      // } else {
+      return {
+        cancelTxt: 'Cancel',
+        onCancel: handleCancel,
+        title: 'Deposit NFT',
+        onClick: handleDepositNFT,
+        disabled: !selectedNft
+        // };
+      };
+    }
+  };
   const renderFooter = () => {
     return toast?.state ? (
       ToastComponent
-    ) : hasOpenPosition ? (
-      <div className={styles.buttons}>
-        <div className={styles.smallCol}>
-          <HoneyButton variant="secondary" onClick={handleCancel}>
-            Cancel
-          </HoneyButton>
-        </div>
-        <div className={styles.bigCol}>
-          <HoneyButton
-            solAmount={valueSOL || 0}
-            usdcValue={valueUSD || 0}
-            variant="primary"
-            disabled={isBorrowButtonDisabled()}
-            block
-            onClick={handleBorrow}
-          >
-            Borrow
-          </HoneyButton>
-        </div>
-      </div>
     ) : (
       <div className={styles.buttons}>
         <div className={styles.smallCol}>
-          <HoneyButton variant="secondary" onClick={handleCancel}>
-            Cancel
+          <HoneyButton
+            variant="secondary"
+            onClick={getBtnDetails().onCancel || handleCancel}
+          >
+            {getBtnDetails().cancelTxt || 'Cancel'}
           </HoneyButton>
         </div>
         <div className={styles.bigCol}>
-          <HoneyButton
-            disabled={!selectedNft}
-            variant="primary"
-            block
-            onClick={handleDepositNFT}
-          >
-            Deposit NFT
+          <HoneyButton variant="primary" block {...getBtnDetails()}>
+            {getBtnDetails().title}
           </HoneyButton>
         </div>
       </div>
