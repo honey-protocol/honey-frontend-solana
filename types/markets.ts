@@ -23,7 +23,6 @@ export type MarketTableRow = {
   liqThreshold?: any;
   untilLiquidation?: number;
   verifiedCreator: string;
-  reserve?: string;
   nftPrice?: number;
   userDebt?: number;
   ltv?: number;
