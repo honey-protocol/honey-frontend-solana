@@ -325,6 +325,7 @@ const Markets: NextPage = () => {
               setIsFetchingData(false);
               return collection;
             } else {
+              setIsFetchingData(false);
               await populateMarketData(
                 'BORROW',
                 collection,
@@ -343,9 +344,7 @@ const Markets: NextPage = () => {
 
               if (currentMarketId === collection.id)
                 setActiveInterestRate(collection.rate);
-              setIsFetchingData(false);
             }
-            setIsFetchingData(false);
             return collection;
           })
         );
@@ -354,7 +353,7 @@ const Markets: NextPage = () => {
       getData()
         .then(result => {
           if (marketData.length) setInitState(true);
-
+          setIsFetchingData(false);
           setTableData(result);
           setTableDataFiltered(result);
         })
@@ -990,7 +989,7 @@ const Markets: NextPage = () => {
         'So11111111111111111111111111111111111111112'
       );
       toast.processing();
-      console.log('@@-- fetched', fetchedDataObject);
+
       if (!fetchedDataObject) return;
 
       const tx = await borrowAndRefresh(
