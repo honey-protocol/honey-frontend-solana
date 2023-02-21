@@ -331,50 +331,52 @@ async function handleFormatMarket(
   connection: Connection,
   mData?: any
 ) {
-  console.log('@@-- mData', mData[0]);
-  const totalMarketDebt = mData
-    ? await mData.getReserveState().outstandingDebt
-    : 0;
+  try {
+    const totalMarketDebt = mData
+      ? await mData.getReserveState().outstandingDebt
+      : 0;
 
-  const totalMarketDeposits = mData
-    ? await mData.getReserveState().totalDeposits
-    : 0;
+    const totalMarketDeposits = mData
+      ? await mData.getReserveState().totalDeposits
+      : 0;
 
-  const { utilization, interestRate } =
-    await collection.marketData[0].reserves[0].getUtilizationAndInterestRate();
+    const { utilization, interestRate } =
+      await collection.marketData[0].reserves[0].getUtilizationAndInterestRate();
 
-  const totalMarketValue = totalMarketDeposits + totalMarketDebt;
+    const totalMarketValue = totalMarketDeposits + totalMarketDebt;
 
-  const nftPrice = await honeyMarket.fetchNFTFloorPriceInReserve(0);
-  collection.nftPrice = nftPrice;
+    const nftPrice = await honeyMarket.fetchNFTFloorPriceInReserve(0);
+    collection.nftPrice = nftPrice;
 
-  const allowanceAndDebt = await honeyUser.fetchAllowanceAndDebt(
-    0,
-    'mainnet-beta'
-  );
+    const allowanceAndDebt = await honeyUser.fetchAllowanceAndDebt(
+      0,
+      'mainnet-beta'
+    );
 
-  console.log('@@-- total market', totalMarketDeposits);
+    const tvl = nftPrice * (await fetchTVL(obligations));
+    const userTotalDeposits = await honeyUser.fetchUserDeposits(0);
 
-  const tvl = nftPrice * (await fetchTVL(obligations));
-  const userTotalDeposits = await honeyUser.fetchUserDeposits(0);
-
-  return await configureCollectionObjecet(origin, collection, {
-    allowance: allowanceAndDebt.allowance,
-    userDebt: allowanceAndDebt.debt,
-    ltv: allowanceAndDebt.ltv,
-    tvl,
-    totalMarketDeposits,
-    totalMarketValue,
-    connection,
-    honeyUser,
-    nftPrice,
-    obligations,
-    totalMarketDebt,
-    currentMarketId,
-    utilization,
-    interestRate,
-    userTotalDeposits
-  });
+    return await configureCollectionObjecet(origin, collection, {
+      allowance: allowanceAndDebt.allowance,
+      userDebt: allowanceAndDebt.debt,
+      ltv: allowanceAndDebt.ltv,
+      tvl,
+      totalMarketDeposits,
+      totalMarketValue,
+      connection,
+      honeyUser,
+      nftPrice,
+      obligations,
+      totalMarketDebt,
+      currentMarketId,
+      utilization,
+      interestRate,
+      userTotalDeposits
+    });
+  } catch (error) {
+    console.log('Error: ', error);
+    return collection;
+  }
 }
 
 /**
@@ -419,7 +421,8 @@ export async function populateMarketData(
       connection,
       mData
     );
-  } else {
+  }
+  try {
     const provider = new anchor.AnchorProvider(
       connection,
       dummyWallet,
@@ -435,20 +438,10 @@ export async function populateMarketData(
       honeyClient,
       new PublicKey(collection.id)
     );
-    console.log('@@-- honey client', honeyClient);
-    console.log(
-      '@@-- honey market',
-      honeyMarket.reserveList[0].vault.toString(),
-      honeyMarket.address.toString()
-    );
-    // init reserves
-    const res = new PublicKey('5V6H5BPtTLyESrQhfALyWvfG4yahxH4ySXcAJpPHbhTg');
-    const honeyReserves: HoneyReserve[] = honeyMarket.market.reserves.map(
-      reserve => {
-        // console.log('@@-- honeymarket', honeyMarket);
 
-        return new HoneyReserve(honeyClient, honeyMarket, res);
-      }
+    // init reserves - should become honeyReserves
+    const honeyReserves: HoneyReserve[] = honeyMarket.cachedReserveInfo.map(
+      reserve => new HoneyReserve(honeyClient, honeyMarket, reserve.reserve)
     );
 
     const honeyUser = await HoneyUser.load(
@@ -459,7 +452,6 @@ export async function populateMarketData(
       honeyReserves
     );
 
-    console.log('@@-- honeyUser', honeyUser);
     return await handleFormatMarket(
       origin,
       collection,
@@ -469,8 +461,10 @@ export async function populateMarketData(
       honeyUser,
       honeyClient,
       honeyMarket,
-      connection,
-      honeyReserves
+      connection
     );
+  } catch (error) {
+    console.log('Error: ', error);
+    return collection;
   }
 }
