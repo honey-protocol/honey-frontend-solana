@@ -449,6 +449,7 @@ const Markets: NextPage = ({ res }: { res: any }) => {
                 collection.nftPrice = collection.marketData[0].nftPrice;
                 // @ts-ignore
                 collection.utilizationRate =
+                  // @ts-ignore
                   collection.marketData[0].utilization;
 
                 setIsFetchingData(false);
