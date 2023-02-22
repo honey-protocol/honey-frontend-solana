@@ -19,6 +19,9 @@ export type OpenPositions = {
   uri: string;
 };
 
+export const ROOT_SSR = 'SSR';
+export const ROOT_CLIENT = 'CLIENT';
+
 // returns array of market ids based on market collections - curr. inactive
 export const marketIDs = async (marketCollections: MarketTableRow[]) => {
   const marketIdArray: string[] = [];

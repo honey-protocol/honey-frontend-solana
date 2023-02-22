@@ -61,7 +61,8 @@ import {
   renderMarketName,
   marketCollections,
   COLLATERAL_FACTOR,
-  HONEY_GENESIS_MARKET_ID
+  HONEY_GENESIS_MARKET_ID,
+  ROOT_CLIENT
 } from 'helpers/marketHelpers';
 import { toast } from 'react-toastify';
 
@@ -154,7 +155,7 @@ export async function fetchSolPrice(parsedReserves: any, connection: any) {
  * @params obligations array, currentmarketid. nft
  * @returns chart data
  */
-const setObligations = async (
+export const setObligations = async (
   obligations: any,
   currentMarketId: string,
   nftPrice: number
@@ -183,7 +184,7 @@ const setObligations = async (
  * @params array of obligations | nft price | boolean: false will calculate the risk - true will calculate the total debt | market id | name of collection
  * @returns total debt of market if type is true, risk of market if type is false
  */
-const calculateRisk = async (
+export const calculateRisk = async (
   obligations: any,
   nftPrice: number,
   type: boolean,
@@ -386,6 +387,7 @@ async function handleFormatMarket(
  */
 export async function populateMarketData(
   origin: string,
+  dataRoot: string,
   collection: MarketTableRow,
   connection: Connection,
   wallet: ConnectedWallet | null,
@@ -403,6 +405,7 @@ export async function populateMarketData(
   let dummyWallet = wallet ? wallet : new NodeWallet(new Keypair());
 
   if (
+    dataRoot === ROOT_CLIENT &&
     hasMarketData &&
     honeyClient &&
     honeyMarket &&
@@ -421,50 +424,5 @@ export async function populateMarketData(
       connection,
       mData
     );
-  }
-  try {
-    const provider = new anchor.AnchorProvider(
-      connection,
-      dummyWallet,
-      anchor.AnchorProvider.defaultOptions()
-    );
-
-    const honeyClient = await HoneyClient.connect(
-      provider,
-      collection.id,
-      false
-    );
-    const honeyMarket = await HoneyMarket.load(
-      honeyClient,
-      new PublicKey(collection.id)
-    );
-
-    // init reserves - should become honeyReserves
-    const honeyReserves: HoneyReserve[] = honeyMarket.cachedReserveInfo.map(
-      reserve => new HoneyReserve(honeyClient, honeyMarket, reserve.reserve)
-    );
-
-    const honeyUser = await HoneyUser.load(
-      honeyClient,
-      honeyMarket,
-      // @ts-ignore
-      dummyWallet,
-      honeyReserves
-    );
-
-    return await handleFormatMarket(
-      origin,
-      collection,
-      currentMarketId,
-      liquidations,
-      obligations,
-      honeyUser,
-      honeyClient,
-      honeyMarket,
-      connection
-    );
-  } catch (error) {
-    console.log('Error: ', error);
-    return collection;
   }
 }
