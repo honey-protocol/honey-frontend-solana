@@ -133,7 +133,7 @@ const createMarketObject = async (marketData: any) => {
   }
 };
 
-export async function getServerSideProps() {
+export async function getStaticProps() {
   const createConnection = () => {
     // @ts-ignore
     return new Connection(process.env.NEXT_PUBLIC_RPC_NODE, 'mainnet-beta');
