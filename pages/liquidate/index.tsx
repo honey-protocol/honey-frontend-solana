@@ -225,12 +225,6 @@ const Liquidate: NextPage = ({ res }: { res: any }) => {
 
   const [dataRoot, setDataRoot] = useState<String>();
 
-  useEffect(() => {
-    setDataRoot(ROOT_SSR);
-    setMarketData(res as unknown as MarketBundle[]);
-    handleBids();
-  }, [res]);
-
   //  ************* START FETCH MARKET DATA *************
   async function fetchAllMarketData(marketIDs: string[]) {
     const data = await fetchAllMarkets(
@@ -251,6 +245,12 @@ const Liquidate: NextPage = ({ res }: { res: any }) => {
     const marketIDs = marketCollections.map(market => market.id);
     fetchAllMarketData(marketIDs);
   }, [sdkConfig.sdkWallet]);
+
+  useEffect(() => {
+    setDataRoot(ROOT_SSR);
+    setMarketData(res as unknown as MarketBundle[]);
+    handleBids();
+  }, [res]);
 
   //  ************* END FETCH MARKET DATA *************
 
@@ -516,7 +516,6 @@ const Liquidate: NextPage = ({ res }: { res: any }) => {
    */
   useEffect(() => {
     if (sdkConfig.saberHqConnection) {
-      if (!marketData) return;
       function getData() {
         return Promise.all(
           marketCollections.map(async collection => {
@@ -530,6 +529,7 @@ const Liquidate: NextPage = ({ res }: { res: any }) => {
               if (dataRoot === ROOT_CLIENT) {
                 if (initState === true && currentMarketId !== collection.id)
                   return collection;
+
                 collection.marketData = marketData.filter(
                   //@ts-ignore
                   marketObject =>
@@ -634,7 +634,9 @@ const Liquidate: NextPage = ({ res }: { res: any }) => {
                         openPos.debt / COLLATERAL_FACTOR);
                     });
                   }
+                  return collection;
                 }
+                return collection;
               }
             }
             return collection;

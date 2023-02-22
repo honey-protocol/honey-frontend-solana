@@ -43,7 +43,6 @@ const HoneyTable: FC<HoneyTableProps> = props => {
       classes.push(styles.honeyTableRowSelected);
     }
     if (isLoading) {
-      console.log('@loading');
       classes.push(styles.loadingCursor);
     }
 
