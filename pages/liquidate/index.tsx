@@ -572,28 +572,38 @@ const Liquidate: NextPage = ({ res }: { res: any }) => {
                 return collection;
               } else if (dataRoot === ROOT_SSR) {
                 if (collection.marketData) {
+                  //@ts-ignore
                   collection.allowance = collection.marketData[0].allowance
-                    ? collection.marketData[0].allowance
+                    ? //@ts-ignore
+                      collection.marketData[0].allowance
                     : 0;
+                  //@ts-ignore
                   collection.available = collection.marketData[0]
                     .totalMarketDeposits
-                    ? collection.marketData[0].totalMarketDeposits
+                    ? //@ts-ignore
+                      collection.marketData[0].totalMarketDeposits
                     : 0;
-
+                  //@ts-ignore
                   collection.value =
+                    //@ts-ignore
                     collection.marketData[0].totalMarketDeposits +
                     // @ts-ignore
                     collection.marketData[0].totalMarketDebt.outstandingDebt;
+                  //@ts-ignore
                   collection.connection = sdkConfig.saberHqConnection;
+                  //@ts-ignore
                   collection.nftPrice = collection.marketData[0].nftPrice;
-
+                  //@ts-ignore
                   collection.utilizationRate = collection.marketData[0]
                     .utilization
-                    ? collection.marketData[0].utilization
+                    ? //@ts-ignore
+                      collection.marketData[0].utilization
                     : 0;
+                  //@ts-ignore
                   collection.totalDebt =
                     //@ts-ignore
                     collection.marketData[0].totalMarketDebt.outstandingDebt;
+                  //@ts-ignore
                   collection.risk = collection.marketData[0].positions
                     ? await calculateRisk(
                         collection.marketData[0].positions,
