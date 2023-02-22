@@ -578,11 +578,11 @@ const Liquidate: NextPage = ({ res }: { res: any }) => {
                       collection.marketData[0].allowance
                     : 0;
                   //@ts-ignore
-                  collection.available = collection.marketData[0]
-                    .totalMarketDeposits
-                    ? //@ts-ignore
-                      collection.marketData[0].totalMarketDeposits
-                    : 0;
+                  collection.available = //@ts-ignore
+                    collection.marketData[0].totalMarketDeposits
+                      ? //@ts-ignore
+                        collection.marketData[0].totalMarketDeposits
+                      : 0;
                   //@ts-ignore
                   collection.value =
                     //@ts-ignore
@@ -594,11 +594,11 @@ const Liquidate: NextPage = ({ res }: { res: any }) => {
                   //@ts-ignore
                   collection.nftPrice = collection.marketData[0].nftPrice;
                   //@ts-ignore
-                  collection.utilizationRate = collection.marketData[0]
-                    .utilization
-                    ? //@ts-ignore
-                      collection.marketData[0].utilization
-                    : 0;
+                  collection.utilizationRate = //@ts-ignore
+                    collection.marketData[0].utilization
+                      ? //@ts-ignore
+                        collection.marketData[0].utilization
+                      : 0;
                   //@ts-ignore
                   collection.totalDebt =
                     //@ts-ignore
