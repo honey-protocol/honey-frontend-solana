@@ -443,7 +443,9 @@ const Markets: NextPage = ({ res }: { res: any }) => {
                   collection.marketData[0].totalMarketDeposits +
                   // @ts-ignore
                   collection.marketData[0].totalMarketDebt.outstandingDebt;
+                // @ts-ignore
                 collection.connection = sdkConfig.saberHqConnection;
+                // @ts-ignore
                 collection.nftPrice = collection.marketData[0].nftPrice;
                 // @ts-ignore
                 collection.utilizationRate =
