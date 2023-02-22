@@ -527,15 +527,20 @@ const Lend: NextPage = ({ res }: { res: any }) => {
                 collection.allowance = collection.marketData[0].allowance;
                 // @ts-ignore
                 collection.available =
+                  // @ts-ignore
                   collection.marketData[0].totalMarketDeposits;
                 collection.value =
+                  // @ts-ignore
                   collection.marketData[0].totalMarketDeposits +
                   // @ts-ignore
                   collection.marketData[0].totalMarketDebt.outstandingDebt;
+                // @ts-ignore
                 collection.connection = sdkConfig.saberHqConnection;
+                // @ts-ignore
                 collection.nftPrice = collection.marketData[0].nftPrice;
                 // @ts-ignore
                 collection.utilizationRate =
+                  // @ts-ignore
                   collection.marketData[0].utilization;
 
                 setIsFetchingData(false);
