@@ -566,9 +566,9 @@ const Liquidate: NextPage = ({ res }: { res: any }) => {
                   setNftPrice(RoundHalfDown(Number(collection.nftPrice)));
                 }
 
-                setTimeout(() => {
-                  setIsFetchingData(false);
-                }, 2000); // shows 0 for some values for a second before showing values so delay for 2 sec
+                // setTimeout(() => {
+                setIsFetchingData(false);
+                // }, 2000); // shows 0 for some values for a second before showing values so delay for 2 sec
                 return collection;
               } else if (dataRoot === ROOT_SSR) {
                 if (collection.marketData) {
@@ -634,11 +634,12 @@ const Liquidate: NextPage = ({ res }: { res: any }) => {
                         openPos.debt / COLLATERAL_FACTOR);
                     });
                   }
+                  setIsFetchingData(false);
                   return collection;
                 }
-                return collection;
               }
             }
+            setIsFetchingData(false);
             return collection;
           })
         );
