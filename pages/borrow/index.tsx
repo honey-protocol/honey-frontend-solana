@@ -413,6 +413,7 @@ const Markets: NextPage = ({ res }: { res: any }) => {
                     ? setNftPrice(RoundHalfDown(collection.nftPrice))
                     : 0;
                   setUserAllowance(collection.allowance);
+
                   // @ts-ignore
                   setUserDebt(collection.userDebt);
                   setLoanToValue(Number(collection.ltv));

@@ -138,7 +138,8 @@ const allowedCollections = [
   'Ukiyo',
   'Droid Capital',
   'Heavenland',
-  'Marshies'
+  'Marshies',
+  'drunken ape social club'
 ];
 
 async function getNFTImgURI(uri: string, name: string) {

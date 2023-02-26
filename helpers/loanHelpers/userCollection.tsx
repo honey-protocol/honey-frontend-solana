@@ -65,6 +65,7 @@ import {
   ROOT_CLIENT
 } from 'helpers/marketHelpers';
 import { toast } from 'react-toastify';
+import { roundTwoDecimalsUp } from 'helpers/math/math';
 
 /**
  * @description formatting functions to format with perfect / format in SOL with icon or just a regular 2 decimal format
@@ -357,9 +358,13 @@ async function handleFormatMarket(
     const tvl = nftPrice * (await fetchTVL(obligations));
     const userTotalDeposits = await honeyUser.fetchUserDeposits(0);
 
+    const userDebt = allowanceAndDebt.debt
+      ? roundTwoDecimalsUp(allowanceAndDebt.debt, 2)
+      : 0;
+
     return await configureCollectionObjecet(origin, collection, {
       allowance: allowanceAndDebt.allowance,
-      userDebt: allowanceAndDebt.debt,
+      userDebt: userDebt,
       ltv: allowanceAndDebt.ltv,
       tvl,
       totalMarketDeposits,
