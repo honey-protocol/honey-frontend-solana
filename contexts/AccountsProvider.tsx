@@ -159,7 +159,6 @@ async function getNFTImgURI(uri: string, name: string) {
           return result.image;
         })
         .catch(error => {
-          console.error(`Error occurred while getting NFT image URI: ${uri}`);
           console.error(error);
           return '';
         });
