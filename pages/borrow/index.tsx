@@ -1011,6 +1011,9 @@ const Markets: NextPage = ({ res }: { res: any }) => {
                 `https://solscan.io/tx/${tx[1][0]}?cluster=${network}`
               );
             }
+          } else {
+            console.log('tx: ', tx);
+            return toast.error('Error depositing NFT');
           }
         }
       });

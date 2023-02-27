@@ -262,30 +262,30 @@ export const marketCollections: MarketTableRow[] = [
         'https://pbs.twimg.com/profile_images/1610792754388570113/LXrVtzAE_400x400.jpg',
       discountedMarket: false
     }
+  },
+  {
+    id: '7pfaZcAqpWRHpEqGMwPQrn5tj5WVQ48F4PrAtFLuS1P7',
+    key: 'Drunken Ape Social Club',
+    name: 'Drunken Ape Social Club',
+    verifiedCreator: '56ruMizEJh4P12r6UqXEZ9AEYE9N5BtBortHfqp4m6Lm',
+    rate: 0,
+    available: 0,
+    value: 0,
+    allowance: 0,
+    connection: undefined,
+    user: undefined,
+    debt: 0,
+    utilizationRate: 0,
+    openPositions: [],
+    constants: {
+      marketId: '7pfaZcAqpWRHpEqGMwPQrn5tj5WVQ48F4PrAtFLuS1P7',
+      verifiedCreator: '56ruMizEJh4P12r6UqXEZ9AEYE9N5BtBortHfqp4m6Lm',
+      marketName: 'Drunken Ape Social Club',
+      marketImage:
+        'https://img-cdn.magiceden.dev/rs:fill:400:400:0:0/plain/https://creator-hub-prod.s3.us-east-2.amazonaws.com/drunkenapesc_pfp_1647995737060.jpeg',
+      discountedMarket: false
+    }
   }
-  // {
-  //   id: '95nNotJN936aboqZKpwwzamV7WDyqVRGycX13Eq6jSMS',
-  //   key: 'Drunken Ape Social Club',
-  //   name: 'Drunken Ape Social Club',
-  //   verifiedCreator: '56ruMizEJh4P12r6UqXEZ9AEYE9N5BtBortHfqp4m6Lm',
-  //   rate: 0,
-  //   available: 0,
-  //   value: 0,
-  //   allowance: 0,
-  //   connection: undefined,
-  //   user: undefined,
-  //   debt: 0,
-  //   utilizationRate: 0,
-  //   openPositions: [],
-  //   constants: {
-  //     marketId: '95nNotJN936aboqZKpwwzamV7WDyqVRGycX13Eq6jSMS',
-  //     verifiedCreator: '56ruMizEJh4P12r6UqXEZ9AEYE9N5BtBortHfqp4m6Lm',
-  //     marketName: 'Drunken Ape Social Club',
-  //     marketImage:
-  //       'https://img-cdn.magiceden.dev/rs:fill:400:400:0:0/plain/https://creator-hub-prod.s3.us-east-2.amazonaws.com/drunkenapesc_pfp_1647995737060.jpeg',
-  //     discountedMarket: false
-  //   }
-  // }
   // {
   //   id: 'F8rZviSSuqgkTsjMeoyrTUSNSqh7yNDCAozJkxm7eujY',
   //   key: 'BURR',
