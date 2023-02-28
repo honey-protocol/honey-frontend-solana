@@ -165,6 +165,7 @@ const Lend: NextPage = ({ res }: { res: any }) => {
   const [tableDataFiltered, setTableDataFiltered] =
     useState<LendTableRow[]>(marketCollections);
   const [isFetchingData, setIsFetchingData] = useState(true);
+  const [isFetchingClientData, setIsFetchingClientData] = useState(true);
   const [expandedRowKeys, setExpandedRowKeys] = useState<readonly Key[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [isMyCollectionsFilterEnabled, setIsMyCollectionsFilterEnabled] =
@@ -508,6 +509,7 @@ const Lend: NextPage = ({ res }: { res: any }) => {
                   : setUserTotalDeposits(0);
 
                 setTimeout(() => {
+                  setIsFetchingClientData(false);
                   setIsFetchingData(false);
                 }, 2000); // shows 0 for some values for a second before showing values so delay for 2 sec
                 return collection;
@@ -856,7 +858,7 @@ const Lend: NextPage = ({ res }: { res: any }) => {
         marketImage={renderMarketImageByName(currentMarketName)}
         currentMarketId={currentMarketId}
         activeInterestRate={activeInterestRate}
-        isFetchingData={isFetchingData}
+        isFetchingData={isFetchingClientData}
       />
     </HoneySider>
   );

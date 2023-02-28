@@ -181,6 +181,7 @@ const Liquidate: NextPage = ({ res }: { res: any }) => {
     HONEY_GENESIS_MARKET_ID
   );
   const [isFetchingData, setIsFetchingData] = useState(true);
+  const [isFetchingClientData, setIsFetchingClientData] = useState(true);
   // init anchor
   const { program } = useAnchor();
   // init sdk config obj
@@ -358,6 +359,7 @@ const Liquidate: NextPage = ({ res }: { res: any }) => {
       setHighestBiddingAddress(highestBid[0].bidder);
       setHighestBiddingValue(highestBid[0].bidLimit / LAMPORTS_PER_SOL);
     }
+    setIsFetchingClientData(false);
   }
   //  ************* END HANDLE BIDDING STATE *************
 
@@ -565,10 +567,8 @@ const Liquidate: NextPage = ({ res }: { res: any }) => {
                 if (currentMarketId === collection.id) {
                   setNftPrice(RoundHalfDown(Number(collection.nftPrice)));
                 }
-
-                // setTimeout(() => {
+                setIsFetchingClientData(false);
                 setIsFetchingData(false);
-                // }, 2000); // shows 0 for some values for a second before showing values so delay for 2 sec
                 return collection;
               } else if (dataRoot === ROOT_SSR) {
                 if (collection.marketData) {
@@ -634,7 +634,9 @@ const Liquidate: NextPage = ({ res }: { res: any }) => {
                         openPos.debt / COLLATERAL_FACTOR);
                     });
                   }
-                  setIsFetchingData(false);
+                  setTimeout(() => {
+                    setIsFetchingData(false);
+                  }, 2000);
                   return collection;
                 }
               }
@@ -969,7 +971,7 @@ const Liquidate: NextPage = ({ res }: { res: any }) => {
         fetchedReservePrice={fetchedReservePrice}
         onCancel={hideMobileSidebar}
         currentMarketId={currentMarketId}
-        isFetchingData={isFetchingData}
+        isFetchingData={isFetchingClientData}
       />
     </HoneySider>
   );

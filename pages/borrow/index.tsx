@@ -272,6 +272,7 @@ const Markets: NextPage = ({ res }: { res: any }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [isMobileSidebarVisible, setShowMobileSidebar] = useState(false);
   const [isFetchingData, setIsFetchingData] = useState(true);
+  const [isFetchingClientData, setIsFetchingClientData] = useState(true);
   const [showWeeklyRates, setShowWeeklyRates] = useState(true);
   const [initState, setInitState] = useState(false);
 
@@ -420,6 +421,7 @@ const Markets: NextPage = ({ res }: { res: any }) => {
                   setFetchedDataObject(collection.marketData[0]);
                 }
                 setIsFetchingData(false);
+                setIsFetchingClientData(false);
                 return collection;
               } else if (dataRoot === ROOT_SSR) {
                 collection.marketData = marketData.filter(
@@ -465,7 +467,6 @@ const Markets: NextPage = ({ res }: { res: any }) => {
       getData()
         .then(result => {
           if (marketData.length) setInitState(true);
-          setIsFetchingData(false);
           setTableData(result);
           setTableDataFiltered(result);
         })
@@ -1233,7 +1234,7 @@ const Markets: NextPage = ({ res }: { res: any }) => {
               calculatedInterestRate={activeInterestRate}
               currentMarketId={currentMarketId}
               availableNFTS={NFTs}
-              isFetchingData={isFetchingData}
+              isFetchingData={isFetchingClientData}
             />
           </HoneySider>
         );
