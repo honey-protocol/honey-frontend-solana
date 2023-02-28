@@ -149,11 +149,25 @@ export async function getStaticProps() {
     false
   );
 
-  return createMarketObject(response).then(res => {
-    return {
-      props: { res, revalidate: 30 }
-    };
+  // return createMarketObject(response).then(res => {
+  //   return {
+  //     props: { res },
+  //     revalidate: 30
+  //   };
+  // });
+
+  let res;
+
+  await createMarketObject(response).then(result => {
+    res = result;
   });
+
+  console.log('@@-- create market object result', res);
+
+  return {
+    props: { res },
+    revalidate: 30
+  };
 }
 
 // @ts-ignore
@@ -248,7 +262,7 @@ const Liquidate: NextPage = ({ res }: { res: any }) => {
   }, [sdkConfig.sdkWallet]);
 
   useEffect(() => {
-    console.log('@@-- SSR refresh');
+    console.log('@@-- SSR refresh', res);
     setDataRoot(ROOT_SSR);
     setMarketData(res as unknown as MarketBundle[]);
     handleBids();
@@ -524,13 +538,16 @@ const Liquidate: NextPage = ({ res }: { res: any }) => {
           marketCollections.map(async collection => {
             if (
               collection.id == '' ||
-              (initState === true && collection.id !== currentMarketId)
+              (initState === true &&
+                collection.id !== currentMarketId &&
+                dataRoot !== ROOT_SSR)
             )
               return collection;
 
             if (marketData.length) {
               if (dataRoot === ROOT_CLIENT) {
-                if (initState === true) return collection;
+                if (initState === true && currentMarketId !== collection.id)
+                  return collection;
 
                 collection.marketData = marketData.filter(
                   //@ts-ignore
@@ -638,7 +655,6 @@ const Liquidate: NextPage = ({ res }: { res: any }) => {
                     });
                   }
                   setTimeout(() => {
-                    setIsFetchingClientData(false);
                     setIsFetchingData(false);
                   }, 2000);
                   return collection;
@@ -658,7 +674,6 @@ const Liquidate: NextPage = ({ res }: { res: any }) => {
           setTableDataFiltered(result);
         })
         .catch(() => {
-          setIsFetchingClientData(false);
           setIsFetchingData(false);
         });
     }

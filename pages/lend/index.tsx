@@ -139,11 +139,25 @@ export async function getStaticProps() {
     false
   );
 
-  return createMarketObject(response).then(res => {
-    return {
-      props: { res, revalidate: 30 }
-    };
+  // return createMarketObject(response).then(res => {
+  //   return {
+  //     props: { res },
+  //     revalidate: 30
+  //   };
+  // });
+
+  let res;
+
+  await createMarketObject(response).then(result => {
+    res = result;
   });
+
+  console.log('@@-- create market object result', res);
+
+  return {
+    props: { res },
+    revalidate: 30
+  };
 }
 
 // @ts-ignore
@@ -245,7 +259,7 @@ const Lend: NextPage = ({ res }: { res: any }) => {
   }, [sdkConfig.sdkWallet]);
 
   useEffect(() => {
-    console.log('@@-- SSR refresh');
+    console.log('@@-- SSR refresh', res);
     setDataRoot(ROOT_SSR);
     setMarketData(res as unknown as MarketBundle[]);
   }, [res]);
@@ -460,12 +474,17 @@ const Lend: NextPage = ({ res }: { res: any }) => {
           marketCollections.map(async collection => {
             if (
               collection.id == '' ||
-              (initState === true && collection.id !== currentMarketId)
+              (initState === true &&
+                collection.id !== currentMarketId &&
+                dataRoot !== ROOT_SSR)
             )
               return collection;
 
             if (marketData.length) {
-              if (dataRoot === ROOT_CLIENT) {
+              if (
+                dataRoot === ROOT_CLIENT &&
+                collection.id === currentMarketId
+              ) {
                 collection.marketData = marketData.filter(
                   marketObject =>
                     marketObject.market.address.toString() === collection.id
@@ -542,7 +561,7 @@ const Lend: NextPage = ({ res }: { res: any }) => {
                 collection.utilizationRate =
                   // @ts-ignore
                   collection.marketData[0].utilization;
-                setIsFetchingClientData(false);
+
                 setIsFetchingData(false);
                 return collection;
               }
@@ -558,10 +577,7 @@ const Lend: NextPage = ({ res }: { res: any }) => {
           setTableData(result);
           setTableDataFiltered(result);
         })
-        .catch(() => {
-          setIsFetchingClientData(false);
-          setIsFetchingData(false);
-        });
+        .catch(() => setIsFetchingData(false));
     }
   }, [
     sdkConfig.saberHqConnection,
