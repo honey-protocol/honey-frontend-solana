@@ -465,10 +465,7 @@ const Lend: NextPage = ({ res }: { res: any }) => {
               return collection;
 
             if (marketData.length) {
-              if (
-                dataRoot === ROOT_CLIENT &&
-                collection.id === currentMarketId
-              ) {
+              if (dataRoot === ROOT_CLIENT) {
                 collection.marketData = marketData.filter(
                   marketObject =>
                     marketObject.market.address.toString() === collection.id
@@ -545,7 +542,7 @@ const Lend: NextPage = ({ res }: { res: any }) => {
                 collection.utilizationRate =
                   // @ts-ignore
                   collection.marketData[0].utilization;
-
+                setIsFetchingClientData(false);
                 setIsFetchingData(false);
                 return collection;
               }
@@ -561,7 +558,10 @@ const Lend: NextPage = ({ res }: { res: any }) => {
           setTableData(result);
           setTableDataFiltered(result);
         })
-        .catch(() => setIsFetchingData(false));
+        .catch(() => {
+          setIsFetchingClientData(false);
+          setIsFetchingData(false);
+        });
     }
   }, [
     sdkConfig.saberHqConnection,

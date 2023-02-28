@@ -530,8 +530,7 @@ const Liquidate: NextPage = ({ res }: { res: any }) => {
 
             if (marketData.length) {
               if (dataRoot === ROOT_CLIENT) {
-                if (initState === true && currentMarketId !== collection.id)
-                  return collection;
+                if (initState === true) return collection;
 
                 collection.marketData = marketData.filter(
                   //@ts-ignore
@@ -639,6 +638,7 @@ const Liquidate: NextPage = ({ res }: { res: any }) => {
                     });
                   }
                   setTimeout(() => {
+                    setIsFetchingClientData(false);
                     setIsFetchingData(false);
                   }, 2000);
                   return collection;
@@ -658,6 +658,7 @@ const Liquidate: NextPage = ({ res }: { res: any }) => {
           setTableDataFiltered(result);
         })
         .catch(() => {
+          setIsFetchingClientData(false);
           setIsFetchingData(false);
         });
     }
