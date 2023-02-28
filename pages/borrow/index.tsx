@@ -292,6 +292,7 @@ const Markets: NextPage = ({ res }: { res: any }) => {
   const [dataRoot, setDataRoot] = useState<String>();
 
   useEffect(() => {
+    console.log('@@-- SSR refresh');
     setDataRoot(ROOT_SSR);
     setMarketData(res as unknown as MarketBundle[]);
   }, [res]);

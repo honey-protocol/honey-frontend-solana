@@ -245,6 +245,7 @@ const Lend: NextPage = ({ res }: { res: any }) => {
   }, [sdkConfig.sdkWallet]);
 
   useEffect(() => {
+    console.log('@@-- SSR refresh');
     setDataRoot(ROOT_SSR);
     setMarketData(res as unknown as MarketBundle[]);
   }, [res]);
