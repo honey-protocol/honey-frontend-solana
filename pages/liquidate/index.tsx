@@ -568,8 +568,11 @@ const Liquidate: NextPage = ({ res }: { res: any }) => {
                 if (currentMarketId === collection.id) {
                   setNftPrice(RoundHalfDown(Number(collection.nftPrice)));
                 }
-                setIsFetchingClientData(false);
-                setIsFetchingData(false);
+                setTimeout(() => {
+                  setIsFetchingClientData(false);
+                  setIsFetchingData(false);
+                }, 2000);
+
                 return collection;
               } else if (dataRoot === ROOT_SSR) {
                 if (collection.marketData) {
@@ -642,7 +645,7 @@ const Liquidate: NextPage = ({ res }: { res: any }) => {
                 }
               }
             }
-            setIsFetchingData(false);
+
             return collection;
           })
         );
