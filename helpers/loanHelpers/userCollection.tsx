@@ -362,6 +362,8 @@ async function handleFormatMarket(
       ? roundTwoDecimalsUp(allowanceAndDebt.debt, 2)
       : 0;
 
+    if (allowanceAndDebt.allowance < 0) allowanceAndDebt.allowance = 0;
+
     return await configureCollectionObjecet(origin, collection, {
       allowance: allowanceAndDebt.allowance,
       userDebt: userDebt,
