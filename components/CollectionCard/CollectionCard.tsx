@@ -35,7 +35,6 @@ export const CollectionCard: FC<CollectionCardProps> = ({
       <div className={styles.blur}>
         <div className={styles.iconBlur}>
           <Image
-            // TODO: validate backup and place in each render / collection
             src={`${cloudinary_uri}${imageUrl}` || honeyGenesisBee}
             alt={`${name}`}
             layout="fill"

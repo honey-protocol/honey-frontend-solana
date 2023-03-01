@@ -8,6 +8,8 @@ import honeyGenesisBee from '/public/images/imagePlaceholder.png';
 import { LeftOutlined } from '@ant-design/icons';
 const { Text } = Typography;
 
+const cloudinary_uri = process.env.CLOUDINARY_URI;
+
 export const P2PPageTitle: FC<P2PPageTitleProps> = ({
   img,
   name,
@@ -23,7 +25,11 @@ export const P2PPageTitle: FC<P2PPageTitleProps> = ({
       <div className={styles.pagesTitle}>
         <div className={styles.img}>
           <HexaBoxContainer>
-            <Image src={img || honeyGenesisBee} alt={`${name}`} layout="fill" />
+            <Image
+              src={`${cloudinary_uri}${img}` ?? `${honeyGenesisBee}`}
+              alt={`${name}`}
+              layout="fill"
+            />
           </HexaBoxContainer>
         </div>
         <Text className={styles.name}>{name}</Text>

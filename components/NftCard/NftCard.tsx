@@ -24,7 +24,9 @@ const NftCard = (props: NftCardProps) => {
       onClick(name, image, mint, creators);
     }
   }, [mint]);
-  
+
+  const cloudinary_uri = process.env.CLOUDINARY_URI;
+
   return (
     <div
       className={c(styles.nftCard, { [styles.hasBorder]: hasBorder })}
@@ -33,7 +35,7 @@ const NftCard = (props: NftCardProps) => {
       <div className={styles.nftImage}>
         <HexaBoxContainer>
           <Image
-            src={image}
+            src={`${cloudinary_uri}${image}`}
             layout={'fill'}
             alt={'NFT Image'}
           />
@@ -41,21 +43,17 @@ const NftCard = (props: NftCardProps) => {
       </div>
       <div className={styles.nftRight}>
         <div className={styles.nftDescription}>
-          <div className={styles.nftName}>
-            {name}
-          </div>
+          <div className={styles.nftName}>{name}</div>
           <div className={styles.nftLabel}>
             {text} {hint && <span className={styles.hint}>{hint}</span>}
           </div>
         </div>
-        {
-          text != 'Select a market for your NFTs' &&
-          
+        {text != 'Select a market for your NFTs' && (
           <HoneyButton variant="text">
             Up to {buttonText}
             <div className={styles.arrowRight} />
           </HoneyButton>
-        }
+        )}
       </div>
     </div>
   );

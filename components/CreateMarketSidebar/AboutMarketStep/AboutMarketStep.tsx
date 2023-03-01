@@ -31,6 +31,7 @@ export const AboutMarketStep = (props: AboutMarketStepProps) => {
       <Image
         src={`${cloudinary_uri}${mockCollectionImage}`}
         className={styles.collectionLogo}
+        alt=""
       />
     )
   };

@@ -46,6 +46,7 @@ const ListItem: FC<ListItemProps> = ({
               src={`${cloudinary_uri}${image}` ?? honeyGenesisBee}
               width={40}
               height={40}
+              alt=""
             />
           </HexaBoxContainer>
         </div>

@@ -49,6 +49,8 @@ const LendForm = (props: LendFormProps) => {
     }`;
   };
 
+  const cloudinary_uri = process.env.CLOUDINARY_URI;
+
   return (
     <SidebarScroll
       footer={
@@ -73,7 +75,7 @@ const LendForm = (props: LendFormProps) => {
           <div className={styles.nftImage}>
             <HexaBoxContainer>
               <Image
-                src={imageUrl || honeyGenesisBee}
+                src={`${cloudinary_uri}${imageUrl}` ?? `${honeyGenesisBee}`}
                 layout="fill"
                 alt={`${name}`}
               />

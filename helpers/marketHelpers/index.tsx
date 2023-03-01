@@ -373,6 +373,8 @@ export const HONEY_PROGRAM_ID = 'hNEYyRsRBVq2La65V1KjvdbTE39w36gwrdjkmcpvysk';
 // import image from next
 import Image from 'next/image';
 
+const cloudinary_uri = process.env.CLOUDINARY_URI;
+
 /**
  * @description returns the image setup used for each market
  * @params name of the market in string format
@@ -384,7 +386,7 @@ export const renderMarketImageByName = (marketName: string) => {
   );
   return (
     <Image
-      src={filteredMarket[0].constants.marketImage}
+      src={`${cloudinary_uri}${filteredMarket[0].constants.marketImage}`}
       alt={`${filteredMarket[0].constants.marketName} NFT image`}
       layout="fill"
     />
@@ -402,7 +404,7 @@ export const renderMarketImageByID = (marketId: string) => {
   );
   return (
     <Image
-      src={filteredMarket[0].constants.marketImage}
+      src={`${cloudinary_uri}${filteredMarket[0].constants.marketImage}`}
       alt={`${filteredMarket[0].constants.marketName} NFT image`}
       layout="fill"
     />

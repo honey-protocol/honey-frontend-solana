@@ -7,6 +7,7 @@ import { formatNumber, formatNFTName as fnn } from '../../../helpers/format';
 import HoneyTooltip from '../../HoneyTooltip/HoneyTooltip';
 
 const { formatPercent: fp, formatShortName: fsn } = formatNumber;
+const cloudinary_uri = process.env.CLOUDINARY_URI;
 
 export const SliderPosition: FC<SliderPositionProps> = ({ position }) => {
   const { name, value, image, difference } = position;
@@ -14,7 +15,12 @@ export const SliderPosition: FC<SliderPositionProps> = ({ position }) => {
     <div className={styles.honeyPosition}>
       <div className={styles.collectionIconWrapper}>
         <HexaBoxContainer>
-          <Image src={image} width={34} height={34} />
+          <Image
+            src={`${cloudinary_uri}${image}`}
+            width={34}
+            height={34}
+            alt=""
+          />
         </HexaBoxContainer>
       </div>
       <div className={styles.honeyPositionValues}>
