@@ -9,6 +9,7 @@ import c from 'classnames';
 import HoneyTooltip from '../../HoneyTooltip/HoneyTooltip';
 
 const { formatUsd: fu, formatPercent: fp } = formatNumber;
+const cloudinary_uri = process.env.CLOUDINARY_URI;
 
 export const LendPositionCard: FC<LendPositionCardProps> = ({
   position,
@@ -22,7 +23,12 @@ export const LendPositionCard: FC<LendPositionCardProps> = ({
     >
       <div className={styles.collectionIcon}>
         <HexaBoxContainer>
-          <Image width={46} height={46} src={position.imageUrl} />
+          <Image
+            width={46}
+            height={46}
+            src={`${cloudinary_uri}${position.imageUrl}`}
+            alt=""
+          />
         </HexaBoxContainer>
       </div>
       <div className={styles.positionName}>

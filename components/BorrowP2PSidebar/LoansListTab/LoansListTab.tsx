@@ -13,6 +13,8 @@ type LoansListTabProps = {
   selected?: string;
 };
 
+const cloudinary_uri = process.env.CLOUDINARY_URI;
+
 const { formatPercentRounded: fpr, formatSol: fs } = formatNumber;
 
 export const LoansListTab = ({
@@ -44,7 +46,11 @@ export const LoansListTab = ({
           >
             <div className={styles.loan.image}>
               <HexaBoxContainer>
-                <Image src={loan.imageUrl} alt={loan.name} layout="fill" />
+                <Image
+                  src={`${cloudinary_uri}${loan.imageUrl}`}
+                  alt={loan.name}
+                  layout="fill"
+                />
               </HexaBoxContainer>
             </div>
 

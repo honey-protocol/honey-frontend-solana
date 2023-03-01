@@ -39,6 +39,8 @@ interface NFT {
   creator: string;
 }
 
+const cloudinary_uri = process.env.CLOUDINARY_URI;
+
 const BorrowForm = (props: BorrowProps) => {
   let {
     availableNFTs,
@@ -187,7 +189,7 @@ const BorrowForm = (props: BorrowProps) => {
             <HexaBoxContainer>
               {openPositions.length ? (
                 <Image
-                  src={openPositions[0].image}
+                  src={`${cloudinary_uri}${openPositions[0].image}`}
                   alt="Honey NFT image"
                   layout="fill"
                 />

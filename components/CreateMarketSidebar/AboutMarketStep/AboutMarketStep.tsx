@@ -22,10 +22,17 @@ export const AboutMarketStep = (props: AboutMarketStepProps) => {
     collectionUrl
   } = props;
 
+  const cloudinary_uri = process.env.CLOUDINARY_URI;
+
   const mockCollectionData = {
     title: 'Mock collection title',
     description: 'mock data',
-    image: <Image src={mockCollectionImage} className={styles.collectionLogo} />
+    image: (
+      <Image
+        src={`${cloudinary_uri}${mockCollectionImage}`}
+        className={styles.collectionLogo}
+      />
+    )
   };
 
   const onChange = (value: string) => {
