@@ -75,7 +75,10 @@ const LendForm = (props: LendFormProps) => {
           <div className={styles.nftImage}>
             <HexaBoxContainer>
               <Image
-                src={`${cloudinary_uri}${imageUrl}` ?? `${honeyGenesisBee}`}
+                src={
+                  `https://res.cloudinary.com/${cloudinary_uri}/image/fetch/${imageUrl}` ??
+                  `${honeyGenesisBee}`
+                }
                 layout="fill"
                 alt={`${name}`}
               />

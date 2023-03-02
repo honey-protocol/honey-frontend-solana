@@ -29,7 +29,7 @@ export const AboutMarketStep = (props: AboutMarketStepProps) => {
     description: 'mock data',
     image: (
       <Image
-        src={`${cloudinary_uri}${mockCollectionImage}`}
+        src={`https://res.cloudinary.com/${cloudinary_uri}/image/fetch/${mockCollectionImage}`}
         className={styles.collectionLogo}
         alt=""
       />

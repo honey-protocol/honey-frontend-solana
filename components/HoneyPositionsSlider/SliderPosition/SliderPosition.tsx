@@ -16,7 +16,7 @@ export const SliderPosition: FC<SliderPositionProps> = ({ position }) => {
       <div className={styles.collectionIconWrapper}>
         <HexaBoxContainer>
           <Image
-            src={`${cloudinary_uri}${image}`}
+            src={`https://res.cloudinary.com/${cloudinary_uri}/image/fetch/${image}`}
             width={34}
             height={34}
             alt=""

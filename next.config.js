@@ -6,8 +6,6 @@ const { PHASE_DEVELOPMENT_SERVER } = require('next/constants');
 const mainNetEndpoint = process.env.NEXT_PUBLIC_RPC_NODE;
 const cloudinary_uri = process.env.CLOUDINARY_URI;
 
-console.log('@@-- uri', cloudinary_uri)
-
 /** We should put all environment dependent variables into this file. However, Prod RPC NODE should still reside in
  * .env file for security reason. API Keys and secrets should also reside in .env file
  * "yarn dev" is dev build so by default should use the settings related to  dev-net

@@ -47,7 +47,7 @@ export const LoansListTab = ({
             <div className={styles.loan.image}>
               <HexaBoxContainer>
                 <Image
-                  src={`${cloudinary_uri}${loan.imageUrl}`}
+                  src={`https://res.cloudinary.com/${cloudinary_uri}/image/fetch/${loan.imageUrl}`}
                   alt={loan.name}
                   layout="fill"
                 />

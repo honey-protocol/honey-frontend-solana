@@ -35,7 +35,10 @@ export const CollectionCard: FC<CollectionCardProps> = ({
       <div className={styles.blur}>
         <div className={styles.iconBlur}>
           <Image
-            src={`${cloudinary_uri}${imageUrl}` || honeyGenesisBee}
+            src={
+              `https://res.cloudinary.com/${cloudinary_uri}/image/fetch/${imageUrl}` ||
+              honeyGenesisBee
+            }
             alt={`${name}`}
             layout="fill"
           />
@@ -44,7 +47,10 @@ export const CollectionCard: FC<CollectionCardProps> = ({
           <HexaBoxContainer>
             <Image
               // TODO: validate backup and place in each render / collection
-              src={`${cloudinary_uri}${imageUrl}` || honeyGenesisBee}
+              src={
+                `https://res.cloudinary.com/${cloudinary_uri}/image/fetch/${imageUrl}` ||
+                honeyGenesisBee
+              }
               alt={`${name}`}
               layout="fill"
             />

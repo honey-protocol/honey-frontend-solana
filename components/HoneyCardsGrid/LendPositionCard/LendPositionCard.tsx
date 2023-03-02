@@ -26,7 +26,7 @@ export const LendPositionCard: FC<LendPositionCardProps> = ({
           <Image
             width={46}
             height={46}
-            src={`${cloudinary_uri}${position.imageUrl}`}
+            src={`https://res.cloudinary.com/${cloudinary_uri}/image/fetch/${position.imageUrl}`}
             alt=""
           />
         </HexaBoxContainer>

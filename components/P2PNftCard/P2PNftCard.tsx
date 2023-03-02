@@ -28,7 +28,10 @@ export const P2PNftCard: FC<P2PNftCardProps> = ({
     >
       <div className={styles.img}>
         <Image
-          src={`${cloudinary_uri}${imageUrl}` ?? `${honeyGenesisBee}`}
+          src={
+            `https://res.cloudinary.com/${cloudinary_uri}/image/fetch/${imageUrl}` ??
+            `${honeyGenesisBee}`
+          }
           alt={`${name}`}
           layout="fill"
         />

@@ -35,7 +35,7 @@ const NftCard = (props: NftCardProps) => {
       <div className={styles.nftImage}>
         <HexaBoxContainer>
           <Image
-            src={`${cloudinary_uri}${image}`}
+            src={`https://res.cloudinary.com/${cloudinary_uri}/image/fetch/${image}`}
             layout={'fill'}
             alt={'NFT Image'}
           />

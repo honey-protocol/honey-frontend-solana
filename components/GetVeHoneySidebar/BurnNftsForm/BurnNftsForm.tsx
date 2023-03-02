@@ -43,7 +43,10 @@ const ListItem: FC<ListItemProps> = ({
         <div className={styles.listItemIcon}>
           <HexaBoxContainer>
             <Image
-              src={`${cloudinary_uri}${image}` ?? honeyGenesisBee}
+              src={
+                `https://res.cloudinary.com/${cloudinary_uri}/image/fetch/${image}` ??
+                honeyGenesisBee
+              }
               width={40}
               height={40}
               alt=""

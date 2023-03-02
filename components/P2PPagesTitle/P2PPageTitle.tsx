@@ -26,7 +26,10 @@ export const P2PPageTitle: FC<P2PPageTitleProps> = ({
         <div className={styles.img}>
           <HexaBoxContainer>
             <Image
-              src={`${cloudinary_uri}${img}` ?? `${honeyGenesisBee}`}
+              src={
+                `https://res.cloudinary.com/${cloudinary_uri}/image/fetch/${img}` ??
+                `${honeyGenesisBee}`
+              }
               alt={`${name}`}
               layout="fill"
             />

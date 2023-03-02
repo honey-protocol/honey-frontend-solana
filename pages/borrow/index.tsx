@@ -844,7 +844,10 @@ const Markets: NextPage = ({ res }: { res: any }) => {
               <HexaBoxContainer>
                 {
                   <Image
-                    src={`${cloudinary_uri}${record.image}` ?? ''}
+                    src={
+                      `https://res.cloudinary.com/${cloudinary_uri}/image/fetch/${record.image}` ??
+                      ''
+                    }
                     alt=""
                     layout="fill"
                   />
