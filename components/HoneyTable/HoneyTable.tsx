@@ -6,6 +6,7 @@ import c from 'classnames';
 
 type HoneyTableProps = TableProps<any> & {
   hasRowsShadow?: boolean;
+  isLoading?: boolean;
   selectedRowsKeys?: Key[];
 };
 
@@ -16,6 +17,7 @@ const HoneyTable: FC<HoneyTableProps> = props => {
     expandedRowClassName,
     expandable,
     hasRowsShadow,
+    isLoading,
     selectedRowsKeys = [],
     ...rest
   } = props;
@@ -39,6 +41,10 @@ const HoneyTable: FC<HoneyTableProps> = props => {
 
     if (hasRowsShadow && selectedRowsKeys.includes(key)) {
       classes.push(styles.honeyTableRowSelected);
+    }
+    if (isLoading) {
+      console.log('@loading');
+      classes.push(styles.loadingCursor);
     }
 
     if (

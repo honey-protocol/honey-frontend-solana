@@ -7,5 +7,5 @@ export type CurrentBidCardProps = {
   usdcValue: number;
   solAmount: number;
   solValue: number;
-  fetchedSolPrice: number;
+  fetchedReservePrice: number;
 };

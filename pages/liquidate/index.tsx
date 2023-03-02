@@ -36,12 +36,13 @@ import {
   MarketBundle,
   HoneyMarket,
   HoneyUser,
-  HoneyClient
+  HoneyClient,
+  TReserve,
+  fetchReservePrice
 } from '@honey-finance/sdk';
 import { ConfigureSDK } from 'helpers/loanHelpers';
 import { useConnectedWallet } from '@saberhq/use-solana';
-import { LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js';
-import { calcNFT, fetchSolPrice } from 'helpers/loanHelpers/userCollection';
+import { Connection, LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js';
 import {
   HONEY_PROGRAM_ID,
   HONEY_GENESIS_MARKET_ID,
@@ -51,8 +52,8 @@ import { NATIVE_MINT } from '@solana/spl-token-v-0.1.8';
 import HoneySider from 'components/HoneySider/HoneySider';
 import HoneyContent from 'components/HoneyContent/HoneyContent';
 import { hideTablet, showTablet } from 'styles/markets.css';
-import { pageDescription, pageTitle } from 'styles/common.css';
-import { Typography } from 'antd';
+import { pageDescription, pageTitle, center } from 'styles/common.css';
+import { Skeleton, Typography } from 'antd';
 import { ToastProps } from 'hooks/useToast';
 import HoneyTableRow from 'components/HoneyTable/HoneyTableRow/HoneyTableRow';
 import HoneyTableNameCell from 'components/HoneyTable/HoneyTableNameCell/HoneyTableNameCell';
@@ -62,6 +63,7 @@ import { populateMarketData } from 'helpers/loanHelpers/userCollection';
 import { MarketTableRow } from 'types/markets';
 import { renderMarket, renderMarketImageByName } from 'helpers/marketHelpers';
 import { network } from 'pages/_app';
+import SorterIcon from 'icons/Sorter';
 
 const { formatPercent: fp, formatSol: fs, formatRoundDown: fd } = formatNumber;
 const Liquidate: NextPage = () => {
@@ -72,20 +74,22 @@ const Liquidate: NextPage = () => {
   const [currentUserBid, setCurrentUserBid] = useState<number>();
   const [nftPrice, setNftPrice] = useState<number>(0);
   const [userBalance, setUserBalance] = useState(0);
-  const [fetchedSolPrice, setFetchedSolPrice] = useState(0);
+  const [fetchedReservePrice, setFetchedReservePrice] = useState(0);
   const [isMobileSidebarVisible, setShowMobileSidebar] = useState(false);
   const [biddingArray, setBiddingArray] = useState({});
   const [marketData, setMarketData] = useState<MarketBundle[]>([]);
-  const [tableData, setTableData] = useState<MarketTableRow[]>([]);
+  const [tableData, setTableData] =
+    useState<MarketTableRow[]>(marketCollections);
   const [expandedRowKeys, setExpandedRowKeys] = useState<readonly Key[]>([]);
   const [isMyBidsFilterEnabled, setIsMyBidsFilterEnabled] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
-  const [tableDataFiltered, setTableDataFiltered] = useState<MarketTableRow[]>(
-    []
-  );
+  const [tableDataFiltered, setTableDataFiltered] =
+    useState<MarketTableRow[]>(marketCollections);
+  const [initState, setInitState] = useState(false);
   const [currentMarketId, setCurrentMarketId] = useState(
     HONEY_GENESIS_MARKET_ID
   );
+  const [isFetchingData, setIsFetchingData] = useState(true);
   // init anchor
   const { program } = useAnchor();
   // init sdk config obj
@@ -142,15 +146,9 @@ const Liquidate: NextPage = () => {
   }
 
   useEffect(() => {
-    if (
-      sdkConfig.saberHqConnection &&
-      sdkConfig.sdkWallet &&
-      sdkConfig.honeyId
-    ) {
-      const marketIDs = marketCollections.map(market => market.id);
-      fetchAllMarketData(marketIDs);
-    }
-  }, [sdkConfig.saberHqConnection, sdkConfig.sdkWallet]);
+    const marketIDs = marketCollections.map(market => market.id);
+    fetchAllMarketData(marketIDs);
+  }, []);
 
   //  ************* END FETCH MARKET DATA *************
 
@@ -252,42 +250,9 @@ const Liquidate: NextPage = () => {
     document.body.classList.remove('disable-scroll');
   };
 
-  //  ************* START CALC. NFT PRICE *************
-  /**
-   * @description
-   * @params
-   * @returns
-   */
-  // async function calculateNFTPrice() {
-  //   if (marketReserveInfo && parsedReserves && honeyMarket) {
-  //     let nftPrice = await calcNFT(
-  //       marketReserveInfo,
-  //       parsedReserves[0],
-  //       honeyMarket,
-  //       sdkConfig.saberHqConnection
-  //     );
-  //     setNftPrice(Number(nftPrice));
-  //   }
-  // }
-  /**
-   * @description
-   * @params
-   * @returns
-   */
-  // useEffect(() => {
-  //   calculateNFTPrice();
-  // }, [marketReserveInfo, parsedReserves]);
-  //  ************* END CALC. NFT PRICE *************
-
-  //  ************* START FETCH SOL PRICE *************
-  /**
-   * @description
-   * @params
-   * @returns
-   */
-  async function fetchSolValue(reserves: any, connection: any) {
-    const slPrice = await fetchSolPrice(reserves, connection);
-    setFetchedSolPrice(slPrice);
+  async function fetchReserveValue(reserves: TReserve, connection: Connection) {
+    const reservePrice = await fetchReservePrice(reserves, connection);
+    setFetchedReservePrice(reservePrice);
   }
   /**
    * @description
@@ -295,8 +260,8 @@ const Liquidate: NextPage = () => {
    * @returns
    */
   useEffect(() => {
-    if (parsedReserves && sdkConfig.saberHqConnection) {
-      fetchSolValue(parsedReserves, sdkConfig.saberHqConnection);
+    if (parsedReserves) {
+      fetchReserveValue(parsedReserves[0], sdkConfig.saberHqConnection);
     }
   }, [parsedReserves]);
   //  ************* END FETCH SOL PRICE *************
@@ -315,8 +280,7 @@ const Liquidate: NextPage = () => {
     try {
       const liquidatorClient = await LiquidatorClient.connect(
         program.provider,
-        HONEY_PROGRAM_ID,
-        true
+        HONEY_PROGRAM_ID
       );
       if (wallet) {
         if (type == 'revoke_bid') {
@@ -333,7 +297,7 @@ const Liquidate: NextPage = () => {
 
           if (transactionOutcome[0] == 'SUCCESS') {
             setCurrentUserBid(0);
-
+            if (walletPK) await fetchWalletBalance(walletPK);
             return toast.success('Bid revoked, fetching chain data');
           } else {
             return toast.error('Revoke bid failed');
@@ -353,6 +317,7 @@ const Liquidate: NextPage = () => {
           });
 
           if (transactionOutcome[0] == 'SUCCESS') {
+            if (walletPK) await fetchWalletBalance(walletPK);
             return toast.success('Bid placed, fetching chain data');
           } else {
             return toast.error('Bid failed');
@@ -360,7 +325,7 @@ const Liquidate: NextPage = () => {
         } else if (type == 'increase_bid') {
           // if no user bid terminate action
           if (!userBid) return;
-
+          userBid = Number(userBid.toFixed(2));
           toast.processing();
           let transactionOutcome: any = await liquidatorClient.increaseBid({
             bid_increase: userBid,
@@ -370,6 +335,7 @@ const Liquidate: NextPage = () => {
           });
 
           if (transactionOutcome[0] == 'SUCCESS') {
+            if (walletPK) await fetchWalletBalance(walletPK);
             return toast.success('Bid increased, fetching chain data');
           } else {
             return toast.error('Bid increase failed');
@@ -379,6 +345,7 @@ const Liquidate: NextPage = () => {
         return;
       }
     } catch (error) {
+      console.log('Error: ', error);
       return toast.error('Bid failed');
     }
   }
@@ -432,7 +399,11 @@ const Liquidate: NextPage = () => {
       function getData() {
         return Promise.all(
           marketCollections.map(async collection => {
-            if (collection.id == '') return collection;
+            if (
+              collection.id == '' ||
+              (initState === true && collection.id !== currentMarketId)
+            )
+              return collection;
 
             if (marketData.length) {
               collection.marketData = marketData.filter(
@@ -444,50 +415,7 @@ const Liquidate: NextPage = () => {
               const honeyMarket: HoneyMarket = collection.marketData[0].market;
               const honeyClient: HoneyClient = collection.marketData[0].client;
               const parsedReserves = collection.marketData[0].reserves[0].data;
-              const pR = collection.marketData[0].reserves[0];
-
-              const fetchMarketOutcome = await HoneyMarket.fetchMarket(
-                honeyClient,
-                honeyMarket.address
-              );
-
-              const fetchFloorPriceOutcome =
-                await honeyMarket.fetchNFTFloorPrice('mainnet-beta');
-
-              const fetchReserveData = await pR.fetchReserveValue(
-                'mainnet-beta'
-              );
-
-              // console.log(
-              //   '@@-- state object',
-              //   fetchMarketOutcome[2][0].state.outstandingDebt /
-              //     LAMPORTS_PER_SOL
-              // );
-              // const calc = fetchMarketOutcome[2][0].state.outstandingDebt
-              //   .div(new BN(10 ** 9))
-              //   .toNumber();
-              // console.log('xyz calc', calc / LAMPORTS_PER_SOL);
-
-              // const outstandingDebt =
-              //   fetchMarketOutcome[2][0].state.outstandingDebt.toString();
-
-              // const totalDeposits =
-              //   fetchMarketOutcome[2][0].state.totalDeposits.toString();
-
-              // console.log('@@-- fetch outstanding debt', outstandingDebt);
-
-              // console.log('@@-- fetch total deposits', totalDeposits);
-
-              // console.log('@@-- fetch market outcome', fetchMarketOutcome);
-              // console.log(
-              //   '@@-- fetch floor price outcome',
-              //   fetchFloorPriceOutcome.toNumber()
-              // );
-
-              // console.log(
-              //   '@@-- fetch reserve data outcome',
-              //   fetchReserveData.toString()
-              // );
+              const mData = collection.marketData[0].reserves[0];
 
               await populateMarketData(
                 'LIQUIDATIONS',
@@ -501,39 +429,31 @@ const Liquidate: NextPage = () => {
                 honeyClient,
                 honeyMarket,
                 honeyUser,
-                parsedReserves
+                parsedReserves,
+                mData
               );
 
               if (currentMarketId === collection.id)
                 setNftPrice(RoundHalfDown(Number(collection.nftPrice)));
-              return collection;
-            } else {
-              marketCollections.map(async collection => {
-                await populateMarketData(
-                  'LIQUIDATIONS',
-                  collection,
-                  sdkConfig.saberHqConnection,
-                  sdkConfig.sdkWallet,
-                  currentMarketId,
-                  true,
-                  [],
-                  true,
-                  honeyClient,
-                  honeyMarket,
-                  honeyUser,
-                  parsedReserves
-                );
-              });
+              setTimeout(() => {
+                setIsFetchingData(false);
+              }, 2000); // shows 0 for some values for a second before showing values so delay for 2 sec
               return collection;
             }
+            return collection;
           })
         );
       }
 
-      getData().then(result => {
-        setTableData(result);
-        setTableDataFiltered(result);
-      });
+      getData()
+        .then(result => {
+          if (marketData.length) setInitState(true);
+          setTableData(result);
+          setTableDataFiltered(result);
+        })
+        .catch(() => {
+          setIsFetchingData(false);
+        });
     }
   }, [
     currentMarketId,
@@ -652,15 +572,22 @@ const Liquidate: NextPage = () => {
               style={{ paddingLeft: 15 }}
             >
               <span>Risk</span>
-              <div className={style.sortIcon[sortOrder]} />
+              <div className={style.sortIcon[sortOrder]}>
+                <SorterIcon active={sortOrder !== 'disabled'} />
+              </div>
             </div>
           );
         },
         dataIndex: 'risk',
         sorter: (a, b) => a.risk! - b.risk!,
-        render: (rate: number, market: any) => {
-          return <div className={style.rateCell}>{fp(market.risk * 100)}</div>;
-        }
+        render: (risk: number, market: any) =>
+          isFetchingData ? (
+            <div className={center}>
+              <Skeleton.Button size="small" active />
+            </div>
+          ) : (
+            <div className={style.rateCell}>{fp(risk)}</div>
+          )
       },
       {
         width: columnsWidth[2],
@@ -676,7 +603,9 @@ const Liquidate: NextPage = () => {
               style={{ paddingLeft: 15 }}
             >
               <span>Liq %</span>
-              <div className={style.sortIcon[sortOrder]} />
+              <div className={style.sortIcon[sortOrder]}>
+                <SorterIcon active={sortOrder !== 'disabled'} />
+              </div>
             </div>
           );
         },
@@ -702,14 +631,20 @@ const Liquidate: NextPage = () => {
               style={{ paddingLeft: 15 }}
             >
               <span>Total Debt</span>{' '}
-              <div className={style.sortIcon[sortOrder]} />
+              <div className={style.sortIcon[sortOrder]}>
+                <SorterIcon active={sortOrder !== 'disabled'} />
+              </div>
             </div>
           );
         },
         dataIndex: 'totalDebt',
         sorter: (a, b) => a.totalDebt! - b.totalDebt!,
         render: (available: number, market) => {
-          return (
+          return isFetchingData ? (
+            <div className={center}>
+              <Skeleton.Button size="small" active />
+            </div>
+          ) : (
             <div className={style.availableCell}>{fs(market.totalDebt)}</div>
           );
         }
@@ -728,15 +663,22 @@ const Liquidate: NextPage = () => {
               style={{ paddingLeft: 15 }}
             >
               <span>TVL</span>
-              <div className={style.sortIcon[sortOrder]} />
+              <div className={style.sortIcon[sortOrder]}>
+                <SorterIcon active={sortOrder !== 'disabled'} />
+              </div>
             </div>
           );
         },
         dataIndex: 'tvl',
         sorter: (a, b) => a.tvl! - b.tvl!,
-        render: (value: number, market: any) => {
-          return <div className={style.valueCell}>{fs(market.tvl)}</div>;
-        }
+        render: (value: number, market: any) =>
+          isFetchingData ? (
+            <div className={center}>
+              <Skeleton.Button size="small" active />
+            </div>
+          ) : (
+            <div className={style.valueCell}>{fs(market.tvl)}</div>
+          )
       },
       {
         width: columnsWidth[5],
@@ -761,7 +703,7 @@ const Liquidate: NextPage = () => {
         }
       }
     ],
-    [isMyBidsFilterEnabled, tableData, searchQuery]
+    [isMyBidsFilterEnabled, tableData, isFetchingData, searchQuery]
   );
   // Render Mobile Configuration
   const columnsMobile: ColumnType<LiquidateTableRow>[] = useMemo(
@@ -799,7 +741,7 @@ const Liquidate: NextPage = () => {
 
               <HoneyTableRow>
                 {/* <div className={style.rateCell}>{fp(row.risk * 100)}</div> */}
-                <div className={style.rateCell}>{}</div>
+                <div className={style.rateCell}>{fp(row.risk)}</div>
                 <div className={style.rateCell}>{fs(row.totalDebt)}</div>
                 <div className={style.availableCell}>{fs(row.value)}</div>
               </HoneyTableRow>
@@ -824,9 +766,10 @@ const Liquidate: NextPage = () => {
         handleRevokeBid={handleRevokeBid}
         handleIncreaseBid={handleIncreaseBid}
         handlePlaceBid={handlePlaceBid}
-        fetchedSolPrice={fetchedSolPrice}
+        fetchedReservePrice={fetchedReservePrice}
         onCancel={hideMobileSidebar}
         currentMarketId={currentMarketId}
+        isFetchingData={isFetchingData}
       />
     </HoneySider>
   );
@@ -847,6 +790,7 @@ const Liquidate: NextPage = () => {
             columns={columns}
             dataSource={tableDataFiltered}
             pagination={false}
+            isLoading={isFetchingData}
             className={classNames(style.table, {
               [style.emptyTable]: !tableDataFiltered.length
             })}
@@ -859,7 +803,9 @@ const Liquidate: NextPage = () => {
               // we use our own custom expand column
               showExpandColumn: false,
               onExpand: (expanded, row) =>
-                setExpandedRowKeys(expanded ? [row.key] : []),
+                setExpandedRowKeys(
+                  expanded && !isFetchingData ? [row.key] : []
+                ),
               expandedRowKeys,
               expandedRowRender: record => {
                 return (
@@ -955,7 +901,7 @@ const Liquidate: NextPage = () => {
       {/*    handleRevokeBid={handleRevokeBid}*/}
       {/*    handleIncreaseBid={handleIncreaseBid}*/}
       {/*    handlePlaceBid={handlePlaceBid}*/}
-      {/*    fetchedSolPrice={fetchedSolPrice}*/}
+      {/*    fetchedReservePrice={fetchedReservePrice}*/}
       {/*  />*/}
       {/*</HoneySider>*/}
     </LayoutRedesign>

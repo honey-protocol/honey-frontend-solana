@@ -18,6 +18,7 @@ import { MAX_LTV } from 'constants/loan';
 import { COLLATERAL_FACTOR } from 'helpers/marketHelpers';
 import { renderMarketImageByID } from 'helpers/marketHelpers';
 import QuestionIcon from 'icons/QuestionIcon';
+import { Skeleton } from 'antd';
 import HoneyWarning from 'components/HoneyWarning/HoneyWarning';
 
 const {
@@ -25,7 +26,8 @@ const {
   formatPercent: fp,
   formatSol: fs,
   parse: p,
-  formatRoundDown: frd
+  formatRoundDown: frd,
+  formatShortName: fsn
 } = formatNumber;
 
 const RepayForm = (props: RepayProps) => {
@@ -38,10 +40,11 @@ const RepayForm = (props: RepayProps) => {
     userAllowance,
     userDebt,
     loanToValue,
-    fetchedSolPrice,
+    fetchedReservePrice,
     currentMarketId,
     hideMobileSidebar,
-    changeTab
+    changeTab,
+    isFetchingData
   } = props;
   // state
   const [valueUSD, setValueUSD] = useState<number>();
@@ -50,7 +53,7 @@ const RepayForm = (props: RepayProps) => {
   const { toast, ToastComponent } = useToast();
   // constants && calculations
   const maxValue = userDebt != 0 ? userDebt : userAllowance;
-  const solPrice = fetchedSolPrice;
+  const solPrice = fetchedReservePrice;
   const liquidationThreshold = COLLATERAL_FACTOR;
   const SOLBalance = useSolBalance();
   const newDebt = userDebt - (valueSOL ? valueSOL : 0);
@@ -66,6 +69,7 @@ const RepayForm = (props: RepayProps) => {
 
   // Put your validators here
   const isRepayButtonDisabled = () => {
+    if (isFetchingData) return true;
     return false;
   };
   // change of input - render calculated values
@@ -164,7 +168,13 @@ const RepayForm = (props: RepayProps) => {
         <div className={styles.row}>
           <div className={styles.col}>
             <InfoBlock
-              value={fs(nftPrice)}
+              value={
+                isFetchingData ? (
+                  <Skeleton.Button size="small" active />
+                ) : (
+                  fsn(nftPrice ?? 0)
+                )
+              }
               valueSize="big"
               title={
                 <span className={hAlign}>
@@ -191,7 +201,13 @@ const RepayForm = (props: RepayProps) => {
           </div>
           <div className={styles.col}>
             <InfoBlock
-              value={fs(Number(frd(userAllowance)))}
+              value={
+                isFetchingData ? (
+                  <Skeleton.Button size="small" active />
+                ) : (
+                  fsn(Number(frd(userAllowance)))
+                )
+              }
               title={
                 <span className={hAlign}>
                   Allowance{' '}
@@ -210,7 +226,13 @@ const RepayForm = (props: RepayProps) => {
         <div className={styles.row}>
           <div className={styles.col}>
             <InfoBlock
-              value={fp(loanToValue * 100)}
+              value={
+                isFetchingData ? (
+                  <Skeleton.Button size="small" active />
+                ) : (
+                  fp(loanToValue * 100)
+                )
+              }
               toolTipLabel={
                 <span>
                   <a
@@ -254,7 +276,13 @@ const RepayForm = (props: RepayProps) => {
                   </div>
                 </span>
               }
-              value={fp((newDebt / (nftPrice || 0)) * 100)}
+              value={
+                isFetchingData ? (
+                  <Skeleton.Button size="small" active />
+                ) : (
+                  fp((newDebt / (nftPrice || 0)) * 100)
+                )
+              }
               isDisabled={userDebt == 0 ? true : false}
               toolTipLabel={
                 <span>
@@ -294,7 +322,13 @@ const RepayForm = (props: RepayProps) => {
                   </div>
                 </span>
               }
-              value={fs(userDebt)}
+              value={
+                isFetchingData ? (
+                  <Skeleton.Button size="small" active />
+                ) : (
+                  fsn(userDebt)
+                )
+              }
               toolTipLabel={
                 <span>
                   Value borrowed from the lending pool, upon which interest
@@ -320,7 +354,13 @@ const RepayForm = (props: RepayProps) => {
                   </div>
                 </span>
               }
-              value={fs(newDebt < 0 ? 0 : newDebt)}
+              value={
+                isFetchingData ? (
+                  <Skeleton.Button size="small" active />
+                ) : (
+                  fsn(newDebt < 0 ? 0 : newDebt)
+                )
+              }
               isDisabled={userDebt == 0 ? true : false}
               toolTipLabel={
                 <span>
@@ -342,9 +382,15 @@ const RepayForm = (props: RepayProps) => {
         <div className={styles.row}>
           <div className={styles.col}>
             <InfoBlock
-              value={`${fs(liquidationPrice)} ${
-                userDebt ? `(-${liqPercent.toFixed(0)}%)` : ''
-              }`}
+              value={
+                isFetchingData ? (
+                  <Skeleton.Button size="small" active />
+                ) : (
+                  `${fsn(liquidationPrice)} ${
+                    userDebt ? `(-${liqPercent.toFixed(0)}%)` : ''
+                  }`
+                )
+              }
               valueSize="normal"
               isDisabled={userDebt == 0 ? true : false}
               title={
@@ -393,9 +439,15 @@ const RepayForm = (props: RepayProps) => {
                   after the requested changes to the loan are approved.
                 </span>
               }
-              value={`${fs(newLiquidationPrice)} ${
-                userDebt ? `(-${newLiqPercent?.toFixed(0)}%)` : ''
-              }`}
+              value={
+                isFetchingData ? (
+                  <Skeleton.Button size="small" active />
+                ) : (
+                  `${fsn(newLiquidationPrice)} ${
+                    userDebt ? `(-${newLiqPercent?.toFixed(0)}%)` : ''
+                  }`
+                )
+              }
               valueSize="normal"
             />
           </div>
@@ -406,14 +458,26 @@ const RepayForm = (props: RepayProps) => {
             <div className={cs(styles.balance, styles.col)}>
               <InfoBlock
                 title={'Your SOL balance'}
-                value={fs(Number(frd(SOLBalance, 3)))}
+                value={
+                  isFetchingData ? (
+                    <Skeleton.Button size="small" active />
+                  ) : (
+                    fsn(Number(frd(SOLBalance, 3)))
+                  )
+                }
               ></InfoBlock>
             </div>
             <div className={cs(styles.balance, styles.col)}>
               <InfoBlock
                 isDisabled={userDebt == 0 ? true : false}
                 title={'NEW SOL balance'}
-                value={fs(Number(frd(SOLBalance - (valueSOL || 0), 3)))}
+                value={
+                  isFetchingData ? (
+                    <Skeleton.Button size="small" active />
+                  ) : (
+                    fsn(Number(frd(SOLBalance - (valueSOL || 0), 3)))
+                  )
+                }
               ></InfoBlock>
             </div>
           </div>

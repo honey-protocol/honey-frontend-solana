@@ -19,24 +19,21 @@ import { OpenPositions, UserNFTs } from '../../types/markets';
 import {
   borrow,
   depositNFT,
+  fetchReservePrice,
   repay,
+  TReserve,
   useBorrowPositions,
   useHoney,
   useMarket,
   withdrawNFT
 } from '@honey-finance/sdk';
-import { LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js';
+import { Connection, LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js';
 import { BnToDecimal, ConfigureSDK } from '../../helpers/loanHelpers';
 import useFetchNFTByUser from '../../hooks/useNFTV2';
 import { useConnectedWallet } from '@saberhq/use-solana';
 
 import BN from 'bn.js';
 import { RoundHalfDown } from '../../helpers/utils';
-import {
-  calcNFT,
-  fetchSolPrice,
-  getInterestRate
-} from '../../helpers/loanHelpers/userCollection';
 import { ToastProps } from '../../hooks/useToast';
 import { Metadata } from '@metaplex-foundation/mpl-token-metadata';
 import { generateMockHistoryData } from '../../helpers/chartUtils';
@@ -127,7 +124,7 @@ const Dashboard: NextPage = () => {
   const [dataArray, setDataArray] = useState<NotificationCardProps[]>([]);
 
   const userWalletBalance = 50;
-  const [fetchedSolPrice, setFetchedSolPrice] = useState(0);
+  const [fetchedReservePrice, setFetchedSolPrice] = useState(0);
 
   useEffect(() => {
     if (width >= TABLET_BP) {
@@ -137,8 +134,8 @@ const Dashboard: NextPage = () => {
     }
   }, [width, data]);
 
-  async function fetchSolValue(reserves: any, connection: any) {
-    const slPrice = await fetchSolPrice(reserves, connection);
+  async function fetchSolValue(reserves: TReserve, connection: Connection) {
+    const slPrice = await fetchReservePrice(reserves, connection);
     setFetchedSolPrice(slPrice);
   }
 
@@ -148,17 +145,8 @@ const Dashboard: NextPage = () => {
    * @returns updates marketValue
    */
   useEffect(() => {
-    if (parsedReserves && parsedReserves[0].reserveState.totalDeposits) {
-      let totalMarketDeposits = BnToDecimal(
-        parsedReserves[0].reserveState.totalDeposits,
-        9,
-        2
-      );
-      setTotalMarketDeposits(totalMarketDeposits);
-      // setTotalMarketDeposits(parsedReserves[0].reserveState.totalDeposits.div(new BN(10 ** 9)).toNumber());
-      if (parsedReserves && sdkConfig.saberHqConnection) {
-        fetchSolValue(parsedReserves, sdkConfig.saberHqConnection);
-      }
+    if (parsedReserves && sdkConfig.saberHqConnection) {
+      fetchSolValue(parsedReserves[0], sdkConfig.saberHqConnection);
     }
   }, [parsedReserves]);
 
@@ -373,24 +361,6 @@ const Dashboard: NextPage = () => {
     }
   }, [honeyMarket]);
 
-  // calculates nft price
-  async function calculateNFTPrice() {
-    if (marketReserveInfo && parsedReserves && honeyMarket) {
-      let nftPrice = await calcNFT(
-        marketReserveInfo,
-        parsedReserves[0],
-        honeyMarket,
-        sdkConfig.saberHqConnection
-      );
-      setNftPrice(Number(nftPrice));
-      setCalculatedNftPrice(true);
-    }
-  }
-
-  useEffect(() => {
-    calculateNFTPrice();
-  }, [marketReserveInfo, parsedReserves]);
-
   async function fetchHelperValues(
     nftPrice: any,
     collateralNFTPositions: any,
@@ -399,41 +369,6 @@ const Dashboard: NextPage = () => {
   ) {
     return;
   }
-
-  /**
-   * @description updates honeyUser | marketReserveInfo | - timeout required
-   * @params none
-   * @returns honeyUser | marketReserveInfo |
-   */
-  useEffect(() => {
-    if (marketReserveInfo && parsedReserves) {
-      setDepositNoteExchangeRate(
-        BnToDecimal(marketReserveInfo[0].depositNoteExchangeRate, 15, 5)
-      );
-      setCRatio(BnToDecimal(marketReserveInfo[0].minCollateralRatio, 15, 5));
-    }
-
-    if (nftPrice && collateralNFTPositions && honeyUser && marketReserveInfo)
-      fetchHelperValues(
-        nftPrice,
-        collateralNFTPositions,
-        honeyUser,
-        marketReserveInfo
-      );
-
-    setLiquidationThreshold((1 / cRatio) * 100);
-  }, [
-    marketReserveInfo,
-    honeyUser,
-    collateralNFTPositions,
-    market,
-    error,
-    parsedReserves,
-    honeyReserves,
-    cRatio,
-    reserveHoneyState,
-    calculatedNftPrice
-  ]);
 
   useEffect(() => {
     setUserAvailableNFTs(availableNFTs[0]);
@@ -461,22 +396,6 @@ const Dashboard: NextPage = () => {
       );
     }
   }, [totalMarketDeposits, totalMarketDebt, totalMarketDeposits]);
-
-  async function calculateInterestRate(utilizationRate: number) {
-    // TODO: update market ID param to be dynamic before going live with the dashboard page
-    let interestRate = await getInterestRate(
-      utilizationRate,
-      HONEY_GENESIS_MARKET_ID
-    );
-    if (interestRate) setCalculatedInterestRate(interestRate);
-  }
-
-  useEffect(() => {
-    console.log('Runnig');
-    if (utilizationRate) {
-      calculateInterestRate(utilizationRate);
-    }
-  }, [utilizationRate]);
 
   /**
    * @description executes the deposit NFT func. from SDK
@@ -619,7 +538,7 @@ const Dashboard: NextPage = () => {
       toast.processing();
       const tx = await repay(
         honeyUser,
-        val * LAMPORTS_PER_SOL,
+        new BN(val * LAMPORTS_PER_SOL),
         repayTokenMint,
         honeyReserves
       );
@@ -682,17 +601,17 @@ const Dashboard: NextPage = () => {
           nftPrice={nftPrice}
           executeDepositNFT={executeDepositNFT}
           executeWithdrawNFT={executeWithdrawNFT}
+          availableNFTS={[]}
           executeBorrow={executeBorrow}
           executeRepay={executeRepay}
           userDebt={userDebt}
           userAllowance={userAllowance}
           loanToValue={loanToValue}
           hideMobileSidebar={hideMobileSidebar}
-          fetchedSolPrice={fetchedSolPrice}
+          fetchedReservePrice={fetchedReservePrice}
           calculatedInterestRate={calculatedInterestRate}
           //TODO: fix market id
           currentMarketId={''}
-          availableNFTS={[]}
         />
       ) : (
         <LendSidebar
@@ -707,10 +626,11 @@ const Dashboard: NextPage = () => {
           available={totalMarketDeposits}
           value={totalMarketDeposits + totalMarketDebt}
           userWalletBalance={userWalletBalance}
-          fetchedSolPrice={fetchedSolPrice}
+          fetchedReservePrice={fetchedReservePrice}
           onCancel={hideMobileSidebar}
           //TODO: fix market id
           currentMarketId={''}
+          activeInterestRate={0}
           marketImage={''}
         />
       )}

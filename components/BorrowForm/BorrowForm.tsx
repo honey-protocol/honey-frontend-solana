@@ -13,7 +13,7 @@ import { BorrowProps } from './types';
 import { toastResponse } from 'helpers/loanHelpers';
 import SidebarScroll from '../SidebarScroll/SidebarScroll';
 import * as stylesRepay from '../RepayForm/RepayForm.css';
-import { hAlign, extLink } from 'styles/common.css';
+import { hAlign, extLink, center } from 'styles/common.css';
 import { questionIcon } from 'styles/icons.css';
 import useToast from 'hooks/useToast';
 import cs from 'classnames';
@@ -27,7 +27,13 @@ import {
 import QuestionIcon from 'icons/QuestionIcon';
 import { HoneyButtonTabs } from 'components/HoneyButtonTabs/HoneyButtonTabs';
 import NFTSelectListItem from 'components/NFTSelectListItem/NFTSelectListItem';
-const { formatPercent: fp, formatSol: fs, formatRoundDown: frd } = formatNumber;
+import { Skeleton } from 'antd';
+const {
+  formatPercent: fp,
+  formatSol: fs,
+  formatRoundDown: frd,
+  formatShortName: fsn
+} = formatNumber;
 
 interface NFT {
   name: string;
@@ -48,9 +54,10 @@ const BorrowForm = (props: BorrowProps) => {
     userDebt,
     loanToValue,
     hideMobileSidebar,
-    fetchedSolPrice,
+    fetchedReservePrice,
     calculatedInterestRate,
-    currentMarketId
+    currentMarketId,
+    isFetchingData
   } = props;
   // state declarations
   const [valueUSD, setValueUSD] = useState<number>(0);
@@ -69,7 +76,7 @@ const BorrowForm = (props: BorrowProps) => {
   // constants && calculations
   const borrowedValue = userDebt;
   const maxValue = userAllowance;
-  const solPrice = fetchedSolPrice;
+  const solPrice = fetchedReservePrice;
   const liquidationThreshold = COLLATERAL_FACTOR; // TODO: change where relevant, currently set to 65% on mainnet
   const borrowFee = BORROW_FEE; // TODO: 1,5% later but 0% for now
   const newAdditionalDebt = valueSOL * (1 + borrowFee);
@@ -208,13 +215,11 @@ const BorrowForm = (props: BorrowProps) => {
       );
       setSelectedMultipleNFTs(newSelectedNFTs);
     } else {
-      // select
-      // Uncomment when multiple deposit/claim allowed
-      // if (selectedMultipleNFTs && selectedMultipleNFTs?.length) {
-      //   setSelectedMultipleNFTs([...selectedMultipleNFTs, nft]);
-      // } else {
-      //   setSelectedMultipleNFTs([nft]);
-      // }
+      if (selectedMultipleNFTs && selectedMultipleNFTs?.length) {
+        setSelectedMultipleNFTs([...selectedMultipleNFTs, nft]);
+      } else {
+        setSelectedMultipleNFTs([nft]);
+      }
       setSelectedMultipleNFTs([nft]);
     }
   };
@@ -223,7 +228,7 @@ const BorrowForm = (props: BorrowProps) => {
   const renderContent = () => {
     if (!hasOpenPosition) {
       //Remove false when multiple deposits is possible
-      if (isBulkLoan && false) {
+      if (isBulkLoan) {
         return (
           <>
             <div className={styles.newBorrowingTitle}>Choose Multiple NFTs</div>
@@ -370,7 +375,13 @@ const BorrowForm = (props: BorrowProps) => {
         <div className={styles.row}>
           <div className={styles.col}>
             <InfoBlock
-              value={fs(nftPrice)}
+              value={
+                isFetchingData ? (
+                  <Skeleton.Button size="small" active />
+                ) : (
+                  fsn(nftPrice)
+                )
+              }
               valueSize="big"
               title={
                 <span className={hAlign}>
@@ -397,7 +408,14 @@ const BorrowForm = (props: BorrowProps) => {
           </div>
           <div className={styles.col}>
             <InfoBlock
-              value={fs(Number(frd(userAllowance)))}
+              value={
+                isFetchingData ? (
+                  <Skeleton.Button size="small" active />
+                ) : (
+                  fsn(userAllowance)
+                )
+              }
+              // value={fs(Number(frd(userAllowance)))}
               title={
                 <span className={hAlign}>
                   Allowance{' '}
@@ -416,7 +434,13 @@ const BorrowForm = (props: BorrowProps) => {
         <div className={styles.row}>
           <div className={styles.col}>
             <InfoBlock
-              value={fp(loanToValue * 100)}
+              value={
+                isFetchingData ? (
+                  <Skeleton.Button size="small" active />
+                ) : (
+                  fp(loanToValue * 100)
+                )
+              }
               toolTipLabel={
                 <span>
                   <a
@@ -472,7 +496,13 @@ const BorrowForm = (props: BorrowProps) => {
                   after the requested changes to the loan are approved.
                 </span>
               }
-              value={fp((loanToValue + newAdditionalDebt / nftPrice) * 100)}
+              value={
+                isFetchingData ? (
+                  <Skeleton.Button size="small" active />
+                ) : (
+                  fp((loanToValue + newAdditionalDebt / nftPrice) * 100)
+                )
+              }
               isDisabled={userDebt == 0 ? true : false}
             />
             <HoneySlider
@@ -511,7 +541,13 @@ const BorrowForm = (props: BorrowProps) => {
                   </a>
                 </span>
               }
-              value={fs(userDebt)}
+              value={
+                isFetchingData ? (
+                  <Skeleton.Button size="small" active />
+                ) : (
+                  fsn(userDebt)
+                )
+              }
             />
           </div>
           <div className={styles.col}>
@@ -537,7 +573,13 @@ const BorrowForm = (props: BorrowProps) => {
                   after the requested changes to the loan are approved.
                 </span>
               }
-              value={fs(newTotalDebt < 0 ? 0 : newTotalDebt)}
+              value={
+                isFetchingData ? (
+                  <Skeleton.Button size="small" active />
+                ) : (
+                  fsn(newTotalDebt < 0 ? 0 : newTotalDebt)
+                )
+              }
               isDisabled={userDebt == 0 ? true : false}
             />
           </div>
@@ -546,9 +588,15 @@ const BorrowForm = (props: BorrowProps) => {
         <div className={styles.row}>
           <div className={styles.col}>
             <InfoBlock
-              value={`${fs(liquidationPrice)} ${
-                userDebt ? `(-${liqPercent.toFixed(0)}%)` : ''
-              }`}
+              value={
+                isFetchingData ? (
+                  <Skeleton.Button size="small" active />
+                ) : (
+                  `${fsn(liquidationPrice)} ${
+                    userDebt ? `(-${liqPercent.toFixed(0)}%)` : ''
+                  }`
+                )
+              }
               valueSize="normal"
               isDisabled={userDebt == 0 ? true : false}
               title={
@@ -597,9 +645,15 @@ const BorrowForm = (props: BorrowProps) => {
                   after the requested changes to the loan are approved.
                 </span>
               }
-              value={`${fs(newLiquidationPrice)} ${
-                userDebt ? `(-${newLiqPercent.toFixed(0)}%)` : ''
-              }`}
+              value={
+                isFetchingData ? (
+                  <Skeleton.Button size="small" active />
+                ) : (
+                  `${fsn(newLiquidationPrice)} ${
+                    userDebt ? `(-${newLiqPercent.toFixed(0)}%)` : ''
+                  }`
+                )
+              }
               valueSize="normal"
             />
           </div>
@@ -628,7 +682,13 @@ const BorrowForm = (props: BorrowProps) => {
                     </a>
                   </span>
                 }
-                value={fp(calculatedInterestRate)}
+                value={
+                  isFetchingData ? (
+                    <Skeleton.Button size="small" active />
+                  ) : (
+                    fp(calculatedInterestRate)
+                  )
+                }
               ></InfoBlock>
             </div>
             <div className={cs(stylesRepay.balance, styles.col)}>
@@ -642,7 +702,13 @@ const BorrowForm = (props: BorrowProps) => {
                     </div>
                   </span>
                 }
-                value={fs(valueSOL * borrowFee)}
+                value={
+                  isFetchingData ? (
+                    <Skeleton.Button size="small" active />
+                  ) : (
+                    fsn(valueSOL * borrowFee)
+                  )
+                }
                 //TODO: add link to docs
                 toolTipLabel={
                   <span>
@@ -716,23 +782,23 @@ const BorrowForm = (props: BorrowProps) => {
       };
     } else {
       //Uncomment when multiple deposits allowed
-      // if (isBulkLoan) {
-      //   return {
-      //     cancelTxt: 'Cancel',
-      //     onCancel: handleCancel,
-      //     title: 'Deposit Selected NFT',
-      //     onClick: handleDepositMultipleNFTs,
-      //     disabled: !selectedMultipleNFTs?.length
-      //   };
-      // } else {
-      return {
-        cancelTxt: 'Cancel',
-        onCancel: handleCancel,
-        title: 'Deposit NFT',
-        onClick: handleDepositNFT,
-        disabled: !selectedNft
-        // };
-      };
+      if (isBulkLoan) {
+        return {
+          cancelTxt: 'Cancel',
+          onCancel: handleCancel,
+          title: 'Deposit Selected NFT',
+          onClick: handleDepositMultipleNFTs,
+          disabled: !selectedMultipleNFTs?.length
+        };
+      } else {
+        return {
+          cancelTxt: 'Cancel',
+          onCancel: handleCancel,
+          title: 'Deposit NFT',
+          onClick: handleDepositNFT,
+          disabled: !selectedNft
+        };
+      }
     }
   };
   const renderFooter = () => {

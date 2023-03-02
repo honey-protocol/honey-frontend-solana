@@ -562,11 +562,31 @@
   dependencies:
     client-only "^0.0.1"
 
-"@honey-finance/sdk@^1.1.13":
-  version "1.1.13"
-  resolved "https://registry.yarnpkg.com/@honey-finance/sdk/-/sdk-1.1.13.tgz#8faf4f90dc46e98281816a3c97c65b97f33bd28b"
-  integrity sha512-Bdal9scV19LPXaXikfnLRNBQJ7mxk4JsG6LPvBkDZK478yQ3nP9gwUMHwjl4uYU4LqJymVodWhwuzUPbGcpL1w==
+"@honey-finance/sdk@^1.1.48":
+  version "1.1.62"
+  resolved "https://registry.yarnpkg.com/@honey-finance/sdk/-/sdk-1.1.62.tgz#39657ec6c0450cd553dcaa191a34d64d272a02cd"
+  integrity sha512-V40RfeQU5+fiLRGShsX9u7g5K1oMS1BHB9JQ2307aji1CHhXNRh4yH9a5NXAAiJCbh72gCX+5hsINhM+ewNYPA==
   dependencies:
+    "@honey-finance/sdk" "^1.1.48"
+    "@metaplex-foundation/mpl-token-metadata" "^1.2.0"
+    "@project-serum/anchor" "^0.25.0"
+    "@project-serum/serum" "^0.13.61"
+    "@pythnetwork/client" "^2.5.3"
+    "@rollup/plugin-commonjs" "^21.1.0"
+    "@solana/buffer-layout" "^3.0.0"
+    "@solana/spl-token" "^0.1.8"
+    "@solana/web3.js" "^1.32.1"
+    "@switchboard-xyz/switchboard-v2" "^0.0.127"
+    "@types/chai" "^4.3.0"
+    "@types/chai-as-promised" "^7.1.5"
+    "@types/mocha" "^9.1.0"
+
+"@honey-finance/sdk@^1.1.96":
+  version "1.1.96"
+  resolved "https://registry.yarnpkg.com/@honey-finance/sdk/-/sdk-1.1.96.tgz#097197838b5e0d5b2d3417d3b9128bf28ba36634"
+  integrity sha512-dnZSEazpVIOSyG5ANPg4keQOKItTZ6NMxY+mRVQRdXx70vltVlo/UL8XgdpnrrA3JaiK46+w2mP/pcanPHGMCA==
+  dependencies:
+    "@honey-finance/sdk" "^1.1.48"
     "@metaplex-foundation/mpl-token-metadata" "^1.2.0"
     "@project-serum/anchor" "^0.25.0"
     "@project-serum/serum" "^0.13.61"

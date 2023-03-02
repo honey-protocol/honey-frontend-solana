@@ -21,12 +21,13 @@ const MarketsSidebar = (props: MarketsSidebarProps) => {
   const [NFTs, isLoadingNfts, refetchNfts] = useFetchNFTByUser(wallet);
 
   const {
+    isFetchingData,
     openPositions,
     nftPrice,
     userAllowance,
     userDebt,
     loanToValue,
-    fetchedSolPrice,
+    fetchedReservePrice,
     calculatedInterestRate,
     currentMarketId,
     hideMobileSidebar,
@@ -65,7 +66,7 @@ const MarketsSidebar = (props: MarketsSidebarProps) => {
   // fetches available nfts in current market
   const availableNFTsInSelectedMarket = renderNftList(
     currentMarketId,
-    availableNFTs
+    availableNFTS
   );
 
   return (
@@ -132,9 +133,10 @@ const MarketsSidebar = (props: MarketsSidebarProps) => {
           <>
             {activeTab === 'borrow' && (
               <BorrowForm
+                isFetchingData={isFetchingData}
                 userDebt={userDebt}
                 executeBorrow={executeBorrow}
-                availableNFTs={availableNFTs}
+                availableNFTs={availableNFTsInSelectedMarket}
                 openPositions={openPositions}
                 nftPrice={nftPrice}
                 executeDepositNFT={executeDepositNFT}
@@ -142,7 +144,7 @@ const MarketsSidebar = (props: MarketsSidebarProps) => {
                 userAllowance={userAllowance}
                 loanToValue={loanToValue}
                 hideMobileSidebar={hideMobileSidebar}
-                fetchedSolPrice={fetchedSolPrice}
+                fetchedReservePrice={fetchedReservePrice}
                 calculatedInterestRate={calculatedInterestRate}
                 currentMarketId={currentMarketId}
               />
@@ -151,7 +153,7 @@ const MarketsSidebar = (props: MarketsSidebarProps) => {
               <RepayForm
                 executeRepay={executeRepay}
                 openPositions={openPositions}
-                availableNFTs={availableNFTs}
+                availableNFTs={availableNFTsInSelectedMarket}
                 nftPrice={nftPrice}
                 executeWithdrawNFT={executeWithdrawNFT}
                 userDebt={userDebt}
@@ -159,8 +161,9 @@ const MarketsSidebar = (props: MarketsSidebarProps) => {
                 loanToValue={loanToValue}
                 hideMobileSidebar={hideMobileSidebar}
                 changeTab={handleTabChange}
-                fetchedSolPrice={fetchedSolPrice}
+                fetchedReservePrice={fetchedReservePrice}
                 currentMarketId={currentMarketId}
+                isFetchingData={isFetchingData}
               />
             )}
           </>

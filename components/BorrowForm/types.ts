@@ -1,4 +1,5 @@
 export type BorrowProps = {
+  isFetchingData?: boolean;
   collectionId?: string;
   availableNFTs?: any;
   openPositions?: any;
@@ -6,7 +7,7 @@ export type BorrowProps = {
   userAllowance: number;
   userDebt: number;
   loanToValue: number;
-  fetchedSolPrice: number;
+  fetchedReservePrice: number;
   calculatedInterestRate: number;
   currentMarketId: string;
   isBulkLoan?: boolean;

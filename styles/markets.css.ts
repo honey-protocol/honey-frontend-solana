@@ -1,7 +1,7 @@
 import { globalStyle, style, styleVariants } from '@vanilla-extract/css';
 import { breakpoints, typography, vars } from './theme.css';
 import { createMarketIcon, lampIcon, questionIcon } from './icons.css';
-import { container } from './common.css';
+import { center, container } from './common.css';
 import { honeyTableExpandedRow } from '../components/HoneyTable/HoneyTable.css';
 
 export const marketsPage = style([container, {}]);
@@ -59,9 +59,9 @@ export const collectionNameMobile = style([
   }
 ]);
 
-export const availableCell = style([typography.numbersRegular, {}]);
-export const valueCell = style([typography.numbersRegular, {}]);
-export const rateCell = style([typography.numbersRegular, {}]);
+export const availableCell = style([typography.numbersRegular, center]);
+export const valueCell = style([typography.numbersRegular, center]);
+export const rateCell = style([typography.numbersRegular, center]);
 export const rateCellMobile = style([
   typography.numbersMini,
   {
@@ -218,6 +218,7 @@ const headerCellBasic = style([
   typography.button,
   {
     display: 'flex',
+    justifyContent: 'center',
     alignItems: 'center',
     textTransform: 'uppercase',
     whiteSpace: 'nowrap',
