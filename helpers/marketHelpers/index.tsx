@@ -31,7 +31,7 @@ export const marketIDs = async (marketCollections: MarketTableRow[]) => {
 // collection strucutre for the markets
 export const marketCollections: MarketTableRow[] = [
   {
-    id: '6FcJaAzQnuoA6o3sVw1GD6Ba69XuL5jinZpQTzJhd2R3',
+    id: 'ACv7BxtW7QzvFyLtmxtB8xZBQrfHAyTAjdCZ3q4QEowF',
     key: 'HNYG',
     name: 'Honey Genesis Bee',
     verifiedCreator: '6vRx1iVZo3xfrBHdpvuwArL2jucVj9j9nLpd2VUTTGMG',
@@ -45,7 +45,7 @@ export const marketCollections: MarketTableRow[] = [
     utilizationRate: 0,
     openPositions: [],
     constants: {
-      marketId: '6FcJaAzQnuoA6o3sVw1GD6Ba69XuL5jinZpQTzJhd2R3',
+      marketId: 'ACv7BxtW7QzvFyLtmxtB8xZBQrfHAyTAjdCZ3q4QEowF',
       verifiedCreator: '6vRx1iVZo3xfrBHdpvuwArL2jucVj9j9nLpd2VUTTGMG',
       marketName: 'Honey Genesis Bee',
       marketImage:
@@ -340,9 +340,9 @@ export const BORROW_FEE = 0;
 
 // Honey Program ID
 export const HONEY_GENESIS_MARKET_ID =
-  '6FcJaAzQnuoA6o3sVw1GD6Ba69XuL5jinZpQTzJhd2R3';
+  'ACv7BxtW7QzvFyLtmxtB8xZBQrfHAyTAjdCZ3q4QEowF';
 export const HONEY_GENESIS_BEE_MARKET_NAME = 'Honey Genesis Bee';
-export const HONEY_PROGRAM_ID = 'hNEYyRsRBVq2La65V1KjvdbTE39w36gwrdjkmcpvysk';
+export const HONEY_PROGRAM_ID = 'AoaqbAiwMVK12MQHkRi7p5aemc1CQ271JyuyeHzXonXu';
 
 // import image from next
 import Image from 'next/image';

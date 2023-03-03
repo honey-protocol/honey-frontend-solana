@@ -562,10 +562,10 @@
   dependencies:
     client-only "^0.0.1"
 
-"@honey-finance/sdk@^1.1.48":
-  version "1.1.62"
-  resolved "https://registry.yarnpkg.com/@honey-finance/sdk/-/sdk-1.1.62.tgz#39657ec6c0450cd553dcaa191a34d64d272a02cd"
-  integrity sha512-V40RfeQU5+fiLRGShsX9u7g5K1oMS1BHB9JQ2307aji1CHhXNRh4yH9a5NXAAiJCbh72gCX+5hsINhM+ewNYPA==
+"@honey-finance/sdk@^1.1.107":
+  version "1.1.107"
+  resolved "https://registry.yarnpkg.com/@honey-finance/sdk/-/sdk-1.1.107.tgz#857c2e768f5610936bb2d8beed2b1daf0508d301"
+  integrity sha512-A2o6InaCulb2EtjVo0OnZyMDGKPzDDfX4jEuPvKifM9RUQnxABn+tr2Pq4VO/LubjvbVCESZN0am16C8ByJX5w==
   dependencies:
     "@honey-finance/sdk" "^1.1.48"
     "@metaplex-foundation/mpl-token-metadata" "^1.2.0"
@@ -581,10 +581,10 @@
     "@types/chai-as-promised" "^7.1.5"
     "@types/mocha" "^9.1.0"
 
-"@honey-finance/sdk@^1.1.96":
-  version "1.1.96"
-  resolved "https://registry.yarnpkg.com/@honey-finance/sdk/-/sdk-1.1.96.tgz#097197838b5e0d5b2d3417d3b9128bf28ba36634"
-  integrity sha512-dnZSEazpVIOSyG5ANPg4keQOKItTZ6NMxY+mRVQRdXx70vltVlo/UL8XgdpnrrA3JaiK46+w2mP/pcanPHGMCA==
+"@honey-finance/sdk@^1.1.48":
+  version "1.1.62"
+  resolved "https://registry.yarnpkg.com/@honey-finance/sdk/-/sdk-1.1.62.tgz#39657ec6c0450cd553dcaa191a34d64d272a02cd"
+  integrity sha512-V40RfeQU5+fiLRGShsX9u7g5K1oMS1BHB9JQ2307aji1CHhXNRh4yH9a5NXAAiJCbh72gCX+5hsINhM+ewNYPA==
   dependencies:
     "@honey-finance/sdk" "^1.1.48"
     "@metaplex-foundation/mpl-token-metadata" "^1.2.0"

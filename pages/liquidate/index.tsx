@@ -98,7 +98,7 @@ const Liquidate: NextPage = () => {
   const wallet = useConnectedWallet() || null;
   let stringyfiedWalletPK = sdkConfig.sdkWallet?.publicKey.toString();
   let walletPK = sdkConfig.sdkWallet?.publicKey;
-
+  const TEST_HONEY_PROGRAM_ID = 'AoaqbAiwMVK12MQHkRi7p5aemc1CQ271JyuyeHzXonXu';
   //  ************* START HOOKS *************
   /**
    * @description fetches open nft positions
@@ -280,7 +280,7 @@ const Liquidate: NextPage = () => {
     try {
       const liquidatorClient = await LiquidatorClient.connect(
         program.provider,
-        HONEY_PROGRAM_ID
+        TEST_HONEY_PROGRAM_ID
       );
       if (wallet) {
         if (type == 'revoke_bid') {

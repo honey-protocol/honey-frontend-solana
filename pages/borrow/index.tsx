@@ -67,7 +67,6 @@ import { pageDescription, pageTitle, center } from 'styles/common.css';
 import HoneyTableRow from 'components/HoneyTable/HoneyTableRow/HoneyTableRow';
 import HoneyTableNameCell from '../../components/HoneyTable/HoneyTableNameCell/HoneyTableNameCell';
 import {
-  HONEY_PROGRAM_ID,
   marketCollections,
   OpenPositions
 } from '../../helpers/marketHelpers/index';
@@ -907,9 +906,9 @@ const Markets: NextPage = () => {
       if (!mintID) return;
       toast.processing();
       // TODO: set verified creator of active market along with currentMarketId
-      if (fetchedDataObject) {
+      if (marketCollections) {
         // @ts-ignore
-        fetchedDataObject.map(async collection => {
+        marketCollections.map(async collection => {
           if (collection.id === currentMarketId) {
             const metadata = await Metadata.findByMint(
               collection.connection,

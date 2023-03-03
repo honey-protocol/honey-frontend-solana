@@ -39,7 +39,7 @@ interface NFT {
   name: string;
   img: string;
   mint: string;
-  creator: string;
+  creators: any;
 }
 
 const BorrowForm = (props: BorrowProps) => {
@@ -135,9 +135,9 @@ const BorrowForm = (props: BorrowProps) => {
   // set selection state and render (or not) detail nft
   const selectNFT = (name: string, img: string, mint: any, creators: any) => {
     if (hasOpenPosition == false) {
-      setSelectedNft({ name, img, mint, creator: creators[0].address });
+      setSelectedNft({ name, img, mint, creators: creators[0].address });
     } else {
-      setSelectedNft({ name, img, mint, creator: creators[0].address });
+      setSelectedNft({ name, img, mint, creators: creators[0].address });
     }
   };
 
@@ -145,12 +145,13 @@ const BorrowForm = (props: BorrowProps) => {
   useEffect(() => {
     if (openPositions?.length) {
       const { name, image, mint, verifiedCreator } = openPositions[0];
-      setSelectedNft({ name, img: image, mint, creator: verifiedCreator });
+      setSelectedNft({ name, img: image, mint, creators: verifiedCreator });
       setHasOpenPosition(true);
     } else if (openPositions.length == 0) {
       setHasOpenPosition(false);
     }
   }, [openPositions, availableNFTs]);
+
   // handles the deposit NFT function - which is depending on selectedNft
   const handleDepositNFT = async () => {
     if (selectedNft && selectedNft.mint.length < 1)
@@ -160,7 +161,7 @@ const BorrowForm = (props: BorrowProps) => {
         selectedNft.mint,
         toast,
         selectedNft.name,
-        selectedNft.creator
+        selectedNft.creators
       );
     handleSliderChange(0);
   };
@@ -169,13 +170,22 @@ const BorrowForm = (props: BorrowProps) => {
   const handleDepositMultipleNFTs = async () => {
     if (selectedMultipleNFTs?.length && selectedMultipleNFTs[0].mint.length < 1)
       return toastResponse('ERROR', 'Please select an NFT', 'ERROR');
-    if (selectedMultipleNFTs?.length && selectedMultipleNFTs[0].mint.length > 1)
-      await executeDepositNFT(
-        selectedMultipleNFTs[0].mint,
-        toast,
-        selectedMultipleNFTs[0].name,
-        selectedMultipleNFTs[0].creator
-      );
+    if (
+      selectedMultipleNFTs?.length &&
+      selectedMultipleNFTs[0].mint.length > 1
+    ) {
+      for (let index = 0; index < selectedMultipleNFTs.length; index++) {
+        const verifiedCreator = selectedMultipleNFTs[index].creators.filter(
+          (creator: { verified: any }) => creator.verified
+        );
+        await executeDepositNFT(
+          selectedMultipleNFTs[index].mint,
+          toast,
+          selectedMultipleNFTs[index].name,
+          verifiedCreator[0].address
+        );
+      }
+    }
 
     //Reset selected NFTs
     setSelectedMultipleNFTs([]);
@@ -220,7 +230,6 @@ const BorrowForm = (props: BorrowProps) => {
       } else {
         setSelectedMultipleNFTs([nft]);
       }
-      setSelectedMultipleNFTs([nft]);
     }
   };
 
@@ -250,7 +259,7 @@ const BorrowForm = (props: BorrowProps) => {
                     handleSelectMultipleNFTsItem(event, nft);
                   }}
                   tokenName="SOL"
-                  disabled={disabled} //remove disabled when multiple selction becomes allowed
+                  disabled={false} //remove disabled when multiple selction becomes allowed
                 />
               );
             })}

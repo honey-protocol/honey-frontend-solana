@@ -9,13 +9,11 @@ import SectionTitle from '../../SectionTitle/SectionTitle';
 import { AboutMarketStep } from '../AboutMarketStep/AboutMarketStep';
 import { SettingMarketStep } from '../SettingMarketStep/SettingMarketStep';
 import { RiskModelStep, RiskModelTab } from '../RiskModelStep/RiskModelStep';
-import { Keypair, PublicKey } from '@solana/web3.js';
+import { PublicKey } from '@solana/web3.js';
 import { HoneyMarket } from '@honey-finance/sdk';
 import { buildReserveConfig } from './reserveConfigs';
 import MarketDetailsStep from '../MarketDetailsStep/MarketDetailsStep';
-import { HONEY_PROGRAM_ID } from 'helpers/marketHelpers/index';
 import HoneyTooltip from 'components/HoneyTooltip/HoneyTooltip';
-import { extLink } from 'styles/common.css';
 
 interface CreateMarketTabProps {
   wallet: any;
