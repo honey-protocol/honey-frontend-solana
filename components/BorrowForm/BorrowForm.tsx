@@ -10,7 +10,7 @@ import HexaBoxContainer from 'components/HexaBoxContainer/HexaBoxContainer';
 import NftList from '../NftList/NftList';
 import { MAX_LTV } from '../../constants/loan';
 import { BorrowProps } from './types';
-import { toastResponse } from 'helpers/loanHelpers';
+import { ConfigureSDK, toastResponse } from 'helpers/loanHelpers';
 import SidebarScroll from '../SidebarScroll/SidebarScroll';
 import * as stylesRepay from '../RepayForm/RepayForm.css';
 import { hAlign, extLink, center } from 'styles/common.css';
@@ -28,6 +28,8 @@ import QuestionIcon from 'icons/QuestionIcon';
 import { HoneyButtonTabs } from 'components/HoneyButtonTabs/HoneyButtonTabs';
 import NFTSelectListItem from 'components/NFTSelectListItem/NFTSelectListItem';
 import { Skeleton } from 'antd';
+import { useMarket } from '@honey-finance/sdk';
+import { PublicKey } from '@solana/web3.js';
 const {
   formatPercent: fp,
   formatSol: fs,
@@ -66,8 +68,8 @@ const BorrowForm = (props: BorrowProps) => {
   const [isBulkLoan, setIsBulkLoan] = useState(true);
   const [selectedMultipleNFTs, setSelectedMultipleNFTs] = useState<NFT[]>();
   const [collateralMenuMode, setCollateralMenuMode] = useState<
-    'new_collaterals' | 'collaterals'
-  >('collaterals');
+    'new_collateral' | 'collateral'
+  >('collateral');
   const [showCollateralMenu, setShowCollateralMenu] = useState(false);
   const [hasOpenPosition, setHasOpenPosition] = useState(false);
   const [sliderValue, setSliderValue] = useState(0);
@@ -92,7 +94,6 @@ const BorrowForm = (props: BorrowProps) => {
   const selectedMarket = marketCollections.find(
     market => market.constants.marketId === currentMarketId
   );
-  const currentBulkCollaterals: NFT[] = []; // MOCK
   // Put your validators here
   const isBorrowButtonDisabled = () => {
     return userAllowance == 0 ? true : false;
@@ -141,6 +142,42 @@ const BorrowForm = (props: BorrowProps) => {
     }
   };
 
+  const sdkConfig = ConfigureSDK();
+  const { honeyUser, honeyMarket } = useMarket(
+    sdkConfig.saberHqConnection,
+    sdkConfig.sdkWallet,
+    sdkConfig.honeyId,
+    currentMarketId
+  );
+
+  const [collateralCount, setCollateralCount] = useState(0);
+  const [price, setPrice] = useState(0);
+
+  useEffect(() => {
+    const updateCollateralCount = async () => {
+      if (honeyUser) {
+        const obligationData = await honeyUser.getObligationData();
+        if (obligationData instanceof Error) {
+          setCollateralCount(0);
+          return;
+        }
+        const collateralNftMint = obligationData.collateralNftMint.filter(
+          mint => !mint.equals(PublicKey.default)
+        );
+        setCollateralCount(collateralNftMint.length);
+      }
+    };
+    updateCollateralCount();
+  }, [honeyUser]);
+
+  useEffect(() => {
+    const updatePrice = async () => {
+      const price = await honeyMarket.fetchNFTFloorPrice();
+      setPrice(price);
+    };
+    updatePrice();
+  }, [honeyMarket]);
+
   // if user has an open position, we need to be able to click on the position and borrow against it
   useEffect(() => {
     if (openPositions?.length) {
@@ -156,13 +193,17 @@ const BorrowForm = (props: BorrowProps) => {
   const handleDepositNFT = async () => {
     if (selectedNft && selectedNft.mint.length < 1)
       return toastResponse('ERROR', 'Please select an NFT', 'ERROR');
-    if (selectedNft && selectedNft.mint.length > 1)
+    if (selectedNft && selectedNft.mint.length > 1) {
+      const verifiedCreator = selectedNft.creators.filter(
+        (creator: { verified: any }) => creator.verified
+      );
       executeDepositNFT(
         selectedNft.mint,
         toast,
         selectedNft.name,
-        selectedNft.creators
+        verifiedCreator[0].address
       );
+    }
     handleSliderChange(0);
   };
 
@@ -192,17 +233,19 @@ const BorrowForm = (props: BorrowProps) => {
   };
 
   const handleClaimMultipleCollateral = async () => {
-    if (
-      selectedMultipleNFTs?.length &&
-      selectedMultipleNFTs[0].mint.length < 1
-    ) {
+    if (selectedMultipleNFTs && selectedMultipleNFTs?.length < 1) {
       return toastResponse('ERROR', 'Please select an NFT', 'ERROR');
     }
+    if (!selectedMultipleNFTs) return;
 
-    await executeWithdrawNFT(openPositions[0].mint, toast);
+    for (let index = 0; index < selectedMultipleNFTs.length; index++) {
+      await executeWithdrawNFT(selectedMultipleNFTs[index].mint, toast);
+    }
+
     //Reset selected NFTs
     setSelectedMultipleNFTs([]);
   };
+
   // executes the borrow function
   const handleBorrow = async () => {
     executeBorrow(valueSOL, toast);
@@ -253,7 +296,7 @@ const BorrowForm = (props: BorrowProps) => {
                   id={nft.mint}
                   name={nft.name}
                   image={nft.img}
-                  value={fs(10)}
+                  value={fs(price)}
                   isSelected={isSelected}
                   onChange={e => {
                     handleSelectMultipleNFTsItem(event, nft);
@@ -303,7 +346,7 @@ const BorrowForm = (props: BorrowProps) => {
             <div className={styles.nftNameContainer}>
               <div className={styles.nftName}>{selectedMarket?.name}</div>
               <div className={styles.collateralDetails}>
-                3 collaterals on this loan
+                {collateralCount} assets securing this loan
               </div>
             </div>
             <div className={styles.cancelIcon} />
@@ -311,12 +354,12 @@ const BorrowForm = (props: BorrowProps) => {
           <HoneyButtonTabs
             items={[
               {
-                name: 'Collaterals',
-                slug: 'collaterals'
+                name: 'collateral',
+                slug: 'collateral'
               },
               {
-                name: 'New collaterals ',
-                slug: 'new_collaterals'
+                name: 'New collateral ',
+                slug: 'new_collateral'
               }
             ]}
             activeItemSlug={collateralMenuMode}
@@ -327,8 +370,8 @@ const BorrowForm = (props: BorrowProps) => {
             }}
           />
           <div className={styles.collateralList}>
-            {(collateralMenuMode === 'collaterals'
-              ? currentBulkCollaterals
+            {(collateralMenuMode === 'collateral'
+              ? openPositions
               : availableNFTsInSelectedMarket
             ).map((nft: NFT) => {
               const isSelected = Boolean(
@@ -376,7 +419,7 @@ const BorrowForm = (props: BorrowProps) => {
           <div className={styles.nftNameContainer}>
             <div className={styles.nftName}>{selectedMarket?.name}</div>
             <div className={styles.collateralDetails}>
-              3 collaterals on this loan
+              {collateralCount} assets securing this loan
             </div>
           </div>
           <div className={styles.arrowRightIcon} />
@@ -768,11 +811,11 @@ const BorrowForm = (props: BorrowProps) => {
         cancelTxt: 'Return',
         onCancel: handleCancel,
         title:
-          collateralMenuMode === 'collaterals'
-            ? 'Claim collaterals'
-            : 'Add collaterals',
+          collateralMenuMode === 'collateral'
+            ? 'Claim collateral'
+            : 'Add collateral',
         onClick:
-          collateralMenuMode === 'collaterals'
+          collateralMenuMode === 'collateral'
             ? handleClaimMultipleCollateral
             : handleDepositMultipleNFTs,
         disabled: Boolean(!selectedMultipleNFTs?.length)

@@ -962,9 +962,9 @@ const Markets: NextPage = () => {
     try {
       if (!mintID) return toast.error('Please select NFT');
       toast.processing();
-      if (fetchedDataObject) {
+      if (marketCollections && fetchedDataObject) {
         //@ts-ignore
-        fetchedDataObject.map(async collection => {
+        marketCollections.map(async collection => {
           if (collection.id === currentMarketId) {
             const metadata = await Metadata.findByMint(
               sdkConfig.saberHqConnection,
