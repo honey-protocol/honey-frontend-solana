@@ -182,7 +182,8 @@ export const formatNumber = {
  * @param {string} nftName - full NFT name, consist of collection name + NFT number
  * @param {number} maxLength - max formatted name length, 10 by default
  */
-export const formatNFTName = (nftName: string, maxLength = 10) => {
+export const formatNFTName = (nftName: string, maxLength = 20) => {
+  // TODO: refactor so this will always return the format, even when max length is exceeded
   if (nftName.length <= maxLength) {
     return nftName;
   }

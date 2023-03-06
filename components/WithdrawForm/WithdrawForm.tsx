@@ -120,47 +120,12 @@ const WithdrawForm = (props: WithdrawFormProps) => {
           </div>
         </div>
         <div className={styles.row}>
-          <div className={styles.col}>
-            <InfoBlock
-              value={
-                isFetchingData ? (
-                  <Skeleton.Button size="small" active />
-                ) : (
-                  fs(userTotalDeposits)
-                )
-              }
-              valueSize="big"
-              footer={<span>Your Deposits</span>}
-            />
-          </div>
           <HoneyWarning
             message="To learn more about the risks of lending, make sure to explore our Protocol Risk documentation"
             link="https://docs.honey.finance/lending-protocol/risk/protocol-risks"
           />
         </div>
         <div className={styles.row}>
-          <div className={styles.col}>
-            <InfoBlock
-              value={
-                isFetchingData ? (
-                  <Skeleton.Button size="small" active />
-                ) : (
-                  fp(activeInterestRate)
-                )
-              }
-              valueSize="big"
-              toolTipLabel="Variable interest rate, based on Utilization rate."
-              footer={
-                <span className={hAlign}>
-                  Interest rate Estimated{' '}
-                  <span className={textUnderline}>APY</span>
-                  <div className={questionIcon}>
-                    <QuestionIcon />
-                  </div>
-                </span>
-              }
-            />
-          </div>
           <div className={styles.col}>
             <InfoBlock
               value={
@@ -180,6 +145,44 @@ const WithdrawForm = (props: WithdrawFormProps) => {
                   </div>
                 </span>
               }
+            />
+          </div>
+
+          <div className={styles.col}>
+            <InfoBlock
+              value={
+                isFetchingData ? (
+                  <Skeleton.Button size="small" active />
+                ) : (
+                  fp(activeInterestRate)
+                )
+              }
+              valueSize="big"
+              toolTipLabel="Variable interest rate, based on Utilization rate."
+              footer={
+                <span className={hAlign}>
+                  Interest rate Estimated{' '}
+                  <div className={questionIcon}>
+                    <QuestionIcon />
+                  </div>
+                </span>
+              }
+            />
+          </div>
+        </div>
+
+        <div className={styles.row}>
+          <div className={styles.col}>
+            <InfoBlock
+              value={
+                isFetchingData ? (
+                  <Skeleton.Button size="small" active />
+                ) : (
+                  fs(userTotalDeposits)
+                )
+              }
+              valueSize="big"
+              footer={<span>Your Deposits</span>}
             />
           </div>
         </div>

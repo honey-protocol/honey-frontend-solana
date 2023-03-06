@@ -16,3 +16,7 @@ export const numberToLamports = (
   const factor = 10 ** decimals;
   return new Decimal(value).mul(factor);
 };
+
+export const roundTwoDecimalsUp = (debt: number, decimals: number) => {
+    return Math.ceil(debt * Math.pow(10, decimals)) / Math.pow(10, decimals);
+}

@@ -61,9 +61,11 @@ import {
   renderMarketName,
   marketCollections,
   COLLATERAL_FACTOR,
-  HONEY_GENESIS_MARKET_ID
+  HONEY_GENESIS_MARKET_ID,
+  ROOT_CLIENT
 } from 'helpers/marketHelpers';
 import { toast } from 'react-toastify';
+import { roundTwoDecimalsUp } from 'helpers/math/math';
 
 /**
  * @description formatting functions to format with perfect / format in SOL with icon or just a regular 2 decimal format
@@ -154,7 +156,7 @@ export async function fetchSolPrice(parsedReserves: any, connection: any) {
  * @params obligations array, currentmarketid. nft
  * @returns chart data
  */
-const setObligations = async (
+export const setObligations = async (
   obligations: any,
   currentMarketId: string,
   nftPrice: number
@@ -183,7 +185,7 @@ const setObligations = async (
  * @params array of obligations | nft price | boolean: false will calculate the risk - true will calculate the total debt | market id | name of collection
  * @returns total debt of market if type is true, risk of market if type is false
  */
-const calculateRisk = async (
+export const calculateRisk = async (
   obligations: any,
   nftPrice: number,
   type: boolean,
@@ -329,52 +331,60 @@ async function handleFormatMarket(
   honeyClient: HoneyClient,
   honeyMarket: HoneyMarket,
   connection: Connection,
-  parsedReserves: TReserve,
   mData?: any
 ) {
-  const totalMarketDebt = mData
-    ? await mData.getReserveState().outstandingDebt
-    : 0;
+  try {
+    const totalMarketDebt = mData
+      ? await mData.getReserveState().outstandingDebt
+      : 0;
 
-  const totalMarketDeposits = mData
-    ? await mData.getReserveState().totalDeposits
-    : 0;
+    const totalMarketDeposits = mData
+      ? await mData.getReserveState().totalDeposits
+      : 0;
 
-  const { utilization, interestRate } =
-    await collection.marketData[0].reserves[0].getUtilizationAndInterestRate();
+    const { utilization, interestRate } =
+      await collection.marketData[0].reserves[0].getUtilizationAndInterestRate();
 
-  const totalMarketValue = totalMarketDeposits + totalMarketDebt;
+    const totalMarketValue = totalMarketDeposits + totalMarketDebt;
 
-  const nftPrice = await honeyMarket.fetchNFTFloorPriceInReserve(0);
-  collection.nftPrice = nftPrice;
+    const nftPrice = await honeyMarket.fetchNFTFloorPriceInReserve(0);
+    collection.nftPrice = nftPrice;
 
-  const allowanceAndDebt = await honeyUser.fetchAllowanceAndDebt(
-    0,
-    'mainnet-beta'
-  );
+    const allowanceAndDebt = await honeyUser.fetchAllowanceAndDebt(
+      0,
+      'mainnet-beta'
+    );
 
-  console.log('@@-- allowance and debt', collection.name, allowanceAndDebt);
+    const tvl = nftPrice * (await fetchTVL(obligations));
+    const userTotalDeposits = await honeyUser.fetchUserDeposits(0);
 
-  const tvl = nftPrice * (await fetchTVL(obligations));
-  const userTotalDeposits = await honeyUser.fetchUserDeposits(0);
+    const userDebt = allowanceAndDebt.debt
+      ? roundTwoDecimalsUp(allowanceAndDebt.debt, 2)
+      : 0;
 
-  return await configureCollectionObjecet(origin, collection, {
-    allowance: allowanceAndDebt.allowance,
-    userDebt: allowanceAndDebt.debt,
-    ltv: allowanceAndDebt.ltv,
-    tvl,
-    totalMarketDeposits,
-    totalMarketValue,
-    connection,
-    honeyUser,
-    nftPrice,
-    obligations,
-    totalMarketDebt,
-    currentMarketId,
-    utilization,
-    interestRate,
-    userTotalDeposits
-  });
+    if (allowanceAndDebt.allowance < 0) allowanceAndDebt.allowance = 0;
+
+    return await configureCollectionObjecet(origin, collection, {
+      allowance: allowanceAndDebt.allowance,
+      userDebt: userDebt,
+      ltv: allowanceAndDebt.ltv,
+      tvl,
+      totalMarketDeposits,
+      totalMarketValue,
+      connection,
+      honeyUser,
+      nftPrice,
+      obligations,
+      totalMarketDebt,
+      currentMarketId,
+      utilization,
+      interestRate,
+      userTotalDeposits
+    });
+  } catch (error) {
+    console.log('Error: ', error);
+    return collection;
+  }
 }
 
 /**
@@ -384,6 +394,7 @@ async function handleFormatMarket(
  */
 export async function populateMarketData(
   origin: string,
+  dataRoot: string,
   collection: MarketTableRow,
   connection: Connection,
   wallet: ConnectedWallet | null,
@@ -401,6 +412,7 @@ export async function populateMarketData(
   let dummyWallet = wallet ? wallet : new NodeWallet(new Keypair());
 
   if (
+    dataRoot === ROOT_CLIENT &&
     hasMarketData &&
     honeyClient &&
     honeyMarket &&
@@ -417,9 +429,7 @@ export async function populateMarketData(
       honeyClient,
       honeyMarket,
       connection,
-      parsedReserves,
       mData
     );
   }
-  return collection;
 }
