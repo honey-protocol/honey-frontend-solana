@@ -39,7 +39,7 @@ const {
 
 interface NFT {
   name: string;
-  img: string;
+  image: string;
   mint: string;
   creators: any;
 }
@@ -134,11 +134,11 @@ const BorrowForm = (props: BorrowProps) => {
   };
 
   // set selection state and render (or not) detail nft
-  const selectNFT = (name: string, img: string, mint: any, creators: any) => {
+  const selectNFT = (name: string, image: string, mint: any, creators: any) => {
     if (hasOpenPosition == false) {
-      setSelectedNft({ name, img, mint, creators: creators[0].address });
+      setSelectedNft({ name, image, mint, creators: creators[0].address });
     } else {
-      setSelectedNft({ name, img, mint, creators: creators[0].address });
+      setSelectedNft({ name, image, mint, creators: creators[0].address });
     }
   };
 
@@ -171,8 +171,9 @@ const BorrowForm = (props: BorrowProps) => {
   }, [honeyUser]);
 
   useEffect(() => {
+    if (!honeyMarket) return;
     const updatePrice = async () => {
-      const price = await honeyMarket.fetchNFTFloorPrice();
+      const price = await honeyMarket.fetchNFTFloorPriceInReserve(0);
       setPrice(price);
     };
     updatePrice();
@@ -182,7 +183,7 @@ const BorrowForm = (props: BorrowProps) => {
   useEffect(() => {
     if (openPositions?.length) {
       const { name, image, mint, verifiedCreator } = openPositions[0];
-      setSelectedNft({ name, img: image, mint, creators: verifiedCreator });
+      setSelectedNft({ name, image, mint, creators: verifiedCreator });
       setHasOpenPosition(true);
     } else if (openPositions.length == 0) {
       setHasOpenPosition(false);
@@ -295,7 +296,7 @@ const BorrowForm = (props: BorrowProps) => {
                   key={nft.mint}
                   id={nft.mint}
                   name={nft.name}
-                  image={nft.img}
+                  image={nft.image}
                   value={fs(price)}
                   isSelected={isSelected}
                   onChange={e => {
@@ -382,8 +383,8 @@ const BorrowForm = (props: BorrowProps) => {
                   key={nft.mint}
                   id={nft.mint}
                   name={nft.name}
-                  image={nft.img}
-                  value={fs(10)}
+                  image={nft.image}
+                  value={fs(price)}
                   isSelected={isSelected}
                   onChange={e => {
                     handleSelectMultipleNFTsItem(event, nft);
