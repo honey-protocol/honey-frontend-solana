@@ -19,6 +19,18 @@ export type OpenPositions = {
   uri: string;
 };
 
+export const ROOT_SSR = 'SSR';
+export const ROOT_CLIENT = 'CLIENT';
+
+// returns array of market ids based on market collections - curr. inactive
+export const marketIDs = async (marketCollections: MarketTableRow[]) => {
+  const marketIdArray: string[] = [];
+  marketCollections.map((collection: MarketTableRow) =>
+    marketIdArray.push(collection.id)
+  );
+  return marketIdArray;
+};
+
 // collection strucutre for the markets
 export const marketCollections: MarketTableRow[] = [
   {
@@ -30,7 +42,6 @@ export const marketCollections: MarketTableRow[] = [
     available: 0,
     value: 0,
     allowance: 0,
-    positions: [],
     connection: undefined,
     user: undefined,
     debt: 0,
@@ -54,7 +65,6 @@ export const marketCollections: MarketTableRow[] = [
     available: 0,
     value: 0,
     allowance: 0,
-    positions: [],
     connection: undefined,
     user: undefined,
     debt: 0,
@@ -78,7 +88,6 @@ export const marketCollections: MarketTableRow[] = [
     available: 0,
     value: 0,
     allowance: 0,
-    positions: [],
     connection: undefined,
     user: undefined,
     debt: 0,
@@ -102,7 +111,6 @@ export const marketCollections: MarketTableRow[] = [
     available: 0,
     value: 0,
     allowance: 0,
-    positions: [],
     connection: undefined,
     user: undefined,
     debt: 0,
@@ -117,30 +125,167 @@ export const marketCollections: MarketTableRow[] = [
       discountedMarket: true
     }
   },
-  // {
-  //   id: '5UKRRSxbi4PgPnQU2ZqtukUxd1fyN6ydn1hoxivP46A8',
-  //   key: 'OLV',
-  //   name: 'Elixir: Ovols',
-  //   verifiedCreator: 'ovo1kT7RqrAZwFtgSGEgNfa7nHjeZoK6ykg1GknJEXG',
-  //   rate: 0,
-  //   available: 0,
-  //   value: 0,
-  //   allowance: 0,
-  // positions: [],
-  //   connection: undefined,
-  //   user: undefined,
-  //   debt: 0,
-  //   utilizationRate: 0,
-  //   openPositions: [],
-  //   constants: {
-  //     marketId: '5UKRRSxbi4PgPnQU2ZqtukUxd1fyN6ydn1hoxivP46A8',
-  //     verifiedCreator: 'ovo1kT7RqrAZwFtgSGEgNfa7nHjeZoK6ykg1GknJEXG',
-  //     marketName: 'Elixir: Ovols',
-  //     marketImage:
-  //       'https://img-cdn.magiceden.dev/rs:fill:400:400:0:0/plain/https://creator-hub-prod.s3.us-east-2.amazonaws.com/elixir_ovols_pfp_1668964852701.png',
-  //     discountedMarket: true
-  //   }
-  // }
+  {
+    id: 'FTBLaLcrx1aXALW2UEpu8a6HLRVFATezkK12wCABPAiA',
+    key: 'Ukiyo',
+    name: 'Ukiyo',
+    verifiedCreator: '9dQhwT67yaTk3YKhTN7f4jKFEAYtNtMotyVmVswmAQKe',
+    rate: 0,
+    available: 0,
+    value: 0,
+    allowance: 0,
+    connection: undefined,
+    user: undefined,
+    debt: 0,
+    utilizationRate: 0,
+    openPositions: [],
+    constants: {
+      marketId: 'FTBLaLcrx1aXALW2UEpu8a6HLRVFATezkK12wCABPAiA',
+      verifiedCreator: '9dQhwT67yaTk3YKhTN7f4jKFEAYtNtMotyVmVswmAQKe',
+      marketName: 'Ukiyo',
+      marketImage:
+        'https://img-cdn.magiceden.dev/rs:fill:400:400:0:0/plain/https://creator-hub-prod.s3.us-east-2.amazonaws.com/ukiyo_pfp_1663178207810.jpeg',
+      discountedMarket: false
+    }
+  },
+  {
+    id: '5UKRRSxbi4PgPnQU2ZqtukUxd1fyN6ydn1hoxivP46A8',
+    key: 'OLV',
+    name: 'Elixir: Ovols',
+    verifiedCreator: 'ovo1kT7RqrAZwFtgSGEgNfa7nHjeZoK6ykg1GknJEXG',
+    rate: 0,
+    available: 0,
+    value: 0,
+    allowance: 0,
+    connection: undefined,
+    user: undefined,
+    debt: 0,
+    utilizationRate: 0,
+    openPositions: [],
+    constants: {
+      marketId: '5UKRRSxbi4PgPnQU2ZqtukUxd1fyN6ydn1hoxivP46A8',
+      verifiedCreator: 'ovo1kT7RqrAZwFtgSGEgNfa7nHjeZoK6ykg1GknJEXG',
+      marketName: 'Elixir: Ovols',
+      marketImage:
+        'https://img-cdn.magiceden.dev/rs:fill:400:400:0:0/plain/https://creator-hub-prod.s3.us-east-2.amazonaws.com/elixir_ovols_pfp_1668964852701.png',
+      discountedMarket: true
+    }
+  },
+  {
+    id: 'GAqyPziKPwVpwKaeqPhEsxiy6MwQ2bvtodruWErpLVKo',
+    key: 'Droids',
+    name: 'Droid Capital',
+    verifiedCreator: 'C88kKdEmTrCh43GC1w3BUFLsW3oKMEWWBGCyweQAaEYa',
+    rate: 0,
+    available: 0,
+    value: 0,
+    allowance: 0,
+    connection: undefined,
+    user: undefined,
+    debt: 0,
+    utilizationRate: 0,
+    openPositions: [],
+    constants: {
+      marketId: 'GAqyPziKPwVpwKaeqPhEsxiy6MwQ2bvtodruWErpLVKo',
+      verifiedCreator: 'C88kKdEmTrCh43GC1w3BUFLsW3oKMEWWBGCyweQAaEYa',
+      marketName: 'Droid Capital',
+      marketImage:
+        'https://i.seadn.io/gae/c5CkCKH28E2hKPnY2Tgj2H_maWZ06yqfeV4aQqkH00q1egB54S4BAc-6yCJsyHdQ716vp5amA1NPg-cyNzVjH1AR4HkBvimd_xq7Gw?auto=format&w=256',
+      discountedMarket: false
+    }
+  },
+  {
+    id: '2dxJ4eMkhMxm1ZqpAhKsjunvyziuq1JRnuHaqKFRY8et',
+    key: 'Vandals',
+    name: 'Vandal City',
+    verifiedCreator: '8wACNDCJiPVVxfrFJRUYkJx4hQgvcoZggMXKmNvjQ6R7',
+    rate: 0,
+    available: 0,
+    value: 0,
+    allowance: 0,
+    connection: undefined,
+    user: undefined,
+    debt: 0,
+    utilizationRate: 0,
+    openPositions: [],
+    constants: {
+      marketId: '2dxJ4eMkhMxm1ZqpAhKsjunvyziuq1JRnuHaqKFRY8et',
+      verifiedCreator: '8wACNDCJiPVVxfrFJRUYkJx4hQgvcoZggMXKmNvjQ6R7',
+      marketName: 'Vandal City',
+      marketImage:
+        'https://i.seadn.io/gae/BgIPqBsvXBIoT-7IFHqAMbUJn9yU1Ngcdc5p1ItIQlderHXU5HuQX1SNWV4zqGpe_GWGcZwO88FFwpOdJMU7a5o4RMULdxmPr4TAlY4?auto=format&w=256',
+      discountedMarket: false
+    }
+  },
+  {
+    id: '5ZxAjKpbYje5fCxhvnRYxbMh6XSZm5Cd7RA9mMGb1DLY',
+    key: 'Heavenland',
+    name: 'Heavenland',
+    verifiedCreator: 'C4ki5erQ54EWDwuHYeD3m8xMrF6YXL9tV9dYpaf4idkS',
+    rate: 0,
+    available: 0,
+    value: 0,
+    allowance: 0,
+    connection: undefined,
+    user: undefined,
+    debt: 0,
+    utilizationRate: 0,
+    openPositions: [],
+    constants: {
+      marketId: '5ZxAjKpbYje5fCxhvnRYxbMh6XSZm5Cd7RA9mMGb1DLY',
+      verifiedCreator: 'C4ki5erQ54EWDwuHYeD3m8xMrF6YXL9tV9dYpaf4idkS',
+      marketName: 'Heavenland',
+      marketImage:
+        'https://img-cdn.magiceden.dev/rs:fill:400:400:0:0/plain/https://dl.airtable.com/.attachmentThumbnails/9d1ed55dcb8a3f2a73d514c1e5fdc3e0/cecf9ba3',
+      discountedMarket: false
+    }
+  },
+  {
+    id: 'Dmngi1MDEQU9fm6sX39EuyT3EpYEmXYuyg56uEjVCkD6',
+    key: 'Marshies',
+    name: 'Marshies',
+    verifiedCreator: 'ACBrgk19WYp6oT4VLHQZhAgDPJo8HNoCfDZW6iTpJSjS',
+    rate: 0,
+    available: 0,
+    value: 0,
+    allowance: 0,
+    connection: undefined,
+    user: undefined,
+    debt: 0,
+    utilizationRate: 0,
+    openPositions: [],
+    constants: {
+      marketId: 'Dmngi1MDEQU9fm6sX39EuyT3EpYEmXYuyg56uEjVCkD6',
+      verifiedCreator: 'ACBrgk19WYp6oT4VLHQZhAgDPJo8HNoCfDZW6iTpJSjS',
+      marketName: 'Marshies',
+      marketImage:
+        'https://pbs.twimg.com/profile_images/1610792754388570113/LXrVtzAE_400x400.jpg',
+      discountedMarket: false
+    }
+  },
+  {
+    id: '7pfaZcAqpWRHpEqGMwPQrn5tj5WVQ48F4PrAtFLuS1P7',
+    key: 'Drunken Ape Social Club',
+    name: 'Drunken Ape Social Club',
+    verifiedCreator: '56ruMizEJh4P12r6UqXEZ9AEYE9N5BtBortHfqp4m6Lm',
+    rate: 0,
+    available: 0,
+    value: 0,
+    allowance: 0,
+    connection: undefined,
+    user: undefined,
+    debt: 0,
+    utilizationRate: 0,
+    openPositions: [],
+    constants: {
+      marketId: '7pfaZcAqpWRHpEqGMwPQrn5tj5WVQ48F4PrAtFLuS1P7',
+      verifiedCreator: '56ruMizEJh4P12r6UqXEZ9AEYE9N5BtBortHfqp4m6Lm',
+      marketName: 'Drunken Ape Social Club',
+      marketImage:
+        'https://img-cdn.magiceden.dev/rs:fill:400:400:0:0/plain/https://creator-hub-prod.s3.us-east-2.amazonaws.com/drunkenapesc_pfp_1647995737060.jpeg',
+      discountedMarket: false
+    }
+  }
   // {
   //   id: 'F8rZviSSuqgkTsjMeoyrTUSNSqh7yNDCAozJkxm7eujY',
   //   key: 'BURR',
@@ -213,126 +358,6 @@ export const marketCollections: MarketTableRow[] = [
   //     discountedMarket: false
   //   }
   // },
-  {
-    id: 'GAqyPziKPwVpwKaeqPhEsxiy6MwQ2bvtodruWErpLVKo',
-    key: 'Droids',
-    name: 'Droid Capital',
-    verifiedCreator: 'C88kKdEmTrCh43GC1w3BUFLsW3oKMEWWBGCyweQAaEYa',
-    rate: 0,
-    available: 0,
-    value: 0,
-    allowance: 0,
-    positions: [],
-    connection: undefined,
-    user: undefined,
-    debt: 0,
-    utilizationRate: 0,
-    openPositions: [],
-    constants: {
-      marketId: 'GAqyPziKPwVpwKaeqPhEsxiy6MwQ2bvtodruWErpLVKo',
-      verifiedCreator: 'C88kKdEmTrCh43GC1w3BUFLsW3oKMEWWBGCyweQAaEYa',
-      marketName: 'Droid Capital',
-      marketImage:
-        'https://i.seadn.io/gae/c5CkCKH28E2hKPnY2Tgj2H_maWZ06yqfeV4aQqkH00q1egB54S4BAc-6yCJsyHdQ716vp5amA1NPg-cyNzVjH1AR4HkBvimd_xq7Gw?auto=format&w=256',
-      discountedMarket: false
-    }
-  },
-  {
-    id: '2dxJ4eMkhMxm1ZqpAhKsjunvyziuq1JRnuHaqKFRY8et',
-    key: 'Vandals',
-    name: 'Vandal City',
-    verifiedCreator: '8wACNDCJiPVVxfrFJRUYkJx4hQgvcoZggMXKmNvjQ6R7',
-    rate: 0,
-    available: 0,
-    value: 0,
-    allowance: 0,
-    positions: [],
-    connection: undefined,
-    user: undefined,
-    debt: 0,
-    utilizationRate: 0,
-    openPositions: [],
-    constants: {
-      marketId: '2dxJ4eMkhMxm1ZqpAhKsjunvyziuq1JRnuHaqKFRY8et',
-      verifiedCreator: '8wACNDCJiPVVxfrFJRUYkJx4hQgvcoZggMXKmNvjQ6R7',
-      marketName: 'Vandal City',
-      marketImage:
-        'https://i.seadn.io/gae/BgIPqBsvXBIoT-7IFHqAMbUJn9yU1Ngcdc5p1ItIQlderHXU5HuQX1SNWV4zqGpe_GWGcZwO88FFwpOdJMU7a5o4RMULdxmPr4TAlY4?auto=format&w=256',
-      discountedMarket: false
-    }
-  },
-  {
-    id: 'FTBLaLcrx1aXALW2UEpu8a6HLRVFATezkK12wCABPAiA',
-    key: 'Ukiyo',
-    name: 'Ukiyo',
-    verifiedCreator: '9dQhwT67yaTk3YKhTN7f4jKFEAYtNtMotyVmVswmAQKe',
-    rate: 0,
-    available: 0,
-    value: 0,
-    allowance: 0,
-    positions: [],
-    connection: undefined,
-    user: undefined,
-    debt: 0,
-    utilizationRate: 0,
-    openPositions: [],
-    constants: {
-      marketId: 'FTBLaLcrx1aXALW2UEpu8a6HLRVFATezkK12wCABPAiA',
-      verifiedCreator: '9dQhwT67yaTk3YKhTN7f4jKFEAYtNtMotyVmVswmAQKe',
-      marketName: 'Ukiyo',
-      marketImage:
-        'https://img-cdn.magiceden.dev/rs:fill:400:400:0:0/plain/https://creator-hub-prod.s3.us-east-2.amazonaws.com/ukiyo_pfp_1663178207810.jpeg',
-      discountedMarket: false
-    }
-  },
-  {
-    id: '5ZxAjKpbYje5fCxhvnRYxbMh6XSZm5Cd7RA9mMGb1DLY',
-    key: 'Heavenland',
-    name: 'Heavenland',
-    verifiedCreator: 'C4ki5erQ54EWDwuHYeD3m8xMrF6YXL9tV9dYpaf4idkS',
-    rate: 0,
-    available: 0,
-    value: 0,
-    allowance: 0,
-    positions: [],
-    connection: undefined,
-    user: undefined,
-    debt: 0,
-    utilizationRate: 0,
-    openPositions: [],
-    constants: {
-      marketId: '5ZxAjKpbYje5fCxhvnRYxbMh6XSZm5Cd7RA9mMGb1DLY',
-      verifiedCreator: 'C4ki5erQ54EWDwuHYeD3m8xMrF6YXL9tV9dYpaf4idkS',
-      marketName: 'Heavenland',
-      marketImage:
-        'https://img-cdn.magiceden.dev/rs:fill:400:400:0:0/plain/https://dl.airtable.com/.attachmentThumbnails/9d1ed55dcb8a3f2a73d514c1e5fdc3e0/cecf9ba3',
-      discountedMarket: false
-    }
-  },
-  {
-    id: 'Dmngi1MDEQU9fm6sX39EuyT3EpYEmXYuyg56uEjVCkD6',
-    key: 'Marshies',
-    name: 'Marshies',
-    verifiedCreator: 'ACBrgk19WYp6oT4VLHQZhAgDPJo8HNoCfDZW6iTpJSjS',
-    rate: 0,
-    available: 0,
-    value: 0,
-    allowance: 0,
-    positions: [],
-    connection: undefined,
-    user: undefined,
-    debt: 0,
-    utilizationRate: 0,
-    openPositions: [],
-    constants: {
-      marketId: 'Dmngi1MDEQU9fm6sX39EuyT3EpYEmXYuyg56uEjVCkD6',
-      verifiedCreator: 'ACBrgk19WYp6oT4VLHQZhAgDPJo8HNoCfDZW6iTpJSjS',
-      marketName: 'Marshies',
-      marketImage:
-        'https://pbs.twimg.com/profile_images/1610792754388570113/LXrVtzAE_400x400.jpg',
-      discountedMarket: false
-    }
-  }
 ];
 
 // fees

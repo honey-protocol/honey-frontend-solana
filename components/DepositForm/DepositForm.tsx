@@ -13,6 +13,7 @@ import { hAlign, textUnderline } from 'styles/common.css';
 import useToast from 'hooks/useToast';
 import { renderMarketImageByID, renderMarketName } from 'helpers/marketHelpers';
 import QuestionIcon from 'icons/QuestionIcon';
+import { Skeleton } from 'antd';
 import HoneyWarning from 'components/HoneyWarning/HoneyWarning';
 
 const {
@@ -20,7 +21,8 @@ const {
   formatPercent: fp,
   formatSol: fs,
   parse: p,
-  formatRoundDown: frd
+  formatRoundDown: frd,
+  formatShortName: fsn
 } = formatNumber;
 
 const DepositForm = (props: DepositFormProps) => {
@@ -30,10 +32,12 @@ const DepositForm = (props: DepositFormProps) => {
     value,
     available,
     userWalletBalance,
-    fetchedSolPrice,
+    fetchedReservePrice,
     marketImage,
     currentMarketId,
-    onCancel
+    onCancel,
+    activeInterestRate,
+    isFetchingData
   } = props;
   // state declarations
   const [valueUSD, setValueUSD] = useState<number>(0);
@@ -50,10 +54,11 @@ const DepositForm = (props: DepositFormProps) => {
   }, [value, available]);
   // constants
   const maxValue = userWalletBalance;
-  const solPrice = fetchedSolPrice;
+  const solPrice = fetchedReservePrice;
 
   // Put your validators here
   const isDepositButtonDisabled = () => {
+    if (isFetchingData) return true;
     return false;
   };
   // change of input - render calculated values
@@ -131,20 +136,33 @@ const DepositForm = (props: DepositFormProps) => {
           </div>
         </div>
         <div className={styles.row}>
-          <HoneyWarning
-            message="To learn more about the risks of lending, make sure to explore our Protocol Risk documentation"
-            link="https://docs.honey.finance/lending-protocol/risk/protocol-risks"
-          />
-        </div>
-        <div className={styles.row}>
           <div className={styles.col}>
             <InfoBlock
-              value={fp()}
+              value={
+                isFetchingData ? (
+                  <Skeleton.Button size="small" active />
+                ) : (
+                  fs(userTotalDeposits)
+                )
+              }
               valueSize="big"
-              toolTipLabel="APY is measured by compounding the weekly interest rate"
+              footer={<span>Your Deposits</span>}
+            />
+          </div>
+          <div className={styles.col}>
+            <InfoBlock
+              value={
+                isFetchingData ? (
+                  <Skeleton.Button size="small" active />
+                ) : (
+                  fp(activeInterestRate)
+                )
+              }
+              valueSize="big"
+              toolTipLabel="Variable interest rate, based on Utilization rate."
               footer={
                 <span className={hAlign}>
-                  Estimated <span className={textUnderline}>APY</span>
+                  Interest rate{' '}
                   <div className={questionIcon}>
                     <QuestionIcon />
                   </div>
@@ -154,7 +172,13 @@ const DepositForm = (props: DepositFormProps) => {
           </div>
           <div className={styles.col}>
             <InfoBlock
-              value={fp(utilizationRate)}
+              value={
+                isFetchingData ? (
+                  <Skeleton.Button size="small" active />
+                ) : (
+                  fp(utilizationRate)
+                )
+              }
               valueSize="big"
               toolTipLabel=" Amount of supplied liquidity currently being borrowed"
               footer={
@@ -165,16 +189,6 @@ const DepositForm = (props: DepositFormProps) => {
                   </div>
                 </span>
               }
-            />
-          </div>
-        </div>
-
-        <div className={styles.row}>
-          <div className={styles.col}>
-            <InfoBlock
-              value={fs(userTotalDeposits)}
-              valueSize="big"
-              footer={<span>Your Deposits</span>}
             />
           </div>
         </div>

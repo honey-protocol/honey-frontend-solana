@@ -15,6 +15,7 @@ import { questionIcon } from 'styles/icons.css';
 import useToast from 'hooks/useToast';
 import { renderMarketImageByID, renderMarketName } from 'helpers/marketHelpers';
 import QuestionIcon from 'icons/QuestionIcon';
+import { Skeleton } from 'antd';
 
 const {
   format: f,
@@ -30,14 +31,15 @@ const BidForm = (props: BidFormProps) => {
     userBalance,
     highestBiddingValue,
     currentUserBid,
-    fetchedSolPrice,
+    fetchedReservePrice,
     currentMarketId,
     highestBiddingAddress,
     stringyfiedWalletPK,
     handleRevokeBid,
     handleIncreaseBid,
     handlePlaceBid,
-    onCancel
+    onCancel,
+    isFetchingData
   } = props;
   // state declarations
   const [valueUSD, setValueUSD] = useState<number>(0);
@@ -48,7 +50,7 @@ const BidForm = (props: BidFormProps) => {
   const { toast, ToastComponent } = useToast();
   // set constants
   const maxValue = 1000;
-  const solPrice = fetchedSolPrice;
+  const solPrice = fetchedReservePrice;
   // Put your validators here
   const isSubmitButtonDisabled = () => {
     return false;
@@ -171,7 +173,13 @@ const BidForm = (props: BidFormProps) => {
         <div className={styles.row}>
           <div className={styles.col}>
             <InfoBlock
-              value={fs(highestBiddingValue)}
+              value={
+                isFetchingData ? (
+                  <Skeleton.Button size="small" active />
+                ) : (
+                  fs(highestBiddingValue)
+                )
+              }
               valueSize="big"
               title={
                 <span className={hAlign}>
@@ -198,7 +206,13 @@ const BidForm = (props: BidFormProps) => {
         <div className={styles.row}>
           <div className={styles.col}>
             <InfoBlock
-              value={fs(userBalance)}
+              value={
+                isFetchingData ? (
+                  <Skeleton.Button size="small" active />
+                ) : (
+                  fs(userBalance)
+                )
+              }
               valueSize="big"
               title="Your SOL balance"
             />

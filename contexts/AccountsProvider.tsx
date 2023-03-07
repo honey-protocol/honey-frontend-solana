@@ -72,7 +72,7 @@ export const AccountsProvider: React.FC<React.ReactNode> = ({ children }) => {
       nfts.map(async nft => {
         const mint = new PublicKey(nft.mint);
         const meta = await Metadata.getPDA(mint);
-        const image = await getNFTImgURI(nft.data.uri);
+        const image = await getNFTImgURI(nft.data.uri, nft.data.name);
 
         return {
           pubkey: getATAAddressSync({ mint, owner: ownerKey }),
@@ -124,25 +124,47 @@ export const AccountsProvider: React.FC<React.ReactNode> = ({ children }) => {
   );
 };
 
-async function getNFTImgURI(uri: string) {
+const allowedCollections = [
+  'pesky penguins',
+  'burrito boyz',
+  'droid',
+  'lifinity flares',
+  'vandals',
+  'honey genesis bee',
+  'elixir: ovols',
+  'blocksmith labs',
+  "Trippin' Ape Tribe",
+  'og atadians',
+  'Ukiyo',
+  'Droid Capital',
+  'Heavenland',
+  'Marshies',
+  'drunken ape social club'
+];
+
+async function getNFTImgURI(uri: string, name: string) {
   if (!!uri) {
-    return fetch(uri)
-      .then(response => {
-        if (!response.ok) {
-          throw new Error(
-            'Network response was not OK when fetching NFT image URI'
-          );
-        }
-        return response.json();
-      })
-      .then(result => {
-        return result.image;
-      })
-      .catch(error => {
-        console.error(`Error occurred while getting NFT image URI: ${uri}`);
-        console.error(error);
-        return '';
-      });
+    // only make the request if the
+    if (allowedCollections.includes(name.toLocaleLowerCase())) {
+      return fetch(uri)
+        .then(response => {
+          if (!response.ok) {
+            throw new Error(
+              'Network response was not OK when fetching NFT image URI'
+            );
+          }
+          return response.json();
+        })
+        .then(result => {
+          return result.image;
+        })
+        .catch(error => {
+          console.error(error);
+          return '';
+        });
+    } else {
+      return '';
+    }
   }
   return '';
 }

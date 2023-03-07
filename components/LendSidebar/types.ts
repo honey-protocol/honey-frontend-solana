@@ -4,10 +4,12 @@ export type LendSidebarProps = {
   available: number;
   value: number;
   userWalletBalance: number;
-  fetchedSolPrice: number;
+  fetchedReservePrice: number;
   marketImage: any;
   currentMarketId: string;
+  activeInterestRate: number;
   executeDeposit: (val: number) => void;
   executeWithdraw: (val: number) => void;
   onCancel: Function;
+  isFetchingData?: boolean;
 };

@@ -13,6 +13,7 @@ import { hAlign, textUnderline } from 'styles/common.css';
 import useToast from 'hooks/useToast';
 import { renderMarketImageByID, renderMarketName } from 'helpers/marketHelpers';
 import QuestionIcon from 'icons/QuestionIcon';
+import { Skeleton } from 'antd';
 import HoneyWarning from 'components/HoneyWarning/HoneyWarning';
 
 const { format: f, formatPercent: fp, formatSol: fs, parse: p } = formatNumber;
@@ -23,10 +24,12 @@ const WithdrawForm = (props: WithdrawFormProps) => {
     userTotalDeposits,
     value,
     available,
-    fetchedSolPrice,
+    fetchedReservePrice,
     marketImage,
     currentMarketId,
-    onCancel
+    onCancel,
+    activeInterestRate,
+    isFetchingData
   } = props;
   const [valueUSD, setValueUSD] = useState<number>(0);
   const [valueSOL, setValueSOL] = useState<number>(0);
@@ -34,16 +37,17 @@ const WithdrawForm = (props: WithdrawFormProps) => {
   const { toast, ToastComponent } = useToast();
 
   const maxValue = userTotalDeposits;
-  const solPrice = fetchedSolPrice;
+  const reservePrice = fetchedReservePrice;
 
   // Put your validators here
   const isWithdrawButtonDisabled = () => {
+    if (isFetchingData) return true;
     return false;
   };
 
   const handleSliderChange = (value: number) => {
     setSliderValue(value);
-    setValueUSD(value * solPrice);
+    setValueUSD(value * reservePrice);
     setValueSOL(value);
   };
 
@@ -56,8 +60,8 @@ const WithdrawForm = (props: WithdrawFormProps) => {
     }
 
     setValueUSD(usdValue);
-    setValueSOL(usdValue / solPrice);
-    setSliderValue(usdValue / solPrice);
+    setValueSOL(usdValue / reservePrice);
+    setSliderValue(usdValue / reservePrice);
   };
 
   const handleSolInputChange = (solValue: number | undefined) => {
@@ -68,7 +72,7 @@ const WithdrawForm = (props: WithdrawFormProps) => {
       return;
     }
 
-    setValueUSD(solValue * solPrice);
+    setValueUSD(solValue * reservePrice);
     setValueSOL(solValue);
     setSliderValue(solValue);
   };
@@ -124,22 +128,13 @@ const WithdrawForm = (props: WithdrawFormProps) => {
         <div className={styles.row}>
           <div className={styles.col}>
             <InfoBlock
-              value={fp()}
-              valueSize="big"
-              toolTipLabel="APY is measured by compounding the weekly interest rate"
-              footer={
-                <span className={hAlign}>
-                  Estimated <span className={textUnderline}>APY</span>
-                  <div className={questionIcon}>
-                    <QuestionIcon />
-                  </div>
-                </span>
+              value={
+                isFetchingData ? (
+                  <Skeleton.Button size="small" active />
+                ) : (
+                  fp(((value - available) / value) * 100)
+                )
               }
-            />
-          </div>
-          <div className={styles.col}>
-            <InfoBlock
-              value={fp(((value - available) / value) * 100)}
               valueSize="big"
               toolTipLabel=" Amount of supplied liquidity currently being borrowed"
               footer={
@@ -152,11 +147,40 @@ const WithdrawForm = (props: WithdrawFormProps) => {
               }
             />
           </div>
+
+          <div className={styles.col}>
+            <InfoBlock
+              value={
+                isFetchingData ? (
+                  <Skeleton.Button size="small" active />
+                ) : (
+                  fp(activeInterestRate)
+                )
+              }
+              valueSize="big"
+              toolTipLabel="Variable interest rate, based on Utilization rate."
+              footer={
+                <span className={hAlign}>
+                  Interest rate Estimated{' '}
+                  <div className={questionIcon}>
+                    <QuestionIcon />
+                  </div>
+                </span>
+              }
+            />
+          </div>
         </div>
+
         <div className={styles.row}>
           <div className={styles.col}>
             <InfoBlock
-              value={fs(userTotalDeposits)}
+              value={
+                isFetchingData ? (
+                  <Skeleton.Button size="small" active />
+                ) : (
+                  fs(userTotalDeposits)
+                )
+              }
               valueSize="big"
               footer={<span>Your Deposits</span>}
             />

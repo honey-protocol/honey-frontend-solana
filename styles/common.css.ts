@@ -99,3 +99,10 @@ export const hideOnMobile = style({
 export const textUnderline = style({
   textDecoration: 'underline'
 });
+
+export const center = style({
+  display: 'flex',
+  justifyContent: 'center',
+  alignItems: 'center',
+  width: '100%'
+});

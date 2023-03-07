@@ -4,11 +4,11 @@ import { CurrentBidCardProps } from '../CurrentBidCard/types';
 
 type CurrentBidListProps = {
   data: CurrentBidCardProps[];
-  fetchedSolPrice: number;
+  fetchedReservePrice: number;
 };
 
 const CurrentBidList = (props: CurrentBidListProps) => {
-  const { data, fetchedSolPrice } = props;
+  const { data, fetchedReservePrice } = props;
 
   return (
     <>
@@ -17,10 +17,10 @@ const CurrentBidList = (props: CurrentBidListProps) => {
           <div key={index}>
             <CurrentBidCard
               {...item}
-              fetchedSolPrice={fetchedSolPrice}
+              fetchedReservePrice={fetchedReservePrice}
               hasBorder={index !== data.length - 1}
             />
-          </ div>
+          </div>
         ))}
     </>
   );
