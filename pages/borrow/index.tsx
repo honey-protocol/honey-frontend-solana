@@ -1339,7 +1339,7 @@ const Markets: NextPage = ({ res }: { res: any }) => {
                           pagination={false}
                           showHeader={false}
                           footer={
-                            record.openPositions.length
+                            record.openPositions.length == 11
                               ? ExpandedTableFooter
                               : undefined
                           }

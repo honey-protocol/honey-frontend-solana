@@ -355,6 +355,14 @@ async function handleFormatMarket(
       'mainnet-beta'
     );
 
+    const obligtion = await honeyUser.getObligationData();
+    const nftCount =
+      obligtion instanceof Error
+        ? 1
+        : obligtion.collateralNftMint.filter(
+            mint => !mint.equals(PublicKey.default)
+          ).length;
+
     const tvl = nftPrice * (await fetchTVL(obligations));
     const userTotalDeposits = await honeyUser.fetchUserDeposits(0);
 

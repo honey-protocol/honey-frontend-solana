@@ -74,10 +74,15 @@ const BorrowForm = (props: BorrowProps) => {
   const [hasOpenPosition, setHasOpenPosition] = useState(false);
   const [sliderValue, setSliderValue] = useState(0);
   const { toast, ToastComponent } = useToast();
+  const [overallValue, setOverallValue] = useState(0);
+
+  useEffect(() => {
+    setOverallValue(nftPrice * openPositions?.length);
+  }, [nftPrice, openPositions]);
 
   // constants && calculations
   const borrowedValue = userDebt;
-  const maxValue = userAllowance;
+  const maxValue = userAllowance * openPositions?.length;
   const solPrice = fetchedReservePrice;
   const liquidationThreshold = COLLATERAL_FACTOR; // TODO: change where relevant, currently set to 65% on mainnet
   const borrowFee = BORROW_FEE; // TODO: 1,5% later but 0% for now
@@ -86,10 +91,10 @@ const BorrowForm = (props: BorrowProps) => {
     ? userDebt + newAdditionalDebt
     : userDebt;
   const liquidationPrice = userDebt / liquidationThreshold;
-  const liqPercent = ((nftPrice - liquidationPrice) / nftPrice) * 100;
+  const liqPercent = ((overallValue * -liquidationPrice) / nftPrice) * 100;
   const newLiquidationPrice = newTotalDebt / liquidationThreshold;
-  const newLiqPercent = nftPrice
-    ? ((nftPrice - newLiquidationPrice) / nftPrice) * 100
+  const newLiqPercent = overallValue
+    ? ((overallValue - newLiquidationPrice) / overallValue) * 100
     : 0;
   const selectedMarket = marketCollections.find(
     market => market.constants.marketId === currentMarketId
@@ -432,7 +437,7 @@ const BorrowForm = (props: BorrowProps) => {
                 isFetchingData ? (
                   <Skeleton.Button size="small" active />
                 ) : (
-                  fsn(nftPrice)
+                  fsn(overallValue)
                 )
               }
               valueSize="big"
@@ -465,7 +470,7 @@ const BorrowForm = (props: BorrowProps) => {
                 isFetchingData ? (
                   <Skeleton.Button size="small" active />
                 ) : (
-                  fsn(userAllowance)
+                  fsn(userAllowance * openPositions?.length)
                 )
               }
               // value={fs(Number(frd(userAllowance)))}
@@ -518,7 +523,7 @@ const BorrowForm = (props: BorrowProps) => {
             />
             <HoneySlider
               currentValue={0}
-              maxValue={nftPrice}
+              maxValue={overallValue}
               minAvailableValue={borrowedValue}
               maxSafePosition={0.3 - borrowedValue / 1000}
               dangerPosition={0.45 - borrowedValue / 1000}
@@ -560,7 +565,7 @@ const BorrowForm = (props: BorrowProps) => {
             />
             <HoneySlider
               currentValue={sliderValue * 1.1}
-              maxValue={nftPrice}
+              maxValue={maxValue}
               minAvailableValue={borrowedValue}
               maxSafePosition={0.3 - borrowedValue / 1000}
               dangerPosition={0.45 - borrowedValue / 1000}
@@ -786,7 +791,7 @@ const BorrowForm = (props: BorrowProps) => {
 
         <HoneySlider
           currentValue={sliderValue}
-          maxValue={nftPrice}
+          maxValue={overallValue}
           minAvailableValue={borrowedValue}
           maxSafePosition={0.3 - borrowedValue / 1000}
           dangerPosition={0.45 - borrowedValue / 1000}
