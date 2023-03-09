@@ -33,6 +33,7 @@ export type MarketTableRow = {
     marketName: string;
     marketImage: string;
     discountedMarket: boolean;
+    pnft?: boolean;
   }
   marketData?: Array<MarketBundle>;
 };

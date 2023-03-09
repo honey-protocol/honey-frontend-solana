@@ -1011,7 +1011,8 @@ const Markets: NextPage = ({ res }: { res: any }) => {
           const tx = await depositNFT(
             collection.connection,
             honeyUser,
-            metadata.pubkey
+            metadata.pubkey,
+            collection.constants.pnft
           );
 
           if (tx[0] == 'SUCCESS') {
@@ -1067,7 +1068,8 @@ const Markets: NextPage = ({ res }: { res: any }) => {
           const tx = await withdrawNFT(
             sdkConfig.saberHqConnection,
             honeyUser,
-            metadata.pubkey
+            metadata.pubkey,
+            collection.constants.pnft
           );
 
           if (tx[0] == 'SUCCESS') {

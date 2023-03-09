@@ -285,6 +285,30 @@ export const marketCollections: MarketTableRow[] = [
         'https://img-cdn.magiceden.dev/rs:fill:400:400:0:0/plain/https://creator-hub-prod.s3.us-east-2.amazonaws.com/drunkenapesc_pfp_1647995737060.jpeg',
       discountedMarket: false
     }
+  },
+  {
+    id: 'NznFYbWT5PH7BptTHyu52KFGfFx33j77XDwi3L9CM41',
+    key: 'BVD cats',
+    name: 'BVDCats',
+    verifiedCreator: '8Jhy62JeG4rgPu4Q2tn3Q3eZ8XUZmHhYDKpVJkQ8RFhe',
+    rate: 0,
+    available: 0,
+    value: 0,
+    allowance: 0,
+    connection: undefined,
+    user: undefined,
+    debt: 0,
+    utilizationRate: 0,
+    openPositions: [],
+    constants: {
+      marketId: 'NznFYbWT5PH7BptTHyu52KFGfFx33j77XDwi3L9CM41',
+      verifiedCreator: '8Jhy62JeG4rgPu4Q2tn3Q3eZ8XUZmHhYDKpVJkQ8RFhe',
+      marketName: 'BVDCats',
+      marketImage:
+        'https://shdw-drive.genesysgo.net/CjscEgskhZAYCHuwYWz8uzL8EYbnLLpPyPyMNd5nHEMH/517ff1a65a6aa15369aaa0d15b851aa382c0ee5a.png',
+      discountedMarket: false,
+      pnft: true
+    }
   }
   // {
   //   id: 'F8rZviSSuqgkTsjMeoyrTUSNSqh7yNDCAozJkxm7eujY',
@@ -366,9 +390,9 @@ export const BORROW_FEE = 0;
 
 // Honey Program ID
 export const HONEY_GENESIS_MARKET_ID =
-  '6FcJaAzQnuoA6o3sVw1GD6Ba69XuL5jinZpQTzJhd2R3';
-export const HONEY_GENESIS_BEE_MARKET_NAME = 'Honey Genesis Bee';
-export const HONEY_PROGRAM_ID = 'hNEYyRsRBVq2La65V1KjvdbTE39w36gwrdjkmcpvysk';
+  'NznFYbWT5PH7BptTHyu52KFGfFx33j77XDwi3L9CM41';
+export const HONEY_GENESIS_BEE_MARKET_NAME = 'BVDCats';
+export const HONEY_PROGRAM_ID = 'DQYcRGf9cdhFFUoNbnebzZTz8D6tzFNS2GZgM5MJyiK';
 
 // import image from next
 import Image from 'next/image';

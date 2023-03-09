@@ -21,7 +21,7 @@
     "@gemworks/gem-farm-ts": "^0.24.2",
     "@gokiprotocol/client": "^0.10.4",
     "@gokiprotocol/walletkit": "^1.6.5",
-    "@honey-finance/sdk": "^1.1.122",
+    "@honey-finance/sdk": "https://github.com/honey-protocol/honey-sdk#b4c3896eb2f86620c4c5ed002dde2460dfe8d848",
     "@jup-ag/react-hook": "^2.0.0-beta.2",
     "@metaplex-foundation/mpl-auction": "^0.0.2",
     "@metaplex-foundation/mpl-core": "^0.0.4",
@@ -84,6 +84,8 @@
     "zustand": "^4.1.1"
   },
   "devDependencies": {
+    "@metaplex-foundation/js": "^0.18.0",
+    "@msgpack/msgpack": "^2.8.0",
     "@types/node": "17.0.21",
     "@types/react": "17.0.39",
     "@types/react-dom": "17.0.15",
