@@ -91,7 +91,7 @@ const BorrowForm = (props: BorrowProps) => {
     ? userDebt + newAdditionalDebt
     : userDebt;
   const liquidationPrice = userDebt / liquidationThreshold;
-  const liqPercent = ((overallValue * -liquidationPrice) / nftPrice) * 100;
+  const liqPercent = ((overallValue * -liquidationPrice) / overallValue) * 100;
   const newLiquidationPrice = newTotalDebt / liquidationThreshold;
   const newLiqPercent = overallValue
     ? ((overallValue - newLiquidationPrice) / overallValue) * 100
@@ -470,7 +470,7 @@ const BorrowForm = (props: BorrowProps) => {
                 isFetchingData ? (
                   <Skeleton.Button size="small" active />
                 ) : (
-                  fsn(userAllowance * openPositions?.length)
+                  fsn(userAllowance)
                 )
               }
               // value={fs(Number(frd(userAllowance)))}
@@ -492,12 +492,13 @@ const BorrowForm = (props: BorrowProps) => {
         <div className={styles.row}>
           <div className={styles.col}>
             <InfoBlock
-              value={
-                isFetchingData ? (
-                  <Skeleton.Button size="small" active />
-                ) : (
-                  fp(loanToValue * 100)
-                )
+              title={
+                <span className={hAlign}>
+                  LTV %
+                  <div className={questionIcon}>
+                    <QuestionIcon />
+                  </div>
+                </span>
               }
               toolTipLabel={
                 <span>
@@ -508,21 +509,20 @@ const BorrowForm = (props: BorrowProps) => {
                   >
                     Loan-to-value ratio{' '}
                   </a>
-                  measures the ratio of the debt, compared to the value of the
-                  collateral.
+                  after the requested changes to the loan are approved.
                 </span>
               }
-              title={
-                <span className={hAlign}>
-                  Loan-to-Value %
-                  <div className={questionIcon}>
-                    <QuestionIcon />
-                  </div>
-                </span>
+              value={
+                isFetchingData ? (
+                  <Skeleton.Button size="small" active />
+                ) : (
+                  fp((loanToValue + newAdditionalDebt / overallValue) * 100)
+                )
               }
+              isDisabled={userDebt == 0 ? true : false}
             />
             <HoneySlider
-              currentValue={0}
+              currentValue={sliderValue * 1.1}
               maxValue={overallValue}
               minAvailableValue={borrowedValue}
               maxSafePosition={0.3 - borrowedValue / 1000}
@@ -531,160 +531,49 @@ const BorrowForm = (props: BorrowProps) => {
               isReadonly
             />
           </div>
-          <div className={styles.col}>
-            <InfoBlock
-              title={
-                <span className={hAlign}>
-                  New LTV %
-                  <div className={questionIcon}>
-                    <QuestionIcon />
-                  </div>
-                </span>
-              }
-              toolTipLabel={
-                <span>
-                  New{' '}
-                  <a
-                    className={extLink}
-                    target="blank"
-                    href="https://docs.honey.finance/learn/defi-lending#loan-to-value-ratio"
-                  >
-                    Loan-to-value ratio{' '}
-                  </a>
-                  after the requested changes to the loan are approved.
-                </span>
-              }
-              value={
-                isFetchingData ? (
-                  <Skeleton.Button size="small" active />
-                ) : (
-                  fp((loanToValue + newAdditionalDebt / nftPrice) * 100)
-                )
-              }
-              isDisabled={userDebt == 0 ? true : false}
-            />
-            <HoneySlider
-              currentValue={sliderValue * 1.1}
-              maxValue={maxValue}
-              minAvailableValue={borrowedValue}
-              maxSafePosition={0.3 - borrowedValue / 1000}
-              dangerPosition={0.45 - borrowedValue / 1000}
-              maxAvailablePosition={MAX_LTV}
-              isReadonly
-            />
-          </div>
+        </div>
+
+        <div className={styles.row}>
+          <InfoBlock
+            title={
+              <span className={hAlign}>
+                Debt + fees{' '}
+                <div className={questionIcon}>
+                  <QuestionIcon />
+                </div>
+              </span>
+            }
+            toolTipLabel={
+              <span>
+                Estimated{' '}
+                <a
+                  className={extLink}
+                  target="blank"
+                  href="https://docs.honey.finance/learn/defi-lending#debt"
+                >
+                  debt{' '}
+                </a>
+                after the requested changes to the loan are approved.
+              </span>
+            }
+            value={
+              isFetchingData ? (
+                <Skeleton.Button size="small" active />
+              ) : (
+                fsn(newTotalDebt < 0 ? 0 : newTotalDebt)
+              )
+            }
+            isDisabled={userDebt == 0 ? true : false}
+          />
         </div>
 
         <div className={styles.row}>
           <div className={styles.col}>
             <InfoBlock
-              title={
-                <span className={hAlign}>
-                  Debt{' '}
-                  <div className={questionIcon}>
-                    <QuestionIcon />
-                  </div>
-                </span>
-              }
-              toolTipLabel={
-                <span>
-                  Value borrowed from the lending pool, upon which interest
-                  accrues.{' '}
-                  <a
-                    className={extLink}
-                    target="blank"
-                    href="https://docs.honey.finance/learn/defi-lending#debt"
-                  >
-                    Learn more.
-                  </a>
-                </span>
-              }
-              value={
-                isFetchingData ? (
-                  <Skeleton.Button size="small" active />
-                ) : (
-                  fsn(userDebt)
-                )
-              }
-            />
-          </div>
-          <div className={styles.col}>
-            <InfoBlock
-              title={
-                <span className={hAlign}>
-                  New debt + fees{' '}
-                  <div className={questionIcon}>
-                    <QuestionIcon />
-                  </div>
-                </span>
-              }
-              toolTipLabel={
-                <span>
-                  Estimated{' '}
-                  <a
-                    className={extLink}
-                    target="blank"
-                    href="https://docs.honey.finance/learn/defi-lending#debt"
-                  >
-                    debt{' '}
-                  </a>
-                  after the requested changes to the loan are approved.
-                </span>
-              }
-              value={
-                isFetchingData ? (
-                  <Skeleton.Button size="small" active />
-                ) : (
-                  fsn(newTotalDebt < 0 ? 0 : newTotalDebt)
-                )
-              }
-              isDisabled={userDebt == 0 ? true : false}
-            />
-          </div>
-        </div>
-
-        <div className={styles.row}>
-          <div className={styles.col}>
-            <InfoBlock
-              value={
-                isFetchingData ? (
-                  <Skeleton.Button size="small" active />
-                ) : (
-                  `${fsn(liquidationPrice)} ${
-                    userDebt ? `(-${liqPercent.toFixed(0)}%)` : ''
-                  }`
-                )
-              }
-              valueSize="normal"
               isDisabled={userDebt == 0 ? true : false}
               title={
                 <span className={hAlign}>
                   Liquidation price{' '}
-                  <div className={questionIcon}>
-                    <QuestionIcon />
-                  </div>
-                </span>
-              }
-              toolTipLabel={
-                <span>
-                  Price at which the position (NFT) will be liquidated.{' '}
-                  <a
-                    className={extLink}
-                    target="blank"
-                    href=" " //TODO: add link to docs
-                  >
-                    Learn more.
-                  </a>
-                </span>
-              }
-            />
-          </div>
-          <div className={styles.col}>
-            <InfoBlock
-              isDisabled={userDebt == 0 ? true : false}
-              title={
-                <span className={hAlign}>
-                  New Liquidation price{' '}
                   <div className={questionIcon}>
                     <QuestionIcon />
                   </div>

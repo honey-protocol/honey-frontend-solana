@@ -208,7 +208,7 @@ export const calculateRisk = async (
   }
 };
 
-async function configureCollectionObjecet(
+async function configureCollectionObject(
   origin: String,
   collection: any,
   dataObject: {
@@ -372,7 +372,7 @@ async function handleFormatMarket(
 
     if (allowanceAndDebt.allowance < 0) allowanceAndDebt.allowance = 0;
 
-    return await configureCollectionObjecet(origin, collection, {
+    return await configureCollectionObject(origin, collection, {
       allowance: allowanceAndDebt.allowance,
       userDebt: userDebt,
       ltv: allowanceAndDebt.ltv,

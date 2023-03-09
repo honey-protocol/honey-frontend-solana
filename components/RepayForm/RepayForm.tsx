@@ -20,6 +20,9 @@ import { renderMarketImageByID } from 'helpers/marketHelpers';
 import QuestionIcon from 'icons/QuestionIcon';
 import { Skeleton } from 'antd';
 import HoneyWarning from 'components/HoneyWarning/HoneyWarning';
+import { ConfigureSDK } from 'helpers/loanHelpers';
+import { useMarket } from '@honey-finance/sdk';
+import { PublicKey } from '@solana/web3.js';
 
 const {
   format: f,
@@ -49,10 +52,11 @@ const RepayForm = (props: RepayProps) => {
   // state
   const [valueUSD, setValueUSD] = useState<number>();
   const [valueSOL, setValueSOL] = useState<number>();
+  const [collateralCount, setCollateralCount] = useState(0);
   const [sliderValue, setSliderValue] = useState(0);
+  const [maxValue, setMaxValue] = useState(0);
   const { toast, ToastComponent } = useToast();
   // constants && calculations
-  const maxValue = userDebt != 0 ? userDebt : userAllowance;
   const solPrice = fetchedReservePrice;
   const liquidationThreshold = COLLATERAL_FACTOR;
   const SOLBalance = useSolBalance();
@@ -60,11 +64,21 @@ const RepayForm = (props: RepayProps) => {
   const borrowedValue = userDebt;
   const liquidationPrice = userDebt / liquidationThreshold;
   const newLiquidationPrice = newDebt / liquidationThreshold;
-  const liqPercent = nftPrice
-    ? ((nftPrice - liquidationPrice) / nftPrice) * 100
+  const [overallValue, setOverallValue] = useState(0);
+
+  useEffect(() => {
+    setMaxValue(userDebt != 0 ? userDebt : userAllowance * collateralCount);
+  }, [userDebt, userAllowance, collateralCount]);
+
+  useEffect(() => {
+    setOverallValue((nftPrice || 0) * openPositions?.length);
+  }, [nftPrice, openPositions]);
+
+  const liqPercent = overallValue
+    ? ((overallValue - liquidationPrice) / overallValue) * 100
     : 0;
-  const newLiqPercent = nftPrice
-    ? ((nftPrice - newLiquidationPrice) / nftPrice) * 100
+  const newLiqPercent = overallValue
+    ? ((overallValue - newLiquidationPrice) / overallValue) * 100
     : 0;
 
   // Put your validators here
@@ -118,6 +132,31 @@ const RepayForm = (props: RepayProps) => {
     }
   };
 
+  const sdkConfig = ConfigureSDK();
+  const { honeyUser, honeyMarket } = useMarket(
+    sdkConfig.saberHqConnection,
+    sdkConfig.sdkWallet,
+    sdkConfig.honeyId,
+    currentMarketId
+  );
+
+  useEffect(() => {
+    const updateCollateralCount = async () => {
+      if (honeyUser) {
+        const obligationData = await honeyUser.getObligationData();
+        if (obligationData instanceof Error) {
+          setCollateralCount(0);
+          return;
+        }
+        const collateralNftMint = obligationData.collateralNftMint.filter(
+          mint => !mint.equals(PublicKey.default)
+        );
+        setCollateralCount(collateralNftMint.length);
+      }
+    };
+    updateCollateralCount();
+  }, [honeyUser]);
+
   return (
     <SidebarScroll
       footer={
@@ -163,7 +202,10 @@ const RepayForm = (props: RepayProps) => {
               )}
             </HexaBoxContainer>
           </div>
-          <div className={styles.nftName}>{openPositions[0].name}</div>
+          <div className={styles.nftName}>
+            {openPositions[0].name}{' '}
+            {collateralCount > 1 && <span>+ {collateralCount - 1} more</span>}
+          </div>
         </div>
         <div className={styles.row}>
           <div className={styles.col}>
@@ -172,7 +214,7 @@ const RepayForm = (props: RepayProps) => {
                 isFetchingData ? (
                   <Skeleton.Button size="small" active />
                 ) : (
-                  fsn(nftPrice ?? 0)
+                  fsn(overallValue ?? 0)
                 )
               }
               valueSize="big"
@@ -205,7 +247,7 @@ const RepayForm = (props: RepayProps) => {
                 isFetchingData ? (
                   <Skeleton.Button size="small" active />
                 ) : (
-                  fsn(Number(frd(userAllowance)))
+                  fs(userAllowance)
                 )
               }
               title={
@@ -226,51 +268,9 @@ const RepayForm = (props: RepayProps) => {
         <div className={styles.row}>
           <div className={styles.col}>
             <InfoBlock
-              value={
-                isFetchingData ? (
-                  <Skeleton.Button size="small" active />
-                ) : (
-                  fp(loanToValue * 100)
-                )
-              }
-              toolTipLabel={
-                <span>
-                  <a
-                    className={extLink}
-                    target="blank"
-                    href="https://docs.honey.finance/learn/defi-lending#loan-to-value-ratio"
-                  >
-                    Loan-to-value ratio{' '}
-                  </a>
-                  measures the ratio of the debt, compared to the value of the
-                  collateral.
-                </span>
-              }
               title={
                 <span className={hAlign}>
-                  Loan-to-Value %
-                  <div className={questionIcon}>
-                    <QuestionIcon />
-                  </div>
-                </span>
-              }
-            />
-
-            <HoneySlider
-              currentValue={0}
-              maxValue={nftPrice || 0}
-              minAvailableValue={borrowedValue}
-              maxSafePosition={0.3 - borrowedValue / 1000}
-              dangerPosition={0.45 - borrowedValue / 1000}
-              maxAvailablePosition={MAX_LTV}
-              isReadonly
-            />
-          </div>
-          <div className={styles.col}>
-            <InfoBlock
-              title={
-                <span className={hAlign}>
-                  New LTV %
+                  LTV %
                   <div className={questionIcon}>
                     <QuestionIcon />
                   </div>
@@ -279,14 +279,16 @@ const RepayForm = (props: RepayProps) => {
               value={
                 isFetchingData ? (
                   <Skeleton.Button size="small" active />
+                ) : overallValue == 0 ? (
+                  fp(0)
                 ) : (
-                  fp((newDebt / (nftPrice || 0)) * 100)
+                  fp((newDebt / overallValue) * 100)
                 )
               }
               isDisabled={userDebt == 0 ? true : false}
               toolTipLabel={
                 <span>
-                  New{' '}
+                  {' '}
                   <a
                     className={extLink}
                     target="blank"
@@ -301,7 +303,7 @@ const RepayForm = (props: RepayProps) => {
 
             <HoneySlider
               currentValue={0}
-              maxValue={nftPrice || 0}
+              maxValue={overallValue || 0}
               minAvailableValue={newDebt}
               maxSafePosition={0.3 - borrowedValue / 1000}
               dangerPosition={0.45 - borrowedValue / 1000}
@@ -317,38 +319,6 @@ const RepayForm = (props: RepayProps) => {
               title={
                 <span className={hAlign}>
                   Debt
-                  <div className={questionIcon}>
-                    <QuestionIcon />
-                  </div>
-                </span>
-              }
-              value={
-                isFetchingData ? (
-                  <Skeleton.Button size="small" active />
-                ) : (
-                  fsn(userDebt)
-                )
-              }
-              toolTipLabel={
-                <span>
-                  Value borrowed from the lending pool, upon which interest
-                  accrues.{' '}
-                  <a
-                    className={extLink}
-                    target="blank"
-                    href="https://docs.honey.finance/learn/defi-lending#debt"
-                  >
-                    Learn more.
-                  </a>
-                </span>
-              }
-            />
-          </div>
-          <div className={styles.col}>
-            <InfoBlock
-              title={
-                <span className={hAlign}>
-                  New debt
                   <div className={questionIcon}>
                     <QuestionIcon />
                   </div>
@@ -382,45 +352,10 @@ const RepayForm = (props: RepayProps) => {
         <div className={styles.row}>
           <div className={styles.col}>
             <InfoBlock
-              value={
-                isFetchingData ? (
-                  <Skeleton.Button size="small" active />
-                ) : (
-                  `${fsn(liquidationPrice)} ${
-                    userDebt ? `(-${liqPercent.toFixed(0)}%)` : ''
-                  }`
-                )
-              }
-              valueSize="normal"
               isDisabled={userDebt == 0 ? true : false}
               title={
                 <span className={hAlign}>
                   Liquidation price{' '}
-                  <div className={questionIcon}>
-                    <QuestionIcon />
-                  </div>
-                </span>
-              }
-              toolTipLabel={
-                <span>
-                  Price at which the position (NFT) will be liquidated.{' '}
-                  <a
-                    className={extLink}
-                    target="blank"
-                    href=" " //TODO: add link to docs
-                  >
-                    Learn more.
-                  </a>
-                </span>
-              }
-            />
-          </div>
-          <div className={styles.col}>
-            <InfoBlock
-              isDisabled={userDebt == 0 ? true : false}
-              title={
-                <span className={hAlign}>
-                  New Liquidation price{' '}
                   <div className={questionIcon}>
                     <QuestionIcon />
                   </div>
