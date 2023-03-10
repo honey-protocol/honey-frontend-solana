@@ -118,6 +118,8 @@ const RepayForm = (props: RepayProps) => {
     }
   };
 
+  const cloudinary_uri = process.env.CLOUDINARY_URI;
+
   return (
     <SidebarScroll
       footer={
@@ -154,7 +156,7 @@ const RepayForm = (props: RepayProps) => {
             <HexaBoxContainer>
               {openPositions.length ? (
                 <Image
-                  src={openPositions[0].image}
+                  src={`https://res.cloudinary.com/${cloudinary_uri}/image/fetch/${openPositions[0].image}`}
                   alt="Honey NFT image"
                   layout="fill"
                 />

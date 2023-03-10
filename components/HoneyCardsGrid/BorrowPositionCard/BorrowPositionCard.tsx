@@ -13,6 +13,7 @@ import { MAX_LTV } from '../../../constants/loan';
 import { COLLATERAL_FACTOR } from 'helpers/marketHelpers';
 
 const { formatUsd: fu, formatPercent: fp } = formatNumber;
+const cloudinary_uri = process.env.CLOUDINARY_URI;
 
 export const BorrowPositionCard: FC<BorrowPositionCardProps> = ({
   position,
@@ -26,7 +27,12 @@ export const BorrowPositionCard: FC<BorrowPositionCardProps> = ({
     >
       <div className={styles.collectionIcon}>
         <HexaBoxContainer>
-          <Image width={46} height={46} src={position.imageUrl} />
+          <Image
+            width={46}
+            height={46}
+            src={`https://res.cloudinary.com/${cloudinary_uri}/image/fetch/${position.imageUrl}`}
+            alt=""
+          />
         </HexaBoxContainer>
       </div>
       <div className={styles.positionName}>

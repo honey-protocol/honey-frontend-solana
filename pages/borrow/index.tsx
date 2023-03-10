@@ -290,6 +290,8 @@ const Markets: NextPage = ({ res }: { res: any }) => {
   const [showWeeklyRates, setShowWeeklyRates] = useState(true);
   const [initState, setInitState] = useState(false);
 
+  const cloudinary_uri = process.env.CLOUDINARY_URI;
+
   /**
    * @description fetches all nfts in users wallet
    * @params wallet
@@ -842,7 +844,10 @@ const Markets: NextPage = ({ res }: { res: any }) => {
               <HexaBoxContainer>
                 {
                   <Image
-                    src={record.image ? record.image : ''}
+                    src={
+                      `https://res.cloudinary.com/${cloudinary_uri}/image/fetch/${record.image}` ??
+                      ''
+                    }
                     alt=""
                     layout="fill"
                   />

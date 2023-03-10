@@ -10,6 +10,8 @@ import { noop } from 'lodash';
 
 const { Text } = Typography;
 
+const cloudinary_uri = process.env.CLOUDINARY_URI;
+
 export const P2PNftCard: FC<P2PNftCardProps> = ({
   name,
   verified,
@@ -26,7 +28,10 @@ export const P2PNftCard: FC<P2PNftCardProps> = ({
     >
       <div className={styles.img}>
         <Image
-          src={imageUrl || honeyGenesisBee}
+          src={
+            `https://res.cloudinary.com/${cloudinary_uri}/image/fetch/${imageUrl}` ??
+            `${honeyGenesisBee}`
+          }
           alt={`${name}`}
           layout="fill"
         />

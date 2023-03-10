@@ -28,6 +28,7 @@ import { onSailError } from 'helpers/error';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { getPlatformFeeAccounts, JupiterProvider } from '@jup-ag/react-hook';
 export const network = (process.env.NETWORK as Network) || 'mainnet-beta';
+
 import {
   HONEY_GENESIS_MARKET_ID,
   HONEY_PROGRAM_ID
