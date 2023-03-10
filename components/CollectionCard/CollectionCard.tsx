@@ -13,6 +13,8 @@ import c from 'classnames';
 const { Text } = Typography;
 const { format: f, formatSol: fs } = formatNumber;
 
+const cloudinary_uri = process.env.CLOUDINARY_URI;
+
 export const CollectionCard: FC<CollectionCardProps> = ({
   tag,
   name,
@@ -33,7 +35,10 @@ export const CollectionCard: FC<CollectionCardProps> = ({
       <div className={styles.blur}>
         <div className={styles.iconBlur}>
           <Image
-            src={imageUrl || honeyGenesisBee}
+            src={
+              `https://res.cloudinary.com/${cloudinary_uri}/image/fetch/${imageUrl}` ||
+              honeyGenesisBee
+            }
             alt={`${name}`}
             layout="fill"
           />
@@ -41,7 +46,11 @@ export const CollectionCard: FC<CollectionCardProps> = ({
         <div className={styles.icon}>
           <HexaBoxContainer>
             <Image
-              src={imageUrl || honeyGenesisBee}
+              // TODO: validate backup and place in each render / collection
+              src={
+                `https://res.cloudinary.com/${cloudinary_uri}/image/fetch/${imageUrl}` ||
+                honeyGenesisBee
+              }
               alt={`${name}`}
               layout="fill"
             />

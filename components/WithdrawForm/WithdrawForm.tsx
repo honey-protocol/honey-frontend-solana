@@ -120,6 +120,19 @@ const WithdrawForm = (props: WithdrawFormProps) => {
           </div>
         </div>
         <div className={styles.row}>
+          <div className={styles.col}>
+            <InfoBlock
+              value={
+                isFetchingData ? (
+                  <Skeleton.Button size="small" active />
+                ) : (
+                  fs(userTotalDeposits)
+                )
+              }
+              valueSize="big"
+              footer={<span>Your Deposits</span>}
+            />
+          </div>
           <HoneyWarning
             message="To learn more about the risks of lending, make sure to explore our Protocol Risk documentation"
             link="https://docs.honey.finance/lending-protocol/risk/protocol-risks"

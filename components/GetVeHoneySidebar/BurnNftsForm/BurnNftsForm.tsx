@@ -18,6 +18,7 @@ import useToast from 'hooks/useToast';
 import { ProofType } from 'contexts/GovernanceProvider';
 
 const { format: f, formatPercent: fp, formatUsd: fu } = formatNumber;
+const cloudinary_uri = process.env.CLOUDINARY_URI;
 
 interface ListItemProps {
   name: string;
@@ -41,7 +42,15 @@ const ListItem: FC<ListItemProps> = ({
       <div className={styles.listItemLeft}>
         <div className={styles.listItemIcon}>
           <HexaBoxContainer>
-            <Image src={image ?? honeyGenesisBee} width={40} height={40} />
+            <Image
+              src={
+                `https://res.cloudinary.com/${cloudinary_uri}/image/fetch/${image}` ??
+                honeyGenesisBee
+              }
+              width={40}
+              height={40}
+              alt=""
+            />
           </HexaBoxContainer>
         </div>
 
