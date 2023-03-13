@@ -18,7 +18,7 @@ import { MAX_LTV } from 'constants/loan';
 import { COLLATERAL_FACTOR } from 'helpers/marketHelpers';
 import { renderMarketImageByID } from 'helpers/marketHelpers';
 import QuestionIcon from 'icons/QuestionIcon';
-import { Skeleton } from 'antd';
+import { Skeleton, Space } from 'antd';
 import HoneyWarning from 'components/HoneyWarning/HoneyWarning';
 import { ConfigureSDK } from 'helpers/loanHelpers';
 import { useMarket } from '@honey-finance/sdk';
@@ -164,25 +164,31 @@ const RepayForm = (props: RepayProps) => {
           {toast?.state ? (
             ToastComponent
           ) : (
-            <div className={styles.buttons}>
-              <div className={styles.smallCol}>
-                <HoneyButton variant="secondary" onClick={hideMobileSidebar}>
-                  Cancel
-                </HoneyButton>
+            <Space direction="vertical">
+              {userDebt == 0 && !toast.state && (
+                <HoneyWarning message="Your have no outstanding debt. You can claim your collateral" />
+              )}
+
+              <div className={styles.buttons}>
+                <div className={styles.smallCol}>
+                  <HoneyButton variant="secondary" onClick={hideMobileSidebar}>
+                    Cancel
+                  </HoneyButton>
+                </div>
+                <div className={styles.bigCol}>
+                  <HoneyButton
+                    variant="primary"
+                    solAmount={userDebt > 0 ? valueSOL || 0 : undefined}
+                    usdcValue={userDebt > 0 ? valueUSD || 0 : undefined}
+                    disabled={isRepayButtonDisabled()}
+                    block
+                    onClick={onRepay}
+                  >
+                    {userDebt > 0 ? 'Repay' : 'Claim NFT'}
+                  </HoneyButton>
+                </div>
               </div>
-              <div className={styles.bigCol}>
-                <HoneyButton
-                  variant="primary"
-                  solAmount={userDebt > 0 ? valueSOL || 0 : undefined}
-                  usdcValue={userDebt > 0 ? valueUSD || 0 : undefined}
-                  disabled={isRepayButtonDisabled()}
-                  block
-                  onClick={onRepay}
-                >
-                  {userDebt > 0 ? 'Repay' : 'Claim NFT'}
-                </HoneyButton>
-              </div>
-            </div>
+            </Space>
           )}
         </>
       }
@@ -347,9 +353,6 @@ const RepayForm = (props: RepayProps) => {
               }
             />
           </div>
-        </div>
-
-        <div className={styles.row}>
           <div className={styles.col}>
             <InfoBlock
               isDisabled={userDebt == 0 ? true : false}
@@ -425,15 +428,13 @@ const RepayForm = (props: RepayProps) => {
             />
           )}
         </div>
-        {userDebt !== 0 ? (
+        {userDebt !== 0 && (
           <HoneySlider
             currentValue={sliderValue}
             maxValue={maxValue}
             minAvailableValue={0}
             onChange={handleSliderChange}
           />
-        ) : (
-          <HoneyWarning message="Your have no outstanding debt. You can claim your collateral" />
         )}
       </div>
     </SidebarScroll>

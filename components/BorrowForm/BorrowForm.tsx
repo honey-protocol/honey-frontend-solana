@@ -534,40 +534,39 @@ const BorrowForm = (props: BorrowProps) => {
         </div>
 
         <div className={styles.row}>
-          <InfoBlock
-            title={
-              <span className={hAlign}>
-                Debt + fees{' '}
-                <div className={questionIcon}>
-                  <QuestionIcon />
-                </div>
-              </span>
-            }
-            toolTipLabel={
-              <span>
-                Estimated{' '}
-                <a
-                  className={extLink}
-                  target="blank"
-                  href="https://docs.honey.finance/learn/defi-lending#debt"
-                >
-                  debt{' '}
-                </a>
-                after the requested changes to the loan are approved.
-              </span>
-            }
-            value={
-              isFetchingData ? (
-                <Skeleton.Button size="small" active />
-              ) : (
-                fsn(newTotalDebt < 0 ? 0 : newTotalDebt)
-              )
-            }
-            isDisabled={userDebt == 0 ? true : false}
-          />
-        </div>
-
-        <div className={styles.row}>
+          <div className={styles.col}>
+            <InfoBlock
+              title={
+                <span className={hAlign}>
+                  Debt + fees{' '}
+                  <div className={questionIcon}>
+                    <QuestionIcon />
+                  </div>
+                </span>
+              }
+              toolTipLabel={
+                <span>
+                  Estimated{' '}
+                  <a
+                    className={extLink}
+                    target="blank"
+                    href="https://docs.honey.finance/learn/defi-lending#debt"
+                  >
+                    debt{' '}
+                  </a>
+                  after the requested changes to the loan are approved.
+                </span>
+              }
+              value={
+                isFetchingData ? (
+                  <Skeleton.Button size="small" active />
+                ) : (
+                  fsn(newTotalDebt < 0 ? 0 : newTotalDebt)
+                )
+              }
+              isDisabled={userDebt == 0 ? true : false}
+            />
+          </div>
           <div className={styles.col}>
             <InfoBlock
               isDisabled={userDebt == 0 ? true : false}
