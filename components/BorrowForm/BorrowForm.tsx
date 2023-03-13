@@ -30,6 +30,7 @@ import NFTSelectListItem from 'components/NFTSelectListItem/NFTSelectListItem';
 import { Skeleton } from 'antd';
 import { useMarket } from '@honey-finance/sdk';
 import { PublicKey } from '@solana/web3.js';
+import HoneyWarning from 'components/HoneyWarning/HoneyWarning';
 const {
   formatPercent: fp,
   formatSol: fs,
@@ -357,6 +358,9 @@ const BorrowForm = (props: BorrowProps) => {
             </div>
             <div className={styles.cancelIcon} />
           </div>
+          <div style={{marginBottom: "14px"}}>
+            <HoneyWarning message="You can only add one collateral at a time." />
+          </div>
           <HoneyButtonTabs
             items={[
               {
@@ -364,7 +368,7 @@ const BorrowForm = (props: BorrowProps) => {
                 slug: 'collateral'
               },
               {
-                name: 'New collateral ',
+                name: 'Add collateral ',
                 slug: 'new_collateral'
               }
             ]}
@@ -443,7 +447,7 @@ const BorrowForm = (props: BorrowProps) => {
               valueSize="big"
               title={
                 <span className={hAlign}>
-                  Estimated value{' '}
+                  Collateral value{' '}
                   <div className={questionIcon}>
                     <QuestionIcon />
                   </div>
@@ -476,7 +480,7 @@ const BorrowForm = (props: BorrowProps) => {
               // value={fs(Number(frd(userAllowance)))}
               title={
                 <span className={hAlign}>
-                  Allowance{' '}
+                  Total allowance{' '}
                   <div className={questionIcon}>
                     <QuestionIcon />
                   </div>
@@ -494,7 +498,7 @@ const BorrowForm = (props: BorrowProps) => {
             <InfoBlock
               title={
                 <span className={hAlign}>
-                  LTV %
+                  Loan-to-Value %
                   <div className={questionIcon}>
                     <QuestionIcon />
                   </div>
@@ -660,9 +664,9 @@ const BorrowForm = (props: BorrowProps) => {
                   <span>
                     Borrow Fee is a{' '}
                     <a className={extLink} target="blank" href=" ">
-                      protocol fee{' '}
+                      comission{' '}
                     </a>
-                    that is charged upon borrowing. For now it is set at 0,00%.
+                    that is charged upon borrowing. You will be charged 1,5% 
                   </span>
                 }
               ></InfoBlock>

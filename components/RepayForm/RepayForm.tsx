@@ -226,7 +226,7 @@ const RepayForm = (props: RepayProps) => {
               valueSize="big"
               title={
                 <span className={hAlign}>
-                  Estimated value{' '}
+                  Collateral value{' '}
                   <div className={questionIcon}>
                     <QuestionIcon />
                   </div>
@@ -258,7 +258,7 @@ const RepayForm = (props: RepayProps) => {
               }
               title={
                 <span className={hAlign}>
-                  Allowance{' '}
+                  Total allowance{' '}
                   <div className={questionIcon}>
                     <QuestionIcon />
                   </div>
@@ -276,7 +276,7 @@ const RepayForm = (props: RepayProps) => {
             <InfoBlock
               title={
                 <span className={hAlign}>
-                  LTV %
+                  Loan-to-Value %
                   <div className={questionIcon}>
                     <QuestionIcon />
                   </div>
