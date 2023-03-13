@@ -937,24 +937,6 @@
   dependencies:
     client-only "^0.0.1"
 
-"@honey-finance/sdk@https://github.com/honey-protocol/honey-sdk#726a6010f125db374e15e70af5941b957c1d9584":
-  version "1.1.107"
-  resolved "https://github.com/honey-protocol/honey-sdk#726a6010f125db374e15e70af5941b957c1d9584"
-  dependencies:
-    "@metaplex-foundation/mpl-token-auth-rules" "^1.0.0"
-    "@metaplex-foundation/mpl-token-metadata" "^2.7.0"
-    "@project-serum/anchor" "^0.26.0"
-    "@project-serum/serum" "^0.13.61"
-    "@pythnetwork/client" "^2.5.3"
-    "@rollup/plugin-commonjs" "^21.1.0"
-    "@solana/buffer-layout" "^4.0.0"
-    "@solana/spl-token" "^0.3.7"
-    "@solana/web3.js" "^1.73.3"
-    "@switchboard-xyz/switchboard-v2" "^0.0.127"
-    "@types/chai" "^4.3.0"
-    "@types/chai-as-promised" "^7.1.5"
-    "@types/mocha" "^9.1.0"
-
 "@honey-finance/sdk@https://github.com/honey-protocol/honey-sdk#b4c3896eb2f86620c4c5ed002dde2460dfe8d848":
   version "1.1.107"
   resolved "https://github.com/honey-protocol/honey-sdk#b4c3896eb2f86620c4c5ed002dde2460dfe8d848"
