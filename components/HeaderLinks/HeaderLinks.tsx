@@ -44,11 +44,11 @@ export const links: MenuLink[] = [
   },
   {
     title: 'GOVERNANCE',
-    href: 'https://governance.honey.finance/'
+    href: 'https://governance.honey.finance'
   },
   {
     title: 'FARM',
-    href: 'https://farms.honey.finance/'
+    href: 'https://farms.honey.finance'
   },
   {
     title: 'DOCUMENTATION',
