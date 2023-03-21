@@ -43,20 +43,20 @@ export const links: MenuLink[] = [
     href: '/swap'
   },
   {
-    title: 'GOVERNANCE',
-    href: '/governance'
-  },
-  {
-    title: 'FARM',
-    href: '/farm'
-  },
-  {
     title: 'DOCUMENTATION',
     href: 'https://docs.honey.finance'
   },
   {
     title: 'FEEDBACK',
     href: 'https://feedback.honey.finance'
+  },
+  {
+    title: 'GOVERNANCE',
+    href: 'https://governance.honey.finance/'
+  },
+  {
+    title: 'FARM',
+    href: 'https://farms.honey.finance/'
   },
   {
     title: 'BLOG',
