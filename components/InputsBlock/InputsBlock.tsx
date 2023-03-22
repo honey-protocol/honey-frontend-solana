@@ -29,7 +29,7 @@ export const InputsBlock: FC<InputsBlockProps> = ({
   maxValue = Infinity,
   delimiterIcon = (
     <div className={styles.delimiterIcon}>
-      <Image src={EqualIcon} />
+      <Image src={EqualIcon} alt="" />
     </div>
   ),
   firstInputAddon = (

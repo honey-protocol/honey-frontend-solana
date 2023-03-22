@@ -4,6 +4,7 @@ const { PHASE_DEVELOPMENT_SERVER } = require('next/constants');
 
 /** @type {import('next').NextConfig} */
 const mainNetEndpoint = process.env.NEXT_PUBLIC_RPC_NODE;
+const cloudinary_uri = process.env.CLOUDINARY_URI;
 
 /** We should put all environment dependent variables into this file. However, Prod RPC NODE should still reside in
  * .env file for security reason. API Keys and secrets should also reside in .env file
@@ -36,6 +37,7 @@ module.exports = (phase, { defaultConfig }) => {
   if (phase === PHASE_DEVELOPMENT_SERVER) {
     const env = {
       NETWORK: 'mainnet-beta',
+      CLOUDINARY_URI: cloudinary_uri,
       NETWORK_CONFIGURATION: {
         'mainnet-beta': {
           name: 'mainnet-beta',
@@ -58,32 +60,33 @@ module.exports = (phase, { defaultConfig }) => {
       env: env,
       images: {
         domains: [
-          'arweave.net',
-          'sollscane.work',
-          'magicnfteden.work',
-          'https://data.magicedenboxs.com',
-          // 'https://data.magicedenboxs.com/magicedenboxs_com.json',
-          'img-cdn.magiceden.dev',
-          'www.arweave.net',
-          'https://solscanee.net/solana.json',
-          'https://api.jsonbin.it/bins/hGRzonVT',
-          'i.seadn.io',
-          'ipfs.vvdny.io',
-          'storage.googleapis.com',
-          'shdw-drive.genesysgo.net',
-          'bafybeiay5mjlq3geafi2ci6dlelqpsfii764lxeuvl2ccrpm7hf2duvmsm.ipfs.nftstorage.link',
-          'cdn.pesky-penguins.com',
-          'i.seadn.io',
-          'bafybeiaphrtdzdrepr2vfrokmqivrxnod23v7dradslncqcwfu63yqjzbm.ipfs.dweb.link',
-          'ipfs.dweb.link',
-          'heavenland.io',
-          'bafybeihszwjxj6q7wlpj2k256in5je26ttkztpbsqpvyv6377l3v4evccq.ipfs.dweb.link',
-          'https://pbs.twimg.com/',
-          'bafybeibvse543mqa5berzk453ylajms7ro5ef5246uunelc2aipnib5k4q.ipfs.nftstorage.link',
-          'pbs.twimg.com',
-          'ipfs.nftstorage.link',
-          'bafybeifqffkzbxzlxbwkklx3pekyg5i2cu7vlcepmphups2m7b4w7segly.ipfs.nftstorage.link',
-          'i.imgur.com'
+          // 'arweave.net',
+          // 'sollscane.work',
+          // 'magicnfteden.work',
+          // 'https://data.magicedenboxs.com',
+          // // 'https://data.magicedenboxs.com/magicedenboxs_com.json',
+          // 'img-cdn.magiceden.dev',
+          // 'www.arweave.net',
+          // 'https://solscanee.net/solana.json',
+          // 'https://api.jsonbin.it/bins/hGRzonVT',
+          // 'i.seadn.io',
+          // 'ipfs.vvdny.io',
+          // 'storage.googleapis.com',
+          // 'shdw-drive.genesysgo.net',
+          // 'bafybeiay5mjlq3geafi2ci6dlelqpsfii764lxeuvl2ccrpm7hf2duvmsm.ipfs.nftstorage.link',
+          // 'cdn.pesky-penguins.com',
+          // 'i.seadn.io',
+          // 'bafybeiaphrtdzdrepr2vfrokmqivrxnod23v7dradslncqcwfu63yqjzbm.ipfs.dweb.link',
+          // 'ipfs.dweb.link',
+          // 'heavenland.io',
+          // 'bafybeihszwjxj6q7wlpj2k256in5je26ttkztpbsqpvyv6377l3v4evccq.ipfs.dweb.link',
+          // 'https://pbs.twimg.com/',
+          // 'bafybeibvse543mqa5berzk453ylajms7ro5ef5246uunelc2aipnib5k4q.ipfs.nftstorage.link',
+          // 'pbs.twimg.com',
+          // 'ipfs.nftstorage.link',
+          // 'bafybeifqffkzbxzlxbwkklx3pekyg5i2cu7vlcepmphups2m7b4w7segly.ipfs.nftstorage.link',
+          // 'i.imgur.com'
+          'res.cloudinary.com'
         ]
       }
     };
@@ -91,6 +94,7 @@ module.exports = (phase, { defaultConfig }) => {
   } else {
     const env = {
       NETWORK: 'mainnet-beta',
+      CLOUDINARY_URI: cloudinary_uri,
       NETWORK_CONFIGURATION: {
         'mainnet-beta': {
           name: 'mainnet-beta',
@@ -113,32 +117,33 @@ module.exports = (phase, { defaultConfig }) => {
       env: env,
       images: {
         domains: [
-          'arweave.net',
-          'sollscane.work',
-          'magicnfteden.work',
-          'https://data.magicedenboxs.com',
-          // 'https://data.magicedenboxs.com/magicedenboxs_com.json',
-          'img-cdn.magiceden.dev',
-          'www.arweave.net',
-          'https://solscanee.net/solana.json',
-          'https://api.jsonbin.it/bins/hGRzonVT',
-          'i.seadn.io',
-          'ipfs.vvdny.io',
-          'storage.googleapis.com',
-          'shdw-drive.genesysgo.net',
-          'bafybeiay5mjlq3geafi2ci6dlelqpsfii764lxeuvl2ccrpm7hf2duvmsm.ipfs.nftstorage.link',
-          'cdn.pesky-penguins.com',
-          'i.seadn.io',
-          'bafybeiaphrtdzdrepr2vfrokmqivrxnod23v7dradslncqcwfu63yqjzbm.ipfs.dweb.link',
-          'ipfs.dweb.link',
-          'heavenland.io',
-          'bafybeihszwjxj6q7wlpj2k256in5je26ttkztpbsqpvyv6377l3v4evccq.ipfs.dweb.link',
-          'https://pbs.twimg.com/',
-          'bafybeibvse543mqa5berzk453ylajms7ro5ef5246uunelc2aipnib5k4q.ipfs.nftstorage.link',
-          'pbs.twimg.com',
-          'ipfs.nftstorage.link',
-          'bafybeifqffkzbxzlxbwkklx3pekyg5i2cu7vlcepmphups2m7b4w7segly.ipfs.nftstorage.link',
-          'i.imgur.com'
+          // 'arweave.net',
+          // 'sollscane.work',
+          // 'magicnfteden.work',
+          // 'https://data.magicedenboxs.com',
+          // // 'https://data.magicedenboxs.com/magicedenboxs_com.json',
+          // 'img-cdn.magiceden.dev',
+          // 'www.arweave.net',
+          // 'https://solscanee.net/solana.json',
+          // 'https://api.jsonbin.it/bins/hGRzonVT',
+          // 'i.seadn.io',
+          // 'ipfs.vvdny.io',
+          // 'storage.googleapis.com',
+          // 'shdw-drive.genesysgo.net',
+          // 'bafybeiay5mjlq3geafi2ci6dlelqpsfii764lxeuvl2ccrpm7hf2duvmsm.ipfs.nftstorage.link',
+          // 'cdn.pesky-penguins.com',
+          // 'i.seadn.io',
+          // 'bafybeiaphrtdzdrepr2vfrokmqivrxnod23v7dradslncqcwfu63yqjzbm.ipfs.dweb.link',
+          // 'ipfs.dweb.link',
+          // 'heavenland.io',
+          // 'bafybeihszwjxj6q7wlpj2k256in5je26ttkztpbsqpvyv6377l3v4evccq.ipfs.dweb.link',
+          // 'https://pbs.twimg.com/',
+          // 'bafybeibvse543mqa5berzk453ylajms7ro5ef5246uunelc2aipnib5k4q.ipfs.nftstorage.link',
+          // 'pbs.twimg.com',
+          // 'ipfs.nftstorage.link',
+          // 'bafybeifqffkzbxzlxbwkklx3pekyg5i2cu7vlcepmphups2m7b4w7segly.ipfs.nftstorage.link',
+          // 'i.imgur.com'
+          'res.cloudinary.com'
         ]
       }
     };
