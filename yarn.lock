@@ -937,9 +937,9 @@
   dependencies:
     client-only "^0.0.1"
 
-"@honey-finance/sdk@https://github.com/honey-protocol/honey-sdk#ece61b39834e62fe9e4330d4c2a0c6fd00a25782":
-  version "1.1.107"
-  resolved "https://github.com/honey-protocol/honey-sdk#ece61b39834e62fe9e4330d4c2a0c6fd00a25782"
+"@honey-finance/sdk@https://github.com/honey-protocol/honey-sdk#28f7dabca4e00803d92ac8486624e3985f671d99":
+  version "1.1.122"
+  resolved "https://github.com/honey-protocol/honey-sdk#28f7dabca4e00803d92ac8486624e3985f671d99"
   dependencies:
     "@metaplex-foundation/mpl-token-auth-rules" "^1.0.0"
     "@metaplex-foundation/mpl-token-metadata" "^2.7.0"
