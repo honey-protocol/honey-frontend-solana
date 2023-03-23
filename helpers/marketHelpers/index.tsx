@@ -342,7 +342,10 @@ export const BORROW_FEE = 0.015; // Flagging min interest rate as fee
 export const HONEY_GENESIS_MARKET_ID =
   'ACv7BxtW7QzvFyLtmxtB8xZBQrfHAyTAjdCZ3q4QEowF';
 export const HONEY_GENESIS_BEE_MARKET_NAME = 'Honey Genesis Bee';
-export const HONEY_PROGRAM_ID = 'AoaqbAiwMVK12MQHkRi7p5aemc1CQ271JyuyeHzXonXu';
+// swap to TEST_HONEY_PROGRAM_ID for test program on mainnet, for development of new features
+export const HONEY_PROGRAM_ID = 'hNEYyRsRBVq2La65V1KjvdbTE39w36gwrdjkmcpvysk';
+export const TEST_HONEY_PROGRAM_ID =
+  'AoaqbAiwMVK12MQHkRi7p5aemc1CQ271JyuyeHzXonXu';
 
 // import image from next
 import Image from 'next/image';

@@ -23,15 +23,12 @@ import { formatNumber } from '../../helpers/format';
 import { LiquidateTableRow } from '../../types/liquidate';
 import { LiquidateExpandTable } from '../../components/LiquidateExpandTable/LiquidateExpandTable';
 import { RoundHalfDown } from 'helpers/utils';
-import { getOraclePrice } from '../../helpers/loanHelpers/index';
-import BN from 'bn.js';
 import {
   useAnchor,
   LiquidatorClient,
   useAllPositions,
   useHoney,
   useMarket,
-  NftPosition,
   fetchAllMarkets,
   MarketBundle,
   HoneyMarket,
@@ -45,6 +42,7 @@ import { useConnectedWallet } from '@saberhq/use-solana';
 import { Connection, LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js';
 import {
   HONEY_PROGRAM_ID,
+  TEST_HONEY_PROGRAM_ID,
   HONEY_GENESIS_MARKET_ID,
   COLLATERAL_FACTOR,
   marketIDs,
@@ -204,7 +202,6 @@ const Liquidate: NextPage = ({ res }: { res: any }) => {
   const wallet = useConnectedWallet() || null;
   let stringyfiedWalletPK = sdkConfig.sdkWallet?.publicKey.toString();
   let walletPK = sdkConfig.sdkWallet?.publicKey;
-  const TEST_HONEY_PROGRAM_ID = 'AoaqbAiwMVK12MQHkRi7p5aemc1CQ271JyuyeHzXonXu';
   //  ************* START HOOKS *************
   /**
    * @description fetches open nft positions
@@ -418,7 +415,7 @@ const Liquidate: NextPage = ({ res }: { res: any }) => {
     try {
       const liquidatorClient = await LiquidatorClient.connect(
         program.provider,
-        TEST_HONEY_PROGRAM_ID
+        HONEY_PROGRAM_ID
       );
       if (wallet) {
         if (type == 'revoke_bid') {

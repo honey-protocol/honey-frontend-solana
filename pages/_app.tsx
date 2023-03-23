@@ -39,8 +39,6 @@ import { HoneyIcon } from 'icons/HoneyIcon';
 // top level function that injects the app with a new market ID - being called from pages where interaction with markets is possible. Currently: borrow | lend | liquidate
 // export const setMarketId = (marketID: string) => marketID;
 
-const TEST_HONEY_PROGRAM_ID = 'AoaqbAiwMVK12MQHkRi7p5aemc1CQ271JyuyeHzXonXu';
-
 const networkConfiguration = () => {
   if (process.env.NETWORK_CONFIGURATION) {
     return process.env.NETWORK_CONFIGURATION as PartialNetworkConfigMap;
@@ -61,12 +59,12 @@ const OnChainProvider: FC<{ children: ReactNode }> = ({ children }) => {
       wallet={wallet}
       connection={connection}
       network={network}
-      honeyProgram={TEST_HONEY_PROGRAM_ID}
+      honeyProgram={HONEY_PROGRAM_ID}
     >
       <HoneyProvider
         wallet={wallet}
         connection={connection}
-        honeyProgramId={TEST_HONEY_PROGRAM_ID}
+        honeyProgramId={HONEY_PROGRAM_ID}
         honeyMarketId={HONEY_GENESIS_MARKET_ID}
       >
         {children}
