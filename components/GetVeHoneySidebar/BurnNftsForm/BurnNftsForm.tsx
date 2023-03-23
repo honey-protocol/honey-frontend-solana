@@ -19,6 +19,54 @@ import { ProofType } from 'contexts/GovernanceProvider';
 import NFTSelectListItem from 'components/NFTSelectListItem/NFTSelectListItem';
 
 const { format: f, formatPercent: fp, formatUsd: fu } = formatNumber;
+const cloudinary_uri = process.env.CLOUDINARY_URI;
+
+interface ListItemProps {
+  name: string;
+  value: string;
+  image?: string;
+  id: string;
+  isSelected: boolean;
+  onChange: (event: CheckboxChangeEvent, id: string) => void;
+}
+
+const ListItem: FC<ListItemProps> = ({
+  name,
+  value,
+  image,
+  onChange,
+  id,
+  isSelected
+}) => {
+  return (
+    <div className={styles.listItem}>
+      <div className={styles.listItemLeft}>
+        <div className={styles.listItemIcon}>
+          <HexaBoxContainer>
+            <Image
+              src={
+                `https://res.cloudinary.com/${cloudinary_uri}/image/fetch/${image}` ??
+                honeyGenesisBee
+              }
+              width={40}
+              height={40}
+              alt=""
+            />
+          </HexaBoxContainer>
+        </div>
+
+        <div className={styles.itemCollection}>
+          <div className={styles.itemCollectionName}>{name}</div>
+          <div className={styles.itemCollectionValue}>
+            <div className={styles.itemCollectionValueCount}>{value}</div>
+            <div className={styles.itemCollectionToken}>veHONEY</div>
+          </div>
+        </div>
+      </div>
+      <HoneyCheckbox checked={isSelected} onChange={e => onChange(e, id)} />
+    </div>
+  );
+};
 
 const BurnNftsForm = (props: { onClose: Function }) => {
   const [selected, setSelected] = useState<string>();
