@@ -1,70 +1,22 @@
-import { RoundHalfDown, RoundHalfUp } from 'helpers/utils';
-import { MAX_LTV } from '../../constants/loan';
-import BN from 'bn.js';
 import { getOraclePrice } from '../../helpers/loanHelpers/index';
-import {
-  OPTIMAL_RATIO_ONE,
-  OPTIMAL_RATIO_TWO,
-  MAX_UTILISATION_RATIO,
-  BASE_BORROW_RATE,
-  DISCOUNTED_BORROW_RATE,
-  BORROW_RATE_ONE,
-  BORROW_RATE_TWO,
-  BORROW_RATE_THREE
-} from '../../constants/interestRate';
 import { network } from 'pages/_app';
 import { ConnectedWallet } from '@saberhq/use-solana';
+import { Connection, Keypair, PublicKey } from '@solana/web3.js';
 import {
-  Connection,
-  Keypair,
-  LAMPORTS_PER_SOL,
-  PublicKey
-} from '@solana/web3.js';
-
-import * as anchor from '@project-serum/anchor';
-import {
-  CollateralNFTPosition,
-  getHealthStatus,
-  getNFTAssociatedMetadata,
   HoneyClient,
   HoneyMarket,
-  HoneyReserve,
   HoneyUser,
-  LoanPosition,
-  METADATA_PROGRAM_ID,
-  NftPosition,
-  ObligationAccount,
-  ObligationPositionStruct,
-  PositionInfoList,
-  TReserve,
-  borrowAndRefresh,
-  depositNFT,
-  repayAndRefresh,
-  useBorrowPositions,
-  useHoney,
-  useMarket,
-  fetchAllMarkets,
-  MarketBundle,
-  waitForConfirmation,
-  withdrawNFT,
-  fetchReservePrice,
-  ReserveConfigStruct,
-  MarketAccount,
-  CachedReserveInfo
+  TReserve
 } from '@honey-finance/sdk';
-import { Metadata } from '@metaplex-foundation/mpl-token-metadata';
 import { formatNumber } from '../../helpers/format';
 import { generateMockHistoryData } from 'helpers/chartUtils';
 import { MarketTableRow } from 'types/markets';
 import NodeWallet from '@project-serum/anchor/dist/cjs/nodewallet';
 import {
   renderMarketName,
-  marketCollections,
   COLLATERAL_FACTOR,
-  HONEY_GENESIS_MARKET_ID,
   ROOT_CLIENT
 } from 'helpers/marketHelpers';
-import { toast } from 'react-toastify';
 import { roundTwoDecimalsUp } from 'helpers/math/math';
 
 /**

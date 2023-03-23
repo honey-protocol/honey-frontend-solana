@@ -32,12 +32,7 @@ import EmptyStateDetails from 'components/EmptyStateDetails/EmptyStateDetails';
 import { getColumnSortStatus } from '../../helpers/tableUtils';
 import { useConnectedWallet, useSolana } from '@saberhq/use-solana';
 import { BnToDecimal, ConfigureSDK } from '../../helpers/loanHelpers/index';
-import {
-  Connection,
-  LAMPORTS_PER_SOL,
-  PublicKey,
-  clusterApiUrl
-} from '@solana/web3.js';
+import { Connection, LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js';
 import HealthLvl from '../../components/HealthLvl/HealthLvl';
 import useFetchNFTByUser from 'hooks/useNFTV2';
 import {
