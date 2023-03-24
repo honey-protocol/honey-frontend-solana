@@ -521,9 +521,8 @@ const Lend: NextPage = ({ res }: { res: any }) => {
                 setActiveMarketAvailable(collection.available);
                 setNftPrice(RoundHalfDown(Number(collection.nftPrice)));
                 setFetchedDataObject(collection.marketData[0]);
-                collection.userTotalDeposits
-                  ? setUserTotalDeposits(collection.userTotalDeposits)
-                  : setUserTotalDeposits(0);
+                const totalUserDeposits = await honeyUser.fetchUserDeposits(0);
+                setUserTotalDeposits(totalUserDeposits);
 
                 setTimeout(() => {
                   setIsFetchingClientData(false);
