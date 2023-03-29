@@ -821,6 +821,7 @@ const Markets: NextPage = ({ res }: { res: any }) => {
     ],
     [isMyCollectionsFilterEnabled, tableData, searchQuery, showWeeklyRates]
   );
+  const cloudinary_uri = process.env.CLOUDINARY_URI;
 
   // position in each market
   const expandColumns: ColumnType<MarketTablePosition>[] = [
@@ -837,7 +838,11 @@ const Markets: NextPage = ({ res }: { res: any }) => {
               <HexaBoxContainer>
                 {
                   <Image
-                    src={record.image ? record.image : ''}
+                    src={
+                      record.image
+                        ? `https://res.cloudinary.com/${cloudinary_uri}/image/fetch/${record.image}`
+                        : ''
+                    }
                     alt=""
                     layout="fill"
                   />
