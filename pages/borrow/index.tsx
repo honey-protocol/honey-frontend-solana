@@ -289,6 +289,7 @@ const Markets: NextPage = ({ res }: { res: any }) => {
   const [isFetchingClientData, setIsFetchingClientData] = useState(true);
   const [showWeeklyRates, setShowWeeklyRates] = useState(true);
   const [initState, setInitState] = useState(false);
+  const [marketCount, setMarketCount] = useState(6);
 
   const cloudinary_uri = process.env.CLOUDINARY_URI;
 
@@ -301,8 +302,8 @@ const Markets: NextPage = ({ res }: { res: any }) => {
    * [2] reFetch function which can be called after deposit or withdraw and updates nft list
    */
   const [NFTs, isLoadingNfts, refetchNfts] = useFetchNFTByUser(wallet);
-  const [isCreateMarketAreaOnHover, setIsCreateMarketAreaOnHover] =
-    useState<boolean>(false);
+  // const [isCreateMarketAreaOnHover, setIsCreateMarketAreaOnHover] =
+  //   useState<boolean>(false);
 
   const [marketData, setMarketData] = useState<MarketBundle[]>([]);
   const [dataRoot, setDataRoot] = useState<String>();
@@ -486,8 +487,9 @@ const Markets: NextPage = ({ res }: { res: any }) => {
       getData()
         .then(result => {
           if (marketData.length) setInitState(true);
-          setTableData(result);
-          setTableDataFiltered(result);
+          const split = result.splice(0, marketCount);
+          setTableData(split);
+          setTableDataFiltered(split);
         })
         .catch(() => setIsFetchingData(false));
     }
@@ -505,6 +507,10 @@ const Markets: NextPage = ({ res }: { res: any }) => {
 
   const handleToggle = (checked: boolean) => {
     setIsMyCollectionsFilterEnabled(checked);
+  };
+
+  const handleLoadMarkets = () => {
+    console.log('Running load markets');
   };
 
   const WeeklyToggle = () => (
@@ -1462,10 +1468,10 @@ const Markets: NextPage = ({ res }: { res: any }) => {
           <div
             className={style.createMarketLauncherCell}
             // style={{ width: launchAreaWidth }}
-            onClick={() => setSidebarMode(BorrowSidebarMode.CREATE_MARKET)}
+            onClick={() => handleLoadMarkets()}
           >
-            <div className={style.createMarket}>
-              <div className={style.nameCell}>
+            {/* <div className={style.createMarket}> */}
+            {/* <div className={style.nameCell}>
                 <div className={style.logoWrapper}>
                   <div className={style.createMarketLogo}>
                     <HexaBoxContainer borderColor="gray">
@@ -1476,19 +1482,14 @@ const Markets: NextPage = ({ res }: { res: any }) => {
                 <div className={style.createMarketTitle}>
                   Do you want to create a new one?
                 </div>
-              </div>
-              <div className={style.buttonsCell}>
-                <HoneyButton variant="text">
-                  Create{' '}
-                  <div
-                    className={c(style.arrowRightIcon, {
-                      [style.createMarketHover]: isCreateMarketAreaOnHover
-                    })}
-                  />
-                </HoneyButton>
-              </div>
+              </div> */}
+            <div className={style.buttonsCell}>
+              <HoneyButton variant="text">
+                Load more <div className={c(style.plusIcon)} />
+              </HoneyButton>
             </div>
           </div>
+          // </div>
         }
       </HoneyContent>
     </LayoutRedesign>

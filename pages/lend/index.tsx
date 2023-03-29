@@ -195,6 +195,7 @@ const Lend: NextPage = ({ res }: { res: any }) => {
     HONEY_GENESIS_BEE_MARKET_NAME
   );
   const [showWeeklyRates, setShowWeeklyRates] = useState(false);
+  const [marketCount, setMarketCount] = useState(6);
 
   // init wallet and sdkConfiguration file
   const sdkConfig = ConfigureSDK();
@@ -573,8 +574,9 @@ const Lend: NextPage = ({ res }: { res: any }) => {
       getData()
         .then(result => {
           if (marketData.length) setInitState(true);
-          setTableData(result);
-          setTableDataFiltered(result);
+          const split = result.splice(0, marketCount);
+          setTableData(split);
+          setTableDataFiltered(split);
         })
         .catch(() => setIsFetchingData(false));
     }
@@ -656,6 +658,10 @@ const Lend: NextPage = ({ res }: { res: any }) => {
         value={searchQuery}
       />
     );
+  };
+
+  const handleLoadMarkets = () => {
+    console.log('Running load markets');
   };
 
   const columnsWidth: Array<number | string> = [240, 150, 150, 150, 150];
@@ -969,6 +975,17 @@ const Lend: NextPage = ({ res }: { res: any }) => {
               };
             }}
           />
+        </div>
+        <div
+          className={style.createMarketLauncherCell}
+          // style={{ width: launchAreaWidth }}
+          onClick={() => handleLoadMarkets()}
+        >
+          <div className={style.buttonsCell}>
+            <HoneyButton variant="text">
+              Load more <div className={c(style.plusIcon)} />
+            </HoneyButton>
+          </div>
         </div>
       </HoneyContent>
     </LayoutRedesign>

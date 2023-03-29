@@ -196,6 +196,7 @@ const Liquidate: NextPage = ({ res }: { res: any }) => {
   );
   const [isFetchingData, setIsFetchingData] = useState(true);
   const [isFetchingClientData, setIsFetchingClientData] = useState(true);
+  const [marketCount, setMarketCount] = useState(6);
   // init anchor
   const { program } = useAnchor();
   // init sdk config obj
@@ -670,8 +671,9 @@ const Liquidate: NextPage = ({ res }: { res: any }) => {
       getData()
         .then(result => {
           if (marketData.length && dataRoot === ROOT_CLIENT) setInitState(true);
-          setTableData(result);
-          setTableDataFiltered(result);
+          const split = result.splice(0, marketCount);
+          setTableData(split);
+          setTableDataFiltered(split);
         })
         .catch(() => {
           setIsFetchingData(false);
@@ -755,6 +757,11 @@ const Liquidate: NextPage = ({ res }: { res: any }) => {
       />
     );
   };
+
+  const handleLoadMarkets = () => {
+    console.log('Running load markets');
+  };
+
   const columnsWidth: Array<number | string> = [200, 100, 150, 150, 100, 70];
   // Render Desktop Configuration
   const columns: ColumnType<MarketTableRow>[] = useMemo(
@@ -1112,6 +1119,17 @@ const Liquidate: NextPage = ({ res }: { res: any }) => {
               />
             </div>
           ))}
+        <div
+          className={style.createMarketLauncherCell}
+          // style={{ width: launchAreaWidth }}
+          onClick={() => handleLoadMarkets()}
+        >
+          <div className={style.buttonsCell}>
+            <HoneyButton variant="text">
+              Load more <div className={classNames(style.plusIcon)} />
+            </HoneyButton>
+          </div>
+        </div>
       </HoneyContent>
       {/*<HoneySider>*/}
       {/*  <LiquidateSidebar*/}

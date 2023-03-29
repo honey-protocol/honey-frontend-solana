@@ -134,6 +134,18 @@ export const arrowIcon = style({
   }
 });
 
+export const plusIcon = style({
+  width: 20,
+  height: 20,
+  background: 'url(/images/add-icon.svg) center no-repeat',
+  transition: 'all .3s',
+  selectors: {
+    [`${honeyTableExpandedRow} &`]: {
+      transform: 'rotate(-180deg)'
+    }
+  }
+});
+
 export const createMarketHover = style({
   transform: `translate(4px, 0)`
 });
@@ -318,7 +330,7 @@ export const expandedRowNameCell = style([
   nameCell,
   {
     display: 'flex',
-    alignItems: 'center'
+    alignItems: 'center',
   }
 ]);
 export const expandedRowIcon = style({
