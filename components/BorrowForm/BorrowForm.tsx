@@ -283,6 +283,7 @@ const BorrowForm = (props: BorrowProps) => {
     }
   };
 
+  const cloudinary_uri = process.env.CLOUDINARY_URI;
   // renders nft list is no nft is selected
   const renderContent = () => {
     if (!hasOpenPosition) {
@@ -302,7 +303,7 @@ const BorrowForm = (props: BorrowProps) => {
                   key={nft.mint}
                   id={nft.mint}
                   name={nft.name}
-                  image={nft.image}
+                  image={`https://res.cloudinary.com/${cloudinary_uri}/image/fetch/${nft.image}`}
                   value={fs(price)}
                   isSelected={isSelected}
                   onChange={e => {
@@ -358,7 +359,7 @@ const BorrowForm = (props: BorrowProps) => {
             </div>
             <div className={styles.cancelIcon} />
           </div>
-          <div style={{marginBottom: "14px"}}>
+          <div style={{ marginBottom: '14px' }}>
             <HoneyWarning message="You can only add one collateral at a time." />
           </div>
           <HoneyButtonTabs
@@ -392,7 +393,7 @@ const BorrowForm = (props: BorrowProps) => {
                   key={nft.mint}
                   id={nft.mint}
                   name={nft.name}
-                  image={nft.image}
+                  image={`https://res.cloudinary.com/${cloudinary_uri}/image/fetch/${nft.image}`}
                   value={fs(price)}
                   isSelected={isSelected}
                   onChange={e => {
@@ -666,7 +667,7 @@ const BorrowForm = (props: BorrowProps) => {
                     <a className={extLink} target="blank" href=" ">
                       comission{' '}
                     </a>
-                    that is charged upon borrowing. You will be charged 1,5% 
+                    that is charged upon borrowing. You will be charged 1,5%
                   </span>
                 }
               ></InfoBlock>

@@ -10,6 +10,8 @@ interface FarmNFTCardProps {
 }
 
 const FarmNFTCard = (props: FarmNFTCardProps) => {
+  const cloudinary_uri = process.env.CLOUDINARY_URI;
+
   return (
     <Box
       backgroundColor={'backgroundSecondary'}
@@ -25,7 +27,7 @@ const FarmNFTCard = (props: FarmNFTCardProps) => {
       <Avatar
         label={props.NFT.name}
         size="full"
-        src={props.NFT.image}
+        src={`https://res.cloudinary.com/${cloudinary_uri}/image/fetch/${props.NFT.image}`}
         shape="square"
         key={props.NFT.mint}
       />

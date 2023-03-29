@@ -41,6 +41,7 @@ const Borrowing: NextPage = () => {
   const [pageMode, setPageMode] = useState<BorrowPageMode>(
     BorrowPageMode.INITIAL_STATE
   );
+  const cloudinary_uri = process.env.CLOUDINARY_URI;
 
   const [selectedNFT, setSelectedNFT] = useState<P2PPosition>();
   const [isMobileSidebarVisible, setShowMobileSidebar] = useState(false);
@@ -122,7 +123,7 @@ const Borrowing: NextPage = () => {
             <P2PPageTitle
               onGetBack={() => setPageMode(BorrowPageMode.INITIAL_STATE)}
               name={selectedNFT.name}
-              img={selectedNFT.imageUrl}
+              img={`https://res.cloudinary.com/${cloudinary_uri}/image/fetch/${selectedNFT.imageUrl}`}
             />
           );
         }
