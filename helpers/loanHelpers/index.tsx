@@ -17,7 +17,7 @@ export function ConfigureSDK() {
   return {
     saberHqConnection: useConnection(),
     sdkWallet: useConnectedWallet() || null,
-    honeyId: 'AoaqbAiwMVK12MQHkRi7p5aemc1CQ271JyuyeHzXonXu'
+    honeyId: 'hNEYyRsRBVq2La65V1KjvdbTE39w36gwrdjkmcpvysk'
   };
 }
 /**
