@@ -34,7 +34,7 @@ export const marketIDs = async (marketCollections: MarketTableRow[]) => {
 // collection strucutre for the markets
 export const marketCollections: MarketTableRow[] = [
   {
-    id: 'ACv7BxtW7QzvFyLtmxtB8xZBQrfHAyTAjdCZ3q4QEowF',
+    id: '6FcJaAzQnuoA6o3sVw1GD6Ba69XuL5jinZpQTzJhd2R3',
     key: 'HNYG',
     name: 'Honey Genesis Bee',
     verifiedCreator: '6vRx1iVZo3xfrBHdpvuwArL2jucVj9j9nLpd2VUTTGMG',
@@ -48,7 +48,7 @@ export const marketCollections: MarketTableRow[] = [
     utilizationRate: 0,
     openPositions: [],
     constants: {
-      marketId: 'ACv7BxtW7QzvFyLtmxtB8xZBQrfHAyTAjdCZ3q4QEowF',
+      marketId: '6FcJaAzQnuoA6o3sVw1GD6Ba69XuL5jinZpQTzJhd2R3',
       verifiedCreator: '6vRx1iVZo3xfrBHdpvuwArL2jucVj9j9nLpd2VUTTGMG',
       marketName: 'Honey Genesis Bee',
       marketImage:
