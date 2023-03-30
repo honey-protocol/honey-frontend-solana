@@ -518,6 +518,7 @@ const Markets: NextPage = ({ res }: { res: any }) => {
   const handleLoadMarkets = () => {
     if (fetchedMarketCount >= marketCollections.length) return;
     setIsLoadingMarkets(true);
+    setIsFetchingData(true);
     setFetchedMarketCount(fetchedMarketCount + 5);
   };
 
