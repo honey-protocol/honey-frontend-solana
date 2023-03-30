@@ -1032,9 +1032,9 @@ const Markets: NextPage = ({ res }: { res: any }) => {
                   `https://solscan.io/tx/${tx[1][0]}?cluster=${network}`
                 );
               }
+            } else {
+              return toast.error('Error depositing NFT');
             }
-          } else {
-            return toast.error('Error depositing NFT');
           }
         });
       }
