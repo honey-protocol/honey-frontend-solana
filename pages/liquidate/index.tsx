@@ -196,7 +196,8 @@ const Liquidate: NextPage = ({ res }: { res: any }) => {
   );
   const [isFetchingData, setIsFetchingData] = useState(true);
   const [isFetchingClientData, setIsFetchingClientData] = useState(true);
-  const [marketCount, setMarketCount] = useState(6);
+  const [fetchedMarketCount, setFetchedMarketCount] = useState(6);
+  const [isLoadingMarkets, setIsLoadingMarkets] = useState(false);
   // init anchor
   const { program } = useAnchor();
   // init sdk config obj
@@ -243,24 +244,30 @@ const Liquidate: NextPage = ({ res }: { res: any }) => {
 
   //  ************* START FETCH MARKET DATA *************
   async function fetchAllMarketData(marketIDs: string[]) {
+    const paginatedMarketArray = marketIDs.splice(0, fetchedMarketCount);
+
     const data = await fetchAllMarkets(
       sdkConfig.saberHqConnection,
       sdkConfig.sdkWallet,
       sdkConfig.honeyId,
-      marketIDs,
+      paginatedMarketArray,
       false
     );
 
+    console.log('@@-- data', data);
+
     setDataRoot(ROOT_CLIENT);
     setMarketData(data as unknown as MarketBundle[]);
+    setIsLoadingMarkets(false);
     handleBids();
   }
 
   useEffect(() => {
     if (!sdkConfig.sdkWallet) return;
+
     const marketIDs = marketCollections.map(market => market.id);
     fetchAllMarketData(marketIDs);
-  }, [sdkConfig.sdkWallet]);
+  }, [sdkConfig.sdkWallet, fetchedMarketCount]);
 
   useEffect(() => {
     console.log('@@-- SSR refresh', res);
@@ -547,6 +554,7 @@ const Liquidate: NextPage = ({ res }: { res: any }) => {
 
             if (marketData.length) {
               if (dataRoot === ROOT_CLIENT) {
+                console.log('@@-- running pop');
                 if (initState === true && currentMarketId !== collection.id)
                   return collection;
 
@@ -588,7 +596,7 @@ const Liquidate: NextPage = ({ res }: { res: any }) => {
                 setTimeout(() => {
                   setIsFetchingClientData(false);
                   setIsFetchingData(false);
-                }, 2000);
+                }, 3500);
 
                 return collection;
               } else if (dataRoot === ROOT_SSR) {
@@ -657,7 +665,7 @@ const Liquidate: NextPage = ({ res }: { res: any }) => {
                   }
                   setTimeout(() => {
                     setIsFetchingData(false);
-                  }, 2000);
+                  }, 3500);
                   return collection;
                 }
               }
@@ -671,11 +679,12 @@ const Liquidate: NextPage = ({ res }: { res: any }) => {
       getData()
         .then(result => {
           if (marketData.length && dataRoot === ROOT_CLIENT) setInitState(true);
-          const split = result.splice(0, marketCount);
+          const split = result.splice(0, fetchedMarketCount);
           setTableData(split);
           setTableDataFiltered(split);
         })
         .catch(() => {
+          setIsFetchingData(false);
           setIsFetchingData(false);
         });
     }
@@ -759,7 +768,10 @@ const Liquidate: NextPage = ({ res }: { res: any }) => {
   };
 
   const handleLoadMarkets = () => {
-    console.log('Running load markets');
+    if (fetchedMarketCount >= marketCollections.length) return;
+    setIsLoadingMarkets(true);
+    setIsFetchingData(true);
+    setFetchedMarketCount(fetchedMarketCount + 5);
   };
 
   const columnsWidth: Array<number | string> = [200, 100, 150, 150, 100, 70];
@@ -1125,7 +1137,7 @@ const Liquidate: NextPage = ({ res }: { res: any }) => {
           onClick={() => handleLoadMarkets()}
         >
           <div className={style.buttonsCell}>
-            <HoneyButton variant="text">
+            <HoneyButton disabled={isLoadingMarkets} variant="text">
               Load more <div className={classNames(style.plusIcon)} />
             </HoneyButton>
           </div>
