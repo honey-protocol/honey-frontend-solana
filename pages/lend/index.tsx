@@ -914,7 +914,7 @@ const Lend: NextPage = ({ res }: { res: any }) => {
             </span>
           </Typography.Text>
         </div>
-        <div className={style.hideTablet}>
+        <div className={c(style.hideTablet, style.contentWrapper)}>
           <HoneyTable
             hasRowsShadow={true}
             tableLayout="fixed"

@@ -1024,7 +1024,7 @@ const Liquidate: NextPage = ({ res }: { res: any }) => {
             Bid on discounted NFTs from borrowers{' '}
           </Typography.Text>
         </div>
-        <div className={hideTablet}>
+        <div className={classNames(style.hideTablet, style.contentWrapper)}>
           <HoneyTable
             hasRowsShadow={true}
             tableLayout="fixed"

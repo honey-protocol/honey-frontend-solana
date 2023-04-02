@@ -12,6 +12,15 @@ export const nameCell = style({
   alignItems: 'center'
 });
 
+export const contentWrapper = style({
+  maxHeight: '38.5em',
+  overflowY: 'scroll',
+});
+
+globalStyle(`${contentWrapper} table`, {
+  padding: '1em',
+});
+
 export const nameCellMobile = style({
   display: 'flex',
   justifyContent: 'center',

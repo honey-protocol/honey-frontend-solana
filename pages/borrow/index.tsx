@@ -1302,7 +1302,7 @@ const Markets: NextPage = ({ res }: { res: any }) => {
           </Typography.Text>
         </div>
         {/* TODO: mock modal run*/}
-        <div className={style.hideTablet}>
+        <div className={classNames(style.hideTablet, style.contentWrapper)}>
           <HoneyTable
             hasRowsShadow={true}
             tableLayout="fixed"
