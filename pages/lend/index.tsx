@@ -917,7 +917,6 @@ const Lend: NextPage = ({ res }: { res: any }) => {
         <div className={c(style.hideTablet, style.contentWrapper)}>
           <HoneyTable
             hasRowsShadow={true}
-            tableLayout="fixed"
             columns={columns}
             dataSource={tableDataFiltered}
             pagination={false}
