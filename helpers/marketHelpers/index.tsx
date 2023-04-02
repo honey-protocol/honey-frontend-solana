@@ -285,6 +285,29 @@ export const marketCollections: MarketTableRow[] = [
         'https://img-cdn.magiceden.dev/rs:fill:400:400:0:0/plain/https://shdw-drive.genesysgo.net/2ZSU8JnjGSCjYgj9wTU4SRjTkz6kqv3WAQeGxgVh6yJG/19.png',
       discountedMarket: false
     }
+  },
+  {
+    id: 'HyUDgtmrERNC6xnPUjxs7fvkB6rX5esqvP5LW4LiXzrV',
+    key: 'Wolf Capital',
+    name: 'Wolf Capital',
+    verifiedCreator: 'DivyPfXM84oUP4LqW4YN2nNujHBRoggUDAKf9spppncD',
+    rate: 0,
+    available: 0,
+    value: 0,
+    allowance: 0,
+    connection: undefined,
+    user: undefined,
+    debt: 0,
+    utilizationRate: 0,
+    openPositions: [],
+    constants: {
+      marketId: 'HyUDgtmrERNC6xnPUjxs7fvkB6rX5esqvP5LW4LiXzrV',
+      verifiedCreator: 'DivyPfXM84oUP4LqW4YN2nNujHBRoggUDAKf9spppncD',
+      marketName: 'Wolf Capital',
+      marketImage:
+        'https://img-cdn.magiceden.dev/rs:fill:400:400:0:0/plain/https://shdw-drive.genesysgo.net/2ZSU8JnjGSCjYgj9wTU4SRjTkz6kqv3WAQeGxgVh6yJG/19.png',
+      discountedMarket: false
+    }
   }
   // {
   //   id: 'F8rZviSSuqgkTsjMeoyrTUSNSqh7yNDCAozJkxm7eujY',
