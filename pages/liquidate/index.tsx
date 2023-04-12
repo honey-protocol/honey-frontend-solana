@@ -71,6 +71,7 @@ import { MarketTableRow } from 'types/markets';
 import { renderMarket, renderMarketImageByName } from 'helpers/marketHelpers';
 import { network } from 'pages/_app';
 import SorterIcon from 'icons/Sorter';
+import { FETCH_USER_MARKET_DATA } from 'constants/apiEndpoints';
 
 const { formatPercent: fp, formatSol: fs, formatRoundDown: fd } = formatNumber;
 
@@ -255,7 +256,10 @@ const Liquidate: NextPage = ({ res }: { res: any }) => {
     handleBids();
   }
   // sets the users public key in local storage - then fetches user specific market data via API
-  async function fetchMarketValuesFromAPI(walletPk: string) {
+  async function fetchMarketValuesFromAPI(
+    walletPk: string,
+    marketIDs: string[]
+  ) {
     // store walletPk in localStorage
     localStorage.setItem('userPk', walletPk);
     // implement paginated markets from markets_onDemand branch
@@ -275,6 +279,10 @@ const Liquidate: NextPage = ({ res }: { res: any }) => {
   useEffect(() => {
     if (!sdkConfig.sdkWallet) return;
     const marketIDs = marketCollections.map(market => market.id);
+    fetchMarketValuesFromAPI(
+      sdkConfig.sdkWallet.publicKey.toString(),
+      marketIDs
+    );
     fetchAllMarketData(marketIDs);
   }, [sdkConfig.sdkWallet]);
 
