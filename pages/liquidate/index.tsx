@@ -254,6 +254,23 @@ const Liquidate: NextPage = ({ res }: { res: any }) => {
     setMarketData(data as unknown as MarketBundle[]);
     handleBids();
   }
+  // sets the users public key in local storage - then fetches user specific market data via API
+  async function fetchMarketValuesFromAPI(walletPk: string) {
+    // store walletPk in localStorage
+    localStorage.setItem('userPk', walletPk);
+    // implement paginated markets from markets_onDemand branch
+    return;
+
+    fetch(`${FETCH_USER_MARKET_DATA}${walletPk}`)
+      .then(response => {
+        setDataRoot(ROOT_CLIENT);
+        setMarketData(response as unknown as MarketBundle[]); // convert response based on return value
+        return;
+      })
+      .catch(err => {
+        console.log(`Error occurred fetching market values from API ${err}`);
+      });
+  }
 
   useEffect(() => {
     if (!sdkConfig.sdkWallet) return;

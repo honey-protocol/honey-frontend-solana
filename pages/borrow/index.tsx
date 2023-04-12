@@ -98,6 +98,7 @@ import ExpandedRowIcon from 'icons/ExpandedRowIcon';
 import useToast from 'hooks/useToast';
 import { toast } from 'components/HoneyToast/HoneyToast.css';
 import HoneyToggle from 'components/HoneyToggle/HoneyToggle';
+import { FETCH_USER_MARKET_DATA } from 'constants/apiEndpoints';
 // import { network } from 'pages/_app';
 const {
   format: f,
@@ -210,8 +211,14 @@ const Markets: NextPage = ({ res }: { res: any }) => {
   const [currentMarketId, setCurrentMarketId] = useState(
     HONEY_GENESIS_MARKET_ID
   );
-  // init wallet and sdkConfiguration file
-  const wallet = useConnectedWallet() || null;
+
+  /**
+   * @description
+   * configures the object that returns:
+   * connected wallet
+   * saberHQ connection
+   * honey program ID
+   */
   const sdkConfig = ConfigureSDK();
   const { disconnect } = useSolana();
   const [sidebarMode, setSidebarMode] = useState<BorrowSidebarMode>(
@@ -300,7 +307,9 @@ const Markets: NextPage = ({ res }: { res: any }) => {
    * [1] loading state
    * [2] reFetch function which can be called after deposit or withdraw and updates nft list
    */
-  const [NFTs, isLoadingNfts, refetchNfts] = useFetchNFTByUser(wallet);
+  const [NFTs, isLoadingNfts, refetchNfts] = useFetchNFTByUser(
+    sdkConfig.sdkWallet
+  );
   const [isCreateMarketAreaOnHover, setIsCreateMarketAreaOnHover] =
     useState<boolean>(false);
 
@@ -342,10 +351,34 @@ const Markets: NextPage = ({ res }: { res: any }) => {
     setDataRoot(ROOT_CLIENT);
     setMarketData(data as unknown as MarketBundle[]);
   }
+  // sets the users public key in local storage - then fetches user specific market data via API
+  async function fetchMarketValuesFromAPI(
+    walletPk: string,
+    marketIDs: string[]
+  ) {
+    // store walletPk in localStorage
+    localStorage.setItem('userPk', walletPk);
+    // implement paginated markets from markets_onDemand branch
+    return;
+
+    fetch(`${FETCH_USER_MARKET_DATA}${walletPk}`)
+      .then(response => {
+        setDataRoot(ROOT_CLIENT);
+        setMarketData(response as unknown as MarketBundle[]); // convert response based on return value
+        return;
+      })
+      .catch(err => {
+        console.log(`Error occurred fetching market values from API ${err}`);
+      });
+  }
 
   useEffect(() => {
     if (!sdkConfig.sdkWallet) return;
     const marketIDs = marketCollections.map(market => market.id);
+    fetchMarketValuesFromAPI(
+      sdkConfig.sdkWallet.publicKey.toString(),
+      marketIDs
+    );
     fetchAllMarketData(marketIDs);
   }, [sdkConfig.sdkWallet]);
 
@@ -1267,7 +1300,7 @@ const Markets: NextPage = ({ res }: { res: any }) => {
               onCancel={() => {
                 setSidebarMode(BorrowSidebarMode.MARKET);
               }}
-              wallet={wallet}
+              wallet={sdkConfig.sdkWallet}
               honeyClient={honeyClient}
             />
           </HoneySider>
