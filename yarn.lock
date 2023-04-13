@@ -505,18 +505,6 @@
   resolved "https://registry.yarnpkg.com/@fontsource/inter/-/inter-4.5.12.tgz#a6236379bf710658db048d7087ec588754962cb6"
   integrity sha512-bGKk4/8tube/nCk8hav0ZDBVbzJzc7m0Vt4xF5p15IN4YImwGdtKG38Oq5bU8xHNS+VfvbFFCepgQNj7Pr/Lvg==
 
-"@gemworks/gem-farm-ts@^0.24.2":
-  version "0.24.2"
-  resolved "https://registry.yarnpkg.com/@gemworks/gem-farm-ts/-/gem-farm-ts-0.24.2.tgz#f8380dcba804079b9bc50b3aa1e62bbfc88c943c"
-  integrity sha512-bopxvI3/gi8e9IbMt+lcxXMduXehgQ39gufAnR4lM3Q6J7J+u3tLkHoFPvyMOd2dGvZxXPAMFE73NLZYxQaMoQ==
-  dependencies:
-    "@metaplex-foundation/mpl-token-metadata" "^0.0.2"
-    "@metaplex/js" "^4.9.0"
-    "@project-serum/anchor" "0.24.2"
-    "@solana/spl-token" "^0.1.8"
-    "@solana/wallet-adapter-base" "^0.8.1"
-    "@solana/web3.js" "^1.31.0"
-
 "@gokiprotocol/client@^0.10.4":
   version "0.10.4"
   resolved "https://registry.yarnpkg.com/@gokiprotocol/client/-/client-0.10.4.tgz#3848858b4b5768b9af372d8d882c002fc15b251b"
