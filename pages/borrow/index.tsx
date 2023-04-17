@@ -290,6 +290,7 @@ const Markets: NextPage = ({ res }: { res: any }) => {
   const [showWeeklyRates, setShowWeeklyRates] = useState(true);
   const [initState, setInitState] = useState(false);
   const [fetchedMarketCount, setFetchedMarketCount] = useState(6);
+  const [startingMarketCount, setStartingMarketCount] = useState(0);
   const [isLoadingMarkets, setIsLoadingMarkets] = useState(false);
 
   const cloudinary_uri = process.env.CLOUDINARY_URI;
@@ -334,7 +335,10 @@ const Markets: NextPage = ({ res }: { res: any }) => {
   }, [parsedReserves]);
 
   async function fetchAllMarketData(marketIDs: string[]) {
-    const paginatedMarketArray = marketIDs.splice(0, fetchedMarketCount);
+    const paginatedMarketArray = marketIDs.splice(
+      startingMarketCount,
+      fetchedMarketCount
+    );
 
     const data = await fetchAllMarkets(
       sdkConfig.saberHqConnection,
@@ -344,9 +348,18 @@ const Markets: NextPage = ({ res }: { res: any }) => {
       false
     );
 
-    setDataRoot(ROOT_CLIENT);
-    setMarketData(data as unknown as MarketBundle[]);
-    setIsLoadingMarkets(false);
+    if (startingMarketCount === 0) {
+      setDataRoot(ROOT_CLIENT);
+      setMarketData(data as unknown as MarketBundle[]);
+      setIsLoadingMarkets(false);
+    } else {
+      setMarketData({
+        ...marketData,
+        // @ts-ignore
+        data
+      });
+      setIsLoadingMarkets(false);
+    }
   }
 
   useEffect(() => {
@@ -493,6 +506,7 @@ const Markets: NextPage = ({ res }: { res: any }) => {
       getData()
         .then(result => {
           if (marketData.length) setInitState(true);
+          setIsFetchingData(false);
           const split = result.splice(0, fetchedMarketCount);
           setTableData(split);
           setTableDataFiltered(split);
@@ -519,6 +533,7 @@ const Markets: NextPage = ({ res }: { res: any }) => {
     if (fetchedMarketCount >= marketCollections.length) return;
     setIsLoadingMarkets(true);
     setIsFetchingData(true);
+    setStartingMarketCount(fetchedMarketCount);
     setFetchedMarketCount(fetchedMarketCount + 5);
   };
 
