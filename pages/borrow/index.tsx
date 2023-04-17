@@ -62,8 +62,8 @@ import HoneyContent from '../../components/HoneyContent/HoneyContent';
 import HoneySider from '../../components/HoneySider/HoneySider';
 import { TABLET_BP } from '../../constants/breakpoints';
 import useWindowSize from '../../hooks/useWindowSize';
-import { Skeleton, Typography, Space } from 'antd';
-import { pageDescription, pageTitle, center } from 'styles/common.css';
+import { Skeleton, Typography, Space, Spin } from 'antd';
+import { pageDescription, pageTitle, center, spinner } from 'styles/common.css';
 import HoneyTableRow from 'components/HoneyTable/HoneyTableRow/HoneyTableRow';
 import HoneyTableNameCell from '../../components/HoneyTable/HoneyTableNameCell/HoneyTableNameCell';
 import HoneyTooltip from '../../components/HoneyTooltip/HoneyTooltip';
@@ -1317,7 +1317,7 @@ const Markets: NextPage = ({ res }: { res: any }) => {
           </Typography.Text>
         </div>
         {/* TODO: mock modal run*/}
-        <div className={classNames(style.hideTablet, style.contentWrapper)}>
+        <div className={style.hideTablet}>
           <HoneyTable
             hasRowsShadow={true}
             tableLayout="fixed"
@@ -1488,14 +1488,13 @@ const Markets: NextPage = ({ res }: { res: any }) => {
               />
             </div>
           ))}
-        {
-          <div
-            className={style.createMarketLauncherCell}
-            // style={{ width: launchAreaWidth }}
-            onClick={() => handleLoadMarkets()}
-          >
-            {/* <div className={style.createMarket}> */}
-            {/* <div className={style.nameCell}>
+        {/* <div
+              className={style.createMarketLauncherCell}
+              // style={{ width: launchAreaWidth }}            
+              onClick={() => setSidebarMode(BorrowSidebarMode.CREATE_MARKET)}
+            >
+              <div className={style.createMarket}>
+              <div className={style.nameCell}>
                 <div className={style.logoWrapper}>
                   <div className={style.createMarketLogo}>
                     <HexaBoxContainer borderColor="gray">
@@ -1506,15 +1505,27 @@ const Markets: NextPage = ({ res }: { res: any }) => {
                 <div className={style.createMarketTitle}>
                   Do you want to create a new one?
                 </div>
-              </div> */}
-            <div className={style.buttonsCell}>
-              <HoneyButton disabled={isLoadingMarkets} variant="text">
+              </div>
+            </div>
+          </div> */}
+
+        <div className={style.loadMoreContainer}>
+          {isLoadingMarkets ? (
+            <div>
+              <Spin className={spinner} />
+            </div>
+          ) : (
+            fetchedMarketCount !== marketCollections.length && (
+              <HoneyButton
+                disabled={isLoadingMarkets}
+                variant="text"
+                onClick={() => handleLoadMarkets()}
+              >
                 Load more <div className={c(style.plusIcon)} />
               </HoneyButton>
-            </div>
-          </div>
-          // </div>
-        }
+            )
+          )}
+        </div>
       </HoneyContent>
     </LayoutRedesign>
   );

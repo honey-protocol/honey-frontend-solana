@@ -55,8 +55,8 @@ import { NATIVE_MINT } from '@solana/spl-token-v-0.1.8';
 import HoneySider from 'components/HoneySider/HoneySider';
 import HoneyContent from 'components/HoneyContent/HoneyContent';
 import { hideTablet, showTablet } from 'styles/markets.css';
-import { pageDescription, pageTitle, center } from 'styles/common.css';
-import { Skeleton, Typography } from 'antd';
+import { pageDescription, pageTitle, center, spinner } from 'styles/common.css';
+import { Skeleton, Typography, Spin } from 'antd';
 import { ToastProps } from 'hooks/useToast';
 import HoneyTableRow from 'components/HoneyTable/HoneyTableRow/HoneyTableRow';
 import HoneyTableNameCell from 'components/HoneyTable/HoneyTableNameCell/HoneyTableNameCell';
@@ -1024,7 +1024,7 @@ const Liquidate: NextPage = ({ res }: { res: any }) => {
             Bid on discounted NFTs from borrowers{' '}
           </Typography.Text>
         </div>
-        <div className={classNames(style.hideTablet, style.contentWrapper)}>
+        <div className={style.hideTablet}>
           <HoneyTable
             hasRowsShadow={true}
             tableLayout="fixed"
@@ -1131,16 +1131,22 @@ const Liquidate: NextPage = ({ res }: { res: any }) => {
               />
             </div>
           ))}
-        <div
-          className={style.createMarketLauncherCell}
-          // style={{ width: launchAreaWidth }}
-          onClick={() => handleLoadMarkets()}
-        >
-          <div className={style.buttonsCell}>
-            <HoneyButton disabled={isLoadingMarkets} variant="text">
-              Load more <div className={classNames(style.plusIcon)} />
-            </HoneyButton>
-          </div>
+        <div className={style.loadMoreContainer}>
+          {isLoadingMarkets ? (
+            <div>
+              <Spin className={spinner} />
+            </div>
+          ) : (
+            fetchedMarketCount !== marketCollections.length && (
+              <HoneyButton
+                disabled={isLoadingMarkets}
+                variant="text"
+                onClick={() => handleLoadMarkets()}
+              >
+                Load more <div className={style.plusIcon} />
+              </HoneyButton>
+            )
+          )}
         </div>
       </HoneyContent>
       {/*<HoneySider>*/}

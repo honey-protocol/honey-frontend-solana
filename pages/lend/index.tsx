@@ -43,8 +43,8 @@ import {
   populateMarketData
 } from 'helpers/loanHelpers/userCollection';
 import { ToastProps } from 'hooks/useToast';
-import { Skeleton, Typography, Space } from 'antd';
-import { pageDescription, pageTitle, center } from 'styles/common.css';
+import { Skeleton, Typography, Space, Spin } from 'antd';
+import { pageDescription, pageTitle, center, spinner } from 'styles/common.css';
 import HoneyTableNameCell from 'components/HoneyTable/HoneyTableNameCell/HoneyTableNameCell';
 import HoneyTableRow from 'components/HoneyTable/HoneyTableRow/HoneyTableRow';
 
@@ -914,7 +914,7 @@ const Lend: NextPage = ({ res }: { res: any }) => {
             </span>
           </Typography.Text>
         </div>
-        <div className={c(style.hideTablet, style.contentWrapper)}>
+        <div className={style.hideTablet}>
           <HoneyTable
             hasRowsShadow={true}
             columns={columns}
@@ -984,16 +984,22 @@ const Lend: NextPage = ({ res }: { res: any }) => {
             }}
           />
         </div>
-        <div
-          className={style.createMarketLauncherCell}
-          // style={{ width: launchAreaWidth }}
-          onClick={() => handleLoadMarkets()}
-        >
-          <div className={style.buttonsCell}>
-            <HoneyButton disabled={isLoadingMarkets} variant="text">
-              Load more <div className={c(style.plusIcon)} />
-            </HoneyButton>
-          </div>
+        <div className={style.loadMoreContainer}>
+          {isLoadingMarkets ? (
+            <div>
+              <Spin className={spinner} />
+            </div>
+          ) : (
+            fetchedMarketCount !== marketCollections.length && (
+              <HoneyButton
+                onClick={() => handleLoadMarkets()}
+                disabled={isLoadingMarkets}
+                variant="text"
+              >
+                Load more <div className={c(style.plusIcon)} />
+              </HoneyButton>
+            )
+          )}
         </div>
       </HoneyContent>
     </LayoutRedesign>

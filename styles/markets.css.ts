@@ -12,15 +12,6 @@ export const nameCell = style({
   alignItems: 'center'
 });
 
-export const contentWrapper = style({
-  maxHeight: '38.5em',
-  overflowY: 'scroll',
-});
-
-globalStyle(`${contentWrapper} table`, {
-  padding: '1em',
-});
-
 export const nameCellMobile = style({
   display: 'flex',
   justifyContent: 'center',
@@ -339,7 +330,7 @@ export const expandedRowNameCell = style([
   nameCell,
   {
     display: 'flex',
-    alignItems: 'center',
+    alignItems: 'center'
   }
 ]);
 export const expandedRowIcon = style({
@@ -555,4 +546,11 @@ export const createMarket = style({
   backgroundImage: `repeating-linear-gradient(0deg, ${vars.colors.grayDark}, ${vars.colors.grayDark} 10px, transparent 10px, transparent 20px), repeating-linear-gradient(90deg, ${vars.colors.grayDark}, ${vars.colors.grayDark} 10px, transparent 10px, transparent 20px), repeating-linear-gradient(180deg, ${vars.colors.grayDark}, ${vars.colors.grayDark} 10px, transparent 10px, transparent 20px), repeating-linear-gradient(270deg, ${vars.colors.grayDark}, ${vars.colors.grayDark} 10px, transparent 10px, transparent 20px)`,
   borderImage: `repeating-linear-gradient(0deg, ${vars.colors.grayDark}, ${vars.colors.grayDark} 10px, transparent 10px, transparent 20px)`,
   cursor: 'pointer'
+});
+
+export const loadMoreContainer = style({
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  padding: '10px 0'
 });
