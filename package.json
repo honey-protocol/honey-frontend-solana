@@ -18,7 +18,6 @@
     "@emotion/styled": "^11.8.1",
     "@fontsource/ia-writer-mono": "^4.5.1",
     "@fontsource/inter": "^4.5.4",
-    "@gemworks/gem-farm-ts": "^0.24.2",
     "@gokiprotocol/client": "^0.10.4",
     "@gokiprotocol/walletkit": "^1.6.5",
     "@honey-finance/sdk": "^1.1.122",

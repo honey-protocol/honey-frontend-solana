@@ -84,11 +84,7 @@ import {
   OpenPositions,
   marketIDs
 } from 'helpers/marketHelpers';
-/**
- * @description formatting functions to format with perfect / format in SOL with icon or just a regular 2 decimal format
- * @params value to be formatted
- * @returns requested format
- */
+
 import CreateMarketSidebar from '../../components/CreateMarketSidebar/CreateMarketSidebar';
 // TODO: change to dynamic value
 const network = 'mainnet-beta';
@@ -99,6 +95,12 @@ import useToast from 'hooks/useToast';
 import { toast } from 'components/HoneyToast/HoneyToast.css';
 import HoneyToggle from 'components/HoneyToggle/HoneyToggle';
 // import { network } from 'pages/_app';
+
+/**
+ * @description formatting functions to format with perfect / format in SOL with icon or just a regular 2 decimal format
+ * @params value to be formatted
+ * @returns requested format
+ */
 const {
   format: f,
   formatPercent: fp,
@@ -353,6 +355,7 @@ const Markets: NextPage = ({ res }: { res: any }) => {
       setMarketData(data as unknown as MarketBundle[]);
       setIsLoadingMarkets(false);
     } else {
+      if (dataRoot !== ROOT_CLIENT) setDataRoot(ROOT_CLIENT);
       setMarketData({
         ...marketData,
         // @ts-ignore
