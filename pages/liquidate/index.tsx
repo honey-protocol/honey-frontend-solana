@@ -262,7 +262,7 @@ const Liquidate: NextPage = ({ res }: { res: any }) => {
   }, [sdkConfig.sdkWallet]);
 
   useEffect(() => {
-    console.log('@@-- SSR refresh', res);
+    console.log('@@-- SSR refresh');
     setDataRoot(ROOT_SSR);
     setMarketData(res as unknown as MarketBundle[]);
     setServerRenderedMarketData(res);
@@ -368,7 +368,7 @@ const Liquidate: NextPage = ({ res }: { res: any }) => {
     let userWallet = stringyfiedWalletPK
       ? stringyfiedWalletPK
       : fetchUserWalletFromLS();
-    console.log('@@-- wallet local storage', userWallet);
+
     if (userWallet === false) return;
 
     const arrayOfBiddingAddress = await biddingArray.map(
@@ -772,7 +772,7 @@ const Liquidate: NextPage = ({ res }: { res: any }) => {
     if (record.id === currentMarketId) return;
 
     const marketData = renderMarket(record.id);
-    console.log('@@-- market id change', marketData[0].id);
+
     if (marketData[0].id) {
       setCurrentMarketId(marketData[0].id);
     }
