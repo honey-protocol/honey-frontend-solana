@@ -1,7 +1,7 @@
 import React from 'react';
 import { Box, Text } from 'degen';
-import { LOW_TPS } from '../../constants/vehoney';
 import { useTPS } from '../../hooks/useTPS';
+const LOW_TPS = 1700;
 
 /**
  * @params None
@@ -12,17 +12,24 @@ const Tps = () => {
   const tps = useTPS();
 
   return (
-    <Box flexDirection='row'  display='flex'>
-      <Text size='small'
-            align='left'
-            weight='normal'
-            color='textTertiary'>Solana Network: </Text>
-      <Text align='right' weight='medium' whiteSpace='pre-wrap'>{` ${tps} TPS`}  </Text>
-      {parseInt(tps) < LOW_TPS && <Text color='textTertiary'
-                                        align='right'
-                                        weight='medium'
-                                        whiteSpace='pre-wrap'> ⚠️ Low</Text>}
-
+    <Box flexDirection="row" display="flex">
+      <Text size="small" align="left" weight="normal" color="textTertiary">
+        Solana Network:{' '}
+      </Text>
+      <Text align="right" weight="medium" whiteSpace="pre-wrap">
+        {` ${tps} TPS`}{' '}
+      </Text>
+      {parseInt(tps) < LOW_TPS && (
+        <Text
+          color="textTertiary"
+          align="right"
+          weight="medium"
+          whiteSpace="pre-wrap"
+        >
+          {' '}
+          ⚠️ Low
+        </Text>
+      )}
     </Box>
   );
 };

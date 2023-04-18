@@ -6,7 +6,7 @@ import CreateMarketTab from './CreateMarketTab/CreateMarketTab';
 import HoneyTabs, { HoneyTabItem } from 'components/HoneyTabs/HoneyTabs';
 import EmptyStateDetails from 'components/EmptyStateDetails/EmptyStateDetails';
 import HowItWorksBorrowTab from 'components/HowItWorksBorrowTab/HowItWorksBorrowTab';
-import { useLocker } from 'hooks/useVeHoney';
+// import { useLocker } from 'hooks/useVeHoney';
 
 import * as styles from './CreateMarketSidebar.css';
 
@@ -24,12 +24,14 @@ const CreateMarketSidebar: FC<CreateMarketSidebarProps> = (
   const { onCancel, wallet, honeyClient } = props;
   const { connect } = useWalletKit();
   const [activeTab, setActiveTab] = useState<Tab>('how_it_works');
-  const { votingPower } = useLocker();
-  const requiredVeHONEY = 25;
-  const veHoneyAmount = useMemo(
-    () => (votingPower ? votingPower.asNumber : 0),
-    [votingPower]
-  );
+
+  // TODO: add back governance context in a minimalistic way if we want to continue using the veHONEY check
+  //   const { votingPower } = useLocker();
+  //   const requiredVeHONEY = 25;
+  //   const veHoneyAmount = useMemo(
+  //     () => (votingPower ? votingPower.asNumber : 0),
+  //     [votingPower]
+  //   );
 
   const handleTabChange = (tabKey: string) => {
     setActiveTab(tabKey as Tab);
@@ -61,42 +63,46 @@ const CreateMarketSidebar: FC<CreateMarketSidebarProps> = (
         items={items}
         active={true}
       >
-        {!wallet ? (
-          <EmptyStateDetails
-            icon={<div className={styles.lightIcon} />}
-            title="You didn’t connect any wallet yet"
-            description="First, connect a wallet"
-            buttons={[
-              {
-                title: 'connect wallet',
-                onClick: connect
-              }
-            ]}
-          />
-        ) : veHoneyAmount > requiredVeHONEY ? (
-          <>
-            {activeTab === 'how_it_works' && (
-              <HowItWorksBorrowTab
-                onCancel={onCancel}
-                hasReadHowCreateMarketWorks={hasReadHowItWorks}
-                setHasReadHowCreateMarketWorks={setHasReadHowItWorks}
-                onClickUnderstand={onClickUnderstand}
-              />
-            )}
-            {activeTab === 'create' && (
-              <CreateMarketTab wallet={wallet} honeyClient={honeyClient} />
-            )}
-          </>
-        ) : (
-          <EmptyStateDetails
-            icon=""
-            title="Insufficient veHONEY"
-            description={`You need to ${
-              requiredVeHONEY - veHoneyAmount
-            }  more veHONEY to create a market`}
-            buttons={[{ title: 'GET VEHONEY', onClick: () => {} }]}
-          />
-        )}
+        {
+          !wallet ? (
+            <EmptyStateDetails
+              icon={<div className={styles.lightIcon} />}
+              title="You didn’t connect any wallet yet"
+              description="First, connect a wallet"
+              buttons={[
+                {
+                  title: 'connect wallet',
+                  onClick: connect
+                }
+              ]}
+            />
+          ) : (
+            // veHoneyAmount > requiredVeHONEY ?
+            <>
+              {activeTab === 'how_it_works' && (
+                <HowItWorksBorrowTab
+                  onCancel={onCancel}
+                  hasReadHowCreateMarketWorks={hasReadHowItWorks}
+                  setHasReadHowCreateMarketWorks={setHasReadHowItWorks}
+                  onClickUnderstand={onClickUnderstand}
+                />
+              )}
+              {activeTab === 'create' && (
+                <CreateMarketTab wallet={wallet} honeyClient={honeyClient} />
+              )}
+            </>
+          )
+          // : (
+          //   <EmptyStateDetails
+          //     icon=""
+          //     title="Insufficient veHONEY"
+          //     description={`You need to ${
+          //       requiredVeHONEY - veHoneyAmount
+          //     }  more veHONEY to create a market`}
+          //     buttons={[{ title: 'GET VEHONEY', onClick: () => {} }]}
+          //   />
+          // )
+        }
       </HoneyTabs>
     </div>
   );
