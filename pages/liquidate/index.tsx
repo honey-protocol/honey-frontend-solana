@@ -197,6 +197,7 @@ const Liquidate: NextPage = ({ res }: { res: any }) => {
   const [isFetchingData, setIsFetchingData] = useState(true);
   const [isFetchingClientData, setIsFetchingClientData] = useState(true);
   const [fetchedMarketCount, setFetchedMarketCount] = useState(6);
+  const [startingMarketCount, setStartingMarketCount] = useState(0);
   const [isLoadingMarkets, setIsLoadingMarkets] = useState(false);
   // init anchor
   const { program } = useAnchor();
@@ -244,7 +245,10 @@ const Liquidate: NextPage = ({ res }: { res: any }) => {
 
   //  ************* START FETCH MARKET DATA *************
   async function fetchAllMarketData(marketIDs: string[]) {
-    const paginatedMarketArray = marketIDs.splice(0, fetchedMarketCount);
+    const paginatedMarketArray = marketIDs.splice(
+      startingMarketCount,
+      fetchedMarketCount
+    );
 
     const data = await fetchAllMarkets(
       sdkConfig.saberHqConnection,
@@ -254,12 +258,21 @@ const Liquidate: NextPage = ({ res }: { res: any }) => {
       false
     );
 
-    console.log('@@-- data', data);
-
-    setDataRoot(ROOT_CLIENT);
-    setMarketData(data as unknown as MarketBundle[]);
-    setIsLoadingMarkets(false);
-    handleBids();
+    if (startingMarketCount === 0) {
+      setDataRoot(ROOT_CLIENT);
+      setMarketData(data as unknown as MarketBundle[]);
+      setIsLoadingMarkets(false);
+      handleBids();
+    } else {
+      if (dataRoot !== ROOT_CLIENT) setDataRoot(ROOT_CLIENT);
+      setMarketData({
+        ...marketData,
+        //@ts-ignore
+        data
+      });
+      setIsLoadingMarkets(false);
+      handleBids();
+    }
   }
 
   useEffect(() => {
@@ -771,6 +784,7 @@ const Liquidate: NextPage = ({ res }: { res: any }) => {
     if (fetchedMarketCount >= marketCollections.length) return;
     setIsLoadingMarkets(true);
     setIsFetchingData(true);
+    setStartingMarketCount(fetchedMarketCount);
     setFetchedMarketCount(fetchedMarketCount + 5);
   };
 

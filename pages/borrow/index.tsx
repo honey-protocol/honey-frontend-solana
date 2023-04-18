@@ -353,6 +353,7 @@ const Markets: NextPage = ({ res }: { res: any }) => {
       setMarketData(data as unknown as MarketBundle[]);
       setIsLoadingMarkets(false);
     } else {
+      if (dataRoot !== ROOT_CLIENT) setDataRoot(ROOT_CLIENT);
       setMarketData({
         ...marketData,
         // @ts-ignore
