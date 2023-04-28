@@ -39,7 +39,7 @@ import {
   clusterApiUrl
 } from '@solana/web3.js';
 import HealthLvl from '../../components/HealthLvl/HealthLvl';
-import useFetchNFTByUser from 'hooks/useNFTV2';
+import useFetchNFTByUser from 'hooks/useNFTV3';
 import {
   borrowAndRefresh,
   depositNFT,
@@ -292,6 +292,10 @@ const Markets: NextPage = ({ res }: { res: any }) => {
   const [showWeeklyRates, setShowWeeklyRates] = useState(true);
   const [initState, setInitState] = useState(false);
 
+  const selectedMarket = marketCollections.find(
+    collection => collection.id === currentMarketId
+  );
+
   const cloudinary_uri = process.env.CLOUDINARY_URI;
 
   /**
@@ -302,7 +306,10 @@ const Markets: NextPage = ({ res }: { res: any }) => {
    * [1] loading state
    * [2] reFetch function which can be called after deposit or withdraw and updates nft list
    */
-  const [NFTs, isLoadingNfts, refetchNfts] = useFetchNFTByUser(wallet);
+  const [NFTs, isLoadingNfts, refetchNfts] = useFetchNFTByUser(
+    wallet,
+    selectedMarket?.verifiedCreator
+  );
   const [isCreateMarketAreaOnHover, setIsCreateMarketAreaOnHover] =
     useState<boolean>(false);
 
