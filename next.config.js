@@ -86,7 +86,8 @@ module.exports = (phase, { defaultConfig }) => {
           // 'ipfs.nftstorage.link',
           // 'bafybeifqffkzbxzlxbwkklx3pekyg5i2cu7vlcepmphups2m7b4w7segly.ipfs.nftstorage.link',
           // 'i.imgur.com'
-          'res.cloudinary.com'
+          'res.cloudinary.com',
+          'https://www.honeyfinance.xyz/'
         ]
       }
     };
@@ -143,7 +144,8 @@ module.exports = (phase, { defaultConfig }) => {
           // 'ipfs.nftstorage.link',
           // 'bafybeifqffkzbxzlxbwkklx3pekyg5i2cu7vlcepmphups2m7b4w7segly.ipfs.nftstorage.link',
           // 'i.imgur.com'
-          'res.cloudinary.com'
+          'res.cloudinary.com',
+          'https://www.honeyfinance.xyz/'
         ]
       }
     };
