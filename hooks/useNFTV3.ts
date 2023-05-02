@@ -29,8 +29,7 @@ const defaultNFT: NFT = {
   mint: ''
 };
 
-export const defaultNFTImageUrl =
-  'https://api.phantom.app/image-proxy/?image=https%3A%2F%2Farweave.net%2F6siPwaXmPJXNd2-nnDPmYvQyP1R9mD6QfVNo7xjbo7A';
+export const defaultNFTImageUrl = honeyGenesisBee.src;
 const defaultTokenId = 'defaultTokenId';
 
 //this function should fetch all NFT from User
