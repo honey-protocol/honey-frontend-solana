@@ -373,7 +373,7 @@ const Markets: NextPage = () => {
                     // @ts-ignore
                     marketObject.marketId === collection.id
                 );
-                console.log('@@-- data', collection.marketData);
+
                 // @ts-ignore
                 collection.rate =
                   // @ts-ignore
