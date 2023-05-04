@@ -475,6 +475,7 @@ const Swap: NextPage = () => {
                       tokenInputFormatter(value, outputToken?.decimals)
                     }
                     value={estimatedOutAmount}
+                    // @ts-ignore
                     onChange={debouncedHandleOutputInput}
                     addonAfter=""
                   />

@@ -385,7 +385,7 @@ export const marketCollections: MarketTableRow[] = [
 
 // fees
 export const COLLATERAL_FACTOR = 0.65;
-export const BORROW_FEE = 0;
+export const BORROW_FEE = 0.015;
 
 // Honey Program ID
 export const HONEY_GENESIS_MARKET_ID =
