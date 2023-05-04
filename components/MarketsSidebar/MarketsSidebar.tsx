@@ -10,7 +10,7 @@ import { useConnectedWallet, useSolana } from '@saberhq/use-solana';
 import { useWalletKit } from '@gokiprotocol/walletkit';
 import { mobileReturnButton } from 'styles/common.css';
 import { renderNftList } from 'helpers/marketHelpers';
-import useFetchNFTByUser from 'hooks/useNFTV2';
+import useFetchNFTByUser from 'hooks/useNFTV3';
 import { spinner } from 'styles/common.css';
 import { active } from 'components/HoneyTabs/HoneyTabs.css';
 type Tab = 'borrow' | 'repay';

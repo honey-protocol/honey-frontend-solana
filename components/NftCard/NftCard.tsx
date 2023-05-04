@@ -5,6 +5,7 @@ import HoneyButton from '../HoneyButton/HoneyButton';
 import { NftCardProps } from './types';
 import c from 'classnames';
 import Image from 'next/image';
+import { defaultNFTImageUrl } from 'hooks/useNFTV3';
 
 const NftCard = (props: NftCardProps) => {
   const {
@@ -26,6 +27,10 @@ const NftCard = (props: NftCardProps) => {
   }, [mint]);
 
   const cloudinary_uri = process.env.CLOUDINARY_URI;
+  const imageSrc =
+    image === defaultNFTImageUrl
+      ? image
+      : `https://res.cloudinary.com/${cloudinary_uri}/image/fetch/${image}`;
 
   return (
     <div
@@ -34,11 +39,7 @@ const NftCard = (props: NftCardProps) => {
     >
       <div className={styles.nftImage}>
         <HexaBoxContainer>
-          <Image
-            src={`https://res.cloudinary.com/${cloudinary_uri}/image/fetch/${image}`}
-            layout={'fill'}
-            alt={'NFT Image'}
-          />
+          <Image src={imageSrc} layout={'fill'} alt={'NFT Image'} />
         </HexaBoxContainer>
       </div>
       <div className={styles.nftRight}>

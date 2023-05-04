@@ -16,6 +16,7 @@ type NFT = {
   creators: Array<Creator>;
   tokenId: string;
   mint: string;
+  tokenUri?: string;
 };
 
 declare global {
