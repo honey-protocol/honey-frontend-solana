@@ -1,0 +1,1 @@
+export const FETCH_USER_MARKET_DATA = 'http://honeyfinance.xyz/marketData';
