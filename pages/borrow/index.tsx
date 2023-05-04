@@ -32,6 +32,7 @@ import EmptyStateDetails from 'components/EmptyStateDetails/EmptyStateDetails';
 import { getColumnSortStatus } from '../../helpers/tableUtils';
 import { useConnectedWallet, useSolana } from '@saberhq/use-solana';
 import { BnToDecimal, ConfigureSDK } from '../../helpers/loanHelpers/index';
+import { FETCH_USER_MARKET_DATA } from 'constants/apiEndpoints';
 import {
   Connection,
   LAMPORTS_PER_SOL,
@@ -108,104 +109,7 @@ const {
   formatShortName: fsn
 } = formatNumber;
 
-const createMarketObject = async (marketData: any) => {
-  try {
-    return Promise.all(
-      marketData.map(async (marketObject: any) => {
-        const marketId = marketObject.market.address.toString();
-        const { utilization, interestRate } =
-          await marketObject.reserves[0].getUtilizationAndInterestRate();
-        const totalMarketDebt =
-          await marketObject.reserves[0].getReserveState();
-        const totalMarketDeposits =
-          await marketObject.reserves[0].getReserveState().totalDeposits;
-        const nftPrice = await marketObject.market.fetchNFTFloorPriceInReserve(
-          0
-        );
-        const allowanceAndDebt = await marketObject.user.fetchAllowanceAndDebt(
-          0,
-          'mainnet-beta'
-        );
-
-        const allowance = await allowanceAndDebt.allowance;
-        const liquidationThreshold =
-          await allowanceAndDebt.liquidationThreshold;
-        const ltv = await allowanceAndDebt.ltv;
-        const ratio = await allowanceAndDebt.ratio.toString();
-
-        const positions = marketObject.positions.map((pos: any) => {
-          return {
-            obligation: pos.obligation,
-            debt: pos.debt,
-            owner: pos.owner.toString(),
-            ltv: pos.ltv,
-            is_healthy: pos.is_healthy,
-            highest_bid: pos.highest_bid,
-            verifiedCreator: pos.verifiedCreator.toString()
-          };
-        });
-
-        return {
-          marketId,
-          utilization: utilization,
-          interestRate: interestRate,
-          totalMarketDebt: totalMarketDebt,
-          totalMarketDeposits: totalMarketDeposits,
-          // totalMarketValue: totalMarketDebt + totalMarketDeposits,
-          nftPrice: nftPrice,
-          bids: marketObject.bids,
-          allowance,
-          liquidationThreshold,
-          ltv,
-          ratio,
-          positions
-        };
-      })
-    );
-  } catch (error) {
-    return {};
-  }
-};
-
-export async function getStaticProps() {
-  const createConnection = () => {
-    // @ts-ignore
-    return new Connection(process.env.NEXT_PUBLIC_RPC_NODE, 'mainnet-beta');
-  };
-
-  const arrayOfMarketIds = await marketIDs(marketCollections);
-
-  const response = await fetchAllMarkets(
-    createConnection(),
-    null,
-    HONEY_PROGRAM_ID,
-    arrayOfMarketIds,
-    false
-  );
-
-  // return createMarketObject(response).then(res => {
-  //   return {
-  //     props: { res },
-  //     revalidate: 30
-  //   };
-  // });
-
-  let res;
-
-  await createMarketObject(response).then(result => {
-    res = result;
-  });
-
-  console.log('@@-- create market object result', res);
-
-  return {
-    props: { res },
-    revalidate: 30
-  };
-}
-
-// @ts-ignore
-const Markets: NextPage = ({ res }: { res: any }) => {
+const Markets: NextPage = () => {
   const { toast, ToastComponent } = useToast();
   // Sets market ID which is used for fetching market specific data
   // each market currently is a different call and re-renders the page
@@ -316,11 +220,20 @@ const Markets: NextPage = ({ res }: { res: any }) => {
   const [marketData, setMarketData] = useState<MarketBundle[]>([]);
   const [dataRoot, setDataRoot] = useState<String>();
 
+  // fetches market level data from API
+  async function fetchServerSideMarketData() {
+    fetch(FETCH_USER_MARKET_DATA)
+      .then(res => res.json())
+      .then(data => {
+        setDataRoot(ROOT_SSR);
+        setMarketData(data as unknown as MarketBundle[]);
+      })
+      .catch(err => console.log(`Error fetching SSR: ${err}`));
+  }
+
   useEffect(() => {
-    console.log('@@-- SSR refresh', res);
-    setDataRoot(ROOT_SSR);
-    setMarketData(res as unknown as MarketBundle[]);
-  }, [res]);
+    fetchServerSideMarketData();
+  }, []);
 
   // fetches the sol price
   // TODO: create type for reserves and connection
@@ -339,7 +252,7 @@ const Markets: NextPage = ({ res }: { res: any }) => {
       fetchReserveValue(parsedReserves[0], sdkConfig.saberHqConnection);
     }
   }, [parsedReserves]);
-
+  // calls upon fetchAllMarkets from SDK - market level and user level data regarding markets
   async function fetchAllMarketData(marketIDs: string[]) {
     const data = await fetchAllMarkets(
       sdkConfig.saberHqConnection,
@@ -354,6 +267,9 @@ const Markets: NextPage = ({ res }: { res: any }) => {
 
   useEffect(() => {
     if (!sdkConfig.sdkWallet) return;
+    // if the wallet pub. key changes - update cache
+    localStorage.setItem('userPk', sdkConfig.sdkWallet.publicKey.toString());
+
     const marketIDs = marketCollections.map(market => market.id);
     fetchAllMarketData(marketIDs);
   }, [sdkConfig.sdkWallet]);
@@ -457,31 +373,38 @@ const Markets: NextPage = ({ res }: { res: any }) => {
                     // @ts-ignore
                     marketObject.marketId === collection.id
                 );
+                console.log('@@-- data', collection.marketData);
                 // @ts-ignore
-                collection.rate = collection.marketData[0].interestRate * 100;
+                collection.rate =
+                  // @ts-ignore
+                  collection.marketData[0].data.interestRate * 100;
                 collection.openPositions = await handlePositions(
                   collection.verifiedCreator,
                   []
                 );
                 // @ts-ignore
-                collection.allowance = collection.marketData[0].allowance;
+                collection.allowance = collection.marketData[0].data.allowance;
 
                 collection.available =
                   // @ts-ignore
-                  collection.marketData[0].totalMarketDeposits;
-                collection.value =
-                  // @ts-ignore
-                  collection.marketData[0].totalMarketDeposits +
-                  // @ts-ignore
-                  collection.marketData[0].totalMarketDebt.outstandingDebt;
+                  collection.marketData[0].data.totalMarketDeposits;
+                // @ts-ignore
+                collection.value = collection.marketData[0].data.totalMarketDebt
+                  ? // @ts-ignore
+                    collection.marketData[0].data.totalMarketDebt +
+                    // @ts-ignore
+                    collection.marketData[0].data.totalMarketDeposits
+                  : // @ts-ignore
+                    collection.marketData[0].data.totalMarketDeposits;
+
                 // @ts-ignore
                 collection.connection = sdkConfig.saberHqConnection;
                 // @ts-ignore
-                collection.nftPrice = collection.marketData[0].nftPrice;
+                collection.nftPrice = collection.marketData[0].data.nftPrice;
                 // @ts-ignore
                 collection.utilizationRate =
                   // @ts-ignore
-                  collection.marketData[0].utilization;
+                  collection.marketData[0].data.utilization;
 
                 setIsFetchingData(false);
                 return collection;

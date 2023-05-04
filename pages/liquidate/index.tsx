@@ -72,98 +72,11 @@ import { renderMarket, renderMarketImageByName } from 'helpers/marketHelpers';
 import { network } from 'pages/_app';
 import SorterIcon from 'icons/Sorter';
 import { fetchTVL } from 'helpers/loanHelpers/userCollection';
+import { FETCH_USER_MARKET_DATA } from 'constants/apiEndpoints';
 
 const { formatPercent: fp, formatSol: fs, formatRoundDown: fd } = formatNumber;
 
-const createMarketObject = async (marketData: any) => {
-  try {
-    return Promise.all(
-      marketData.map(async (marketObject: any) => {
-        const marketId = marketObject.market.address.toString();
-        const { utilization, interestRate } =
-          await marketObject.reserves[0].getUtilizationAndInterestRate();
-        const totalMarketDebt =
-          await marketObject.reserves[0].getReserveState();
-        const totalMarketDeposits =
-          await marketObject.reserves[0].getReserveState().totalDeposits;
-        const nftPrice = await marketObject.market.fetchNFTFloorPriceInReserve(
-          0
-        );
-        const allowanceAndDebt = await marketObject.user.fetchAllowanceAndDebt(
-          0,
-          'mainnet-beta'
-        );
-
-        const allowance = await allowanceAndDebt.allowance;
-        const liquidationThreshold =
-          await allowanceAndDebt.liquidationThreshold;
-        const ltv = await allowanceAndDebt.ltv;
-        const ratio = await allowanceAndDebt.ratio.toString();
-
-        const positions = marketObject.positions.map((pos: any) => {
-          return {
-            obligation: pos.obligation,
-            debt: pos.debt,
-            owner: pos.owner.toString(),
-            ltv: pos.ltv,
-            is_healthy: pos.is_healthy,
-            highest_bid: pos.highest_bid,
-            verifiedCreator: pos.verifiedCreator.toString()
-          };
-        });
-
-        return {
-          marketId,
-          utilization: utilization,
-          interestRate: interestRate,
-          totalMarketDebt: totalMarketDebt,
-          totalMarketDeposits: totalMarketDeposits,
-          // totalMarketValue: totalMarketDebt + totalMarketDeposits,
-          nftPrice: nftPrice,
-          bids: marketObject.bids,
-          allowance,
-          liquidationThreshold,
-          ltv,
-          ratio,
-          positions
-        };
-      })
-    );
-  } catch (error) {
-    return {};
-  }
-};
-
-export async function getStaticProps() {
-  const createConnection = () => {
-    // @ts-ignore
-    return new Connection(process.env.NEXT_PUBLIC_RPC_NODE, 'mainnet-beta');
-  };
-
-  const arrayOfMarketIds = await marketIDs(marketCollections);
-
-  const response = await fetchAllMarkets(
-    createConnection(),
-    null,
-    HONEY_PROGRAM_ID,
-    arrayOfMarketIds,
-    false
-  );
-
-  let res;
-
-  await createMarketObject(response).then(result => {
-    res = result;
-  });
-
-  return {
-    props: { res },
-    revalidate: 30
-  };
-}
-
-// @ts-ignore
-const Liquidate: NextPage = ({ res }: { res: any }) => {
+const Liquidate: NextPage = () => {
   // base state
   const [hasPosition, setHasPosition] = useState(false);
   const [highestBiddingAddress, setHighestBiddingAddress] = useState('');
@@ -255,20 +168,23 @@ const Liquidate: NextPage = ({ res }: { res: any }) => {
     setMarketData(data as unknown as MarketBundle[]);
   }
 
-  useEffect(() => {
-    if (!sdkConfig.sdkWallet) return;
-    const marketIDs = marketCollections.map(market => market.id);
-    fetchAllMarketData(marketIDs);
-  }, [sdkConfig.sdkWallet]);
+  // fetches market level data from API
+  async function fetchServerSideMarketData() {
+    fetch(FETCH_USER_MARKET_DATA)
+      .then(res => res.json())
+      .then(data => {
+        setDataRoot(ROOT_SSR);
+        setMarketData(data as unknown as MarketBundle[]);
+        setServerRenderedMarketData(data);
+        setBidsOrigin(ROOT_SSR);
+        handleBids(currentMarketId);
+      })
+      .catch(err => console.log(`Error fetching SSR: ${err}`));
+  }
 
   useEffect(() => {
-    console.log('@@-- SSR refresh');
-    setDataRoot(ROOT_SSR);
-    setMarketData(res as unknown as MarketBundle[]);
-    setServerRenderedMarketData(res);
-    setBidsOrigin(ROOT_SSR);
-    handleBids(currentMarketId);
-  }, [res]);
+    fetchServerSideMarketData();
+  }, []);
 
   //  ************* END FETCH MARKET DATA *************
 
@@ -302,9 +218,12 @@ const Liquidate: NextPage = ({ res }: { res: any }) => {
           marketObject.marketId === currentMarketId
       );
       if (filteredMarketData.length) {
-        if (filteredMarketData[0].bids) {
-          setBiddingArray(filteredMarketData[0].bids);
-          handleBiddingState(filteredMarketData[0].bids);
+        //@ts-ignore
+        if (filteredMarketData[0].data.bids) {
+          //@ts-ignore
+          setBiddingArray(filteredMarketData[0].data.bids);
+          //@ts-ignore
+          handleBiddingState(filteredMarketData[0].data.bids);
         } else {
           setBiddingArray([]);
           handleBiddingState([]);
@@ -644,61 +563,76 @@ const Liquidate: NextPage = ({ res }: { res: any }) => {
                   );
 
                   //@ts-ignore
-                  collection.allowance = collection.marketData[0].allowance
+                  collection.allowance = collection.marketData[0].data.allowance
                     ? //@ts-ignore
-                      collection.marketData[0].allowance
+                      collection.marketData[0].data.allowance
                     : 0;
                   //@ts-ignore
                   collection.available = //@ts-ignore
-                    collection.marketData[0].totalMarketDeposits
+                    collection.marketData[0].data.totalMarketDeposits
                       ? //@ts-ignore
-                        collection.marketData[0].totalMarketDeposits
+                        collection.marketData[0].data.totalMarketDeposits
                       : 0;
                   //@ts-ignore
-                  collection.value =
-                    //@ts-ignore
-                    collection.marketData[0].totalMarketDeposits +
-                    // @ts-ignore
-                    collection.marketData[0].totalMarketDebt.outstandingDebt;
+                  // @ts-ignore
+                  collection.value = collection.marketData[0].data
+                    .totalMarketDebt
+                    ? // @ts-ignore
+                      collection.marketData[0].data.totalMarketDebt +
+                      // @ts-ignore
+                      collection.marketData[0].data.totalMarketDeposits
+                    : // @ts-ignore
+                      collection.marketData[0].data.totalMarketDeposits;
+
                   //@ts-ignore
                   collection.connection = sdkConfig.saberHqConnection;
                   //@ts-ignore
-                  collection.nftPrice = collection.marketData[0].nftPrice;
+                  collection.nftPrice = collection.marketData[0].data.nftPrice;
                   //@ts-ignore
                   collection.tvl =
-                    collection.marketData[0].positions && collection.nftPrice
-                      ? collection.nftPrice *
-                        (await fetchTVL(collection.marketData[0].positions))
+                    //@ts-ignore
+                    collection.marketData[0].data.positions &&
+                    //@ts-ignore
+                    collection.marketData[0].data.nftPrice
+                      ? //@ts-ignore
+                        collection.marketData[0].data.nftPrice *
+                        //@ts-ignore
+                        (await fetchTVL(
+                          //@ts-ignore
+                          collection.marketData[0].data.positions
+                        ))
                       : 0;
                   //@ts-ignore
                   collection.utilizationRate = //@ts-ignore
-                    collection.marketData[0].utilization
+                    collection.marketData[0].data.utilization
                       ? //@ts-ignore
-                        collection.marketData[0].utilization
+                        collection.marketData[0].data.utilization
                       : 0;
                   //@ts-ignore
                   collection.totalDebt =
                     //@ts-ignore
-                    collection.marketData[0].totalMarketDebt.outstandingDebt;
+                    collection.marketData[0].data.totalMarketDebt;
+
                   //@ts-ignore
-                  collection.risk = collection.marketData[0].positions
+                  collection.risk = collection.marketData[0].data.positions
                     ? await calculateRisk(
-                        collection.marketData[0].positions,
                         // @ts-ignore
-                        collection.nftPrice,
-                        false,
-                        collection
+                        collection.marketData[0].data.positions,
+                        // @ts-ignore
+                        collection.marketData[0].data.nftPrice,
+                        false
                       )
                     : 0;
 
                   // @ts-ignore
-                  collection.openPositions = collection.marketData[0].positions
-                    .length
+                  collection.openPositions = collection.marketData[0].data
+                    .positions.length
                     ? await setObligations(
-                        collection.marketData[0].positions,
+                        // @ts-ignore
+                        collection.marketData[0].data.positions,
                         currentMarketId,
                         // @ts-ignore
-                        collection.nftPrice
+                        collection.marketData[0].data.nftPrice
                       )
                     : [];
 
