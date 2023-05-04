@@ -188,8 +188,7 @@ export const setObligations = async (
 export const calculateRisk = async (
   obligations: any,
   nftPrice: number,
-  type: boolean,
-  collection: string
+  type: boolean
 ) => {
   if (!obligations) return 0;
   let filtered = await obligations.filter(
@@ -264,12 +263,7 @@ async function configureCollectionObjecet(
       collection.utilizationRate = utilization;
 
       collection.risk = obligations.length
-        ? await calculateRisk(
-            obligations,
-            collection.nftPrice,
-            false,
-            collection
-          )
+        ? await calculateRisk(obligations, collection.nftPrice, false)
         : 0;
 
       collection.openPositions = obligations
