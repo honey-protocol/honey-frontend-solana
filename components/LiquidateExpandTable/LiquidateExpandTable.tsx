@@ -77,7 +77,7 @@ export const LiquidateExpandTable = (props: LiquidateExpandTableProps) =>  {
         sorter: (a, b) => a.estimatedValue - b.estimatedValue,
         render: estimatedValue => (
           <div className={sharedStyles.expandedRowCell}>
-            <InfoBlock title={'Estimated value:'} value={fs(estimatedValue)} />
+            <InfoBlock title={'Collateral value:'} value={fs(estimatedValue)} />
           </div>
         )
       }

@@ -42,7 +42,12 @@ export const nftImage = style([
     marginRight: 15
   }
 ]);
-export const nftName = style([typography.title, {}]);
+export const nftName = style([
+  typography.title,
+  {
+    fontSize: 16
+  }
+]);
 
 export const balance = style({
   marginBottom: 0

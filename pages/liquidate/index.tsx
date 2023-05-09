@@ -23,15 +23,12 @@ import { formatNumber } from '../../helpers/format';
 import { LiquidateTableRow } from '../../types/liquidate';
 import { LiquidateExpandTable } from '../../components/LiquidateExpandTable/LiquidateExpandTable';
 import { RoundHalfDown } from 'helpers/utils';
-import { getOraclePrice } from '../../helpers/loanHelpers/index';
-import BN from 'bn.js';
 import {
   useAnchor,
   LiquidatorClient,
   useAllPositions,
   useHoney,
   useMarket,
-  NftPosition,
   fetchAllMarkets,
   MarketBundle,
   HoneyMarket,
@@ -45,6 +42,7 @@ import { useConnectedWallet } from '@saberhq/use-solana';
 import { Connection, LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js';
 import {
   HONEY_PROGRAM_ID,
+  TEST_HONEY_PROGRAM_ID,
   HONEY_GENESIS_MARKET_ID,
   COLLATERAL_FACTOR,
   marketIDs,

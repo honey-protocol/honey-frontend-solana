@@ -264,10 +264,10 @@ export const marketCollections: MarketTableRow[] = [
     }
   },
   {
-    id: '7pfaZcAqpWRHpEqGMwPQrn5tj5WVQ48F4PrAtFLuS1P7',
-    key: 'Drunken Ape Social Club',
-    name: 'Drunken Ape Social Club',
-    verifiedCreator: '56ruMizEJh4P12r6UqXEZ9AEYE9N5BtBortHfqp4m6Lm',
+    id: 'HyUDgtmrERNC6xnPUjxs7fvkB6rX5esqvP5LW4LiXzrV',
+    key: 'Wolf Capital',
+    name: 'Wolf Capital',
+    verifiedCreator: 'DivyPfXM84oUP4LqW4YN2nNujHBRoggUDAKf9spppncD',
     rate: 0,
     available: 0,
     value: 0,
@@ -278,11 +278,11 @@ export const marketCollections: MarketTableRow[] = [
     utilizationRate: 0,
     openPositions: [],
     constants: {
-      marketId: '7pfaZcAqpWRHpEqGMwPQrn5tj5WVQ48F4PrAtFLuS1P7',
-      verifiedCreator: '56ruMizEJh4P12r6UqXEZ9AEYE9N5BtBortHfqp4m6Lm',
-      marketName: 'Drunken Ape Social Club',
+      marketId: 'HyUDgtmrERNC6xnPUjxs7fvkB6rX5esqvP5LW4LiXzrV',
+      verifiedCreator: 'DivyPfXM84oUP4LqW4YN2nNujHBRoggUDAKf9spppncD',
+      marketName: 'Wolf Capital',
       marketImage:
-        'https://img-cdn.magiceden.dev/rs:fill:400:400:0:0/plain/https://creator-hub-prod.s3.us-east-2.amazonaws.com/drunkenapesc_pfp_1647995737060.jpeg',
+        'https://img-cdn.magiceden.dev/rs:fill:400:400:0:0/plain/https://shdw-drive.genesysgo.net/2ZSU8JnjGSCjYgj9wTU4SRjTkz6kqv3WAQeGxgVh6yJG/19.png',
       discountedMarket: false
     }
   },
@@ -318,7 +318,6 @@ export const marketCollections: MarketTableRow[] = [
   //   available: 0,
   //   value: 0,
   //   allowance: 0,
-  // positions: [],
   //   connection: undefined,
   //   user: undefined,
   //   debt: 0,
@@ -342,7 +341,6 @@ export const marketCollections: MarketTableRow[] = [
   //   available: 0,
   //   value: 0,
   //   allowance: 0,
-  // positions: [],
   //   connection: undefined,
   //   user: undefined,
   //   debt: 0,
@@ -366,7 +364,6 @@ export const marketCollections: MarketTableRow[] = [
   //   available: 0,
   //   value: 0,
   //   allowance: 0,
-  // positions: [],
   //   connection: undefined,
   //   user: undefined,
   //   debt: 0,
@@ -390,8 +387,13 @@ export const BORROW_FEE = 0.015;
 // Honey Program ID
 export const HONEY_GENESIS_MARKET_ID =
   '6FcJaAzQnuoA6o3sVw1GD6Ba69XuL5jinZpQTzJhd2R3';
+// export const HONEY_GENESIS_MARKET_ID =
+//   'ACv7BxtW7QzvFyLtmxtB8xZBQrfHAyTAjdCZ3q4QEowF';
 export const HONEY_GENESIS_BEE_MARKET_NAME = 'Honey Genesis Bee';
+// swap to TEST_HONEY_PROGRAM_ID for test program on mainnet, for development of new features
 export const HONEY_PROGRAM_ID = 'hNEYyRsRBVq2La65V1KjvdbTE39w36gwrdjkmcpvysk';
+export const TEST_HONEY_PROGRAM_ID =
+  'AoaqbAiwMVK12MQHkRi7p5aemc1CQ271JyuyeHzXonXu';
 
 // import image from next
 import Image from 'next/image';

@@ -777,8 +777,9 @@ const Markets: NextPage = () => {
                 {
                   <Image
                     src={
-                      `https://res.cloudinary.com/${cloudinary_uri}/image/fetch/${record.image}` ??
-                      ''
+                      record.image
+                        ? `https://res.cloudinary.com/${cloudinary_uri}/image/fetch/${record.image}`
+                        : ''
                     }
                     alt=""
                     layout="fill"
@@ -934,44 +935,47 @@ const Markets: NextPage = () => {
       if (!mintID) return;
       toast.processing();
       // TODO: set verified creator of active market along with currentMarketId
-      marketCollections.map(async collection => {
-        if (collection.id === currentMarketId) {
-          const metadata = await Metadata.findByMint(
-            collection.connection,
-            mintID
-          );
-          const tx = await depositNFT(
-            collection.connection,
-            honeyUser,
-            metadata.pubkey
-          );
-
-          if (tx[0] == 'SUCCESS') {
-            const confirmation = tx[1];
-            const confirmationHash = confirmation[0];
-
-            await waitForConfirmation(
-              sdkConfig.saberHqConnection,
-              confirmationHash
+      if (marketCollections) {
+        // @ts-ignore
+        marketCollections.map(async collection => {
+          if (collection.id === currentMarketId) {
+            const metadata = await Metadata.findByMint(
+              collection.connection,
+              mintID
             );
-            if (collection.marketData) {
-              await collection.marketData[0].reserves[0].refresh();
-              await collection.marketData[0].user.refresh();
+            const tx = await depositNFT(
+              collection.connection,
+              honeyUser,
+              metadata.pubkey
+            );
 
-              await refreshPositions();
-              refetchNfts({});
+            if (tx[0] == 'SUCCESS') {
+              const confirmation = tx[1];
+              let counter = confirmation.length - 1;
+              const confirmationHash = confirmation[counter];
 
-              toast.success(
-                'Deposit success',
-                `https://solscan.io/tx/${tx[1][0]}?cluster=${network}`
+              await waitForConfirmation(
+                sdkConfig.saberHqConnection,
+                confirmationHash
               );
+              if (collection.marketData) {
+                await collection.marketData[0].reserves[0].refresh();
+                await collection.marketData[0].user.refresh();
+
+                await refreshPositions();
+                refetchNfts({});
+
+                toast.success(
+                  'Deposit success',
+                  `https://solscan.io/tx/${tx[1][0]}?cluster=${network}`
+                );
+              }
+            } else {
+              return toast.error('Error depositing NFT');
             }
-          } else {
-            console.log('tx: ', tx);
-            return toast.error('Error depositing NFT');
           }
-        }
-      });
+        });
+      }
     } catch (error) {
       return toast.error(
         'Error depositing NFT'
@@ -989,31 +993,32 @@ const Markets: NextPage = () => {
     try {
       if (!mintID) return toast.error('Please select NFT');
       toast.processing();
-
-      marketCollections.map(async collection => {
-        if (collection.id === currentMarketId) {
-          const metadata = await Metadata.findByMint(
-            sdkConfig.saberHqConnection,
-            mintID
-          );
-          const tx = await withdrawNFT(
-            sdkConfig.saberHqConnection,
-            honeyUser,
-            metadata.pubkey
-          );
-
-          if (tx[0] == 'SUCCESS') {
-            const confirmation = tx[1];
-            const confirmationHash = confirmation[0];
-
-            await waitForConfirmation(
+      if (marketCollections && fetchedDataObject) {
+        //@ts-ignore
+        marketCollections.map(async collection => {
+          if (collection.id === currentMarketId) {
+            const metadata = await Metadata.findByMint(
               sdkConfig.saberHqConnection,
-              confirmationHash
+              mintID
+            );
+            const tx = await withdrawNFT(
+              sdkConfig.saberHqConnection,
+              honeyUser,
+              metadata.pubkey
             );
 
-            if (collection.marketData) {
-              await collection.marketData[0].reserves[0].refresh();
-              await collection.marketData[0].user.refresh();
+            if (tx[0] == 'SUCCESS') {
+              const confirmation = tx[1];
+              let counter = confirmation.length - 1;
+              const confirmationHash = confirmation[counter];
+
+              await waitForConfirmation(
+                sdkConfig.saberHqConnection,
+                confirmationHash
+              );
+
+              await fetchedDataObject.reserves[0].refresh();
+              await fetchedDataObject.user.refresh();
 
               await refreshPositions();
               refetchNfts({});
@@ -1023,23 +1028,15 @@ const Markets: NextPage = () => {
                 `https://solscan.io/tx/${tx[1][0]}?cluster=${network}`
               );
             } else {
-              await refreshPositions();
-              refetchNfts({});
-
-              toast.success(
-                'Withdraw success',
+              toast.error(
+                'Withdraw failed',
                 `https://solscan.io/tx/${tx[1][0]}?cluster=${network}`
               );
             }
-          } else {
-            toast.error(
-              'Withdraw failed',
-              `https://solscan.io/tx/${tx[1][0]}?cluster=${network}`
-            );
           }
-        }
-        return true;
-      });
+          return true;
+        });
+      }
     } catch (error) {
       toast.error('Error withdraw NFT');
       return;
@@ -1059,7 +1056,6 @@ const Markets: NextPage = () => {
         'So11111111111111111111111111111111111111112'
       );
       toast.processing();
-
       if (!fetchedDataObject) return;
 
       const tx = await borrowAndRefresh(
@@ -1082,6 +1078,7 @@ const Markets: NextPage = () => {
         await fetchedDataObject.user.refresh();
 
         await refreshPositions();
+
         refetchNfts({});
 
         reserveHoneyState === 0
@@ -1280,7 +1277,7 @@ const Markets: NextPage = () => {
                           pagination={false}
                           showHeader={false}
                           footer={
-                            record.openPositions.length
+                            record.openPositions.length == 11
                               ? ExpandedTableFooter
                               : undefined
                           }

@@ -23,13 +23,13 @@ const LayoutRedesign: FC<Props> = ({ children }) => {
       <LayoutHeader className={styles.layoutHeader}>
         <Header />
       </LayoutHeader>
-      {alertMsg && (
+      {/* {alertMsg && (
         <div className={styles.alertBox}>
           <div className={styles.alertContent}>
             This product is in beta ! Please use at your own risk
           </div>
         </div>
-      )}
+      )} */}
       <Layout className={styles.contentContainer}>
         <div className={styles.contentCenter}>
           {/* Provide a <Content> and <Sider> in child component */}

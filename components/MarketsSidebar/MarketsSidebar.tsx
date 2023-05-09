@@ -140,6 +140,7 @@ const MarketsSidebar = (props: MarketsSidebarProps) => {
                 openPositions={openPositions}
                 nftPrice={nftPrice}
                 executeDepositNFT={executeDepositNFT}
+                executeWithdrawNFT={executeWithdrawNFT}
                 userAllowance={userAllowance}
                 loanToValue={loanToValue}
                 hideMobileSidebar={hideMobileSidebar}
