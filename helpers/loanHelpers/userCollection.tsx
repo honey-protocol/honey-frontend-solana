@@ -124,13 +124,16 @@ export const setObligations = async (
         name: renderMarketName(currentMarketId),
         riskLvl: (obligation.debt / nftPrice) * 100,
         healthLvl:
-          ((nftPrice - obligation.debt / COLLATERAL_FACTOR) / nftPrice) * 100,
+          ((nftPrice * obligation.count - obligation.debt / COLLATERAL_FACTOR) /
+            (nftPrice * obligation.count)) *
+          100,
         debt: obligation.debt,
-        estimatedValue: nftPrice,
+        estimatedValue: nftPrice * obligation.count,
         nftMint: obligation.nft_mint,
         owner: obligation.owner,
         obligation: obligation.obligation,
-        highestBid: obligation.highest_bid
+        highestBid: obligation.highest_bid,
+        count: obligation.count
       };
     })
     .filter((obl: any) => obl.debt.toString() != 0);

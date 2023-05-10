@@ -14,14 +14,14 @@ import HealthLvl from 'components/HealthLvl/HealthLvl';
 import { renderMarketImageByID } from 'helpers/marketHelpers';
 import { RoundHalfDown } from 'helpers/utils';
 import { LiquidateExpandTableProps } from './LiquidateExpandTableProps';
+import c from 'classnames';
 
 const { formatPercent: fp, formatSol: fs } = formatNumber;
 
 type FilterType = 'most_critical' | 'max_debt' | 'most_valuable';
 
-
-export const LiquidateExpandTable = (props: LiquidateExpandTableProps) =>  {
-  const { data, currentMarketId} = props;
+export const LiquidateExpandTable = (props: LiquidateExpandTableProps) => {
+  const { data, currentMarketId } = props;
   const [filter, setFilter] = useState<FilterType>('most_critical');
 
   const expandColumns: ColumnType<LiquidateTablePosition>[] = useMemo(
@@ -31,35 +31,44 @@ export const LiquidateExpandTable = (props: LiquidateExpandTableProps) =>  {
         dataIndex: 'name',
         sortOrder: filter === 'most_critical' ? 'descend' : undefined,
         sorter: (a, b) => b.healthLvl - a.healthLvl,
-        render: (name, record) => (
-          <div className={sharedStyles.expandedRowNameCell}>
-            <div className={sharedStyles.expandedRowIcon} />
-            <div className={sharedStyles.collectionLogo}>
-              <HexaBoxContainer>
-                {renderMarketImageByID(currentMarketId)}
-              </HexaBoxContainer>
-            </div>
-            <div className={sharedStyles.nameCellText}>
-              <HoneyTooltip title={name}>
-                <div className={sharedStyles.collectionName}>
-                  {formatNFTName(name)}
+        render: (name, record) => {
+          return (
+            <div className={sharedStyles.expandedRowNameCell}>
+              <div className={sharedStyles.expandedRowIcon} />
+              {record.count > 1 ? (
+                <div className={styles.logoWrapper}>
+                  <div className={styles.collectionLogo}>
+                    <HexaBoxContainer>
+                      {renderMarketImageByID(currentMarketId)}
+                    </HexaBoxContainer>
+                  </div>
+                  <div
+                    className={c(styles.collectionLogo, styles.secondaryLogo)}
+                  >
+                    <HexaBoxContainer>
+                      {renderMarketImageByID(currentMarketId)}
+                    </HexaBoxContainer>
+                  </div>
                 </div>
-              </HoneyTooltip>
-              <HealthLvl healthLvl={record.healthLvl} />
+              ) : (
+                <div className={sharedStyles.collectionLogo}>
+                  <HexaBoxContainer>
+                    {renderMarketImageByID(currentMarketId)}
+                  </HexaBoxContainer>
+                </div>
+              )}
+
+              <div className={sharedStyles.nameCellText}>
+                <HoneyTooltip title={name}>
+                  <div className={sharedStyles.collectionName}>
+                    {formatNFTName(name)}
+                  </div>
+                </HoneyTooltip>
+                <HealthLvl healthLvl={record.healthLvl} />
+              </div>
             </div>
-          </div>
-        )
-      },
-      {
-        dataIndex: 'untilLiquidation',
-        render: untilLiquidation => (
-          <div className={sharedStyles.expandedRowCell}>
-            <InfoBlock
-              title={'Until liquidation:'}
-              value={fs(RoundHalfDown(untilLiquidation, 5))}
-            />
-          </div>
-        )
+          );
+        }
       },
       {
         dataIndex: 'debt',
@@ -70,6 +79,22 @@ export const LiquidateExpandTable = (props: LiquidateExpandTableProps) =>  {
             <InfoBlock title={'Debt:'} value={fs(debt)} />
           </div>
         )
+      },
+      {
+        dataIndex: 'untilLiquidation',
+        render: (untilLiquidation, record) => {
+          console.log('@@-- the ef record', record);
+          return (
+            <div className={sharedStyles.expandedRowCell}>
+              <InfoBlock
+                title={'Liquidation Price:'}
+                value={fs(
+                  RoundHalfDown(record.estimatedValue - untilLiquidation, 5)
+                )}
+              />
+            </div>
+          );
+        }
       },
       {
         dataIndex: 'estimatedValue',
@@ -84,13 +109,15 @@ export const LiquidateExpandTable = (props: LiquidateExpandTableProps) =>  {
     ],
     [filter]
   );
-  
+
   return (
     <>
       <div className={styles.expandTableHeader}>
         <div className={styles.positionsCounterContainer}>
           <span className={styles.positionsCounterTitle}>Open positions</span>
-          <span className={styles.positionsCount}>{data && data.length ? data.length : 0}</span>
+          <span className={styles.positionsCount}>
+            {data && data.length ? data.length : 0}
+          </span>
         </div>
         <HoneyButtonTabs
           items={[

@@ -264,10 +264,10 @@ export const marketCollections: MarketTableRow[] = [
     }
   },
   {
-    id: 'HyUDgtmrERNC6xnPUjxs7fvkB6rX5esqvP5LW4LiXzrV',
-    key: 'Wolf Capital',
-    name: 'Wolf Capital',
-    verifiedCreator: 'DivyPfXM84oUP4LqW4YN2nNujHBRoggUDAKf9spppncD',
+    id: '7pfaZcAqpWRHpEqGMwPQrn5tj5WVQ48F4PrAtFLuS1P7',
+    key: 'Drunken Ape Social Club',
+    name: 'Drunken Ape Social Club',
+    verifiedCreator: '56ruMizEJh4P12r6UqXEZ9AEYE9N5BtBortHfqp4m6Lm',
     rate: 0,
     available: 0,
     value: 0,
@@ -278,11 +278,11 @@ export const marketCollections: MarketTableRow[] = [
     utilizationRate: 0,
     openPositions: [],
     constants: {
-      marketId: 'HyUDgtmrERNC6xnPUjxs7fvkB6rX5esqvP5LW4LiXzrV',
-      verifiedCreator: 'DivyPfXM84oUP4LqW4YN2nNujHBRoggUDAKf9spppncD',
-      marketName: 'Wolf Capital',
+      marketId: '7pfaZcAqpWRHpEqGMwPQrn5tj5WVQ48F4PrAtFLuS1P7',
+      verifiedCreator: '56ruMizEJh4P12r6UqXEZ9AEYE9N5BtBortHfqp4m6Lm',
+      marketName: 'Drunken Ape Social Club',
       marketImage:
-        'https://img-cdn.magiceden.dev/rs:fill:400:400:0:0/plain/https://shdw-drive.genesysgo.net/2ZSU8JnjGSCjYgj9wTU4SRjTkz6kqv3WAQeGxgVh6yJG/19.png',
+        'https://img-cdn.magiceden.dev/rs:fill:400:400:0:0/plain/https://creator-hub-prod.s3.us-east-2.amazonaws.com/drunkenapesc_pfp_1647995737060.jpeg',
       discountedMarket: false
     }
   },

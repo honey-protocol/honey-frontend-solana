@@ -165,12 +165,59 @@ const Liquidate: NextPage = () => {
     setDataRoot(ROOT_CLIENT);
     setMarketData(data as unknown as MarketBundle[]);
   }
+  /**
+   * @description loops through the positions array - if dubble obligations - meaning bulk loan, it sums the debt and adds a counter
+   * @params array of objects - each object being an open position
+   * @returns array of objects with bulk loans merged into one object
+   */
+  function mergeDuplicates(arr: any) {
+    const mergedArr = []; // initialize an empty array to store the merged objects
+
+    // create an object to keep track of how many times an obligation occurs
+    const obligationCount = {};
+
+    // loop through each object in the array
+    for (let i = 0; i < arr.length; i++) {
+      const obj = arr[i];
+      const obligation = obj.obligation;
+      // @ts-ignore
+      if (!obligationCount[obligation]) {
+        // if the obligation hasn't occurred before
+        // @ts-ignore
+        obligationCount[obligation] = 1; // set its count to 1
+        mergedArr.push(obj); // add the object to the merged array
+      } else {
+        const index = mergedArr.findIndex(
+          item => item.obligation === obligation
+        ); // find the index of the existing object with the same obligation
+
+        // merge the debt and increment the count
+        mergedArr[index].debt += obj.debt;
+        // @ts-ignore
+        obligationCount[obligation] += 1;
+      }
+    }
+    // add the count field to each merged object
+    for (let i = 0; i < mergedArr.length; i++) {
+      const obligation = mergedArr[i].obligation;
+      // @ts-ignore
+      mergedArr[i].count = obligationCount[obligation];
+    }
+
+    return mergedArr; // return the merged array with the count field added to each object
+  }
 
   // fetches market level data from API
   async function fetchServerSideMarketData() {
     fetch(FETCH_USER_MARKET_DATA)
       .then(res => res.json())
-      .then(data => {
+      .then(async data => {
+        await data.map(async (marketObject: any) => {
+          marketObject.data.positions = mergeDuplicates(
+            marketObject.data.positions
+          );
+        });
+
         setDataRoot(ROOT_SSR);
         setMarketData(data as unknown as MarketBundle[]);
         setServerRenderedMarketData(data);
@@ -332,21 +379,10 @@ const Liquidate: NextPage = () => {
     setFetchedReservePrice(reservePrice);
   }
   // refetches markets after bid is placed | revoked | increased
+  // TODO: Validate if we can use the API for this call as well
   async function fetchBidData() {
     setTimeout(async () => {
-      console.log('@@-- refetching chain data');
-      const marketIDs = marketCollections.map(market => market.id);
-
-      const data = await fetchAllMarkets(
-        sdkConfig.saberHqConnection,
-        sdkConfig.sdkWallet,
-        sdkConfig.honeyId,
-        marketIDs,
-        false
-      );
-
-      setBidsOrigin(ROOT_CLIENT);
-      setServerRenderedMarketData(data as unknown as MarketBundle[]);
+      fetchServerSideMarketData();
     }, 30000);
   }
 
@@ -633,8 +669,9 @@ const Liquidate: NextPage = () => {
                         collection.marketData[0].data.nftPrice
                       )
                     : [];
-
+                  // @ts-ignore
                   if (collection.openPositions) {
+                    //@ts-ignore
                     collection.openPositions.map(openPos => {
                       // @ts-ignore
                       return (openPos.untilLiquidation =
@@ -1026,6 +1063,7 @@ const Liquidate: NextPage = () => {
                   <div className={style.expandSection}>
                     <div className={style.dashedDivider} />
                     <LiquidateExpandTable
+                      // TODO: set to record.marketData[0].data.positions
                       data={record.openPositions}
                       currentMarketId={currentMarketId}
                     />
@@ -1076,6 +1114,7 @@ const Liquidate: NextPage = () => {
                   >
                     <div className={style.dashedDivider} />
                     <LiquidateExpandTableMobile
+                      // TODO: set to record.marketData[0].data.positions
                       data={record.openPositions}
                       onPlaceBid={showMobileSidebar}
                       currentMarketId={currentMarketId}
