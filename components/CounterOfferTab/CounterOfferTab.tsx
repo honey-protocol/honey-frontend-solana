@@ -20,7 +20,7 @@ export const CounterOfferTab = ({ offers }: CounterOfferTabProps) => {
   const [secondInputValue, setSecondInputValue] = useState<number>();
   const [isMakeOfferButtonDisabled, setIsMakeOfferButtonDisabled] =
     useState<boolean>(false);
-  const solBalance = useSolBalance();
+  const { balance: solBalance } = useSolBalance();
 
   const firstInputAddon = () => {
     return <div className={styles.inputsAddon}>Period (days)</div>;

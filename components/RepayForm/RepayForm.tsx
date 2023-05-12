@@ -13,9 +13,9 @@ import { hAlign, extLink } from 'styles/common.css';
 import { questionIcon } from 'styles/icons.css';
 import cs from 'classnames';
 import useToast from 'hooks/useToast';
-import { useSolBalance } from 'hooks/useSolBalance';
+import { useSolBalance, useTokenBalance } from 'hooks/useSolBalance';
 import { MAX_LTV } from 'constants/loan';
-import { COLLATERAL_FACTOR } from 'helpers/marketHelpers';
+import { COLLATERAL_FACTOR, marketCollections } from 'helpers/marketHelpers';
 import { renderMarketImageByID } from 'helpers/marketHelpers';
 import QuestionIcon from 'icons/QuestionIcon';
 import { Skeleton, Space } from 'antd';
@@ -82,6 +82,38 @@ const RepayForm = (props: RepayProps) => {
   const newLiqPercent = overallValue
     ? ((overallValue - newLiquidationPrice) / overallValue) * 100
     : 0;
+
+  const selectedMarket = marketCollections.find(
+    collection => collection.id === currentMarketId
+  );
+
+  //Wallet balance
+  const {
+    balance: walletSolBalance,
+    loading: isLoadingSolBalance,
+    refetch: refetchSolBalance
+  } = useSolBalance();
+
+  const {
+    balance: walletLoanTokenBalance,
+    loading: isLoadingWalletLoanTokenBalance,
+    refetch: refetchWalletLoanTokenBalance
+  } = useTokenBalance(
+    selectedMarket?.constants.marketLoanCurrencyTokenMintAddress ?? ''
+  );
+
+  const userWalletBalance =
+    selectedMarket?.loanCurrency === 'SOL'
+      ? walletSolBalance
+      : walletLoanTokenBalance;
+  const isLoadingWalletBalance =
+    selectedMarket?.loanCurrency === 'SOL'
+      ? isLoadingSolBalance
+      : isLoadingWalletLoanTokenBalance;
+  const refetchWalletBalance =
+    selectedMarket?.loanCurrency === 'SOL'
+      ? refetchSolBalance
+      : refetchWalletLoanTokenBalance;
 
   // Put your validators here
   const isRepayButtonDisabled = () => {
@@ -407,7 +439,7 @@ const RepayForm = (props: RepayProps) => {
                   isFetchingData ? (
                     <Skeleton.Button size="small" active />
                   ) : (
-                    fsn(Number(frd(SOLBalance, 3)))
+                    fsn(Number(frd(userWalletBalance, 3)))
                   )
                 }
               ></InfoBlock>
@@ -415,12 +447,14 @@ const RepayForm = (props: RepayProps) => {
             <div className={cs(styles.balance, styles.col)}>
               <InfoBlock
                 isDisabled={userDebt == 0 ? true : false}
-                title={'NEW SOL balance'}
+                title={`NEW ${selectedMarket?.constants.marketLoanCurrency} balance`}
                 value={
                   isFetchingData ? (
                     <Skeleton.Button size="small" active />
                   ) : (
-                    fsn(Number(frd(SOLBalance - (valueSOL || 0), 3)))
+                    fsn(
+                      Number(frd(userWalletBalance - (valueUnderlying || 0), 3))
+                    )
                   )
                 }
               ></InfoBlock>

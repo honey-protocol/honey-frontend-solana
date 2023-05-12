@@ -24,7 +24,7 @@ export const RepayP2PTab = ({ position, onClose }: RepayP2PTabProps) => {
   const [isDisableCreateButton, setIsDisableCreateButton] =
     useState<boolean>(false);
 
-  const solBalance = useSolBalance();
+  const { balance: solBalance } = useSolBalance();
   const solPrice = useSolPrice();
 
   const getDateFormatted = (date: number): string => {
