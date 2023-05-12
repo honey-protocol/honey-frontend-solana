@@ -237,14 +237,14 @@ const Lend: NextPage = () => {
    * @returns succes | failure
    */
   async function executeDeposit(value?: number, toast?: ToastProps['toast']) {
-    if (!toast) return;
+    if (!toast || !selectedMarket) return;
     try {
       if (!value) return toast.error('Deposit failed');
       const tokenAmount = new BN(value * LAMPORTS_PER_SOL);
       toast.processing();
 
       const depositTokenMint = new PublicKey(
-        'So11111111111111111111111111111111111111112'
+        selectedMarket?.constants.marketLoanCurrencyTokenMintAddress
       );
 
       const tx = await deposit(
@@ -304,13 +304,13 @@ const Lend: NextPage = () => {
    * @returns succes | failure
    */
   async function executeWithdraw(value: number, toast?: ToastProps['toast']) {
-    if (!toast) return;
+    if (!toast || !selectedMarket) return;
     try {
       if (!value) return toast.error('Withdraw failed');
 
       const tokenAmount = new BN(value * LAMPORTS_PER_SOL);
       const depositTokenMint = new PublicKey(
-        'So11111111111111111111111111111111111111112'
+        selectedMarket?.constants.marketLoanCurrencyTokenMintAddress
       );
 
       toast.processing();

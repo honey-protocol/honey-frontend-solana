@@ -387,6 +387,7 @@ const Liquidate: NextPage = () => {
     toast: ToastProps['toast'],
     mrktID: string
   ) {
+    if (!selectedMarket) return;
     try {
       const liquidatorClient = await LiquidatorClient.connect(
         program.provider,
@@ -401,7 +402,9 @@ const Liquidate: NextPage = () => {
           let transactionOutcome: any = await liquidatorClient.revokeBid({
             market: new PublicKey(mrktID),
             bidder: wallet.publicKey,
-            bid_mint: NATIVE_MINT,
+            bid_mint: new PublicKey(
+              selectedMarket?.constants.marketLoanCurrencyTokenMintAddress
+            ),
             withdraw_destination: wallet.publicKey
           });
 
@@ -424,7 +427,9 @@ const Liquidate: NextPage = () => {
             bid_limit: userBid,
             market: new PublicKey(mrktID),
             bidder: wallet.publicKey,
-            bid_mint: NATIVE_MINT
+            bid_mint: new PublicKey(
+              selectedMarket?.constants.marketLoanCurrencyTokenMintAddress
+            )
           });
 
           if (transactionOutcome[0] == 'SUCCESS') {
@@ -443,7 +448,9 @@ const Liquidate: NextPage = () => {
             bid_increase: userBid,
             market: new PublicKey(mrktID),
             bidder: wallet.publicKey,
-            bid_mint: NATIVE_MINT
+            bid_mint: new PublicKey(
+              selectedMarket?.constants.marketLoanCurrencyTokenMintAddress
+            )
           });
 
           if (transactionOutcome[0] == 'SUCCESS') {

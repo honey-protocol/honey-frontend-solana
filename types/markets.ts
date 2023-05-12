@@ -35,7 +35,7 @@ export type MarketTableRow = {
     marketImage: string;
     marketLoanCurrency: string;
     marketLoanCurrencyImage: string;
-    marketLoanCurrencyTokenMintAddress?: string;
+    marketLoanCurrencyTokenMintAddress: string;
     discountedMarket: boolean;
   };
   marketData?: Array<MarketBundle>;

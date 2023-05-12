@@ -56,6 +56,8 @@ export const marketCollections: MarketTableRow[] = [
         'https://img-cdn.magiceden.dev/rs:fill:400:400:0:0/plain/https://dl.airtable.com/.attachmentThumbnails/6b6c8954aed777a74de52fd70f8751ab/46b325db',
       marketLoanCurrency: 'SOL',
       marketLoanCurrencyImage: '/images/tokens/sol.svg',
+      marketLoanCurrencyTokenMintAddress:
+        'So11111111111111111111111111111111111111112',
       discountedMarket: false
     }
   },
@@ -110,6 +112,8 @@ export const marketCollections: MarketTableRow[] = [
         'https://img-cdn.magiceden.dev/rs:fill:400:400:0:0/plain/https://i.imgur.com/37nsjBZ.png',
       marketLoanCurrency: 'SOL',
       marketLoanCurrencyImage: '/images/tokens/sol.svg',
+      marketLoanCurrencyTokenMintAddress:
+        'So11111111111111111111111111111111111111112',
       discountedMarket: false
     }
   },
@@ -136,6 +140,8 @@ export const marketCollections: MarketTableRow[] = [
         'https://img-cdn.magiceden.dev/rs:fill:400:400:0:0/plain/https://dl.airtable.com/.attachmentThumbnails/6972d5c2efb77d49be97b07ccf4fbc69/e9572fb8',
       marketLoanCurrency: 'SOL',
       marketLoanCurrencyImage: '/images/tokens/sol.svg',
+      marketLoanCurrencyTokenMintAddress:
+        'So11111111111111111111111111111111111111112',
       discountedMarket: true
     }
   },
@@ -162,6 +168,8 @@ export const marketCollections: MarketTableRow[] = [
         'https://i.seadn.io/gae/O8GK9vCJ5Cdtjz9aP3x7M4Bc4Z5HNgcsP0AcZFRjhC8p8fU4icgv2ecfNfZhMBjcYycVgJ2gpvCae_1TfXdbGOg2d6pKCdXRPlSsfQ?auto=format&w=384',
       marketLoanCurrency: 'SOL',
       marketLoanCurrencyImage: '/images/tokens/sol.svg',
+      marketLoanCurrencyTokenMintAddress:
+        'So11111111111111111111111111111111111111112',
       discountedMarket: true
     }
   },
@@ -188,6 +196,8 @@ export const marketCollections: MarketTableRow[] = [
         'https://img-cdn.magiceden.dev/rs:fill:400:400:0:0/plain/https://creator-hub-prod.s3.us-east-2.amazonaws.com/ukiyo_pfp_1663178207810.jpeg',
       marketLoanCurrency: 'SOL',
       marketLoanCurrencyImage: '/images/tokens/sol.svg',
+      marketLoanCurrencyTokenMintAddress:
+        'So11111111111111111111111111111111111111112',
       discountedMarket: false
     }
   },
@@ -214,6 +224,8 @@ export const marketCollections: MarketTableRow[] = [
         'https://img-cdn.magiceden.dev/rs:fill:400:400:0:0/plain/https://creator-hub-prod.s3.us-east-2.amazonaws.com/elixir_ovols_pfp_1668964852701.png',
       marketLoanCurrency: 'SOL',
       marketLoanCurrencyImage: '/images/tokens/sol.svg',
+      marketLoanCurrencyTokenMintAddress:
+        'So11111111111111111111111111111111111111112',
       discountedMarket: true
     }
   },
@@ -240,6 +252,8 @@ export const marketCollections: MarketTableRow[] = [
         'https://i.seadn.io/gae/c5CkCKH28E2hKPnY2Tgj2H_maWZ06yqfeV4aQqkH00q1egB54S4BAc-6yCJsyHdQ716vp5amA1NPg-cyNzVjH1AR4HkBvimd_xq7Gw?auto=format&w=256',
       marketLoanCurrency: 'SOL',
       marketLoanCurrencyImage: '/images/tokens/sol.svg',
+      marketLoanCurrencyTokenMintAddress:
+        'So11111111111111111111111111111111111111112',
       discountedMarket: false
     }
   },
@@ -266,6 +280,8 @@ export const marketCollections: MarketTableRow[] = [
         'https://i.seadn.io/gae/BgIPqBsvXBIoT-7IFHqAMbUJn9yU1Ngcdc5p1ItIQlderHXU5HuQX1SNWV4zqGpe_GWGcZwO88FFwpOdJMU7a5o4RMULdxmPr4TAlY4?auto=format&w=256',
       marketLoanCurrency: 'SOL',
       marketLoanCurrencyImage: '/images/tokens/sol.svg',
+      marketLoanCurrencyTokenMintAddress:
+        'So11111111111111111111111111111111111111112',
       discountedMarket: false
     }
   },
@@ -292,6 +308,8 @@ export const marketCollections: MarketTableRow[] = [
         'https://img-cdn.magiceden.dev/rs:fill:400:400:0:0/plain/https://dl.airtable.com/.attachmentThumbnails/9d1ed55dcb8a3f2a73d514c1e5fdc3e0/cecf9ba3',
       marketLoanCurrency: 'SOL',
       marketLoanCurrencyImage: '/images/tokens/sol.svg',
+      marketLoanCurrencyTokenMintAddress:
+        'So11111111111111111111111111111111111111112',
       discountedMarket: false
     }
   },
@@ -318,6 +336,8 @@ export const marketCollections: MarketTableRow[] = [
         'https://pbs.twimg.com/profile_images/1610792754388570113/LXrVtzAE_400x400.jpg',
       marketLoanCurrency: 'SOL',
       marketLoanCurrencyImage: '/images/tokens/sol.svg',
+      marketLoanCurrencyTokenMintAddress:
+        'So11111111111111111111111111111111111111112',
       discountedMarket: false
     }
   },
@@ -344,6 +364,8 @@ export const marketCollections: MarketTableRow[] = [
         'https://img-cdn.magiceden.dev/rs:fill:400:400:0:0/plain/https://creator-hub-prod.s3.us-east-2.amazonaws.com/drunkenapesc_pfp_1647995737060.jpeg',
       marketLoanCurrency: 'SOL',
       marketLoanCurrencyImage: '/images/tokens/sol.svg',
+      marketLoanCurrencyTokenMintAddress:
+        'So11111111111111111111111111111111111111112',
       discountedMarket: false
     }
   },
@@ -370,6 +392,8 @@ export const marketCollections: MarketTableRow[] = [
         'https://img-cdn.magiceden.dev/rs:fill:400:400:0:0/plain/https://shdw-drive.genesysgo.net/2ZSU8JnjGSCjYgj9wTU4SRjTkz6kqv3WAQeGxgVh6yJG/19.png',
       marketLoanCurrency: 'SOL',
       marketLoanCurrencyImage: '/images/tokens/sol.svg',
+      marketLoanCurrencyTokenMintAddress:
+        'So11111111111111111111111111111111111111112',
       discountedMarket: false
     }
   }
