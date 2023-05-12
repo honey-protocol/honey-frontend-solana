@@ -64,6 +64,7 @@ import SorterIcon from 'icons/Sorter';
 import HoneyToggle from 'components/HoneyToggle/HoneyToggle';
 import HoneyTooltip from 'components/HoneyTooltip/HoneyTooltip';
 import { FETCH_USER_MARKET_DATA } from 'constants/apiEndpoints';
+import { useSolBalance, useTokenBalance } from 'hooks/useSolBalance';
 // TODO: fetch based on config
 const network = 'mainnet-beta';
 
@@ -72,7 +73,6 @@ const Lend: NextPage = () => {
   const [userTotalDeposits, setUserTotalDeposits] = useState<number>(0);
   const [reserveHoneyState, setReserveHoneyState] = useState(0);
   const [nftPrice, setNftPrice] = useState(0);
-  const [userWalletBalance, setUserWalletBalance] = useState<number>(0);
   const [fetchedReservePrice, setFetchedReservePrice] = useState(0);
   const [activeMarketSupplied, setActiveMarketSupplied] = useState(0);
   const [activeMarketAvailable, setActiveMarketAvailable] = useState(0);
@@ -95,12 +95,43 @@ const Lend: NextPage = () => {
   // Sets market ID which is used for fetching market specific data
   // each market currently is a different call and re-renders the page
   const [currentMarketId, setCurrentMarketId] = useState(
-    HONEY_GENESIS_MARKET_ID
+    marketCollections[0].constants.marketId
   );
   const [currentMarketName, setCurrentMarketName] = useState(
-    HONEY_GENESIS_BEE_MARKET_NAME
+    marketCollections[0].constants.marketName
   );
   const [showWeeklyRates, setShowWeeklyRates] = useState(false);
+
+  const selectedMarket = marketCollections.find(
+    collection => collection.id === currentMarketId
+  );
+  //Wallet balance
+  const {
+    balance: walletSolBalance,
+    loading: isLoadingSolBalance,
+    refetch: refetchSolBalance
+  } = useSolBalance();
+
+  const {
+    balance: walletLoanTokenBalance,
+    loading: isLoadingWalletLoanTokenBalance,
+    refetch: refetchWalletLoanTokenBalance
+  } = useTokenBalance(
+    selectedMarket?.constants.marketLoanCurrencyTokenMintAddress ?? ''
+  );
+
+  const userWalletBalance =
+    selectedMarket?.loanCurrency === 'SOL'
+      ? walletSolBalance
+      : walletLoanTokenBalance;
+  const isLoadingWalletBalance =
+    selectedMarket?.loanCurrency === 'SOL'
+      ? isLoadingSolBalance
+      : isLoadingWalletLoanTokenBalance;
+  const refetchWalletBalance =
+    selectedMarket?.loanCurrency === 'SOL'
+      ? refetchSolBalance
+      : refetchWalletLoanTokenBalance;
 
   // init wallet and sdkConfiguration file
   const sdkConfig = ConfigureSDK();
@@ -181,23 +212,6 @@ const Lend: NextPage = () => {
 
   //  ************* END FETCH MARKET DATA *************
 
-  //  ************* START FETCH USER BALANCE *************
-  // fetches the users balance
-  async function fetchWalletBalance(key: PublicKey) {
-    try {
-      const userBalance =
-        (await sdkConfig.saberHqConnection.getBalance(key)) / LAMPORTS_PER_SOL;
-      setUserWalletBalance(userBalance);
-    } catch (error) {
-      console.log('Error', error);
-    }
-  }
-
-  useEffect(() => {
-    if (walletPK) fetchWalletBalance(walletPK);
-  }, [walletPK]);
-  //  ************* END FETCH USER BALANCE *************
-
   //  ************* START FETCH CURRENT RESERVE PRICE *************
   // fetches the current reserve price
   async function fetchReserveValue(reserves: TReserve, connection: Connection) {
@@ -259,7 +273,7 @@ const Lend: NextPage = () => {
             ? setHoneyReservesChange(1)
             : setHoneyReservesChange(0);
 
-          if (walletPK) await fetchWalletBalance(walletPK);
+          if (walletPK) await refetchWalletBalance();
 
           toast.success(
             'Deposit success',
@@ -270,7 +284,7 @@ const Lend: NextPage = () => {
             ? setHoneyReservesChange(1)
             : setHoneyReservesChange(0);
 
-          if (walletPK) await fetchWalletBalance(walletPK);
+          if (walletPK) await refetchWalletBalance();
 
           toast.success(
             'Deposit success',
@@ -326,7 +340,7 @@ const Lend: NextPage = () => {
             ? setHoneyReservesChange(1)
             : setHoneyReservesChange(0);
 
-          if (walletPK) await fetchWalletBalance(walletPK);
+          if (walletPK) await refetchWalletBalance();
 
           toast.success(
             'Deposit success',
@@ -337,7 +351,7 @@ const Lend: NextPage = () => {
             ? setHoneyReservesChange(1)
             : setHoneyReservesChange(0);
 
-          if (walletPK) await fetchWalletBalance(walletPK);
+          if (walletPK) await refetchWalletBalance();
 
           toast.success(
             'Deposit success',
@@ -602,20 +616,20 @@ const Lend: NextPage = () => {
               trigger={['hover']}
               title={`${data.name}/${data.loanCurrency}`}
             >
-            <div className={style.nameCell}>
-              <div className={style.logoWrapper}>
-                <div className={style.collectionLogo}>
-                  <HexaBoxContainer>
-                    {renderMarketImageByName(name)}
-                  </HexaBoxContainer>
-                </div>
+              <div className={style.nameCell}>
+                <div className={style.logoWrapper}>
+                  <div className={style.collectionLogo}>
+                    <HexaBoxContainer>
+                      {renderMarketImageByName(name)}
+                    </HexaBoxContainer>
+                  </div>
 
                   <div className={c(style.collectionLogo, style.secondaryLogo)}>
                     <HexaBoxContainer>
                       {renderMarketCurrencyImageByID(data.id)}
                     </HexaBoxContainer>
-              </div>
-            </div>
+                  </div>
+                </div>
                 <div
                   className={style.collectionName}
                 >{`${data.name}/${data.loanCurrency}`}</div>

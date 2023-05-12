@@ -75,6 +75,7 @@ import SorterIcon from 'icons/Sorter';
 import { fetchTVL } from 'helpers/loanHelpers/userCollection';
 import HoneyTooltip from 'components/HoneyTooltip/HoneyTooltip';
 import { FETCH_USER_MARKET_DATA } from 'constants/apiEndpoints';
+import { useSolBalance, useTokenBalance } from 'hooks/useSolBalance';
 
 const { formatPercent: fp, formatSol: fs, formatRoundDown: fd } = formatNumber;
 
@@ -85,7 +86,6 @@ const Liquidate: NextPage = () => {
   const [highestBiddingValue, setHighestBiddingValue] = useState(0);
   const [currentUserBid, setCurrentUserBid] = useState<number>();
   const [nftPrice, setNftPrice] = useState<number>(0);
-  const [userBalance, setUserBalance] = useState(0);
   const [fetchedReservePrice, setFetchedReservePrice] = useState(0);
   const [isMobileSidebarVisible, setShowMobileSidebar] = useState(false);
   const [biddingArray, setBiddingArray] = useState({});
@@ -115,6 +115,37 @@ const Liquidate: NextPage = () => {
   const wallet = useConnectedWallet() || null;
   let stringyfiedWalletPK = sdkConfig.sdkWallet?.publicKey.toString();
   let walletPK = sdkConfig.sdkWallet?.publicKey;
+
+  const selectedMarket = marketCollections.find(
+    collection => collection.id === currentMarketId
+  );
+  //Wallet balance
+  const {
+    balance: walletSolBalance,
+    loading: isLoadingSolBalance,
+    refetch: refetchSolBalance
+  } = useSolBalance();
+
+  const {
+    balance: walletLoanTokenBalance,
+    loading: isLoadingWalletLoanTokenBalance,
+    refetch: refetchWalletLoanTokenBalance
+  } = useTokenBalance(
+    selectedMarket?.constants.marketLoanCurrencyTokenMintAddress ?? ''
+  );
+
+  const userWalletBalance =
+    selectedMarket?.loanCurrency === 'SOL'
+      ? walletSolBalance
+      : walletLoanTokenBalance;
+  const isLoadingWalletBalance =
+    selectedMarket?.loanCurrency === 'SOL'
+      ? isLoadingSolBalance
+      : isLoadingWalletLoanTokenBalance;
+  const refetchWalletBalance =
+    selectedMarket?.loanCurrency === 'SOL'
+      ? refetchSolBalance
+      : refetchWalletLoanTokenBalance;
 
   useEffect(() => {
     if (stringyfiedWalletPK)
@@ -241,27 +272,6 @@ const Liquidate: NextPage = () => {
     handleBids(currentMarketId);
   }, [currentMarketId, serverRenderedMarketData, stringyfiedWalletPK]);
   //  ************* END HANDLE BIDS *************
-
-  //  ************* START FETCH WALLET BALANCE *************
-  /**
-   * @description
-   * @params
-   * @returns
-   */
-  async function fetchWalletBalance(key: PublicKey) {
-    try {
-      const userBalance =
-        (await sdkConfig.saberHqConnection.getBalance(key)) / LAMPORTS_PER_SOL;
-      setUserBalance(userBalance);
-    } catch (error) {
-      console.log('Error', error);
-    }
-  }
-
-  useEffect(() => {
-    if (walletPK) fetchWalletBalance(walletPK);
-  }, [walletPK]);
-  //  ************* END FETCH WALLET BALANCE *************
 
   function fetchUserWalletFromLS() {
     let userWallet = localStorage.getItem('walletPK');
@@ -397,7 +407,7 @@ const Liquidate: NextPage = () => {
 
           if (transactionOutcome[0] == 'SUCCESS') {
             setCurrentUserBid(0);
-            if (walletPK) await fetchWalletBalance(walletPK);
+            if (walletPK) await refetchWalletBalance();
             fetchBidData();
             return toast.success('Bid revoked, fetching chain data');
           } else {
@@ -418,7 +428,7 @@ const Liquidate: NextPage = () => {
           });
 
           if (transactionOutcome[0] == 'SUCCESS') {
-            if (walletPK) await fetchWalletBalance(walletPK);
+            if (walletPK) await refetchWalletBalance();
             fetchBidData();
             return toast.success('Bid placed, fetching chain data');
           } else {
@@ -437,7 +447,7 @@ const Liquidate: NextPage = () => {
           });
 
           if (transactionOutcome[0] == 'SUCCESS') {
-            if (walletPK) await fetchWalletBalance(walletPK);
+            if (walletPK) await refetchWalletBalance();
             fetchBidData();
             return toast.success('Bid increased, fetching chain data');
           } else {
@@ -766,13 +776,13 @@ const Liquidate: NextPage = () => {
               trigger={['hover']}
               title={`${data.name}/${data.loanCurrency}`}
             >
-            <div className={style.nameCell}>
-              <div className={style.logoWrapper}>
-                <div className={style.collectionLogo}>
-                  <HexaBoxContainer>
-                    {renderMarketImageByName(name)}
-                  </HexaBoxContainer>
-                </div>
+              <div className={style.nameCell}>
+                <div className={style.logoWrapper}>
+                  <div className={style.collectionLogo}>
+                    <HexaBoxContainer>
+                      {renderMarketImageByName(name)}
+                    </HexaBoxContainer>
+                  </div>
 
                   <div
                     className={classNames(
@@ -783,8 +793,8 @@ const Liquidate: NextPage = () => {
                     <HexaBoxContainer>
                       {renderMarketCurrencyImageByID(data.id)}
                     </HexaBoxContainer>
-              </div>
-            </div>
+                  </div>
+                </div>
                 <div
                   className={style.collectionName}
                 >{`${data.name}/${data.loanCurrency}`}</div>
@@ -1006,7 +1016,7 @@ const Liquidate: NextPage = () => {
       <LiquidateSidebar
         collectionId="0"
         biddingArray={biddingArray}
-        userBalance={userBalance}
+        userBalance={userWalletBalance}
         stringyfiedWalletPK={stringyfiedWalletPK}
         highestBiddingValue={highestBiddingValue}
         highestBiddingAddress={highestBiddingAddress}
