@@ -102,7 +102,7 @@ export const RepayP2PTab = ({ position, onClose }: RepayP2PTabProps) => {
         isActionButtonDisabled={isDisableCreateButton}
         onClose={onClose}
         actionButtonProps={{
-          solAmount: position.request,
+          tokenAmount: position.request,
           usdcValue: new Decimal(position.request).mul(solPrice || 0).toNumber()
         }}
       />

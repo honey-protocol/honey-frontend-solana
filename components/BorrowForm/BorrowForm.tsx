@@ -596,7 +596,8 @@ const BorrowForm = (props: BorrowProps) => {
         </div>
         <div className={styles.bigCol}>
           <HoneyButton
-            solAmount={valueSOL || 0}
+            tokenAmount={valueUnderlying || 0}
+            tokenName={selectedMarket?.constants.marketLoanCurrency}
             usdcValue={valueUSD || 0}
             variant="primary"
             disabled={isBorrowButtonDisabled()}

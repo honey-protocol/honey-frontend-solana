@@ -7,7 +7,8 @@ import { formatNumber } from '../../helpers/format';
 
 export interface HoneyButtonProps extends ButtonProps {
   variant?: 'primary' | 'secondary' | 'tertiary' | 'text' | 'textSecondary';
-  solAmount?: number;
+  tokenAmount?: number;
+  tokenName?: string;
   usdcValue?: number;
   textRight?: string;
 }
@@ -15,7 +16,8 @@ const { format: f, formatPercent: fp, formatUsd: fu } = formatNumber;
 
 const HoneyButton = (props: HoneyButtonProps) => {
   const {
-    solAmount,
+    tokenAmount,
+    tokenName,
     usdcValue,
     className,
     children,
@@ -25,7 +27,7 @@ const HoneyButton = (props: HoneyButtonProps) => {
     ...rest
   } = props;
 
-  const isButtonWithValues = !isNil(solAmount) || !isNil(usdcValue);
+  const isButtonWithValues = !isNil(tokenAmount) || !isNil(usdcValue);
   return (
     <Button
       {...rest}
@@ -51,7 +53,9 @@ const HoneyButton = (props: HoneyButtonProps) => {
         >
           {isButtonWithValues && (
             <>
-              <span className={styles.usdcAmount}>SOL {f(solAmount)}</span>
+              <span className={styles.usdcAmount}>
+                {tokenName ? tokenName : 'SOL'} {f(tokenAmount)}
+              </span>
               <span className={styles.usdcValue}>{fu(usdcValue)}</span>
             </>
           )}

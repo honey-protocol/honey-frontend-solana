@@ -128,7 +128,8 @@ const BidForm = (props: BidFormProps) => {
                 disabled={isSubmitButtonDisabled()}
                 block
                 usdcValue={valueUSD || 0}
-                solAmount={valueSOL || 0}
+                tokenAmount={valueSOL || 0}
+                tokenName={selectedMarket?.loanCurrency}
                 onClick={triggerIndicator}
               >
                 {userBidValue != 0 ? 'Increase Bid' : 'Place Bid'}
