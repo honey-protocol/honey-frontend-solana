@@ -20,13 +20,14 @@ export const nameCellMobile = style({
 });
 
 export const logoWrapper = style({
-  marginRight: 12
+  marginRight: 12,
+  display: 'flex'
 });
 
 export const createMarketLogo = style({
-  width: '36px',
-  height: '36px',
-  minWidth: '36px',
+  width: '34px',
+  height: '34px',
+  minWidth: '34px',
   flexShrink: 0
 });
 
@@ -34,7 +35,13 @@ export const collectionLogo = style({
   width: '34px',
   height: '34px',
   minWidth: '34px',
-  flexShrink: 0
+  flexShrink: 0,
+  zIndex: 1
+});
+
+export const secondaryLogo = style({
+  marginLeft: -15,
+  zIndex: 0
 });
 
 export const collectionName = style([

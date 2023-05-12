@@ -19,7 +19,7 @@ import { ColumnType } from 'antd/lib/table';
 import HexaBoxContainer from '../../components/HexaBoxContainer/HexaBoxContainer';
 import { getColumnSortStatus } from '../../helpers/tableUtils';
 import HoneyButton from '../../components/HoneyButton/HoneyButton';
-import { formatNumber } from '../../helpers/format';
+import { formatNFTName, formatNumber } from '../../helpers/format';
 import { LiquidateTableRow } from '../../types/liquidate';
 import { LiquidateExpandTable } from '../../components/LiquidateExpandTable/LiquidateExpandTable';
 import { RoundHalfDown } from 'helpers/utils';
@@ -49,7 +49,8 @@ import {
   COLLATERAL_FACTOR,
   marketIDs,
   ROOT_SSR,
-  ROOT_CLIENT
+  ROOT_CLIENT,
+  renderMarketCurrencyImageByID
 } from '../../helpers/marketHelpers/index';
 import { NATIVE_MINT } from '@solana/spl-token-v-0.1.8';
 import HoneySider from 'components/HoneySider/HoneySider';
@@ -72,6 +73,7 @@ import { renderMarket, renderMarketImageByName } from 'helpers/marketHelpers';
 import { network } from 'pages/_app';
 import SorterIcon from 'icons/Sorter';
 import { fetchTVL } from 'helpers/loanHelpers/userCollection';
+import HoneyTooltip from 'components/HoneyTooltip/HoneyTooltip';
 import { FETCH_USER_MARKET_DATA } from 'constants/apiEndpoints';
 
 const { formatPercent: fp, formatSol: fs, formatRoundDown: fd } = formatNumber;
@@ -758,8 +760,12 @@ const Liquidate: NextPage = () => {
         title: SearchForm,
         dataIndex: 'name',
         key: 'name',
-        render: (name: string) => {
+        render: (name: string, data: any) => {
           return (
+            <HoneyTooltip
+              trigger={['hover']}
+              title={`${data.name}/${data.loanCurrency}`}
+            >
             <div className={style.nameCell}>
               <div className={style.logoWrapper}>
                 <div className={style.collectionLogo}>
@@ -767,9 +773,23 @@ const Liquidate: NextPage = () => {
                     {renderMarketImageByName(name)}
                   </HexaBoxContainer>
                 </div>
+
+                  <div
+                    className={classNames(
+                      style.collectionLogo,
+                      style.secondaryLogo
+                    )}
+                  >
+                    <HexaBoxContainer>
+                      {renderMarketCurrencyImageByID(data.id)}
+                    </HexaBoxContainer>
               </div>
-              <div className={style.collectionName}>{name}</div>
             </div>
+                <div
+                  className={style.collectionName}
+                >{`${data.name}/${data.loanCurrency}`}</div>
+              </div>
+            </HoneyTooltip>
           );
         }
       },
@@ -940,9 +960,21 @@ const Liquidate: NextPage = () => {
                           {renderMarketImageByName(name)}
                         </HexaBoxContainer>
                       </div>
+                      <div
+                        className={classNames(
+                          style.collectionLogo,
+                          style.secondaryLogo
+                        )}
+                      >
+                        <HexaBoxContainer>
+                          {renderMarketCurrencyImageByID(row.id ?? '')}
+                        </HexaBoxContainer>
+                      </div>
                     </div>
                     <div className={style.nameCellMobile}>
-                      <div className={style.collectionName}>{name}</div>
+                      <div className={style.collectionName}>
+                        {formatNFTName(`${name}/${row.loanCurrency}`, 20)}
+                      </div>
                     </div>
                   </>
                 }

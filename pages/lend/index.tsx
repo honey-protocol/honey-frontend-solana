@@ -16,7 +16,7 @@ import { ColumnType } from 'antd/lib/table';
 import HexaBoxContainer from '../../components/HexaBoxContainer/HexaBoxContainer';
 import HoneyButton from '../../components/HoneyButton/HoneyButton';
 import { Key } from 'antd/lib/table/interface';
-import { formatNumber } from '../../helpers/format';
+import { formatNFTName, formatNumber } from '../../helpers/format';
 import SearchInput from '../../components/SearchInput/SearchInput';
 import debounce from 'lodash/debounce';
 import { getColumnSortStatus } from '../../helpers/tableUtils';
@@ -52,6 +52,7 @@ import {
   HONEY_GENESIS_BEE_MARKET_NAME,
   HONEY_PROGRAM_ID,
   marketIDs,
+  renderMarketCurrencyImageByID,
   ROOT_CLIENT,
   ROOT_SSR
 } from '../../helpers/marketHelpers';
@@ -61,6 +62,7 @@ import { generateMockHistoryData } from '../../helpers/chartUtils';
 import { renderMarket, renderMarketImageByName } from 'helpers/marketHelpers';
 import SorterIcon from 'icons/Sorter';
 import HoneyToggle from 'components/HoneyToggle/HoneyToggle';
+import HoneyTooltip from 'components/HoneyTooltip/HoneyTooltip';
 import { FETCH_USER_MARKET_DATA } from 'constants/apiEndpoints';
 // TODO: fetch based on config
 const network = 'mainnet-beta';
@@ -594,8 +596,12 @@ const Lend: NextPage = () => {
         title: SearchForm,
         dataIndex: 'name',
         key: 'name',
-        render: (name: string) => {
+        render: (name: string, data: LendTableRow) => {
           return (
+            <HoneyTooltip
+              trigger={['hover']}
+              title={`${data.name}/${data.loanCurrency}`}
+            >
             <div className={style.nameCell}>
               <div className={style.logoWrapper}>
                 <div className={style.collectionLogo}>
@@ -603,9 +609,18 @@ const Lend: NextPage = () => {
                     {renderMarketImageByName(name)}
                   </HexaBoxContainer>
                 </div>
+
+                  <div className={c(style.collectionLogo, style.secondaryLogo)}>
+                    <HexaBoxContainer>
+                      {renderMarketCurrencyImageByID(data.id)}
+                    </HexaBoxContainer>
               </div>
-              <div className={style.collectionName}>{name}</div>
             </div>
+                <div
+                  className={style.collectionName}
+                >{`${data.name}/${data.loanCurrency}`}</div>
+              </div>
+            </HoneyTooltip>
           );
         }
       },
@@ -750,9 +765,19 @@ const Lend: NextPage = () => {
                           {renderMarketImageByName(name)}
                         </HexaBoxContainer>
                       </div>
+
+                      <div
+                        className={c(style.collectionLogo, style.secondaryLogo)}
+                      >
+                        <HexaBoxContainer>
+                          {renderMarketCurrencyImageByID(row.id)}
+                        </HexaBoxContainer>
+                      </div>
                     </div>
                     <div className={style.nameCellMobile}>
-                      <div className={style.collectionName}>{name}</div>
+                      <div className={style.collectionName}>
+                        {formatNFTName(`${name}/${row.loanCurrency}`, 20)}
+                      </div>
                     </div>
                   </>
                 }
