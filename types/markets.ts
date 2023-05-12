@@ -10,11 +10,12 @@ export type MarketTableRow = {
   id: string;
   key: string;
   name: string;
+  loanCurrency: string;
   rate: number;
   user: any;
   utilizationRate: number;
   value: number;
-  openPositions: Array<MarketTablePosition>; 
+  openPositions: Array<MarketTablePosition>;
   stats?: any;
   risk?: number;
   liquidationThreshold?: number;
@@ -32,8 +33,11 @@ export type MarketTableRow = {
     verifiedCreator: string;
     marketName: string;
     marketImage: string;
+    marketLoanCurrency: string;
+    marketLoanCurrencyImage: string;
+    marketLoanCurrencyTokenMintAddress?: string;
     discountedMarket: boolean;
-  }
+  };
   marketData?: Array<MarketBundle>;
 };
 

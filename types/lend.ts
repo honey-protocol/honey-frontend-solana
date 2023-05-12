@@ -1,4 +1,4 @@
-import { TimestampPoint } from "../components/HoneyChart/types";
+import { TimestampPoint } from '../components/HoneyChart/types';
 import { MarketBundle } from '@honey-finance/sdk';
 export type LendTableRow = {
   allowance: number;
@@ -8,6 +8,7 @@ export type LendTableRow = {
   id: string;
   key: string;
   name: string;
+  loanCurrency: string;
   rate: number;
   user: any;
   utilizationRate: number;
@@ -25,7 +26,9 @@ export type LendTableRow = {
     verifiedCreator: string;
     marketName: string;
     marketImage: string;
+    marketLoanCurrency: string;
+    marketLoanCurrencyImage: string;
     discountedMarket: boolean;
-  }
+  };
   marketData?: Array<MarketBundle>;
 };
