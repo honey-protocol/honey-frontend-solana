@@ -13,7 +13,11 @@ import { BidFormProps } from './types';
 import { hAlign } from 'styles/common.css';
 import { questionIcon } from 'styles/icons.css';
 import useToast from 'hooks/useToast';
-import { renderMarketImageByID, renderMarketName } from 'helpers/marketHelpers';
+import {
+  marketCollections,
+  renderMarketImageByID,
+  renderMarketName
+} from 'helpers/marketHelpers';
 import QuestionIcon from 'icons/QuestionIcon';
 import { Skeleton } from 'antd';
 
@@ -55,6 +59,10 @@ const BidForm = (props: BidFormProps) => {
   const isSubmitButtonDisabled = () => {
     return false;
   };
+
+  const selectedMarket = marketCollections.find(
+    collection => collection.id === currentMarketId
+  );
 
   // change of input - render calculated values
   const handleSliderChange = (value: number) => {
@@ -226,6 +234,7 @@ const BidForm = (props: BidFormProps) => {
             onChangeFirstInput={handleSolInputChange}
             onChangeSecondInput={handleUsdInputChange}
             maxValue={maxValue}
+            firstInputAddon={selectedMarket?.loanCurrency}
           />
         </div>
 

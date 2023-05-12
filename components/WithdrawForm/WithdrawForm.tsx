@@ -11,7 +11,11 @@ import { WithdrawFormProps } from './types';
 import { questionIcon } from 'styles/icons.css';
 import { hAlign, textUnderline } from 'styles/common.css';
 import useToast from 'hooks/useToast';
-import { renderMarketImageByID, renderMarketName } from 'helpers/marketHelpers';
+import {
+  marketCollections,
+  renderMarketImageByID,
+  renderMarketName
+} from 'helpers/marketHelpers';
 import QuestionIcon from 'icons/QuestionIcon';
 import { Skeleton } from 'antd';
 import HoneyWarning from 'components/HoneyWarning/HoneyWarning';
@@ -35,6 +39,10 @@ const WithdrawForm = (props: WithdrawFormProps) => {
   const [valueSOL, setValueSOL] = useState<number>(0);
   const [sliderValue, setSliderValue] = useState(0);
   const { toast, ToastComponent } = useToast();
+
+  const selectedMarket = marketCollections.find(
+    collection => collection.id === currentMarketId
+  );
 
   const maxValue = userTotalDeposits;
   const reservePrice = fetchedReservePrice;
@@ -194,6 +202,7 @@ const WithdrawForm = (props: WithdrawFormProps) => {
             onChangeFirstInput={handleSolInputChange}
             onChangeSecondInput={handleUsdInputChange}
             maxValue={maxValue}
+            firstInputAddon={selectedMarket?.constants.marketLoanCurrency}
           />
         </div>
 

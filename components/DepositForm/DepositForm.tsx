@@ -11,7 +11,11 @@ import { DepositFormProps } from './types';
 import { questionIcon } from 'styles/icons.css';
 import { hAlign, textUnderline } from 'styles/common.css';
 import useToast from 'hooks/useToast';
-import { renderMarketImageByID, renderMarketName } from 'helpers/marketHelpers';
+import {
+  marketCollections,
+  renderMarketImageByID,
+  renderMarketName
+} from 'helpers/marketHelpers';
 import QuestionIcon from 'icons/QuestionIcon';
 import { Skeleton } from 'antd';
 import HoneyWarning from 'components/HoneyWarning/HoneyWarning';
@@ -44,6 +48,11 @@ const DepositForm = (props: DepositFormProps) => {
   const [valueSOL, setValueSOL] = useState<number>(0);
   const [sliderValue, setSliderValue] = useState(0);
   const [utilizationRate, setUtilizationRate] = useState(0);
+
+  const selectedMarket = marketCollections.find(
+    collection => collection.id === currentMarketId
+  );
+
   // imports toast for responses
   const { toast, ToastComponent } = useToast();
   // sets utilization rate
@@ -199,6 +208,7 @@ const DepositForm = (props: DepositFormProps) => {
             onChangeFirstInput={handleSolInputChange}
             onChangeSecondInput={handleUsdInputChange}
             maxValue={maxValue}
+            firstInputAddon={selectedMarket?.constants.marketLoanCurrency}
           />
         </div>
         <HoneySlider

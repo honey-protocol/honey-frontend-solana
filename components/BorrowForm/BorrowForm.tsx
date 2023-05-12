@@ -680,6 +680,7 @@ const BorrowForm = (props: BorrowProps) => {
             onChangeFirstInput={handleSolInputChange}
             onChangeSecondInput={handleUsdInputChange}
             maxValue={maxValue}
+            firstInputAddon={selectedMarket?.constants.marketLoanCurrency}
           />
         </div>
 
