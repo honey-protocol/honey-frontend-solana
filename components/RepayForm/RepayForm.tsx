@@ -523,6 +523,7 @@ const RepayForm = (props: RepayProps) => {
               secondInputValue={valueUSD}
               onChangeFirstInput={handleSolInputChange}
               onChangeSecondInput={handleUsdInputChange}
+              firstInputAddon={selectedMarket?.constants.marketLoanCurrency}
             />
           )}
         </div>

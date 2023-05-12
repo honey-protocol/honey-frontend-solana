@@ -21,7 +21,8 @@ import {
   renderMarketImageByID,
   renderNftList,
   BORROW_FEE,
-  COLLATERAL_FACTOR
+  COLLATERAL_FACTOR,
+  marketCollections
 } from 'helpers/marketHelpers';
 import QuestionIcon from 'icons/QuestionIcon';
 import { Skeleton } from 'antd';
@@ -81,6 +82,10 @@ const BorrowForm = (props: BorrowProps) => {
   const newLiqPercent = nftPrice
     ? ((nftPrice - newLiquidationPrice) / nftPrice) * 100
     : 0;
+
+  const selectedMarket = marketCollections.find(
+    collection => collection.id === currentMarketId
+  );
 
   // Put your validators here
   const isBorrowButtonDisabled = () => {
@@ -556,6 +561,7 @@ const BorrowForm = (props: BorrowProps) => {
             onChangeFirstInput={handleSolInputChange}
             onChangeSecondInput={handleUsdInputChange}
             maxValue={maxValue}
+            firstInputAddon={selectedMarket?.constants.marketLoanCurrency}
           />
         </div>
 
