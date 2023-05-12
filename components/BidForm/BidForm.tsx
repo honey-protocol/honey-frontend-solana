@@ -223,7 +223,7 @@ const BidForm = (props: BidFormProps) => {
                 )
               }
               valueSize="big"
-              title="Your SOL balance"
+              title={`Your ${selectedMarket?.constants.marketLoanCurrency} balance`}
             />
           </div>
         </div>
