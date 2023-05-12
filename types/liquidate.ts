@@ -33,6 +33,7 @@ export type LiquidateTablePosition = {
   owner: PublicKey;
   obligation: string;
   highestBid: number;
+  count: number;
 };
 
 export type BiddingPosition = {

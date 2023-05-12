@@ -1,5 +1,4 @@
 import { useConnection, useConnectedWallet } from '@saberhq/use-solana';
-import { HONEY_PROGRAM_ID } from 'helpers/marketHelpers/index';
 import { toast } from 'react-toastify';
 import BN from 'bn.js';
 import { Big } from 'big.js';
@@ -18,7 +17,7 @@ export function ConfigureSDK() {
   return {
     saberHqConnection: useConnection(),
     sdkWallet: useConnectedWallet() || null,
-    honeyId: HONEY_PROGRAM_ID
+    honeyId: 'hNEYyRsRBVq2La65V1KjvdbTE39w36gwrdjkmcpvysk'
   };
 }
 /**

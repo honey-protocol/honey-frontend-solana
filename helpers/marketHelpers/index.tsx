@@ -318,7 +318,6 @@ export const marketCollections: MarketTableRow[] = [
   //   available: 0,
   //   value: 0,
   //   allowance: 0,
-  // positions: [],
   //   connection: undefined,
   //   user: undefined,
   //   debt: 0,
@@ -342,7 +341,6 @@ export const marketCollections: MarketTableRow[] = [
   //   available: 0,
   //   value: 0,
   //   allowance: 0,
-  // positions: [],
   //   connection: undefined,
   //   user: undefined,
   //   debt: 0,
@@ -366,7 +364,6 @@ export const marketCollections: MarketTableRow[] = [
   //   available: 0,
   //   value: 0,
   //   allowance: 0,
-  // positions: [],
   //   connection: undefined,
   //   user: undefined,
   //   debt: 0,
@@ -390,8 +387,13 @@ export const BORROW_FEE = 0.015;
 // Honey Program ID
 export const HONEY_GENESIS_MARKET_ID =
   '6FcJaAzQnuoA6o3sVw1GD6Ba69XuL5jinZpQTzJhd2R3';
+// export const HONEY_GENESIS_MARKET_ID =
+//   'ACv7BxtW7QzvFyLtmxtB8xZBQrfHAyTAjdCZ3q4QEowF';
 export const HONEY_GENESIS_BEE_MARKET_NAME = 'Honey Genesis Bee';
+// swap to TEST_HONEY_PROGRAM_ID for test program on mainnet, for development of new features
 export const HONEY_PROGRAM_ID = 'hNEYyRsRBVq2La65V1KjvdbTE39w36gwrdjkmcpvysk';
+export const TEST_HONEY_PROGRAM_ID =
+  'AoaqbAiwMVK12MQHkRi7p5aemc1CQ271JyuyeHzXonXu';
 
 // import image from next
 import Image from 'next/image';

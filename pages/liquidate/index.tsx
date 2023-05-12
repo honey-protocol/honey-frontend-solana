@@ -23,15 +23,12 @@ import { formatNumber } from '../../helpers/format';
 import { LiquidateTableRow } from '../../types/liquidate';
 import { LiquidateExpandTable } from '../../components/LiquidateExpandTable/LiquidateExpandTable';
 import { RoundHalfDown } from 'helpers/utils';
-import { getOraclePrice } from '../../helpers/loanHelpers/index';
-import BN from 'bn.js';
 import {
   useAnchor,
   LiquidatorClient,
   useAllPositions,
   useHoney,
   useMarket,
-  NftPosition,
   fetchAllMarkets,
   MarketBundle,
   HoneyMarket,
@@ -45,6 +42,7 @@ import { useConnectedWallet } from '@saberhq/use-solana';
 import { Connection, LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js';
 import {
   HONEY_PROGRAM_ID,
+  TEST_HONEY_PROGRAM_ID,
   HONEY_GENESIS_MARKET_ID,
   COLLATERAL_FACTOR,
   marketIDs,
@@ -72,98 +70,11 @@ import { renderMarket, renderMarketImageByName } from 'helpers/marketHelpers';
 import { network } from 'pages/_app';
 import SorterIcon from 'icons/Sorter';
 import { fetchTVL } from 'helpers/loanHelpers/userCollection';
+import { FETCH_USER_MARKET_DATA } from 'constants/apiEndpoints';
 
 const { formatPercent: fp, formatSol: fs, formatRoundDown: fd } = formatNumber;
 
-const createMarketObject = async (marketData: any) => {
-  try {
-    return Promise.all(
-      marketData.map(async (marketObject: any) => {
-        const marketId = marketObject.market.address.toString();
-        const { utilization, interestRate } =
-          await marketObject.reserves[0].getUtilizationAndInterestRate();
-        const totalMarketDebt =
-          await marketObject.reserves[0].getReserveState();
-        const totalMarketDeposits =
-          await marketObject.reserves[0].getReserveState().totalDeposits;
-        const nftPrice = await marketObject.market.fetchNFTFloorPriceInReserve(
-          0
-        );
-        const allowanceAndDebt = await marketObject.user.fetchAllowanceAndDebt(
-          0,
-          'mainnet-beta'
-        );
-
-        const allowance = await allowanceAndDebt.allowance;
-        const liquidationThreshold =
-          await allowanceAndDebt.liquidationThreshold;
-        const ltv = await allowanceAndDebt.ltv;
-        const ratio = await allowanceAndDebt.ratio.toString();
-
-        const positions = marketObject.positions.map((pos: any) => {
-          return {
-            obligation: pos.obligation,
-            debt: pos.debt,
-            owner: pos.owner.toString(),
-            ltv: pos.ltv,
-            is_healthy: pos.is_healthy,
-            highest_bid: pos.highest_bid,
-            verifiedCreator: pos.verifiedCreator.toString()
-          };
-        });
-
-        return {
-          marketId,
-          utilization: utilization,
-          interestRate: interestRate,
-          totalMarketDebt: totalMarketDebt,
-          totalMarketDeposits: totalMarketDeposits,
-          // totalMarketValue: totalMarketDebt + totalMarketDeposits,
-          nftPrice: nftPrice,
-          bids: marketObject.bids,
-          allowance,
-          liquidationThreshold,
-          ltv,
-          ratio,
-          positions
-        };
-      })
-    );
-  } catch (error) {
-    return {};
-  }
-};
-
-export async function getStaticProps() {
-  const createConnection = () => {
-    // @ts-ignore
-    return new Connection(process.env.NEXT_PUBLIC_RPC_NODE, 'mainnet-beta');
-  };
-
-  const arrayOfMarketIds = await marketIDs(marketCollections);
-
-  const response = await fetchAllMarkets(
-    createConnection(),
-    null,
-    HONEY_PROGRAM_ID,
-    arrayOfMarketIds,
-    false
-  );
-
-  let res;
-
-  await createMarketObject(response).then(result => {
-    res = result;
-  });
-
-  return {
-    props: { res },
-    revalidate: 30
-  };
-}
-
-// @ts-ignore
-const Liquidate: NextPage = ({ res }: { res: any }) => {
+const Liquidate: NextPage = () => {
   // base state
   const [hasPosition, setHasPosition] = useState(false);
   const [highestBiddingAddress, setHighestBiddingAddress] = useState('');
@@ -254,21 +165,71 @@ const Liquidate: NextPage = ({ res }: { res: any }) => {
     setDataRoot(ROOT_CLIENT);
     setMarketData(data as unknown as MarketBundle[]);
   }
+  /**
+   * @description loops through the positions array - if dubble obligations - meaning bulk loan, it sums the debt and adds a counter
+   * @params array of objects - each object being an open position
+   * @returns array of objects with bulk loans merged into one object
+   */
+  function mergeDuplicates(arr: any) {
+    const mergedArr = []; // initialize an empty array to store the merged objects
+
+    // create an object to keep track of how many times an obligation occurs
+    const obligationCount = {};
+
+    // loop through each object in the array
+    for (let i = 0; i < arr.length; i++) {
+      const obj = arr[i];
+      const obligation = obj.obligation;
+      // @ts-ignore
+      if (!obligationCount[obligation]) {
+        // if the obligation hasn't occurred before
+        // @ts-ignore
+        obligationCount[obligation] = 1; // set its count to 1
+        mergedArr.push(obj); // add the object to the merged array
+      } else {
+        const index = mergedArr.findIndex(
+          item => item.obligation === obligation
+        ); // find the index of the existing object with the same obligation
+
+        // merge the debt and increment the count
+        mergedArr[index].debt += obj.debt;
+        // @ts-ignore
+        obligationCount[obligation] += 1;
+      }
+    }
+    // add the count field to each merged object
+    for (let i = 0; i < mergedArr.length; i++) {
+      const obligation = mergedArr[i].obligation;
+      // @ts-ignore
+      mergedArr[i].count = obligationCount[obligation];
+    }
+
+    return mergedArr; // return the merged array with the count field added to each object
+  }
+
+  // fetches market level data from API
+  async function fetchServerSideMarketData() {
+    fetch(FETCH_USER_MARKET_DATA)
+      .then(res => res.json())
+      .then(async data => {
+        await data.map(async (marketObject: any) => {
+          marketObject.data.positions = mergeDuplicates(
+            marketObject.data.positions
+          );
+        });
+
+        setDataRoot(ROOT_SSR);
+        setMarketData(data as unknown as MarketBundle[]);
+        setServerRenderedMarketData(data);
+        setBidsOrigin(ROOT_SSR);
+        handleBids(currentMarketId);
+      })
+      .catch(err => console.log(`Error fetching SSR: ${err}`));
+  }
 
   useEffect(() => {
-    if (!sdkConfig.sdkWallet) return;
-    const marketIDs = marketCollections.map(market => market.id);
-    fetchAllMarketData(marketIDs);
-  }, [sdkConfig.sdkWallet]);
-
-  useEffect(() => {
-    console.log('@@-- SSR refresh');
-    setDataRoot(ROOT_SSR);
-    setMarketData(res as unknown as MarketBundle[]);
-    setServerRenderedMarketData(res);
-    setBidsOrigin(ROOT_SSR);
-    handleBids(currentMarketId);
-  }, [res]);
+    fetchServerSideMarketData();
+  }, []);
 
   //  ************* END FETCH MARKET DATA *************
 
@@ -302,9 +263,12 @@ const Liquidate: NextPage = ({ res }: { res: any }) => {
           marketObject.marketId === currentMarketId
       );
       if (filteredMarketData.length) {
-        if (filteredMarketData[0].bids) {
-          setBiddingArray(filteredMarketData[0].bids);
-          handleBiddingState(filteredMarketData[0].bids);
+        //@ts-ignore
+        if (filteredMarketData[0].data.bids) {
+          //@ts-ignore
+          setBiddingArray(filteredMarketData[0].data.bids);
+          //@ts-ignore
+          handleBiddingState(filteredMarketData[0].data.bids);
         } else {
           setBiddingArray([]);
           handleBiddingState([]);
@@ -415,21 +379,10 @@ const Liquidate: NextPage = ({ res }: { res: any }) => {
     setFetchedReservePrice(reservePrice);
   }
   // refetches markets after bid is placed | revoked | increased
+  // TODO: Validate if we can use the API for this call as well
   async function fetchBidData() {
     setTimeout(async () => {
-      console.log('@@-- refetching chain data');
-      const marketIDs = marketCollections.map(market => market.id);
-
-      const data = await fetchAllMarkets(
-        sdkConfig.saberHqConnection,
-        sdkConfig.sdkWallet,
-        sdkConfig.honeyId,
-        marketIDs,
-        false
-      );
-
-      setBidsOrigin(ROOT_CLIENT);
-      setServerRenderedMarketData(data as unknown as MarketBundle[]);
+      fetchServerSideMarketData();
     }, 30000);
   }
 
@@ -644,65 +597,81 @@ const Liquidate: NextPage = ({ res }: { res: any }) => {
                   );
 
                   //@ts-ignore
-                  collection.allowance = collection.marketData[0].allowance
+                  collection.allowance = collection.marketData[0].data.allowance
                     ? //@ts-ignore
-                      collection.marketData[0].allowance
+                      collection.marketData[0].data.allowance
                     : 0;
                   //@ts-ignore
                   collection.available = //@ts-ignore
-                    collection.marketData[0].totalMarketDeposits
+                    collection.marketData[0].data.totalMarketDeposits
                       ? //@ts-ignore
-                        collection.marketData[0].totalMarketDeposits
+                        collection.marketData[0].data.totalMarketDeposits
                       : 0;
                   //@ts-ignore
-                  collection.value =
-                    //@ts-ignore
-                    collection.marketData[0].totalMarketDeposits +
-                    // @ts-ignore
-                    collection.marketData[0].totalMarketDebt.outstandingDebt;
+                  // @ts-ignore
+                  collection.value = collection.marketData[0].data
+                    .totalMarketDebt
+                    ? // @ts-ignore
+                      collection.marketData[0].data.totalMarketDebt +
+                      // @ts-ignore
+                      collection.marketData[0].data.totalMarketDeposits
+                    : // @ts-ignore
+                      collection.marketData[0].data.totalMarketDeposits;
+
                   //@ts-ignore
                   collection.connection = sdkConfig.saberHqConnection;
                   //@ts-ignore
-                  collection.nftPrice = collection.marketData[0].nftPrice;
+                  collection.nftPrice = collection.marketData[0].data.nftPrice;
                   //@ts-ignore
                   collection.tvl =
-                    collection.marketData[0].positions && collection.nftPrice
-                      ? collection.nftPrice *
-                        (await fetchTVL(collection.marketData[0].positions))
+                    //@ts-ignore
+                    collection.marketData[0].data.positions &&
+                    //@ts-ignore
+                    collection.marketData[0].data.nftPrice
+                      ? //@ts-ignore
+                        collection.marketData[0].data.nftPrice *
+                        //@ts-ignore
+                        (await fetchTVL(
+                          //@ts-ignore
+                          collection.marketData[0].data.positions
+                        ))
                       : 0;
                   //@ts-ignore
                   collection.utilizationRate = //@ts-ignore
-                    collection.marketData[0].utilization
+                    collection.marketData[0].data.utilization
                       ? //@ts-ignore
-                        collection.marketData[0].utilization
+                        collection.marketData[0].data.utilization
                       : 0;
                   //@ts-ignore
                   collection.totalDebt =
                     //@ts-ignore
-                    collection.marketData[0].totalMarketDebt.outstandingDebt;
+                    collection.marketData[0].data.totalMarketDebt;
+
                   //@ts-ignore
-                  collection.risk = collection.marketData[0].positions
+                  collection.risk = collection.marketData[0].data.positions
                     ? await calculateRisk(
-                        collection.marketData[0].positions,
                         // @ts-ignore
-                        collection.nftPrice,
-                        false,
-                        collection
+                        collection.marketData[0].data.positions,
+                        // @ts-ignore
+                        collection.marketData[0].data.nftPrice,
+                        false
                       )
                     : 0;
 
                   // @ts-ignore
-                  collection.openPositions = collection.marketData[0].positions
-                    .length
+                  collection.openPositions = collection.marketData[0].data
+                    .positions.length
                     ? await setObligations(
-                        collection.marketData[0].positions,
+                        // @ts-ignore
+                        collection.marketData[0].data.positions,
                         currentMarketId,
                         // @ts-ignore
-                        collection.nftPrice
+                        collection.marketData[0].data.nftPrice
                       )
                     : [];
-
+                  // @ts-ignore
                   if (collection.openPositions) {
+                    //@ts-ignore
                     collection.openPositions.map(openPos => {
                       // @ts-ignore
                       return (openPos.untilLiquidation =
@@ -1094,6 +1063,7 @@ const Liquidate: NextPage = ({ res }: { res: any }) => {
                   <div className={style.expandSection}>
                     <div className={style.dashedDivider} />
                     <LiquidateExpandTable
+                      // TODO: set to record.marketData[0].data.positions
                       data={record.openPositions}
                       currentMarketId={currentMarketId}
                     />
@@ -1144,6 +1114,7 @@ const Liquidate: NextPage = ({ res }: { res: any }) => {
                   >
                     <div className={style.dashedDivider} />
                     <LiquidateExpandTableMobile
+                      // TODO: set to record.marketData[0].data.positions
                       data={record.openPositions}
                       onPlaceBid={showMobileSidebar}
                       currentMarketId={currentMarketId}

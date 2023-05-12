@@ -32,6 +32,7 @@ import EmptyStateDetails from 'components/EmptyStateDetails/EmptyStateDetails';
 import { getColumnSortStatus } from '../../helpers/tableUtils';
 import { useConnectedWallet, useSolana } from '@saberhq/use-solana';
 import { BnToDecimal, ConfigureSDK } from '../../helpers/loanHelpers/index';
+import { FETCH_USER_MARKET_DATA } from 'constants/apiEndpoints';
 import {
   Connection,
   LAMPORTS_PER_SOL,
@@ -108,104 +109,7 @@ const {
   formatShortName: fsn
 } = formatNumber;
 
-const createMarketObject = async (marketData: any) => {
-  try {
-    return Promise.all(
-      marketData.map(async (marketObject: any) => {
-        const marketId = marketObject.market.address.toString();
-        const { utilization, interestRate } =
-          await marketObject.reserves[0].getUtilizationAndInterestRate();
-        const totalMarketDebt =
-          await marketObject.reserves[0].getReserveState();
-        const totalMarketDeposits =
-          await marketObject.reserves[0].getReserveState().totalDeposits;
-        const nftPrice = await marketObject.market.fetchNFTFloorPriceInReserve(
-          0
-        );
-        const allowanceAndDebt = await marketObject.user.fetchAllowanceAndDebt(
-          0,
-          'mainnet-beta'
-        );
-
-        const allowance = await allowanceAndDebt.allowance;
-        const liquidationThreshold =
-          await allowanceAndDebt.liquidationThreshold;
-        const ltv = await allowanceAndDebt.ltv;
-        const ratio = await allowanceAndDebt.ratio.toString();
-
-        const positions = marketObject.positions.map((pos: any) => {
-          return {
-            obligation: pos.obligation,
-            debt: pos.debt,
-            owner: pos.owner.toString(),
-            ltv: pos.ltv,
-            is_healthy: pos.is_healthy,
-            highest_bid: pos.highest_bid,
-            verifiedCreator: pos.verifiedCreator.toString()
-          };
-        });
-
-        return {
-          marketId,
-          utilization: utilization,
-          interestRate: interestRate,
-          totalMarketDebt: totalMarketDebt,
-          totalMarketDeposits: totalMarketDeposits,
-          // totalMarketValue: totalMarketDebt + totalMarketDeposits,
-          nftPrice: nftPrice,
-          bids: marketObject.bids,
-          allowance,
-          liquidationThreshold,
-          ltv,
-          ratio,
-          positions
-        };
-      })
-    );
-  } catch (error) {
-    return {};
-  }
-};
-
-export async function getStaticProps() {
-  const createConnection = () => {
-    // @ts-ignore
-    return new Connection(process.env.NEXT_PUBLIC_RPC_NODE, 'mainnet-beta');
-  };
-
-  const arrayOfMarketIds = await marketIDs(marketCollections);
-
-  const response = await fetchAllMarkets(
-    createConnection(),
-    null,
-    HONEY_PROGRAM_ID,
-    arrayOfMarketIds,
-    false
-  );
-
-  // return createMarketObject(response).then(res => {
-  //   return {
-  //     props: { res },
-  //     revalidate: 30
-  //   };
-  // });
-
-  let res;
-
-  await createMarketObject(response).then(result => {
-    res = result;
-  });
-
-  console.log('@@-- create market object result', res);
-
-  return {
-    props: { res },
-    revalidate: 30
-  };
-}
-
-// @ts-ignore
-const Markets: NextPage = ({ res }: { res: any }) => {
+const Markets: NextPage = () => {
   const { toast, ToastComponent } = useToast();
   // Sets market ID which is used for fetching market specific data
   // each market currently is a different call and re-renders the page
@@ -316,11 +220,20 @@ const Markets: NextPage = ({ res }: { res: any }) => {
   const [marketData, setMarketData] = useState<MarketBundle[]>([]);
   const [dataRoot, setDataRoot] = useState<String>();
 
+  // fetches market level data from API
+  async function fetchServerSideMarketData() {
+    fetch(FETCH_USER_MARKET_DATA)
+      .then(res => res.json())
+      .then(data => {
+        setDataRoot(ROOT_SSR);
+        setMarketData(data as unknown as MarketBundle[]);
+      })
+      .catch(err => console.log(`Error fetching SSR: ${err}`));
+  }
+
   useEffect(() => {
-    console.log('@@-- SSR refresh', res);
-    setDataRoot(ROOT_SSR);
-    setMarketData(res as unknown as MarketBundle[]);
-  }, [res]);
+    fetchServerSideMarketData();
+  }, []);
 
   // fetches the sol price
   // TODO: create type for reserves and connection
@@ -339,7 +252,7 @@ const Markets: NextPage = ({ res }: { res: any }) => {
       fetchReserveValue(parsedReserves[0], sdkConfig.saberHqConnection);
     }
   }, [parsedReserves]);
-
+  // calls upon fetchAllMarkets from SDK - market level and user level data regarding markets
   async function fetchAllMarketData(marketIDs: string[]) {
     const data = await fetchAllMarkets(
       sdkConfig.saberHqConnection,
@@ -354,6 +267,9 @@ const Markets: NextPage = ({ res }: { res: any }) => {
 
   useEffect(() => {
     if (!sdkConfig.sdkWallet) return;
+    // if the wallet pub. key changes - update cache
+    localStorage.setItem('userPk', sdkConfig.sdkWallet.publicKey.toString());
+
     const marketIDs = marketCollections.map(market => market.id);
     fetchAllMarketData(marketIDs);
   }, [sdkConfig.sdkWallet]);
@@ -457,31 +373,38 @@ const Markets: NextPage = ({ res }: { res: any }) => {
                     // @ts-ignore
                     marketObject.marketId === collection.id
                 );
+
                 // @ts-ignore
-                collection.rate = collection.marketData[0].interestRate * 100;
+                collection.rate =
+                  // @ts-ignore
+                  collection.marketData[0].data.interestRate * 100;
                 collection.openPositions = await handlePositions(
                   collection.verifiedCreator,
                   []
                 );
                 // @ts-ignore
-                collection.allowance = collection.marketData[0].allowance;
+                collection.allowance = collection.marketData[0].data.allowance;
 
                 collection.available =
                   // @ts-ignore
-                  collection.marketData[0].totalMarketDeposits;
-                collection.value =
-                  // @ts-ignore
-                  collection.marketData[0].totalMarketDeposits +
-                  // @ts-ignore
-                  collection.marketData[0].totalMarketDebt.outstandingDebt;
+                  collection.marketData[0].data.totalMarketDeposits;
+                // @ts-ignore
+                collection.value = collection.marketData[0].data.totalMarketDebt
+                  ? // @ts-ignore
+                    collection.marketData[0].data.totalMarketDebt +
+                    // @ts-ignore
+                    collection.marketData[0].data.totalMarketDeposits
+                  : // @ts-ignore
+                    collection.marketData[0].data.totalMarketDeposits;
+
                 // @ts-ignore
                 collection.connection = sdkConfig.saberHqConnection;
                 // @ts-ignore
-                collection.nftPrice = collection.marketData[0].nftPrice;
+                collection.nftPrice = collection.marketData[0].data.nftPrice;
                 // @ts-ignore
                 collection.utilizationRate =
                   // @ts-ignore
-                  collection.marketData[0].utilization;
+                  collection.marketData[0].data.utilization;
 
                 setIsFetchingData(false);
                 return collection;
@@ -854,8 +777,9 @@ const Markets: NextPage = ({ res }: { res: any }) => {
                 {
                   <Image
                     src={
-                      `https://res.cloudinary.com/${cloudinary_uri}/image/fetch/${record.image}` ??
-                      ''
+                      record.image
+                        ? `https://res.cloudinary.com/${cloudinary_uri}/image/fetch/${record.image}`
+                        : ''
                     }
                     alt=""
                     layout="fill"
@@ -1011,44 +935,47 @@ const Markets: NextPage = ({ res }: { res: any }) => {
       if (!mintID) return;
       toast.processing();
       // TODO: set verified creator of active market along with currentMarketId
-      marketCollections.map(async collection => {
-        if (collection.id === currentMarketId) {
-          const metadata = await Metadata.findByMint(
-            collection.connection,
-            mintID
-          );
-          const tx = await depositNFT(
-            collection.connection,
-            honeyUser,
-            metadata.pubkey
-          );
-
-          if (tx[0] == 'SUCCESS') {
-            const confirmation = tx[1];
-            const confirmationHash = confirmation[0];
-
-            await waitForConfirmation(
-              sdkConfig.saberHqConnection,
-              confirmationHash
+      if (marketCollections) {
+        // @ts-ignore
+        marketCollections.map(async collection => {
+          if (collection.id === currentMarketId) {
+            const metadata = await Metadata.findByMint(
+              collection.connection,
+              mintID
             );
-            if (collection.marketData) {
-              await collection.marketData[0].reserves[0].refresh();
-              await collection.marketData[0].user.refresh();
+            const tx = await depositNFT(
+              collection.connection,
+              honeyUser,
+              metadata.pubkey
+            );
 
-              await refreshPositions();
-              refetchNfts({});
+            if (tx[0] == 'SUCCESS') {
+              const confirmation = tx[1];
+              let counter = confirmation.length - 1;
+              const confirmationHash = confirmation[counter];
 
-              toast.success(
-                'Deposit success',
-                `https://solscan.io/tx/${tx[1][0]}?cluster=${network}`
+              await waitForConfirmation(
+                sdkConfig.saberHqConnection,
+                confirmationHash
               );
+              if (collection.marketData) {
+                await collection.marketData[0].reserves[0].refresh();
+                await collection.marketData[0].user.refresh();
+
+                await refreshPositions();
+                refetchNfts({});
+
+                toast.success(
+                  'Deposit success',
+                  `https://solscan.io/tx/${tx[1][0]}?cluster=${network}`
+                );
+              }
+            } else {
+              return toast.error('Error depositing NFT');
             }
-          } else {
-            console.log('tx: ', tx);
-            return toast.error('Error depositing NFT');
           }
-        }
-      });
+        });
+      }
     } catch (error) {
       return toast.error(
         'Error depositing NFT'
@@ -1066,31 +993,32 @@ const Markets: NextPage = ({ res }: { res: any }) => {
     try {
       if (!mintID) return toast.error('Please select NFT');
       toast.processing();
-
-      marketCollections.map(async collection => {
-        if (collection.id === currentMarketId) {
-          const metadata = await Metadata.findByMint(
-            sdkConfig.saberHqConnection,
-            mintID
-          );
-          const tx = await withdrawNFT(
-            sdkConfig.saberHqConnection,
-            honeyUser,
-            metadata.pubkey
-          );
-
-          if (tx[0] == 'SUCCESS') {
-            const confirmation = tx[1];
-            const confirmationHash = confirmation[0];
-
-            await waitForConfirmation(
+      if (marketCollections && fetchedDataObject) {
+        //@ts-ignore
+        marketCollections.map(async collection => {
+          if (collection.id === currentMarketId) {
+            const metadata = await Metadata.findByMint(
               sdkConfig.saberHqConnection,
-              confirmationHash
+              mintID
+            );
+            const tx = await withdrawNFT(
+              sdkConfig.saberHqConnection,
+              honeyUser,
+              metadata.pubkey
             );
 
-            if (collection.marketData) {
-              await collection.marketData[0].reserves[0].refresh();
-              await collection.marketData[0].user.refresh();
+            if (tx[0] == 'SUCCESS') {
+              const confirmation = tx[1];
+              let counter = confirmation.length - 1;
+              const confirmationHash = confirmation[counter];
+
+              await waitForConfirmation(
+                sdkConfig.saberHqConnection,
+                confirmationHash
+              );
+
+              await fetchedDataObject.reserves[0].refresh();
+              await fetchedDataObject.user.refresh();
 
               await refreshPositions();
               refetchNfts({});
@@ -1100,23 +1028,15 @@ const Markets: NextPage = ({ res }: { res: any }) => {
                 `https://solscan.io/tx/${tx[1][0]}?cluster=${network}`
               );
             } else {
-              await refreshPositions();
-              refetchNfts({});
-
-              toast.success(
-                'Withdraw success',
+              toast.error(
+                'Withdraw failed',
                 `https://solscan.io/tx/${tx[1][0]}?cluster=${network}`
               );
             }
-          } else {
-            toast.error(
-              'Withdraw failed',
-              `https://solscan.io/tx/${tx[1][0]}?cluster=${network}`
-            );
           }
-        }
-        return true;
-      });
+          return true;
+        });
+      }
     } catch (error) {
       toast.error('Error withdraw NFT');
       return;
@@ -1136,7 +1056,6 @@ const Markets: NextPage = ({ res }: { res: any }) => {
         'So11111111111111111111111111111111111111112'
       );
       toast.processing();
-
       if (!fetchedDataObject) return;
 
       const tx = await borrowAndRefresh(
@@ -1159,6 +1078,7 @@ const Markets: NextPage = ({ res }: { res: any }) => {
         await fetchedDataObject.user.refresh();
 
         await refreshPositions();
+
         refetchNfts({});
 
         reserveHoneyState === 0
@@ -1357,7 +1277,7 @@ const Markets: NextPage = ({ res }: { res: any }) => {
                           pagination={false}
                           showHeader={false}
                           footer={
-                            record.openPositions.length
+                            record.openPositions.length == 11
                               ? ExpandedTableFooter
                               : undefined
                           }
