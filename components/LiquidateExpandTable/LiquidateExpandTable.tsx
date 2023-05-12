@@ -83,7 +83,6 @@ export const LiquidateExpandTable = (props: LiquidateExpandTableProps) => {
       {
         dataIndex: 'untilLiquidation',
         render: (untilLiquidation, record) => {
-          console.log('@@-- the ef record', record);
           return (
             <div className={sharedStyles.expandedRowCell}>
               <InfoBlock
