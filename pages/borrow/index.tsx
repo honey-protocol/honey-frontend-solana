@@ -73,7 +73,8 @@ import {
   renderMarketName,
   renderMarketImageByID,
   ROOT_SSR,
-  ROOT_CLIENT
+  ROOT_CLIENT,
+  renderMarketCurrencyImageByID
 } from '../../helpers/marketHelpers';
 import {
   renderMarket,
@@ -518,16 +519,33 @@ const Markets: NextPage = () => {
               key: 'name',
               render: (name: string, data: MarketTableRow, index: number) => {
                 return (
-                  <div className={style.nameCell}>
-                    <div className={style.logoWrapper}>
-                      <div className={style.collectionLogo}>
-                        <HexaBoxContainer>
-                          {renderMarketImageByName(name)}
-                        </HexaBoxContainer>
+                  <HoneyTooltip
+                    trigger={['hover']}
+                    title={`${data.name}/${data.loanCurrency}`}
+                  >
+                    <div className={style.nameCell}>
+                      <div className={style.logoWrapper}>
+                        <div className={style.collectionLogo}>
+                          <HexaBoxContainer>
+                            {renderMarketImageByName(name)}
+                          </HexaBoxContainer>
+                        </div>
+                        <div
+                          className={c(
+                            style.collectionLogo,
+                            style.secondaryLogo
+                          )}
+                        >
+                          <HexaBoxContainer>
+                            {renderMarketCurrencyImageByID(data.id)}
+                          </HexaBoxContainer>
+                        </div>
                       </div>
+                      <div
+                        className={style.collectionName}
+                      >{`${data.name}/${data.loanCurrency}`}</div>
                     </div>
-                    <div className={style.collectionName}>{name}</div>
-                  </div>
+                  </HoneyTooltip>
                 );
               }
             }
@@ -709,10 +727,17 @@ const Markets: NextPage = () => {
                           {renderMarketImageByName(name)}
                         </HexaBoxContainer>
                       </div>
+                      <div
+                        className={c(style.collectionLogo, style.secondaryLogo)}
+                      >
+                        <HexaBoxContainer>
+                          {renderMarketCurrencyImageByID(row.id)}
+                        </HexaBoxContainer>
+                      </div>
                     </div>
                     <div className={style.nameCellMobile}>
                       <div className={style.collectionName}>
-                        {formatNFTName(name, 20)}
+                        {formatNFTName(`${name}/${row.loanCurrency}`, 20)}
                       </div>
                       {/* <div className={style.rateCellMobile}>
                         {fp(row.rate * 100)}
