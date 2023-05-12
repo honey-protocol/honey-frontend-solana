@@ -731,7 +731,9 @@ const BorrowForm = (props: BorrowProps) => {
         onClick: handleBorrow,
         disabled: isBorrowButtonDisabled(),
         solAmount: valueSOL || 0,
-        usdcValue: valueUSD || 0
+        usdcValue: valueUSD || 0,
+        tokenAmount: valueSOL || 0,
+        tokenName: selectedMarket?.constants.marketLoanCurrency
       };
     } else {
       //Uncomment when multiple deposits allowed

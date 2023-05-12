@@ -213,7 +213,8 @@ const RepayForm = (props: RepayProps) => {
                 <div className={styles.bigCol}>
                   <HoneyButton
                     variant="primary"
-                    solAmount={userDebt > 0 ? valueSOL || 0 : undefined}
+                    tokenAmount={userDebt > 0 ? valueSOL || 0 : undefined}
+                    tokenName={selectedMarket?.constants.marketLoanCurrency}
                     usdcValue={userDebt > 0 ? valueUSD || 0 : undefined}
                     disabled={isRepayButtonDisabled()}
                     block
