@@ -1088,9 +1088,10 @@ const Markets: NextPage = () => {
   async function executeBorrow(val: any, toast: ToastProps['toast']) {
     try {
       if (!val) return toast.error('Please provide a value');
-      // TODO: make the token mint dynamic by importing it from marketcollection / fetchAllMarkets
+      if (!selectedMarket) return;
+
       const borrowTokenMint = new PublicKey(
-        'So11111111111111111111111111111111111111112'
+        selectedMarket?.constants.marketLoanCurrencyTokenMintAddress
       );
       toast.processing();
       if (!fetchedDataObject) return;
@@ -1151,9 +1152,9 @@ const Markets: NextPage = () => {
       if (!val) return toast.error('Please provide a value');
       // add additional value if user wants to repay 100% of loan due to interest rate not being included
       if (val == userDebt) val += 0.1;
-      // TODO: make dynamic - marketCollections or fetchAllMarkets
+      if (!selectedMarket) return;
       const repayTokenMint = new PublicKey(
-        'So11111111111111111111111111111111111111112'
+        selectedMarket?.constants.marketLoanCurrencyTokenMintAddress
       );
       toast.processing();
       if (!fetchedDataObject) return;
