@@ -65,7 +65,7 @@ const BorrowForm = (props: BorrowProps) => {
   } = props;
   // state declarations
   const [valueUSD, setValueUSD] = useState<number>(0);
-  const [valueSOL, setValueSOL] = useState<number>(0);
+  const [valueUnderlying, setValueUnderlying] = useState<number>(0);
   const [selectedNft, setSelectedNft] = useState<NFT | null>(null);
   const [isBulkLoan, setIsBulkLoan] = useState(true);
   const [selectedMultipleNFTs, setSelectedMultipleNFTs] = useState<NFT[]>();
@@ -85,10 +85,10 @@ const BorrowForm = (props: BorrowProps) => {
   // constants && calculations
   const borrowedValue = userDebt;
   const maxValue = userAllowance * openPositions?.length;
-  const solPrice = fetchedReservePrice;
+  const marketTokenPrice = fetchedReservePrice;
   const liquidationThreshold = COLLATERAL_FACTOR; // TODO: change where relevant, currently set to 65% on mainnet
   const borrowFee = BORROW_FEE; // TODO: 1,5% later but 0% for now
-  const newAdditionalDebt = valueSOL * (1 + borrowFee);
+  const newAdditionalDebt = valueUnderlying * (1 + borrowFee);
   const newTotalDebt = newAdditionalDebt
     ? userDebt + newAdditionalDebt
     : userDebt;
@@ -109,34 +109,34 @@ const BorrowForm = (props: BorrowProps) => {
   const handleSliderChange = (value: number) => {
     if (userAllowance == 0) return;
     setSliderValue(value);
-    setValueUSD(value * solPrice);
-    setValueSOL(value);
+    setValueUSD(value * marketTokenPrice);
+    setValueUnderlying(value);
   };
   // change of input - render calculated values
   const handleUsdInputChange = (usdValue: number | undefined) => {
     if (userAllowance == 0) return;
     if (!usdValue) {
       setValueUSD(0);
-      setValueSOL(0);
+      setValueUnderlying(0);
       setSliderValue(0);
       return;
     }
     setValueUSD(usdValue);
-    setValueSOL(usdValue / solPrice);
-    setSliderValue(usdValue / solPrice);
+    setValueUnderlying(usdValue / marketTokenPrice);
+    setSliderValue(usdValue / marketTokenPrice);
   };
   // change of input - render calculated values
   const handleSolInputChange = (solValue: number | undefined) => {
     if (userAllowance == 0) return;
     if (!solValue) {
       setValueUSD(0);
-      setValueSOL(0);
+      setValueUnderlying(0);
       setSliderValue(0);
       return;
     }
 
-    setValueUSD(solValue * solPrice);
-    setValueSOL(solValue);
+    setValueUSD(solValue * marketTokenPrice);
+    setValueUnderlying(solValue);
     setSliderValue(solValue);
   };
 
@@ -256,7 +256,7 @@ const BorrowForm = (props: BorrowProps) => {
 
   // executes the borrow function
   const handleBorrow = async () => {
-    executeBorrow(valueSOL, toast);
+    executeBorrow(valueUnderlying, toast);
     handleSliderChange(0);
   };
   // fetches the market specific available nfts
@@ -658,7 +658,7 @@ const BorrowForm = (props: BorrowProps) => {
                   isFetchingData ? (
                     <Skeleton.Button size="small" active />
                   ) : (
-                    fsn(valueSOL * borrowFee)
+                    fsn(valueUnderlying * borrowFee)
                   )
                 }
                 //TODO: add link to docs
@@ -675,7 +675,7 @@ const BorrowForm = (props: BorrowProps) => {
             </div>
           </div>
           <InputsBlock
-            firstInputValue={valueSOL}
+            firstInputValue={valueUnderlying}
             secondInputValue={valueUSD}
             onChangeFirstInput={handleSolInputChange}
             onChangeSecondInput={handleUsdInputChange}
@@ -730,9 +730,9 @@ const BorrowForm = (props: BorrowProps) => {
         title: 'Borrow',
         onClick: handleBorrow,
         disabled: isBorrowButtonDisabled(),
-        solAmount: valueSOL || 0,
+        solAmount: valueUnderlying || 0,
         usdcValue: valueUSD || 0,
-        tokenAmount: valueSOL || 0,
+        tokenAmount: valueUnderlying || 0,
         tokenName: selectedMarket?.constants.marketLoanCurrency
       };
     } else {

@@ -45,7 +45,7 @@ const DepositForm = (props: DepositFormProps) => {
   } = props;
   // state declarations
   const [valueUSD, setValueUSD] = useState<number>(0);
-  const [valueSOL, setValueSOL] = useState<number>(0);
+  const [valueUnderyling, setValueUnderyling] = useState<number>(0);
   const [sliderValue, setSliderValue] = useState(0);
   const [utilizationRate, setUtilizationRate] = useState(0);
 
@@ -63,7 +63,7 @@ const DepositForm = (props: DepositFormProps) => {
   }, [value, available]);
   // constants
   const maxValue = userWalletBalance;
-  const solPrice = fetchedReservePrice;
+  const underlyingTokenPrice = fetchedReservePrice;
 
   // Put your validators here
   const isDepositButtonDisabled = () => {
@@ -73,37 +73,37 @@ const DepositForm = (props: DepositFormProps) => {
   // change of input - render calculated values
   const handleSliderChange = (value: number) => {
     setSliderValue(value);
-    setValueUSD(value * solPrice);
-    setValueSOL(value);
+    setValueUSD(value * underlyingTokenPrice);
+    setValueUnderyling(value);
   };
   // change of input - render calculated values
   const handleUsdInputChange = (usdValue: number | undefined) => {
     if (!usdValue) {
       setValueUSD(0);
-      setValueSOL(0);
+      setValueUnderyling(0);
       setSliderValue(0);
       return;
     }
     setValueUSD(usdValue);
-    setValueSOL(usdValue / solPrice);
-    setSliderValue(usdValue / solPrice);
+    setValueUnderyling(usdValue / underlyingTokenPrice);
+    setSliderValue(usdValue / underlyingTokenPrice);
   };
   // change of input - render calculated values
-  const handleSolInputChange = (solValue: number | undefined) => {
-    if (!solValue) {
+  const handleTokenInputChange = (tokenValue: number | undefined) => {
+    if (!tokenValue) {
       setValueUSD(0);
-      setValueSOL(0);
+      setValueUnderyling(0);
       setSliderValue(0);
       return;
     }
 
-    setValueUSD(solValue * solPrice);
-    setValueSOL(solValue);
-    setSliderValue(solValue);
+    setValueUSD(tokenValue * underlyingTokenPrice);
+    setValueUnderyling(tokenValue);
+    setSliderValue(tokenValue);
   };
   // executes deposit
   const handleDeposit = async () => {
-    executeDeposit(valueSOL, toast);
+    executeDeposit(valueUnderyling, toast);
     handleSliderChange(0);
   };
 
@@ -203,9 +203,9 @@ const DepositForm = (props: DepositFormProps) => {
         </div>
         <div className={styles.inputs}>
           <InputsBlock
-            firstInputValue={valueSOL}
+            firstInputValue={valueUnderyling}
             secondInputValue={valueUSD}
-            onChangeFirstInput={handleSolInputChange}
+            onChangeFirstInput={handleTokenInputChange}
             onChangeSecondInput={handleUsdInputChange}
             maxValue={maxValue}
             firstInputAddon={selectedMarket?.constants.marketLoanCurrency}

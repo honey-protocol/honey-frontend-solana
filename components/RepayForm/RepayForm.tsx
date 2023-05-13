@@ -52,16 +52,15 @@ const RepayForm = (props: RepayProps) => {
   } = props;
   // state
   const [valueUSD, setValueUSD] = useState<number>();
-  const [valueSOL, setValueSOL] = useState<number>();
+  const [valueUnderlying, setValueUnderlying] = useState<number>();
   // const [collateralCount, setCollateralCount] = useState(0);
   const [sliderValue, setSliderValue] = useState(0);
   const [maxValue, setMaxValue] = useState(0);
   const { toast, ToastComponent } = useToast();
   // constants && calculations
-  const solPrice = fetchedReservePrice;
+  const marketTokenPrice = fetchedReservePrice;
   const liquidationThreshold = COLLATERAL_FACTOR;
-  const SOLBalance = useSolBalance();
-  const newDebt = userDebt - (valueSOL ? valueSOL : 0);
+  const newDebt = userDebt - (valueUnderlying ? valueUnderlying : 0);
   const borrowedValue = userDebt;
   const liquidationPrice = userDebt / liquidationThreshold;
   const newLiquidationPrice = newDebt / liquidationThreshold;
@@ -125,33 +124,33 @@ const RepayForm = (props: RepayProps) => {
     if (userDebt <= 0) return;
 
     setSliderValue(value);
-    setValueUSD(value * solPrice);
-    setValueSOL(value);
+    setValueUSD(value * marketTokenPrice);
+    setValueUnderlying(value);
   };
   // change of input - render calculated values
   const handleUsdInputChange = (usdValue: number | undefined) => {
     if (!usdValue || userDebt <= 0) {
       setValueUSD(0);
-      setValueSOL(0);
+      setValueUnderlying(0);
       setSliderValue(0);
       return;
     }
     setValueUSD(usdValue);
-    setValueSOL(usdValue / solPrice);
-    setSliderValue(usdValue / solPrice);
+    setValueUnderlying(usdValue / marketTokenPrice);
+    setSliderValue(usdValue / marketTokenPrice);
   };
   // change of input - render calculated values
-  const handleSolInputChange = (solValue: number | undefined) => {
-    if (!solValue || userDebt <= 0) {
+  const handleTokenInputChange = (tokenValue: number | undefined) => {
+    if (!tokenValue || userDebt <= 0) {
       setValueUSD(0);
-      setValueSOL(0);
+      setValueUnderlying(0);
       setSliderValue(0);
       return;
     }
 
-    setValueUSD(solValue * solPrice);
-    setValueSOL(solValue);
-    setSliderValue(solValue);
+    setValueUSD(tokenValue * marketTokenPrice);
+    setValueUnderlying(tokenValue);
+    setSliderValue(tokenValue);
   };
   // executes repay function - changes tab state to borrow if changeTab exists
   const onRepay = async (event: any) => {
@@ -161,7 +160,7 @@ const RepayForm = (props: RepayProps) => {
       //   changeTab('borrow');
       // }
     } else {
-      executeRepay(valueSOL || 0, toast);
+      executeRepay(valueUnderlying || 0, toast);
       handleSliderChange(0);
     }
   };
@@ -213,7 +212,9 @@ const RepayForm = (props: RepayProps) => {
                 <div className={styles.bigCol}>
                   <HoneyButton
                     variant="primary"
-                    tokenAmount={userDebt > 0 ? valueSOL || 0 : undefined}
+                    tokenAmount={
+                      userDebt > 0 ? valueUnderlying || 0 : undefined
+                    }
                     tokenName={selectedMarket?.constants.marketLoanCurrency}
                     usdcValue={userDebt > 0 ? valueUSD || 0 : undefined}
                     disabled={isRepayButtonDisabled()}
@@ -435,7 +436,7 @@ const RepayForm = (props: RepayProps) => {
           <div className={styles.row}>
             <div className={cs(styles.balance, styles.col)}>
               <InfoBlock
-                title={'Your SOL balance'}
+                title={`Your ${selectedMarket?.loanCurrency} balance`}
                 value={
                   isFetchingData ? (
                     <Skeleton.Button size="small" active />
@@ -463,9 +464,9 @@ const RepayForm = (props: RepayProps) => {
           </div>
           {userDebt !== 0 && (
             <InputsBlock
-              firstInputValue={valueSOL}
+              firstInputValue={valueUnderlying}
               secondInputValue={valueUSD}
-              onChangeFirstInput={handleSolInputChange}
+              onChangeFirstInput={handleTokenInputChange}
               onChangeSecondInput={handleUsdInputChange}
               firstInputAddon={selectedMarket?.constants.marketLoanCurrency}
             />
