@@ -165,7 +165,7 @@ const RepayForm = (props: RepayProps) => {
           {toast?.state ? (
             ToastComponent
           ) : (
-            <Space direction="vertical">
+            <Space direction="vertical" className={styles.buttonMaxWidth}>
               {userDebt == 0 && !toast.state && (
                 <HoneyWarning message="Your have no outstanding debt. You can claim your collateral" />
               )}
