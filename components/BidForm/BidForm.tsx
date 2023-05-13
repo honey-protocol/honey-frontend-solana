@@ -47,14 +47,14 @@ const BidForm = (props: BidFormProps) => {
   } = props;
   // state declarations
   const [valueUSD, setValueUSD] = useState<number>(0);
-  const [valueSOL, setValueSOL] = useState<number>(0);
+  const [valueUnderlying, setValueUnderlying] = useState<number>(0);
   const [sliderValue, setSliderValue] = useState(0);
   const [userBidValue, setUserBidValue] = useState(0);
   // import toast for responses
   const { toast, ToastComponent } = useToast();
   // set constants
   const maxValue = 1000;
-  const solPrice = fetchedReservePrice;
+  const marketTokenPrice = fetchedReservePrice;
   // Put your validators here
   const isSubmitButtonDisabled = () => {
     return false;
@@ -67,39 +67,39 @@ const BidForm = (props: BidFormProps) => {
   // change of input - render calculated values
   const handleSliderChange = (value: number) => {
     setSliderValue(value);
-    setValueUSD(value * solPrice);
-    setValueSOL(value);
+    setValueUSD(value * marketTokenPrice);
+    setValueUnderlying(value);
   };
   // change of input - render calculated values
   const handleUsdInputChange = (usdValue: number | undefined) => {
     if (!usdValue) {
       setValueUSD(0);
-      setValueSOL(0);
+      setValueUnderlying(0);
       setSliderValue(0);
       return;
     }
     setValueUSD(usdValue);
-    setValueSOL(usdValue / solPrice);
-    setSliderValue(usdValue / solPrice);
+    setValueUnderlying(usdValue / marketTokenPrice);
+    setSliderValue(usdValue / marketTokenPrice);
   };
   // change of input - render calculated values
   const handleSolInputChange = (solValue: number | undefined) => {
     if (!solValue) {
       setValueUSD(0);
-      setValueSOL(0);
+      setValueUnderlying(0);
       setSliderValue(0);
       return;
     }
 
-    setValueUSD(solValue * solPrice);
-    setValueSOL(solValue);
+    setValueUSD(solValue * marketTokenPrice);
+    setValueUnderlying(solValue);
     setSliderValue(solValue);
   };
   // function for content render increase of place bid
   function triggerIndicator() {
     userBidValue != 0
-      ? handlePlaceBid('increase_bid', valueSOL, toast, currentMarketId)
-      : handleIncreaseBid('place_bid', valueSOL, toast, currentMarketId);
+      ? handlePlaceBid('increase_bid', valueUnderlying, toast, currentMarketId)
+      : handleIncreaseBid('place_bid', valueUnderlying, toast, currentMarketId);
   }
   // render logic for current user bid
   useEffect(() => {
@@ -128,7 +128,7 @@ const BidForm = (props: BidFormProps) => {
                 disabled={isSubmitButtonDisabled()}
                 block
                 usdcValue={valueUSD || 0}
-                tokenAmount={valueSOL || 0}
+                tokenAmount={valueUnderlying || 0}
                 tokenName={selectedMarket?.loanCurrency}
                 onClick={triggerIndicator}
               >
@@ -230,7 +230,7 @@ const BidForm = (props: BidFormProps) => {
 
         <div className={styles.inputs}>
           <InputsBlock
-            firstInputValue={valueSOL}
+            firstInputValue={valueUnderlying}
             secondInputValue={valueUSD}
             onChangeFirstInput={handleSolInputChange}
             onChangeSecondInput={handleUsdInputChange}
