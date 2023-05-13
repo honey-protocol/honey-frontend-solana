@@ -195,6 +195,7 @@ const Markets: NextPage = () => {
   const [isFetchingClientData, setIsFetchingClientData] = useState(true);
   const [showWeeklyRates, setShowWeeklyRates] = useState(true);
   const [initState, setInitState] = useState(false);
+  const [obligationCount, setObligationCount] = useState<number>();
 
   const selectedMarket = marketCollections.find(
     collection => collection.id === currentMarketId
@@ -291,8 +292,11 @@ const Markets: NextPage = () => {
     return await handleOpenPositions(verifiedCreator, currentOpenPositions);
   }
   // calculation of health percentage
-  const healthPercent =
-    ((nftPrice - userDebt / COLLATERAL_FACTOR) / nftPrice) * 100;
+  const healthPercent = obligationCount
+    ? ((nftPrice * obligationCount - userDebt / COLLATERAL_FACTOR) /
+        (nftPrice * obligationCount)) *
+      100
+    : ((nftPrice * 2 - userDebt / COLLATERAL_FACTOR) / (nftPrice * 2)) * 100;
 
   /**
    * @description inits each market with their data | happening in userCollection.tsx
@@ -314,10 +318,7 @@ const Markets: NextPage = () => {
               return collection;
 
             if (marketData.length) {
-              if (
-                dataRoot === ROOT_CLIENT &&
-                collection.id === currentMarketId
-              ) {
+              if (dataRoot === ROOT_CLIENT) {
                 collection.marketData = marketData.filter(
                   marketObject =>
                     marketObject.market.address.toString() === collection.id
@@ -352,6 +353,7 @@ const Markets: NextPage = () => {
                 );
 
                 if (currentMarketId === collection.id) {
+                  setObligationCount(collection.openPositions.length);
                   setActiveInterestRate(collection.rate);
                   // @ts-ignore
                   collection.nftPrice
@@ -373,6 +375,8 @@ const Markets: NextPage = () => {
                     // @ts-ignore
                     marketObject.marketId === collection.id
                 );
+
+                setObligationCount(collection.openPositions.length);
 
                 // @ts-ignore
                 collection.rate =
@@ -802,7 +806,10 @@ const Markets: NextPage = () => {
       width: columnsWidth[1],
       render: debt => (
         <div className={style.expandedRowCell}>
-          <InfoBlock title={'Debt:'} value={fsn(userDebt)} />
+          <InfoBlock
+            title={'Debt:'}
+            value={fsn(obligationCount ? userDebt / obligationCount : userDebt)}
+          />
         </div>
       )
     },
@@ -811,7 +818,12 @@ const Markets: NextPage = () => {
       width: columnsWidth[2],
       render: allowance => (
         <div className={style.expandedRowCell}>
-          <InfoBlock title={'Allowance:'} value={fsn(userAllowance)} />
+          <InfoBlock
+            title={'Allowance:'}
+            value={fs(
+              obligationCount ? userAllowance / obligationCount : userAllowance
+            )}
+          />
         </div>
       )
     },
@@ -1186,6 +1198,7 @@ const Markets: NextPage = () => {
               currentMarketId={currentMarketId}
               availableNFTS={NFTs}
               isFetchingData={isFetchingClientData}
+              collCount={obligationCount}
             />
           </HoneySider>
         );
