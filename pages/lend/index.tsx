@@ -35,7 +35,7 @@ import {
   TReserve
 } from '@honey-finance/sdk';
 import { BnToDecimal, ConfigureSDK } from '../../helpers/loanHelpers/index';
-import { Connection, LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js';
+import { Connection, PublicKey } from '@solana/web3.js';
 import BN from 'bn.js';
 import { populateMarketData } from 'helpers/loanHelpers/userCollection';
 import { ToastProps } from 'hooks/useToast';
@@ -48,6 +48,7 @@ import {
   HONEY_GENESIS_BEE_MARKET_NAME,
   HONEY_PROGRAM_ID,
   marketIDs,
+  marketsTokens,
   renderMarketCurrencyImageByID,
   ROOT_CLIENT,
   ROOT_SSR
@@ -238,9 +239,9 @@ const Lend: NextPage = () => {
     if (!toast || !selectedMarket) return;
     try {
       if (!value) return toast.error('Deposit failed');
-      const decimals =
-        selectedMarket?.loanCurrency === 'SOL' ? LAMPORTS_PER_SOL : 10 ** 6;
-      const tokenAmount = new BN(value * decimals);
+      const tokenAmount = new BN(
+        value * marketsTokens[selectedMarket.loanCurrency].decimals
+      );
       toast.processing();
 
       const depositTokenMint = new PublicKey(
@@ -308,7 +309,9 @@ const Lend: NextPage = () => {
     try {
       if (!value) return toast.error('Withdraw failed');
 
-      const tokenAmount = new BN(value * LAMPORTS_PER_SOL);
+      const tokenAmount = new BN(
+        value * marketsTokens[selectedMarket.loanCurrency].decimals
+      );
       const depositTokenMint = new PublicKey(
         selectedMarket?.constants.marketLoanCurrencyTokenMintAddress
       );
