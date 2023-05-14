@@ -191,6 +191,8 @@ const Lend: NextPage = () => {
     fetchAllMarketData(marketIDs);
   }, [sdkConfig.sdkWallet]);
 
+  console.log(selectedMarket);
+
   // fetches market level data from API
   async function fetchServerSideMarketData() {
     fetch(FETCH_USER_MARKET_DATA)
@@ -236,7 +238,9 @@ const Lend: NextPage = () => {
     if (!toast || !selectedMarket) return;
     try {
       if (!value) return toast.error('Deposit failed');
-      const tokenAmount = new BN(value * LAMPORTS_PER_SOL);
+      const decimals =
+        selectedMarket?.loanCurrency === 'SOL' ? LAMPORTS_PER_SOL : 10 ** 6;
+      const tokenAmount = new BN(value * decimals);
       toast.processing();
 
       const depositTokenMint = new PublicKey(

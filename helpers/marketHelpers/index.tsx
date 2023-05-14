@@ -62,7 +62,7 @@ export const marketCollections: MarketTableRow[] = [
     }
   },
   {
-    id: 'FMTyFFxYQdttS93ti7qGRMtVTdqUSPdEk5qkMRqE9qXu',
+    id: 'HxuWzw18mR93RmxPkPu8RCD8kjrSJxo7WyaaKHu5NQEZ',
     key: 'HBG',
     name: 'Honey Genesis Bee',
     verifiedCreator: '6vRx1iVZo3xfrBHdpvuwArL2jucVj9j9nLpd2VUTTGMG',
@@ -77,7 +77,7 @@ export const marketCollections: MarketTableRow[] = [
     utilizationRate: 0,
     openPositions: [],
     constants: {
-      marketId: 'FMTyFFxYQdttS93ti7qGRMtVTdqUSPdEk5qkMRqE9qXu',
+      marketId: 'HxuWzw18mR93RmxPkPu8RCD8kjrSJxo7WyaaKHu5NQEZ',
       verifiedCreator: '6vRx1iVZo3xfrBHdpvuwArL2jucVj9j9nLpd2VUTTGMG',
       marketName: 'Honey Genesis Bee',
       marketImage:
