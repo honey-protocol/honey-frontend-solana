@@ -160,22 +160,22 @@ const BorrowForm = (props: BorrowProps) => {
   const [collateralCount, setCollateralCount] = useState(0);
   const [price, setPrice] = useState(0);
 
-  useEffect(() => {
-    const updateCollateralCount = async () => {
-      if (honeyUser) {
-        const obligationData = await honeyUser.getObligationData();
-        if (obligationData instanceof Error) {
-          setCollateralCount(0);
-          return;
-        }
-        const collateralNftMint = obligationData.collateralNftMint.filter(
-          mint => !mint.equals(PublicKey.default)
-        );
-        setCollateralCount(collateralNftMint.length);
-      }
-    };
-    updateCollateralCount();
-  }, [honeyUser]);
+  // useEffect(() => {
+  //   const updateCollateralCount = async () => {
+  //     if (honeyUser) {
+  //       const obligationData = await honeyUser.getObligationData();
+  //       if (obligationData instanceof Error) {
+  //         setCollateralCount(0);
+  //         return;
+  //       }
+  //       const collateralNftMint = obligationData.collateralNftMint.filter(
+  //         mint => !mint.equals(PublicKey.default)
+  //       );
+  //       setCollateralCount(collateralNftMint.length);
+  //     }
+  //   };
+  //   updateCollateralCount();
+  // }, [honeyUser]);
 
   useEffect(() => {
     if (!honeyMarket) return;

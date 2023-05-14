@@ -166,6 +166,7 @@ const MarketsSidebar = (props: MarketsSidebarProps) => {
                 fetchedReservePrice={fetchedReservePrice}
                 currentMarketId={currentMarketId}
                 isFetchingData={isFetchingData}
+                collCount={collCount}
               />
             )}
           </>

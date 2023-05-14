@@ -47,12 +47,13 @@ const RepayForm = (props: RepayProps) => {
     currentMarketId,
     hideMobileSidebar,
     changeTab,
-    isFetchingData
+    isFetchingData,
+    collCount
   } = props;
   // state
   const [valueUSD, setValueUSD] = useState<number>();
   const [valueSOL, setValueSOL] = useState<number>();
-  const [collateralCount, setCollateralCount] = useState(0);
+  // const [collateralCount, setCollateralCount] = useState(0);
   const [sliderValue, setSliderValue] = useState(0);
   const [maxValue, setMaxValue] = useState(0);
   const { toast, ToastComponent } = useToast();
@@ -67,8 +68,9 @@ const RepayForm = (props: RepayProps) => {
   const [overallValue, setOverallValue] = useState(0);
 
   useEffect(() => {
-    setMaxValue(userDebt != 0 ? userDebt : userAllowance * collateralCount);
-  }, [userDebt, userAllowance, collateralCount]);
+    if (!collCount || !userDebt || !userAllowance) return;
+    setMaxValue(userDebt != 0 ? userDebt : userAllowance * collCount);
+  }, [userDebt, userAllowance, collCount]);
 
   useEffect(() => {
     setOverallValue((nftPrice || 0) * openPositions?.length);
@@ -140,22 +142,22 @@ const RepayForm = (props: RepayProps) => {
     currentMarketId
   );
 
-  useEffect(() => {
-    const updateCollateralCount = async () => {
-      if (honeyUser) {
-        const obligationData = await honeyUser.getObligationData();
-        if (obligationData instanceof Error) {
-          setCollateralCount(0);
-          return;
-        }
-        const collateralNftMint = obligationData.collateralNftMint.filter(
-          mint => !mint.equals(PublicKey.default)
-        );
-        setCollateralCount(collateralNftMint.length);
-      }
-    };
-    updateCollateralCount();
-  }, [honeyUser]);
+  // useEffect(() => {
+  //   const updateCollateralCount = async () => {
+  //     if (honeyUser) {
+  //       const obligationData = await honeyUser.getObligationData();
+  //       if (obligationData instanceof Error) {
+  //         setCollateralCount(0);
+  //         return;
+  //       }
+  //       const collateralNftMint = obligationData.collateralNftMint.filter(
+  //         mint => !mint.equals(PublicKey.default)
+  //       );
+  //       setCollateralCount(collateralNftMint.length);
+  //     }
+  //   };
+  //   updateCollateralCount();
+  // }, [honeyUser]);
   const cloudinary_uri = process.env.CLOUDINARY_URI;
 
   return (
@@ -211,7 +213,11 @@ const RepayForm = (props: RepayProps) => {
           </div>
           <div className={styles.nftName}>
             {openPositions[0].name}{' '}
-            {collateralCount > 1 && <span>+ {collateralCount - 1} more</span>}
+            {collCount ? (
+              collCount > 1 && <span>+ {collCount - 1} more</span>
+            ) : (
+              <span>+ 0 more</span>
+            )}
           </div>
         </div>
         <div className={styles.row}>
