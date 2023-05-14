@@ -1,10 +1,11 @@
 import { PublicKey } from '@solana/web3.js';
 import { MarketTableRow } from './markets';
+import { marketTokenName } from 'helpers/marketHelpers';
 
 export type LiquidateTableRow = {
   key: string;
   name: string;
-  loanCurrency: string;
+  loanCurrency: marketTokenName;
   risk: number;
   liqThreshold: number;
   totalDebt: number;
