@@ -82,3 +82,7 @@ export const bigCol = style([
     flex: '1 0 auto'
   }
 ]);
+
+export const buttonMaxWidth = style({
+  width: '100%' 
+});

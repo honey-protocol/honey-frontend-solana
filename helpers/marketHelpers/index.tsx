@@ -331,7 +331,7 @@ export const marketCollections: MarketTableRow[] = [
   //       'https://img-cdn.magiceden.dev/rs:fill:400:400:0:0/plain/https://creator-hub-prod.s3.us-east-2.amazonaws.com/burrito_boyz_pfp_1653394754301.png',
   //     discountedMarket: false
   //   }
-  // },
+  // }
   // {
   //   id: 'GrKPvcdHVb4cwR5a2CCgCTvdkSqhNDRgSUiUVzXRWLk6',
   //   key: 'Smyths',

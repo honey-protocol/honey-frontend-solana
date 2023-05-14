@@ -60,7 +60,8 @@ const BorrowForm = (props: BorrowProps) => {
     fetchedReservePrice,
     calculatedInterestRate,
     currentMarketId,
-    isFetchingData
+    isFetchingData,
+    collCount
   } = props;
   // state declarations
   const [valueUSD, setValueUSD] = useState<number>(0);
@@ -159,22 +160,22 @@ const BorrowForm = (props: BorrowProps) => {
   const [collateralCount, setCollateralCount] = useState(0);
   const [price, setPrice] = useState(0);
 
-  useEffect(() => {
-    const updateCollateralCount = async () => {
-      if (honeyUser) {
-        const obligationData = await honeyUser.getObligationData();
-        if (obligationData instanceof Error) {
-          setCollateralCount(0);
-          return;
-        }
-        const collateralNftMint = obligationData.collateralNftMint.filter(
-          mint => !mint.equals(PublicKey.default)
-        );
-        setCollateralCount(collateralNftMint.length);
-      }
-    };
-    updateCollateralCount();
-  }, [honeyUser]);
+  // useEffect(() => {
+  //   const updateCollateralCount = async () => {
+  //     if (honeyUser) {
+  //       const obligationData = await honeyUser.getObligationData();
+  //       if (obligationData instanceof Error) {
+  //         setCollateralCount(0);
+  //         return;
+  //       }
+  //       const collateralNftMint = obligationData.collateralNftMint.filter(
+  //         mint => !mint.equals(PublicKey.default)
+  //       );
+  //       setCollateralCount(collateralNftMint.length);
+  //     }
+  //   };
+  //   updateCollateralCount();
+  // }, [honeyUser]);
 
   useEffect(() => {
     if (!honeyMarket) return;
@@ -354,7 +355,7 @@ const BorrowForm = (props: BorrowProps) => {
             <div className={styles.nftNameContainer}>
               <div className={styles.nftName}>{selectedMarket?.name}</div>
               <div className={styles.collateralDetails}>
-                {collateralCount} assets securing this loan
+                {collCount} assets securing this loan
               </div>
             </div>
             <div className={styles.cancelIcon} />
@@ -430,7 +431,7 @@ const BorrowForm = (props: BorrowProps) => {
           <div className={styles.nftNameContainer}>
             <div className={styles.nftName}>{selectedMarket?.name}</div>
             <div className={styles.collateralDetails}>
-              {collateralCount} assets securing this loan
+              {collCount} assets securing this loan
             </div>
           </div>
           <div className={styles.arrowRightIcon} />

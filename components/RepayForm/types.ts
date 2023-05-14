@@ -13,4 +13,5 @@ export type RepayProps = {
   hideMobileSidebar?: () => void;
   changeTab?: (tabKey: string) => void;
   isFetchingData?: boolean;
+  collCount?: number;
 };
