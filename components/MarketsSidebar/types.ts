@@ -21,4 +21,5 @@ export type MarketsSidebarProps = {
   executeBorrow: (val: any, toast: any) => void;
   executeRepay: (val: any, toast: any) => void;
   hideMobileSidebar?: () => void;
+  collCount?: number;
 };

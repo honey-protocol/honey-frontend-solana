@@ -35,7 +35,8 @@ const MarketsSidebar = (props: MarketsSidebarProps) => {
     executeWithdrawNFT,
     executeBorrow,
     executeRepay,
-    availableNFTS
+    availableNFTS,
+    collCount
   } = props;
   const availableNFTs = availableNFTS;
   // tab state
@@ -147,6 +148,7 @@ const MarketsSidebar = (props: MarketsSidebarProps) => {
                 fetchedReservePrice={fetchedReservePrice}
                 calculatedInterestRate={calculatedInterestRate}
                 currentMarketId={currentMarketId}
+                collCount={collCount}
               />
             )}
             {activeTab === 'repay' && Boolean(openPositions.length) && (
