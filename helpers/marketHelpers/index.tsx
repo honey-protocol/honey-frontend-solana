@@ -5,7 +5,7 @@
  * should be updated.
  */
 
-import { PublicKey } from '@solana/web3.js';
+import { LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js';
 import { MarketTableRow } from 'types/markets';
 import { logoIcon } from 'styles/icons.css';
 
@@ -30,6 +30,20 @@ export const marketIDs = async (marketCollections: MarketTableRow[]) => {
   );
   return marketIdArray;
 };
+
+//Market token details decimals and mint
+export const marketsTokens = {
+  SOL: {
+    decimals: LAMPORTS_PER_SOL,
+    mint: 'So11111111111111111111111111111111111111112'
+  },
+  USDC: {
+    decimals: 10 ** 6,
+    mint: 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v'
+  }
+};
+
+export type marketTokenName = keyof typeof marketsTokens;
 
 // collection strucutre for the markets
 export const marketCollections: MarketTableRow[] = [

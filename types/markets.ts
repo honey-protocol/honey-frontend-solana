@@ -1,6 +1,7 @@
 import { ColumnType } from 'antd/lib/table';
 import { PublicKey } from '@solana/web3.js';
 import { MarketBundle } from '@honey-finance/sdk';
+import { marketTokenName } from 'helpers/marketHelpers';
 
 export type MarketTableRow = {
   allowance: number;
@@ -10,7 +11,7 @@ export type MarketTableRow = {
   id: string;
   key: string;
   name: string;
-  loanCurrency: string;
+  loanCurrency: marketTokenName;
   rate: number;
   user: any;
   utilizationRate: number;
@@ -33,7 +34,7 @@ export type MarketTableRow = {
     verifiedCreator: string;
     marketName: string;
     marketImage: string;
-    marketLoanCurrency: string;
+    marketLoanCurrency: marketTokenName;
     marketLoanCurrencyImage: string;
     marketLoanCurrencyTokenMintAddress: string;
     discountedMarket: boolean;
