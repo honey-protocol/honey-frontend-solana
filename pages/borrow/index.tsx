@@ -236,14 +236,6 @@ const Markets: NextPage = () => {
     fetchServerSideMarketData();
   }, []);
 
-  useEffect(() => {
-    if (honeyMarket) {
-      console.log('@@-- running one', honeyMarket);
-      honeyMarket.refresh();
-      console.log('@@-- running one');
-    }
-  }, [honeyMarket]);
-
   // fetches the sol price
   // TODO: create type for reserves and connection
   async function fetchReserveValue(reserves: TReserve, connection: Connection) {
