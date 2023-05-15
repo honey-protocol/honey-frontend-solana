@@ -250,10 +250,10 @@ const Markets: NextPage = () => {
    * @returns updates marketValue
    */
   useEffect(() => {
-    if (parsedReserves) {
-      fetchReserveValue(parsedReserves[0], sdkConfig.saberHqConnection);
+    if (honeyReserves[0].data) {
+      fetchReserveValue(honeyReserves[0].data, sdkConfig.saberHqConnection);
     }
-  }, [parsedReserves]);
+  }, [honeyReserves]);
   // calls upon fetchAllMarkets from SDK - market level and user level data regarding markets
   async function fetchAllMarketData(marketIDs: string[]) {
     const data = await fetchAllMarkets(
