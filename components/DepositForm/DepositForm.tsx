@@ -64,6 +64,7 @@ const DepositForm = (props: DepositFormProps) => {
   // constants
   const maxValue = userWalletBalance;
   const underlyingTokenPrice = fetchedReservePrice;
+  console.log('underlyingTokenPrice', underlyingTokenPrice);
 
   // Put your validators here
   const isDepositButtonDisabled = () => {
