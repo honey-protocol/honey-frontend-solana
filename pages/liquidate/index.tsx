@@ -50,7 +50,8 @@ import {
   marketIDs,
   ROOT_SSR,
   ROOT_CLIENT,
-  renderMarketCurrencyImageByID
+  renderMarketCurrencyImageByID,
+  marketsTokens
 } from '../../helpers/marketHelpers/index';
 import { NATIVE_MINT } from '@solana/spl-token-v-0.1.8';
 import HoneySider from 'components/HoneySider/HoneySider';
@@ -295,6 +296,7 @@ const Liquidate: NextPage = () => {
       setHighestBiddingAddress('');
       return;
     }
+    if (!selectedMarket) return;
 
     let userWallet = stringyfiedWalletPK
       ? stringyfiedWalletPK
@@ -311,7 +313,12 @@ const Liquidate: NextPage = () => {
 
       biddingArray.map((obligation: any) => {
         if (userWallet && obligation.bidder === userWallet) {
-          setCurrentUserBid(Number(obligation.bidLimit / LAMPORTS_PER_SOL));
+          setCurrentUserBid(
+            Number(
+              obligation.bidLimit /
+                marketsTokens[selectedMarket.loanCurrency].decimals
+            )
+          );
         }
       });
     } else {
@@ -325,7 +332,10 @@ const Liquidate: NextPage = () => {
 
     if (highestBid[0]) {
       setHighestBiddingAddress(highestBid[0].bidder);
-      setHighestBiddingValue(highestBid[0].bidLimit / LAMPORTS_PER_SOL);
+      setHighestBiddingValue(
+        highestBid[0].bidLimit /
+          marketsTokens[selectedMarket.loanCurrency].decimals
+      );
     }
     setIsFetchingClientData(false);
   }

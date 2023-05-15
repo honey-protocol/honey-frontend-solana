@@ -1,3 +1,4 @@
+import { marketTokenName } from 'helpers/marketHelpers';
 import { TimestampPoint } from '../components/HoneyChart/types';
 import { MarketBundle } from '@honey-finance/sdk';
 export type LendTableRow = {
@@ -8,7 +9,7 @@ export type LendTableRow = {
   id: string;
   key: string;
   name: string;
-  loanCurrency: string;
+  loanCurrency: marketTokenName;
   rate: number;
   user: any;
   utilizationRate: number;

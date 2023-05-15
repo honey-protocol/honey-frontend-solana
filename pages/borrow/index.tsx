@@ -33,12 +33,7 @@ import { getColumnSortStatus } from '../../helpers/tableUtils';
 import { useConnectedWallet, useSolana } from '@saberhq/use-solana';
 import { BnToDecimal, ConfigureSDK } from '../../helpers/loanHelpers/index';
 import { FETCH_USER_MARKET_DATA } from 'constants/apiEndpoints';
-import {
-  Connection,
-  LAMPORTS_PER_SOL,
-  PublicKey,
-  clusterApiUrl
-} from '@solana/web3.js';
+import { Connection, PublicKey, clusterApiUrl } from '@solana/web3.js';
 import HealthLvl from '../../components/HealthLvl/HealthLvl';
 import useFetchNFTByUser from 'hooks/useNFTV3';
 import {
@@ -74,7 +69,8 @@ import {
   renderMarketImageByID,
   ROOT_SSR,
   ROOT_CLIENT,
-  renderMarketCurrencyImageByID
+  renderMarketCurrencyImageByID,
+  marketsTokens
 } from '../../helpers/marketHelpers';
 import {
   renderMarket,
@@ -306,6 +302,7 @@ const Markets: NextPage = () => {
         setIsFetchingData(true);
         return Promise.all(
           marketCollections.map(async collection => {
+            console.log('Here', '@collection');
             if (
               collection.id == '' ||
               (initState === true &&
@@ -323,6 +320,9 @@ const Markets: NextPage = () => {
                   marketObject =>
                     marketObject.market.address.toString() === collection.id
                 );
+
+                console.log(collection.marketData, '@collection');
+                console.log(collection.marketData, '@collection');
                 const honeyUser = collection.marketData[0].user;
                 const honeyMarket = collection.marketData[0].market;
                 const honeyClient = collection.marketData[0].client;
@@ -330,6 +330,10 @@ const Markets: NextPage = () => {
                   collection.marketData[0].reserves[0].data;
                 const mData = collection.marketData[0].reserves[0];
 
+                console.log(
+                  { collection: collection.name },
+                  '@collection, here'
+                );
                 await populateMarketData(
                   'BORROW',
                   ROOT_CLIENT,
@@ -346,6 +350,8 @@ const Markets: NextPage = () => {
                   parsedReserves,
                   mData
                 );
+
+                console.log({ collection: collection.name }, '@collection');
 
                 collection.openPositions = await handlePositions(
                   collection.verifiedCreator,
@@ -369,6 +375,7 @@ const Markets: NextPage = () => {
                 setIsFetchingClientData(false);
                 return collection;
               } else if (dataRoot === ROOT_SSR) {
+                console.log('else', '@collection');
                 collection.marketData = marketData.filter(
                   marketObject =>
                     // @ts-ignore
@@ -379,10 +386,10 @@ const Markets: NextPage = () => {
                 collection.rate =
                   // @ts-ignore
                   collection.marketData[0].data.interestRate * 100;
-                collection.openPositions = await handlePositions(
-                  collection.verifiedCreator,
-                  []
-                );
+                // collection.openPositions = await handlePositions(
+                //   collection.verifiedCreator,
+                //   []
+                // );
                 // @ts-ignore
                 collection.allowance = collection.marketData[0].data.allowance;
 
@@ -1090,7 +1097,7 @@ const Markets: NextPage = () => {
 
       const tx = await borrowAndRefresh(
         fetchedDataObject.user,
-        new BN(val * LAMPORTS_PER_SOL),
+        new BN(val * marketsTokens[selectedMarket.loanCurrency].decimals),
         borrowTokenMint,
         fetchedDataObject.reserves
       );
@@ -1151,7 +1158,7 @@ const Markets: NextPage = () => {
       if (!fetchedDataObject) return;
       const tx = await repayAndRefresh(
         fetchedDataObject.user,
-        new BN(val * LAMPORTS_PER_SOL),
+        new BN(val * marketsTokens[selectedMarket.loanCurrency].decimals),
         repayTokenMint,
         fetchedDataObject.reserves
       );
