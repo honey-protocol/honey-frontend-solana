@@ -246,7 +246,7 @@ const Markets: NextPage = () => {
    * @returns updates marketValue
    */
   useEffect(() => {
-    if (honeyReserves[0].data) {
+    if (honeyReserves && honeyReserves[0]?.data) {
       fetchReserveValue(honeyReserves[0].data, sdkConfig.saberHqConnection);
     }
   }, [honeyReserves]);
