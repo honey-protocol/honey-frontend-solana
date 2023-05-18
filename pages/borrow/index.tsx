@@ -58,7 +58,7 @@ import HoneyContent from '../../components/HoneyContent/HoneyContent';
 import HoneySider from '../../components/HoneySider/HoneySider';
 import { TABLET_BP } from '../../constants/breakpoints';
 import useWindowSize from '../../hooks/useWindowSize';
-import { Skeleton, Typography, Space } from 'antd';
+import { Skeleton, Typography, Space, Empty } from 'antd';
 import { pageDescription, pageTitle, center } from 'styles/common.css';
 import HoneyTableRow from 'components/HoneyTable/HoneyTableRow/HoneyTableRow';
 import HoneyTableNameCell from '../../components/HoneyTable/HoneyTableNameCell/HoneyTableNameCell';
@@ -1326,6 +1326,18 @@ const Markets: NextPage = () => {
                               ? ExpandedTableFooter
                               : undefined
                           }
+                          locale={{
+                            emptyText: (
+                              <Empty
+                                image={Empty.PRESENTED_IMAGE_SIMPLE}
+                                description={
+                                  wallet?.connected
+                                    ? 'No loan positions'
+                                    : 'Connect wallet'
+                                }
+                              />
+                            )
+                          }}
                         />
                       </div>
                     </div>
@@ -1405,6 +1417,18 @@ const Markets: NextPage = () => {
                                   </HoneyButton>
                                 )
                           }
+                          locale={{
+                            emptyText: (
+                              <Empty
+                                image={Empty.PRESENTED_IMAGE_SIMPLE}
+                                description={
+                                  wallet?.connected
+                                    ? 'No loan positions'
+                                    : 'Connect wallet'
+                                }
+                              />
+                            )
+                          }}
                         />
                       </div>
                     </div>
