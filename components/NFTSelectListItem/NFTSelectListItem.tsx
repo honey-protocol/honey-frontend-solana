@@ -5,6 +5,7 @@ import React, { FC } from 'react';
 import honeyGenesisBee from 'public/images/imagePlaceholder.png';
 import * as styles from './NFTSelectListItem.css';
 import { CheckboxChangeEvent } from 'antd/lib/checkbox';
+import HoneyTooltip from 'components/HoneyTooltip/HoneyTooltip';
 
 interface ListItemProps {
   name: string;
@@ -30,11 +31,19 @@ const NFTSelectListItem: FC<ListItemProps> = ({
   return (
     <div className={styles.listItem}>
       <div className={styles.listItemLeft}>
-        <div className={styles.listItemIcon}>
-          <HexaBoxContainer>
-            <Image src={image ?? honeyGenesisBee} width={40} height={40} />
-          </HexaBoxContainer>
-        </div>
+        <HoneyTooltip
+          placement="right"
+          trigger={['hover']}
+          title={
+            <Image src={image ?? honeyGenesisBee} width={150} height={150} />
+          }
+        >
+          <div className={styles.listItemIcon}>
+            <HexaBoxContainer>
+              <Image src={image ?? honeyGenesisBee} width={40} height={40} />
+            </HexaBoxContainer>
+          </div>
+        </HoneyTooltip>
 
         <div className={styles.itemCollection}>
           <div className={styles.itemCollectionName}>{name}</div>
