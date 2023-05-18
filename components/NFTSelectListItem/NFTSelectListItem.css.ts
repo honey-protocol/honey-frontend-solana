@@ -35,13 +35,16 @@ export const itemCollectionName = style([
 ]);
 export const itemCollectionValue = style({
   display: 'flex',
-  alignItems: 'center'
+  alignItems: 'center',
+  fontSize: 12
 });
 export const itemCollectionValueCount = style([
   typography.numbersRegular,
   {
     color: vars.colors.text,
-    marginRight: 4
+    marginRight: 4,
+    marginLeft: 4,
+    fontSize: 14
   }
 ]);
 export const itemCollectionToken = style([

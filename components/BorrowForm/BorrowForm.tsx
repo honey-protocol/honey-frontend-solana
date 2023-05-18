@@ -305,7 +305,7 @@ const BorrowForm = (props: BorrowProps) => {
                   id={nft.mint}
                   name={nft.name}
                   image={`https://res.cloudinary.com/${cloudinary_uri}/image/fetch/${nft.image}`}
-                  value={fs(price)}
+                  value={fs(nftPrice * MAX_LTV)}
                   isSelected={isSelected}
                   onChange={e => {
                     handleSelectMultipleNFTsItem(event, nft);
@@ -395,7 +395,11 @@ const BorrowForm = (props: BorrowProps) => {
                   id={nft.mint}
                   name={nft.name}
                   image={`https://res.cloudinary.com/${cloudinary_uri}/image/fetch/${nft.image}`}
-                  value={fs(price)}
+                    value={fs(
+                      collateralMenuMode === 'new_collateral'
+                        ? nftPrice * MAX_LTV
+                        : userAllowance / (collCount || 1)
+                    )}
                   isSelected={isSelected}
                   onChange={e => {
                     handleSelectMultipleNFTsItem(event, nft);

@@ -48,6 +48,7 @@ const NFTSelectListItem: FC<ListItemProps> = ({
         <div className={styles.itemCollection}>
           <div className={styles.itemCollectionName}>{name}</div>
           <div className={styles.itemCollectionValue}>
+            <div className={styles.itemCollectionToken}>Borrow</div>
             <div className={styles.itemCollectionValueCount}>{value}</div>
             <div className={styles.itemCollectionToken}>{tokenName}</div>
           </div>
