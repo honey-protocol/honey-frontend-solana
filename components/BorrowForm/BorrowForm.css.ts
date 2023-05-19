@@ -112,12 +112,39 @@ export const bigCol = style([
 ]);
 
 // NEW BORROWING FORM
+
 export const newBorrowingTitle = style([
   typography.title,
   {
     marginBottom: 18
   }
 ]);
+
+export const borrowTopbar = style([
+  {
+    display: 'flex'
+  }
+]);
+
+export const borrowUpto = style([
+  typography.caption,
+  {
+    marginBottom: 18,
+    color:  vars.colors.textTertiary,
+    fontSize: 14,
+    marginRight: 5 
+  }
+]);
+
+export const borrowAmount = style([
+  typography.caption,
+  {
+    marginBottom: 18,
+    color:  vars.colors.textTertiary,
+    fontSize: 14
+  }
+]);
+
 
 export const collateralList = style({
   display: 'flex',
