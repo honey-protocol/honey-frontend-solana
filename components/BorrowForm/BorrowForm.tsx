@@ -292,7 +292,13 @@ const BorrowForm = (props: BorrowProps) => {
       if (isBulkLoan) {
         return (
           <>
-            <div className={styles.newBorrowingTitle}>Choose Multiple NFTs</div>
+            
+            <div className={styles.newBorrowingTitle}>Choose NFTs</div>
+            <div className={styles.borrowTopbar}>
+              <div className={styles.borrowUpto}>Borrow up to </div>
+              <div className={styles.borrowAmount}>{parseFloat(fs(nftPrice * MAX_LTV)) * selectedMultipleNFTs?.length }/{(parseFloat(fs(nftPrice * MAX_LTV)) * availableNFTs.length)} SOL</div>
+            </div>
+
             {availableNFTs.map((nft: NFT) => {
               const isSelected = Boolean(
                 selectedMultipleNFTs?.some(item => item.mint === nft.mint)
