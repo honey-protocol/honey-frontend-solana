@@ -225,9 +225,6 @@ const Liquidate: NextPage = () => {
         const index = mergedArr.findIndex(
           item => item.obligation === obligation
         ); // find the index of the existing object with the same obligation
-
-        // merge the debt and increment the count
-        mergedArr[index].debt += obj.debt;
         // @ts-ignore
         obligationCount[obligation] += 1;
       }
