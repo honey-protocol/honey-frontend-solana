@@ -44,6 +44,8 @@ export const marketsTokens = {
 };
 
 export type marketTokenName = keyof typeof marketsTokens;
+export const LOAN_CURRENCY_SOL = 'SOL';
+export const LOAN_CURRENCY_USDC = 'USDC';
 
 // collection strucutre for the markets
 export const marketCollections: MarketTableRow[] = [
