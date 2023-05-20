@@ -24,7 +24,7 @@ export const RepayP2PTab = ({ position, onClose }: RepayP2PTabProps) => {
   const [isDisableCreateButton, setIsDisableCreateButton] =
     useState<boolean>(false);
 
-  const solBalance = useSolBalance();
+  const { balance: solBalance } = useSolBalance();
   const solPrice = useSolPrice();
 
   const getDateFormatted = (date: number): string => {
@@ -102,7 +102,7 @@ export const RepayP2PTab = ({ position, onClose }: RepayP2PTabProps) => {
         isActionButtonDisabled={isDisableCreateButton}
         onClose={onClose}
         actionButtonProps={{
-          solAmount: position.request,
+          tokenAmount: position.request,
           usdcValue: new Decimal(position.request).mul(solPrice || 0).toNumber()
         }}
       />

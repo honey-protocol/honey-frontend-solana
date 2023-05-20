@@ -33,12 +33,7 @@ import { getColumnSortStatus } from '../../helpers/tableUtils';
 import { useConnectedWallet, useSolana } from '@saberhq/use-solana';
 import { BnToDecimal, ConfigureSDK } from '../../helpers/loanHelpers/index';
 import { FETCH_USER_MARKET_DATA } from 'constants/apiEndpoints';
-import {
-  Connection,
-  LAMPORTS_PER_SOL,
-  PublicKey,
-  clusterApiUrl
-} from '@solana/web3.js';
+import { Connection, PublicKey, clusterApiUrl } from '@solana/web3.js';
 import HealthLvl from '../../components/HealthLvl/HealthLvl';
 import useFetchNFTByUser from 'hooks/useNFTV3';
 import {
@@ -73,7 +68,9 @@ import {
   renderMarketName,
   renderMarketImageByID,
   ROOT_SSR,
-  ROOT_CLIENT
+  ROOT_CLIENT,
+  renderMarketCurrencyImageByID,
+  marketsTokens
 } from '../../helpers/marketHelpers';
 import {
   renderMarket,
@@ -179,6 +176,7 @@ const Markets: NextPage = () => {
   const [launchAreaWidth, setLaunchAreaWidth] = useState<number>(840);
   const [fetchedReservePrice, setFetchedReservePrice] = useState(0);
   const [activeInterestRate, setActiveInterestRate] = useState(0);
+  const [tokenName, setTokenName] = useState('SOL');
   // interface related constants
   const { width: windowWidth } = useWindowSize();
   const [tableData, setTableData] =
@@ -221,6 +219,13 @@ const Markets: NextPage = () => {
   const [marketData, setMarketData] = useState<MarketBundle[]>([]);
   const [dataRoot, setDataRoot] = useState<String>();
 
+  useEffect(() => {
+    const tokenValue = marketCollections.filter(
+      market => market.id === currentMarketId
+    );
+    if (tokenValue.length) setTokenName(tokenValue[0].loanCurrency);
+  }, [currentMarketId]);
+
   // fetches market level data from API
   async function fetchServerSideMarketData() {
     fetch(FETCH_USER_MARKET_DATA)
@@ -249,10 +254,10 @@ const Markets: NextPage = () => {
    * @returns updates marketValue
    */
   useEffect(() => {
-    if (parsedReserves) {
-      fetchReserveValue(parsedReserves[0], sdkConfig.saberHqConnection);
+    if (honeyReserves && honeyReserves[0]?.data) {
+      fetchReserveValue(honeyReserves[0].data, sdkConfig.saberHqConnection);
     }
-  }, [parsedReserves]);
+  }, [honeyReserves]);
   // calls upon fetchAllMarkets from SDK - market level and user level data regarding markets
   async function fetchAllMarketData(marketIDs: string[]) {
     const data = await fetchAllMarkets(
@@ -309,6 +314,7 @@ const Markets: NextPage = () => {
         setIsFetchingData(true);
         return Promise.all(
           marketCollections.map(async collection => {
+            console.log('Here', '@collection');
             if (
               collection.id == '' ||
               (initState === true &&
@@ -323,6 +329,9 @@ const Markets: NextPage = () => {
                   marketObject =>
                     marketObject.market.address.toString() === collection.id
                 );
+
+                console.log(collection.marketData, '@collection');
+                console.log(collection.marketData, '@collection');
                 const honeyUser = collection.marketData[0].user;
                 const honeyMarket = collection.marketData[0].market;
                 const honeyClient = collection.marketData[0].client;
@@ -330,6 +339,10 @@ const Markets: NextPage = () => {
                   collection.marketData[0].reserves[0].data;
                 const mData = collection.marketData[0].reserves[0];
 
+                console.log(
+                  { collection: collection.name },
+                  '@collection, here'
+                );
                 await populateMarketData(
                   'BORROW',
                   ROOT_CLIENT,
@@ -346,6 +359,8 @@ const Markets: NextPage = () => {
                   parsedReserves,
                   mData
                 );
+
+                console.log({ collection: collection.name }, '@collection');
 
                 collection.openPositions = await handlePositions(
                   collection.verifiedCreator,
@@ -370,6 +385,7 @@ const Markets: NextPage = () => {
                 setIsFetchingClientData(false);
                 return collection;
               } else if (dataRoot === ROOT_SSR) {
+                console.log('else', '@collection');
                 collection.marketData = marketData.filter(
                   marketObject =>
                     // @ts-ignore
@@ -382,10 +398,10 @@ const Markets: NextPage = () => {
                 collection.rate =
                   // @ts-ignore
                   collection.marketData[0].data.interestRate * 100;
-                collection.openPositions = await handlePositions(
-                  collection.verifiedCreator,
-                  []
-                );
+                // collection.openPositions = await handlePositions(
+                //   collection.verifiedCreator,
+                //   []
+                // );
                 // @ts-ignore
                 collection.allowance = collection.marketData[0].data.allowance;
 
@@ -518,16 +534,33 @@ const Markets: NextPage = () => {
               key: 'name',
               render: (name: string, data: MarketTableRow, index: number) => {
                 return (
-                  <div className={style.nameCell}>
-                    <div className={style.logoWrapper}>
-                      <div className={style.collectionLogo}>
-                        <HexaBoxContainer>
-                          {renderMarketImageByName(name)}
-                        </HexaBoxContainer>
+                  <HoneyTooltip
+                    trigger={['hover']}
+                    title={`${data.name}/${data.loanCurrency}`}
+                  >
+                    <div className={style.nameCell}>
+                      <div className={style.logoWrapper}>
+                        <div className={style.collectionLogo}>
+                          <HexaBoxContainer>
+                            {renderMarketImageByName(name)}
+                          </HexaBoxContainer>
+                        </div>
+                        <div
+                          className={c(
+                            style.collectionLogo,
+                            style.secondaryLogo
+                          )}
+                        >
+                          <HexaBoxContainer>
+                            {renderMarketCurrencyImageByID(data.id)}
+                          </HexaBoxContainer>
+                        </div>
                       </div>
+                      <div
+                        className={style.collectionName}
+                      >{`${data.name}/${data.loanCurrency}`}</div>
                     </div>
-                    <div className={style.collectionName}>{name}</div>
-                  </div>
+                  </HoneyTooltip>
                 );
               }
             }
@@ -709,10 +742,17 @@ const Markets: NextPage = () => {
                           {renderMarketImageByName(name)}
                         </HexaBoxContainer>
                       </div>
+                      <div
+                        className={c(style.collectionLogo, style.secondaryLogo)}
+                      >
+                        <HexaBoxContainer>
+                          {renderMarketCurrencyImageByID(row.id)}
+                        </HexaBoxContainer>
+                      </div>
                     </div>
                     <div className={style.nameCellMobile}>
                       <div className={style.collectionName}>
-                        {formatNFTName(name, 20)}
+                        {formatNFTName(`${name}/${row.loanCurrency}`, 20)}
                       </div>
                       {/* <div className={style.rateCellMobile}>
                         {fp(row.rate * 100)}
@@ -1063,16 +1103,17 @@ const Markets: NextPage = () => {
   async function executeBorrow(val: any, toast: ToastProps['toast']) {
     try {
       if (!val) return toast.error('Please provide a value');
-      // TODO: make the token mint dynamic by importing it from marketcollection / fetchAllMarkets
+      if (!selectedMarket) return;
+
       const borrowTokenMint = new PublicKey(
-        'So11111111111111111111111111111111111111112'
+        selectedMarket?.constants.marketLoanCurrencyTokenMintAddress
       );
       toast.processing();
       if (!fetchedDataObject) return;
 
       const tx = await borrowAndRefresh(
         fetchedDataObject.user,
-        new BN(val * LAMPORTS_PER_SOL),
+        new BN(val * marketsTokens[selectedMarket.loanCurrency].decimals),
         borrowTokenMint,
         fetchedDataObject.reserves
       );
@@ -1126,15 +1167,15 @@ const Markets: NextPage = () => {
       if (!val) return toast.error('Please provide a value');
       // add additional value if user wants to repay 100% of loan due to interest rate not being included
       if (val == userDebt) val += 0.1;
-      // TODO: make dynamic - marketCollections or fetchAllMarkets
+      if (!selectedMarket) return;
       const repayTokenMint = new PublicKey(
-        'So11111111111111111111111111111111111111112'
+        selectedMarket?.constants.marketLoanCurrencyTokenMintAddress
       );
       toast.processing();
       if (!fetchedDataObject) return;
       const tx = await repayAndRefresh(
         fetchedDataObject.user,
-        new BN(val * LAMPORTS_PER_SOL),
+        new BN(val * marketsTokens[selectedMarket.loanCurrency].decimals),
         repayTokenMint,
         fetchedDataObject.reserves
       );
@@ -1199,6 +1240,7 @@ const Markets: NextPage = () => {
               availableNFTS={NFTs}
               isFetchingData={isFetchingClientData}
               collCount={obligationCount}
+              tokenName={tokenName}
             />
           </HoneySider>
         );

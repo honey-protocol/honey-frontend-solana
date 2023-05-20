@@ -11,7 +11,11 @@ import { WithdrawFormProps } from './types';
 import { questionIcon } from 'styles/icons.css';
 import { hAlign, textUnderline } from 'styles/common.css';
 import useToast from 'hooks/useToast';
-import { renderMarketImageByID, renderMarketName } from 'helpers/marketHelpers';
+import {
+  marketCollections,
+  renderMarketImageByID,
+  renderMarketName
+} from 'helpers/marketHelpers';
 import QuestionIcon from 'icons/QuestionIcon';
 import { Skeleton } from 'antd';
 import HoneyWarning from 'components/HoneyWarning/HoneyWarning';
@@ -32,9 +36,13 @@ const WithdrawForm = (props: WithdrawFormProps) => {
     isFetchingData
   } = props;
   const [valueUSD, setValueUSD] = useState<number>(0);
-  const [valueSOL, setValueSOL] = useState<number>(0);
+  const [valueUnderlying, setValueUnderlying] = useState<number>(0);
   const [sliderValue, setSliderValue] = useState(0);
   const { toast, ToastComponent } = useToast();
+
+  const selectedMarket = marketCollections.find(
+    collection => collection.id === currentMarketId
+  );
 
   const maxValue = userTotalDeposits;
   const reservePrice = fetchedReservePrice;
@@ -48,37 +56,37 @@ const WithdrawForm = (props: WithdrawFormProps) => {
   const handleSliderChange = (value: number) => {
     setSliderValue(value);
     setValueUSD(value * reservePrice);
-    setValueSOL(value);
+    setValueUnderlying(value);
   };
 
   const handleUsdInputChange = (usdValue: number | undefined) => {
     if (!usdValue) {
       setValueUSD(0);
-      setValueSOL(0);
+      setValueUnderlying(0);
       setSliderValue(0);
       return;
     }
 
     setValueUSD(usdValue);
-    setValueSOL(usdValue / reservePrice);
+    setValueUnderlying(usdValue / reservePrice);
     setSliderValue(usdValue / reservePrice);
   };
 
-  const handleSolInputChange = (solValue: number | undefined) => {
-    if (!solValue) {
+  const handleTokenInputChange = (tokenValue: number | undefined) => {
+    if (!tokenValue) {
       setValueUSD(0);
-      setValueSOL(0);
+      setValueUnderlying(0);
       setSliderValue(0);
       return;
     }
 
-    setValueUSD(solValue * reservePrice);
-    setValueSOL(solValue);
-    setSliderValue(solValue);
+    setValueUSD(tokenValue * reservePrice);
+    setValueUnderlying(tokenValue);
+    setSliderValue(tokenValue);
   };
 
   const handleWithdraw = async () => {
-    executeWithdraw(valueSOL, toast);
+    executeWithdraw(valueUnderlying, toast);
     handleSliderChange(0);
   };
 
@@ -189,11 +197,12 @@ const WithdrawForm = (props: WithdrawFormProps) => {
 
         <div className={styles.inputs}>
           <InputsBlock
-            firstInputValue={valueSOL}
+            firstInputValue={valueUnderlying}
             secondInputValue={valueUSD}
-            onChangeFirstInput={handleSolInputChange}
+            onChangeFirstInput={handleTokenInputChange}
             onChangeSecondInput={handleUsdInputChange}
             maxValue={maxValue}
+            firstInputAddon={selectedMarket?.constants.marketLoanCurrency}
           />
         </div>
 

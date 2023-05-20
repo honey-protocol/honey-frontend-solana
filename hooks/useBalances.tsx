@@ -27,7 +27,7 @@ export const useWalletTokensBalances = ({
   const [tokensBalancesMap, setTokenBalancesMap] = useState<TokenBalances>({});
   const wallet = useConnectedWallet();
   const connection = useConnection();
-  const solBalance = useSolBalance();
+  const { balance: solBalance } = useSolBalance();
 
   const getUserTokenBalances = useCallback(async () => {
     if (!wallet?.connected || !wallet.publicKey) {
