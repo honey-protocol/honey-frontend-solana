@@ -314,7 +314,6 @@ const Markets: NextPage = () => {
         setIsFetchingData(true);
         return Promise.all(
           marketCollections.map(async collection => {
-            console.log('Here', '@collection');
             if (
               collection.id == '' ||
               (initState === true &&
@@ -330,8 +329,6 @@ const Markets: NextPage = () => {
                     marketObject.market.address.toString() === collection.id
                 );
 
-                console.log(collection.marketData, '@collection');
-                console.log(collection.marketData, '@collection');
                 const honeyUser = collection.marketData[0].user;
                 const honeyMarket = collection.marketData[0].market;
                 const honeyClient = collection.marketData[0].client;
@@ -339,10 +336,6 @@ const Markets: NextPage = () => {
                   collection.marketData[0].reserves[0].data;
                 const mData = collection.marketData[0].reserves[0];
 
-                console.log(
-                  { collection: collection.name },
-                  '@collection, here'
-                );
                 await populateMarketData(
                   'BORROW',
                   ROOT_CLIENT,
@@ -359,8 +352,6 @@ const Markets: NextPage = () => {
                   parsedReserves,
                   mData
                 );
-
-                console.log({ collection: collection.name }, '@collection');
 
                 collection.openPositions = await handlePositions(
                   collection.verifiedCreator,
@@ -385,7 +376,6 @@ const Markets: NextPage = () => {
                 setIsFetchingClientData(false);
                 return collection;
               } else if (dataRoot === ROOT_SSR) {
-                console.log('else', '@collection');
                 collection.marketData = marketData.filter(
                   marketObject =>
                     // @ts-ignore
