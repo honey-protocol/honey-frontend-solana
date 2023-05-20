@@ -176,6 +176,7 @@ const Markets: NextPage = () => {
   const [launchAreaWidth, setLaunchAreaWidth] = useState<number>(840);
   const [fetchedReservePrice, setFetchedReservePrice] = useState(0);
   const [activeInterestRate, setActiveInterestRate] = useState(0);
+  const [tokenName, setTokenName] = useState('SOL');
   // interface related constants
   const { width: windowWidth } = useWindowSize();
   const [tableData, setTableData] =
@@ -217,6 +218,13 @@ const Markets: NextPage = () => {
 
   const [marketData, setMarketData] = useState<MarketBundle[]>([]);
   const [dataRoot, setDataRoot] = useState<String>();
+
+  useEffect(() => {
+    const tokenValue = marketCollections.filter(
+      market => market.id === currentMarketId
+    );
+    if (tokenValue.length) setTokenName(tokenValue[0].loanCurrency);
+  }, [currentMarketId]);
 
   // fetches market level data from API
   async function fetchServerSideMarketData() {
@@ -1232,6 +1240,7 @@ const Markets: NextPage = () => {
               availableNFTS={NFTs}
               isFetchingData={isFetchingClientData}
               collCount={obligationCount}
+              tokenName={tokenName}
             />
           </HoneySider>
         );

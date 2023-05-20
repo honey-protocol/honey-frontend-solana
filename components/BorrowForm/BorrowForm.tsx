@@ -61,7 +61,8 @@ const BorrowForm = (props: BorrowProps) => {
     calculatedInterestRate,
     currentMarketId,
     isFetchingData,
-    collCount
+    collCount,
+    tokenName
   } = props;
   // state declarations
   const [valueUSD, setValueUSD] = useState<number>(0);
@@ -310,7 +311,7 @@ const BorrowForm = (props: BorrowProps) => {
                   onChange={e => {
                     handleSelectMultipleNFTsItem(event, nft);
                   }}
-                  tokenName="SOL"
+                  tokenName={tokenName}
                   disabled={false} //remove disabled when multiple selction becomes allowed
                 />
               );
