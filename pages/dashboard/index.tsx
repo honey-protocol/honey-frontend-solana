@@ -612,6 +612,7 @@ const Dashboard: NextPage = () => {
           calculatedInterestRate={calculatedInterestRate}
           //TODO: fix market id
           currentMarketId={''}
+          tokenName={'SOL'}
         />
       ) : (
         <LendSidebar
