@@ -22,12 +22,35 @@ export const listItemIcon = style({
   flexShrink: 0,
   marginRight: 15
 });
+export const itemCollection = style({
+  display: 'flex',
+  flexDirection: 'column'
+});
 export const itemCollectionName = style([
   typography.caption,
   {
-    marginTop: 12,
+    marginBottom: 2,
     color: vars.colors.text,
     fontSize: 16
   }
 ]);
-
+export const itemCollectionValue = style({
+  display: 'flex',
+  alignItems: 'center',
+  fontSize: 12
+});
+export const itemCollectionValueCount = style([
+  typography.numbersRegular,
+  {
+    color: vars.colors.text,
+    marginRight: 4,
+    marginLeft: 4,
+    fontSize: 14
+  }
+]);
+export const itemCollectionToken = style([
+  typography.caption,
+  {
+    color: vars.colors.text
+  }
+]);

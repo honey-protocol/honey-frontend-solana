@@ -298,7 +298,7 @@ const BorrowForm = (props: BorrowProps) => {
             <div className={styles.borrowTopbar}>
               <div className={styles.borrowUpto}>Borrow up to </div>
               <div className={styles.borrowAmount}>{parseFloat(fs(nftPrice * MAX_LTV)) * selectedMultipleNFTs?.length }/{(parseFloat(fs(nftPrice * MAX_LTV)) * availableNFTs.length)} SOL</div>
-            </div>
+                </div>
 
             {availableNFTs.map((nft: NFT) => {
               const isSelected = Boolean(
@@ -313,6 +313,7 @@ const BorrowForm = (props: BorrowProps) => {
                   name={nft.name}
                   image={`https://res.cloudinary.com/${cloudinary_uri}/image/fetch/${nft.image}`}
                   value={fs(nftPrice * MAX_LTV)}
+                  isLoadingValue={isFetchingData as boolean}
                   isSelected={isSelected}
                   onChange={e => {
                     handleSelectMultipleNFTsItem(event, nft);
@@ -414,6 +415,7 @@ const BorrowForm = (props: BorrowProps) => {
                         ? nftPrice * MAX_LTV
                         : userAllowance / (collCount || 1)
                     )}
+                    isLoadingValue={isFetchingData as boolean}
                     isSelected={isSelected}
                     onChange={e => {
                       handleSelectMultipleNFTsItem(event, nft);
