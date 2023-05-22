@@ -224,11 +224,7 @@ function MyApp({ Component, pageProps }: AppProps) {
                             : 'honey-light-theme'
                         }
                       >
-                        {showPopup ? (
-                          <SecPopup setShowPopup={setShowPopup} />
-                        ) : (
-                          <Component {...pageProps} />
-                        )}
+                        <Component {...pageProps} />
                       </div>
                       <ToastContainer theme="dark" position="bottom-right" />
                     </OnChainProvider>
