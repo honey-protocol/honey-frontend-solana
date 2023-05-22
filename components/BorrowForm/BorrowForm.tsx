@@ -27,7 +27,7 @@ import {
 import QuestionIcon from 'icons/QuestionIcon';
 import { HoneyButtonTabs } from 'components/HoneyButtonTabs/HoneyButtonTabs';
 import NFTSelectListItem from 'components/NFTSelectListItem/NFTSelectListItem';
-import { Skeleton } from 'antd';
+import { Empty, Skeleton } from 'antd';
 import { useMarket } from '@honey-finance/sdk';
 import { PublicKey } from '@solana/web3.js';
 import HoneyWarning from 'components/HoneyWarning/HoneyWarning';
@@ -306,7 +306,7 @@ const BorrowForm = (props: BorrowProps) => {
                   id={nft.mint}
                   name={nft.name}
                   image={`https://res.cloudinary.com/${cloudinary_uri}/image/fetch/${nft.image}`}
-                  value={fs(price)}
+                  value={fs(nftPrice * MAX_LTV)}
                   isSelected={isSelected}
                   onChange={e => {
                     handleSelectMultipleNFTsItem(event, nft);
@@ -383,28 +383,40 @@ const BorrowForm = (props: BorrowProps) => {
             }}
           />
           <div className={styles.collateralList}>
-            {(collateralMenuMode === 'collateral'
-              ? openPositions
-              : availableNFTsInSelectedMarket
-            ).map((nft: NFT) => {
-              const isSelected = Boolean(
-                selectedMultipleNFTs?.some(item => item.mint === nft.mint)
-              );
-              return (
-                <NFTSelectListItem
-                  key={nft.mint}
-                  id={nft.mint}
-                  name={nft.name}
-                  image={`https://res.cloudinary.com/${cloudinary_uri}/image/fetch/${nft.image}`}
-                  value={fs(price)}
-                  isSelected={isSelected}
-                  onChange={e => {
-                    handleSelectMultipleNFTsItem(event, nft);
-                  }}
-                  tokenName="SOL"
-                />
-              );
-            })}
+            {collateralMenuMode === 'new_collateral' &&
+            availableNFTsInSelectedMarket.length === 0 ? (
+              <Empty
+                image={Empty.PRESENTED_IMAGE_SIMPLE}
+                description={'No new collaterals'}
+              />
+            ) : (
+              (collateralMenuMode === 'collateral'
+                ? openPositions
+                : availableNFTsInSelectedMarket
+              ).map((nft: NFT) => {
+                const isSelected = Boolean(
+                  selectedMultipleNFTs?.some(item => item.mint === nft.mint)
+                );
+                return (
+                  <NFTSelectListItem
+                    key={nft.mint}
+                    id={nft.mint}
+                    name={nft.name}
+                    image={`https://res.cloudinary.com/${cloudinary_uri}/image/fetch/${nft.image}`}
+                    value={fs(
+                      collateralMenuMode === 'new_collateral'
+                        ? nftPrice * MAX_LTV
+                        : userAllowance / (collCount || 1)
+                    )}
+                    isSelected={isSelected}
+                    onChange={e => {
+                      handleSelectMultipleNFTsItem(event, nft);
+                    }}
+                    tokenName="SOL"
+                  />
+                );
+              })
+            )}
           </div>
         </>
       );
