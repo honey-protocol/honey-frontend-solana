@@ -1386,7 +1386,9 @@ const Markets: NextPage = () => {
                           pagination={false}
                           showHeader={false}
                           footer={
-                            collateralNFTPositions?.length
+                            isFetchingClientData
+                              ? undefined
+                              : collateralNFTPositions?.length
                               ? ExpandedTableFooter
                               : () => (
                                   <HoneyButton variant="secondary" block>
@@ -1410,6 +1412,9 @@ const Markets: NextPage = () => {
                                 className={c(style.emptyTableSpinner, spinner)}
                               >
                                 <Spin />
+                                <span className={style.spinnerText}>
+                                  Fetching your details
+                                </span>
                               </div>
                             )
                           }}
