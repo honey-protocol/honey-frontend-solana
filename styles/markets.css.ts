@@ -485,6 +485,22 @@ export const emptyStateContainer = style({
   flex: 1
 });
 
+export const emptyTableSpinner = style({
+  height: '130px',
+  display: 'flex',
+  flexDirection: 'column',
+  alignItems: 'center',
+  justifyContent: 'center'
+});
+
+export const spinnerText = style([
+  typography.caption,
+  {
+    color: vars.colors.textTertiary,
+    opacity: 0.65
+  }
+]);
+
 export const docIcon = style({
   width: 52,
   height: 52,

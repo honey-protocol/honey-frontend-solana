@@ -615,7 +615,7 @@ export const renderNftList = (marketId: string, nftArray: any) => {
   const filteredMarket = marketCollections.filter(
     market => market.constants.marketId === marketId
   );
-  return filterNfts(nftArray, filteredMarket[0].constants.verifiedCreator);
+  return filterNfts(nftArray, filteredMarket[0]?.constants.verifiedCreator);
 };
 
 /**

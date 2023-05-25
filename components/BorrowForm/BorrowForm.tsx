@@ -61,8 +61,7 @@ const BorrowForm = (props: BorrowProps) => {
     calculatedInterestRate,
     currentMarketId,
     isFetchingData,
-    collCount,
-    tokenName
+    collCount
   } = props;
   // state declarations
   const [valueUSD, setValueUSD] = useState<number>(0);
@@ -306,7 +305,7 @@ const BorrowForm = (props: BorrowProps) => {
                   {parseFloat(fs(nftPrice * MAX_LTV)) *
                     (selectedMultipleNFTs?.length ?? 0)}
                   /{parseFloat(fs(nftPrice * MAX_LTV)) * availableNFTs.length}{' '}
-                  {tokenName}
+                  {selectedMarket?.loanCurrency}
                 </div>
               )}
             </div>
@@ -328,7 +327,7 @@ const BorrowForm = (props: BorrowProps) => {
                   onChange={e => {
                     handleSelectMultipleNFTsItem(event, nft);
                   }}
-                  tokenName={tokenName}
+                  tokenName={selectedMarket?.loanCurrency ?? ''}
                   disabled={false} //remove disabled when multiple selction becomes allowed
                 />
               );
@@ -774,7 +773,7 @@ const BorrowForm = (props: BorrowProps) => {
           onCancel: handleCancel,
           title: 'Deposit Selected NFT',
           onClick: handleDepositMultipleNFTs,
-          disabled: !selectedMultipleNFTs?.length
+          disabled: !selectedMultipleNFTs?.length || isFetchingData
         };
       } else {
         return {

@@ -21,5 +21,4 @@ export type BorrowProps = {
   executeBorrow: (val: number, toast: any) => void;
   hideMobileSidebar?: () => void;
   collCount?: number;
-  tokenName: string;
 };
