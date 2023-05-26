@@ -429,7 +429,7 @@ const BorrowForm = (props: BorrowProps) => {
                     onChange={e => {
                       handleSelectMultipleNFTsItem(event, nft);
                     }}
-                    tokenName="SOL"
+                    tokenName={selectedMarket?.loanCurrency ?? ''}
                   />
                 );
               })
