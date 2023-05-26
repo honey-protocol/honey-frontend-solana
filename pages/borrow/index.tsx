@@ -15,9 +15,11 @@ import {
 } from '../../types/markets';
 import React, {
   ChangeEvent,
+  MutableRefObject,
   useCallback,
   useEffect,
   useMemo,
+  useRef,
   useState
 } from 'react';
 import { formatNFTName, formatNumber } from '../../helpers/format';
@@ -289,90 +291,114 @@ const Markets: NextPage = () => {
     fetchMarketLevelDataFromAPI();
   }, [fetchMarketLevelDataFromAPI]);
 
-  const fetchCurrentMarketData = useCallback(async () => {
-    if (!currentMarketId) return;
+  const marketDataCache: MutableRefObject<{
+    [id: string]: Array<MarketBundle>;
+  }> = useRef({});
+  const fetchMarketDataObj = useCallback(
+    async (marketId, connection, wallet, honeyId) => {
+      //Check cache if object exists
+      if (marketDataCache.current[marketId]) {
+        return marketDataCache.current[marketId];
+      }
 
-    const collection = marketCollections.find(
-      collection => collection.id === currentMarketId
-    );
-
-    if (!collection) return;
-
-    console.log('Fetching current market specific data', '@current');
-    setIsFetchingClientData(true);
-
-    try {
       const data: MarketBundle[] = await fetchAllMarkets(
-        sdkConfig.saberHqConnection,
-        sdkConfig.sdkWallet,
-        sdkConfig.honeyId,
-        [currentMarketId],
+        connection,
+        wallet,
+        honeyId,
+        [marketId],
         false
       );
 
-      collection.marketData = data;
+      //Update cache
+      marketDataCache.current[marketId] = data;
+      return data;
+    },
+    []
+  );
 
-      const honeyUser = data[0].user;
-      const honeyMarket = data[0].market;
-      const honeyClient = data[0].client;
-      const parsedReserves = data[0].reserves[0].data;
-      const mData = data[0].reserves[0];
+  const fetchCurrentMarketData = useCallback(
+    async (silentRefresh?: boolean) => {
+      if (!currentMarketId) return;
 
-      console.log({ data }, '@current');
-
-      await populateMarketData(
-        'BORROW',
-        ROOT_CLIENT,
-        collection,
-        sdkConfig.saberHqConnection,
-        sdkConfig.sdkWallet,
-        currentMarketId,
-        false,
-        data[0].positions,
-        true,
-        honeyClient,
-        honeyMarket,
-        honeyUser,
-        parsedReserves,
-        mData
+      const collection = marketCollections.find(
+        collection => collection.id === currentMarketId
       );
 
-      // collection.openPositions =
-      //   collection.marketData[0].positions?.filter(
-      //     position =>
-      //       position.verifiedCreator?.toString() === collection.verifiedCreator
-      //   ) ?? [];
+      if (!collection) return;
 
-      // setObligationCount(collection.openPositions.length);
-      setActiveInterestRate(collection.rate);
-      // @ts-ignore
-      collection.nftPrice ? setNftPrice(RoundHalfDown(collection.nftPrice)) : 0;
-      setUserAllowance(collection.allowance);
+      if (!silentRefresh) {
+        setIsFetchingClientData(true);
+      }
 
-      // @ts-ignore
-      setUserDebt(collection.userDebt);
-      setLoanToValue(Number(collection.ltv));
-      setFetchedDataObject(data[0]);
+      try {
+        const data = await fetchMarketDataObj(
+          currentMarketId,
+          sdkConfig.saberHqConnection,
+          sdkConfig.sdkWallet,
+          sdkConfig.honeyId
+        );
+        collection.marketData = data;
 
-      const newMarketData = marketCollections.map(marketCollection =>
-        marketCollection.id === collection.id ? collection : marketCollection
-      );
+        const honeyUser = data[0].user;
+        const honeyMarket = data[0].market;
+        const honeyClient = data[0].client;
+        const parsedReserves = data[0].reserves[0].data;
+        const mData = data[0].reserves[0];
 
-      // Update market table data
-      setTableData(newMarketData);
-      setTableDataFiltered(newMarketData);
-    } catch (error) {
-      console.log('Error fetching selected market data', '@current');
-    } finally {
-      setIsFetchingData(false);
-      setIsFetchingClientData(false);
-    }
-  }, [
-    currentMarketId,
-    sdkConfig.honeyId,
-    sdkConfig.saberHqConnection,
-    sdkConfig.sdkWallet
-  ]);
+        console.log({ data }, '@current');
+
+        await populateMarketData(
+          'BORROW',
+          ROOT_CLIENT,
+          collection,
+          sdkConfig.saberHqConnection,
+          sdkConfig.sdkWallet,
+          currentMarketId,
+          false,
+          data[0].positions,
+          true,
+          honeyClient,
+          honeyMarket,
+          honeyUser,
+          parsedReserves,
+          mData
+        );
+
+        // setObligationCount(collection.openPositions.length);
+        setActiveInterestRate(collection.rate);
+        // @ts-ignore
+        collection.nftPrice
+          ? setNftPrice(RoundHalfDown(collection.nftPrice))
+          : 0;
+        setUserAllowance(collection.allowance);
+
+        // @ts-ignore
+        setUserDebt(collection.userDebt);
+        setLoanToValue(Number(collection.ltv));
+        setFetchedDataObject(data[0]);
+
+        const newMarketData = marketCollections.map(marketCollection =>
+          marketCollection.id === collection.id ? collection : marketCollection
+        );
+
+        // Update market table data
+        setTableData(newMarketData);
+        setTableDataFiltered(newMarketData);
+      } catch (error) {
+        console.log('Error fetching selected market data', '@current');
+      } finally {
+        setIsFetchingData(false);
+        setIsFetchingClientData(false);
+      }
+    },
+    [
+      currentMarketId,
+      sdkConfig.honeyId,
+      sdkConfig.saberHqConnection,
+      sdkConfig.sdkWallet,
+      fetchMarketDataObj
+    ]
+  );
 
   useEffect(() => {
     fetchCurrentMarketData();
