@@ -145,85 +145,99 @@ const Markets: NextPage = () => {
   );
 
   // setIsFetchingClientData(true);
-  async function handleCollateralNFTMintArray(arr: any) {
-    const collateralNFTPositions: any = [];
-
-    const promises = arr.map(async (key: PublicKey, index: number) => {
-      if (!key.equals(PublicKey.default)) {
-        const [nftMetadata, _] = await PublicKey.findProgramAddress(
-          [
-            Buffer.from('metadata'),
-            METADATA_PROGRAM_ID.toBuffer(),
-            key.toBuffer()
-          ],
-          METADATA_PROGRAM_ID
-        );
-
-        const data = await getNFTAssociatedMetadata(
-          sdkConfig.saberHqConnection,
-          nftMetadata
-        );
-
-        if (!data) return;
-
-        const tokenMetadata = await Metadata.fromAccountAddress(
-          sdkConfig.saberHqConnection,
-          nftMetadata
-        );
-
-        // TODO: validate if we can run it or need to catch
-        // @ts-ignore
-        const verifiedCreator = tokenMetadata.data.creators.filter(
-          (creator: any) => creator.verified
-        )[0].address;
-
-        //   `(https://res.cloudinary.com/${cloudinary_uri}/image/fetch/${tokenMetadata.data.uri})`
-
-        // TODO: fetch via cloudinary
-        const arweaveData = await (await fetch(tokenMetadata.data.uri)).json();
-
-        collateralNFTPositions.push({
-          // mint: new PublicKey(tokenMetadata?.mint),
-          mint: nftMetadata.toString(),
-          updateAuthority: new PublicKey(tokenMetadata?.updateAuthority),
-          name: tokenMetadata?.data?.name,
-          symbol: tokenMetadata?.data?.symbol,
-          uri: tokenMetadata?.data?.uri,
-          image: arweaveData?.image,
-          verifiedCreator: verifiedCreator.toBase58()
-        });
-      }
-    });
-
-    await Promise.all(promises);
-
-    if (collateralNFTPositions.length > 0) {
-      const userData = await honeyUser.fetchAllowanceAndDebt(0);
-
-      setUserDebt(userData && userData.debt ? userData.debt : 0);
-      setUserAllowance(userData && userData.allowance ? userData.allowance : 0);
-      setCollateralNFTPositions(collateralNFTPositions);
-      setIsFetchingClientData(false);
-    } else {
-      setUserDebt(0);
-      setUserAllowance(0);
-      setCollateralNFTPositions([]);
-      setIsFetchingClientData(false);
+  async function handleCollateralNFTMintArray() {
+    if (!honeyUser || !sdkConfig.sdkWallet || sdkConfig.sdkWallet == null) {
+      return;
     }
-    const nftPrice = RoundHalfDown(
-      await honeyMarket.fetchNFTFloorPriceInReserve(0),
-      2
-    );
-    setNftPrice(nftPrice);
+    try {
+      const data = await honeyUser.getObligationData();
+      const collaternftmint = data.collateralNftMint;
+
+      const collateralNFTPositions: any = [];
+      if (collaternftmint.length && collaternftmint.length > 0) {
+        const promises = collaternftmint.map(
+          async (key: PublicKey, index: number) => {
+            if (!key.equals(PublicKey.default)) {
+              const [nftMetadata, _] = await PublicKey.findProgramAddress(
+                [
+                  Buffer.from('metadata'),
+                  METADATA_PROGRAM_ID.toBuffer(),
+                  key.toBuffer()
+                ],
+                METADATA_PROGRAM_ID
+              );
+
+              const data = await getNFTAssociatedMetadata(
+                sdkConfig.saberHqConnection,
+                nftMetadata
+              );
+
+              if (!data) return;
+
+              const tokenMetadata = await Metadata.fromAccountAddress(
+                sdkConfig.saberHqConnection,
+                nftMetadata
+              );
+
+              // TODO: validate if we can run it or need to catch
+              // @ts-ignore
+              const verifiedCreator = tokenMetadata.data.creators.filter(
+                (creator: any) => creator.verified
+              )[0].address;
+
+              //   `(https://res.cloudinary.com/${cloudinary_uri}/image/fetch/${tokenMetadata.data.uri})`
+
+              // TODO: fetch via cloudinary
+              const arweaveData = await (
+                await fetch(tokenMetadata.data.uri)
+              ).json();
+
+              collateralNFTPositions.push({
+                // mint: new PublicKey(tokenMetadata?.mint),
+                mint: nftMetadata.toString(),
+                updateAuthority: new PublicKey(tokenMetadata?.updateAuthority),
+                name: tokenMetadata?.data?.name,
+                symbol: tokenMetadata?.data?.symbol,
+                uri: tokenMetadata?.data?.uri,
+                image: arweaveData?.image,
+                verifiedCreator: verifiedCreator.toBase58()
+              });
+            }
+          }
+        );
+
+        await Promise.all(promises);
+
+        if (collateralNFTPositions.length > 0) {
+          const userData = await honeyUser.fetchAllowanceAndDebt(0);
+
+          setUserDebt(userData && userData.debt ? userData.debt : 0);
+          setUserAllowance(
+            userData && userData.allowance ? userData.allowance : 0
+          );
+          setCollateralNFTPositions(collateralNFTPositions);
+          setIsFetchingClientData(false);
+        } else {
+          setUserDebt(0);
+          setUserAllowance(0);
+          setCollateralNFTPositions([]);
+          setIsFetchingClientData(false);
+        }
+        const nftPrice = RoundHalfDown(
+          await honeyMarket.fetchNFTFloorPriceInReserve(0),
+          2
+        );
+        setNftPrice(nftPrice);
+      }
+    } catch (error) {
+      console.log(`Error during fetching of collateral nft mint: ${error}`);
+    }
   }
 
   useEffect(() => {
-    if (!honeyUser) return;
-    honeyUser.getObligationData().then(data => {
-      if (data.collateralNftMint)
-        handleCollateralNFTMintArray(data.collateralNftMint);
-    });
-  }, [honeyUser]);
+    if (!honeyUser || sdkConfig.sdkWallet === null) return;
+    handleCollateralNFTMintArray();
+  }, [honeyUser, sdkConfig.sdkWallet]);
 
   /**
    * @description fetches collateral nft positions | refresh positions (func) from SDK
