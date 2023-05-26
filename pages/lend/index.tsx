@@ -346,7 +346,7 @@ const Lend: NextPage = () => {
           if (walletPK) await refetchWalletBalance();
 
           toast.success(
-            'Deposit success',
+            'Withdraw success',
             `https://solscan.io/tx/${tx[1][0]}?cluster=${network}`
           );
         } else {
@@ -357,7 +357,7 @@ const Lend: NextPage = () => {
           if (walletPK) await refetchWalletBalance();
 
           toast.success(
-            'Deposit success',
+            'Withdraw success',
             `https://solscan.io/tx/${tx[1][0]}?cluster=${network}`
           );
         }
