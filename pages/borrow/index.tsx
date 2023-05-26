@@ -993,6 +993,7 @@ const Markets: NextPage = () => {
 
                 await refreshPositions();
                 refetchNfts({});
+                await fetchCurrentMarketData(true);
 
                 toast.success(
                   'Deposit success',
@@ -1051,6 +1052,7 @@ const Markets: NextPage = () => {
 
               await refreshPositions();
               refetchNfts({});
+              await fetchCurrentMarketData(true);
 
               toast.success(
                 'Withdraw success',
@@ -1107,7 +1109,7 @@ const Markets: NextPage = () => {
         await fetchedDataObject.reserves[0].refresh();
         await fetchedDataObject.user.refresh();
 
-        await refreshPositions();
+        await fetchCurrentMarketData(true);
 
         refetchNfts({});
 
@@ -1169,7 +1171,7 @@ const Markets: NextPage = () => {
         await fetchedDataObject.reserves[0].refresh();
         await fetchedDataObject.user.refresh();
 
-        await refreshPositions();
+        await fetchCurrentMarketData(true);
         refetchNfts({});
 
         reserveHoneyState === 0
