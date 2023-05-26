@@ -9,7 +9,6 @@ import { Network } from '@saberhq/solana-contrib';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { PartialNetworkConfigMap } from '@saberhq/use-solana/src/utils/useConnectionInternal';
-import SecPopup from 'components/SecPopup';
 import { useConnectedWallet, useConnection } from '@saberhq/use-solana';
 import { AnchorProvider, HoneyProvider } from '@honey-finance/sdk';
 import React, {
@@ -120,7 +119,7 @@ export const HoneyThemeContext = createContext<HoneyThemeContext>(
 );
 
 function MyApp({ Component, pageProps }: AppProps) {
-  const [showPopup, setShowPopup] = useState(true);
+  // const [showPopup, setShowPopup] = useState(true);
   const [shouldRender, setShouldRender] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const [theme, setTheme] = useState<HoneyTheme>('light');
@@ -133,9 +132,7 @@ function MyApp({ Component, pageProps }: AppProps) {
     }
   };
   useEffect(() => {
-    const cautionAgreed = localStorage.getItem('caution-agreed');
     const savedTheme: any = localStorage.getItem('honey-theme');
-    setShowPopup(cautionAgreed === 'true' ? false : true);
     if (savedTheme) {
       setTheme(savedTheme);
     }
@@ -224,11 +221,7 @@ function MyApp({ Component, pageProps }: AppProps) {
                             : 'honey-light-theme'
                         }
                       >
-                        {showPopup ? (
-                          <SecPopup setShowPopup={setShowPopup} />
-                        ) : (
-                          <Component {...pageProps} />
-                        )}
+                        <Component {...pageProps} />
                       </div>
                       <ToastContainer theme="dark" position="bottom-right" />
                     </OnChainProvider>
