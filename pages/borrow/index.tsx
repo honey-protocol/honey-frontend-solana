@@ -177,9 +177,8 @@ const Markets: NextPage = () => {
           (creator: any) => creator.verified
         )[0].address;
 
-        // const image = tokenMetadata.data.uri
-        //   ? `https://res.cloudinary.com/${cloudinary_uri}/image/fetch/${tokenMetadata.data.uri}`
-        //   : defaultNFTImageUrl;
+        //   `(https://res.cloudinary.com/${cloudinary_uri}/image/fetch/${tokenMetadata.data.uri})`
+
         // TODO: fetch via cloudinary
         const arweaveData = await (await fetch(tokenMetadata.data.uri)).json();
 
@@ -197,7 +196,7 @@ const Markets: NextPage = () => {
     });
 
     await Promise.all(promises);
-    console.log('@@-- collateral nft pos', collateralNFTPositions);
+
     if (collateralNFTPositions.length > 0) {
       const userData = await honeyUser.fetchAllowanceAndDebt(0);
 
@@ -219,10 +218,10 @@ const Markets: NextPage = () => {
   }
 
   useEffect(() => {
-    console.log('@@-- hello', honeyUser);
     if (!honeyUser) return;
     honeyUser.getObligationData().then(data => {
-      handleCollateralNFTMintArray(data.collateralNftMint);
+      if (data.collateralNftMint)
+        handleCollateralNFTMintArray(data.collateralNftMint);
     });
   }, [honeyUser]);
 
@@ -429,8 +428,6 @@ const Markets: NextPage = () => {
         const honeyClient = data[0].client;
         const parsedReserves = data[0].reserves[0].data;
         const mData = data[0].reserves[0];
-
-        console.log({ data }, '@current');
 
         await populateMarketData(
           'BORROW',
