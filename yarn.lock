@@ -1138,10 +1138,10 @@
   dependencies:
     client-only "^0.0.1"
 
-"@honey-finance/sdk@^1.2.3":
-  version "1.2.4"
-  resolved "https://registry.yarnpkg.com/@honey-finance/sdk/-/sdk-1.2.4.tgz#dcdb7705be3386952f96ba0f03703effaf993da3"
-  integrity sha512-wz5hPAyJi2YKXuCcU1Bnp90AdN1QxnWr26EVBxTr9qY6iC1hvZL295iwetAJH0eALhm3K39xZ1la3RVuq0u3Sw==
+"@honey-finance/sdk@^1.2.5":
+  version "1.2.5"
+  resolved "https://registry.yarnpkg.com/@honey-finance/sdk/-/sdk-1.2.5.tgz#3473dfa10833573d440c8686cc885e0773da4587"
+  integrity sha512-jiuWEvjxe6Bw+UU4aKDukooEla69cQsoW5r04Z4XLSN4Y9y1j/x5vosUARCMiTuw5IN6F/HTya8bG+Dq8Hi8ZA==
   dependencies:
     "@metaplex-foundation/js" "^0.18.0"
     "@metaplex-foundation/mpl-token-auth-rules" "^1.0.0"
@@ -1563,7 +1563,7 @@
     "@solana/spl-token" "^0.1.8"
     "@solana/web3.js" "^1.31.0"
 
-"@metaplex-foundation/mpl-token-metadata@^1.1.0", "@metaplex-foundation/mpl-token-metadata@^1.2.5":
+"@metaplex-foundation/mpl-token-metadata@^1.1.0":
   version "1.2.5"
   resolved "https://registry.yarnpkg.com/@metaplex-foundation/mpl-token-metadata/-/mpl-token-metadata-1.2.5.tgz#1a927b1c7d30cd634a1e4782022712a02f6865c2"
   integrity sha512-pxRG53JsTSwXpiJJMHNulJhH8kO3hHztQ3QxslUoKw2hBYKXsg9TGsiHgNIhN2MPZGBJ2pDeK6kNGv0sd54HhA==
@@ -1571,6 +1571,19 @@
     "@metaplex-foundation/mpl-core" "^0.0.2"
     "@solana/spl-token" "^0.1.8"
     "@solana/web3.js" "^1.31.0"
+
+"@metaplex-foundation/mpl-token-metadata@^2.11.1":
+  version "2.11.1"
+  resolved "https://registry.yarnpkg.com/@metaplex-foundation/mpl-token-metadata/-/mpl-token-metadata-2.11.1.tgz#b7755c5cc7bae5e98e285dd675fa65b62e9bd881"
+  integrity sha512-FNJhDAFmpXD5K9lstJYXROjUjHQmCHFpzVs4asUpVvtkF645+PGyDtqoUENfVEwoUPY8ZT6Exs7d0exRgYqxUA==
+  dependencies:
+    "@metaplex-foundation/beet" "^0.7.1"
+    "@metaplex-foundation/beet-solana" "^0.4.0"
+    "@metaplex-foundation/cusper" "^0.0.2"
+    "@solana/spl-token" "^0.3.6"
+    "@solana/web3.js" "^1.66.2"
+    bn.js "^5.2.0"
+    debug "^4.3.4"
 
 "@metaplex-foundation/mpl-token-metadata@^2.7.0", "@metaplex-foundation/mpl-token-metadata@^2.8.6":
   version "2.11.0"

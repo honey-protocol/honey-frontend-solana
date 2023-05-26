@@ -37,7 +37,7 @@ import { ConfigureSDK } from '../../helpers/loanHelpers/index';
 import { FETCH_USER_MARKET_DATA } from 'constants/apiEndpoints';
 import { Connection, PublicKey, clusterApiUrl } from '@solana/web3.js';
 import HealthLvl from '../../components/HealthLvl/HealthLvl';
-import useFetchNFTByUser from 'hooks/useNFTV3';
+import useFetchNFTByUser, { defaultNFTImageUrl } from 'hooks/useNFTV3';
 import {
   borrowAndRefresh,
   depositNFT,
@@ -50,7 +50,9 @@ import {
   waitForConfirmation,
   fetchReservePrice,
   withdrawNFT,
-  TReserve
+  TReserve,
+  METADATA_PROGRAM_ID,
+  getNFTAssociatedMetadata
 } from '@honey-finance/sdk';
 import { populateMarketData } from 'helpers/loanHelpers/userCollection';
 import { Metadata } from '@metaplex-foundation/mpl-token-metadata';
@@ -113,6 +115,7 @@ const Markets: NextPage = () => {
   // Sets market ID which is used for fetching market specific data
   // each market currently is a different call and re-renders the page
   const [currentMarketId, setCurrentMarketId] = useState('');
+  const [collateralNFTPositions, setCollateralNFTPositions] = useState<NFT[]>();
 
   /**
    * @description sets the market ID based on market click
@@ -128,7 +131,7 @@ const Markets: NextPage = () => {
   //  * @returns market | market reserve information | parsed reserves |
   //  */
   // const { marketReserveInfo, parsedReserves, fetchMarket } = useHoney();
-
+  const [isFetchingClientData, setIsFetchingClientData] = useState(true);
   /**
    * @description fetches honey client | honey user | honey reserves | honey market from SDK
    * @params  useConnection func. | useConnectedWallet func. | honeyID | marketID
@@ -140,23 +143,106 @@ const Markets: NextPage = () => {
     sdkConfig.honeyId,
     currentMarketId
   );
+
+  // setIsFetchingClientData(true);
+  async function handleCollateralNFTMintArray(arr: any) {
+    const collateralNFTPositions: any = [];
+
+    const promises = arr.map(async (key: PublicKey, index: number) => {
+      if (!key.equals(PublicKey.default)) {
+        const [nftMetadata, _] = await PublicKey.findProgramAddress(
+          [
+            Buffer.from('metadata'),
+            METADATA_PROGRAM_ID.toBuffer(),
+            key.toBuffer()
+          ],
+          METADATA_PROGRAM_ID
+        );
+
+        const data = await getNFTAssociatedMetadata(
+          sdkConfig.saberHqConnection,
+          nftMetadata
+        );
+
+        if (!data) return;
+
+        const tokenMetadata = await Metadata.fromAccountAddress(
+          sdkConfig.saberHqConnection,
+          nftMetadata
+        );
+
+        // TODO: validate if we can run it or need to catch
+        // @ts-ignore
+        const verifiedCreator = tokenMetadata.data.creators.filter(
+          (creator: any) => creator.verified
+        )[0].address;
+
+        // const image = tokenMetadata.data.uri
+        //   ? `https://res.cloudinary.com/${cloudinary_uri}/image/fetch/${tokenMetadata.data.uri}`
+        //   : defaultNFTImageUrl;
+        // TODO: fetch via cloudinary
+        const arweaveData = await (await fetch(tokenMetadata.data.uri)).json();
+
+        collateralNFTPositions.push({
+          // mint: new PublicKey(tokenMetadata?.mint),
+          mint: nftMetadata.toString(),
+          updateAuthority: new PublicKey(tokenMetadata?.updateAuthority),
+          name: tokenMetadata?.data?.name,
+          symbol: tokenMetadata?.data?.symbol,
+          uri: tokenMetadata?.data?.uri,
+          image: arweaveData?.image,
+          verifiedCreator: verifiedCreator.toBase58()
+        });
+      }
+    });
+
+    await Promise.all(promises);
+    console.log('@@-- collateral nft pos', collateralNFTPositions);
+    if (collateralNFTPositions.length > 0) {
+      const userData = await honeyUser.fetchAllowanceAndDebt(0);
+
+      setUserDebt(userData && userData.debt ? userData.debt : 0);
+      setUserAllowance(userData && userData.allowance ? userData.allowance : 0);
+      setCollateralNFTPositions(collateralNFTPositions);
+      setIsFetchingClientData(false);
+    } else {
+      setUserDebt(0);
+      setUserAllowance(0);
+      setCollateralNFTPositions([]);
+      setIsFetchingClientData(false);
+    }
+    const nftPrice = RoundHalfDown(
+      await honeyMarket.fetchNFTFloorPriceInReserve(0),
+      2
+    );
+    setNftPrice(nftPrice);
+  }
+
+  useEffect(() => {
+    console.log('@@-- hello', honeyUser);
+    if (!honeyUser) return;
+    honeyUser.getObligationData().then(data => {
+      handleCollateralNFTMintArray(data.collateralNftMint);
+    });
+  }, [honeyUser]);
+
   /**
    * @description fetches collateral nft positions | refresh positions (func) from SDK
    * @params useConnection func. | useConnectedWallet func. | honeyID | marketID
    * @returns collateralNFTPositions | loanPositions | loading | error
    */
-  let {
-    loading: loadingCollateralPositions,
-    collateralNFTPositions,
-    loanPositions,
-    refreshPositions,
-    error
-  } = useBorrowPositions(
-    sdkConfig.saberHqConnection,
-    sdkConfig.sdkWallet!,
-    sdkConfig.honeyId,
-    currentMarketId
-  );
+  // let {
+  //   loading: loadingCollateralPositions,
+  //   collateralNFTPositions,
+  //   loanPositions,
+  //   refreshPositions,
+  //   error
+  // } = useBorrowPositions(
+  //   sdkConfig.saberHqConnection,
+  //   sdkConfig.sdkWallet!,
+  //   sdkConfig.honeyId,
+  //   currentMarketId
+  // );
 
   // market specific constants - calculations / ratios / debt / allowance etc.
   const [nftPrice, setNftPrice] = useState(0);
@@ -188,7 +274,6 @@ const Markets: NextPage = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [isMobileSidebarVisible, setShowMobileSidebar] = useState(false);
   const [isFetchingData, setIsFetchingData] = useState(true);
-  const [isFetchingClientData, setIsFetchingClientData] = useState(true);
   const [showWeeklyRates, setShowWeeklyRates] = useState(true);
   const [sidebarMode, setSidebarMode] = useState<BorrowSidebarMode>(
     BorrowSidebarMode.MARKET
@@ -327,7 +412,7 @@ const Markets: NextPage = () => {
       if (!collection) return;
 
       if (!silentRefresh) {
-        setIsFetchingClientData(true);
+        // setIsFetchingClientData(true);
       }
 
       try {
@@ -366,6 +451,7 @@ const Markets: NextPage = () => {
 
         // setObligationCount(collection.openPositions.length);
         setActiveInterestRate(collection.rate);
+
         // @ts-ignore
         collection.nftPrice
           ? setNftPrice(RoundHalfDown(collection.nftPrice))
@@ -968,14 +1054,10 @@ const Markets: NextPage = () => {
         // @ts-ignore
         marketCollections.map(async collection => {
           if (collection.id === currentMarketId) {
-            const metadata = await Metadata.findByMint(
-              collection.connection,
-              mintID
-            );
             const tx = await depositNFT(
               collection.connection,
               honeyUser,
-              metadata.pubkey
+              new PublicKey(mintID)
             );
 
             if (tx[0] == 'SUCCESS') {
@@ -990,8 +1072,8 @@ const Markets: NextPage = () => {
               if (collection.marketData) {
                 await collection.marketData[0].reserves[0].refresh();
                 await collection.marketData[0].user.refresh();
-
-                await refreshPositions();
+                // refreshes the honey user which sets the updated collateral NFT mint array - which calculates the positions
+                await honeyUser.getObligationData();
                 refetchNfts({});
                 await fetchCurrentMarketData(true);
 
@@ -1027,14 +1109,10 @@ const Markets: NextPage = () => {
         //@ts-ignore
         marketCollections.map(async collection => {
           if (collection.id === currentMarketId) {
-            const metadata = await Metadata.findByMint(
-              sdkConfig.saberHqConnection,
-              mintID
-            );
-            const tx = await withdrawNFT(
-              sdkConfig.saberHqConnection,
+            const tx = await depositNFT(
+              collection.connection,
               honeyUser,
-              metadata.pubkey
+              new PublicKey(mintID)
             );
 
             if (tx[0] == 'SUCCESS') {
@@ -1049,8 +1127,8 @@ const Markets: NextPage = () => {
 
               await fetchedDataObject.reserves[0].refresh();
               await fetchedDataObject.user.refresh();
-
-              await refreshPositions();
+              // refreshes the honey user which sets the updated collateral NFT mint array - which calculates the positions
+              await honeyUser.getObligationData();
               refetchNfts({});
               await fetchCurrentMarketData(true);
 
