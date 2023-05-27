@@ -27,7 +27,7 @@ import {
 import QuestionIcon from 'icons/QuestionIcon';
 import { HoneyButtonTabs } from 'components/HoneyButtonTabs/HoneyButtonTabs';
 import NFTSelectListItem from 'components/NFTSelectListItem/NFTSelectListItem';
-import { Skeleton } from 'antd';
+import { Empty, Skeleton } from 'antd';
 import { useMarket } from '@honey-finance/sdk';
 import { PublicKey } from '@solana/web3.js';
 import HoneyWarning from 'components/HoneyWarning/HoneyWarning';
@@ -65,7 +65,7 @@ const BorrowForm = (props: BorrowProps) => {
   } = props;
   // state declarations
   const [valueUSD, setValueUSD] = useState<number>(0);
-  const [valueSOL, setValueSOL] = useState<number>(0);
+  const [valueUnderlying, setValueUnderlying] = useState<number>(0);
   const [selectedNft, setSelectedNft] = useState<NFT | null>(null);
   const [isBulkLoan, setIsBulkLoan] = useState(true);
   const [selectedMultipleNFTs, setSelectedMultipleNFTs] = useState<NFT[]>();
@@ -85,10 +85,10 @@ const BorrowForm = (props: BorrowProps) => {
   // constants && calculations
   const borrowedValue = userDebt;
   const maxValue = userAllowance * openPositions?.length;
-  const solPrice = fetchedReservePrice;
+  const marketTokenPrice = fetchedReservePrice;
   const liquidationThreshold = COLLATERAL_FACTOR; // TODO: change where relevant, currently set to 65% on mainnet
   const borrowFee = BORROW_FEE; // TODO: 1,5% later but 0% for now
-  const newAdditionalDebt = valueSOL * (1 + borrowFee);
+  const newAdditionalDebt = valueUnderlying * (1 + borrowFee);
   const newTotalDebt = newAdditionalDebt
     ? userDebt + newAdditionalDebt
     : userDebt;
@@ -109,34 +109,34 @@ const BorrowForm = (props: BorrowProps) => {
   const handleSliderChange = (value: number) => {
     if (userAllowance == 0) return;
     setSliderValue(value);
-    setValueUSD(value * solPrice);
-    setValueSOL(value);
+    setValueUSD(value * marketTokenPrice);
+    setValueUnderlying(value);
   };
   // change of input - render calculated values
   const handleUsdInputChange = (usdValue: number | undefined) => {
     if (userAllowance == 0) return;
     if (!usdValue) {
       setValueUSD(0);
-      setValueSOL(0);
+      setValueUnderlying(0);
       setSliderValue(0);
       return;
     }
     setValueUSD(usdValue);
-    setValueSOL(usdValue / solPrice);
-    setSliderValue(usdValue / solPrice);
+    setValueUnderlying(usdValue / marketTokenPrice);
+    setSliderValue(usdValue / marketTokenPrice);
   };
   // change of input - render calculated values
   const handleSolInputChange = (solValue: number | undefined) => {
     if (userAllowance == 0) return;
     if (!solValue) {
       setValueUSD(0);
-      setValueSOL(0);
+      setValueUnderlying(0);
       setSliderValue(0);
       return;
     }
 
-    setValueUSD(solValue * solPrice);
-    setValueSOL(solValue);
+    setValueUSD(solValue * marketTokenPrice);
+    setValueUnderlying(solValue);
     setSliderValue(solValue);
   };
 
@@ -256,7 +256,7 @@ const BorrowForm = (props: BorrowProps) => {
 
   // executes the borrow function
   const handleBorrow = async () => {
-    executeBorrow(valueSOL, toast);
+    executeBorrow(valueUnderlying, toast);
     handleSliderChange(0);
   };
   // fetches the market specific available nfts
@@ -288,11 +288,27 @@ const BorrowForm = (props: BorrowProps) => {
   // renders nft list is no nft is selected
   const renderContent = () => {
     if (!hasOpenPosition) {
-      //Remove false when multiple deposits is possible
       if (isBulkLoan) {
         return (
           <>
-            <div className={styles.newBorrowingTitle}>Choose Multiple NFTs</div>
+            <div className={styles.newBorrowingTitle}>Choose NFTs</div>
+            <div className={styles.borrowTopbar}>
+              <div className={styles.borrowUpto}>Borrow up to </div>
+              {isFetchingData ? (
+                <Skeleton.Button
+                  size="small"
+                  style={{ height: '16px' }}
+                  active
+                />
+              ) : (
+                <div className={styles.borrowAmount}>
+                  {parseFloat(fs(nftPrice * MAX_LTV)) *
+                    (selectedMultipleNFTs?.length ?? 0)}
+                  /{parseFloat(fs(nftPrice * MAX_LTV)) * availableNFTs.length}{' '}
+                  {selectedMarket?.loanCurrency}
+                </div>
+              )}
+            </div>
             {availableNFTs.map((nft: NFT) => {
               const isSelected = Boolean(
                 selectedMultipleNFTs?.some(item => item.mint === nft.mint)
@@ -305,12 +321,13 @@ const BorrowForm = (props: BorrowProps) => {
                   id={nft.mint}
                   name={nft.name}
                   image={`https://res.cloudinary.com/${cloudinary_uri}/image/fetch/${nft.image}`}
-                  value={fs(price)}
+                  value={fs(nftPrice * MAX_LTV)}
+                  isLoadingValue={isFetchingData as boolean}
                   isSelected={isSelected}
                   onChange={e => {
                     handleSelectMultipleNFTsItem(event, nft);
                   }}
-                  tokenName="SOL"
+                  tokenName={selectedMarket?.loanCurrency ?? ''}
                   disabled={false} //remove disabled when multiple selction becomes allowed
                 />
               );
@@ -382,28 +399,41 @@ const BorrowForm = (props: BorrowProps) => {
             }}
           />
           <div className={styles.collateralList}>
-            {(collateralMenuMode === 'collateral'
-              ? openPositions
-              : availableNFTsInSelectedMarket
-            ).map((nft: NFT) => {
-              const isSelected = Boolean(
-                selectedMultipleNFTs?.some(item => item.mint === nft.mint)
-              );
-              return (
-                <NFTSelectListItem
-                  key={nft.mint}
-                  id={nft.mint}
-                  name={nft.name}
-                  image={`https://res.cloudinary.com/${cloudinary_uri}/image/fetch/${nft.image}`}
-                  value={fs(price)}
-                  isSelected={isSelected}
-                  onChange={e => {
-                    handleSelectMultipleNFTsItem(event, nft);
-                  }}
-                  tokenName="SOL"
-                />
-              );
-            })}
+            {collateralMenuMode === 'new_collateral' &&
+            availableNFTsInSelectedMarket.length === 0 ? (
+              <Empty
+                image={Empty.PRESENTED_IMAGE_SIMPLE}
+                description={'No new collaterals'}
+              />
+            ) : (
+              (collateralMenuMode === 'collateral'
+                ? openPositions
+                : availableNFTsInSelectedMarket
+              ).map((nft: NFT) => {
+                const isSelected = Boolean(
+                  selectedMultipleNFTs?.some(item => item.mint === nft.mint)
+                );
+                return (
+                  <NFTSelectListItem
+                    key={nft.mint}
+                    id={nft.mint}
+                    name={nft.name}
+                    image={`https://res.cloudinary.com/${cloudinary_uri}/image/fetch/${nft.image}`}
+                    value={fs(
+                      collateralMenuMode === 'new_collateral'
+                        ? nftPrice * MAX_LTV
+                        : userAllowance / (collCount || 1)
+                    )}
+                    isLoadingValue={isFetchingData as boolean}
+                    isSelected={isSelected}
+                    onChange={e => {
+                      handleSelectMultipleNFTsItem(event, nft);
+                    }}
+                    tokenName={selectedMarket?.loanCurrency ?? ''}
+                  />
+                );
+              })
+            )}
           </div>
         </>
       );
@@ -658,7 +688,7 @@ const BorrowForm = (props: BorrowProps) => {
                   isFetchingData ? (
                     <Skeleton.Button size="small" active />
                   ) : (
-                    fsn(valueSOL * borrowFee)
+                    fsn(valueUnderlying * borrowFee)
                   )
                 }
                 //TODO: add link to docs
@@ -675,11 +705,12 @@ const BorrowForm = (props: BorrowProps) => {
             </div>
           </div>
           <InputsBlock
-            firstInputValue={valueSOL}
+            firstInputValue={valueUnderlying}
             secondInputValue={valueUSD}
             onChangeFirstInput={handleSolInputChange}
             onChangeSecondInput={handleUsdInputChange}
             maxValue={maxValue}
+            firstInputAddon={selectedMarket?.constants.marketLoanCurrency}
           />
         </div>
 
@@ -729,8 +760,10 @@ const BorrowForm = (props: BorrowProps) => {
         title: 'Borrow',
         onClick: handleBorrow,
         disabled: isBorrowButtonDisabled(),
-        solAmount: valueSOL || 0,
-        usdcValue: valueUSD || 0
+        solAmount: valueUnderlying || 0,
+        usdcValue: valueUSD || 0,
+        tokenAmount: valueUnderlying || 0,
+        tokenName: selectedMarket?.constants.marketLoanCurrency
       };
     } else {
       //Uncomment when multiple deposits allowed
@@ -740,7 +773,7 @@ const BorrowForm = (props: BorrowProps) => {
           onCancel: handleCancel,
           title: 'Deposit Selected NFT',
           onClick: handleDepositMultipleNFTs,
-          disabled: !selectedMultipleNFTs?.length
+          disabled: !selectedMultipleNFTs?.length || isFetchingData
         };
       } else {
         return {

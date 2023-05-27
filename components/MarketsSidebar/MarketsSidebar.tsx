@@ -76,7 +76,7 @@ const MarketsSidebar = (props: MarketsSidebarProps) => {
         activeKey={activeTab}
         onTabChange={handleTabChange}
         items={items}
-        active={Boolean(currentMarketId)}
+        active={true}
       >
         {!wallet?.connected ? (
           <EmptyStateDetails
@@ -97,17 +97,17 @@ const MarketsSidebar = (props: MarketsSidebarProps) => {
               }
             ]}
           />
-        ) : !currentMarketId ? (
-          <EmptyStateDetails
-            icon={<div className={styles.boltIcon} />}
-            title="Manage panel"
-            description="First, choose a NFT collection"
-          />
         ) : isLoadingNfts ? (
           <EmptyStateDetails
             icon={<Spin className={spinner} />}
             title="Fetching your NFTs"
             description=""
+          />
+        ) : !currentMarketId ? (
+          <EmptyStateDetails
+            icon={<div className={styles.boltIcon} />}
+            title="Manage panel"
+            description="First, choose a NFT collection"
           />
         ) : (!availableNFTsInSelectedMarket ||
             availableNFTsInSelectedMarket.length === 0) &&

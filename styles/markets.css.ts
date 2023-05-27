@@ -20,13 +20,14 @@ export const nameCellMobile = style({
 });
 
 export const logoWrapper = style({
-  marginRight: 12
+  marginRight: 12,
+  display: 'flex'
 });
 
 export const createMarketLogo = style({
-  width: '36px',
-  height: '36px',
-  minWidth: '36px',
+  width: '34px',
+  height: '34px',
+  minWidth: '34px',
   flexShrink: 0
 });
 
@@ -34,7 +35,13 @@ export const collectionLogo = style({
   width: '34px',
   height: '34px',
   minWidth: '34px',
-  flexShrink: 0
+  flexShrink: 0,
+  zIndex: 1
+});
+
+export const secondaryLogo = style({
+  marginLeft: -15,
+  zIndex: 0
 });
 
 export const collectionName = style([
@@ -477,6 +484,22 @@ export const emptyStateContainer = style({
   height: '300px',
   flex: 1
 });
+
+export const emptyTableSpinner = style({
+  height: '130px',
+  display: 'flex',
+  flexDirection: 'column',
+  alignItems: 'center',
+  justifyContent: 'center'
+});
+
+export const spinnerText = style([
+  typography.caption,
+  {
+    color: vars.colors.textTertiary,
+    opacity: 0.65
+  }
+]);
 
 export const docIcon = style({
   width: 52,

@@ -19,7 +19,7 @@ import { ColumnType } from 'antd/lib/table';
 import HexaBoxContainer from '../../components/HexaBoxContainer/HexaBoxContainer';
 import { getColumnSortStatus } from '../../helpers/tableUtils';
 import HoneyButton from '../../components/HoneyButton/HoneyButton';
-import { formatNumber } from '../../helpers/format';
+import { formatNFTName, formatNumber } from '../../helpers/format';
 import { LiquidateTableRow } from '../../types/liquidate';
 import { LiquidateExpandTable } from '../../components/LiquidateExpandTable/LiquidateExpandTable';
 import { RoundHalfDown } from 'helpers/utils';
@@ -47,7 +47,10 @@ import {
   COLLATERAL_FACTOR,
   marketIDs,
   ROOT_SSR,
-  ROOT_CLIENT
+  ROOT_CLIENT,
+  renderMarketCurrencyImageByID,
+  marketsTokens,
+  LOAN_CURRENCY_USDC
 } from '../../helpers/marketHelpers/index';
 import { NATIVE_MINT } from '@solana/spl-token-v-0.1.8';
 import HoneySider from 'components/HoneySider/HoneySider';
@@ -70,7 +73,9 @@ import { renderMarket, renderMarketImageByName } from 'helpers/marketHelpers';
 import { network } from 'pages/_app';
 import SorterIcon from 'icons/Sorter';
 import { fetchTVL } from 'helpers/loanHelpers/userCollection';
+import HoneyTooltip from 'components/HoneyTooltip/HoneyTooltip';
 import { FETCH_USER_MARKET_DATA } from 'constants/apiEndpoints';
+import { useSolBalance, useTokenBalance } from 'hooks/useSolBalance';
 
 const { formatPercent: fp, formatSol: fs, formatRoundDown: fd } = formatNumber;
 
@@ -81,7 +86,6 @@ const Liquidate: NextPage = () => {
   const [highestBiddingValue, setHighestBiddingValue] = useState(0);
   const [currentUserBid, setCurrentUserBid] = useState<number>();
   const [nftPrice, setNftPrice] = useState<number>(0);
-  const [userBalance, setUserBalance] = useState(0);
   const [fetchedReservePrice, setFetchedReservePrice] = useState(0);
   const [isMobileSidebarVisible, setShowMobileSidebar] = useState(false);
   const [biddingArray, setBiddingArray] = useState({});
@@ -111,6 +115,37 @@ const Liquidate: NextPage = () => {
   const wallet = useConnectedWallet() || null;
   let stringyfiedWalletPK = sdkConfig.sdkWallet?.publicKey.toString();
   let walletPK = sdkConfig.sdkWallet?.publicKey;
+
+  const selectedMarket = marketCollections.find(
+    collection => collection.id === currentMarketId
+  );
+  //Wallet balance
+  const {
+    balance: walletSolBalance,
+    loading: isLoadingSolBalance,
+    refetch: refetchSolBalance
+  } = useSolBalance();
+
+  const {
+    balance: walletLoanTokenBalance,
+    loading: isLoadingWalletLoanTokenBalance,
+    refetch: refetchWalletLoanTokenBalance
+  } = useTokenBalance(
+    selectedMarket?.constants.marketLoanCurrencyTokenMintAddress ?? ''
+  );
+
+  const userWalletBalance =
+    selectedMarket?.loanCurrency === 'SOL'
+      ? walletSolBalance
+      : walletLoanTokenBalance;
+  const isLoadingWalletBalance =
+    selectedMarket?.loanCurrency === 'SOL'
+      ? isLoadingSolBalance
+      : isLoadingWalletLoanTokenBalance;
+  const refetchWalletBalance =
+    selectedMarket?.loanCurrency === 'SOL'
+      ? refetchSolBalance
+      : refetchWalletLoanTokenBalance;
 
   useEffect(() => {
     if (stringyfiedWalletPK)
@@ -190,9 +225,6 @@ const Liquidate: NextPage = () => {
         const index = mergedArr.findIndex(
           item => item.obligation === obligation
         ); // find the index of the existing object with the same obligation
-
-        // merge the debt and increment the count
-        mergedArr[index].debt += obj.debt;
         // @ts-ignore
         obligationCount[obligation] += 1;
       }
@@ -285,27 +317,6 @@ const Liquidate: NextPage = () => {
   }, [currentMarketId, serverRenderedMarketData, stringyfiedWalletPK]);
   //  ************* END HANDLE BIDS *************
 
-  //  ************* START FETCH WALLET BALANCE *************
-  /**
-   * @description
-   * @params
-   * @returns
-   */
-  async function fetchWalletBalance(key: PublicKey) {
-    try {
-      const userBalance =
-        (await sdkConfig.saberHqConnection.getBalance(key)) / LAMPORTS_PER_SOL;
-      setUserBalance(userBalance);
-    } catch (error) {
-      console.log('Error', error);
-    }
-  }
-
-  useEffect(() => {
-    if (walletPK) fetchWalletBalance(walletPK);
-  }, [walletPK]);
-  //  ************* END FETCH WALLET BALANCE *************
-
   function fetchUserWalletFromLS() {
     let userWallet = localStorage.getItem('walletPK');
     if (userWallet) {
@@ -328,6 +339,7 @@ const Liquidate: NextPage = () => {
       setHighestBiddingAddress('');
       return;
     }
+    if (!selectedMarket) return;
 
     let userWallet = stringyfiedWalletPK
       ? stringyfiedWalletPK
@@ -344,7 +356,12 @@ const Liquidate: NextPage = () => {
 
       biddingArray.map((obligation: any) => {
         if (userWallet && obligation.bidder === userWallet) {
-          setCurrentUserBid(Number(obligation.bidLimit / LAMPORTS_PER_SOL));
+          setCurrentUserBid(
+            Number(
+              obligation.bidLimit /
+                marketsTokens[selectedMarket.loanCurrency].decimals
+            )
+          );
         }
       });
     } else {
@@ -358,7 +375,10 @@ const Liquidate: NextPage = () => {
 
     if (highestBid[0]) {
       setHighestBiddingAddress(highestBid[0].bidder);
-      setHighestBiddingValue(highestBid[0].bidLimit / LAMPORTS_PER_SOL);
+      setHighestBiddingValue(
+        highestBid[0].bidLimit /
+          marketsTokens[selectedMarket.loanCurrency].decimals
+      );
     }
     setIsFetchingClientData(false);
   }
@@ -409,6 +429,7 @@ const Liquidate: NextPage = () => {
     toast: ToastProps['toast'],
     mrktID: string
   ) {
+    if (!selectedMarket) return;
     try {
       const liquidatorClient = await LiquidatorClient.connect(
         program.provider,
@@ -423,13 +444,15 @@ const Liquidate: NextPage = () => {
           let transactionOutcome: any = await liquidatorClient.revokeBid({
             market: new PublicKey(mrktID),
             bidder: wallet.publicKey,
-            bid_mint: NATIVE_MINT,
+            bid_mint: new PublicKey(
+              selectedMarket?.constants.marketLoanCurrencyTokenMintAddress
+            ),
             withdraw_destination: wallet.publicKey
           });
 
           if (transactionOutcome[0] == 'SUCCESS') {
             setCurrentUserBid(0);
-            if (walletPK) await fetchWalletBalance(walletPK);
+            if (walletPK) await refetchWalletBalance();
             fetchBidData();
             return toast.success('Bid revoked, fetching chain data');
           } else {
@@ -446,11 +469,13 @@ const Liquidate: NextPage = () => {
             bid_limit: userBid,
             market: new PublicKey(mrktID),
             bidder: wallet.publicKey,
-            bid_mint: NATIVE_MINT
+            bid_mint: new PublicKey(
+              selectedMarket?.constants.marketLoanCurrencyTokenMintAddress
+            )
           });
 
           if (transactionOutcome[0] == 'SUCCESS') {
-            if (walletPK) await fetchWalletBalance(walletPK);
+            if (walletPK) await refetchWalletBalance();
             fetchBidData();
             return toast.success('Bid placed, fetching chain data');
           } else {
@@ -465,11 +490,13 @@ const Liquidate: NextPage = () => {
             bid_increase: userBid,
             market: new PublicKey(mrktID),
             bidder: wallet.publicKey,
-            bid_mint: NATIVE_MINT
+            bid_mint: new PublicKey(
+              selectedMarket?.constants.marketLoanCurrencyTokenMintAddress
+            )
           });
 
           if (transactionOutcome[0] == 'SUCCESS') {
-            if (walletPK) await fetchWalletBalance(walletPK);
+            if (walletPK) await refetchWalletBalance();
             fetchBidData();
             return toast.success('Bid increased, fetching chain data');
           } else {
@@ -532,120 +559,56 @@ const Liquidate: NextPage = () => {
     if (sdkConfig.saberHqConnection) {
       function getData() {
         return Promise.all(
-          marketCollections.map(async collection => {
-            if (
-              collection.id == '' ||
-              (initState === true &&
-                collection.id !== currentMarketId &&
-                dataRoot !== ROOT_SSR)
+          marketCollections
+            // filter out USDC market
+            .filter(
+              collection => collection.loanCurrency !== LOAN_CURRENCY_USDC
             )
-              return collection;
-
-            if (marketData.length) {
-              if (dataRoot === ROOT_CLIENT) {
-                if (initState === true && currentMarketId !== collection.id)
-                  return collection;
-
-                collection.marketData = marketData.filter(
-                  //@ts-ignore
-                  marketObject =>
-                    marketObject.market.address.toString() === collection.id
-                );
-
-                const honeyUser: HoneyUser = collection.marketData[0].user;
-                const honeyMarket: HoneyMarket =
-                  collection.marketData[0].market;
-                const honeyClient: HoneyClient =
-                  collection.marketData[0].client;
-                const parsedReserves =
-                  collection.marketData[0].reserves[0].data;
-                const mData = collection.marketData[0].reserves[0];
-
-                await populateMarketData(
-                  'LIQUIDATIONS',
-                  ROOT_CLIENT,
-                  collection,
-                  sdkConfig.saberHqConnection,
-                  sdkConfig.sdkWallet,
-                  currentMarketId,
-                  true,
-                  collection.marketData[0].positions,
-                  true,
-                  honeyClient,
-                  honeyMarket,
-                  honeyUser,
-                  parsedReserves,
-                  mData
-                );
-
-                if (currentMarketId === collection.id) {
-                  setNftPrice(RoundHalfDown(Number(collection.nftPrice)));
-                }
-                setTimeout(() => {
-                  setIsFetchingClientData(false);
-                  setIsFetchingData(false);
-                }, 2000);
-
+            .map(async collection => {
+              if (
+                collection.id == '' ||
+                (initState === true &&
+                  collection.id !== currentMarketId &&
+                  dataRoot !== ROOT_SSR)
+              )
                 return collection;
-              } else if (dataRoot === ROOT_SSR) {
-                if (marketData.length) {
+
+              if (marketData.length) {
+                if (dataRoot === ROOT_CLIENT) {
+                  if (initState === true && currentMarketId !== collection.id)
+                    return collection;
+
                   collection.marketData = marketData.filter(
                     //@ts-ignore
                     marketObject =>
-                      //@ts-ignore
-                      marketObject.marketId === collection.id
+                      marketObject.market.address.toString() === collection.id
                   );
 
-                  //@ts-ignore
-                  collection.allowance = collection.marketData[0].data.allowance
-                    ? //@ts-ignore
-                      collection.marketData[0].data.allowance
-                    : 0;
-                  //@ts-ignore
-                  collection.available = //@ts-ignore
-                    collection.marketData[0].data.totalMarketDeposits
-                      ? //@ts-ignore
-                        collection.marketData[0].data.totalMarketDeposits
-                      : 0;
-                  //@ts-ignore
-                  // @ts-ignore
-                  collection.value = collection.marketData[0].data
-                    .totalMarketDebt
-                    ? // @ts-ignore
-                      collection.marketData[0].data.totalMarketDebt +
-                      // @ts-ignore
-                      collection.marketData[0].data.totalMarketDeposits
-                    : // @ts-ignore
-                      collection.marketData[0].data.totalMarketDeposits;
+                  const honeyUser: HoneyUser = collection.marketData[0].user;
+                  const honeyMarket: HoneyMarket =
+                    collection.marketData[0].market;
+                  const honeyClient: HoneyClient =
+                    collection.marketData[0].client;
+                  const parsedReserves =
+                    collection.marketData[0].reserves[0].data;
+                  const mData = collection.marketData[0].reserves[0];
 
-                  //@ts-ignore
-                  collection.connection = sdkConfig.saberHqConnection;
-                  //@ts-ignore
-                  collection.nftPrice = collection.marketData[0].data.nftPrice;
-                  //@ts-ignore
-                  collection.tvl =
-                    //@ts-ignore
-                    collection.marketData[0].data.positions &&
-                    //@ts-ignore
-                    collection.marketData[0].data.nftPrice
-                      ? //@ts-ignore
-                        collection.marketData[0].data.nftPrice *
-                        //@ts-ignore
-                        (await fetchTVL(
-                          //@ts-ignore
-                          collection.marketData[0].data.positions
-                        ))
-                      : 0;
-                  //@ts-ignore
-                  collection.utilizationRate = //@ts-ignore
-                    collection.marketData[0].data.utilization
-                      ? //@ts-ignore
-                        collection.marketData[0].data.utilization
-                      : 0;
-                  //@ts-ignore
-                  collection.totalDebt =
-                    //@ts-ignore
-                    collection.marketData[0].data.totalMarketDebt;
+                  await populateMarketData(
+                    'LIQUIDATIONS',
+                    ROOT_CLIENT,
+                    collection,
+                    sdkConfig.saberHqConnection,
+                    sdkConfig.sdkWallet,
+                    currentMarketId,
+                    true,
+                    collection.marketData[0].positions,
+                    true,
+                    honeyClient,
+                    honeyMarket,
+                    honeyUser,
+                    parsedReserves,
+                    mData
+                  );
 
                   //@ts-ignore
                   collection.risk = collection.marketData[0].data.positions
@@ -682,15 +645,116 @@ const Liquidate: NextPage = () => {
                     });
                   }
                   setTimeout(() => {
+                    setIsFetchingClientData(false);
                     setIsFetchingData(false);
                   }, 2000);
+
                   return collection;
+                } else if (dataRoot === ROOT_SSR) {
+                  if (marketData.length) {
+                    collection.marketData = marketData.filter(
+                      //@ts-ignore
+                      marketObject =>
+                        //@ts-ignore
+                        marketObject.marketId === collection.id
+                    );
+
+                    //@ts-ignore
+                    collection.allowance = collection.marketData[0].data
+                      .allowance
+                      ? //@ts-ignore
+                        collection.marketData[0].data.allowance
+                      : 0;
+                    //@ts-ignore
+                    collection.available = //@ts-ignore
+                      collection.marketData[0].data.totalMarketDeposits
+                        ? //@ts-ignore
+                          collection.marketData[0].data.totalMarketDeposits
+                        : 0;
+                    //@ts-ignore
+                    // @ts-ignore
+                    collection.value = collection.marketData[0].data
+                      .totalMarketDebt
+                      ? // @ts-ignore
+                        collection.marketData[0].data.totalMarketDebt +
+                        // @ts-ignore
+                        collection.marketData[0].data.totalMarketDeposits
+                      : // @ts-ignore
+                        collection.marketData[0].data.totalMarketDeposits;
+
+                    //@ts-ignore
+                    collection.connection = sdkConfig.saberHqConnection;
+                    collection.nftPrice =
+                      //@ts-ignore
+                      collection.marketData[0].data.nftPrice;
+                    //@ts-ignore
+                    collection.tvl =
+                      //@ts-ignore
+                      collection.marketData[0].data.positions &&
+                      //@ts-ignore
+                      collection.marketData[0].data.nftPrice
+                        ? //@ts-ignore
+                          collection.marketData[0].data.nftPrice *
+                          //@ts-ignore
+                          (await fetchTVL(
+                            //@ts-ignore
+                            collection.marketData[0].data.positions
+                          ))
+                        : 0;
+                    //@ts-ignore
+                    collection.utilizationRate = //@ts-ignore
+                      collection.marketData[0].data.utilization
+                        ? //@ts-ignore
+                          collection.marketData[0].data.utilization
+                        : 0;
+                    //@ts-ignore
+                    collection.totalDebt =
+                      //@ts-ignore
+                      collection.marketData[0].data.totalMarketDebt;
+
+                    //@ts-ignore
+                    collection.risk = collection.marketData[0].data.positions
+                      ? await calculateRisk(
+                          // @ts-ignore
+                          collection.marketData[0].data.positions,
+                          // @ts-ignore
+                          collection.marketData[0].data.nftPrice,
+                          false
+                        )
+                      : 0;
+
+                    // @ts-ignore
+                    collection.openPositions = collection.marketData[0].data
+                      .positions.length
+                      ? await setObligations(
+                          // @ts-ignore
+                          collection.marketData[0].data.positions,
+                          currentMarketId,
+                          // @ts-ignore
+                          collection.marketData[0].data.nftPrice
+                        )
+                      : [];
+
+                    if (collection.openPositions) {
+                      collection.openPositions.map(openPos => {
+                        // @ts-ignore
+                        return (openPos.untilLiquidation =
+                          // @ts-ignore
+                          openPos.estimatedValue -
+                          // @ts-ignore
+                          openPos.debt / COLLATERAL_FACTOR);
+                      });
+                    }
+                    setTimeout(() => {
+                      setIsFetchingData(false);
+                    }, 2000);
+                    return collection;
+                  }
                 }
               }
-            }
 
-            return collection;
-          })
+              return collection;
+            })
         );
       }
 
@@ -793,18 +857,36 @@ const Liquidate: NextPage = () => {
         title: SearchForm,
         dataIndex: 'name',
         key: 'name',
-        render: (name: string) => {
+        render: (name: string, data: any) => {
           return (
-            <div className={style.nameCell}>
-              <div className={style.logoWrapper}>
-                <div className={style.collectionLogo}>
-                  <HexaBoxContainer>
-                    {renderMarketImageByName(name)}
-                  </HexaBoxContainer>
+            <HoneyTooltip
+              trigger={['hover']}
+              title={`${data.name}/${data.loanCurrency}`}
+            >
+              <div className={style.nameCell}>
+                <div className={style.logoWrapper}>
+                  <div className={style.collectionLogo}>
+                    <HexaBoxContainer>
+                      {renderMarketImageByName(name)}
+                    </HexaBoxContainer>
+                  </div>
+
+                  <div
+                    className={classNames(
+                      style.collectionLogo,
+                      style.secondaryLogo
+                    )}
+                  >
+                    <HexaBoxContainer>
+                      {renderMarketCurrencyImageByID(data.id)}
+                    </HexaBoxContainer>
+                  </div>
                 </div>
+                <div
+                  className={style.collectionName}
+                >{`${data.name}/${data.loanCurrency}`}</div>
               </div>
-              <div className={style.collectionName}>{name}</div>
-            </div>
+            </HoneyTooltip>
           );
         }
       },
@@ -975,9 +1057,21 @@ const Liquidate: NextPage = () => {
                           {renderMarketImageByName(name)}
                         </HexaBoxContainer>
                       </div>
+                      <div
+                        className={classNames(
+                          style.collectionLogo,
+                          style.secondaryLogo
+                        )}
+                      >
+                        <HexaBoxContainer>
+                          {renderMarketCurrencyImageByID(row.id ?? '')}
+                        </HexaBoxContainer>
+                      </div>
                     </div>
                     <div className={style.nameCellMobile}>
-                      <div className={style.collectionName}>{name}</div>
+                      <div className={style.collectionName}>
+                        {formatNFTName(`${name}/${row.loanCurrency}`, 20)}
+                      </div>
                     </div>
                   </>
                 }
@@ -1009,7 +1103,7 @@ const Liquidate: NextPage = () => {
       <LiquidateSidebar
         collectionId="0"
         biddingArray={biddingArray}
-        userBalance={userBalance}
+        userBalance={userWalletBalance}
         stringyfiedWalletPK={stringyfiedWalletPK}
         highestBiddingValue={highestBiddingValue}
         highestBiddingAddress={highestBiddingAddress}

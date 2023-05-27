@@ -47,7 +47,7 @@ const HealthLvl: FC<HealthLvlProps> = props => {
     );
   };
 
-  return <>{healthLvl && getStatus(healthLvl)}</>;
+  return <>{healthLvl ? getStatus(healthLvl) : ''}</>;
 };
 
 export default HealthLvl;
