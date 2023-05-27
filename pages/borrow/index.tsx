@@ -1087,7 +1087,9 @@ const Markets: NextPage = () => {
       const borrowTokenMint = new PublicKey(
         selectedMarket?.constants.marketLoanCurrencyTokenMintAddress
       );
+
       toast.processing();
+
       if (!fetchedDataObject) return;
 
       const tx = await borrowAndRefresh(
