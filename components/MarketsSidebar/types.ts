@@ -22,5 +22,4 @@ export type MarketsSidebarProps = {
   executeRepay: (val: any, toast: any) => void;
   hideMobileSidebar?: () => void;
   collCount?: number;
-  tokenName: string;
 };

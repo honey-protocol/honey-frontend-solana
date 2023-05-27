@@ -36,8 +36,7 @@ const MarketsSidebar = (props: MarketsSidebarProps) => {
     executeBorrow,
     executeRepay,
     availableNFTS,
-    collCount,
-    tokenName
+    collCount
   } = props;
   const availableNFTs = availableNFTS;
   // tab state
@@ -77,7 +76,7 @@ const MarketsSidebar = (props: MarketsSidebarProps) => {
         activeKey={activeTab}
         onTabChange={handleTabChange}
         items={items}
-        active={Boolean(currentMarketId)}
+        active={true}
       >
         {!wallet?.connected ? (
           <EmptyStateDetails
@@ -98,17 +97,17 @@ const MarketsSidebar = (props: MarketsSidebarProps) => {
               }
             ]}
           />
-        ) : !currentMarketId ? (
-          <EmptyStateDetails
-            icon={<div className={styles.boltIcon} />}
-            title="Manage panel"
-            description="First, choose a NFT collection"
-          />
         ) : isLoadingNfts ? (
           <EmptyStateDetails
             icon={<Spin className={spinner} />}
             title="Fetching your NFTs"
             description=""
+          />
+        ) : !currentMarketId ? (
+          <EmptyStateDetails
+            icon={<div className={styles.boltIcon} />}
+            title="Manage panel"
+            description="First, choose a NFT collection"
           />
         ) : (!availableNFTsInSelectedMarket ||
             availableNFTsInSelectedMarket.length === 0) &&
@@ -150,7 +149,6 @@ const MarketsSidebar = (props: MarketsSidebarProps) => {
                 calculatedInterestRate={calculatedInterestRate}
                 currentMarketId={currentMarketId}
                 collCount={collCount}
-                tokenName={tokenName}
               />
             )}
             {activeTab === 'repay' && Boolean(openPositions.length) && (
