@@ -95,6 +95,7 @@ const HoneyJupiterProvider: FC<{ children: ReactNode }> = ({ children }) => {
       feeAccounts: platformFeeAccounts
     };
   }
+  console.log('Honey.Finance SDK @1.2.5');
   // console.log('platformFeeAndAccounts', platformFeeAndAccounts);
 
   return (
@@ -224,11 +225,7 @@ function MyApp({ Component, pageProps }: AppProps) {
                             : 'honey-light-theme'
                         }
                       >
-                        {showPopup ? (
-                          <SecPopup setShowPopup={setShowPopup} />
-                        ) : (
-                          <Component {...pageProps} />
-                        )}
+                        <Component {...pageProps} />
                       </div>
                       <ToastContainer theme="dark" position="bottom-right" />
                     </OnChainProvider>
