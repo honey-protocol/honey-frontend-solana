@@ -15,7 +15,7 @@ export type BorrowProps = {
     mint: string,
     toast: any,
     name: string,
-    creator: string
+    creator: string,
   ) => void;
   executeWithdrawNFT: (mint: string, toast: any) => void;
   executeBorrow: (val: number, toast: any) => void;

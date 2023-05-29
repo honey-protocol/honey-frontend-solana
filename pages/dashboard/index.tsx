@@ -407,14 +407,10 @@ const Dashboard: NextPage = () => {
       if (!mintID) return;
       toast.processing();
 
-      const metadata = await Metadata.findByMint(
-        sdkConfig.saberHqConnection,
-        mintID
-      );
       const tx = await depositNFT(
         sdkConfig.saberHqConnection,
         honeyUser,
-        metadata.pubkey
+        new PublicKey(mintID)
       );
       if (tx[0] == 'SUCCESS') {
         toast.success(
@@ -443,14 +439,11 @@ const Dashboard: NextPage = () => {
     try {
       if (!mintID) return toast.error('Please select NFT');
       toast.processing();
-      const metadata = await Metadata.findByMint(
-        sdkConfig.saberHqConnection,
-        mintID
-      );
+
       const tx = await withdrawNFT(
         sdkConfig.saberHqConnection,
         honeyUser,
-        metadata.pubkey
+        new PublicKey(mintID)
       );
 
       if (tx[0] == 'SUCCESS') {

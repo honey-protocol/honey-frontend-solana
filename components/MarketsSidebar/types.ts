@@ -15,7 +15,7 @@ export type MarketsSidebarProps = {
     mint: any,
     toast: any,
     name: string,
-    creator: string
+    creator: string,
   ) => void;
   executeWithdrawNFT: (mint: any, toast: any) => void;
   executeBorrow: (val: any, toast: any) => void;
