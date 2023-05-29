@@ -43,6 +43,7 @@ interface NFT {
   image: string;
   mint: string;
   creators: any;
+  tokenId: string;
 }
 
 const BorrowForm = (props: BorrowProps) => {
@@ -145,11 +146,29 @@ const BorrowForm = (props: BorrowProps) => {
   };
 
   // set selection state and render (or not) detail nft
-  const selectNFT = (name: string, image: string, mint: any, creators: any) => {
+  const selectNFT = (
+    name: string,
+    image: string,
+    mint: any,
+    creators: any,
+    tokenId: string
+  ) => {
     if (hasOpenPosition == false) {
-      setSelectedNft({ name, image, mint, creators: creators[0].address });
+      setSelectedNft({
+        name,
+        image,
+        mint,
+        creators: creators[0].address,
+        tokenId
+      });
     } else {
-      setSelectedNft({ name, image, mint, creators: creators[0].address });
+      setSelectedNft({
+        name,
+        image,
+        mint,
+        creators: creators[0].address,
+        tokenId
+      });
     }
   };
 
@@ -193,8 +212,8 @@ const BorrowForm = (props: BorrowProps) => {
   // if user has an open position, we need to be able to click on the position and borrow against it
   useEffect(() => {
     if (openPositions?.length) {
-      const { name, image, mint, verifiedCreator } = openPositions[0];
-      setSelectedNft({ name, image, mint, creators: verifiedCreator });
+      const { name, image, mint, verifiedCreator, tokenId } = openPositions[0];
+      setSelectedNft({ name, image, mint, creators: verifiedCreator, tokenId });
       setHasOpenPosition(true);
     } else if (openPositions.length == 0) {
       setHasOpenPosition(false);
@@ -209,8 +228,9 @@ const BorrowForm = (props: BorrowProps) => {
       const verifiedCreator = selectedNft.creators.filter(
         (creator: { verified: any }) => creator.verified
       );
+
       executeDepositNFT(
-        selectedNft.mint,
+        selectedNft.tokenId,
         toast,
         selectedNft.name,
         verifiedCreator[0].address
@@ -231,8 +251,9 @@ const BorrowForm = (props: BorrowProps) => {
         const verifiedCreator = selectedMultipleNFTs[index].creators.filter(
           (creator: { verified: any }) => creator.verified
         );
+
         await executeDepositNFT(
-          selectedMultipleNFTs[index].mint,
+          selectedMultipleNFTs[index].tokenId,
           toast,
           selectedMultipleNFTs[index].name,
           verifiedCreator[0].address

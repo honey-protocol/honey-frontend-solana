@@ -88,6 +88,7 @@ const network = 'mainnet-beta';
 import SorterIcon from 'icons/Sorter';
 import ExpandedRowIcon from 'icons/ExpandedRowIcon';
 import HoneyToggle from 'components/HoneyToggle/HoneyToggle';
+import useFetchCollateralNFTPositions from 'hooks/useFetchCollateralNFTPositions';
 // import { network } from 'pages/_app';
 
 const cloudinary_uri = process.env.CLOUDINARY_URI;
@@ -113,7 +114,11 @@ const Markets: NextPage = () => {
   // Sets market ID which is used for fetching market specific data
   // each market currently is a different call and re-renders the page
   const [currentMarketId, setCurrentMarketId] = useState('');
+  const [currentVerifiedCreator, setCurrentVerifiedCreator] = useState('');
 
+  const selectedMarket = marketCollections.find(
+    collection => collection.id === currentMarketId
+  );
   /**
    * @description sets the market ID based on market click
    * @params Honey table record - contains all info about a table (aka market / collection)
@@ -121,7 +126,9 @@ const Markets: NextPage = () => {
    */
   async function handleMarketId(record: any) {
     setCurrentMarketId(record.id);
+    setCurrentVerifiedCreator(record.verifiedCreator);
   }
+
   // /**
   //  * @description fetches market reserve info | parsed reserves | fetch market (func) from SDK
   //  * @params none
@@ -145,18 +152,20 @@ const Markets: NextPage = () => {
    * @params useConnection func. | useConnectedWallet func. | honeyID | marketID
    * @returns collateralNFTPositions | loanPositions | loading | error
    */
-  let {
-    loading: loadingCollateralPositions,
-    collateralNFTPositions,
-    loanPositions,
-    refreshPositions,
-    error
-  } = useBorrowPositions(
-    sdkConfig.saberHqConnection,
-    sdkConfig.sdkWallet!,
-    sdkConfig.honeyId,
-    currentMarketId
-  );
+  let [collateralNFTPositions, isLoading, refreshPositions] =
+    useFetchCollateralNFTPositions(
+      honeyUser,
+      currentMarketId,
+      sdkConfig.sdkWallet,
+      sdkConfig.saberHqConnection,
+      currentVerifiedCreator
+    );
+
+  const [userOpenPositions, setUserOpenPositions] = useState([]);
+
+  useEffect(() => {
+    console.log('@@-- coll', collateralNFTPositions);
+  }, [collateralNFTPositions, currentMarketId]);
 
   // market specific constants - calculations / ratios / debt / allowance etc.
   const [nftPrice, setNftPrice] = useState(0);
@@ -194,10 +203,6 @@ const Markets: NextPage = () => {
     BorrowSidebarMode.MARKET
   );
 
-  const selectedMarket = marketCollections.find(
-    collection => collection.id === currentMarketId
-  );
-
   /**
    * @description fetches all nfts in users wallet
    * @params wallet
@@ -208,8 +213,10 @@ const Markets: NextPage = () => {
    */
   const [NFTs, isLoadingNfts, refetchNfts] = useFetchNFTByUser(
     wallet,
-    selectedMarket?.verifiedCreator
+    currentVerifiedCreator
   );
+
+  console.log('@@-- NFTS', NFTs);
 
   const [isCreateMarketAreaOnHover, setIsCreateMarketAreaOnHover] =
     useState<boolean>(false);
@@ -1000,14 +1007,10 @@ const Markets: NextPage = () => {
         // @ts-ignore
         marketCollections.map(async collection => {
           if (collection.id === currentMarketId) {
-            const metadata = await Metadata.findByMint(
-              collection.connection,
-              mintID
-            );
             const tx = await depositNFT(
               collection.connection,
               honeyUser,
-              metadata.pubkey
+              new PublicKey(mintID)
             );
 
             if (tx[0] == 'SUCCESS') {
@@ -1023,14 +1026,16 @@ const Markets: NextPage = () => {
                 await collection.marketData[0].reserves[0].refresh();
                 await collection.marketData[0].user.refresh();
 
-                await refreshPositions();
-                refetchNfts({});
-                await fetchCurrentMarketData(true);
+                setTimeout(async () => {
+                  refreshPositions({});
+                  refetchNfts({});
+                  await fetchCurrentMarketData(true);
 
-                toast.success(
-                  'Deposit success',
-                  `https://solscan.io/tx/${tx[1][0]}?cluster=${network}`
-                );
+                  toast.success(
+                    'Deposit success',
+                    `https://solscan.io/tx/${tx[1][0]}?cluster=${network}`
+                  );
+                }, 2500);
               }
             } else {
               return toast.error('Error depositing NFT');
@@ -1054,19 +1059,16 @@ const Markets: NextPage = () => {
   async function executeWithdrawNFT(mintID: any, toast: ToastProps['toast']) {
     try {
       if (!mintID) return toast.error('Please select NFT');
+
       toast.processing();
       if (marketCollections && fetchedDataObject) {
         //@ts-ignore
         marketCollections.map(async collection => {
           if (collection.id === currentMarketId) {
-            const metadata = await Metadata.findByMint(
-              sdkConfig.saberHqConnection,
-              mintID
-            );
             const tx = await withdrawNFT(
               sdkConfig.saberHqConnection,
               honeyUser,
-              metadata.pubkey
+              new PublicKey(mintID)
             );
 
             if (tx[0] == 'SUCCESS') {
@@ -1082,14 +1084,16 @@ const Markets: NextPage = () => {
               await fetchedDataObject.reserves[0].refresh();
               await fetchedDataObject.user.refresh();
 
-              await refreshPositions();
-              refetchNfts({});
-              await fetchCurrentMarketData(true);
+              setTimeout(async () => {
+                refreshPositions({});
+                refetchNfts({});
+                await fetchCurrentMarketData(true);
 
-              toast.success(
-                'Withdraw success',
-                `https://solscan.io/tx/${tx[1][0]}?cluster=${network}`
-              );
+                toast.success(
+                  'Withdraw success',
+                  `https://solscan.io/tx/${tx[1][0]}?cluster=${network}`
+                );
+              }, 2500);
             } else {
               toast.error(
                 'Withdraw failed',
