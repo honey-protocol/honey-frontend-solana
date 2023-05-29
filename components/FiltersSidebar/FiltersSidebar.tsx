@@ -1,26 +1,31 @@
 import * as styles from './FiltersSidebar.css';
-import { useConnectedWallet } from "@saberhq/use-solana";
-import { useWalletKit } from "@gokiprotocol/walletkit";
-import React, { useState } from "react";
-import HoneyTabs, {HoneyTabItem} from "../HoneyTabs/HoneyTabs";
-import { Tab } from "../BorrowP2PSidebar/types";
-import EmptyStateDetails from "../EmptyStateDetails/EmptyStateDetails";
-import { mobileReturnButton } from "../../styles/common.css";
-import { LendP2PFiltersTab } from "./LendP2PFiltersTab/LendP2PFiltersTab";
-import { FiltersSidebarProps } from "./types";
+import React, { useState } from 'react';
+import HoneyTabs, { HoneyTabItem } from '../HoneyTabs/HoneyTabs';
+import { Tab } from '../BorrowP2PSidebar/types';
+import EmptyStateDetails from '../EmptyStateDetails/EmptyStateDetails';
+import { mobileReturnButton } from '../../styles/common.css';
+import { LendP2PFiltersTab } from './LendP2PFiltersTab/LendP2PFiltersTab';
+import { FiltersSidebarProps } from './types';
+import { useWallet } from '@solana/wallet-adapter-react';
+import { useWalletModal } from '@solana/wallet-adapter-react-ui';
 
-
-
-export const FiltersSidebar = ({ tags, rules, initParams }: FiltersSidebarProps) => {
-  const wallet = useConnectedWallet();
-  const { connect } = useWalletKit();
+export const FiltersSidebar = ({
+  tags,
+  rules,
+  initParams
+}: FiltersSidebarProps) => {
+  const wallet = useWallet();
+  const { setVisible: setWalletModalVisible } = useWalletModal();
   const [activeTab, setActiveTab] = useState<string>('filters');
-  const [interestRangeValues, setInterestRangeValues] = useState<[number, number]>(
-    [initParams.minInterest, initParams.maxInterest]);
-  const [totalRequestedRangeValues, setTotalRequestedRangeValues] = useState<[number, number]>([
-    initParams.minTotalRequest, initParams.maxTotalRequest]);
-  const [totalSuppliedRangeValues, setTotalSuppliedRangeValues] = useState<[number, number]>([
-    initParams.minTotalSupplied, initParams.maxTotalSupplied]);
+  const [interestRangeValues, setInterestRangeValues] = useState<
+    [number, number]
+  >([initParams.minInterest, initParams.maxInterest]);
+  const [totalRequestedRangeValues, setTotalRequestedRangeValues] = useState<
+    [number, number]
+  >([initParams.minTotalRequest, initParams.maxTotalRequest]);
+  const [totalSuppliedRangeValues, setTotalSuppliedRangeValues] = useState<
+    [number, number]
+  >([initParams.minTotalSupplied, initParams.maxTotalSupplied]);
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
 
   const tabs: [HoneyTabItem, HoneyTabItem?] = [
@@ -46,7 +51,7 @@ export const FiltersSidebar = ({ tags, rules, initParams }: FiltersSidebarProps)
             buttons={[
               {
                 title: 'CONNECT',
-                onClick: connect,
+                onClick: () => setWalletModalVisible(true),
                 variant: 'primary'
               },
               {
@@ -58,26 +63,26 @@ export const FiltersSidebar = ({ tags, rules, initParams }: FiltersSidebarProps)
             ]}
           />
         ) : (
-            <LendP2PFiltersTab
-              tags={tags}
-              rules={rules}
-              totalRequestedRange={totalRequestedRangeValues}
-              onChangeTotalRequestedRange={setTotalRequestedRangeValues}
-              maxTotalRequest={initParams.maxTotalRequest}
-              minTotalRequest={initParams.minTotalRequest}
-              maxInterest={initParams.maxInterest}
-              minInterest={initParams.minInterest}
-              maxTotalSupplied={initParams.maxTotalSupplied}
-              minTotalSupplied={initParams.minTotalSupplied}
-              selectedTags={selectedTags}
-              onChangeSelectedTags={setSelectedTags}
-              interestRange={interestRangeValues}
-              onChangeInterestRange={setInterestRangeValues}
-              totalSuppliedRange={totalSuppliedRangeValues}
-              onChangeTotalSuppliedRange={setTotalSuppliedRangeValues}
-            />
+          <LendP2PFiltersTab
+            tags={tags}
+            rules={rules}
+            totalRequestedRange={totalRequestedRangeValues}
+            onChangeTotalRequestedRange={setTotalRequestedRangeValues}
+            maxTotalRequest={initParams.maxTotalRequest}
+            minTotalRequest={initParams.minTotalRequest}
+            maxInterest={initParams.maxInterest}
+            minInterest={initParams.minInterest}
+            maxTotalSupplied={initParams.maxTotalSupplied}
+            minTotalSupplied={initParams.minTotalSupplied}
+            selectedTags={selectedTags}
+            onChangeSelectedTags={setSelectedTags}
+            interestRange={interestRangeValues}
+            onChangeInterestRange={setInterestRangeValues}
+            totalSuppliedRange={totalSuppliedRangeValues}
+            onChangeTotalSuppliedRange={setTotalSuppliedRangeValues}
+          />
         )}
       </HoneyTabs>
     </div>
-  )
-}
+  );
+};

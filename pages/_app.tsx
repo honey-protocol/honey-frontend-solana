@@ -9,30 +9,52 @@ import { Network } from '@saberhq/solana-contrib';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { PartialNetworkConfigMap } from '@saberhq/use-solana/src/utils/useConnectionInternal';
-import { useConnectedWallet, useConnection } from '@saberhq/use-solana';
 import { AnchorProvider, HoneyProvider } from '@honey-finance/sdk';
 import React, {
   createContext,
   FC,
   ReactNode,
   useEffect,
+  useMemo,
   useState
 } from 'react';
 import Script from 'next/script';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { getPlatformFeeAccounts, JupiterProvider } from '@jup-ag/react-hook';
-export const network = (process.env.NETWORK as Network) || 'mainnet-beta';
+
+import {
+  ConnectionProvider,
+  WalletProvider,
+  useConnection,
+  useWallet
+} from '@solana/wallet-adapter-react';
+import { WalletAdapterNetwork } from '@solana/wallet-adapter-base';
+import {
+  UnsafeBurnerWalletAdapter,
+  SolflareWalletAdapter
+} from '@solana/wallet-adapter-wallets';
+import {
+  WalletModalProvider,
+  WalletDisconnectButton,
+  WalletMultiButton
+} from '@solana/wallet-adapter-react-ui';
+require('@solana/wallet-adapter-react-ui/styles.css');
 
 import {
   HONEY_GENESIS_MARKET_ID,
   HONEY_PROGRAM_ID
 } from '../helpers/marketHelpers/index';
 import { DialectProviders } from 'contexts/DialectProvider';
-import { PublicKey } from '@solana/web3.js';
+import { PublicKey, clusterApiUrl } from '@solana/web3.js';
 import Head from 'next/head';
 import { HoneyIcon } from 'icons/HoneyIcon';
 // top level function that injects the app with a new market ID - being called from pages where interaction with markets is possible. Currently: borrow | lend | liquidate
 // export const setMarketId = (marketID: string) => marketID;
+
+export const network = (process.env.NETWORK as Network) || 'mainnet-beta';
+
+const endpoint =
+  process.env.NEXT_PUBLIC_RPC_NODE ?? clusterApiUrl('mainnet-beta');
 
 const networkConfiguration = () => {
   if (process.env.NETWORK_CONFIGURATION) {
@@ -45,8 +67,8 @@ const networkConfiguration = () => {
 const queryClient = new QueryClient();
 
 const OnChainProvider: FC<{ children: ReactNode }> = ({ children }) => {
-  const wallet = useConnectedWallet();
-  const connection = useConnection();
+  const wallet: any = useWallet();
+  const { connection } = useConnection();
   const network = 'mainnet-beta';
 
   return (
@@ -69,8 +91,8 @@ const OnChainProvider: FC<{ children: ReactNode }> = ({ children }) => {
 };
 
 const HoneyJupiterProvider: FC<{ children: ReactNode }> = ({ children }) => {
-  const wallet = useConnectedWallet();
-  const connection = useConnection();
+  const wallet = useWallet();
+  const { connection } = useConnection();
   const [platformFeeAccounts, setPlatformFeeAccounts] = useState(new Map());
   const platformFeeBps = Number(process.env.NEXT_PUBLIC_JUPITER_FEE_BPS || '0');
   const platformFeeWallet = process.env.NEXT_PUBLIC_JUPITER_FEE_ADDRESS
@@ -124,6 +146,12 @@ function MyApp({ Component, pageProps }: AppProps) {
   const [shouldRender, setShouldRender] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const [theme, setTheme] = useState<HoneyTheme>('light');
+
+  const wallets = useMemo(
+    () => [new SolflareWalletAdapter(), new UnsafeBurnerWalletAdapter()],
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [network]
+  );
 
   const onWindowResize = () => {
     if (window.innerWidth < 768) {
@@ -191,45 +219,54 @@ function MyApp({ Component, pageProps }: AppProps) {
             }}
             networkConfigs={networkConfiguration()}
           >
-            {/* {children} */}
-            {
-              <>
-                <HoneyJupiterProvider>
-                  <DialectProviders>
-                    <OnChainProvider>
-                      <Head>
-                        <link
-                          id="theme"
-                          rel="stylesheet"
-                          type="text/css"
-                          href="/css/antdLightTheme.css"
-                        />
-                        {['dark', 'dusk'].includes(theme) && (
-                          <link
-                            id="theme"
-                            rel="stylesheet"
-                            type="text/css"
-                            href="/css/antdDarkTheme.css"
-                          />
-                        )}
-                      </Head>
-                      <div
-                        className={
-                          theme === 'dark'
-                            ? 'honey-dark-theme'
-                            : theme === 'dusk'
-                            ? 'honey-dusk-theme'
-                            : 'honey-light-theme'
-                        }
-                      >
-                        <Component {...pageProps} />
-                      </div>
-                      <ToastContainer theme="dark" position="bottom-right" />
-                    </OnChainProvider>
-                  </DialectProviders>
-                </HoneyJupiterProvider>
-              </>
-            }
+            <ConnectionProvider endpoint={endpoint}>
+              <WalletProvider wallets={wallets} autoConnect>
+                <WalletModalProvider>
+                  {/* {children} */}
+                  {
+                    <>
+                      <HoneyJupiterProvider>
+                        <DialectProviders>
+                          <OnChainProvider>
+                            <Head>
+                              <link
+                                id="theme"
+                                rel="stylesheet"
+                                type="text/css"
+                                href="/css/antdLightTheme.css"
+                              />
+                              {['dark', 'dusk'].includes(theme) && (
+                                <link
+                                  id="theme"
+                                  rel="stylesheet"
+                                  type="text/css"
+                                  href="/css/antdDarkTheme.css"
+                                />
+                              )}
+                            </Head>
+                            <div
+                              className={
+                                theme === 'dark'
+                                  ? 'honey-dark-theme'
+                                  : theme === 'dusk'
+                                  ? 'honey-dusk-theme'
+                                  : 'honey-light-theme'
+                              }
+                            >
+                              <Component {...pageProps} />
+                            </div>
+                            <ToastContainer
+                              theme="dark"
+                              position="bottom-right"
+                            />
+                          </OnChainProvider>
+                        </DialectProviders>
+                      </HoneyJupiterProvider>
+                    </>
+                  }
+                </WalletModalProvider>
+              </WalletProvider>
+            </ConnectionProvider>
           </WalletKitProvider>
         </QueryClientProvider>
       </HoneyThemeContext.Provider>

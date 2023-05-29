@@ -13,7 +13,7 @@ import {
 } from '@dialectlabs/react-ui';
 import { FC, ReactNode, useEffect, useMemo, useState } from 'react';
 import { solanaWalletToDialectWallet } from '../helpers/wallet';
-import { useWallet } from '@saberhq/use-solana';
+import { useWallet } from '@solana/wallet-adapter-react';
 
 export const themeVariables: IncomingThemeVariables = {
   dark: {
@@ -43,8 +43,8 @@ export const DialectProviders: FC<{ children: ReactNode }> = ({ children }) => {
     useState<DialectSolanaWalletAdapter | null>(null);
 
   useEffect(() => {
-    if (wallet.wallet?.publicKey) {
-      setDialectSolanaWalletAdapter(solanaWalletToDialectWallet(wallet.wallet));
+    if (wallet.publicKey) {
+      setDialectSolanaWalletAdapter(solanaWalletToDialectWallet(wallet));
     }
   }, [wallet]);
 

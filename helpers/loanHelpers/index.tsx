@@ -1,4 +1,4 @@
-import { useConnection, useConnectedWallet } from '@saberhq/use-solana';
+import { HONEY_PROGRAM_ID } from 'helpers/marketHelpers/index';
 import { toast } from 'react-toastify';
 import BN from 'bn.js';
 import { Big } from 'big.js';
@@ -7,6 +7,7 @@ import {
   AggregatorAccount,
   loadSwitchboardProgram
 } from '@switchboard-xyz/switchboard-v2';
+import { useConnection, useWallet } from '@solana/wallet-adapter-react';
 
 /**
  * @description exports the current sdk configuration object
@@ -15,8 +16,8 @@ import {
  */
 export function ConfigureSDK() {
   return {
-    saberHqConnection: useConnection(),
-    sdkWallet: useConnectedWallet() || null,
+    saberHqConnection: useConnection().connection,
+    sdkWallet: useWallet().wallet || null,
     honeyId: 'hNEYyRsRBVq2La65V1KjvdbTE39w36gwrdjkmcpvysk'
   };
 }

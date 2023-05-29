@@ -1,5 +1,4 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { useConnectedWallet, useConnection } from '@saberhq/use-solana';
 import { TOKEN_PROGRAM_ID } from '@solana/spl-token-v-0.1.8';
 import {
   AccountInfo,
@@ -11,6 +10,7 @@ import { useSolBalance } from './useSolBalance';
 import { WRAPPED_SOL_MINT } from '@jup-ag/react-hook';
 import Decimal from 'decimal.js';
 import { SOL_DECIMALS } from '@honey-finance/sdk';
+import { useConnection, useWallet } from '@solana/wallet-adapter-react';
 
 export type TokenBalance = {
   amount: string;
@@ -25,9 +25,9 @@ export const useWalletTokensBalances = ({
   areSolWsolBalancesMerged
 }: WalletTokensBalancesOptions = {}) => {
   const [tokensBalancesMap, setTokenBalancesMap] = useState<TokenBalances>({});
-  const wallet = useConnectedWallet();
-  const connection = useConnection();
-  const { balance: solBalance } = useSolBalance();
+  const wallet = useWallet();
+  const { connection } = useConnection();
+  const solBalance = useSolBalance();
 
   const getUserTokenBalances = useCallback(async () => {
     if (!wallet?.connected || !wallet.publicKey) {

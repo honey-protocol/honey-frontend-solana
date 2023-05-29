@@ -5,19 +5,19 @@ import { DownIcon } from 'icons/DownIcon';
 import { formatAddress } from 'helpers/addressUtils';
 import HoneyButton from 'components/HoneyButton/HoneyButton';
 import { WalletIcon } from 'icons/WalletIcon';
-import { useWalletKit } from '@gokiprotocol/walletkit';
-import { useConnectedWallet } from '@saberhq/use-solana';
+import { useWallet } from '@solana/wallet-adapter-react';
 import { DialectNotifications } from 'components/DialectNotifications/DialectNotifications';
 import { vars } from 'styles/theme.css';
 import SettingsModal from 'components/SettingsModal/SettingsModal';
 import { SettingsIcon } from 'icons/SettingsIcon';
+import { useWalletModal } from '@solana/wallet-adapter-react-ui';
 const { Title } = Typography;
 
 const WalletMenu = (props: { menu: JSX.Element }) => {
-  const wallet = useConnectedWallet();
-  const { connect } = useWalletKit();
+  const wallet = useWallet();
+  const { setVisible: setWalletVisible } = useWalletModal();
   const [showSettingsModal, setShowSettingsModal] = useState(false);
-  const walletAddress = wallet?.publicKey.toString();
+  const walletAddress = wallet?.publicKey?.toString();
 
   return !walletAddress ? (
     <Space size="small" className={styles.noAuthWalletMenu}>
@@ -34,7 +34,7 @@ const WalletMenu = (props: { menu: JSX.Element }) => {
             <WalletIcon />
           </span>
         }
-        onClick={connect}
+        onClick={() => setWalletVisible(true)}
       >
         CONNECT
       </HoneyButton>

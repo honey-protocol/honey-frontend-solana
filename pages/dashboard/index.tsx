@@ -30,7 +30,6 @@ import {
 import { Connection, LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js';
 import { BnToDecimal, ConfigureSDK } from '../../helpers/loanHelpers';
 import useFetchNFTByUser from '../../hooks/useNFTV2';
-import { useConnectedWallet } from '@saberhq/use-solana';
 
 import BN from 'bn.js';
 import { RoundHalfDown } from '../../helpers/utils';
@@ -45,6 +44,7 @@ import { TABLET_BP } from '../../constants/breakpoints';
 import LendSidebar from '../../components/LendSidebar/LendSidebar';
 import { PositionType } from '../../types/dashboard';
 import { formatNumber } from '../../helpers/format';
+import { useWallet } from '@solana/wallet-adapter-react';
 
 const network = 'devnet'; // change to dynamic value
 
@@ -97,7 +97,7 @@ const { format: f } = formatNumber;
 
 const Dashboard: NextPage = () => {
   const sdkConfig = ConfigureSDK();
-  const wallet = useConnectedWallet();
+  const wallet = useWallet();
 
   /**
    * @description calls upon markets which
@@ -267,7 +267,7 @@ const Dashboard: NextPage = () => {
   const [utilizationRate, setUtilizationRate] = useState(0);
   const [isMobileSidebarVisible, setShowMobileSidebar] = useState(false);
 
-  const availableNFTs: any = useFetchNFTByUser(wallet);
+  const availableNFTs: any = useFetchNFTByUser(wallet.publicKey);
   let reFetchNFTs = availableNFTs[2];
 
   // sets the market debt

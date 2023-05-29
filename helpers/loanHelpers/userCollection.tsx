@@ -1,6 +1,5 @@
 import { getOraclePrice } from '../../helpers/loanHelpers/index';
 import { network } from 'pages/_app';
-import { ConnectedWallet } from '@saberhq/use-solana';
 import { Connection, Keypair, PublicKey } from '@solana/web3.js';
 import {
   HoneyClient,
@@ -21,6 +20,7 @@ import {
 } from 'helpers/marketHelpers';
 import { toast } from 'react-toastify';
 import { roundTwoDecimalsUp } from 'helpers/math/math';
+import { Wallet } from '@solana/wallet-adapter-react';
 
 /**
  * @description formatting functions to format with perfect / format in SOL with icon or just a regular 2 decimal format
@@ -357,7 +357,7 @@ export async function populateMarketData(
   dataRoot: string,
   collection: MarketTableRow,
   connection: Connection,
-  wallet: ConnectedWallet | null,
+  wallet: Wallet | null,
   currentMarketId: string,
   liquidations: boolean,
   obligations: any,

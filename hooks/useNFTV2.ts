@@ -11,8 +11,8 @@ import {
   resolveToWalletAddress,
   getParsedNftAccountsByOwner
 } from '@nfteyez/sol-rayz';
-import { ConnectedWallet, useSolana } from '@saberhq/use-solana';
 import { programs } from '@metaplex/js';
+import { useConnection } from '@solana/wallet-adapter-react';
 
 interface NFTArrayType {
   [index: string]: Array<NFT>;
@@ -29,11 +29,11 @@ const defaultNFT: NFT = {
 
 //this function should fetch all NFT from User
 export default function useFetchNFTByUser(
-  wallet: ConnectedWallet | null
+  walletAddress: PublicKey | null
 ): [Array<NFT>, Boolean, Dispatch<SetStateAction<{}>>] {
   const [NFTs, setNFTs] = useState<Array<NFT>>([]);
   const [isLoading, setLoading] = useState(true);
-  const providerMut = useSolana();
+  const { connection } = useConnection();
   //adding shouldRefetchNFTs to force refetching by passing {} to refecthNFTs
   const [shouldRefetchNFTs, refetchNFTs] = useState({});
   const shouldRefetchRef: MutableRefObject<{}> = useRef(shouldRefetchNFTs);
@@ -47,8 +47,7 @@ export default function useFetchNFTByUser(
         //   clusterApiUrl('mainnet-beta'),
         //   'processed'
         // );
-        const connection = providerMut?.connection;
-        const walletPublicKey = wallet?.publicKey?.toString() || '';
+        const walletPublicKey = walletAddress?.toString() || '';
         if (walletPublicKey != '') {
           // we need to check if shouldRefetchNFTs trigger this function and we should do refetch instead of getting from cache
           if (
@@ -73,7 +72,7 @@ export default function useFetchNFTByUser(
             const nftArray = await getParsedNftAccountsByOwner({
               publicAddress,
               connection
-            }).then((result) => result.filter(nft => nft.data.creators));
+            }).then(result => result.filter(nft => nft.data.creators));
 
             const promises = nftArray.map(async nft => {
               const imageURI = await getNFTImgURI(nft.data.uri);
@@ -126,7 +125,7 @@ export default function useFetchNFTByUser(
     return () => {
       didCancel = true;
     };
-  }, [wallet, shouldRefetchNFTs]);
+  }, [walletAddress, shouldRefetchNFTs]);
   return [NFTs, isLoading, refetchNFTs];
 }
 

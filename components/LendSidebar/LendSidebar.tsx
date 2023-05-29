@@ -1,12 +1,12 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import * as styles from './LendSidebar.css';
 import { LendSidebarProps } from './types';
 import DepositForm from '../DepositForm/DepositForm';
 import WithdrawForm from '../WithdrawForm/WithdrawForm';
 import HoneyTabs, { HoneyTabItem } from '../HoneyTabs/HoneyTabs';
 import EmptyStateDetails from '../EmptyStateDetails/EmptyStateDetails';
-import { useConnectedWallet } from '@saberhq/use-solana';
-import { useWalletKit } from '@gokiprotocol/walletkit';
+import { WalletModalContext } from '@solana/wallet-adapter-react-ui';
+import { useConnection, useWallet } from '@solana/wallet-adapter-react';
 import { mobileReturnButton } from 'styles/common.css';
 
 const items: [HoneyTabItem, HoneyTabItem] = [
@@ -32,8 +32,8 @@ const LendSidebar = (props: LendSidebarProps) => {
     activeInterestRate,
     isFetchingData
   } = props;
-  const wallet = useConnectedWallet();
-  const { connect } = useWalletKit();
+  const wallet = useWallet();
+  const { setVisible: setWalletModalVisible } = useContext(WalletModalContext);
   const [activeTab, setActiveTab] = useState<Tab>('deposit');
 
   const handleTabChange = (tabKey: string) => {
@@ -47,7 +47,7 @@ const LendSidebar = (props: LendSidebarProps) => {
         items={items}
         active={Boolean(collectionId)}
       >
-        {!wallet ? (
+        {!wallet.connected ? (
           <EmptyStateDetails
             icon={<div className={styles.lightIcon} />}
             title="You didn’t connect any wallet yet"
@@ -55,7 +55,7 @@ const LendSidebar = (props: LendSidebarProps) => {
             buttons={[
               {
                 title: 'CONNECT',
-                onClick: connect,
+                onClick: () => setWalletModalVisible(true),
                 variant: 'primary'
               },
               {

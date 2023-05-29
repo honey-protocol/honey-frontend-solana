@@ -1,10 +1,10 @@
 // 👇️ ts-nocheck disables type checking for entire file
 // @ts-nocheck
 import { DialectSolanaWalletAdapter } from '@dialectlabs/react-sdk-blockchain-solana';
-import { WalletAdapter } from '@saberhq/use-solana';
+import { Wallet, WalletContextState } from '@solana/wallet-adapter-react';
 
 export const solanaWalletToDialectWallet = (
-  wallet?: WalletAdapter
+  wallet?: WalletContextState
 ): DialectSolanaWalletAdapter => {
   return {
     publicKey: wallet?.publicKey ?? undefined,

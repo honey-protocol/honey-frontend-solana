@@ -94,6 +94,7 @@ import ExpandedRowIcon from 'icons/ExpandedRowIcon';
 import HoneyToggle from 'components/HoneyToggle/HoneyToggle';
 import useFetchCollateralNFTPositions from 'hooks/useFetchCollateralNFTPositions';
 import useFetchUserLevelData from 'hooks/useFetchUserLevelData';
+import { useWallet } from '@solana/wallet-adapter-react';
 // import { network } from 'pages/_app';
 
 const cloudinary_uri = process.env.CLOUDINARY_URI;
@@ -112,10 +113,13 @@ const {
 
 const Markets: NextPage = () => {
   // init wallet and sdkConfiguration file
-  const wallet = useConnectedWallet() || null;
+  const {
+    wallet,
+    publicKey: walletPublicKey,
+    disconnect
+  } = useWallet() || null;
   const sdkConfig = ConfigureSDK();
   let stringyfiedWalletPK = sdkConfig.sdkWallet?.publicKey.toString();
-  const { disconnect } = useSolana();
 
   // Sets market ID which is used for fetching market specific data
   // each market currently is a different call and re-renders the page
@@ -131,10 +135,7 @@ const Markets: NextPage = () => {
    * [1] loading state
    * [2] reFetch function which can be called after deposit or withdraw and updates nft list
    */
-  const [NFTs, isLoadingNfts, refetchNfts] = useFetchNFTByUser(
-    wallet,
-    currentVerifiedCreator
-  );
+  const [NFTs, isLoadingNfts, refetchNfts] = useFetchNFTByUser(walletPublicKey);
 
   const selectedMarket = marketCollections.find(
     collection => collection.id === currentMarketId

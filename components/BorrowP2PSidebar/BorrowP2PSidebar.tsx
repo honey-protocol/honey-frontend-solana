@@ -1,15 +1,15 @@
 import * as styles from './BorrowP2PSidebar.css';
 import HoneyTabs, { HoneyTabItem } from '../HoneyTabs/HoneyTabs';
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { BorrowP2PRequestFormTab } from './BorrowP2PRequestTab/BorrowP2PRequestFormTab';
 import { RepayP2PTab } from './RepayP2PTab/RepayP2PTab';
 import { BorrowP2PSidebarProps, Tab } from './types';
 import { P2PPosition } from '../../types/p2p';
 import { LoansListTab } from './LoansListTab/LoansListTab';
 import EmptyStateDetails from '../EmptyStateDetails/EmptyStateDetails';
-import { useConnectedWallet } from '@saberhq/use-solana';
-import { useWalletKit } from '@gokiprotocol/walletkit';
 import { mobileReturnButton } from '../../styles/common.css';
+import { useConnection, useWallet } from '@solana/wallet-adapter-react';
+import { WalletModalContext } from '@solana/wallet-adapter-react-ui';
 
 const tabs: [HoneyTabItem, HoneyTabItem] = [
   { label: 'borrow', key: 'borrow' },
@@ -21,8 +21,8 @@ export const BorrowP2PSidebar = ({
   selectedPosition,
   onClose
 }: BorrowP2PSidebarProps) => {
-  const wallet = useConnectedWallet();
-  const { connect } = useWalletKit();
+  const { wallet, connected } = useWallet();
+  const { setVisible } = useContext(WalletModalContext);
 
   const [activeTab, setActiveTab] = useState<Tab>('borrow');
   const [selectedUserPosition, setSelectedUserPosition] =
@@ -47,7 +47,7 @@ export const BorrowP2PSidebar = ({
         buttons={[
           {
             title: 'CONNECT',
-            onClick: connect,
+            onClick: () => setVisible(true),
             variant: 'primary'
           },
           {
@@ -62,7 +62,7 @@ export const BorrowP2PSidebar = ({
   };
 
   const renderBorrowTab = () => {
-    if (!wallet || !wallet.connected) {
+    if (!wallet || connected) {
       return renderConnectWallet();
     }
 
@@ -88,7 +88,7 @@ export const BorrowP2PSidebar = ({
   };
 
   const renderRepayTab = () => {
-    if (!wallet || !wallet.connected) {
+    if (!wallet || connected) {
       return renderConnectWallet();
     }
 

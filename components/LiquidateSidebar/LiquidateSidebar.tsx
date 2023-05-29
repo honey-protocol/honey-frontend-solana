@@ -1,12 +1,12 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import * as styles from './LiquidateSidebar.css';
 import { LendSidebarProps } from './types';
 import HoneyTabs, { HoneyTabItem } from '../HoneyTabs/HoneyTabs';
 import EmptyStateDetails from '../EmptyStateDetails/EmptyStateDetails';
 import BidForm from '../BidForm/BidForm';
 import BidsList from '../BidsList/BidsList';
-import { useConnectedWallet } from '@saberhq/use-solana';
-import { useWalletKit } from '@gokiprotocol/walletkit';
+import { WalletModalContext } from '@solana/wallet-adapter-react-ui';
+import { useConnection, useWallet } from '@solana/wallet-adapter-react';
 
 const items: [HoneyTabItem, HoneyTabItem] = [
   { label: 'Place a bid', key: 'bid' },
@@ -32,8 +32,8 @@ const LiquidateSidebar = (props: LendSidebarProps) => {
     handlePlaceBid,
     onCancel
   } = props;
-  const wallet = useConnectedWallet();
-  const { connect } = useWalletKit();
+  const wallet = useWallet();
+  const { setVisible: setWalletModalVisible } = useContext(WalletModalContext);
   const [activeTab, setActiveTab] = useState<Tab>('bid');
 
   const handleTabChange = (tabKey: string) => {
@@ -48,7 +48,7 @@ const LiquidateSidebar = (props: LendSidebarProps) => {
         items={items}
         active={Boolean(collectionId)}
       >
-        {!wallet ? (
+        {!wallet.connected ? (
           <EmptyStateDetails
             icon={<div className={styles.lightIcon} />}
             title="You didn’t connect any wallet yet"
@@ -56,7 +56,7 @@ const LiquidateSidebar = (props: LendSidebarProps) => {
             buttons={[
               {
                 title: 'CONNECT',
-                onClick: connect
+                onClick: () => setWalletModalVisible(true)
               },
               {
                 title: 'RETURN',

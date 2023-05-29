@@ -14,7 +14,6 @@ import HoneyButton from '../../components/HoneyButton/HoneyButton';
 import TabsAndManualForm from '../../components/TabsAndManualForm/TabsAndManualForm';
 import HoneyTooltip from '../../components/HoneyTooltip/HoneyTooltip';
 import SectionTitle from '../../components/SectionTitle/SectionTitle';
-import { useConnectedWallet, useConnection } from '@saberhq/use-solana';
 import { PublicKey } from '@solana/web3.js';
 import JSBI from 'jsbi';
 import HoneyFormattedNumericInput from '../../components/HoneyFormattedNumericInput/HoneyFormattedInput';
@@ -30,12 +29,13 @@ import { lamportsToNumber, numberToLamports } from '../../helpers/math/math';
 import { useWalletTokensBalances } from '../../hooks/useBalances';
 import { formatNumber } from '../../helpers/format';
 import { ValueType } from 'rc-input-number/lib/utils/MiniDecimal';
-import { useWalletKit } from '@gokiprotocol/walletkit';
 import Decimal from 'decimal.js';
 import debounce from 'lodash/debounce';
 import useToast from 'hooks/useToast';
 import { ReloadIcon } from 'icons/ReloadIcon';
 import SwapIcon from 'icons/SwapIcon';
+import { useConnection, useWallet } from '@solana/wallet-adapter-react';
+import { useWalletModal } from '@solana/wallet-adapter-react-ui';
 
 const {
   formatTokenAllDecimals: ftad,
@@ -47,8 +47,8 @@ export const MAX_SLIPPAGE = 5;
 const DEFAULT_SLIPPAGE = 0.5;
 
 const Swap: NextPage = () => {
-  const wallet = useConnectedWallet();
-  const { connect } = useWalletKit();
+  const wallet = useWallet();
+  const { setVisible: setWalletModalVisible } = useWalletModal();
   const connection = useConnection();
   const { balances: tokenBalancesMap, refreshBalances } =
     useWalletTokensBalances({ areSolWsolBalancesMerged: true });
@@ -528,7 +528,11 @@ const Swap: NextPage = () => {
               ) : (
                 <div className={styles.buttons}>
                   {!wallet || !wallet.connected ? (
-                    <HoneyButton variant="primary" block onClick={connect}>
+                    <HoneyButton
+                      variant="primary"
+                      block
+                      onClick={() => setWalletModalVisible(true)}
+                    >
                       Connect
                     </HoneyButton>
                   ) : (

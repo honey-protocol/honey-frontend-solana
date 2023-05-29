@@ -38,7 +38,6 @@ import {
   fetchReservePrice
 } from '@honey-finance/sdk';
 import { ConfigureSDK } from 'helpers/loanHelpers';
-import { useConnectedWallet } from '@saberhq/use-solana';
 import { Connection, LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js';
 import {
   HONEY_PROGRAM_ID,
@@ -77,6 +76,7 @@ import HoneyTooltip from 'components/HoneyTooltip/HoneyTooltip';
 import { FETCH_USER_MARKET_DATA } from 'constants/apiEndpoints';
 import { useSolBalance, useTokenBalance } from 'hooks/useSolBalance';
 import Image from 'next/image';
+import { useWallet } from '@solana/wallet-adapter-react';
 
 const { formatPercent: fp, formatSol: fs, formatRoundDown: fd } = formatNumber;
 
@@ -113,7 +113,7 @@ const Liquidate: NextPage = () => {
   // init sdk config obj
   const sdkConfig = ConfigureSDK();
   // create wallet instance for PK
-  const wallet = useConnectedWallet() || null;
+  const wallet = useWallet() || null;
   let stringyfiedWalletPK = sdkConfig.sdkWallet?.publicKey.toString();
   let walletPK = sdkConfig.sdkWallet?.publicKey;
 
@@ -436,7 +436,7 @@ const Liquidate: NextPage = () => {
         program.provider,
         HONEY_PROGRAM_ID
       );
-      if (wallet) {
+      if (wallet.publicKey) {
         if (type == 'revoke_bid') {
           if (!currentUserBid) return;
 

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import * as styles from './MarketsSidebar.css';
 import { MarketsSidebarProps } from './types';
 import BorrowForm from '../BorrowForm/BorrowForm';
@@ -6,8 +6,8 @@ import { Spin, Typography } from 'antd';
 import RepayForm from '../RepayForm/RepayForm';
 import HoneyTabs, { HoneyTabItem } from 'components/HoneyTabs/HoneyTabs';
 import EmptyStateDetails from 'components/EmptyStateDetails/EmptyStateDetails';
-import { useConnectedWallet, useSolana } from '@saberhq/use-solana';
-import { useWalletKit } from '@gokiprotocol/walletkit';
+import { WalletModalContext } from '@solana/wallet-adapter-react-ui';
+import { useConnection, useWallet } from '@solana/wallet-adapter-react';
 import { mobileReturnButton } from 'styles/common.css';
 import { renderNftList } from 'helpers/marketHelpers';
 import useFetchNFTByUser from 'hooks/useNFTV3';
@@ -16,9 +16,9 @@ import { active } from 'components/HoneyTabs/HoneyTabs.css';
 type Tab = 'borrow' | 'repay';
 
 const MarketsSidebar = (props: MarketsSidebarProps) => {
-  const wallet = useConnectedWallet() || null;
-  const { disconnect } = useSolana();
-  const [NFTs, isLoadingNfts, refetchNfts] = useFetchNFTByUser(wallet);
+  const { wallet, publicKey, connected, disconnect } = useWallet() || null;
+  const { setVisible: setWalletModalVisible } = useContext(WalletModalContext);
+  const [NFTs, isLoadingNfts, refetchNfts] = useFetchNFTByUser(publicKey);
 
   const {
     isFetchingData,
@@ -42,7 +42,6 @@ const MarketsSidebar = (props: MarketsSidebarProps) => {
   const availableNFTs = availableNFTS;
   // tab state
   const [activeTab, setActiveTab] = useState<Tab>('borrow');
-  const { connect } = useWalletKit();
   // sets active tab
   const handleTabChange = (tabKey: string) => {
     setActiveTab(tabKey as Tab);
@@ -79,7 +78,7 @@ const MarketsSidebar = (props: MarketsSidebarProps) => {
         items={items}
         active={true}
       >
-        {!wallet?.connected ? (
+        {!connected ? (
           <EmptyStateDetails
             icon={<div className={styles.lightIcon} />}
             title="You didn’t connect any wallet yet"
@@ -87,7 +86,7 @@ const MarketsSidebar = (props: MarketsSidebarProps) => {
             buttons={[
               {
                 title: 'CONNECT',
-                onClick: connect,
+                onClick: () => setWalletModalVisible(true),
                 variant: 'primary'
               },
               {

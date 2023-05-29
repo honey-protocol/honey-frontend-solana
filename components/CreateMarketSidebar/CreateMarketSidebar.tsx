@@ -1,5 +1,4 @@
 import React, { FC, useEffect, useMemo, useState } from 'react';
-import { useWalletKit } from '@gokiprotocol/walletkit';
 
 import { CreateMarketSidebarProps } from './types';
 import CreateMarketTab from './CreateMarketTab/CreateMarketTab';
@@ -9,6 +8,7 @@ import HowItWorksBorrowTab from 'components/HowItWorksBorrowTab/HowItWorksBorrow
 // import { useLocker } from 'hooks/useVeHoney';
 
 import * as styles from './CreateMarketSidebar.css';
+import { useWallet } from '@solana/wallet-adapter-react';
 
 const items: [HoneyTabItem, HoneyTabItem] = [
   { label: 'How it works', key: 'how_it_works' },
@@ -22,7 +22,7 @@ const CreateMarketSidebar: FC<CreateMarketSidebarProps> = (
   props: CreateMarketSidebarProps
 ) => {
   const { onCancel, wallet, honeyClient } = props;
-  const { connect } = useWalletKit();
+  const { connect } = useWallet();
   const [activeTab, setActiveTab] = useState<Tab>('how_it_works');
 
   // TODO: add back governance context in a minimalistic way if we want to continue using the veHONEY check

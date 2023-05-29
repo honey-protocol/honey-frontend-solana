@@ -10,7 +10,7 @@ import Link from 'next/link';
 import Logo from 'icons/Logo';
 import { MenuCloseIcon } from 'icons/MenuCloseIcon';
 import { MenuOpenIcon } from 'icons/MenuOpenIcon';
-import { useConnectedWallet, useSolana } from '@saberhq/use-solana';
+import { useWallet } from '@solana/wallet-adapter-react';
 import { SwitchIcon } from 'icons/SwitchIcon';
 import * as commonStyles from 'styles/common.css';
 import { CopyIcon } from 'icons/CopyIcon';
@@ -19,8 +19,8 @@ import { HoneyThemeContext } from 'pages/_app';
 
 const Header: FC = () => {
   const [showMobileMenu, setShowMobileMenu] = useState(false);
-  const { disconnect } = useSolana();
-  const wallet = useConnectedWallet();
+  const { disconnect } = useWallet();
+  const wallet = useWallet();
   const { theme } = useContext(HoneyThemeContext);
 
   const menu = (
@@ -30,7 +30,7 @@ const Header: FC = () => {
       items={[
         {
           key: '0',
-          label: formatAddress(wallet?.publicKey.toString()),
+          label: formatAddress(wallet.publicKey?.toString()),
           itemIcon: (
             <div className={styles.menuIconContainer}>
               <CopyIcon
@@ -39,7 +39,7 @@ const Header: FC = () => {
             </div>
           ),
           onClick: () =>
-            navigator.clipboard.writeText(wallet?.publicKey.toString() ?? '')
+            navigator.clipboard.writeText(wallet.publicKey?.toString() ?? '')
         },
         {
           key: '1',
