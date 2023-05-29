@@ -50,7 +50,8 @@ import {
   waitForConfirmation,
   fetchReservePrice,
   withdrawNFT,
-  TReserve
+  TReserve,
+  CollateralNFTPosition
 } from '@honey-finance/sdk';
 import { populateMarketData } from 'helpers/loanHelpers/userCollection';
 import { Metadata } from '@metaplex-foundation/mpl-token-metadata';
@@ -88,7 +89,9 @@ const network = 'mainnet-beta';
 import SorterIcon from 'icons/Sorter';
 import ExpandedRowIcon from 'icons/ExpandedRowIcon';
 import HoneyToggle from 'components/HoneyToggle/HoneyToggle';
-import useFetchCollateralNFTPositions from 'hooks/useFetchCollateralNFTPositions';
+import useFetchCollateralNFTPositions, {
+  collateralNFTPosition
+} from 'hooks/useFetchCollateralNFTPositions';
 // import { network } from 'pages/_app';
 
 const cloudinary_uri = process.env.CLOUDINARY_URI;
@@ -161,10 +164,14 @@ const Markets: NextPage = () => {
       currentVerifiedCreator
     );
 
-  const [userOpenPositions, setUserOpenPositions] = useState([]);
+  const [userOpenPositions, setUserOpenPositions] = useState<
+    Array<collateralNFTPosition>
+  >([]);
 
   useEffect(() => {
-    console.log('@@-- coll', collateralNFTPositions);
+    collateralNFTPositions.length
+      ? setUserOpenPositions(collateralNFTPositions)
+      : setUserOpenPositions([]);
   }, [collateralNFTPositions, currentMarketId]);
 
   // market specific constants - calculations / ratios / debt / allowance etc.
@@ -215,8 +222,6 @@ const Markets: NextPage = () => {
     wallet,
     currentVerifiedCreator
   );
-
-  console.log('@@-- NFTS', NFTs);
 
   const [isCreateMarketAreaOnHover, setIsCreateMarketAreaOnHover] =
     useState<boolean>(false);
@@ -993,17 +998,16 @@ const Markets: NextPage = () => {
               if (collection.marketData) {
                 await collection.marketData[0].reserves[0].refresh();
                 await collection.marketData[0].user.refresh();
+                await honeyUser.refresh();
 
-                setTimeout(async () => {
-                  refreshPositions({});
-                  refetchNfts({});
-                  await fetchCurrentMarketData(true);
+                refreshPositions({});
+                refetchNfts({});
+                await fetchCurrentMarketData(true);
 
-                  toast.success(
-                    'Deposit success',
-                    `https://solscan.io/tx/${tx[1][0]}?cluster=${network}`
-                  );
-                }, 2500);
+                toast.success(
+                  'Deposit success',
+                  `https://solscan.io/tx/${tx[1][0]}?cluster=${network}`
+                );
               }
             } else {
               return toast.error('Error depositing NFT');
@@ -1048,20 +1052,18 @@ const Markets: NextPage = () => {
                 sdkConfig.saberHqConnection,
                 confirmationHash
               );
-
+              await honeyUser.refresh();
               await fetchedDataObject.reserves[0].refresh();
               await fetchedDataObject.user.refresh();
 
-              setTimeout(async () => {
-                refreshPositions({});
-                refetchNfts({});
-                await fetchCurrentMarketData(true);
+              refreshPositions({});
+              refetchNfts({});
+              await fetchCurrentMarketData(true);
 
-                toast.success(
-                  'Withdraw success',
-                  `https://solscan.io/tx/${tx[1][0]}?cluster=${network}`
-                );
-              }, 2500);
+              toast.success(
+                'Withdraw success',
+                `https://solscan.io/tx/${tx[1][0]}?cluster=${network}`
+              );
             } else {
               toast.error(
                 'Withdraw failed',
