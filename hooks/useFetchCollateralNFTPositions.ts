@@ -17,6 +17,9 @@ import { Metadata } from '@metaplex-foundation/mpl-token-metadata';
 import { ConfigureSDK } from 'helpers/loanHelpers';
 // set default nft image for loading purposes
 export const defaultNFTImageUrl = honeyGenesisBee.src;
+interface NFTArrayType {
+  [index: string]: Array<NFT>;
+}
 // init type for CollateralNFTPosition
 export interface collateralNFTPosition {
   mint: String;
@@ -28,6 +31,15 @@ export interface collateralNFTPosition {
   verifiedCreator: String;
 }
 
+const defaultNFT: NFT = {
+  name: '',
+  updateAuthority: '',
+  image: '',
+  creators: [],
+  tokenId: '',
+  mint: ''
+};
+
 export type PDA = { publicKey: PublicKey; bump: number };
 
 /**
@@ -36,59 +48,59 @@ export type PDA = { publicKey: PublicKey; bump: number };
  * @returns array of collateral nft positions of user | isLoading: boolean
 */
 export default function useFetchCollateralNFTPositions(
-  honeyUser: HoneyUser, 
   currentMarketID: string,
   wallet: ConnectedWallet | null, 
-  connection: Connection,
-  verified_creator?: string
+  verified_creator?: string,
+  connection?: Connection,
+  honeyUser?: HoneyUser, 
 ): [Array<collateralNFTPosition>, Boolean, Dispatch<SetStateAction<{}>>] {
   // set state
   const [isLoading, setIsLoading] = useState(true);
   const [isRefetching, setIsRefetching] = useState(0);
   const [collateralNFTPositions, setCollateralNFTPositions] = useState<Array<collateralNFTPosition>>([]);
+  // refetch
+  const walletPublicKey = wallet?.publicKey?.toString() || '';
 
-  useEffect(() => {    
+  const fetchData = async () => {
+    // if required params are missing set return value to empty array
+    if (!honeyUser || wallet == null || !currentMarketID || !connection || !verified_creator) {
+      return setCollateralNFTPositions([]);
+    } 
     // init boolean for function execution
     let didCancel = false;
-    // init our construction func. for collateral nft array
-    const fetchCollateralNFTPositions = async () => {
       // set loading state
       setIsLoading(true);
-      // if required params are missing set return value to empty array
-      if (!honeyUser || wallet == null || !currentMarketID || !connection || !verified_creator) {
-        setCollateralNFTPositions([]);
-      } else {
-        // get users obligation data
-        const data = await honeyUser.getObligationData();
-        // get the array of pub.keys presenting the obligations
-        const collaternftmint = data.collateralNftMint;
+      // get users obligation data
+      const data = await honeyUser.getObligationData();
+      // get the array of pub.keys presenting the obligations
+      const collaternftmint = data.collateralNftMint;
 
-        // validate if there are obligations
-        if (collaternftmint.length && collaternftmint.length > 0) {
-          // map through all pubkeys and start process of fetching data
-          const promises = collaternftmint.map(
-            async (key: PublicKey, index: number) => {
-              if (!key.equals(PublicKey.default)) {
-                const [nftMetadata, _] = await PublicKey.findProgramAddress(
-                  [
-                    Buffer.from('metadata'),
-                    METADATA_PROGRAM_ID.toBuffer(),
-                    key.toBuffer()
-                  ],
-                  METADATA_PROGRAM_ID
-                );
+      // validate if there are obligations
+      if (collaternftmint.length && collaternftmint.length > 0) {
+        // map through all pubkeys and start process of fetching data
+        const promises = collaternftmint.map(
+          async (key: PublicKey, index: number) => {
+            if (!key.equals(PublicKey.default)) {
+              const [nftMetadata, _] = await PublicKey.findProgramAddress(
+                [
+                  Buffer.from('metadata'),
+                  METADATA_PROGRAM_ID.toBuffer(),
+                  key.toBuffer()
+                ],
+                METADATA_PROGRAM_ID
+              );
 
-                const data = await getNFTAssociatedMetadata(
-                  connection,
-                  nftMetadata
-                );
-                console.log('@@-- this is data', data);
-                if (!data) return;
+              const data = await getNFTAssociatedMetadata(
+                connection,
+                nftMetadata
+              );
+              
+              if (!data) return;
 
-                const tokenMetadata = await Metadata.fromAccountAddress(
-                  connection,
-                  nftMetadata
-                );
+              const tokenMetadata = await Metadata.fromAccountAddress(
+                connection,
+                nftMetadata
+              );
 
               // TODO: validate if we can run it or need to catch
               // @ts-ignore
@@ -103,7 +115,6 @@ export default function useFetchCollateralNFTPositions(
                 await fetch(tokenMetadata.data.uri)
               ).json();
 
-
               collateralNFTPositions.push({
                 mint: nftMetadata.toString(),
                 updateAuthority: new PublicKey(tokenMetadata?.updateAuthority),
@@ -113,9 +124,6 @@ export default function useFetchCollateralNFTPositions(
                 image: arweaveData?.image,
                 verifiedCreator: verifiedCreator.toBase58(),
               });
-            } else {
-              console.log('@@-- this is else');
-              setCollateralNFTPositions([]);
             }
           }
         );
@@ -128,26 +136,15 @@ export default function useFetchCollateralNFTPositions(
         } else {
           setCollateralNFTPositions([]);
         }
-      }
     }
-    }
+  }
 
-    fetchCollateralNFTPositions()
-    .catch(err => {
-      console.log(`Error fetching collateralised NFT Positions, Error: ${err}`);
-      setCollateralNFTPositions([]);
-    })
-    .finally(() => {
-      setIsLoading(false);
-    });
+  useEffect(() => {    
+    fetchData();
+  }, [honeyUser, currentMarketID, wallet, connection]);
 
-    return () => {
-      didCancel = true;
-    };
-  }, [honeyUser, currentMarketID, wallet, connection, isRefetching]);
-
-  const refreshPositions = () => {
-      isRefetching === 0 ? setIsRefetching(1) : setIsRefetching(0);
+   const refreshPositions = async () => {
+    await fetchData();
   };
 
   return [collateralNFTPositions, isLoading, refreshPositions];
