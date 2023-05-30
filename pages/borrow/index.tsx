@@ -118,6 +118,7 @@ const Markets: NextPage = () => {
   // each market currently is a different call and re-renders the page
   const [currentMarketId, setCurrentMarketId] = useState('');
   const [currentVerifiedCreator, setCurrentVerifiedCreator] = useState('');
+  const [fetchedDataObject, setFetchedDataObject] = useState<MarketBundle>();
 
   const selectedMarket = marketCollections.find(
     collection => collection.id === currentMarketId
@@ -157,11 +158,11 @@ const Markets: NextPage = () => {
    */
   let [collateralNFTPositions, isLoading, refreshPositions] =
     useFetchCollateralNFTPositions(
-      honeyUser,
       currentMarketId,
       sdkConfig.sdkWallet,
-      sdkConfig.saberHqConnection,
-      currentVerifiedCreator
+      currentVerifiedCreator,
+      fetchedDataObject?.connection,
+      fetchedDataObject?.user
     );
 
   const [userOpenPositions, setUserOpenPositions] = useState<
@@ -197,7 +198,6 @@ const Markets: NextPage = () => {
     useState<MarketTableRow[]>(marketCollections);
   const [tableDataFiltered, setTableDataFiltered] =
     useState<MarketTableRow[]>(marketCollections);
-  const [fetchedDataObject, setFetchedDataObject] = useState<MarketBundle>();
   const [expandedRowKeys, setExpandedRowKeys] = useState<readonly Key[]>([]);
   const [isMyCollectionsFilterEnabled, setIsMyCollectionsFilterEnabled] =
     useState(false);
@@ -383,6 +383,8 @@ const Markets: NextPage = () => {
           ? setNftPrice(RoundHalfDown(collection.nftPrice))
           : 0;
         setUserAllowance(collection.allowance);
+        // @ts-ignore
+        data[0].connection = sdkConfig.saberHqConnection;
 
         // @ts-ignore
         setUserDebt(collection.userDebt);
@@ -1084,6 +1086,7 @@ const Markets: NextPage = () => {
                 sdkConfig.saberHqConnection,
                 confirmationHash
               );
+
               await honeyUser.refresh();
               await fetchedDataObject.reserves[0].refresh();
               await fetchedDataObject.user.refresh();
