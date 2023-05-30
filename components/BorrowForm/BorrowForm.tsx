@@ -247,22 +247,28 @@ const BorrowForm = (props: BorrowProps) => {
       selectedMultipleNFTs?.length &&
       selectedMultipleNFTs[0].mint.length > 1
     ) {
-      for (let index = 0; index < selectedMultipleNFTs.length; index++) {
-        const verifiedCreator = selectedMultipleNFTs[index].creators.filter(
+      const promises = selectedMultipleNFTs.map(nft => {
+        const verifiedCreator = nft.creators.filter(
           (creator: { verified: any }) => creator.verified
         );
 
-        await executeDepositNFT(
-          selectedMultipleNFTs[index].tokenId,
+        // for (let index = 0; index < selectedMultipleNFTs.length; index++) {
+        //   const verifiedCreator = selectedMultipleNFTs[index].creators.filter(
+        //     (creator: { verified: any }) => creator.verified
+        //   );
+
+        executeDepositNFT(
+          nft.tokenId,
           toast,
-          selectedMultipleNFTs[index].name,
+          nft.name,
           verifiedCreator[0].address
         );
-      }
+        // }
+      });
+      await Promise.all(promises);
+      //Reset selected NFTs
+      setSelectedMultipleNFTs([]);
     }
-
-    //Reset selected NFTs
-    setSelectedMultipleNFTs([]);
   };
 
   const handleClaimMultipleCollateral = async () => {
@@ -271,9 +277,15 @@ const BorrowForm = (props: BorrowProps) => {
     }
     if (!selectedMultipleNFTs) return;
 
-    for (let index = 0; index < selectedMultipleNFTs.length; index++) {
-      await executeWithdrawNFT(selectedMultipleNFTs[index].mint, toast);
-    }
+    const promises = selectedMultipleNFTs.map(nft => {
+      executeWithdrawNFT(nft.mint, toast);
+    });
+
+    await Promise.all(promises);
+
+    // for (let index = 0; index < selectedMultipleNFTs.length; index++) {
+    //   await executeWithdrawNFT(selectedMultipleNFTs[index].mint, toast);
+    // }
 
     //Reset selected NFTs
     setSelectedMultipleNFTs([]);

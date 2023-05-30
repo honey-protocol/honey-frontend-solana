@@ -89,9 +89,7 @@ const network = 'mainnet-beta';
 import SorterIcon from 'icons/Sorter';
 import ExpandedRowIcon from 'icons/ExpandedRowIcon';
 import HoneyToggle from 'components/HoneyToggle/HoneyToggle';
-import useFetchCollateralNFTPositions, {
-  collateralNFTPosition
-} from 'hooks/useFetchCollateralNFTPositions';
+import useFetchCollateralNFTPositions from 'hooks/useFetchCollateralNFTPositions';
 // import { network } from 'pages/_app';
 
 const cloudinary_uri = process.env.CLOUDINARY_URI;
@@ -151,29 +149,31 @@ const Markets: NextPage = () => {
     sdkConfig.honeyId,
     currentMarketId
   );
+
+  // useEffect(() => {
+  //   console.log('@@-- HONEY USER', honeyUser.getObligationData());
+  // }, [honeyUser]);
   /**
    * @description fetches collateral nft positions | refresh positions (func) from SDK
    * @params useConnection func. | useConnectedWallet func. | honeyID | marketID
    * @returns collateralNFTPositions | loanPositions | loading | error
    */
-  let [collateralNFTPositions, isLoading, refreshPositions] =
+  let { loading, collateralNFTPositions, error, refreshPositions } =
     useFetchCollateralNFTPositions(
-      currentMarketId,
-      sdkConfig.sdkWallet,
-      currentVerifiedCreator,
-      fetchedDataObject?.connection,
-      fetchedDataObject?.user
+      sdkConfig.saberHqConnection,
+      honeyUser,
+      currentVerifiedCreator
     );
 
-  const [userOpenPositions, setUserOpenPositions] = useState<
-    Array<collateralNFTPosition>
-  >([]);
+  // const [userOpenPositions, setUserOpenPositions] = useState<
+  //   Array<collateralNFTPosition>
+  // >([]);
 
-  useEffect(() => {
-    collateralNFTPositions.length
-      ? setUserOpenPositions(collateralNFTPositions)
-      : setUserOpenPositions([]);
-  }, [collateralNFTPositions, currentMarketId]);
+  // useEffect(() => {
+  //   collateralNFTPositions?.length
+  //     ? setUserOpenPositions(collateralNFTPositions)
+  //     : setUserOpenPositions([]);
+  // }, [collateralNFTPositions, currentMarketId]);
 
   // market specific constants - calculations / ratios / debt / allowance etc.
   const [nftPrice, setNftPrice] = useState(0);
@@ -222,6 +222,8 @@ const Markets: NextPage = () => {
     wallet,
     currentVerifiedCreator
   );
+
+  console.log('@@-- NFTs', NFTs, isLoadingNfts);
 
   const [isCreateMarketAreaOnHover, setIsCreateMarketAreaOnHover] =
     useState<boolean>(false);
@@ -1030,11 +1032,12 @@ const Markets: NextPage = () => {
                 confirmationHash
               );
               if (collection.marketData) {
-                await collection.marketData[0].reserves[0].refresh();
-                await collection.marketData[0].user.refresh();
-                await honeyUser.refresh();
+                // TODO: revision
+                // await collection.marketData[0].reserves[0].refresh();
+                // await collection.marketData[0].user.refresh();
+                // await honeyUser.getObligationData();
 
-                refreshPositions({});
+                await refreshPositions();
                 refetchNfts({});
                 await fetchCurrentMarketData(true);
 
@@ -1086,12 +1089,12 @@ const Markets: NextPage = () => {
                 sdkConfig.saberHqConnection,
                 confirmationHash
               );
+              // TODO: revision
+              // await honeyUser.getObligationData();
+              // await fetchedDataObject.reserves[0].refresh();
+              // await fetchedDataObject.user.refresh();
 
-              await honeyUser.refresh();
-              await fetchedDataObject.reserves[0].refresh();
-              await fetchedDataObject.user.refresh();
-
-              refreshPositions({});
+              await refreshPositions();
               refetchNfts({});
               await fetchCurrentMarketData(true);
 
@@ -1262,6 +1265,7 @@ const Markets: NextPage = () => {
               availableNFTS={NFTs}
               isFetchingData={isFetchingClientData}
               collCount={obligationCount}
+              isLoadingNfts={isLoadingNfts}
             />
           </HoneySider>
         );
