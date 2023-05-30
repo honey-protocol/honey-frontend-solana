@@ -213,6 +213,7 @@ const Markets: NextPage = () => {
     wallet,
     selectedMarket?.verifiedCreator
   );
+
   const [isCreateMarketAreaOnHover, setIsCreateMarketAreaOnHover] =
     useState<boolean>(false);
 
