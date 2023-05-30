@@ -37,6 +37,7 @@ const MarketsSidebar = (props: MarketsSidebarProps) => {
     executeRepay,
     availableNFTS,
     collCount
+    // isLoadingNfts
   } = props;
   const availableNFTs = availableNFTS;
   // tab state
