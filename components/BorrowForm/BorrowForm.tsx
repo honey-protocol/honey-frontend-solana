@@ -248,11 +248,6 @@ const BorrowForm = (props: BorrowProps) => {
           (creator: { verified: any }) => creator.verified
         );
 
-        // for (let index = 0; index < selectedMultipleNFTs.length; index++) {
-        //   const verifiedCreator = selectedMultipleNFTs[index].creators.filter(
-        //     (creator: { verified: any }) => creator.verified
-        //   );
-
         executeDepositNFT(
           nft.tokenId,
           toast,
@@ -278,10 +273,6 @@ const BorrowForm = (props: BorrowProps) => {
     });
 
     await Promise.all(promises);
-
-    // for (let index = 0; index < selectedMultipleNFTs.length; index++) {
-    //   await executeWithdrawNFT(selectedMultipleNFTs[index].mint, toast);
-    // }
 
     //Reset selected NFTs
     setSelectedMultipleNFTs([]);
