@@ -41,7 +41,7 @@ export type PDA = { publicKey: PublicKey; bump: number };
  */
 export default function useFetchCollateralNFTPositions(
   connection: Connection,
-  honeyUser: HoneyUser,
+  mintArray: PublicKey[],
   verified_creator: string
 ) {
   // set state
@@ -59,64 +59,50 @@ export default function useFetchCollateralNFTPositions(
     setStatus({ loading: true });
 
     const collateralNFTPositions: CollateralNFTPosition[] = [];
-    honeyUser.getObligationData().then(async obligation => {
-      if (!obligation) {
-        setStatus({
-          loading: false,
-          error: new Error('Obligation does not have a valid market')
-        });
-        return;
-      }
+    const collateralNftMint: PublicKey[] = mintArray;
 
-      const collateralNftMint: PublicKey[] = obligation.collateralNftMint;
+    if (!collateralNftMint || collateralNftMint.length === 0) {
+      setStatus({
+        loading: false,
+        error: new Error('Obligation does not have a valid collateral nft mint')
+      });
+      return;
+    }
 
-      if (!collateralNftMint || collateralNftMint.length === 0) {
-        setStatus({
-          loading: false,
-          error: new Error(
-            'Obligation does not have a valid collateral nft mint'
-          )
-        });
-        return;
-      }
+    // map through all pubkeys and start process of fetching data
+    const promises = collateralNftMint.map(
+      async (key: PublicKey, index: number) => {
+        if (!key.equals(PublicKey.default)) {
+          const [nftMetadata, _] = await PublicKey.findProgramAddress(
+            [
+              Buffer.from('metadata'),
+              METADATA_PROGRAM_ID.toBuffer(),
+              key.toBuffer()
+            ],
+            METADATA_PROGRAM_ID
+          );
 
-      // map through all pubkeys and start process of fetching data
-      const promises = collateralNftMint.map(
-        async (key: PublicKey, index: number) => {
-          if (!key.equals(PublicKey.default)) {
-            const [nftMetadata, _] = await PublicKey.findProgramAddress(
-              [
-                Buffer.from('metadata'),
-                METADATA_PROGRAM_ID.toBuffer(),
-                key.toBuffer()
-              ],
-              METADATA_PROGRAM_ID
-            );
+          const data = await getNFTAssociatedMetadata(connection, nftMetadata);
+          if (!data) return;
 
-            const data = await getNFTAssociatedMetadata(
-              connection,
-              nftMetadata
-            );
-            if (!data) return;
+          const tokenMetadata = await Metadata.fromAccountAddress(
+            connection,
+            nftMetadata
+          );
 
-            const tokenMetadata = await Metadata.fromAccountAddress(
-              connection,
-              nftMetadata
-            );
+          // TODO: validate if we can run it or need to catch
+          // @ts-ignore
+          const verifiedCreator = tokenMetadata.data.creators.filter(
+            (creator: any) => creator.verified
+          )[0].address;
+          //   `(https://res.cloudinary.com/${cloudinary_uri}/image/fetch/${tokenMetadata.data.uri})`
 
-            // TODO: validate if we can run it or need to catch
-            // @ts-ignore
-            const verifiedCreator = tokenMetadata.data.creators.filter(
-              (creator: any) => creator.verified
-            )[0].address;
-
-            //   `(https://res.cloudinary.com/${cloudinary_uri}/image/fetch/${tokenMetadata.data.uri})`
-
-            // TODO: fetch via cloudinary
-            const arweaveData = await (
-              await fetch(tokenMetadata.data.uri)
-            ).json();
-
+          // TODO: fetch via cloudinary
+          const arweaveData = await (
+            await fetch(tokenMetadata.data.uri)
+          ).json();
+          // only push if this obligation belows to current active market
+          if (verifiedCreator.toString() === verified_creator) {
             collateralNFTPositions.push({
               mint: nftMetadata,
               updateAuthority: new PublicKey(tokenMetadata?.updateAuthority),
@@ -128,11 +114,12 @@ export default function useFetchCollateralNFTPositions(
             });
           }
         }
-      );
+      }
+    );
 
-      await Promise.all(promises);
-      return setStatus({ loading: false, collateralNFTPositions });
-    });
+    await Promise.all(promises);
+
+    return setStatus({ loading: false, collateralNFTPositions });
   };
 
   const refreshPositions = async () => {
@@ -140,13 +127,14 @@ export default function useFetchCollateralNFTPositions(
   };
 
   useEffect(() => {
-    if (!honeyUser) {
-      setStatus({ loading: false, error: new Error('HoneyUser is undefined') });
+    console.log('@@-- mint arr', mintArray);
+    if (!mintArray) {
+      setStatus({ loading: false, error: new Error('No mints found') });
       return;
     }
 
     fetchData();
-  }, [honeyUser, connection, verified_creator]);
+  }, [mintArray, connection, verified_creator]);
 
   return { ...status, refreshPositions };
 }
