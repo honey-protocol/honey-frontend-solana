@@ -412,6 +412,34 @@ export const marketCollections: MarketTableRow[] = [
         'So11111111111111111111111111111111111111112',
       discountedMarket: false
     }
+  },
+  {
+    id: '5rXuse6cWigMMNw9fRZMZXGmD2rV7RLpiettBwGKcXm7',
+    key: 'Ubik',
+    name: 'Ubik',
+    verifiedCreator: '2eosSeoeh2LYrCXQg3axkLmrbJrXmcz5Lf1oYhfUya5v',
+    rate: 0,
+    loanCurrency: 'SOL',
+    available: 0,
+    value: 0,
+    allowance: 0,
+    connection: undefined,
+    user: undefined,
+    debt: 0,
+    utilizationRate: 0,
+    openPositions: [],
+    constants: {
+      marketId: '5rXuse6cWigMMNw9fRZMZXGmD2rV7RLpiettBwGKcXm7',
+      verifiedCreator: '2eosSeoeh2LYrCXQg3axkLmrbJrXmcz5Lf1oYhfUya5v',
+      marketName: 'Ubik',
+      marketImage:
+        'https://img-cdn.magiceden.dev/rs:fill:400:400:0:0/plain/https://dl.airtable.com/.attachmentThumbnails/e1ad2e4ef21f39c2cd30bec595dc5137/34c2c6e3',
+      marketLoanCurrency: 'SOL',
+      marketLoanCurrencyImage: '/images/tokens/sol.svg',
+      marketLoanCurrencyTokenMintAddress:
+        'So11111111111111111111111111111111111111112',
+      discountedMarket: false
+    }
   }
 
   // {
