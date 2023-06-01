@@ -498,7 +498,7 @@ export const marketCollections: MarketTableRow[] = [
     }
   },
   {
-    id: 'FnGvAqcLUS8K6pRVDK1M4iu3dZm4KeoUuDQfFiXAfwEZ',
+    id: '4RNS5Z4oMbn6eDAjqLmaKbrpuwExg3sHkRg7FYCZ5HQS',
     key: 'CLS',
     name: 'Claynosaurz',
     verifiedCreator: '7nt1rnsomCqyPzMVUcqGswXeSJGwD2tAHYmTjGJHmhTX',
@@ -513,7 +513,7 @@ export const marketCollections: MarketTableRow[] = [
     utilizationRate: 0,
     openPositions: [],
     constants: {
-      marketId: 'FnGvAqcLUS8K6pRVDK1M4iu3dZm4KeoUuDQfFiXAfwEZ',
+      marketId: '4RNS5Z4oMbn6eDAjqLmaKbrpuwExg3sHkRg7FYCZ5HQS',
       verifiedCreator: '7nt1rnsomCqyPzMVUcqGswXeSJGwD2tAHYmTjGJHmhTX',
       marketName: 'Claynosaurz',
       marketImage:
