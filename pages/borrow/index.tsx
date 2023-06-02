@@ -436,6 +436,7 @@ const Markets: NextPage = () => {
       loanToValue,
       interestRate,
       currentMarketId,
+      collateralNFTPositions,
       sdkConfig.saberHqConnection,
       sdkConfig.sdkWallet
     ]
