@@ -368,27 +368,27 @@ const Markets: NextPage = () => {
     [id: string]: Array<MarketBundle>;
   }> = useRef({});
 
-  const fetchMarketDataObj = useCallback(
-    async (marketId, connection, wallet, honeyId) => {
-      //Check cache if object exists
-      if (marketDataCache.current[marketId]) {
-        return marketDataCache.current[marketId];
-      }
+  // const fetchMarketDataObj = useCallback(
+  //   async (marketId, connection, wallet, honeyId) => {
+  //     //Check cache if object exists
+  //     if (marketDataCache.current[marketId]) {
+  //       return marketDataCache.current[marketId];
+  //     }
 
-      const data: MarketBundle[] = await fetchAllMarkets(
-        connection,
-        wallet,
-        honeyId,
-        [marketId],
-        false
-      );
+  //     const data: MarketBundle[] = await fetchAllMarkets(
+  //       connection,
+  //       wallet,
+  //       honeyId,
+  //       [marketId],
+  //       false
+  //     );
 
-      //Update cache
-      marketDataCache.current[marketId] = data;
-      return data;
-    },
-    []
-  );
+  //     //Update cache
+  //     marketDataCache.current[marketId] = data;
+  //     return data;
+  //   },
+  //   []
+  // );
 
   const fetchCurrentMarketData = useCallback(
     async (silentRefresh?: boolean) => {
