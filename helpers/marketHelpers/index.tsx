@@ -469,8 +469,62 @@ export const marketCollections: MarketTableRow[] = [
       discountedMarket: false
     }
   },
-
-
+  {
+    id: 'JD2mMtsdT7fTkWojVLh2rjMZBLnKUev7JSn6iLg7chM7',
+    key: 'CLU',
+    name: 'Claynosaurz',
+    verifiedCreator: '7nt1rnsomCqyPzMVUcqGswXeSJGwD2tAHYmTjGJHmhTX',
+    loanCurrency: 'USDC',
+    rate: 0,
+    available: 0,
+    value: 0,
+    allowance: 0,
+    connection: undefined,
+    user: undefined,
+    debt: 0,
+    utilizationRate: 0,
+    openPositions: [],
+    constants: {
+      marketId: 'JD2mMtsdT7fTkWojVLh2rjMZBLnKUev7JSn6iLg7chM7',
+      verifiedCreator: '7nt1rnsomCqyPzMVUcqGswXeSJGwD2tAHYmTjGJHmhTX',
+      marketName: 'Clay',
+      marketImage:
+        'https://prod-image-cdn.tensor.trade/images/400x400/freeze=false/https://creator-hub-prod.s3.us-east-2.amazonaws.com/claynosaurz_pfp_1679930706147.jpeg',
+      marketLoanCurrency: 'USDC',
+      marketLoanCurrencyImage: '/images/USDC.svg',
+      marketLoanCurrencyTokenMintAddress:
+        'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v',
+      discountedMarket: false
+    }
+  },
+  {
+    id: '4RNS5Z4oMbn6eDAjqLmaKbrpuwExg3sHkRg7FYCZ5HQS',
+    key: 'CLS',
+    name: 'Claynosaurz',
+    verifiedCreator: '7nt1rnsomCqyPzMVUcqGswXeSJGwD2tAHYmTjGJHmhTX',
+    rate: 0,
+    loanCurrency: 'SOL',
+    available: 0,
+    value: 0,
+    allowance: 0,
+    connection: undefined,
+    user: undefined,
+    debt: 0,
+    utilizationRate: 0,
+    openPositions: [],
+    constants: {
+      marketId: '4RNS5Z4oMbn6eDAjqLmaKbrpuwExg3sHkRg7FYCZ5HQS',
+      verifiedCreator: '7nt1rnsomCqyPzMVUcqGswXeSJGwD2tAHYmTjGJHmhTX',
+      marketName: 'Claynosaurz',
+      marketImage:
+        'https://prod-image-cdn.tensor.trade/images/400x400/freeze=false/https://creator-hub-prod.s3.us-east-2.amazonaws.com/claynosaurz_pfp_1679930706147.jpeg',
+      marketLoanCurrency: 'SOL',
+      marketLoanCurrencyImage: '/images/tokens/sol.svg',
+      marketLoanCurrencyTokenMintAddress:
+        'So11111111111111111111111111111111111111112',
+      discountedMarket: false
+    }
+  }
 
   // {
   //   id: 'F8rZviSSuqgkTsjMeoyrTUSNSqh7yNDCAozJkxm7eujY',
