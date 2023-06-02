@@ -147,6 +147,7 @@ const Markets: NextPage = () => {
   async function handleMarketId(record: any) {
     setCurrentVerifiedCreator(record.verifiedCreator);
     setCurrentMarketId(record.id);
+    refetchUserLevelData();
   }
 
   // /**
@@ -167,6 +168,44 @@ const Markets: NextPage = () => {
     sdkConfig.honeyId,
     currentMarketId
   );
+
+  const [totalMarketDebt, setTotalMarketDebt] = useState(0);
+  const [totalMarketDeposits, setTotalMarketDeposits] = useState(0);
+  const [totalMarketValue, setTotalMarketValue] = useState(0);
+  const [utilizationRate, setUtilizationRate] = useState(0);
+  const [interestRate, setInterestRate] = useState(0);
+
+  async function fetchMarketDepositsAndDebt() {
+    const totalMarketDebt =
+      honeyUser.reserves[0].getReserveState().outstandingDebt;
+    const totalMarketDeposits =
+      honeyUser.reserves[0].getReserveState().totalDeposits;
+
+    const { utilization, interestRate } =
+      honeyUser.reserves[0].getUtilizationAndInterestRate();
+
+    setTotalMarketDebt(totalMarketDebt);
+    setTotalMarketDeposits(totalMarketDeposits);
+    setTotalMarketValue(totalMarketDeposits + totalMarketDebt);
+    setUtilizationRate(utilization);
+    setInterestRate(interestRate);
+  }
+
+  useEffect(() => {
+    if (!honeyUser) return;
+    fetchMarketDepositsAndDebt();
+  }, [honeyUser]);
+
+  // fetches the floor price of the active market and sets it
+  async function fetchMarketNFTFloor() {
+    const nftPrice = await honeyMarket.fetchNFTFloorPriceInReserve(0);
+    nftPrice !== 0 ? setNftPrice(RoundHalfDown(nftPrice)) : setNftPrice(0);
+  }
+  // resets the floor price based on honeyMarket change
+  useEffect(() => {
+    if (!honeyMarket) return;
+    fetchMarketNFTFloor();
+  }, [honeyMarket]);
 
   const { program } = useAnchor();
   const [mintArray, setMintArray] = useState<Array<PublicKey>>([]);
@@ -189,7 +228,6 @@ const Markets: NextPage = () => {
         new PublicKey(HONEY_PROGRAM_ID)
       )
         .then(res => {
-          console.log('@@-- res', res);
           setMintArray(res.collateralNftMint);
         })
         .catch(err => console.log(`Error fetching mint array ${err}`));
@@ -214,11 +252,6 @@ const Markets: NextPage = () => {
     userData,
     errorFetchingUserLevelData
   } = useFetchUserLevelData(honeyUser);
-
-  console.log('@@-- alfa loading user level data', loadingUserData);
-  console.log('@@-- alfa user data', userData);
-  console.log('@@-- alfa user', honeyUser);
-  // console.log('@@-- alfa error fetching', errorFetchingUserLevelData);
 
   // market specific constants - calculations / ratios / debt / allowance etc.
   const [nftPrice, setNftPrice] = useState(0);
@@ -257,18 +290,7 @@ const Markets: NextPage = () => {
   const [isCreateMarketAreaOnHover, setIsCreateMarketAreaOnHover] =
     useState<boolean>(false);
 
-  // const [marketData, setMarketData] = useState<MarketBundle[]>([]);
-  const [dataRoot, setDataRoot] = useState<String>();
-
   useEffect(() => {
-    // setUserAllowance(collection.allowance);
-    // @ts-ignore
-    // data[0].connection = sdkConfig.saberHqConnection;
-
-    // @ts-ignore
-    // setUserDebt(collection.userDebt);
-    // setLoanToValue(Number(collection.ltv));
-
     setUserDebt(userData.userDebt);
     setUserAllowance(userData.userAllowance);
     setLoanToValue(userData.loanToValue);
@@ -281,10 +303,6 @@ const Markets: NextPage = () => {
       const response = await fetch(FETCH_USER_MARKET_DATA);
       const result: MarketBundle[] = await response.json();
 
-      setDataRoot(ROOT_SSR);
-      // setMarketData(result as unknown as MarketBundle[]);
-      console.log({ result }, '@result', 'server side');
-
       const marketDataResult = marketCollections.map(collection => {
         if (result.length) {
           collection.marketData = result.filter(
@@ -292,8 +310,6 @@ const Markets: NextPage = () => {
               // @ts-ignore
               marketObject.marketId === collection.id
           );
-
-          console.log({ collection }, '@data ssr');
 
           // @ts-ignore
           collection.rate =
@@ -351,6 +367,7 @@ const Markets: NextPage = () => {
   const marketDataCache: MutableRefObject<{
     [id: string]: Array<MarketBundle>;
   }> = useRef({});
+
   const fetchMarketDataObj = useCallback(
     async (marketId, connection, wallet, honeyId) => {
       //Check cache if object exists
@@ -384,57 +401,22 @@ const Markets: NextPage = () => {
       if (!collection) return;
 
       if (!silentRefresh) {
-        // setIsFetchingClientData(true);
+        setIsFetchingClientData(true);
       }
 
       try {
-        const data = await fetchMarketDataObj(
-          currentMarketId,
-          sdkConfig.saberHqConnection,
-          sdkConfig.sdkWallet,
-          sdkConfig.honeyId
-        );
-        collection.marketData = data;
+        collection.allowance = userAllowance;
+        collection.userDebt = userDebt;
+        collection.ltv = loanToValue;
+        collection.available = totalMarketDeposits;
+        collection.value = totalMarketValue;
+        collection.connection = sdkConfig.saberHqConnection;
+        collection.nftPrice = nftPrice;
+        collection.rate = interestRate * 100;
+        collection.user = honeyUser;
+        collection.utilizationRate = utilizationRate;
 
-        const honeyUser = data[0].user;
-        const honeyMarket = data[0].market;
-        const honeyClient = data[0].client;
-        const parsedReserves = data[0].reserves[0].data;
-        const mData = data[0].reserves[0];
-
-        console.log({ data }, '@current');
-
-        await populateMarketData(
-          'BORROW',
-          ROOT_CLIENT,
-          collection,
-          sdkConfig.saberHqConnection,
-          sdkConfig.sdkWallet,
-          currentMarketId,
-          false,
-          data[0].positions,
-          true,
-          honeyClient,
-          honeyMarket,
-          honeyUser,
-          parsedReserves,
-          mData
-        );
-
-        // setObligationCount(collection.openPositions.length);
         setActiveInterestRate(collection.rate);
-        // @ts-ignore
-        collection.nftPrice
-          ? setNftPrice(RoundHalfDown(collection.nftPrice))
-          : 0;
-        // setUserAllowance(collection.allowance);
-        // @ts-ignore
-        data[0].connection = sdkConfig.saberHqConnection;
-
-        // @ts-ignore
-        // setUserDebt(collection.userDebt);
-        // setLoanToValue(Number(collection.ltv));
-        setFetchedDataObject(data[0]);
 
         const newMarketData = marketCollections.map(marketCollection =>
           marketCollection.id === collection.id ? collection : marketCollection
@@ -451,11 +433,11 @@ const Markets: NextPage = () => {
       }
     },
     [
+      loanToValue,
+      interestRate,
       currentMarketId,
-      sdkConfig.honeyId,
       sdkConfig.saberHqConnection,
-      sdkConfig.sdkWallet,
-      fetchMarketDataObj
+      sdkConfig.sdkWallet
     ]
   );
 
