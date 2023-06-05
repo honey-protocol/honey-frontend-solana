@@ -82,7 +82,7 @@ const LendingSidebar = (props: LendingSidebarProps) => {
             description="First, choose a NFT collection"
             buttons={[
               {
-                title: 'CONNECT WALLET',
+                title: 'CONNECT',
                 onClick: connect,
                 variant: 'primary'
               },

@@ -27,7 +27,7 @@ import {
 import QuestionIcon from 'icons/QuestionIcon';
 import { HoneyButtonTabs } from 'components/HoneyButtonTabs/HoneyButtonTabs';
 import NFTSelectListItem from 'components/NFTSelectListItem/NFTSelectListItem';
-import { Empty, Skeleton } from 'antd';
+import { Empty, Skeleton, Space } from 'antd';
 import { useMarket } from '@honey-finance/sdk';
 import { PublicKey } from '@solana/web3.js';
 import HoneyWarning from 'components/HoneyWarning/HoneyWarning';
@@ -102,7 +102,11 @@ const BorrowForm = (props: BorrowProps) => {
     market => market.constants.marketId === currentMarketId
   );
   // Put your validators here
+  const isMarketBalanceSufficient = selectedMarket?.available
+    ? selectedMarket.available > valueUnderlying
+    : true;
   const isBorrowButtonDisabled = () => {
+    if (!isMarketBalanceSufficient) return true;
     return userAllowance == 0 ? true : false;
   };
   // change of input - render calculated values
@@ -760,7 +764,6 @@ const BorrowForm = (props: BorrowProps) => {
         title: 'Borrow',
         onClick: handleBorrow,
         disabled: isBorrowButtonDisabled(),
-        solAmount: valueUnderlying || 0,
         usdcValue: valueUSD || 0,
         tokenAmount: valueUnderlying || 0,
         tokenName: selectedMarket?.constants.marketLoanCurrency
@@ -790,21 +793,26 @@ const BorrowForm = (props: BorrowProps) => {
     return toast?.state ? (
       ToastComponent
     ) : (
-      <div className={styles.buttons}>
-        <div className={styles.smallCol}>
-          <HoneyButton
-            variant="secondary"
-            onClick={getBtnDetails().onCancel || handleCancel}
-          >
-            {getBtnDetails().cancelTxt || 'Cancel'}
-          </HoneyButton>
+      <Space direction="vertical" style={{ width: '100%' }}>
+        {!isMarketBalanceSufficient && !toast.state && (
+          <HoneyWarning danger message="Insufficient market balance" />
+        )}
+        <div className={styles.buttons}>
+          <div className={styles.smallCol}>
+            <HoneyButton
+              variant="secondary"
+              onClick={getBtnDetails().onCancel || handleCancel}
+            >
+              {getBtnDetails().cancelTxt || 'Cancel'}
+            </HoneyButton>
+          </div>
+          <div className={styles.bigCol}>
+            <HoneyButton variant="primary" block {...getBtnDetails()}>
+              {getBtnDetails().title}
+            </HoneyButton>
+          </div>
         </div>
-        <div className={styles.bigCol}>
-          <HoneyButton variant="primary" block {...getBtnDetails()}>
-            {getBtnDetails().title}
-          </HoneyButton>
-        </div>
-      </div>
+      </Space>
     );
   };
 

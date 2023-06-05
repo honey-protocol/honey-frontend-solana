@@ -76,6 +76,7 @@ import { fetchTVL } from 'helpers/loanHelpers/userCollection';
 import HoneyTooltip from 'components/HoneyTooltip/HoneyTooltip';
 import { FETCH_USER_MARKET_DATA } from 'constants/apiEndpoints';
 import { useSolBalance, useTokenBalance } from 'hooks/useSolBalance';
+import Image from 'next/image';
 
 const { formatPercent: fp, formatSol: fs, formatRoundDown: fd } = formatNumber;
 
@@ -978,7 +979,15 @@ const Liquidate: NextPage = () => {
               <Skeleton.Button size="small" active />
             </div>
           ) : (
-            <div className={style.availableCell}>{fs(market.totalDebt)}</div>
+            <div className={style.currencyValueCell}>
+              <Image
+                src={market.constants.marketLoanCurrencyImage}
+                alt={market.loanCurrency}
+                width={20}
+                height={20}
+              />
+              <div className={style.availableCell}>{fs(market.totalDebt)}</div>
+            </div>
           );
         }
       },
@@ -1010,7 +1019,15 @@ const Liquidate: NextPage = () => {
               <Skeleton.Button size="small" active />
             </div>
           ) : (
-            <div className={style.valueCell}>{fs(market.tvl)}</div>
+            <div className={style.currencyValueCell}>
+              <Image
+                src={market.constants.marketLoanCurrencyImage}
+                alt={market.loanCurrency}
+                width={20}
+                height={20}
+              />
+              <div className={style.valueCell}>{fs(market.tvl)}</div>
+            </div>
           )
       },
       {
@@ -1087,8 +1104,28 @@ const Liquidate: NextPage = () => {
               <HoneyTableRow>
                 {/* <div className={style.rateCell}>{fp(row.risk * 100)}</div> */}
                 <div className={style.rateCell}>{fp(row.risk)}</div>
-                <div className={style.rateCell}>{fs(row.totalDebt)}</div>
-                <div className={style.availableCell}>{fs(row.value)}</div>
+                <div className={style.rateCell}>
+                  <div className={style.currencyValueCell}>
+                    <Image
+                      src={marketsTokens[row.loanCurrency].image}
+                      alt={row.loanCurrency}
+                      width={16}
+                      height={16}
+                    />
+                    {fs(row.totalDebt)}
+                  </div>
+                </div>
+                <div className={style.availableCell}>
+                  <div className={style.currencyValueCell}>
+                    <Image
+                      src={marketsTokens[row.loanCurrency].image}
+                      alt={row.loanCurrency}
+                      width={16}
+                      height={16}
+                    />
+                    {fs(row.value)}
+                  </div>
+                </div>
               </HoneyTableRow>
             </>
           );

@@ -103,6 +103,6 @@ export const textUnderline = style({
 export const center = style({
   display: 'flex',
   justifyContent: 'center',
-  alignItems: 'center',
-  width: '100%'
+  alignItems: 'center'
+  // width: '100%'
 });

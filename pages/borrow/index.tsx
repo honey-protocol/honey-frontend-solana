@@ -618,13 +618,21 @@ const Markets: NextPage = () => {
               dataIndex: 'value',
               key: 'value',
               hidden: windowWidth < TABLET_BP,
-              render: (value: number) =>
+              render: (value: number, row: MarketTableRow) =>
                 isFetchingData ? (
                   <div className={center}>
                     <Skeleton.Button size="small" active />
                   </div>
                 ) : (
-                  <div className={style.valueCell}>{fs(value)}</div>
+                  <div className={style.currencyValueCell}>
+                    <Image
+                      src={row.constants.marketLoanCurrencyImage}
+                      alt={row.loanCurrency}
+                      width={20}
+                      height={20}
+                    />
+                    <div className={style.valueCell}>{fs(value)}</div>
+                  </div>
                 )
             }
           ],
@@ -661,7 +669,15 @@ const Markets: NextPage = () => {
                     <Skeleton.Button size="small" active />
                   </div>
                 ) : (
-                  <div className={style.availableCell}>{fs(available)}</div>
+                  <div className={style.currencyValueCell}>
+                    <Image
+                      src={data.constants.marketLoanCurrencyImage}
+                      alt={data.loanCurrency}
+                      width={20}
+                      height={20}
+                    />
+                    <div className={style.availableCell}>{fs(available)}</div>
+                  </div>
                 )
             }
           ],
@@ -761,7 +777,15 @@ const Markets: NextPage = () => {
                       <Skeleton.Button size="small" active />
                     </div>
                   ) : (
-                    fs(row.value)
+                    <div className={style.currencyValueCell}>
+                      <Image
+                        src={row.constants.marketLoanCurrencyImage}
+                        alt={row.loanCurrency}
+                        width={16}
+                        height={16}
+                      />
+                      {fs(row.value)}
+                    </div>
                   )}
                 </div>
                 <div className={style.availableCell}>
@@ -770,7 +794,15 @@ const Markets: NextPage = () => {
                       <Skeleton.Button size="small" active />
                     </div>
                   ) : (
-                    fs(row.available)
+                    <div className={style.currencyValueCell}>
+                      <Image
+                        src={row.constants.marketLoanCurrencyImage}
+                        alt={row.loanCurrency}
+                        width={16}
+                        height={16}
+                      />
+                      {fs(row.available)}
+                    </div>
                   )}
                 </div>
               </HoneyTableRow>
@@ -1247,7 +1279,18 @@ const Markets: NextPage = () => {
         <div>
           <Typography.Title className={pageTitle}>Borrow</Typography.Title>
           <Typography.Text className={pageDescription}>
-            Get instant liquidity using your NFTs as collateral{' '}
+            Get instant liquidity using your NFTs as collateral.{' '}
+            <span>
+              <a
+                target="_blank"
+                href="https://docs.honey.finance/lending-protocol/borrowing"
+                rel="noreferrer"
+              >
+                <HoneyButton style={{ display: 'inline' }} variant="text">
+                  How it works?
+                </HoneyButton>
+              </a>
+            </span>
           </Typography.Text>
         </div>
         {/* TODO: mock modal run*/}

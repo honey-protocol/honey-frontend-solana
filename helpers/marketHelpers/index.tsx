@@ -35,11 +35,13 @@ export const marketIDs = async (marketCollections: MarketTableRow[]) => {
 export const marketsTokens = {
   SOL: {
     decimals: LAMPORTS_PER_SOL,
-    mint: 'So11111111111111111111111111111111111111112'
+    mint: 'So11111111111111111111111111111111111111112',
+    image: '/images/tokens/sol.svg'
   },
   USDC: {
     decimals: 10 ** 6,
-    mint: 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v'
+    mint: 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v',
+    image: '/images/tokens/sol.svg'
   }
 };
 

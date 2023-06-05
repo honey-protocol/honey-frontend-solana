@@ -36,7 +36,7 @@ const WalletMenu = (props: { menu: JSX.Element }) => {
         }
         onClick={connect}
       >
-        CONNECT <span className={styles.mobileHidden}>WALLET</span>
+        CONNECT
       </HoneyButton>
     </Space>
   ) : (
