@@ -858,11 +858,11 @@ const Lend: NextPage = () => {
             <span>
               <a
                 target="_blank"
-                href="https://buy.moonpay.com"
+                href="https://docs.honey.finance/lending-protocol/lending"
                 rel="noreferrer"
               >
                 <HoneyButton style={{ display: 'inline' }} variant="text">
-                  Need crypto?
+                  How it works?
                 </HoneyButton>
               </a>
             </span>

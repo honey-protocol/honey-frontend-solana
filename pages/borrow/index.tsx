@@ -1247,7 +1247,18 @@ const Markets: NextPage = () => {
         <div>
           <Typography.Title className={pageTitle}>Borrow</Typography.Title>
           <Typography.Text className={pageDescription}>
-            Get instant liquidity using your NFTs as collateral{' '}
+            Get instant liquidity using your NFTs as collateral.{' '}
+            <span>
+              <a
+                target="_blank"
+                href="https://docs.honey.finance/lending-protocol/borrowing"
+                rel="noreferrer"
+              >
+                <HoneyButton style={{ display: 'inline' }} variant="text">
+                  How it works?
+                </HoneyButton>
+              </a>
+            </span>
           </Typography.Text>
         </div>
         {/* TODO: mock modal run*/}
