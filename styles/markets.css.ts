@@ -76,6 +76,14 @@ export const rateCellMobile = style([
   }
 ]);
 
+export const currencyValueCell = style({
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  gap: 5,
+  margin: '0 5px'
+});
+
 export const borrowRate = style({ color: vars.colors.red });
 export const lendRate = style({ color: vars.colors.green });
 

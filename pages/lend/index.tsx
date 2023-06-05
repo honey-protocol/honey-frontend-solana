@@ -62,6 +62,7 @@ import HoneyToggle from 'components/HoneyToggle/HoneyToggle';
 import HoneyTooltip from 'components/HoneyTooltip/HoneyTooltip';
 import { FETCH_USER_MARKET_DATA } from 'constants/apiEndpoints';
 import { useSolBalance, useTokenBalance } from 'hooks/useSolBalance';
+import Image from 'next/image';
 // TODO: fetch based on config
 const network = 'mainnet-beta';
 
@@ -705,7 +706,15 @@ const Lend: NextPage = () => {
               <Skeleton.Button size="small" active />
             </div>
           ) : (
-            <div className={style.valueCell}>{fs(value)}</div>
+            <div className={style.currencyValueCell}>
+              <Image
+                src={market.constants.marketLoanCurrencyImage}
+                alt={market.loanCurrency}
+                width={20}
+                height={20}
+              />
+              <div className={style.valueCell}>{fs(value)}</div>
+            </div>
           )
       },
       {
@@ -735,7 +744,15 @@ const Lend: NextPage = () => {
               <Skeleton.Button size="small" active />
             </div>
           ) : (
-            <div className={style.availableCell}>{fs(available)}</div>
+            <div className={style.currencyValueCell}>
+              <Image
+                src={market.constants.marketLoanCurrencyImage}
+                alt={market.loanCurrency}
+                width={20}
+                height={20}
+              />
+              <div className={style.availableCell}>{fs(available)}</div>
+            </div>
           )
       },
       {
@@ -811,8 +828,28 @@ const Lend: NextPage = () => {
                 <div className={c(style.rateCell, style.lendRate)}>
                   {fp(row.rate / (showWeeklyRates ? 52 : 1))}
                 </div>
-                <div className={style.valueCell}>{fs(row.value)}</div>
-                <div className={style.availableCell}>{fs(row.available)}</div>
+                <div className={style.valueCell}>
+                  <div className={style.currencyValueCell}>
+                    <Image
+                      src={row.constants?.marketLoanCurrencyImage ?? ''}
+                      alt={row.loanCurrency}
+                      width={16}
+                      height={16}
+                    />
+                    {fs(row.value)}
+                  </div>
+                </div>
+                <div className={style.availableCell}>
+                  <div className={style.currencyValueCell}>
+                    <Image
+                      src={row.constants?.marketLoanCurrencyImage ?? ''}
+                      alt={row.loanCurrency}
+                      width={16}
+                      height={16}
+                    />
+                    {fs(row.available)}
+                  </div>
+                </div>
               </HoneyTableRow>
             </>
           );

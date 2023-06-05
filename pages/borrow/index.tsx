@@ -618,13 +618,21 @@ const Markets: NextPage = () => {
               dataIndex: 'value',
               key: 'value',
               hidden: windowWidth < TABLET_BP,
-              render: (value: number) =>
+              render: (value: number, row: MarketTableRow) =>
                 isFetchingData ? (
                   <div className={center}>
                     <Skeleton.Button size="small" active />
                   </div>
                 ) : (
-                  <div className={style.valueCell}>{fs(value)}</div>
+                  <div className={style.currencyValueCell}>
+                    <Image
+                      src={row.constants.marketLoanCurrencyImage}
+                      alt={row.loanCurrency}
+                      width={20}
+                      height={20}
+                    />
+                    <div className={style.valueCell}>{fs(value)}</div>
+                  </div>
                 )
             }
           ],
@@ -661,7 +669,15 @@ const Markets: NextPage = () => {
                     <Skeleton.Button size="small" active />
                   </div>
                 ) : (
-                  <div className={style.availableCell}>{fs(available)}</div>
+                  <div className={style.currencyValueCell}>
+                    <Image
+                      src={data.constants.marketLoanCurrencyImage}
+                      alt={data.loanCurrency}
+                      width={20}
+                      height={20}
+                    />
+                    <div className={style.availableCell}>{fs(available)}</div>
+                  </div>
                 )
             }
           ],
@@ -761,7 +777,15 @@ const Markets: NextPage = () => {
                       <Skeleton.Button size="small" active />
                     </div>
                   ) : (
-                    fs(row.value)
+                    <div className={style.currencyValueCell}>
+                      <Image
+                        src={row.constants.marketLoanCurrencyImage}
+                        alt={row.loanCurrency}
+                        width={16}
+                        height={16}
+                      />
+                      {fs(row.value)}
+                    </div>
                   )}
                 </div>
                 <div className={style.availableCell}>
@@ -770,7 +794,15 @@ const Markets: NextPage = () => {
                       <Skeleton.Button size="small" active />
                     </div>
                   ) : (
-                    fs(row.available)
+                    <div className={style.currencyValueCell}>
+                      <Image
+                        src={row.constants.marketLoanCurrencyImage}
+                        alt={row.loanCurrency}
+                        width={16}
+                        height={16}
+                      />
+                      {fs(row.available)}
+                    </div>
                   )}
                 </div>
               </HoneyTableRow>
