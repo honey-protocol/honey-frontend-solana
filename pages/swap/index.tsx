@@ -529,7 +529,7 @@ const Swap: NextPage = () => {
                 <div className={styles.buttons}>
                   {!wallet || !wallet.connected ? (
                     <HoneyButton variant="primary" block onClick={connect}>
-                      Connect wallet
+                      Connect
                     </HoneyButton>
                   ) : (
                     <HoneyTooltip

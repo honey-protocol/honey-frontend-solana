@@ -55,7 +55,7 @@ const LiquidateSidebar = (props: LendSidebarProps) => {
             description="First, choose a NFT collection"
             buttons={[
               {
-                title: 'CONNECT WALLET',
+                title: 'CONNECT',
                 onClick: connect
               },
               {

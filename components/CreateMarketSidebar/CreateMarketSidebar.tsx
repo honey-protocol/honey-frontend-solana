@@ -71,7 +71,7 @@ const CreateMarketSidebar: FC<CreateMarketSidebarProps> = (
               description="First, connect a wallet"
               buttons={[
                 {
-                  title: 'connect wallet',
+                  title: 'connect',
                   onClick: connect
                 }
               ]}
