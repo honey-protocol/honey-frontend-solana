@@ -63,6 +63,7 @@ import HoneyTooltip from 'components/HoneyTooltip/HoneyTooltip';
 import { FETCH_USER_MARKET_DATA } from 'constants/apiEndpoints';
 import { useSolBalance, useTokenBalance } from 'hooks/useSolBalance';
 import Image from 'next/image';
+import { parse } from 'path';
 // TODO: fetch based on config
 const network = 'mainnet-beta';
 
@@ -151,6 +152,7 @@ const Lend: NextPage = () => {
    * @returns requested format
    */
   const { format: f, formatPercent: fp, formatSol: fs } = formatNumber;
+  const [parsedReserves, setParsedReserves] = useState<TReserve>();
 
   // ************* HOOKS *************
   /**
@@ -158,7 +160,7 @@ const Lend: NextPage = () => {
    * @params none
    * @returns market | market reserve information | parsed reserves |
    */
-  const { marketReserveInfo, parsedReserves, fetchMarket } = useHoney();
+  // const { marketReserveInfo, parsedReserves, fetchMarket } = useHoney();
 
   /**
    * @description calls upon the honey sdk
@@ -171,6 +173,13 @@ const Lend: NextPage = () => {
     sdkConfig.honeyId,
     currentMarketId
   );
+
+  console.log('@@-- parsed reserves', parsedReserves);
+
+  useEffect(() => {
+    if (honeyReserves) setParsedReserves(honeyReserves[0].data);
+  }, honeyReserves);
+
   // ************* END OF HOOKS *************
   const [dataRoot, setDataRoot] = useState<String>();
 
@@ -226,7 +235,7 @@ const Lend: NextPage = () => {
    */
   useEffect(() => {
     if (parsedReserves) {
-      fetchReserveValue(parsedReserves[0], sdkConfig.saberHqConnection);
+      fetchReserveValue(parsedReserves, sdkConfig.saberHqConnection);
     }
   }, [parsedReserves]);
   //  ************* END FETCH CURRENT RESERVE PRICE *************
