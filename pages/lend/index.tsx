@@ -63,7 +63,6 @@ import HoneyTooltip from 'components/HoneyTooltip/HoneyTooltip';
 import { FETCH_USER_MARKET_DATA } from 'constants/apiEndpoints';
 import { useSolBalance, useTokenBalance } from 'hooks/useSolBalance';
 import Image from 'next/image';
-import { parse } from 'path';
 // TODO: fetch based on config
 const network = 'mainnet-beta';
 
@@ -274,7 +273,7 @@ const Lend: NextPage = () => {
           confirmationHash
         );
 
-        await fetchMarket();
+        // await fetchMarket();
 
         if (fetchedDataObject) {
           await fetchedDataObject.reserves[0].refresh();
@@ -343,7 +342,7 @@ const Lend: NextPage = () => {
           confirmationHash
         );
 
-        await fetchMarket();
+        // await fetchMarket();
 
         if (fetchedDataObject) {
           await fetchedDataObject.reserves[0].refresh();
