@@ -224,10 +224,10 @@ const Lend: NextPage = () => {
    * @returns updates marketValue
    */
   useEffect(() => {
-    if (parsedReserves) {
-      fetchReserveValue(parsedReserves[0], sdkConfig.saberHqConnection);
+    if (honeyReserves && honeyReserves[0]?.data) {
+      fetchReserveValue(honeyReserves[0].data, sdkConfig.saberHqConnection);
     }
-  }, [parsedReserves]);
+  }, [honeyReserves]);
   //  ************* END FETCH CURRENT RESERVE PRICE *************
 
   /**
