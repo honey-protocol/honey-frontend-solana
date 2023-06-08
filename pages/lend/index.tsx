@@ -72,6 +72,14 @@ const Lend: NextPage = () => {
   // init wallet and sdkConfiguration file
   const sdkConfig = ConfigureSDK();
   let walletPK = sdkConfig.sdkWallet?.publicKey;
+  let stringyfiedWalletPK = sdkConfig.sdkWallet?.publicKey.toString();
+
+  // whenever a users wallet changes it stores the PK in LS
+  useEffect(() => {
+    if (stringyfiedWalletPK !== undefined) {
+      localStorage.setItem('walletPK', stringyfiedWalletPK);
+    }
+  }, [stringyfiedWalletPK]);
 
   // market specific constants - calculations / ratios / debt / allowance etc.
   const [userTotalDeposits, setUserTotalDeposits] = useState<number>(0);
@@ -85,7 +93,6 @@ const Lend: NextPage = () => {
   const [isMobileSidebarVisible, setShowMobileSidebar] = useState(false);
   const [activeInterestRate, setActiveInterestRate] = useState(0);
   const [tableData, setTableData] = useState<LendTableRow[]>(marketCollections);
-  const [fetchedDataObject, setFetchedDataObject] = useState<MarketBundle>();
   const [tableDataFiltered, setTableDataFiltered] =
     useState<LendTableRow[]>(marketCollections);
   const [isFetchingData, setIsFetchingData] = useState(true);
@@ -175,8 +182,6 @@ const Lend: NextPage = () => {
     sdkConfig.honeyId,
     currentMarketId
   );
-
-  console.log('@@-- parsed reserves', parsedReserves);
 
   useEffect(() => {
     if (honeyReserves) setParsedReserves(honeyReserves[0].data);
@@ -295,22 +300,13 @@ const Lend: NextPage = () => {
       }
 
       try {
-        const data = await fetchMarketDataObj(
-          currentMarketId,
-          sdkConfig.saberHqConnection,
-          sdkConfig.sdkWallet,
-          sdkConfig.honeyId
-        );
-        collection.marketData = data;
-
-        const honeyUser = data[0].user;
-        const mData = data[0].reserves[0];
-
-        const totalMarketDeposits = mData.getReserveState().totalDeposits;
-        const totalMarketDebt = mData.getReserveState().outstandingDebt;
+        const totalMarketDeposits =
+          honeyUser.reserves[0].getReserveState().totalDeposits;
+        const totalMarketDebt =
+          honeyUser.reserves[0].getReserveState().outstandingDebt;
         const totalMarketValue = totalMarketDeposits + totalMarketDebt;
         const { utilization, interestRate } =
-          await mData.getUtilizationAndInterestRate();
+          honeyUser.reserves[0].getUtilizationAndInterestRate();
 
         const totalUserDeposits = await honeyUser.fetchUserDeposits(0);
         setUserTotalDeposits(totalUserDeposits);
@@ -326,7 +322,7 @@ const Lend: NextPage = () => {
         setActiveInterestRate(collection.rate);
         setActiveMarketSupplied(collection.value);
         setActiveMarketAvailable(collection.available);
-        setFetchedDataObject(collection.marketData[0]);
+        // setFetchedDataObject(collection.marketData[0]);
 
         const newMarketData = marketCollections.map(marketCollection =>
           marketCollection.id === collection.id ? collection : marketCollection
@@ -343,13 +339,7 @@ const Lend: NextPage = () => {
         setIsFetchingClientData(false);
       }
     },
-    [
-      currentMarketId,
-      sdkConfig.honeyId,
-      sdkConfig.saberHqConnection,
-      sdkConfig.sdkWallet,
-      fetchMarketDataObj
-    ]
+    [currentMarketId, honeyUser, honeyReservesChange]
   );
 
   useEffect(() => {
@@ -415,32 +405,32 @@ const Lend: NextPage = () => {
 
         await fetchCurrentMarketData(true);
 
-        if (fetchedDataObject) {
-          await fetchedDataObject.reserves[0].refresh();
-          await fetchedDataObject.user.refresh();
+        // if (fetchedDataObject) {
+        await honeyUser.reserves[0].refresh();
+        await honeyUser.refresh();
 
-          honeyReservesChange === 0
-            ? setHoneyReservesChange(1)
-            : setHoneyReservesChange(0);
+        honeyReservesChange === 0
+          ? setHoneyReservesChange(1)
+          : setHoneyReservesChange(0);
 
-          if (walletPK) await refetchWalletBalance();
+        if (walletPK) await refetchWalletBalance();
 
-          toast.success(
-            'Deposit success',
-            `https://solscan.io/tx/${tx[1][0]}?cluster=${network}`
-          );
-        } else {
-          honeyReservesChange === 0
-            ? setHoneyReservesChange(1)
-            : setHoneyReservesChange(0);
+        toast.success(
+          'Deposit success',
+          `https://solscan.io/tx/${tx[1][0]}?cluster=${network}`
+        );
+        // } else {
+        //   honeyReservesChange === 0
+        //     ? setHoneyReservesChange(1)
+        //     : setHoneyReservesChange(0);
 
-          if (walletPK) await refetchWalletBalance();
+        //   if (walletPK) await refetchWalletBalance();
 
-          toast.success(
-            'Deposit success',
-            `https://solscan.io/tx/${tx[1][0]}?cluster=${network}`
-          );
-        }
+        //   toast.success(
+        //     'Deposit success',
+        //     `https://solscan.io/tx/${tx[1][0]}?cluster=${network}`
+        //   );
+        // }
       } else {
         return toast.error('Deposit failed');
       }
@@ -486,32 +476,22 @@ const Lend: NextPage = () => {
 
         await fetchCurrentMarketData(true);
 
-        if (fetchedDataObject) {
-          await fetchedDataObject.reserves[0].refresh();
-          await fetchedDataObject.user.refresh();
+        // if (fetchedDataObject) {
+        //   await fetchedDataObject.reserves[0].refresh();
+        //   await fetchedDataObject.user.refresh();
+        await honeyUser.reserves[0].refresh();
+        await honeyUser.refresh();
 
-          honeyReservesChange === 0
-            ? setHoneyReservesChange(1)
-            : setHoneyReservesChange(0);
+        honeyReservesChange === 0
+          ? setHoneyReservesChange(1)
+          : setHoneyReservesChange(0);
 
-          if (walletPK) await refetchWalletBalance();
+        if (walletPK) refetchWalletBalance();
 
-          toast.success(
-            'Withdraw success',
-            `https://solscan.io/tx/${tx[1][0]}?cluster=${network}`
-          );
-        } else {
-          honeyReservesChange === 0
-            ? setHoneyReservesChange(1)
-            : setHoneyReservesChange(0);
-
-          if (walletPK) await refetchWalletBalance();
-
-          toast.success(
-            'Withdraw success',
-            `https://solscan.io/tx/${tx[1][0]}?cluster=${network}`
-          );
-        }
+        toast.success(
+          'Withdraw success',
+          `https://solscan.io/tx/${tx[1][0]}?cluster=${network}`
+        );
       } else {
         return toast.error('Withdraw failed ');
       }
