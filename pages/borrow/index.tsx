@@ -148,6 +148,7 @@ const Markets: NextPage = () => {
   async function handleMarketId(record: any) {
     setCurrentVerifiedCreator(record.verifiedCreator);
     setCurrentMarketId(record.id);
+
     refetchUserLevelData();
   }
 
@@ -170,11 +171,11 @@ const Markets: NextPage = () => {
     currentMarketId
   );
 
-  // const [totalMarketDebt, setTotalMarketDebt] = useState(0);
-  // const [totalMarketDeposits, setTotalMarketDeposits] = useState(0);
-  // const [totalMarketValue, setTotalMarketValue] = useState(0);
-  // const [utilizationRate, setUtilizationRate] = useState(0);
-  // const [interestRate, setInterestRate] = useState(0);
+  const [totalMarketDebt, setTotalMarketDebt] = useState(0);
+  const [totalMarketDeposits, setTotalMarketDeposits] = useState(0);
+  const [totalMarketValue, setTotalMarketValue] = useState(0);
+  const [utilizationRate, setUtilizationRate] = useState(0);
+  const [interestRate, setInterestRate] = useState(0);
 
   async function fetchMarketDepositsAndDebt() {
     const totalMarketDebt =
@@ -185,19 +186,19 @@ const Markets: NextPage = () => {
     const { utilization, interestRate } =
       honeyUser.reserves[0].getUtilizationAndInterestRate();
 
-    return {
-      totalMarketDebt,
-      totalMarketDeposits,
-      totalMarketValue: totalMarketDeposits + totalMarketDebt,
-      utilizationRate: utilization,
-      interestRate
-    };
+    // return {
+    //   totalMarketDebt,
+    //   totalMarketDeposits,
+    //   totalMarketValue: totalMarketDeposits + totalMarketDebt,
+    //   utilizationRate: utilization,
+    //   interestRate
+    // };
 
-    // setTotalMarketDebt(totalMarketDebt);
-    // setTotalMarketDeposits(totalMarketDeposits);
-    // setTotalMarketValue(totalMarketDeposits + totalMarketDebt);
-    // setUtilizationRate(utilization);
-    // setInterestRate(interestRate);
+    setTotalMarketDebt(totalMarketDebt);
+    setTotalMarketDeposits(totalMarketDeposits);
+    setTotalMarketValue(totalMarketDeposits + totalMarketDebt);
+    setUtilizationRate(utilization);
+    setInterestRate(interestRate);
   }
 
   useEffect(() => {
@@ -399,45 +400,45 @@ const Markets: NextPage = () => {
   //   []
   // );
 
+  async function fetchHoneyUserValues(honeyUser: HoneyUser) {
+    const data = await honeyUser.fetchAllowanceAndDebt(0);
+    console.log('@@-- data', data);
+    // // total deposits of user in market
+    // // const userTotalDeposits = await honeyUser.fetchUserDeposits(0);
+    // // round debt
+    // const debt: number = data.debt ? roundTwoDecimalsUp(data.debt, 2) : 0;
+    // // set allowance to zero if it's < 1
+    // const allowance: number = (data.allowance =
+    //   data.allowance < 0 ? 0 : data.allowance);
+    // const ltv = data.ltv;
+
+    // // const liquidationPrice = debt / liquidationThreshold;
+    // return {
+    //   allowance,
+    //   debt,
+    //   ltv
+    // };
+    return {
+      allowance: 0,
+      debt: 0,
+      ltv: 0
+    };
+  }
+
   const fetchCurrentMarketData = useCallback(
     async (silentRefresh?: boolean) => {
       if (!currentMarketId) return;
-      if (!honeyUser) return;
-
       const collection = marketCollections.find(
         collection => collection.id === currentMarketId
       );
-
       if (!collection) return;
-
       if (!silentRefresh) {
         setIsFetchingClientData(true);
       }
-
       try {
-        let { allowance, debt, liquidationThreshold, ltv } =
-          await honeyUser.fetchAllowanceAndDebt(0);
-        // total deposits of user in market
-        const userTotalDeposits = await honeyUser.fetchUserDeposits(0);
-        // round debt
-        debt ? roundTwoDecimalsUp(debt, 2) : 0;
-        // set allowance to zero if it's < 1
-        allowance = allowance < 0 ? 0 : allowance;
-
-        const liquidationPrice = debt / liquidationThreshold;
-
-        collection.allowance = allowance;
-        collection.userDebt = debt;
-        collection.ltv = ltv;
-
-        const {
-          totalMarketDebt,
-          totalMarketDeposits,
-          totalMarketValue,
-          utilizationRate,
-          interestRate
-        } = await fetchMarketDepositsAndDebt();
-
+        collection.allowance = userAllowance;
+        collection.userDebt = userDebt;
+        collection.ltv = loanToValue;
         collection.available = totalMarketDeposits;
         collection.value = totalMarketValue;
         collection.connection = sdkConfig.saberHqConnection;
@@ -445,13 +446,10 @@ const Markets: NextPage = () => {
         collection.rate = interestRate * 100;
         collection.user = honeyUser;
         collection.utilizationRate = utilizationRate;
-
         setActiveInterestRate(collection.rate);
-
         const newMarketData = marketCollections.map(marketCollection =>
           marketCollection.id === collection.id ? collection : marketCollection
         );
-
         // Update market table data
         setTableData(newMarketData);
         setTableDataFiltered(newMarketData);
@@ -463,13 +461,12 @@ const Markets: NextPage = () => {
       }
     },
     [
-      // loanToValue,
-      // interestRate,
-      // currentMarketId,
+      loanToValue,
+      interestRate,
+      currentMarketId,
       collateralNFTPositions,
-      // sdkConfig.saberHqConnection,
-      // sdkConfig.sdkWallet
-      honeyUser
+      sdkConfig.saberHqConnection,
+      sdkConfig.sdkWallet
     ]
   );
 
