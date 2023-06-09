@@ -167,7 +167,7 @@ export const marketCollections: MarketTableRow[] = [
     id: '5rXuse6cWigMMNw9fRZMZXGmD2rV7RLpiettBwGKcXm7',
     key: 'Ubik',
     name: 'Ubik',
-    verifiedCreator: '2eosSeoeh2LYrCXQg3axkLmrbJrXmcz5Lf1oYhfUya5v',
+    verifiedCreator: 'WAku72SeQKPDwh9fJbKEohYSnHyMkcXzDU5aaUwaax2',
     rate: 0,
     loanCurrency: 'SOL',
     available: 0,
@@ -180,7 +180,7 @@ export const marketCollections: MarketTableRow[] = [
     openPositions: [],
     constants: {
       marketId: '5rXuse6cWigMMNw9fRZMZXGmD2rV7RLpiettBwGKcXm7',
-      verifiedCreator: '2eosSeoeh2LYrCXQg3axkLmrbJrXmcz5Lf1oYhfUya5v',
+      verifiedCreator: 'WAku72SeQKPDwh9fJbKEohYSnHyMkcXzDU5aaUwaax2',
       marketName: 'Ubik',
       marketImage:
         'https://img-cdn.magiceden.dev/rs:fill:400:400:0:0/plain/https://dl.airtable.com/.attachmentThumbnails/e1ad2e4ef21f39c2cd30bec595dc5137/34c2c6e3',
