@@ -233,7 +233,8 @@ const BorrowForm = (props: BorrowProps) => {
         selectedNft.tokenId,
         toast,
         selectedNft.name,
-        verifiedCreator[0].address
+        verifiedCreator[0].address,
+        true
       );
     }
     handleSliderChange(0);
@@ -247,20 +248,21 @@ const BorrowForm = (props: BorrowProps) => {
       selectedMultipleNFTs?.length &&
       selectedMultipleNFTs[0].mint.length > 1
     ) {
-      const promises = selectedMultipleNFTs.map(nft => {
-        const verifiedCreator = nft.creators.filter(
+      for (let i = 0; i < selectedMultipleNFTs.length; i++) {
+        const verifiedCreator = selectedMultipleNFTs[i].creators.filter(
           (creator: { verified: any }) => creator.verified
         );
 
-        executeDepositNFT(
-          nft.tokenId,
+        const isLastItem = i === selectedMultipleNFTs.length - 1;
+
+        await executeDepositNFT(
+          selectedMultipleNFTs[i].tokenId,
           toast,
-          nft.name,
-          verifiedCreator[0].address
+          selectedMultipleNFTs[i].name,
+          verifiedCreator[0].address,
+          isLastItem
         );
-        // }
-      });
-      await Promise.all(promises);
+      }
       //Reset selected NFTs
       setSelectedMultipleNFTs([]);
     }
@@ -272,12 +274,10 @@ const BorrowForm = (props: BorrowProps) => {
     }
     if (!selectedMultipleNFTs) return;
 
-    const promises = selectedMultipleNFTs.map(nft => {
-      executeWithdrawNFT(nft.mint, toast);
-    });
-
-    await Promise.all(promises);
-
+    for (let i = 0; i < selectedMultipleNFTs.length; i++) {
+      const isLastItem = i === selectedMultipleNFTs.length - 1;
+      await executeWithdrawNFT(selectedMultipleNFTs[i].mint, toast, isLastItem);
+    }
     //Reset selected NFTs
     setSelectedMultipleNFTs([]);
   };

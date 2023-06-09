@@ -16,8 +16,9 @@ export type BorrowProps = {
     toast: any,
     name: string,
     creator: string,
-  ) => void;
-  executeWithdrawNFT: (mint: string, toast: any) => void;
+    isLastItem: boolean,
+  ) => Promise <void>;
+  executeWithdrawNFT: (mint: string, toast: any, isLastItem: boolean,) => Promise<void>;
   executeBorrow: (val: number, toast: any) => void;
   hideMobileSidebar?: () => void;
   collCount?: number;

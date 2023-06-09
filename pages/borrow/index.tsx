@@ -1032,60 +1032,48 @@ const Markets: NextPage = () => {
     mintID: any,
     toast: ToastProps['toast'],
     name: string,
-    creator: string
+    creator: string,
+    isLastItem: boolean
   ) {
     try {
       if (!mintID) return;
       toast.processing();
-      // TODO: set verified creator of active market along with currentMarketId
-      if (marketCollections) {
-        // @ts-ignore
-        marketCollections.map(async collection => {
-          if (collection.id === currentMarketId) {
-            const tx = await depositNFT(
-              collection.connection,
-              honeyUser,
-              new PublicKey(mintID)
-            );
 
-            if (tx[0] == 'SUCCESS') {
-              const confirmation = tx[1];
-              let counter = confirmation.length - 1;
-              const confirmationHash = confirmation[counter];
+      const tx = await depositNFT(
+        sdkConfig.saberHqConnection,
+        honeyUser,
+        new PublicKey(mintID)
+      );
 
-              await waitForConfirmation(
-                sdkConfig.saberHqConnection,
-                confirmationHash
-              );
-              if (collection.marketData) {
-                // TODO: revision
-                // await collection.marketData[0].reserves[0].refresh();
-                // await collection.marketData[0].user.refresh();
-                // await honeyUser.getObligationData();
+      if (tx[0] == 'SUCCESS') {
+        const confirmation = tx[1];
+        let counter = confirmation.length - 1;
+        const confirmationHash = confirmation[counter];
 
-                // await refreshPositions();
-                refreshMint === 0 ? setRefreshMint(1) : setRefreshMint(0);
+        const latestBlockHash =
+          await sdkConfig.saberHqConnection.getLatestBlockhash();
+        await sdkConfig.saberHqConnection.confirmTransaction(
+          {
+            blockhash: latestBlockHash.blockhash,
+            lastValidBlockHeight: latestBlockHash.lastValidBlockHeight,
+            signature: confirmationHash
+          },
+          'finalized'
+        );
 
-                setTimeout(async () => {
-                  await fetchCurrentMarketData(true);
-                  refetchNfts({});
-                  toast.success(
-                    'Deposit success',
-                    `https://solscan.io/tx/${tx[1][0]}?cluster=${network}`
-                  );
-                }, 2000);
-              }
-            } else {
-              return toast.error('Error depositing NFT');
-            }
-          }
-        });
+        if (isLastItem) {
+          await fetchCurrentMarketData(true);
+          refetchNfts({});
+          refreshMint === 0 ? setRefreshMint(1) : setRefreshMint(0);
+          toast.success(
+            'Deposit success',
+            `https://solscan.io/tx/${tx[1][0]}?cluster=${network}`
+          );
+        }
       }
     } catch (error) {
-      return toast.error(
-        'Error depositing NFT'
-        // 'Transaction link(if available)'
-      );
+      toast.error('Error depositing NFT');
+      return Promise.resolve();
     }
   }
 
@@ -1094,58 +1082,50 @@ const Markets: NextPage = () => {
    * @params mint of the NFT
    * @returns succes | failure
    */
-  async function executeWithdrawNFT(mintID: any, toast: ToastProps['toast']) {
+  async function executeWithdrawNFT(
+    mintID: any,
+    toast: ToastProps['toast'],
+    isLastItem: boolean
+  ) {
     try {
       if (!mintID) return toast.error('Please select NFT');
-
       toast.processing();
-      if (marketCollections) {
-        //@ts-ignore
-        marketCollections.map(async collection => {
-          if (collection.id === currentMarketId) {
-            const tx = await withdrawNFT(
-              sdkConfig.saberHqConnection,
-              honeyUser,
-              new PublicKey(mintID)
-            );
 
-            if (tx[0] == 'SUCCESS') {
-              const confirmation = tx[1];
-              let counter = confirmation.length - 1;
-              const confirmationHash = confirmation[counter];
+      const tx = await withdrawNFT(
+        sdkConfig.saberHqConnection,
+        honeyUser,
+        new PublicKey(mintID)
+      );
 
-              await waitForConfirmation(
-                sdkConfig.saberHqConnection,
-                confirmationHash
-              );
-              // TODO: revision
-              // await honeyUser.getObligationData();
-              // await fetchedDataObject.reserves[0].refresh();
-              // await fetchedDataObject.user.refresh();
+      if (tx[0] == 'SUCCESS') {
+        const confirmation = tx[1];
+        let counter = confirmation.length - 1;
+        const confirmationHash = confirmation[counter];
 
-              // await refreshPositions();
-              refreshMint === 0 ? setRefreshMint(1) : setRefreshMint(0);
-              setTimeout(async () => {
-                await fetchCurrentMarketData(true);
-                refetchNfts({});
-                toast.success(
-                  'Withdraw success',
-                  `https://solscan.io/tx/${tx[1][0]}?cluster=${network}`
-                );
-              }, 2000);
-            } else {
-              toast.error(
-                'Withdraw failed',
-                `https://solscan.io/tx/${tx[1][0]}?cluster=${network}`
-              );
-            }
-          }
-          return true;
-        });
+        const latestBlockHash =
+          await sdkConfig.saberHqConnection.getLatestBlockhash();
+        await sdkConfig.saberHqConnection.confirmTransaction(
+          {
+            blockhash: latestBlockHash.blockhash,
+            lastValidBlockHeight: latestBlockHash.lastValidBlockHeight,
+            signature: confirmationHash
+          },
+          'finalized'
+        );
+
+        if (isLastItem) {
+          await fetchCurrentMarketData(true);
+          refetchNfts({});
+          refreshMint === 0 ? setRefreshMint(1) : setRefreshMint(0);
+          toast.success(
+            'Withdraw success',
+            `https://solscan.io/tx/${tx[1][0]}?cluster=${network}`
+          );
+        }
       }
     } catch (error) {
       toast.error('Error withdraw NFT');
-      return;
+      return Promise.resolve();
     }
   }
 

@@ -1138,10 +1138,10 @@
   dependencies:
     client-only "^0.0.1"
 
-"@honey-finance/sdk@^1.2.5":
-  version "1.2.5"
-  resolved "https://registry.yarnpkg.com/@honey-finance/sdk/-/sdk-1.2.5.tgz#3473dfa10833573d440c8686cc885e0773da4587"
-  integrity sha512-jiuWEvjxe6Bw+UU4aKDukooEla69cQsoW5r04Z4XLSN4Y9y1j/x5vosUARCMiTuw5IN6F/HTya8bG+Dq8Hi8ZA==
+"@honey-finance/sdk@^1.2.6":
+  version "1.2.6"
+  resolved "https://registry.yarnpkg.com/@honey-finance/sdk/-/sdk-1.2.6.tgz#52fcdc302940b302be3740aea19c42b5acd33fb4"
+  integrity sha512-HjV0Lgchs7q5XnRAMzxpk7Hj2DWZW9vNTyOW3sVJcg1F+0RZ0My8DoM1cniBgKVbOT7ki/SDi/NOablQzp+igQ==
   dependencies:
     "@metaplex-foundation/js" "^0.18.0"
     "@metaplex-foundation/mpl-token-auth-rules" "^1.0.0"
