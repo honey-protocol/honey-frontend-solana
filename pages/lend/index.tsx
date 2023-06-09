@@ -153,6 +153,7 @@ const Lend: NextPage = () => {
     const marketData = renderMarket(record.id);
     setCurrentMarketId(marketData[0].id);
     setCurrentMarketName(marketData[0].name);
+    setIsFetchingClientData(true);
   }
 
   /**
@@ -339,7 +340,7 @@ const Lend: NextPage = () => {
         setIsFetchingClientData(false);
       }
     },
-    [currentMarketId, honeyUser, honeyReservesChange]
+    [honeyUser, honeyReservesChange]
   );
 
   useEffect(() => {
