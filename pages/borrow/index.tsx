@@ -94,6 +94,7 @@ import ExpandedRowIcon from 'icons/ExpandedRowIcon';
 import HoneyToggle from 'components/HoneyToggle/HoneyToggle';
 import useFetchCollateralNFTPositions from 'hooks/useFetchCollateralNFTPositions';
 import useFetchUserLevelData from 'hooks/useFetchUserLevelData';
+import { roundTwoDecimalsUp } from 'helpers/math/math';
 // import { network } from 'pages/_app';
 
 const cloudinary_uri = process.env.CLOUDINARY_URI;
@@ -169,11 +170,11 @@ const Markets: NextPage = () => {
     currentMarketId
   );
 
-  const [totalMarketDebt, setTotalMarketDebt] = useState(0);
-  const [totalMarketDeposits, setTotalMarketDeposits] = useState(0);
-  const [totalMarketValue, setTotalMarketValue] = useState(0);
-  const [utilizationRate, setUtilizationRate] = useState(0);
-  const [interestRate, setInterestRate] = useState(0);
+  // const [totalMarketDebt, setTotalMarketDebt] = useState(0);
+  // const [totalMarketDeposits, setTotalMarketDeposits] = useState(0);
+  // const [totalMarketValue, setTotalMarketValue] = useState(0);
+  // const [utilizationRate, setUtilizationRate] = useState(0);
+  // const [interestRate, setInterestRate] = useState(0);
 
   async function fetchMarketDepositsAndDebt() {
     const totalMarketDebt =
@@ -184,11 +185,19 @@ const Markets: NextPage = () => {
     const { utilization, interestRate } =
       honeyUser.reserves[0].getUtilizationAndInterestRate();
 
-    setTotalMarketDebt(totalMarketDebt);
-    setTotalMarketDeposits(totalMarketDeposits);
-    setTotalMarketValue(totalMarketDeposits + totalMarketDebt);
-    setUtilizationRate(utilization);
-    setInterestRate(interestRate);
+    return {
+      totalMarketDebt,
+      totalMarketDeposits,
+      totalMarketValue: totalMarketDeposits + totalMarketDebt,
+      utilizationRate: utilization,
+      interestRate
+    };
+
+    // setTotalMarketDebt(totalMarketDebt);
+    // setTotalMarketDeposits(totalMarketDeposits);
+    // setTotalMarketValue(totalMarketDeposits + totalMarketDebt);
+    // setUtilizationRate(utilization);
+    // setInterestRate(interestRate);
   }
 
   useEffect(() => {
@@ -393,6 +402,7 @@ const Markets: NextPage = () => {
   const fetchCurrentMarketData = useCallback(
     async (silentRefresh?: boolean) => {
       if (!currentMarketId) return;
+      if (!honeyUser) return;
 
       const collection = marketCollections.find(
         collection => collection.id === currentMarketId
@@ -405,9 +415,29 @@ const Markets: NextPage = () => {
       }
 
       try {
-        collection.allowance = userAllowance;
-        collection.userDebt = userDebt;
-        collection.ltv = loanToValue;
+        let { allowance, debt, liquidationThreshold, ltv } =
+          await honeyUser.fetchAllowanceAndDebt(0);
+        // total deposits of user in market
+        const userTotalDeposits = await honeyUser.fetchUserDeposits(0);
+        // round debt
+        debt ? roundTwoDecimalsUp(debt, 2) : 0;
+        // set allowance to zero if it's < 1
+        allowance = allowance < 0 ? 0 : allowance;
+
+        const liquidationPrice = debt / liquidationThreshold;
+
+        collection.allowance = allowance;
+        collection.userDebt = debt;
+        collection.ltv = ltv;
+
+        const {
+          totalMarketDebt,
+          totalMarketDeposits,
+          totalMarketValue,
+          utilizationRate,
+          interestRate
+        } = await fetchMarketDepositsAndDebt();
+
         collection.available = totalMarketDeposits;
         collection.value = totalMarketValue;
         collection.connection = sdkConfig.saberHqConnection;
@@ -433,12 +463,13 @@ const Markets: NextPage = () => {
       }
     },
     [
-      loanToValue,
-      interestRate,
-      currentMarketId,
+      // loanToValue,
+      // interestRate,
+      // currentMarketId,
       collateralNFTPositions,
-      sdkConfig.saberHqConnection,
-      sdkConfig.sdkWallet
+      // sdkConfig.saberHqConnection,
+      // sdkConfig.sdkWallet
+      honeyUser
     ]
   );
 
@@ -1050,15 +1081,20 @@ const Markets: NextPage = () => {
         let counter = confirmation.length - 1;
         const confirmationHash = confirmation[counter];
 
-        const latestBlockHash =
-          await sdkConfig.saberHqConnection.getLatestBlockhash();
-        await sdkConfig.saberHqConnection.confirmTransaction(
-          {
-            blockhash: latestBlockHash.blockhash,
-            lastValidBlockHeight: latestBlockHash.lastValidBlockHeight,
-            signature: confirmationHash
-          },
-          'finalized'
+        // const latestBlockHash =
+        //   await sdkConfig.saberHqConnection.getLatestBlockhash();
+        // await sdkConfig.saberHqConnection.confirmTransaction(
+        //   {
+        //     blockhash: latestBlockHash.blockhash,
+        //     lastValidBlockHeight: latestBlockHash.lastValidBlockHeight,
+        //     signature: confirmationHash
+        //   },
+        //   'finalized'
+        // );
+
+        await waitForConfirmation(
+          sdkConfig.saberHqConnection,
+          confirmationHash
         );
 
         if (isLastItem) {
@@ -1102,15 +1138,19 @@ const Markets: NextPage = () => {
         let counter = confirmation.length - 1;
         const confirmationHash = confirmation[counter];
 
-        const latestBlockHash =
-          await sdkConfig.saberHqConnection.getLatestBlockhash();
-        await sdkConfig.saberHqConnection.confirmTransaction(
-          {
-            blockhash: latestBlockHash.blockhash,
-            lastValidBlockHeight: latestBlockHash.lastValidBlockHeight,
-            signature: confirmationHash
-          },
-          'finalized'
+        // const latestBlockHash =
+        //   await sdkConfig.saberHqConnection.getLatestBlockhash();
+        // await sdkConfig.saberHqConnection.confirmTransaction(
+        //   {
+        //     blockhash: latestBlockHash.blockhash,
+        //     lastValidBlockHeight: latestBlockHash.lastValidBlockHeight,
+        //     signature: confirmationHash
+        //   },
+        //   'finalized'
+        // );
+        await waitForConfirmation(
+          sdkConfig.saberHqConnection,
+          confirmationHash
         );
 
         if (isLastItem) {
