@@ -105,12 +105,8 @@ const Lend: NextPage = () => {
   const [initState, setInitState] = useState(false);
   // Sets market ID which is used for fetching market specific data
   // each market currently is a different call and re-renders the page
-  const [currentMarketId, setCurrentMarketId] = useState(
-    marketCollections[0].constants.marketId
-  );
-  const [currentMarketName, setCurrentMarketName] = useState(
-    marketCollections[0].constants.marketName
-  );
+  const [currentMarketId, setCurrentMarketId] = useState('');
+  const [currentMarketName, setCurrentMarketName] = useState('');
   const [showWeeklyRates, setShowWeeklyRates] = useState(false);
 
   const selectedMarket = marketCollections.find(
@@ -664,7 +660,11 @@ const Lend: NextPage = () => {
         dataIndex: 'rate',
         sorter: (a: any = 0, b: any = 0) => a.rate - b.rate,
         render: (rate: number, market: any) => {
-          return (
+          return isFetchingData ? (
+            <div className={center}>
+              <Skeleton.Button size="small" active />
+            </div>
+          ) : (
             <div className={c(style.rateCell, style.lendRate)}>
               {fp(rate / (showWeeklyRates ? 52 : 1))}
             </div>
@@ -860,7 +860,6 @@ const Lend: NextPage = () => {
   const lendSidebar = () => (
     <HoneySider isMobileSidebarVisible={isMobileSidebarVisible}>
       <LendSidebar
-        collectionId="s"
         executeDeposit={executeDeposit}
         executeWithdraw={executeWithdraw}
         userTotalDeposits={userTotalDeposits}

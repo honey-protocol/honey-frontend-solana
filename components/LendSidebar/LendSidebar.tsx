@@ -45,7 +45,7 @@ const LendSidebar = (props: LendSidebarProps) => {
         activeKey={activeTab}
         onTabChange={handleTabChange}
         items={items}
-        active={Boolean(collectionId)}
+        active={true}
       >
         {!wallet ? (
           <EmptyStateDetails
@@ -66,7 +66,7 @@ const LendSidebar = (props: LendSidebarProps) => {
               }
             ]}
           />
-        ) : !collectionId ? (
+        ) : !currentMarketId ? (
           <EmptyStateDetails
             icon={<div className={styles.boltIcon} />}
             title="Manage panel"
