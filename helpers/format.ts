@@ -4,13 +4,13 @@ import BN from 'bn.js';
 export const numberFormatter = new Intl.NumberFormat('en-US', {
   style: 'decimal',
   minimumFractionDigits: 2,
-  maximumFractionDigits: 2
+  maximumFractionDigits: 9
 });
 
 export const numberFormatterMobile = new Intl.NumberFormat('en-US', {
   style: 'decimal',
   minimumFractionDigits: 0,
-  maximumFractionDigits: 2
+  maximumFractionDigits: 9
 });
 
 export const formatNumber = {
