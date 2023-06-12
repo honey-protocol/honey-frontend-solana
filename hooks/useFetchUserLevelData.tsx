@@ -9,7 +9,10 @@ import { roundTwoDecimalsUp } from 'helpers/math/math';
  * @params honey user
  * @returns loading state | {userDebt, userAllowance, liquidationPrice, loanToValue, collateralValue} | errorObject?
  */
-export default function useFetchUserLevelData(honeyUser: HoneyUser) {
+export default function useFetchUserLevelData(
+  honeyUser: HoneyUser,
+  currentMarketId: string
+) {
   const [status, setStatus] = useState<{
     loadingUserData: boolean;
     userData: {
@@ -34,7 +37,13 @@ export default function useFetchUserLevelData(honeyUser: HoneyUser) {
   });
   // fetches the users data of this specific market
   const fetchData = async () => {
+    console.log('@@-- done USERDATA ::: FIRST', honeyUser, currentMarketId);
+    if (honeyUser.market.address.toString() !== currentMarketId) {
+      console.log('@@-- done USERDATA ::::: THECASE');
+      return;
+    }
     try {
+      console.log('@@-- done USERDATA ::::: not ---- THECASE');
       setStatus({
         loadingUserData: true,
         userData: {
