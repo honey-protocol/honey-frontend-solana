@@ -35,6 +35,18 @@ export default function useFetchUserLevelData(honeyUser: HoneyUser) {
   // fetches the users data of this specific market
   const fetchData = async () => {
     try {
+      setStatus({
+        loadingUserData: true,
+        userData: {
+          userDebt: 0,
+          userTotalDeposits: 0,
+          userAllowance: 0,
+          liquidationPrice: 0,
+          liquidationThreshold: 0,
+          loanToValue: 0
+        }
+      });
+
       let { allowance, debt, liquidationThreshold, ltv } =
         await honeyUser.fetchAllowanceAndDebt(0);
       // total deposits of user in market
@@ -56,7 +68,19 @@ export default function useFetchUserLevelData(honeyUser: HoneyUser) {
       };
 
       return setStatus({ loadingUserData: false, userData });
-    } catch (error) {}
+    } catch (error) {
+      return setStatus({
+        loadingUserData: false,
+        userData: {
+          userDebt: 0,
+          userTotalDeposits: 0,
+          userAllowance: 0,
+          liquidationPrice: 0,
+          liquidationThreshold: 0,
+          loanToValue: 0
+        }
+      });
+    }
   };
 
   // refetch the user level data values
