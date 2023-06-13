@@ -247,6 +247,7 @@ const Markets: NextPage = () => {
    * @returns sets the market ID which re-renders page state and fetches market specific data
    */
   async function handleMarketId(record: any) {
+    if (sdkConfig.sdkWallet === null) return;
     setCurrentCollection(record);
     setCurrentMarketId(record.id);
     setCurrentVerifiedCreator(record.verifiedCreator);

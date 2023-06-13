@@ -94,7 +94,7 @@ const HoneyJupiterProvider: FC<{ children: ReactNode }> = ({ children }) => {
       feeAccounts: platformFeeAccounts
     };
   }
-  console.log('Honey.Finance SDK @1.2.5');
+  console.log('Honey.Finance SDK @1.2.6');
   // console.log('platformFeeAndAccounts', platformFeeAndAccounts);
 
   return (
