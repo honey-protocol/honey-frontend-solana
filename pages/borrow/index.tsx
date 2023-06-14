@@ -216,6 +216,7 @@ const Markets: NextPage = () => {
           setMintArray(res.collateralNftMint);
         })
         .catch(err => {
+          setMintArray([]);
           console.log(`Error fetching mint array ${err}`);
         });
     }

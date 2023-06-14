@@ -220,6 +220,10 @@ export default function useFetchCollateralNFTPositions(
       const collateralNFTPositions: CollateralNFTPosition[] = [];
       const collateralNftMint: PublicKey[] = mintArray;
 
+      if (mintArray.length < 1) {
+        return setStatus({ loading: false, collateralNFTPositions });
+      }
+
       if (!collateralNftMint || collateralNftMint.length === 0) {
         setStatus({
           loading: false,
