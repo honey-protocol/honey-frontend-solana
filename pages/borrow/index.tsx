@@ -207,6 +207,7 @@ const Markets: NextPage = () => {
 
   useEffect(() => {
     if (walletPK && currentMarketId) {
+      console.log('@@-- current market ID', currentMarketId);
       HoneyUser.userObligationData(
         program,
         new PublicKey(currentMarketId),
@@ -214,7 +215,7 @@ const Markets: NextPage = () => {
         new PublicKey(HONEY_PROGRAM_ID)
       )
         .then(res => {
-          console.log('@@-- this is res', res.owner.toString());
+          console.log('@@-- this is res', res.market.toString());
           setMintArray(res.collateralNftMint);
         })
         .catch(err => {
