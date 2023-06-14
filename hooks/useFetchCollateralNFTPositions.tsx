@@ -258,6 +258,11 @@ export default function useFetchCollateralNFTPositions(
               nftMetadata
             );
 
+            console.log(
+              '@@-- token meta data update auth',
+              tokenMetadata.updateAuthority.toString()
+            );
+
             // TODO: validate if we can run it or need to catch
             // @ts-ignore
             const verifiedCreator = tokenMetadata.data.creators.filter(

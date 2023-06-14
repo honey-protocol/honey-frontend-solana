@@ -31,8 +31,18 @@ export const useFetchUserLevelData = (
 
   // fetches the users data of this specific market
   const fetchData = async () => {
-    if (!honeyUser) return;
-    if (!currentCollection) return;
+    if (!honeyUser) {
+      return setStatus({
+        loadingUserData: false,
+        userData: undefined
+      });
+    }
+    if (!currentCollection) {
+      return setStatus({
+        loadingUserData: false,
+        userData: undefined
+      });
+    }
     if (
       honeyUser &&
       honeyUser.market.address.toString() !== currentCollection.id

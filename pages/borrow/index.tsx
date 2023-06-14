@@ -203,8 +203,9 @@ const Markets: NextPage = () => {
   const [refreshMint, setRefreshMint] = useState(0);
   const [currentCollection, setCurrentCollection] = useState<MarketTableRow>();
 
+  let walletPK = localStorage.getItem('walletPK');
+
   useEffect(() => {
-    let walletPK = localStorage.getItem('walletPK');
     if (walletPK && currentMarketId) {
       HoneyUser.userObligationData(
         program,
@@ -213,6 +214,7 @@ const Markets: NextPage = () => {
         new PublicKey(HONEY_PROGRAM_ID)
       )
         .then(res => {
+          console.log('@@-- this is res', res.owner.toString());
           setMintArray(res.collateralNftMint);
         })
         .catch(err => {
@@ -220,7 +222,7 @@ const Markets: NextPage = () => {
           console.log(`Error fetching mint array ${err}`);
         });
     }
-  }, [refreshMint, currentMarketId]);
+  }, [refreshMint, currentMarketId, walletPK]);
 
   /**
    * @description fetches collateral nft positions | refresh positions (func) from SDK
