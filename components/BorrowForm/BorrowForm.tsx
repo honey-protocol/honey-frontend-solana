@@ -208,6 +208,7 @@ const BorrowForm = (props: BorrowProps) => {
   const handleDepositNFT = async () => {
     if (selectedNft && selectedNft.mint.length < 1)
       return toastResponse('ERROR', 'Please select an NFT', 'ERROR');
+
     if (selectedNft && selectedNft.mint.length > 1) {
       const verifiedCreator = selectedNft.creators.filter(
         (creator: { verified: any }) => creator.verified
