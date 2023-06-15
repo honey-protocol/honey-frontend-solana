@@ -64,6 +64,7 @@ const BorrowForm = (props: BorrowProps) => {
     isFetchingData,
     collCount
   } = props;
+  console.log('@@-- openPositions', openPositions.length);
   // state declarations
   const [valueUSD, setValueUSD] = useState<number>(0);
   const [valueUnderlying, setValueUnderlying] = useState<number>(0);
@@ -183,23 +184,6 @@ const BorrowForm = (props: BorrowProps) => {
   const [collateralCount, setCollateralCount] = useState(0);
   const [price, setPrice] = useState(0);
 
-  // useEffect(() => {
-  //   const updateCollateralCount = async () => {
-  //     if (honeyUser) {
-  //       const obligationData = await honeyUser.getObligationData();
-  //       if (obligationData instanceof Error) {
-  //         setCollateralCount(0);
-  //         return;
-  //       }
-  //       const collateralNftMint = obligationData.collateralNftMint.filter(
-  //         mint => !mint.equals(PublicKey.default)
-  //       );
-  //       setCollateralCount(collateralNftMint.length);
-  //     }
-  //   };
-  //   updateCollateralCount();
-  // }, [honeyUser]);
-
   useEffect(() => {
     if (!honeyMarket) return;
     const updatePrice = async () => {
@@ -248,38 +232,54 @@ const BorrowForm = (props: BorrowProps) => {
       selectedMultipleNFTs?.length &&
       selectedMultipleNFTs[0].mint.length > 1
     ) {
-      for (let i = 0; i < selectedMultipleNFTs.length; i++) {
-        const verifiedCreator = selectedMultipleNFTs[i].creators.filter(
-          (creator: { verified: any }) => creator.verified
-        );
+      try {
+        for (let i = 0; i < selectedMultipleNFTs.length; i++) {
+          const verifiedCreator = selectedMultipleNFTs[i].creators.filter(
+            (creator: { verified: any }) => creator.verified
+          );
 
-        const isLastItem = i === selectedMultipleNFTs.length - 1;
+          const isLastItem = i === selectedMultipleNFTs.length - 1;
 
-        await executeDepositNFT(
-          selectedMultipleNFTs[i].tokenId,
-          toast,
-          selectedMultipleNFTs[i].name,
-          verifiedCreator[0].address,
-          isLastItem
+          await executeDepositNFT(
+            selectedMultipleNFTs[i].tokenId,
+            toast,
+            selectedMultipleNFTs[i].name,
+            verifiedCreator[0].address,
+            isLastItem
+          );
+        }
+      } catch (error) {
+        console.error(
+          `Error occurred within handle deposit multiple NFTs: ${error}`
         );
+      } finally {
+        //Reset selected NFTs
+        setSelectedMultipleNFTs([]);
       }
-      //Reset selected NFTs
-      setSelectedMultipleNFTs([]);
     }
   };
 
   const handleClaimMultipleCollateral = async () => {
-    if (selectedMultipleNFTs && selectedMultipleNFTs?.length < 1) {
-      return toastResponse('ERROR', 'Please select an NFT', 'ERROR');
-    }
-    if (!selectedMultipleNFTs) return;
+    try {
+      if (selectedMultipleNFTs && selectedMultipleNFTs?.length < 1) {
+        return toastResponse('ERROR', 'Please select an NFT', 'ERROR');
+      }
+      if (!selectedMultipleNFTs) return;
 
-    for (let i = 0; i < selectedMultipleNFTs.length; i++) {
-      const isLastItem = i === selectedMultipleNFTs.length - 1;
-      await executeWithdrawNFT(selectedMultipleNFTs[i].mint, toast, isLastItem);
+      for (let i = 0; i < selectedMultipleNFTs.length; i++) {
+        const isLastItem = i === selectedMultipleNFTs.length - 1;
+        await executeWithdrawNFT(
+          selectedMultipleNFTs[i].mint,
+          toast,
+          isLastItem
+        );
+      }
+    } catch (error) {
+      console.error('Error occurred during collateral claim:', error);
+    } finally {
+      //Reset selected NFTs
+      setSelectedMultipleNFTs([]);
     }
-    //Reset selected NFTs
-    setSelectedMultipleNFTs([]);
   };
 
   // executes the borrow function
@@ -770,6 +770,7 @@ const BorrowForm = (props: BorrowProps) => {
         cancelTxt: 'Return',
         onCancel: handleCancel,
         title:
+          // needs to also validate if there are open positions
           collateralMenuMode === 'collateral'
             ? 'Claim collateral'
             : 'Add collateral',
