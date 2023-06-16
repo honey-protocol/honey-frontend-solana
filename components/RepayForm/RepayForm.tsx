@@ -155,7 +155,7 @@ const RepayForm = (props: RepayProps) => {
   // executes repay function - changes tab state to borrow if changeTab exists
   const onRepay = async (event: any) => {
     if (userDebt == 0 && openPositions[0]) {
-      executeWithdrawNFT(openPositions[0].mint, toast);
+      executeWithdrawNFT(openPositions[0].mint, toast, true);
       // if (changeTab) {
       //   changeTab('borrow');
       // }

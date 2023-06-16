@@ -8,7 +8,7 @@ export type RepayProps = {
   availableNFTs: any;
   fetchedReservePrice: number;
   currentMarketId: string;
-  executeWithdrawNFT: (mint: string, toast: any) => void;
+  executeWithdrawNFT: (mint: string, toast: any, isLastItem: boolean,) => Promise<void>;
   executeRepay: (val: number, toast: any) => void;
   hideMobileSidebar?: () => void;
   changeTab?: (tabKey: string) => void;

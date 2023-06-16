@@ -628,6 +628,7 @@ export const renderMarketImageByName = (marketName: string) => {
   const filteredMarket = marketCollections.filter(
     market => market.constants.marketName === marketName
   );
+  if (!filteredMarket.length) return null;
   return (
     <Image
       src={`https://res.cloudinary.com/${cloudinary_uri}/image/fetch/${filteredMarket[0].constants.marketImage}`}
@@ -646,6 +647,7 @@ export const renderMarketImageByID = (marketId: string) => {
   const filteredMarket = marketCollections.filter(
     market => market.constants.marketId === marketId
   );
+  if (!filteredMarket.length) return null;
   return (
     <Image
       src={`https://res.cloudinary.com/${cloudinary_uri}/image/fetch/${filteredMarket[0].constants.marketImage}`}

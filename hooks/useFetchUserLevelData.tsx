@@ -1,39 +1,59 @@
 import { useState, useEffect } from 'react';
 
-import { HoneyUser } from '@honey-finance/sdk';
+import { HoneyUser, MarketBundle } from '@honey-finance/sdk';
 
 import { roundTwoDecimalsUp } from 'helpers/math/math';
+import { MarketTableRow } from 'types/markets';
+export interface UserData {
+  userDebt: number;
+  userTotalDeposits: number;
+  userAllowance: number;
+  liquidationPrice: number;
+  liquidationThreshold: number;
+  loanToValue: number;
+}
 
 /**
  * @description fetches user level data for a specific market
  * @params honey user
  * @returns loading state | {userDebt, userAllowance, liquidationPrice, loanToValue, collateralValue} | errorObject?
  */
-export default function useFetchUserLevelData(honeyUser: HoneyUser) {
+export const useFetchUserLevelData = (
+  honeyUser: HoneyUser,
+  currentCollection?: MarketTableRow
+) => {
   const [status, setStatus] = useState<{
     loadingUserData: boolean;
-    userData: {
-      userDebt: number;
-      userTotalDeposits: number;
-      userAllowance: number;
-      liquidationPrice: number;
-      liquidationThreshold: number;
-      loanToValue: number;
-    };
+    mID?: string;
+    userData?: UserData;
     errorFetchingUserLevelData?: Error;
-  }>({
-    loadingUserData: false,
-    userData: {
-      userDebt: 0,
-      userTotalDeposits: 0,
-      userAllowance: 0,
-      liquidationPrice: 0,
-      liquidationThreshold: 0,
-      loanToValue: 0
-    }
-  });
+  }>({ loadingUserData: false });
+
   // fetches the users data of this specific market
   const fetchData = async () => {
+    if (!honeyUser) {
+      return setStatus({
+        loadingUserData: false,
+        userData: undefined
+      });
+    }
+    if (!currentCollection) {
+      return setStatus({
+        loadingUserData: false,
+        userData: undefined
+      });
+    }
+    if (
+      honeyUser &&
+      honeyUser.market.address.toString() !== currentCollection.id
+    )
+      return setStatus({
+        loadingUserData: false,
+        mID: currentCollection.id
+      });
+
+    setStatus({ loadingUserData: true });
+
     try {
       let { allowance, debt, liquidationThreshold, ltv } =
         await honeyUser.fetchAllowanceAndDebt(0);
@@ -55,8 +75,17 @@ export default function useFetchUserLevelData(honeyUser: HoneyUser) {
         loanToValue: ltv
       };
 
-      return setStatus({ loadingUserData: false, userData });
-    } catch (error) {}
+      return setStatus({
+        loadingUserData: false,
+        userData,
+        mID: currentCollection.id
+      });
+    } catch (error) {
+      return setStatus({
+        loadingUserData: false,
+        mID: currentCollection.id
+      });
+    }
   };
 
   // refetch the user level data values
@@ -65,24 +94,8 @@ export default function useFetchUserLevelData(honeyUser: HoneyUser) {
   };
 
   useEffect(() => {
-    if (!honeyUser) {
-      setStatus({
-        loadingUserData: false,
-        userData: {
-          userDebt: 0,
-          userTotalDeposits: 0,
-          userAllowance: 0,
-          liquidationPrice: 0,
-          liquidationThreshold: 0,
-          loanToValue: 0
-        },
-        errorFetchingUserLevelData: new Error('No honey user provided')
-      });
-      return;
-    }
-
     fetchData();
   }, [honeyUser]);
 
   return { ...status, refetchUserLevelData };
-}
+};
