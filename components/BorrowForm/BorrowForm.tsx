@@ -331,9 +331,16 @@ const BorrowForm = (props: BorrowProps) => {
                 />
               ) : (
                 <div className={styles.borrowAmount}>
-                  {parseFloat(fs(nftPrice * MAX_LTV)) *
-                    (selectedMultipleNFTs?.length ?? 0)}
-                  /{parseFloat(fs(nftPrice * MAX_LTV)) * availableNFTs.length}{' '}
+                  {frd(
+                    parseFloat(fs(nftPrice * MAX_LTV)) *
+                      (selectedMultipleNFTs?.length ?? 0),
+                    2
+                  )}
+                  /
+                  {frd(
+                    parseFloat(fs(nftPrice * MAX_LTV)) * availableNFTs.length,
+                    2
+                  )}{' '}
                   {selectedMarket?.loanCurrency}
                 </div>
               )}

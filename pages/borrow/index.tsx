@@ -169,6 +169,7 @@ const Markets: NextPage = () => {
   const [mintArray, setMintArray] = useState<Array<PublicKey>>([]);
   // whenever a users wallet changes it stores the PK in LS
   useEffect(() => {
+    refetchNfts({});
     if (stringyfiedWalletPK !== undefined) {
       localStorage.setItem('walletPK', stringyfiedWalletPK);
     }
@@ -180,7 +181,6 @@ const Markets: NextPage = () => {
 
   useEffect(() => {
     if (walletPK && currentMarketId) {
-      console.log('@@-- current market ID', currentMarketId);
       HoneyUser.userObligationData(
         program,
         new PublicKey(currentMarketId),
@@ -188,7 +188,6 @@ const Markets: NextPage = () => {
         new PublicKey(HONEY_PROGRAM_ID)
       )
         .then(res => {
-          console.log('@@-- this is res', res.market.toString());
           setMintArray(res.collateralNftMint);
         })
         .catch(err => {
@@ -216,10 +215,14 @@ const Markets: NextPage = () => {
    * @returns sets the market ID which re-renders page state and fetches market specific data
    */
   async function handleMarketId(record: any) {
-    if (sdkConfig.sdkWallet === null) return;
-    setCurrentMarketId(record.id);
-    setCurrentVerifiedCreator(record.verifiedCreator);
-    setIsFetchingClientData(true);
+    if (sdkConfig.sdkWallet === null) {
+      setCurrentMarketId(record.id);
+      setCurrentVerifiedCreator(record.verifiedCreator);
+    } else {
+      setCurrentMarketId(record.id);
+      setCurrentVerifiedCreator(record.verifiedCreator);
+      setIsFetchingClientData(true);
+    }
     // refetchUserLevelData();
   }
 
