@@ -52,7 +52,8 @@ import {
   ROOT_CLIENT,
   renderMarketCurrencyImageByID,
   marketsTokens,
-  LOAN_CURRENCY_USDC
+  LOAN_CURRENCY_USDC,
+  LOAN_CURRENCY_SOL
 } from '../../helpers/marketHelpers/index';
 import { NATIVE_MINT } from '@solana/spl-token-v-0.1.8';
 import HoneySider from 'components/HoneySider/HoneySider';
@@ -472,77 +473,79 @@ const Liquidate: NextPage = () => {
     if (sdkConfig.saberHqConnection) {
       function getData() {
         return Promise.all(
-          marketCollections.map(async collection => {
-            if (collection.id == '') return collection;
-            if (marketData.length) {
-              collection.marketData = marketData.filter(
-                marketObject => marketObject.marketId === collection.id
-              );
+          marketCollections
+            .filter(collection => collection.loanCurrency === LOAN_CURRENCY_SOL)
+            .map(async collection => {
+              if (collection.id == '') return collection;
+              if (marketData.length) {
+                collection.marketData = marketData.filter(
+                  marketObject => marketObject.marketId === collection.id
+                );
 
-              if (collection.marketData.length) {
-                const data = (collection.marketData[0] as any).data;
-                collection.allowance = data.allowance ? data.allowance : 0;
+                if (collection.marketData.length) {
+                  const data = (collection.marketData[0] as any).data;
+                  collection.allowance = data.allowance ? data.allowance : 0;
 
-                collection.available = data.totalMarketDeposits
-                  ? data.totalMarketDeposits
-                  : 0;
-
-                collection.value = data.totalMarketDebt;
-
-                data.totalMarketDebt + data.totalMarketDeposits;
-
-                data.totalMarketDeposits;
-
-                collection.connection = sdkConfig.saberHqConnection;
-                collection.nftPrice = data.nftPrice;
-
-                collection.tvl =
-                  data.positions && data.nftPrice
-                    ? data.nftPrice * (await fetchTVL(data.positions))
+                  collection.available = data.totalMarketDeposits
+                    ? data.totalMarketDeposits
                     : 0;
 
-                collection.utilizationRate = data.utilization
-                  ? data.utilization
-                  : 0;
+                  collection.value = data.totalMarketDebt;
 
-                collection.totalDebt = data.totalMarketDebt;
+                  data.totalMarketDebt + data.totalMarketDeposits;
 
-                collection.risk = data.positions
-                  ? await calculateRisk(
-                      data.positions,
+                  data.totalMarketDeposits;
 
-                      data.nftPrice,
-                      false
-                    )
-                  : 0;
+                  collection.connection = sdkConfig.saberHqConnection;
+                  collection.nftPrice = data.nftPrice;
 
-                collection.openPositions = data.positions.length
-                  ? await setObligations(
-                      data.positions,
-                      currentMarketId,
+                  collection.tvl =
+                    data.positions && data.nftPrice
+                      ? data.nftPrice * (await fetchTVL(data.positions))
+                      : 0;
 
-                      data.nftPrice
-                    )
-                  : [];
+                  collection.utilizationRate = data.utilization
+                    ? data.utilization
+                    : 0;
 
-                if (collection.openPositions) {
-                  collection.openPositions.map(openPos => {
-                    return (openPos.untilLiquidation =
-                      openPos.estimatedValue && openPos.debt
-                        ? openPos.estimatedValue -
-                          openPos.debt / COLLATERAL_FACTOR
-                        : 0);
-                  });
+                  collection.totalDebt = data.totalMarketDebt;
+
+                  collection.risk = data.positions
+                    ? await calculateRisk(
+                        data.positions,
+
+                        data.nftPrice,
+                        false
+                      )
+                    : 0;
+
+                  collection.openPositions = data.positions.length
+                    ? await setObligations(
+                        data.positions,
+                        currentMarketId,
+
+                        data.nftPrice
+                      )
+                    : [];
+
+                  if (collection.openPositions) {
+                    collection.openPositions.map(openPos => {
+                      return (openPos.untilLiquidation =
+                        openPos.estimatedValue && openPos.debt
+                          ? openPos.estimatedValue -
+                            openPos.debt / COLLATERAL_FACTOR
+                          : 0);
+                    });
+                  }
+                  setTimeout(() => {
+                    setIsFetchingData(false);
+                  }, 2000);
+                  return collection;
                 }
-                setTimeout(() => {
-                  setIsFetchingData(false);
-                }, 2000);
-                return collection;
               }
-            }
 
-            return collection;
-          })
+              return collection;
+            })
         );
       }
 
