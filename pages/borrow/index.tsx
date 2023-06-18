@@ -93,7 +93,8 @@ import SorterIcon from 'icons/Sorter';
 import ExpandedRowIcon from 'icons/ExpandedRowIcon';
 import HoneyToggle from 'components/HoneyToggle/HoneyToggle';
 import useFetchCollateralNFTPositions from 'hooks/useFetchCollateralNFTPositions';
-import useFetchUserLevelData from 'hooks/useFetchUserLevelData';
+import { useFetchUserLevelData } from 'hooks/useFetchUserLevelData';
+import { roundTwoDecimalsUp } from 'helpers/math/math';
 // import { network } from 'pages/_app';
 
 const cloudinary_uri = process.env.CLOUDINARY_URI;
@@ -139,23 +140,6 @@ const Markets: NextPage = () => {
   const selectedMarket = marketCollections.find(
     collection => collection.id === currentMarketId
   );
-  /**
-   * @description sets the market ID based on market click
-   * @params Honey table record - contains all info about a table (aka market / collection)
-   * @returns sets the market ID which re-renders page state and fetches market specific data
-   */
-  async function handleMarketId(record: any) {
-    setCurrentVerifiedCreator(record.verifiedCreator);
-    setCurrentMarketId(record.id);
-    refetchUserLevelData();
-  }
-
-  // /**
-  //  * @description fetches market reserve info | parsed reserves | fetch market (func) from SDK
-  //  * @params none
-  //  * @returns market | market reserve information | parsed reserves |
-  //  */
-  // const { marketReserveInfo, parsedReserves, fetchMarket } = useHoney();
 
   /**
    * @description fetches honey client | honey user | honey reserves | honey market from SDK
@@ -169,48 +153,23 @@ const Markets: NextPage = () => {
     currentMarketId
   );
 
-  const [totalMarketDebt, setTotalMarketDebt] = useState(0);
-  const [totalMarketDeposits, setTotalMarketDeposits] = useState(0);
-  const [totalMarketValue, setTotalMarketValue] = useState(0);
-  const [utilizationRate, setUtilizationRate] = useState(0);
-  const [interestRate, setInterestRate] = useState(0);
-
-  async function fetchMarketDepositsAndDebt() {
-    const totalMarketDebt =
-      honeyUser.reserves[0].getReserveState().outstandingDebt;
-    const totalMarketDeposits =
-      honeyUser.reserves[0].getReserveState().totalDeposits;
-
-    const { utilization, interestRate } =
-      honeyUser.reserves[0].getUtilizationAndInterestRate();
-
-    setTotalMarketDebt(totalMarketDebt);
-    setTotalMarketDeposits(totalMarketDeposits);
-    setTotalMarketValue(totalMarketDeposits + totalMarketDebt);
-    setUtilizationRate(utilization);
-    setInterestRate(interestRate);
-  }
-
-  useEffect(() => {
-    if (!honeyUser) return;
-    fetchMarketDepositsAndDebt();
-  }, [honeyUser]);
-
   // fetches the floor price of the active market and sets it
-  async function fetchMarketNFTFloor() {
+  const fetchMarketNFTFloor = useCallback(async () => {
+    if (!honeyMarket) return;
     const nftPrice = await honeyMarket.fetchNFTFloorPriceInReserve(0);
     nftPrice !== 0 ? setNftPrice(RoundHalfDown(nftPrice)) : setNftPrice(0);
-  }
+  }, [honeyMarket]);
+
   // resets the floor price based on honeyMarket change
   useEffect(() => {
-    if (!honeyMarket) return;
     fetchMarketNFTFloor();
-  }, [honeyMarket]);
+  }, [fetchMarketNFTFloor]);
 
   const { program } = useAnchor();
   const [mintArray, setMintArray] = useState<Array<PublicKey>>([]);
   // whenever a users wallet changes it stores the PK in LS
   useEffect(() => {
+    refetchNfts({});
     if (stringyfiedWalletPK !== undefined) {
       localStorage.setItem('walletPK', stringyfiedWalletPK);
     }
@@ -218,8 +177,9 @@ const Markets: NextPage = () => {
 
   const [refreshMint, setRefreshMint] = useState(0);
 
+  let walletPK = localStorage.getItem('walletPK');
+
   useEffect(() => {
-    let walletPK = localStorage.getItem('walletPK');
     if (walletPK && currentMarketId) {
       HoneyUser.userObligationData(
         program,
@@ -230,9 +190,12 @@ const Markets: NextPage = () => {
         .then(res => {
           setMintArray(res.collateralNftMint);
         })
-        .catch(err => console.log(`Error fetching mint array ${err}`));
+        .catch(err => {
+          setMintArray([]);
+          console.log(`Error fetching mint array ${err}`);
+        });
     }
-  }, [refreshMint, currentMarketId]);
+  }, [refreshMint, currentMarketId, walletPK]);
 
   /**
    * @description fetches collateral nft positions | refresh positions (func) from SDK
@@ -246,12 +209,22 @@ const Markets: NextPage = () => {
       currentVerifiedCreator
     );
 
-  const {
-    refetchUserLevelData,
-    loadingUserData,
-    userData,
-    errorFetchingUserLevelData
-  } = useFetchUserLevelData(honeyUser);
+  /**
+   * @description sets the market ID based on market click
+   * @params Honey table record - contains all info about a table (aka market / collection)
+   * @returns sets the market ID which re-renders page state and fetches market specific data
+   */
+  async function handleMarketId(record: any) {
+    if (sdkConfig.sdkWallet === null) {
+      setCurrentMarketId(record.id);
+      setCurrentVerifiedCreator(record.verifiedCreator);
+    } else {
+      setCurrentMarketId(record.id);
+      setCurrentVerifiedCreator(record.verifiedCreator);
+      setIsFetchingClientData(true);
+    }
+    // refetchUserLevelData();
+  }
 
   // market specific constants - calculations / ratios / debt / allowance etc.
   const [nftPrice, setNftPrice] = useState(0);
@@ -289,12 +262,6 @@ const Markets: NextPage = () => {
 
   const [isCreateMarketAreaOnHover, setIsCreateMarketAreaOnHover] =
     useState<boolean>(false);
-
-  useEffect(() => {
-    setUserDebt(userData.userDebt);
-    setUserAllowance(userData.userAllowance);
-    setLoanToValue(userData.loanToValue);
-  }, [userData]);
 
   // fetches market level data from API
   const fetchMarketLevelDataFromAPI = useCallback(async () => {
@@ -368,28 +335,6 @@ const Markets: NextPage = () => {
     [id: string]: Array<MarketBundle>;
   }> = useRef({});
 
-  // const fetchMarketDataObj = useCallback(
-  //   async (marketId, connection, wallet, honeyId) => {
-  //     //Check cache if object exists
-  //     if (marketDataCache.current[marketId]) {
-  //       return marketDataCache.current[marketId];
-  //     }
-
-  //     const data: MarketBundle[] = await fetchAllMarkets(
-  //       connection,
-  //       wallet,
-  //       honeyId,
-  //       [marketId],
-  //       false
-  //     );
-
-  //     //Update cache
-  //     marketDataCache.current[marketId] = data;
-  //     return data;
-  //   },
-  //   []
-  // );
-
   const fetchCurrentMarketData = useCallback(
     async (silentRefresh?: boolean) => {
       if (!currentMarketId) return;
@@ -405,41 +350,40 @@ const Markets: NextPage = () => {
       }
 
       try {
-        collection.allowance = userAllowance;
-        collection.userDebt = userDebt;
-        collection.ltv = loanToValue;
+        let { allowance, debt, liquidationThreshold, ltv } =
+          await honeyUser.fetchAllowanceAndDebt(0);
+        const totalMarketDebt =
+          honeyUser.reserves[0].getReserveState().outstandingDebt;
+        const totalMarketDeposits =
+          honeyUser.reserves[0].getReserveState().totalDeposits;
+        const { utilization, interestRate } =
+          honeyUser.reserves[0].getUtilizationAndInterestRate();
+
         collection.available = totalMarketDeposits;
-        collection.value = totalMarketValue;
-        collection.connection = sdkConfig.saberHqConnection;
+        collection.value = totalMarketDeposits + totalMarketDebt;
         collection.nftPrice = nftPrice;
         collection.rate = interestRate * 100;
         collection.user = honeyUser;
-        collection.utilizationRate = utilizationRate;
+        collection.utilizationRate = utilization;
 
+        setUserDebt(debt ? roundTwoDecimalsUp(debt, 2) : 0);
+        setUserAllowance(allowance < 0 ? 0 : allowance);
+        setLoanToValue(ltv);
         setActiveInterestRate(collection.rate);
 
         const newMarketData = marketCollections.map(marketCollection =>
           marketCollection.id === collection.id ? collection : marketCollection
         );
 
-        // Update market table data
         setTableData(newMarketData);
         setTableDataFiltered(newMarketData);
       } catch (error) {
         console.log('Error fetching selected market data', '@current');
       } finally {
-        setIsFetchingData(false);
         setIsFetchingClientData(false);
       }
     },
-    [
-      loanToValue,
-      interestRate,
-      currentMarketId,
-      collateralNFTPositions,
-      sdkConfig.saberHqConnection,
-      sdkConfig.sdkWallet
-    ]
+    [honeyUser]
   );
 
   useEffect(() => {
@@ -895,7 +839,7 @@ const Markets: NextPage = () => {
     {
       dataIndex: 'debt',
       width: columnsWidth[1],
-      render: debt => (
+      render: (debt, record) => (
         <div className={style.expandedRowCell}>
           <InfoBlock
             title={'Debt:'}
@@ -1032,60 +976,43 @@ const Markets: NextPage = () => {
     mintID: any,
     toast: ToastProps['toast'],
     name: string,
-    creator: string
+    creator: string,
+    isLastItem: boolean
   ) {
     try {
       if (!mintID) return;
       toast.processing();
-      // TODO: set verified creator of active market along with currentMarketId
-      if (marketCollections) {
-        // @ts-ignore
-        marketCollections.map(async collection => {
-          if (collection.id === currentMarketId) {
-            const tx = await depositNFT(
-              collection.connection,
-              honeyUser,
-              new PublicKey(mintID)
-            );
 
-            if (tx[0] == 'SUCCESS') {
-              const confirmation = tx[1];
-              let counter = confirmation.length - 1;
-              const confirmationHash = confirmation[counter];
+      const tx = await depositNFT(
+        sdkConfig.saberHqConnection,
+        honeyUser,
+        new PublicKey(mintID)
+      );
 
-              await waitForConfirmation(
-                sdkConfig.saberHqConnection,
-                confirmationHash
-              );
-              if (collection.marketData) {
-                // TODO: revision
-                // await collection.marketData[0].reserves[0].refresh();
-                // await collection.marketData[0].user.refresh();
-                // await honeyUser.getObligationData();
+      if (tx[0] == 'SUCCESS') {
+        const confirmation = tx[1];
+        let counter = confirmation.length - 1;
+        const confirmationHash = confirmation[counter];
 
-                // await refreshPositions();
-                refreshMint === 0 ? setRefreshMint(1) : setRefreshMint(0);
+        await waitForConfirmation(
+          sdkConfig.saberHqConnection,
+          confirmationHash
+        );
 
-                setTimeout(async () => {
-                  await fetchCurrentMarketData(true);
-                  refetchNfts({});
-                  toast.success(
-                    'Deposit success',
-                    `https://solscan.io/tx/${tx[1][0]}?cluster=${network}`
-                  );
-                }, 2000);
-              }
-            } else {
-              return toast.error('Error depositing NFT');
-            }
-          }
-        });
+        if (isLastItem) {
+          await fetchCurrentMarketData(true);
+          refetchNfts({});
+          refreshMint === 0 ? setRefreshMint(1) : setRefreshMint(0);
+
+          toast.success(
+            'Deposit success',
+            `https://solscan.io/tx/${tx[1][0]}?cluster=${network}`
+          );
+        }
       }
     } catch (error) {
-      return toast.error(
-        'Error depositing NFT'
-        // 'Transaction link(if available)'
-      );
+      toast.error('Error depositing NFT');
+      return Promise.resolve();
     }
   }
 
@@ -1094,58 +1021,44 @@ const Markets: NextPage = () => {
    * @params mint of the NFT
    * @returns succes | failure
    */
-  async function executeWithdrawNFT(mintID: any, toast: ToastProps['toast']) {
+  async function executeWithdrawNFT(
+    mintID: any,
+    toast: ToastProps['toast'],
+    isLastItem: boolean
+  ) {
     try {
       if (!mintID) return toast.error('Please select NFT');
-
       toast.processing();
-      if (marketCollections) {
-        //@ts-ignore
-        marketCollections.map(async collection => {
-          if (collection.id === currentMarketId) {
-            const tx = await withdrawNFT(
-              sdkConfig.saberHqConnection,
-              honeyUser,
-              new PublicKey(mintID)
-            );
 
-            if (tx[0] == 'SUCCESS') {
-              const confirmation = tx[1];
-              let counter = confirmation.length - 1;
-              const confirmationHash = confirmation[counter];
+      const tx = await withdrawNFT(
+        sdkConfig.saberHqConnection,
+        honeyUser,
+        new PublicKey(mintID)
+      );
 
-              await waitForConfirmation(
-                sdkConfig.saberHqConnection,
-                confirmationHash
-              );
-              // TODO: revision
-              // await honeyUser.getObligationData();
-              // await fetchedDataObject.reserves[0].refresh();
-              // await fetchedDataObject.user.refresh();
+      if (tx[0] == 'SUCCESS') {
+        const confirmation = tx[1];
+        let counter = confirmation.length - 1;
+        const confirmationHash = confirmation[counter];
 
-              // await refreshPositions();
-              refreshMint === 0 ? setRefreshMint(1) : setRefreshMint(0);
-              setTimeout(async () => {
-                await fetchCurrentMarketData(true);
-                refetchNfts({});
-                toast.success(
-                  'Withdraw success',
-                  `https://solscan.io/tx/${tx[1][0]}?cluster=${network}`
-                );
-              }, 2000);
-            } else {
-              toast.error(
-                'Withdraw failed',
-                `https://solscan.io/tx/${tx[1][0]}?cluster=${network}`
-              );
-            }
-          }
-          return true;
-        });
+        await waitForConfirmation(
+          sdkConfig.saberHqConnection,
+          confirmationHash
+        );
+
+        if (isLastItem) {
+          refetchNfts({});
+          refreshMint === 0 ? setRefreshMint(1) : setRefreshMint(0);
+          await fetchCurrentMarketData(true);
+          toast.success(
+            'Withdraw success',
+            `https://solscan.io/tx/${tx[1][0]}?cluster=${network}`
+          );
+        }
       }
     } catch (error) {
       toast.error('Error withdraw NFT');
-      return;
+      return Promise.resolve();
     }
   }
 
@@ -1185,8 +1098,6 @@ const Markets: NextPage = () => {
 
         await honeyUser.reserves[0].refresh();
         await honeyUser.refresh();
-
-        refetchUserLevelData();
         await fetchCurrentMarketData(true);
 
         toast.success(
@@ -1203,6 +1114,7 @@ const Markets: NextPage = () => {
     } catch (error) {
       console.log('Error: ', error);
       return toast.error('An error occurred');
+    } finally {
     }
   }
 
@@ -1242,8 +1154,6 @@ const Markets: NextPage = () => {
 
         await honeyUser.reserves[0].refresh();
         await honeyUser.refresh();
-
-        refetchUserLevelData();
         await fetchCurrentMarketData(true);
 
         toast.success(
@@ -1260,6 +1170,7 @@ const Markets: NextPage = () => {
     } catch (error) {
       console.error('Error: ', error);
       return toast.error('An error occurred');
+    } finally {
     }
   }
 

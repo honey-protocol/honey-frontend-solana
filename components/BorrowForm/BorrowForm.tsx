@@ -64,6 +64,7 @@ const BorrowForm = (props: BorrowProps) => {
     isFetchingData,
     collCount
   } = props;
+  console.log('@@-- openPositions', openPositions.length);
   // state declarations
   const [valueUSD, setValueUSD] = useState<number>(0);
   const [valueUnderlying, setValueUnderlying] = useState<number>(0);
@@ -183,23 +184,6 @@ const BorrowForm = (props: BorrowProps) => {
   const [collateralCount, setCollateralCount] = useState(0);
   const [price, setPrice] = useState(0);
 
-  // useEffect(() => {
-  //   const updateCollateralCount = async () => {
-  //     if (honeyUser) {
-  //       const obligationData = await honeyUser.getObligationData();
-  //       if (obligationData instanceof Error) {
-  //         setCollateralCount(0);
-  //         return;
-  //       }
-  //       const collateralNftMint = obligationData.collateralNftMint.filter(
-  //         mint => !mint.equals(PublicKey.default)
-  //       );
-  //       setCollateralCount(collateralNftMint.length);
-  //     }
-  //   };
-  //   updateCollateralCount();
-  // }, [honeyUser]);
-
   useEffect(() => {
     if (!honeyMarket) return;
     const updatePrice = async () => {
@@ -224,6 +208,7 @@ const BorrowForm = (props: BorrowProps) => {
   const handleDepositNFT = async () => {
     if (selectedNft && selectedNft.mint.length < 1)
       return toastResponse('ERROR', 'Please select an NFT', 'ERROR');
+
     if (selectedNft && selectedNft.mint.length > 1) {
       const verifiedCreator = selectedNft.creators.filter(
         (creator: { verified: any }) => creator.verified
@@ -233,7 +218,8 @@ const BorrowForm = (props: BorrowProps) => {
         selectedNft.tokenId,
         toast,
         selectedNft.name,
-        verifiedCreator[0].address
+        verifiedCreator[0].address,
+        true
       );
     }
     handleSliderChange(0);
@@ -247,39 +233,54 @@ const BorrowForm = (props: BorrowProps) => {
       selectedMultipleNFTs?.length &&
       selectedMultipleNFTs[0].mint.length > 1
     ) {
-      const promises = selectedMultipleNFTs.map(nft => {
-        const verifiedCreator = nft.creators.filter(
-          (creator: { verified: any }) => creator.verified
-        );
+      try {
+        for (let i = 0; i < selectedMultipleNFTs.length; i++) {
+          const verifiedCreator = selectedMultipleNFTs[i].creators.filter(
+            (creator: { verified: any }) => creator.verified
+          );
 
-        executeDepositNFT(
-          nft.tokenId,
-          toast,
-          nft.name,
-          verifiedCreator[0].address
+          const isLastItem = i === selectedMultipleNFTs.length - 1;
+
+          await executeDepositNFT(
+            selectedMultipleNFTs[i].tokenId,
+            toast,
+            selectedMultipleNFTs[i].name,
+            verifiedCreator[0].address,
+            isLastItem
+          );
+        }
+      } catch (error) {
+        console.error(
+          `Error occurred within handle deposit multiple NFTs: ${error}`
         );
-        // }
-      });
-      await Promise.all(promises);
-      //Reset selected NFTs
-      setSelectedMultipleNFTs([]);
+      } finally {
+        //Reset selected NFTs
+        setSelectedMultipleNFTs([]);
+      }
     }
   };
 
   const handleClaimMultipleCollateral = async () => {
-    if (selectedMultipleNFTs && selectedMultipleNFTs?.length < 1) {
-      return toastResponse('ERROR', 'Please select an NFT', 'ERROR');
+    try {
+      if (selectedMultipleNFTs && selectedMultipleNFTs?.length < 1) {
+        return toastResponse('ERROR', 'Please select an NFT', 'ERROR');
+      }
+      if (!selectedMultipleNFTs) return;
+
+      for (let i = 0; i < selectedMultipleNFTs.length; i++) {
+        const isLastItem = i === selectedMultipleNFTs.length - 1;
+        await executeWithdrawNFT(
+          selectedMultipleNFTs[i].mint,
+          toast,
+          isLastItem
+        );
+      }
+    } catch (error) {
+      console.error('Error occurred during collateral claim:', error);
+    } finally {
+      //Reset selected NFTs
+      setSelectedMultipleNFTs([]);
     }
-    if (!selectedMultipleNFTs) return;
-
-    const promises = selectedMultipleNFTs.map(nft => {
-      executeWithdrawNFT(nft.mint, toast);
-    });
-
-    await Promise.all(promises);
-
-    //Reset selected NFTs
-    setSelectedMultipleNFTs([]);
   };
 
   // executes the borrow function
@@ -330,9 +331,16 @@ const BorrowForm = (props: BorrowProps) => {
                 />
               ) : (
                 <div className={styles.borrowAmount}>
-                  {parseFloat(fs(nftPrice * MAX_LTV)) *
-                    (selectedMultipleNFTs?.length ?? 0)}
-                  /{parseFloat(fs(nftPrice * MAX_LTV)) * availableNFTs.length}{' '}
+                  {frd(
+                    parseFloat(fs(nftPrice * MAX_LTV)) *
+                      (selectedMultipleNFTs?.length ?? 0),
+                    2
+                  )}
+                  /
+                  {frd(
+                    parseFloat(fs(nftPrice * MAX_LTV)) * availableNFTs.length,
+                    2
+                  )}{' '}
                   {selectedMarket?.loanCurrency}
                 </div>
               )}
@@ -770,6 +778,7 @@ const BorrowForm = (props: BorrowProps) => {
         cancelTxt: 'Return',
         onCancel: handleCancel,
         title:
+          // needs to also validate if there are open positions
           collateralMenuMode === 'collateral'
             ? 'Claim collateral'
             : 'Add collateral',

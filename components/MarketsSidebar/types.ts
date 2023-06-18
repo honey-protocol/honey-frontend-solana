@@ -16,8 +16,9 @@ export type MarketsSidebarProps = {
     toast: any,
     name: string,
     creator: string,
-  ) => void;
-  executeWithdrawNFT: (mint: any, toast: any) => void;
+    isLastItem: boolean,
+  ) => Promise<void>;
+  executeWithdrawNFT: (mint: any, toast: any, isLastItem: boolean,) => Promise<void>;
   executeBorrow: (val: any, toast: any) => void;
   executeRepay: (val: any, toast: any) => void;
   hideMobileSidebar?: () => void;

@@ -28,6 +28,7 @@ export type MarketTableRow = {
   nftPrice?: number;
   userDebt?: number;
   ltv?: number;
+  data?: any;
   userTotalDeposits?: number;
   constants: {
     marketId: string;
@@ -53,6 +54,9 @@ export type MarketTablePosition = {
   userDebt?: number;
   ltv?: number;
   allowance?: number;
+  untilLiquidation?: number;
+  estimatedValue?: number;
+  debt?: number;
 };
 
 export type UserNFTs = {
