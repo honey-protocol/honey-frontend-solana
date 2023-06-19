@@ -341,8 +341,7 @@ const Liquidate: NextPage = () => {
   async function fetchLiquidatorClient(
     type: string,
     userBid: number | undefined,
-    toast: ToastProps['toast'],
-    mrktID: string
+    toast: ToastProps['toast']
   ) {
     if (!selectedMarket) return;
     const exponent = selectedMarket.decimals;
@@ -358,7 +357,7 @@ const Liquidate: NextPage = () => {
           toast.processing();
 
           let transactionOutcome: any = await liquidatorClient.revokeBid({
-            market: new PublicKey(mrktID),
+            market: new PublicKey(selectedMarket.id),
             bidder: wallet.publicKey,
             bid_mint: new PublicKey(
               selectedMarket?.constants.marketLoanCurrencyTokenMintAddress
@@ -383,7 +382,7 @@ const Liquidate: NextPage = () => {
 
           let transactionOutcome: any = await liquidatorClient.placeBid({
             bid_limit: userBid,
-            market: new PublicKey(mrktID),
+            market: new PublicKey(selectedMarket.id),
             bidder: wallet.publicKey,
             bid_mint: new PublicKey(
               selectedMarket.constants.marketLoanCurrencyTokenMintAddress
@@ -405,7 +404,7 @@ const Liquidate: NextPage = () => {
           toast.processing();
           let transactionOutcome: any = await liquidatorClient.increaseBid({
             bid_increase: userBid,
-            market: new PublicKey(mrktID),
+            market: new PublicKey(selectedMarket.id),
             bidder: wallet.publicKey,
             bid_mint: new PublicKey(
               selectedMarket.constants.marketLoanCurrencyTokenMintAddress
@@ -439,7 +438,7 @@ const Liquidate: NextPage = () => {
     toast: ToastProps['toast'],
     mID: string
   ) {
-    fetchLiquidatorClient(type, undefined, toast, mID);
+    fetchLiquidatorClient(type, undefined, toast);
   }
   /**
    * @description
@@ -452,7 +451,7 @@ const Liquidate: NextPage = () => {
     toast: ToastProps['toast'],
     mID: string
   ) {
-    fetchLiquidatorClient(type, userBid!, toast, mID);
+    fetchLiquidatorClient(type, userBid!, toast);
   }
   /**
    * @description
@@ -465,7 +464,7 @@ const Liquidate: NextPage = () => {
     toast: ToastProps['toast'],
     mID: string
   ) {
-    fetchLiquidatorClient(type, userBid!, toast, mID);
+    fetchLiquidatorClient(type, userBid!, toast);
   }
 
   /**
