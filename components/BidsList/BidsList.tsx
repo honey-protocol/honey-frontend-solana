@@ -6,6 +6,7 @@ import CurrentBidList from '../CurrentBidList/CurrentBidList';
 import { BidListProps } from './types';
 import { LAMPORTS_PER_SOL } from '@solana/web3.js';
 import { Spin } from 'antd';
+import { marketsTokens } from 'helpers/marketHelpers';
 
 const BidsList = (props: BidListProps) => {
   const { biddingArray, fetchedReservePrice, isFetchingData } = props;
@@ -22,8 +23,8 @@ const BidsList = (props: BidListProps) => {
         id: index,
         date: 1663663018156,
         walletAddress: bid.bidder,
-        usdcValue: bid.bidLimit / LAMPORTS_PER_SOL,
-        solAmount: bid.bidLimit / LAMPORTS_PER_SOL
+        usdcValue: bid.bidLimit / marketsTokens.USDC.decimals,
+        solAmount: bid.bidLimit / marketsTokens.SOL.decimals
       };
     });
 

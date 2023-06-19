@@ -39,7 +39,6 @@ import {
 import { BnToDecimal, ConfigureSDK } from '../../helpers/loanHelpers/index';
 import { Connection, PublicKey } from '@solana/web3.js';
 import BN from 'bn.js';
-import { populateMarketData } from 'helpers/loanHelpers/userCollection';
 import { ToastProps } from 'hooks/useToast';
 import { Skeleton, Typography, Space } from 'antd';
 import { pageDescription, pageTitle, center } from 'styles/common.css';

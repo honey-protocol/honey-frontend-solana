@@ -130,6 +130,7 @@ const Liquidate: NextPage = () => {
   const selectedMarket = marketCollections.find(
     collection => collection.id === currentMarketId
   );
+
   //Wallet balance
   const {
     balance: walletSolBalance,
@@ -344,6 +345,7 @@ const Liquidate: NextPage = () => {
     mrktID: string
   ) {
     if (!selectedMarket) return;
+    const exponent = selectedMarket.decimals;
     try {
       const liquidatorClient = await LiquidatorClient.connect(
         program.provider,
@@ -384,8 +386,9 @@ const Liquidate: NextPage = () => {
             market: new PublicKey(mrktID),
             bidder: wallet.publicKey,
             bid_mint: new PublicKey(
-              selectedMarket?.constants.marketLoanCurrencyTokenMintAddress
-            )
+              selectedMarket.constants.marketLoanCurrencyTokenMintAddress
+            ),
+            exponent
           });
 
           if (transactionOutcome[0] == 'SUCCESS') {
@@ -405,8 +408,9 @@ const Liquidate: NextPage = () => {
             market: new PublicKey(mrktID),
             bidder: wallet.publicKey,
             bid_mint: new PublicKey(
-              selectedMarket?.constants.marketLoanCurrencyTokenMintAddress
-            )
+              selectedMarket.constants.marketLoanCurrencyTokenMintAddress
+            ),
+            exponent
           });
 
           if (transactionOutcome[0] == 'SUCCESS') {
@@ -474,7 +478,7 @@ const Liquidate: NextPage = () => {
       function getData() {
         return Promise.all(
           marketCollections
-            .filter(collection => collection.loanCurrency === LOAN_CURRENCY_SOL)
+            // .filter(collection => collection.loanCurrency === LOAN_CURRENCY_SOL)
             .map(async collection => {
               if (collection.id == '') return collection;
               if (marketData.length) {
@@ -511,20 +515,14 @@ const Liquidate: NextPage = () => {
                   collection.totalDebt = data.totalMarketDebt;
 
                   collection.risk = data.positions
-                    ? await calculateRisk(
-                        data.positions,
-
-                        data.nftPrice,
-                        false
-                      )
+                    ? await calculateRisk(data.positions, data.nftPrice, false)
                     : 0;
 
                   collection.openPositions = data.positions.length
                     ? await setObligations(
                         data.positions,
-                        currentMarketId,
-
-                        data.nftPrice
+                        data.nftPrice,
+                        selectedMarket
                       )
                     : [];
 

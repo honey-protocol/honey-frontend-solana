@@ -12,6 +12,7 @@ export type MarketTableRow = {
   key: string;
   name: string;
   loanCurrency: marketTokenName;
+  decimals: number;
   rate: number;
   user: any;
   utilizationRate: number;
