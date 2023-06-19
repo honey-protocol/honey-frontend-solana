@@ -20,7 +20,7 @@
     "@fontsource/inter": "^4.5.4",
     "@gokiprotocol/client": "^0.10.4",
     "@gokiprotocol/walletkit": "^1.6.5",
-    "@honey-finance/sdk": "^1.2.6",
+    "@honey-finance/sdk": "^1.2.8",
     "@jup-ag/react-hook": "^2.0.0-beta.2",
     "@metaplex-foundation/mpl-auction": "^0.0.2",
     "@metaplex-foundation/mpl-core": "^0.0.4",
