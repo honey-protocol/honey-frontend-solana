@@ -8,6 +8,8 @@ import EmptyStateDetails from '../EmptyStateDetails/EmptyStateDetails';
 import { useConnectedWallet } from '@saberhq/use-solana';
 import { useWalletKit } from '@gokiprotocol/walletkit';
 import { mobileReturnButton } from 'styles/common.css';
+import { useMediaQuery } from 'react-responsive';
+import { MQ_DESKTOP_BP } from 'constants/breakpoints';
 
 const items: [HoneyTabItem, HoneyTabItem] = [
   { label: 'Deposit', key: 'deposit' },
@@ -32,6 +34,7 @@ const LendSidebar = (props: LendSidebarProps) => {
     activeInterestRate,
     isFetchingData
   } = props;
+  const isMobile = useMediaQuery({ maxWidth: MQ_DESKTOP_BP });
   const wallet = useConnectedWallet();
   const { connect } = useWalletKit();
   const [activeTab, setActiveTab] = useState<Tab>('deposit');
@@ -52,19 +55,29 @@ const LendSidebar = (props: LendSidebarProps) => {
             icon={<div className={styles.lightIcon} />}
             title="You didn’t connect any wallet yet"
             description="First, choose a NFT collection"
-            buttons={[
-              {
-                title: 'CONNECT',
-                onClick: connect,
-                variant: 'primary'
-              },
-              {
-                title: 'RETURN',
-                onClick: () => onCancel(),
-                variant: 'secondary',
-                className: mobileReturnButton
-              }
-            ]}
+            buttons={
+              isMobile
+                ? [
+                    {
+                      title: 'CONNECT',
+                      onClick: connect,
+                      variant: 'primary'
+                    },
+                    {
+                      title: 'RETURN',
+                      onClick: () => onCancel(),
+                      variant: 'secondary',
+                      className: mobileReturnButton
+                    }
+                  ]
+                : [
+                    {
+                      title: 'CONNECT',
+                      onClick: connect,
+                      variant: 'primary'
+                    }
+                  ]
+            }
           />
         ) : !currentMarketId ? (
           <EmptyStateDetails

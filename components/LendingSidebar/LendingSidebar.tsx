@@ -9,6 +9,8 @@ import { mobileReturnButton } from 'styles/common.css';
 import { CounterOfferTab } from '../CounterOfferTab/CounterOfferTab';
 import { OfferItem } from '../CounterOfferTab/types';
 import LendForm from '../LendForm/LendForm';
+import { useMediaQuery } from 'react-responsive';
+import { MQ_DESKTOP_BP } from 'constants/breakpoints';
 
 const items: [HoneyTabItem, HoneyTabItem] = [
   { label: 'Lend', key: 'lend' },
@@ -60,6 +62,7 @@ const LendingSidebar = (props: LendingSidebarProps) => {
     request,
     total
   } = props;
+  const isMobile = useMediaQuery({ maxWidth: MQ_DESKTOP_BP });
   const wallet = useConnectedWallet();
   const { connect } = useWalletKit();
   const [activeTab, setActiveTab] = useState<Tab>('lend');
@@ -80,19 +83,29 @@ const LendingSidebar = (props: LendingSidebarProps) => {
             icon={<div className={styles.lightIcon} />}
             title="You didn’t connect any wallet yet"
             description="First, choose a NFT collection"
-            buttons={[
-              {
-                title: 'CONNECT',
-                onClick: connect,
-                variant: 'primary'
-              },
-              {
-                title: 'RETURN',
-                onClick: () => onCancel(),
-                variant: 'secondary',
-                className: mobileReturnButton
-              }
-            ]}
+            buttons={
+              isMobile
+                ? [
+                    {
+                      title: 'CONNECT',
+                      onClick: connect,
+                      variant: 'primary'
+                    },
+                    {
+                      title: 'RETURN',
+                      onClick: () => onCancel(),
+                      variant: 'secondary',
+                      className: mobileReturnButton
+                    }
+                  ]
+                : [
+                    {
+                      title: 'CONNECT',
+                      onClick: connect,
+                      variant: 'primary'
+                    }
+                  ]
+            }
           />
         ) : !collectionId ? (
           <EmptyStateDetails

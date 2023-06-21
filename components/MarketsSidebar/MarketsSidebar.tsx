@@ -13,9 +13,12 @@ import { renderNftList } from 'helpers/marketHelpers';
 import useFetchNFTByUser from 'hooks/useNFTV3';
 import { spinner } from 'styles/common.css';
 import { active } from 'components/HoneyTabs/HoneyTabs.css';
+import { useMediaQuery } from 'react-responsive';
+import { MQ_DESKTOP_BP } from 'constants/breakpoints';
 type Tab = 'borrow' | 'repay';
 
 const MarketsSidebar = (props: MarketsSidebarProps) => {
+  const isMobile = useMediaQuery({ maxWidth: MQ_DESKTOP_BP });
   const wallet = useConnectedWallet() || null;
   const { disconnect } = useSolana();
   const [NFTs, isLoadingNfts, refetchNfts] = useFetchNFTByUser(wallet);
@@ -84,19 +87,29 @@ const MarketsSidebar = (props: MarketsSidebarProps) => {
             icon={<div className={styles.lightIcon} />}
             title="You didn’t connect any wallet yet"
             description="First, choose a NFT collection"
-            buttons={[
-              {
-                title: 'CONNECT',
-                onClick: connect,
-                variant: 'primary'
-              },
-              {
-                title: 'RETURN',
-                onClick: hideMobileSidebar,
-                variant: 'secondary',
-                className: mobileReturnButton
-              }
-            ]}
+            buttons={
+              isMobile
+                ? [
+                    {
+                      title: 'CONNECT',
+                      onClick: connect,
+                      variant: 'primary'
+                    },
+                    {
+                      title: 'RETURN',
+                      onClick: hideMobileSidebar,
+                      variant: 'secondary',
+                      className: mobileReturnButton
+                    }
+                  ]
+                : [
+                    {
+                      title: 'CONNECT',
+                      onClick: connect,
+                      variant: 'primary'
+                    }
+                  ]
+            }
           />
         ) : isLoadingNfts ? (
           <EmptyStateDetails
@@ -117,19 +130,29 @@ const MarketsSidebar = (props: MarketsSidebarProps) => {
             icon={<div className={styles.boltIcon} />}
             title="No NFTs found"
             description="You don't have any NFTs of this collection in this wallet"
-            buttons={[
-              {
-                title: 'connect another wallet',
-                onClick: disconnect,
-                variant: 'secondary'
-              },
-              {
-                title: 'RETURN',
-                onClick: hideMobileSidebar,
-                variant: 'secondary',
-                className: mobileReturnButton
-              }
-            ]}
+            buttons={
+              isMobile
+                ? [
+                    {
+                      title: 'connect another wallet',
+                      onClick: disconnect,
+                      variant: 'secondary'
+                    },
+                    {
+                      title: 'RETURN',
+                      onClick: hideMobileSidebar,
+                      variant: 'secondary',
+                      className: mobileReturnButton
+                    }
+                  ]
+                : [
+                    {
+                      title: 'connect another wallet',
+                      onClick: disconnect,
+                      variant: 'secondary'
+                    }
+                  ]
+            }
           />
         ) : (
           <>
