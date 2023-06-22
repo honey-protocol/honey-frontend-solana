@@ -95,6 +95,7 @@ import HoneyToggle from 'components/HoneyToggle/HoneyToggle';
 import useFetchCollateralNFTPositions from 'hooks/useFetchCollateralNFTPositions';
 import { useFetchUserLevelData } from 'hooks/useFetchUserLevelData';
 import { roundTwoDecimalsUp } from 'helpers/math/math';
+import { useRouter } from 'next/router';
 // import { network } from 'pages/_app';
 
 const cloudinary_uri = process.env.CLOUDINARY_URI;
@@ -117,9 +118,11 @@ const Markets: NextPage = () => {
   const sdkConfig = ConfigureSDK();
   let stringyfiedWalletPK = sdkConfig.sdkWallet?.publicKey.toString();
   const { disconnect } = useSolana();
+  const router = useRouter();
 
   // Sets market ID which is used for fetching market specific data
   // each market currently is a different call and re-renders the page
+
   const [currentMarketId, setCurrentMarketId] = useState('');
   const [currentVerifiedCreator, setCurrentVerifiedCreator] = useState('');
   const [fetchedDataObject, setFetchedDataObject] = useState<MarketBundle>();
@@ -132,13 +135,14 @@ const Markets: NextPage = () => {
    * [1] loading state
    * [2] reFetch function which can be called after deposit or withdraw and updates nft list
    */
-  const [NFTs, isLoadingNfts, refetchNfts] = useFetchNFTByUser(
-    wallet,
-    currentVerifiedCreator
-  );
 
   const selectedMarket = marketCollections.find(
     collection => collection.id === currentMarketId
+  );
+
+  const [NFTs, isLoadingNfts, refetchNfts] = useFetchNFTByUser(
+    wallet,
+    selectedMarket?.verifiedCreator
   );
 
   /**
@@ -209,22 +213,37 @@ const Markets: NextPage = () => {
       currentVerifiedCreator
     );
 
+  console.log({ mintArray }, '@mint');
+
   /**
    * @description sets the market ID based on market click
    * @params Honey table record - contains all info about a table (aka market / collection)
    * @returns sets the market ID which re-renders page state and fetches market specific data
    */
-  async function handleMarketId(record: any) {
-    if (sdkConfig.sdkWallet === null) {
-      setCurrentMarketId(record.id);
-      setCurrentVerifiedCreator(record.verifiedCreator);
-    } else {
-      setCurrentMarketId(record.id);
-      setCurrentVerifiedCreator(record.verifiedCreator);
+  function handleMarketId(record: any) {
+    setCurrentMarketId(record.id);
+    setCurrentVerifiedCreator(record.verifiedCreator);
+    router.push(`/borrow?id=${record.id}`, undefined, { shallow: true });
+    if (sdkConfig.sdkWallet !== null) {
       setIsFetchingClientData(true);
     }
     // refetchUserLevelData();
   }
+
+  // useEffect(() => {
+  //   if (router.query.id) {
+  //     setCurrentMarketId(router.query.id.toString());
+  //     if (!isFetchingData) {
+  //       const marketKey = marketCollections.find(
+  //         collection => collection.id === router.query.id?.toString()
+  //       )?.key;
+  //       setExpandedRowKeys(marketKey ? [marketKey] : []);
+  //       setIsFetchingClientData(true);
+  //     }
+  //   }
+  // }, [router.query]);
+
+  console.log({ currentMarketId });
 
   // market specific constants - calculations / ratios / debt / allowance etc.
   const [nftPrice, setNftPrice] = useState(0);
@@ -350,6 +369,7 @@ const Markets: NextPage = () => {
       }
 
       try {
+        console.log('Getting values from @Haney user');
         let { allowance, debt, liquidationThreshold, ltv } =
           await honeyUser.fetchAllowanceAndDebt(0);
         const totalMarketDebt =
@@ -385,6 +405,10 @@ const Markets: NextPage = () => {
     },
     [honeyUser]
   );
+
+  useEffect(() => {
+    console.log('@Haney user changed', currentMarketId, honeyUser);
+  }, [honeyUser]);
 
   useEffect(() => {
     fetchCurrentMarketData();
