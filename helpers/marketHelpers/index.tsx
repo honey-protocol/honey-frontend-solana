@@ -225,6 +225,35 @@ export const marketCollections: MarketTableRow[] = [
       discountedMarket: true
     }
   },
+  // {
+  //   id: 'A5FZGzNiHZEJ8qxzMjUs2Dxtz8oFi2wTrrvhoxYH3e7m',
+  //   key: 'LIFINITY',
+  //   name: 'LIFINITY Flares',
+  //   verifiedCreator: 'EWyWxSkxWHWGzxfCd9kG7zGrKTUDbZGiV6VbFJF8YfqN',
+  //   loanCurrency: 'USDC',
+  //   decimals: 10 ** 6,
+  //   rate: 0,
+  //   available: 0,
+  //   value: 0,
+  //   allowance: 0,
+  //   connection: undefined,
+  //   user: undefined,
+  //   debt: 0,
+  //   utilizationRate: 0,
+  //   openPositions: [],
+  //   constants: {
+  //     marketId: 'A5FZGzNiHZEJ8qxzMjUs2Dxtz8oFi2wTrrvhoxYH3e7m',
+  //     verifiedCreator: 'EWyWxSkxWHWGzxfCd9kG7zGrKTUDbZGiV6VbFJF8YfqN',
+  //     marketName: 'LIFINITY Flares',
+  //     marketImage:
+  //       'https://img-cdn.magiceden.dev/rs:fill:400:400:0:0/plain/https://dl.airtable.com/.attachmentThumbnails/6972d5c2efb77d49be97b07ccf4fbc69/e9572fb8',
+  //     marketLoanCurrency: 'USDC',
+  //     marketLoanCurrencyImage: '/images/USDC.svg',
+  //     marketLoanCurrencyTokenMintAddress:
+  //       'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v',
+  //     discountedMarket: true
+  //   }
+  // },
   {
     id: 'Bxk1JQCbVjpeFnjzvH5n9bepnZeHjRADUFwZiVC7L5Gq',
     key: 'ATD',
