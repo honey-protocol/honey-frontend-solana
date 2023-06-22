@@ -220,11 +220,25 @@ const Markets: NextPage = () => {
    * @params Honey table record - contains all info about a table (aka market / collection)
    * @returns sets the market ID which re-renders page state and fetches market specific data
    */
-  function handleMarketId(record: any) {
-    setCurrentMarketId(record.id);
-    setCurrentVerifiedCreator(record.verifiedCreator);
-    router.push(`/borrow?id=${record.id}`, undefined, { shallow: true });
-    if (sdkConfig.sdkWallet !== null) {
+  // function handleMarketId(record: any) {
+  //   setCurrentMarketId(record.id);
+  //   setCurrentVerifiedCreator(record.verifiedCreator);
+  //   router.push(`/borrow?id=${record.id}`, undefined, { shallow: true });
+  //   if (sdkConfig.sdkWallet !== null) {
+  //     setIsFetchingClientData(true);
+  //   }
+  //   // refetchUserLevelData();
+  // }
+
+  async function handleMarketId(record: any) {
+    if (sdkConfig.sdkWallet === null) {
+      setCurrentMarketId(record.id);
+      setCurrentVerifiedCreator(record.verifiedCreator);
+      router.push(`/borrow?id=${record.id}`, undefined, { shallow: true });
+    } else {
+      setCurrentMarketId(record.id);
+      setCurrentVerifiedCreator(record.verifiedCreator);
+      router.push(`/borrow?id=${record.id}`, undefined, { shallow: true });
       setIsFetchingClientData(true);
     }
     // refetchUserLevelData();
