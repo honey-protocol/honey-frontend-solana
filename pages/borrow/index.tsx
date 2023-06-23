@@ -211,8 +211,6 @@ const Markets: NextPage = () => {
       currentVerifiedCreator
     );
 
-  console.log({ mintArray }, '@mint');
-
   /**
    * @description sets the market ID based on market click
    * @params Honey table record - contains all info about a table (aka market / collection)
@@ -281,29 +279,34 @@ const Markets: NextPage = () => {
   const [isCreateMarketAreaOnHover, setIsCreateMarketAreaOnHover] =
     useState<boolean>(false);
 
-  useEffect(() => {
-    const onUrlChange = () => {
-      const urlParams = new URLSearchParams(window.location.search);
-      const id = urlParams.get('id');
-      if (id) {
-        setCurrentMarketId(id);
-        if (!isFetchingData) {
-          const marketKey = marketCollections.find(
-            collection => collection.id === id
-          )?.key;
-          setExpandedRowKeys(marketKey ? [marketKey] : []);
-          setIsFetchingClientData(true);
-        }
+  const onUrlChange = useCallback(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const id = urlParams.get('id');
+    const market = marketCollections.find(collection => collection.id === id);
+    if (id && market) {
+      setCurrentMarketId(id);
+      setCurrentVerifiedCreator(market.verifiedCreator);
+      if (!isFetchingData) {
+        setExpandedRowKeys([market.key]);
+        setIsFetchingClientData(true);
       }
-    };
+    }
+  }, [isFetchingData]);
+
+  useEffect(() => {
+    //call on url change on mount so that the initial id can be gotten the the url if any
+    onUrlChange();
+  }, [onUrlChange]);
+
+  useEffect(() => {
     window.addEventListener('popstate', onUrlChange);
     () => window.removeEventListener('popstate', onUrlChange);
-  }, [isFetchingData]);
+  }, [onUrlChange]);
 
   // fetches market level data from API
   const fetchMarketLevelDataFromAPI = useCallback(async () => {
     try {
-      setIsFetchingData(false);
+      setIsFetchingData(true);
       const response = await fetch(FETCH_USER_MARKET_DATA);
       const result: MarketBundle[] = await response.json();
 
