@@ -95,7 +95,6 @@ import HoneyToggle from 'components/HoneyToggle/HoneyToggle';
 import useFetchCollateralNFTPositions from 'hooks/useFetchCollateralNFTPositions';
 import { useFetchUserLevelData } from 'hooks/useFetchUserLevelData';
 import { roundTwoDecimalsUp } from 'helpers/math/math';
-import { useRouter } from 'next/router';
 // import { network } from 'pages/_app';
 
 const cloudinary_uri = process.env.CLOUDINARY_URI;
@@ -118,7 +117,6 @@ const Markets: NextPage = () => {
   const sdkConfig = ConfigureSDK();
   let stringyfiedWalletPK = sdkConfig.sdkWallet?.publicKey.toString();
   const { disconnect } = useSolana();
-  const router = useRouter();
 
   // Sets market ID which is used for fetching market specific data
   // each market currently is a different call and re-renders the page
@@ -234,28 +232,15 @@ const Markets: NextPage = () => {
     if (sdkConfig.sdkWallet === null) {
       setCurrentMarketId(record.id);
       setCurrentVerifiedCreator(record.verifiedCreator);
-      router.push(`/borrow?id=${record.id}`, undefined, { shallow: true });
+      window.history.pushState({}, '', `/borrow?id=${record.id}`);
     } else {
       setCurrentMarketId(record.id);
       setCurrentVerifiedCreator(record.verifiedCreator);
-      router.push(`/borrow?id=${record.id}`, undefined, { shallow: true });
+      window.history.pushState({}, '', `/borrow?id=${record.id}`);
       setIsFetchingClientData(true);
     }
     // refetchUserLevelData();
   }
-
-  // useEffect(() => {
-  //   if (router.query.id) {
-  //     setCurrentMarketId(router.query.id.toString());
-  //     if (!isFetchingData) {
-  //       const marketKey = marketCollections.find(
-  //         collection => collection.id === router.query.id?.toString()
-  //       )?.key;
-  //       setExpandedRowKeys(marketKey ? [marketKey] : []);
-  //       setIsFetchingClientData(true);
-  //     }
-  //   }
-  // }, [router.query]);
 
   console.log({ currentMarketId });
 
@@ -295,6 +280,25 @@ const Markets: NextPage = () => {
 
   const [isCreateMarketAreaOnHover, setIsCreateMarketAreaOnHover] =
     useState<boolean>(false);
+
+  useEffect(() => {
+    const onUrlChange = () => {
+      const urlParams = new URLSearchParams(window.location.search);
+      const id = urlParams.get('id');
+      if (id) {
+        setCurrentMarketId(id);
+        if (!isFetchingData) {
+          const marketKey = marketCollections.find(
+            collection => collection.id === id
+          )?.key;
+          setExpandedRowKeys(marketKey ? [marketKey] : []);
+          setIsFetchingClientData(true);
+        }
+      }
+    };
+    window.addEventListener('popstate', onUrlChange);
+    () => window.removeEventListener('popstate', onUrlChange);
+  }, [isFetchingData]);
 
   // fetches market level data from API
   const fetchMarketLevelDataFromAPI = useCallback(async () => {
