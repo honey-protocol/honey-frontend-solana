@@ -729,7 +729,8 @@ const Markets: NextPage = () => {
       tableData,
       showWeeklyRates,
       searchQuery,
-      windowWidth
+      windowWidth,
+      isFetchingData
     ]
   );
   // Render func. for mobile
@@ -827,7 +828,10 @@ const Markets: NextPage = () => {
         }
       }
     ],
-    [isMyCollectionsFilterEnabled, tableData, searchQuery, showWeeklyRates]
+      searchQuery,
+      showWeeklyRates,
+      isFetchingData
+    ]
   );
 
   // position in each market
