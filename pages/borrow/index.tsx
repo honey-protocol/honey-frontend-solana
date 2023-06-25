@@ -828,10 +828,7 @@ const Markets: NextPage = () => {
         }
       }
     ],
-      searchQuery,
-      showWeeklyRates,
-      isFetchingData
-    ]
+    [searchQuery, showWeeklyRates, isFetchingData]
   );
 
   // position in each market
