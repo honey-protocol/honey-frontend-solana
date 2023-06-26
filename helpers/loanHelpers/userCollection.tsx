@@ -53,7 +53,7 @@ export const setObligations = async (
 
   return obligations
     .map((obligation: any) => {
-      const x = {
+      const obl = {
         name: renderMarketName(selectedMarket.id),
         riskLvl: (obligation.debt / nftPrice) * 100,
         healthLvl:
@@ -69,10 +69,7 @@ export const setObligations = async (
         highestBid: obligation.highest_bid,
         count: obligation.count
       };
-      if (obligation.owner === '9LqWBRfn2UJ7WF4v6NhEsYQD79iMkCLujCSj8KfXJua2') {
-        console.log('@@--mine obligation', obligation);
-      }
-      return x;
+      return obl;
     })
     .filter((obl: any) => obl.debt.toString() != 0);
 };

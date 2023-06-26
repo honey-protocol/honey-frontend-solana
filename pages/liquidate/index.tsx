@@ -110,9 +110,7 @@ const Liquidate: NextPage = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [tableDataFiltered, setTableDataFiltered] =
     useState<MarketTableRow[]>(marketCollections);
-  const [currentMarketId, setCurrentMarketId] = useState(
-    HONEY_GENESIS_MARKET_ID
-  );
+  const [currentMarketId, setCurrentMarketId] = useState('');
   const [isFetchingData, setIsFetchingData] = useState(false);
   const [isFetchingClientData, setIsFetchingClientData] = useState(false);
   const [serverRenderedMarketData, setServerRenderedMarketData] = useState<
@@ -188,8 +186,8 @@ const Liquidate: NextPage = () => {
   }, [honeyReserves]);
 
   // fetches market level data from API
-  async function fetchServerSideMarketData() {
-    fetch(FETCH_USER_MARKET_DATA)
+  async function fetchServerSideMarketData(currentMarketId: string) {
+    fetch(`${FETCH_USER_MARKET_DATA}/${currentMarketId}`)
       .then(res => res.json())
       .then(async data => {
         await data.map(async (marketObject: any) => {
@@ -200,13 +198,14 @@ const Liquidate: NextPage = () => {
         setMarketData(data as unknown as MarketBundle[]);
         setServerRenderedMarketData(data);
         handleBids(currentMarketId);
+        console.log('@@-- data', data);
       })
       .catch(err => console.log(`Error fetching SSR: ${err}`));
   }
   // init data fetch from server
   useEffect(() => {
-    fetchServerSideMarketData();
-  }, []);
+    fetchServerSideMarketData(currentMarketId);
+  }, [currentMarketId]);
 
   //  ************* START HANDLE BIDS *************
   async function handleBids(currentMarketId: string) {
@@ -320,11 +319,11 @@ const Liquidate: NextPage = () => {
 
   // refetches markets after bid is placed | revoked | increased
   // TODO: Validate if we can use the API for this call as well
-  async function fetchBidData() {
-    setTimeout(async () => {
-      fetchServerSideMarketData();
-    }, 30000);
-  }
+  // async function fetchBidData() {
+  //   setTimeout(async () => {
+  //     fetchServerSideMarketData();
+  //   }, 30000);
+  // }
 
   // fetches reserve value based on correct parsed reserves - coming from honeyReserves
   useEffect(() => {
@@ -368,7 +367,7 @@ const Liquidate: NextPage = () => {
           if (transactionOutcome[0] == 'SUCCESS') {
             setCurrentUserBid(0);
             if (walletPK) refetchWalletBalance();
-            fetchBidData();
+            // fetchBidData();
             return toast.success('Bid revoked, fetching chain data');
           } else {
             return toast.error('Revoke bid failed');
@@ -392,7 +391,7 @@ const Liquidate: NextPage = () => {
 
           if (transactionOutcome[0] == 'SUCCESS') {
             if (walletPK) await refetchWalletBalance();
-            fetchBidData();
+            // fetchBidData();
             return toast.success('Bid placed, fetching chain data');
           } else {
             return toast.error('Bid failed');
@@ -414,7 +413,7 @@ const Liquidate: NextPage = () => {
 
           if (transactionOutcome[0] == 'SUCCESS') {
             if (walletPK) await refetchWalletBalance();
-            fetchBidData();
+            // fetchBidData();
             return toast.success('Bid increased, fetching chain data');
           } else {
             return toast.error('Bid increase failed');
