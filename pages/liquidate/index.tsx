@@ -110,7 +110,9 @@ const Liquidate: NextPage = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [tableDataFiltered, setTableDataFiltered] =
     useState<MarketTableRow[]>(marketCollections);
-  const [currentMarketId, setCurrentMarketId] = useState('');
+  const [currentMarketId, setCurrentMarketId] = useState(
+    HONEY_GENESIS_MARKET_ID
+  );
   const [isFetchingData, setIsFetchingData] = useState(false);
   const [isFetchingClientData, setIsFetchingClientData] = useState(false);
   const [serverRenderedMarketData, setServerRenderedMarketData] = useState<
