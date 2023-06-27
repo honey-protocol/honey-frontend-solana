@@ -227,7 +227,7 @@ export const marketCollections: MarketTableRow[] = [
   },
   {
     id: 'A5FZGzNiHZEJ8qxzMjUs2Dxtz8oFi2wTrrvhoxYH3e7m',
-    key: 'LIFINITY',
+    key: 'LIFINITYUSDC',
     name: 'LIFINITY Flares',
     verifiedCreator: 'EWyWxSkxWHWGzxfCd9kG7zGrKTUDbZGiV6VbFJF8YfqN',
     loanCurrency: 'USDC',
