@@ -76,7 +76,10 @@ import { network } from 'pages/_app';
 import SorterIcon from 'icons/Sorter';
 import { fetchTVL } from 'helpers/loanHelpers/userCollection';
 import HoneyTooltip from 'components/HoneyTooltip/HoneyTooltip';
-import { FETCH_USER_MARKET_DATA } from 'constants/apiEndpoints';
+import {
+  FETCH_MARKET_BIDDING_DATA,
+  FETCH_USER_MARKET_DATA
+} from 'constants/apiEndpoints';
 import { useSolBalance, useTokenBalance } from 'hooks/useSolBalance';
 import { mergeDuplicates } from 'helpers/liquidationHelpers';
 
@@ -164,6 +167,7 @@ const Liquidate: NextPage = () => {
     if (stringyfiedWalletPK)
       localStorage.setItem('walletPK', stringyfiedWalletPK);
   }, [stringyfiedWalletPK]);
+
   // state for parsed reserves
   const [parsedReserves, setParsedReserves] = useState<TReserve>();
   /**
@@ -188,8 +192,8 @@ const Liquidate: NextPage = () => {
   }, [honeyReserves]);
 
   // fetches market level data from API
-  async function fetchServerSideMarketData(currentMarketId: string) {
-    fetch(`${FETCH_USER_MARKET_DATA}/${currentMarketId}`)
+  async function fetchServerSideMarketData() {
+    fetch(`${FETCH_USER_MARKET_DATA}`)
       .then(res => res.json())
       .then(async data => {
         await data.map(async (marketObject: any) => {
@@ -200,41 +204,34 @@ const Liquidate: NextPage = () => {
         setMarketData(data as unknown as MarketBundle[]);
         setServerRenderedMarketData(data);
         handleBids(currentMarketId);
-        console.log('@@-- data', data);
       })
       .catch(err => console.log(`Error fetching SSR: ${err}`));
   }
   // init data fetch from server
   useEffect(() => {
-    fetchServerSideMarketData(currentMarketId);
-  }, [currentMarketId]);
+    fetchServerSideMarketData();
+  }, []);
 
   //  ************* START HANDLE BIDS *************
   async function handleBids(currentMarketId: string) {
-    if (currentMarketId === undefined || !serverRenderedMarketData) return;
+    if (!currentMarketId) return;
 
-    // gets the current active market
-    const filteredMarketData = serverRenderedMarketData.filter(
-      marketObject => marketObject.marketId === currentMarketId
-    );
-    if (filteredMarketData.length) {
-      const data = (filteredMarketData[0] as any).data;
-      if (data.bids) {
-        setBiddingArray(data.bids);
-        handleBiddingState(data.bids);
-      } else {
+    fetch(`${FETCH_MARKET_BIDDING_DATA}/${currentMarketId}`)
+      .then(res => res.json())
+      .then(data => {
+        setBiddingArray(data);
+        handleBiddingState(data);
+      })
+      .catch(err => {
+        console.log(`Error fetching bids: ${err}`);
         setBiddingArray([]);
         handleBiddingState([]);
-      }
-    } else {
-      setBiddingArray([]);
-      handleBiddingState([]);
-    }
+      });
   }
 
   useEffect(() => {
     handleBids(currentMarketId);
-  }, [currentMarketId, serverRenderedMarketData, stringyfiedWalletPK]);
+  }, [currentMarketId, stringyfiedWalletPK]);
   //  ************* END HANDLE BIDS *************
 
   function fetchUserWalletFromLS() {
