@@ -22,7 +22,6 @@ import HoneyButton from '../../components/HoneyButton/HoneyButton';
 import { formatNFTName, formatNumber } from '../../helpers/format';
 import { LiquidateTableRow } from '../../types/liquidate';
 import { LiquidateExpandTable } from '../../components/LiquidateExpandTable/LiquidateExpandTable';
-import { RoundHalfDown } from 'helpers/utils';
 import {
   useAnchor,
   LiquidatorClient,

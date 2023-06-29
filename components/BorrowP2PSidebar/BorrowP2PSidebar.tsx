@@ -10,6 +10,8 @@ import EmptyStateDetails from '../EmptyStateDetails/EmptyStateDetails';
 import { useConnectedWallet } from '@saberhq/use-solana';
 import { useWalletKit } from '@gokiprotocol/walletkit';
 import { mobileReturnButton } from '../../styles/common.css';
+import { useMediaQuery } from 'react-responsive';
+import { MQ_DESKTOP_BP } from 'constants/breakpoints';
 
 const tabs: [HoneyTabItem, HoneyTabItem] = [
   { label: 'borrow', key: 'borrow' },
@@ -21,6 +23,7 @@ export const BorrowP2PSidebar = ({
   selectedPosition,
   onClose
 }: BorrowP2PSidebarProps) => {
+  const isMobile = useMediaQuery({ maxWidth: MQ_DESKTOP_BP });
   const wallet = useConnectedWallet();
   const { connect } = useWalletKit();
 
@@ -44,19 +47,29 @@ export const BorrowP2PSidebar = ({
         icon={<div className={styles.lightIcon} />}
         title="You didn’t connect any wallet yet"
         description="First, choose a NFT collection"
-        buttons={[
-          {
-            title: 'CONNECT',
-            onClick: connect,
-            variant: 'primary'
-          },
-          {
-            title: 'RETURN',
-            onClick: () => onCancel(),
-            variant: 'secondary',
-            className: mobileReturnButton
-          }
-        ]}
+        buttons={
+          isMobile
+            ? [
+                {
+                  title: 'CONNECT',
+                  onClick: connect,
+                  variant: 'primary'
+                },
+                {
+                  title: 'RETURN',
+                  onClick: () => onCancel(),
+                  variant: 'secondary',
+                  className: mobileReturnButton
+                }
+              ]
+            : [
+                {
+                  title: 'CONNECT',
+                  onClick: connect,
+                  variant: 'primary'
+                }
+              ]
+        }
       />
     );
   };

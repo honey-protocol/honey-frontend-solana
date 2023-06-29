@@ -7,6 +7,8 @@ import BidForm from '../BidForm/BidForm';
 import BidsList from '../BidsList/BidsList';
 import { useConnectedWallet } from '@saberhq/use-solana';
 import { useWalletKit } from '@gokiprotocol/walletkit';
+import { useMediaQuery } from 'react-responsive';
+import { MQ_DESKTOP_BP } from 'constants/breakpoints';
 
 const items: [HoneyTabItem, HoneyTabItem] = [
   { label: 'Place a bid', key: 'bid' },
@@ -32,6 +34,7 @@ const LiquidateSidebar = (props: LendSidebarProps) => {
     handlePlaceBid,
     onCancel
   } = props;
+  const isMobile = useMediaQuery({ maxWidth: MQ_DESKTOP_BP });
   const wallet = useConnectedWallet();
   const { connect } = useWalletKit();
   const [activeTab, setActiveTab] = useState<Tab>('bid');
@@ -53,17 +56,26 @@ const LiquidateSidebar = (props: LendSidebarProps) => {
             icon={<div className={styles.lightIcon} />}
             title="You didn’t connect any wallet yet"
             description="First, choose a NFT collection"
-            buttons={[
-              {
-                title: 'CONNECT',
-                onClick: connect
-              },
-              {
-                title: 'RETURN',
-                onClick: () => onCancel(),
-                variant: 'secondary'
-              }
-            ]}
+            buttons={
+              isMobile
+                ? [
+                    {
+                      title: 'CONNECT',
+                      onClick: connect
+                    },
+                    {
+                      title: 'RETURN',
+                      onClick: () => onCancel(),
+                      variant: 'secondary'
+                    }
+                  ]
+                : [
+                    {
+                      title: 'CONNECT',
+                      onClick: connect
+                    }
+                  ]
+            }
           />
         ) : !collectionId ? (
           <EmptyStateDetails
