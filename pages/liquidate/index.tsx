@@ -166,7 +166,16 @@ const Liquidate: NextPage = () => {
   useEffect(() => {
     if (stringyfiedWalletPK)
       localStorage.setItem('walletPK', stringyfiedWalletPK);
+
+    selectedMarket?.loanCurrency === 'SOL'
+      ? refetchSolBalance()
+      : refetchWalletLoanTokenBalance();
+    refetchWalletBalance();
   }, [stringyfiedWalletPK]);
+
+  // useEffect(() => {
+  //   console.log('@@-- wallet', sdkConfig);
+  // }, [sdkConfig.sdkWallet]);
 
   // state for parsed reserves
   const [parsedReserves, setParsedReserves] = useState<TReserve>();
@@ -315,14 +324,6 @@ const Liquidate: NextPage = () => {
     const reservePrice = await fetchReservePrice(reserves, connection);
     setFetchedReservePrice(reservePrice);
   }
-
-  // refetches markets after bid is placed | revoked | increased
-  // TODO: Validate if we can use the API for this call as well
-  // async function fetchBidData() {
-  //   setTimeout(async () => {
-  //     fetchServerSideMarketData();
-  //   }, 30000);
-  // }
 
   // fetches reserve value based on correct parsed reserves - coming from honeyReserves
   useEffect(() => {
