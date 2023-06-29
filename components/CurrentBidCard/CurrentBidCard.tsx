@@ -37,7 +37,7 @@ const CurrentBidCard = (props: CurrentBidCardProps) => {
       <div className={styles.bidCardRight}>
         <p className={styles.bidCardPrice}>{fs(solAmount)}</p>
         <p className={styles.bidCardUsdcCounts}>
-          {f(usdcValue * fetchedReservePrice)} USDC
+          {f((usdcValue * fetchedReservePrice) / 10 ** 3)} USDC
         </p>
       </div>
     </div>
