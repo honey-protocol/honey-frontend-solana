@@ -7,6 +7,8 @@ import { BidListProps } from './types';
 import { LAMPORTS_PER_SOL } from '@solana/web3.js';
 import { Spin } from 'antd';
 import { marketsTokens } from 'helpers/marketHelpers';
+import { spinner } from 'styles/common.css';
+import EmptyStateDetails from 'components/EmptyStateDetails/EmptyStateDetails';
 
 const BidsList = (props: BidListProps) => {
   const { biddingArray, fetchedReservePrice, isFetchingData } = props;
@@ -44,7 +46,15 @@ const BidsList = (props: BidListProps) => {
   return (
     <SidebarScroll>
       {isFetchingData ? (
-        <Spin />
+        <EmptyStateDetails
+          icon={
+            <div className={spinner}>
+              <Spin />
+            </div>
+          }
+          title=""
+          description=""
+        />
       ) : (
         <div className={styles.bidsList}>
           {currentBidCardData.length ? (

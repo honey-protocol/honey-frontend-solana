@@ -4,6 +4,7 @@ import { BiddingPosition } from '../../types/liquidate';
 export type LendSidebarProps = {
   collectionId?: string;
   userBalance: number;
+  isFetchingBids: boolean;
   biddingArray: any;
   highestBiddingValue: number;
   currentUserBid?: number;

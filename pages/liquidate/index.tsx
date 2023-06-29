@@ -104,6 +104,7 @@ const Liquidate: NextPage = () => {
   const [nftPrice, setNftPrice] = useState<number>(0);
   const [fetchedReservePrice, setFetchedReservePrice] = useState(0);
   const [isMobileSidebarVisible, setShowMobileSidebar] = useState(false);
+  const [isFetchingBids, setIsFetchingBids] = useState(false);
   const [biddingArray, setBiddingArray] = useState({});
   const [marketData, setMarketData] = useState<MarketBundle[]>([]);
   const [tableData, setTableData] =
@@ -213,21 +214,24 @@ const Liquidate: NextPage = () => {
   }, []);
 
   //  ************* START HANDLE BIDS *************
-  async function handleBids(currentMarketId: string) {
+  const handleBids = async (currentMarketId: string) => {
     if (!currentMarketId) return;
-
-    fetch(`${FETCH_MARKET_BIDDING_DATA}/${currentMarketId}`)
-      .then(res => res.json())
-      .then(data => {
-        setBiddingArray(data);
-        handleBiddingState(data);
-      })
-      .catch(err => {
-        console.log(`Error fetching bids: ${err}`);
-        setBiddingArray([]);
-        handleBiddingState([]);
-      });
-  }
+    try {
+      setIsFetchingBids(true);
+      const res = await fetch(
+        `${FETCH_MARKET_BIDDING_DATA}/${currentMarketId}`
+      );
+      const data = await res.json();
+      setBiddingArray(data);
+      handleBiddingState(data);
+    } catch (error) {
+      console.log(`Error fetching bids: ${error}`);
+      setBiddingArray([]);
+      handleBiddingState([]);
+    } finally {
+      setIsFetchingBids(false);
+    }
+  };
 
   useEffect(() => {
     handleBids(currentMarketId);
@@ -887,6 +891,7 @@ const Liquidate: NextPage = () => {
     <HoneySider isMobileSidebarVisible={isMobileSidebarVisible}>
       <LiquidateSidebar
         collectionId="0"
+        isFetchingBids={isFetchingBids}
         biddingArray={biddingArray}
         userBalance={userWalletBalance}
         stringyfiedWalletPK={stringyfiedWalletPK}

@@ -19,6 +19,7 @@ const LiquidateSidebar = (props: LendSidebarProps) => {
   const {
     collectionId,
     userBalance,
+    isFetchingBids,
     biddingArray,
     highestBiddingValue,
     highestBiddingAddress,
@@ -91,7 +92,7 @@ const LiquidateSidebar = (props: LendSidebarProps) => {
             )}
             {activeTab === 'current' && (
               <BidsList
-                isFetchingData={isFetchingData}
+                isFetchingData={isFetchingBids}
                 biddingArray={biddingArray}
                 fetchedReservePrice={fetchedReservePrice}
               />
