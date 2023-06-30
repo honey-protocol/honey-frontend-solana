@@ -268,6 +268,8 @@ const Liquidate: NextPage = () => {
 
     if (userWallet === false) return;
 
+    setIsFetchingClientData(true);
+
     const arrayOfBiddingAddress = await biddingArray.map(
       (obligation: any) => obligation.bidder
     );
@@ -597,6 +599,7 @@ const Liquidate: NextPage = () => {
 
     if (marketData[0].id) {
       setCurrentMarketId(marketData[0].id);
+      setIsFetchingClientData(true);
     }
   }
   /**
