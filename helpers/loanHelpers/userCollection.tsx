@@ -57,8 +57,7 @@ export const setObligations = async (
         name: renderMarketName(selectedMarket.id),
         riskLvl: (obligation.debt / nftPrice) * 100,
         healthLvl:
-          ((nftPrice * obligation.count -
-            obligation.debt / obligation.count / COLLATERAL_FACTOR) /
+          ((nftPrice * obligation.count - obligation.debt / COLLATERAL_FACTOR) /
             (nftPrice * obligation.count)) *
           100,
         debt: obligation.debt,
