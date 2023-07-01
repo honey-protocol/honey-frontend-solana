@@ -32,4 +32,5 @@ export type LendSidebarProps = {
   ) => void;
   onCancel: Function;
   isLoadingWalletBalance: boolean;
+  loanCurrency: string;
 };

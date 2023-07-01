@@ -11,7 +11,8 @@ import { spinner } from 'styles/common.css';
 import EmptyStateDetails from 'components/EmptyStateDetails/EmptyStateDetails';
 
 const BidsList = (props: BidListProps) => {
-  const { biddingArray, fetchedReservePrice, isFetchingData } = props;
+  const { biddingArray, fetchedReservePrice, isFetchingData, loanCurrency } =
+    props;
   const [convertedBiddingArray, setConvertedBiddingArray] = useState([]);
 
   // Put your validators here
@@ -61,6 +62,7 @@ const BidsList = (props: BidListProps) => {
             <CurrentBidList
               data={currentBidCardData}
               fetchedReservePrice={fetchedReservePrice}
+              loanCurrency={loanCurrency}
             />
           ) : (
             'No open bids'

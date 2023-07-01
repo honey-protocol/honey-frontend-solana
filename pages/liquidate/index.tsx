@@ -117,6 +117,7 @@ const Liquidate: NextPage = () => {
   const [currentMarketId, setCurrentMarketId] = useState(
     HONEY_GENESIS_MARKET_ID
   );
+  const [currentCurrency, setCurrentCurrency] = useState('SOL');
   const [isFetchingData, setIsFetchingData] = useState(false);
   const [isFetchingClientData, setIsFetchingClientData] = useState(false);
   const [serverRenderedMarketData, setServerRenderedMarketData] = useState<
@@ -601,6 +602,7 @@ const Liquidate: NextPage = () => {
 
     if (marketData[0].id) {
       setCurrentMarketId(marketData[0].id);
+      setCurrentCurrency(marketData[0].loanCurrency);
       setIsFetchingClientData(true);
     }
   }
@@ -911,6 +913,7 @@ const Liquidate: NextPage = () => {
         currentMarketId={currentMarketId}
         isFetchingData={isFetchingClientData}
         isLoadingWalletBalance={isLoadingWalletBalance}
+        loanCurrency={currentCurrency}
       />
     </HoneySider>
   );
