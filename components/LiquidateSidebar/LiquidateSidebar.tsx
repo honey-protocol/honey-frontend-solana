@@ -31,7 +31,8 @@ const LiquidateSidebar = (props: LendSidebarProps) => {
     handleRevokeBid,
     handleIncreaseBid,
     handlePlaceBid,
-    onCancel
+    onCancel,
+    isLoadingWalletBalance
   } = props;
   const wallet = useConnectedWallet();
   const { connect } = useWalletKit();
@@ -88,6 +89,7 @@ const LiquidateSidebar = (props: LendSidebarProps) => {
                 onCancel={onCancel}
                 currentMarketId={currentMarketId}
                 isFetchingData={isFetchingData}
+                isLoadingWalletBalance={isLoadingWalletBalance}
               />
             )}
             {activeTab === 'current' && (

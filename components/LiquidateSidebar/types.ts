@@ -31,4 +31,5 @@ export type LendSidebarProps = {
     mID: string
   ) => void;
   onCancel: Function;
+  isLoadingWalletBalance: boolean;
 };

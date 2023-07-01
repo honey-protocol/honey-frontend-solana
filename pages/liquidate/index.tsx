@@ -267,6 +267,7 @@ const Liquidate: NextPage = () => {
       setCurrentUserBid(0);
       setHighestBiddingValue(0);
       setHighestBiddingAddress('');
+      setIsFetchingClientData(false);
       return;
     }
     if (!selectedMarket) return;
@@ -909,6 +910,7 @@ const Liquidate: NextPage = () => {
         onCancel={hideMobileSidebar}
         currentMarketId={currentMarketId}
         isFetchingData={isFetchingClientData}
+        isLoadingWalletBalance={isLoadingWalletBalance}
       />
     </HoneySider>
   );
