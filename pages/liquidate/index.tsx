@@ -22,7 +22,6 @@ import HoneyButton from '../../components/HoneyButton/HoneyButton';
 import { formatNFTName, formatNumber } from '../../helpers/format';
 import { LiquidateTableRow } from '../../types/liquidate';
 import { LiquidateExpandTable } from '../../components/LiquidateExpandTable/LiquidateExpandTable';
-import { RoundHalfDown } from 'helpers/utils';
 import {
   useAnchor,
   LiquidatorClient,
@@ -630,8 +629,33 @@ const Liquidate: NextPage = () => {
       setCurrentMarketId(marketData[0].id);
       setCurrentCurrency(marketData[0].loanCurrency);
       setIsFetchingClientData(true);
+      window.history.pushState({}, '', `/liquidate?id=${record.id}`);
     }
   }
+
+  const onUrlChange = useCallback(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const id = urlParams.get('id');
+    const market = marketCollections.find(collection => collection.id === id);
+    if (id && market) {
+      setCurrentMarketId(id);
+      if (!isFetchingData) {
+        setExpandedRowKeys([market.key]);
+        setIsFetchingClientData(true);
+      }
+    }
+  }, [isFetchingData]);
+
+  useEffect(() => {
+    //call on url change on mount so that the initial id can be gotten the the url if any
+    onUrlChange();
+  }, [onUrlChange]);
+
+  useEffect(() => {
+    window.addEventListener('popstate', onUrlChange);
+    () => window.removeEventListener('popstate', onUrlChange);
+  }, [onUrlChange]);
+
   /**
    * @description
    * @params

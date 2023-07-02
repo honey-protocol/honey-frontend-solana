@@ -64,7 +64,7 @@ const BorrowForm = (props: BorrowProps) => {
     isFetchingData,
     collCount
   } = props;
-  console.log('@@-- openPositions', openPositions.length);
+
   // state declarations
   const [valueUSD, setValueUSD] = useState<number>(0);
   const [valueUnderlying, setValueUnderlying] = useState<number>(0);

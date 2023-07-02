@@ -73,6 +73,7 @@
     "react-markdown": "^8.0.3",
     "react-number-format": "^4.9.1",
     "react-query": "^3.39.2",
+    "react-responsive": "^9.0.2",
     "react-sizeme": "^3.0.2",
     "react-toastify": "^8.2.0",
     "react-window": "^1.8.7",
