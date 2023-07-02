@@ -35,7 +35,7 @@ const LiquidateSidebar = (props: LendSidebarProps) => {
     isLoadingWalletBalance,
     loanCurrency
   } = props;
-  console.log('@@-- the loan curr', loanCurrency);
+
   const wallet = useConnectedWallet();
   const { connect } = useWalletKit();
   const [activeTab, setActiveTab] = useState<Tab>('bid');
@@ -92,6 +92,7 @@ const LiquidateSidebar = (props: LendSidebarProps) => {
                 currentMarketId={currentMarketId}
                 isFetchingData={isFetchingData}
                 isLoadingWalletBalance={isLoadingWalletBalance}
+                isFetchingBids={isFetchingBids}
               />
             )}
             {activeTab === 'current' && (

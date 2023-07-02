@@ -44,6 +44,7 @@ const BidForm = (props: BidFormProps) => {
     handlePlaceBid,
     onCancel,
     isFetchingData,
+    isFetchingBids,
     isLoadingWalletBalance
   } = props;
   // state declarations
@@ -193,7 +194,7 @@ const BidForm = (props: BidFormProps) => {
           <div className={styles.col}>
             <InfoBlock
               value={
-                isFetchingData ? (
+                isFetchingBids ? (
                   <Skeleton.Button size="small" active />
                 ) : highestBiddingValue !== 0 ? (
                   fs(highestBiddingValue)
@@ -212,17 +213,6 @@ const BidForm = (props: BidFormProps) => {
               }
             />
           </div>
-          {/* <div className={styles.col}>
-            <InfoBlock
-              title={
-                <span className={hAlign}>
-                  Minimal bid <div className={questionIcon} />
-                </span>
-              }
-              value={fs(highestBiddingValue * 1.1)}
-              valueSize="big"
-            />
-          </div> */}
         </div>
         <div className={styles.row}>
           <div className={styles.col}>

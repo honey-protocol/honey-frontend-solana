@@ -95,11 +95,16 @@ interface MarketBundle {
   marketId?: string;
 }
 
+interface BiddingObject {
+  marketId: string;
+  bids: [];
+}
+
 const Liquidate: NextPage = () => {
   // base state
   const [hasPosition, setHasPosition] = useState(false);
   const [highestBiddingAddress, setHighestBiddingAddress] = useState('');
-  const [highestBiddingValue, setHighestBiddingValue] = useState(0);
+  const [highestBiddingValue, setHighestBiddingValue] = useState<number>(0);
   const [currentUserBid, setCurrentUserBid] = useState<number>();
   const [nftPrice, setNftPrice] = useState<number>(0);
   const [fetchedReservePrice, setFetchedReservePrice] = useState(0);
@@ -202,11 +207,23 @@ const Liquidate: NextPage = () => {
       setParsedReserves(honeyReserves[0].data);
   }, [honeyReserves]);
 
+  const [fetchedBiddingArray, setFetchedBiddingArray] = useState<
+    BiddingObject[]
+  >([]);
   // fetches market level data from API
   async function fetchServerSideMarketData() {
+    setIsFetchingBids(true);
+
     fetch(`${FETCH_USER_MARKET_DATA}`)
       .then(res => res.json())
       .then(async data => {
+        const mappedBiddingArray = data.map((market: any) => {
+          return {
+            marketId: market.marketId,
+            bids: market.data.bids
+          };
+        });
+        setFetchedBiddingArray(mappedBiddingArray);
         await data.map(async (marketObject: any) => {
           marketObject.data.positions = mergeDuplicates(
             marketObject.data.positions
@@ -214,7 +231,8 @@ const Liquidate: NextPage = () => {
         });
         setMarketData(data as unknown as MarketBundle[]);
         setServerRenderedMarketData(data);
-        handleBids(currentMarketId);
+        // handleBids(currentMarketId);
+        // console.log('@@-- one hello?', currentMarketId);
       })
       .catch(err => console.log(`Error fetching SSR: ${err}`));
   }
@@ -226,26 +244,28 @@ const Liquidate: NextPage = () => {
   //  ************* START HANDLE BIDS *************
   const handleBids = async (currentMarketId: string) => {
     if (!currentMarketId) return;
+
     try {
+      if (!fetchedBiddingArray.length) return;
       setIsFetchingBids(true);
-      const res = await fetch(
-        `${FETCH_MARKET_BIDDING_DATA}/${currentMarketId}`
+
+      const data = fetchedBiddingArray.filter(
+        market => market.marketId === currentMarketId
       );
-      const data = await res.json();
-      setBiddingArray(data);
-      handleBiddingState(data);
+
+      setBiddingArray(data[0].bids);
+      handleBiddingState(data[0].bids);
     } catch (error) {
       console.log(`Error fetching bids: ${error}`);
       setBiddingArray([]);
       handleBiddingState([]);
     } finally {
-      setIsFetchingBids(false);
     }
   };
 
   useEffect(() => {
     handleBids(currentMarketId);
-  }, [currentMarketId, stringyfiedWalletPK]);
+  }, [currentMarketId, stringyfiedWalletPK, fetchedBiddingArray]);
   //  ************* END HANDLE BIDS *************
 
   function fetchUserWalletFromLS() {
@@ -263,58 +283,64 @@ const Liquidate: NextPage = () => {
    * @returns state change
    */
   async function handleBiddingState(biddingArray: any) {
-    if (!biddingArray.length) {
-      setHasPosition(false);
-      setCurrentUserBid(0);
-      setHighestBiddingValue(0);
-      setHighestBiddingAddress('');
-      setIsFetchingClientData(false);
-      return;
-    }
-    if (!selectedMarket) return;
+    try {
+      if (!biddingArray.length) {
+        setHasPosition(false);
+        setCurrentUserBid(0);
+        setHighestBiddingValue(0);
+        setHighestBiddingAddress('');
+        setIsFetchingClientData(false);
+        return;
+      }
+      if (!selectedMarket) return;
 
-    let userWallet = stringyfiedWalletPK
-      ? stringyfiedWalletPK
-      : fetchUserWalletFromLS();
+      let userWallet = stringyfiedWalletPK
+        ? stringyfiedWalletPK
+        : fetchUserWalletFromLS();
 
-    if (userWallet === false) return;
+      if (userWallet === false) return;
 
-    setIsFetchingClientData(true);
+      setIsFetchingClientData(true);
 
-    const arrayOfBiddingAddress = await biddingArray.map(
-      (obligation: any) => obligation.bidder
-    );
-
-    if (arrayOfBiddingAddress.includes(userWallet)) {
-      setHasPosition(true);
-
-      biddingArray.map((obligation: any) => {
-        if (userWallet && obligation.bidder === userWallet) {
-          setCurrentUserBid(
-            Number(
-              obligation.bidLimit /
-                marketsTokens[selectedMarket.loanCurrency].decimals
-            )
-          );
-        }
-      });
-    } else {
-      setHasPosition(false);
-      setCurrentUserBid(0);
-    }
-
-    let highestBid = await biddingArray
-      .sort((first: any, second: any) => first.bidLimit - second.bidLimit)
-      .reverse();
-
-    if (highestBid[0]) {
-      setHighestBiddingAddress(highestBid[0].bidder);
-      setHighestBiddingValue(
-        highestBid[0].bidLimit /
-          marketsTokens[selectedMarket.loanCurrency].decimals
+      const arrayOfBiddingAddress = await biddingArray.map(
+        (obligation: any) => obligation.bidder
       );
+
+      if (arrayOfBiddingAddress.includes(userWallet)) {
+        setHasPosition(true);
+
+        biddingArray.map((obligation: any) => {
+          if (userWallet && obligation.bidder === userWallet) {
+            setCurrentUserBid(
+              Number(
+                obligation.bidLimit /
+                  marketsTokens[selectedMarket.loanCurrency].decimals
+              )
+            );
+          }
+        });
+      } else {
+        setHasPosition(false);
+        setCurrentUserBid(0);
+      }
+
+      let highestBid = await biddingArray
+        .sort((first: any, second: any) => first.bidLimit - second.bidLimit)
+        .reverse();
+
+      if (highestBid[0]) {
+        setHighestBiddingAddress(highestBid[0].bidder);
+        setHighestBiddingValue(
+          highestBid[0].bidLimit /
+            marketsTokens[selectedMarket.loanCurrency].decimals
+        );
+      }
+      setIsFetchingClientData(false);
+    } catch (error) {
+      console.log(`Error inside handle bidding state: ${error}`);
+    } finally {
+      setIsFetchingBids(false);
     }
-    setIsFetchingClientData(false);
   }
   //  ************* END HANDLE BIDDING STATE *************
 

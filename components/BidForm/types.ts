@@ -28,6 +28,7 @@ export type BidFormProps = {
   ) => void;
   onCancel: Function;
   isLoadingWalletBalance: boolean;
+  isFetchingBids: boolean;
 };
 
 export type Bid = {
