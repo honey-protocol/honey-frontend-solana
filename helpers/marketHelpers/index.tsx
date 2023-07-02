@@ -110,6 +110,64 @@ export const marketCollections: MarketTableRow[] = [
     }
   },
   {
+    id: 'A7QtyzBeCjZHAD9X4Yfkqh2terwZaQj5erPZWEJKWwzo',
+    key: 'SMB',
+    name: 'Solana Monkey Business',
+    verifiedCreator: 'mdaoxg4DVGptU4WSpzGyVpK3zqsgn7Qzx5XNgWTcEA2',
+    rate: 0,
+    loanCurrency: 'USDC',
+    decimals: 10 ** 6,
+    available: 0,
+    value: 0,
+    allowance: 0,
+    connection: undefined,
+    user: undefined,
+    debt: 0,
+    utilizationRate: 0,
+    openPositions: [],
+    constants: {
+      marketId: 'A7QtyzBeCjZHAD9X4Yfkqh2terwZaQj5erPZWEJKWwzo',
+      verifiedCreator: 'mdaoxg4DVGptU4WSpzGyVpK3zqsgn7Qzx5XNgWTcEA2',
+      marketName: 'Solana Monkey Business',
+      marketImage:
+        'https://img-cdn.magiceden.dev/rs:fill:400:400:0:0/plain/https://i.imgur.com/bMH6qNc.png',
+      marketLoanCurrency: 'USDC',
+      marketLoanCurrencyImage: '/images/USDC.svg',
+      marketLoanCurrencyTokenMintAddress:
+        'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v',
+      discountedMarket: false
+    }
+  },
+  {
+    id: 'HwnSuvkZYQyqSPiecuP4rEPCXRV6oyXz2mVormPP5QjN',
+    key: 'DFC',
+    name: 'Degen Fat Cats',
+    verifiedCreator: '6YRXxDFB92WE98c7YSM4itZw7ZbpeN5cwZFnhNPKKHPG',
+    rate: 0,
+    loanCurrency: 'USDC',
+    decimals: 10 ** 6,
+    available: 0,
+    value: 0,
+    allowance: 0,
+    connection: undefined,
+    user: undefined,
+    debt: 0,
+    utilizationRate: 0,
+    openPositions: [],
+    constants: {
+      marketId: 'HwnSuvkZYQyqSPiecuP4rEPCXRV6oyXz2mVormPP5QjN',
+      verifiedCreator: '6YRXxDFB92WE98c7YSM4itZw7ZbpeN5cwZFnhNPKKHPG',
+      marketName: 'Degen Fat Cats',
+      marketImage:
+        'https://img-cdn.magiceden.dev/rs:fill:400:400:0:0/plain/https://creator-hub-prod.s3.us-east-2.amazonaws.com/degenfatcats_pfp_1657860808010.png',
+      marketLoanCurrency: 'USDC',
+      marketLoanCurrencyImage: '/images/USDC.svg',
+      marketLoanCurrencyTokenMintAddress:
+        'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v',
+      discountedMarket: false
+    }
+  },
+  {
     id: '2SC72EUqsd5Bax6u6vmmwcGiqjrjZrXJ7S1FsGfL4hBR',
     key: 'MLD',
     name: 'Mad Lads',
