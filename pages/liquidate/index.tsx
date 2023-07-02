@@ -856,7 +856,9 @@ const Liquidate: NextPage = () => {
               <Skeleton.Button size="small" active />
             </div>
           ) : (
-            <div className={style.valueCell}>{fs(market.tvl)}</div>
+            <div className={style.valueCell}>
+              {fs(market.tvl + market.available)}
+            </div>
           )
       },
       {
