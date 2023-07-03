@@ -21,6 +21,7 @@ const LiquidateSidebar = (props: LendSidebarProps) => {
   const {
     collectionId,
     userBalance,
+    isFetchingBids,
     biddingArray,
     highestBiddingValue,
     highestBiddingAddress,
@@ -32,7 +33,9 @@ const LiquidateSidebar = (props: LendSidebarProps) => {
     handleRevokeBid,
     handleIncreaseBid,
     handlePlaceBid,
-    onCancel
+    onCancel,
+    isLoadingWalletBalance,
+    loanCurrency
   } = props;
   const isMobile = useMediaQuery({ maxWidth: MQ_DESKTOP_BP });
   const wallet = useConnectedWallet();
@@ -99,13 +102,16 @@ const LiquidateSidebar = (props: LendSidebarProps) => {
                 onCancel={onCancel}
                 currentMarketId={currentMarketId}
                 isFetchingData={isFetchingData}
+                isLoadingWalletBalance={isLoadingWalletBalance}
+                isFetchingBids={isFetchingBids}
               />
             )}
             {activeTab === 'current' && (
               <BidsList
-                isFetchingData={isFetchingData}
+                isFetchingData={isFetchingBids}
                 biddingArray={biddingArray}
                 fetchedReservePrice={fetchedReservePrice}
+                loanCurrency={loanCurrency}
               />
             )}
           </>

@@ -43,7 +43,9 @@ const BidForm = (props: BidFormProps) => {
     handleIncreaseBid,
     handlePlaceBid,
     onCancel,
-    isFetchingData
+    isFetchingData,
+    isFetchingBids,
+    isLoadingWalletBalance
   } = props;
   // state declarations
   const [valueUSD, setValueUSD] = useState<number>(0);
@@ -63,6 +65,15 @@ const BidForm = (props: BidFormProps) => {
   const selectedMarket = marketCollections.find(
     collection => collection.id === currentMarketId
   );
+
+  const [currencyOfMarket, setCurrencyOfMarket] = useState<string>();
+
+  useEffect(() => {
+    if (currencyOfMarket !== selectedMarket?.loanCurrency) {
+      setCurrencyOfMarket(selectedMarket?.loanCurrency);
+      setUserBidValue(0);
+    }
+  }, [selectedMarket]);
 
   // change of input - render calculated values
   const handleSliderChange = (value: number) => {
@@ -183,10 +194,12 @@ const BidForm = (props: BidFormProps) => {
           <div className={styles.col}>
             <InfoBlock
               value={
-                isFetchingData ? (
+                isFetchingBids ? (
                   <Skeleton.Button size="small" active />
-                ) : (
+                ) : highestBiddingValue !== 0 ? (
                   fs(highestBiddingValue)
+                ) : (
+                  'No open bids'
                 )
               }
               valueSize="big"
@@ -200,23 +213,12 @@ const BidForm = (props: BidFormProps) => {
               }
             />
           </div>
-          {/* <div className={styles.col}>
-            <InfoBlock
-              title={
-                <span className={hAlign}>
-                  Minimal bid <div className={questionIcon} />
-                </span>
-              }
-              value={fs(highestBiddingValue * 1.1)}
-              valueSize="big"
-            />
-          </div> */}
         </div>
         <div className={styles.row}>
           <div className={styles.col}>
             <InfoBlock
               value={
-                isFetchingData ? (
+                isLoadingWalletBalance ? (
                   <Skeleton.Button size="small" active />
                 ) : (
                   fs(userBalance)

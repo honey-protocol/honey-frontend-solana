@@ -6,9 +6,13 @@ import CurrentBidList from '../CurrentBidList/CurrentBidList';
 import { BidListProps } from './types';
 import { LAMPORTS_PER_SOL } from '@solana/web3.js';
 import { Spin } from 'antd';
+import { marketsTokens } from 'helpers/marketHelpers';
+import { spinner } from 'styles/common.css';
+import EmptyStateDetails from 'components/EmptyStateDetails/EmptyStateDetails';
 
 const BidsList = (props: BidListProps) => {
-  const { biddingArray, fetchedReservePrice, isFetchingData } = props;
+  const { biddingArray, fetchedReservePrice, isFetchingData, loanCurrency } =
+    props;
   const [convertedBiddingArray, setConvertedBiddingArray] = useState([]);
 
   // Put your validators here
@@ -22,8 +26,8 @@ const BidsList = (props: BidListProps) => {
         id: index,
         date: 1663663018156,
         walletAddress: bid.bidder,
-        usdcValue: bid.bidLimit / LAMPORTS_PER_SOL,
-        solAmount: bid.bidLimit / LAMPORTS_PER_SOL
+        usdcValue: bid.bidLimit / marketsTokens.USDC.decimals,
+        solAmount: bid.bidLimit / marketsTokens.SOL.decimals
       };
     });
 
@@ -43,13 +47,22 @@ const BidsList = (props: BidListProps) => {
   return (
     <SidebarScroll>
       {isFetchingData ? (
-        <Spin />
+        <EmptyStateDetails
+          icon={
+            <div className={spinner}>
+              <Spin />
+            </div>
+          }
+          title=""
+          description=""
+        />
       ) : (
         <div className={styles.bidsList}>
           {currentBidCardData.length ? (
             <CurrentBidList
               data={currentBidCardData}
               fetchedReservePrice={fetchedReservePrice}
+              loanCurrency={loanCurrency}
             />
           ) : (
             'No open bids'

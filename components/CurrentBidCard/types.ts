@@ -8,4 +8,5 @@ export type CurrentBidCardProps = {
   solAmount: number;
   solValue: number;
   fetchedReservePrice: number;
+  loanCurrency: string;
 };

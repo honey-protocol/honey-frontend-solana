@@ -5,10 +5,11 @@ import { CurrentBidCardProps } from '../CurrentBidCard/types';
 type CurrentBidListProps = {
   data: CurrentBidCardProps[];
   fetchedReservePrice: number;
+  loanCurrency: string;
 };
 
 const CurrentBidList = (props: CurrentBidListProps) => {
-  const { data, fetchedReservePrice } = props;
+  const { data, fetchedReservePrice, loanCurrency } = props;
 
   return (
     <>
@@ -19,6 +20,7 @@ const CurrentBidList = (props: CurrentBidListProps) => {
               {...item}
               fetchedReservePrice={fetchedReservePrice}
               hasBorder={index !== data.length - 1}
+              loanCurrency={loanCurrency}
             />
           </div>
         ))}

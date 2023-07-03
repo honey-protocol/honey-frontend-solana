@@ -55,7 +55,6 @@ import {
   HoneyUser,
   useAnchor
 } from '@honey-finance/sdk';
-import { populateMarketData } from 'helpers/loanHelpers/userCollection';
 import { Metadata } from '@metaplex-foundation/mpl-token-metadata';
 import { ToastProps } from 'hooks/useToast';
 import { RoundHalfDown } from 'helpers/utils';
@@ -76,7 +75,8 @@ import {
   ROOT_CLIENT,
   renderMarketCurrencyImageByID,
   marketsTokens,
-  HONEY_PROGRAM_ID
+  HONEY_PROGRAM_ID,
+  marketIDs
 } from '../../helpers/marketHelpers';
 import {
   renderMarketImageByName,
