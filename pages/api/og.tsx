@@ -2,7 +2,11 @@ import { ImageResponse } from '@vercel/og';
 import { marketCollections } from 'helpers/marketHelpers';
 
 export const config = {
-  runtime: 'experimental-edge'
+  runtime: 'experimental-edge',
+  unstable_allowDynamic: [
+    '/helpers/marketHelpers/index.tsx',
+    '/node_modules/**'
+  ]
 };
 
 // eslint-disable-next-line import/no-anonymous-default-export
