@@ -13,12 +13,16 @@ interface Props {
 const alertMsg = 'This product is in beta ! Please use at your own risk';
 const LayoutRedesign: FC<Props> = ({ children }) => {
   // const [isMobileSidebarVisible, setShowMobileSidebar] = useState(false);
+  const urlParams = new URLSearchParams(window.location.search);
+  const id = urlParams.get('id');
+  const imageUrl = `http://localhost:3000/api/og?id=${id}`;
   return (
     <Layout className={styles.layout}>
       <Head>
         <title>Honey Finance</title>
         {/* <meta name="description" content="Liquidity solution for NFTs" /> */}
         <link rel="icon" href="/favicon.ico" />
+        <meta property="og:image" content={imageUrl} />
       </Head>
       <LayoutHeader className={styles.layoutHeader}>
         <Header />
@@ -33,6 +37,7 @@ const LayoutRedesign: FC<Props> = ({ children }) => {
       <Layout className={styles.contentContainer}>
         <div className={styles.contentCenter}>
           {/* Provide a <Content> and <Sider> in child component */}
+          <img src={imageUrl} />
           {children}
         </div>
       </Layout>
