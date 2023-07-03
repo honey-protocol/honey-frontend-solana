@@ -55,8 +55,6 @@ import {
   HoneyUser,
   useAnchor
 } from '@honey-finance/sdk';
-import { populateMarketData } from 'helpers/loanHelpers/userCollection';
-import { Metadata } from '@metaplex-foundation/mpl-token-metadata';
 import { ToastProps } from 'hooks/useToast';
 import { RoundHalfDown } from 'helpers/utils';
 import HoneyContent from '../../components/HoneyContent/HoneyContent';

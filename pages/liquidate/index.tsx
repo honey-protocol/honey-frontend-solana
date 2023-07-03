@@ -1,10 +1,55 @@
-import type { NextPage } from 'next';
-import LayoutRedesign from '../../components/LayoutRedesign/LayoutRedesign';
-import LiquidateSidebar from '../../components/LiquidateSidebar/LiquidateSidebar';
-import HoneyTable from '../../components/HoneyTable/HoneyTable';
-import classNames from 'classnames';
-import * as style from '../../styles/markets.css';
 import EmptyStateDetails from '../../components/EmptyStateDetails/EmptyStateDetails';
+import HexaBoxContainer from '../../components/HexaBoxContainer/HexaBoxContainer';
+import HoneyButton from '../../components/HoneyButton/HoneyButton';
+import HoneyTable from '../../components/HoneyTable/HoneyTable';
+import LayoutRedesign from '../../components/LayoutRedesign/LayoutRedesign';
+import { LiquidateExpandTable } from '../../components/LiquidateExpandTable/LiquidateExpandTable';
+import LiquidateSidebar from '../../components/LiquidateSidebar/LiquidateSidebar';
+import SearchInput from '../../components/SearchInput/SearchInput';
+import { formatNFTName, formatNumber } from '../../helpers/format';
+import {
+  COLLATERAL_FACTOR,
+  HONEY_GENESIS_MARKET_ID,
+  HONEY_PROGRAM_ID,
+  LOAN_CURRENCY_USDC,
+  ROOT_CLIENT,
+  ROOT_SSR,
+  marketsTokens,
+  renderMarketCurrencyImageByID
+} from '../../helpers/marketHelpers/index';
+import { marketCollections } from '../../helpers/marketHelpers/index';
+import { getColumnSortStatus } from '../../helpers/tableUtils';
+import * as style from '../../styles/markets.css';
+import { LiquidateTableRow } from '../../types/liquidate';
+import { useWallet } from '@solana/wallet-adapter-react';
+import { Connection, PublicKey } from '@solana/web3.js';
+import { Skeleton, Typography } from 'antd';
+import { ColumnType } from 'antd/lib/table';
+import { Key } from 'antd/lib/table/interface';
+import classNames from 'classnames';
+import HoneyContent from 'components/HoneyContent/HoneyContent';
+import HoneySider from 'components/HoneySider/HoneySider';
+import HoneyTableNameCell from 'components/HoneyTable/HoneyTableNameCell/HoneyTableNameCell';
+import HoneyTableRow from 'components/HoneyTable/HoneyTableRow/HoneyTableRow';
+import HoneyTooltip from 'components/HoneyTooltip/HoneyTooltip';
+import LiquidateExpandTableMobile from 'components/LiquidateExpandTable/LiquidateExpandTableMobile';
+import { FETCH_USER_MARKET_DATA } from 'constants/apiEndpoints';
+import { ConfigureSDK } from 'helpers/loanHelpers';
+import {
+  calculateRisk,
+  populateMarketData,
+  setObligations
+} from 'helpers/loanHelpers/userCollection';
+import { fetchTVL } from 'helpers/loanHelpers/userCollection';
+import { renderMarket, renderMarketImageByName } from 'helpers/marketHelpers';
+import { useClient } from 'hooks/useClient';
+import { useSolBalance, useTokenBalance } from 'hooks/useSolBalance';
+import { ToastProps } from 'hooks/useToast';
+import SorterIcon from 'icons/Sorter';
+import debounce from 'lodash/debounce';
+import type { NextPage } from 'next';
+import Image from 'next/image';
+import { network } from 'pages/_app';
 import React, {
   ChangeEvent,
   useCallback,
@@ -12,71 +57,9 @@ import React, {
   useMemo,
   useState
 } from 'react';
-import { Key } from 'antd/lib/table/interface';
-import debounce from 'lodash/debounce';
-import SearchInput from '../../components/SearchInput/SearchInput';
-import { ColumnType } from 'antd/lib/table';
-import HexaBoxContainer from '../../components/HexaBoxContainer/HexaBoxContainer';
-import { getColumnSortStatus } from '../../helpers/tableUtils';
-import HoneyButton from '../../components/HoneyButton/HoneyButton';
-import { formatNFTName, formatNumber } from '../../helpers/format';
-import { LiquidateTableRow } from '../../types/liquidate';
-import { LiquidateExpandTable } from '../../components/LiquidateExpandTable/LiquidateExpandTable';
-import { RoundHalfDown } from 'helpers/utils';
-import {
-  useAnchor,
-  LiquidatorClient,
-  useAllPositions,
-  useHoney,
-  useMarket,
-  fetchAllMarkets,
-  MarketBundle,
-  HoneyMarket,
-  HoneyUser,
-  HoneyClient,
-  TReserve,
-  fetchReservePrice
-} from '@honey-finance/sdk';
-import { ConfigureSDK } from 'helpers/loanHelpers';
-import { Connection, LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js';
-import {
-  HONEY_PROGRAM_ID,
-  TEST_HONEY_PROGRAM_ID,
-  HONEY_GENESIS_MARKET_ID,
-  COLLATERAL_FACTOR,
-  marketIDs,
-  ROOT_SSR,
-  ROOT_CLIENT,
-  renderMarketCurrencyImageByID,
-  marketsTokens,
-  LOAN_CURRENCY_USDC
-} from '../../helpers/marketHelpers/index';
-import { NATIVE_MINT } from '@solana/spl-token-v-0.1.8';
-import HoneySider from 'components/HoneySider/HoneySider';
-import HoneyContent from 'components/HoneyContent/HoneyContent';
+import { center, pageDescription, pageTitle } from 'styles/common.css';
 import { hideTablet, showTablet } from 'styles/markets.css';
-import { pageDescription, pageTitle, center } from 'styles/common.css';
-import { Skeleton, Typography } from 'antd';
-import { ToastProps } from 'hooks/useToast';
-import HoneyTableRow from 'components/HoneyTable/HoneyTableRow/HoneyTableRow';
-import HoneyTableNameCell from 'components/HoneyTable/HoneyTableNameCell/HoneyTableNameCell';
-import LiquidateExpandTableMobile from 'components/LiquidateExpandTable/LiquidateExpandTableMobile';
-import { marketCollections } from '../../helpers/marketHelpers/index';
-import {
-  calculateRisk,
-  populateMarketData,
-  setObligations
-} from 'helpers/loanHelpers/userCollection';
 import { MarketTableRow } from 'types/markets';
-import { renderMarket, renderMarketImageByName } from 'helpers/marketHelpers';
-import { network } from 'pages/_app';
-import SorterIcon from 'icons/Sorter';
-import { fetchTVL } from 'helpers/loanHelpers/userCollection';
-import HoneyTooltip from 'components/HoneyTooltip/HoneyTooltip';
-import { FETCH_USER_MARKET_DATA } from 'constants/apiEndpoints';
-import { useSolBalance, useTokenBalance } from 'hooks/useSolBalance';
-import Image from 'next/image';
-import { useWallet } from '@solana/wallet-adapter-react';
 
 const { formatPercent: fp, formatSol: fs, formatRoundDown: fd } = formatNumber;
 
@@ -86,11 +69,9 @@ const Liquidate: NextPage = () => {
   const [highestBiddingAddress, setHighestBiddingAddress] = useState('');
   const [highestBiddingValue, setHighestBiddingValue] = useState(0);
   const [currentUserBid, setCurrentUserBid] = useState<number>();
-  const [nftPrice, setNftPrice] = useState<number>(0);
   const [fetchedReservePrice, setFetchedReservePrice] = useState(0);
   const [isMobileSidebarVisible, setShowMobileSidebar] = useState(false);
   const [biddingArray, setBiddingArray] = useState({});
-  const [marketData, setMarketData] = useState<MarketBundle[]>([]);
   const [tableData, setTableData] =
     useState<MarketTableRow[]>(marketCollections);
   const [expandedRowKeys, setExpandedRowKeys] = useState<readonly Key[]>([]);
@@ -105,17 +86,19 @@ const Liquidate: NextPage = () => {
   const [isFetchingData, setIsFetchingData] = useState(false);
   const [isFetchingClientData, setIsFetchingClientData] = useState(false);
   const [bidsOrigin, setBidsOrigin] = useState(ROOT_SSR);
+
+  const [marketData, setMarketData] = useState<MarketBundle[]>([]);
   const [serverRenderedMarketData, setServerRenderedMarketData] = useState<
     MarketBundle[]
   >([]);
-  // init anchor
-  const { program } = useAnchor();
+
   // init sdk config obj
   const sdkConfig = ConfigureSDK();
   // create wallet instance for PK
   const wallet = useWallet() || null;
-  let stringyfiedWalletPK = sdkConfig.sdkWallet?.publicKey.toString();
-  let walletPK = sdkConfig.sdkWallet?.publicKey;
+  const client = useClient();
+  let stringyfiedWalletPK = wallet?.publicKey?.toString();
+  let walletPK = wallet?.publicKey;
 
   const selectedMarket = marketCollections.find(
     collection => collection.id === currentMarketId
