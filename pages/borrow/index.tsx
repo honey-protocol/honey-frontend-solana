@@ -266,30 +266,6 @@ const Markets: NextPage = () => {
     BorrowSidebarMode.MARKET
   );
 
-  // for testing out the new market - currently fails in the fetch
-  useEffect(() => {
-    // fetchMData();
-  }, []);
-
-  const fetchMData = async () => {
-    const createConnection = () => {
-      // @ts-ignore
-      return new Connection(process.env.NEXT_PUBLIC_RPC_NODE, 'mainnet-beta');
-    };
-    const arrayOfMarketIds = await marketIDs(marketCollections);
-
-    await fetchAllMarkets(
-      createConnection(),
-      null,
-      HONEY_PROGRAM_ID,
-      arrayOfMarketIds,
-      false
-    ).then(res => {
-      console.log('@@-- res', res);
-      return res;
-    });
-  };
-
   const [isCreateMarketAreaOnHover, setIsCreateMarketAreaOnHover] =
     useState<boolean>(false);
 
