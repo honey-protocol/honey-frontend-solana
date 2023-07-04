@@ -9,17 +9,38 @@ export const config = {
   ]
 };
 
-// eslint-disable-next-line import/no-anonymous-default-export
 export default function (req: any, res: any) {
   const urlParams = new URLSearchParams(req.nextUrl.search);
   const marketId = urlParams.get('id');
 
-  const selectedMarket = marketCollections.find(
-    collection => collection.constants.marketId === marketId
-  );
+  let imageContent;
+  if (marketId) {
+    const selectedMarket = marketCollections.find(
+      collection => collection.constants.marketId === marketId
+    );
 
-  return new ImageResponse(
-    (
+    if (selectedMarket) {
+      // Return the image representing the selected market
+      imageContent = (
+        <div
+          style={{
+            background: 'white',
+            width: '100%',
+            height: '100%',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center'
+          }}
+        >
+          <img src={selectedMarket.name} alt={selectedMarket.name} />
+        </div>
+      );
+    }
+  }
+
+  // If no market is selected or selected market not found, return a default image or response
+  if (!imageContent) {
+    imageContent = (
       <div
         style={{
           fontSize: 60,
@@ -32,12 +53,13 @@ export default function (req: any, res: any) {
           justifyContent: 'center'
         }}
       >
-        {selectedMarket ? selectedMarket.name : 'Borrow from various markets'}
+        Borrow from various markets
       </div>
-    ),
-    {
-      width: 1200,
-      height: 600
-    }
-  );
+    );
+  }
+
+  return new ImageResponse(imageContent, {
+    width: 1200,
+    height: 600
+  });
 }
