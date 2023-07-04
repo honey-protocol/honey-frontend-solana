@@ -13,6 +13,7 @@ import {
 export async function fetchTVL(obligations: any) {
   if (!obligations.length) return 0;
   const filtered = obligations.filter((obl: any) => obl.debt !== 0);
+
   let totalCount = 0;
   if (filtered) {
     filtered.forEach((obl: any) => {
@@ -21,7 +22,7 @@ export async function fetchTVL(obligations: any) {
       }
     });
 
-    return filtered.length * totalCount;
+    return totalCount;
   } else {
     return 0;
   }
