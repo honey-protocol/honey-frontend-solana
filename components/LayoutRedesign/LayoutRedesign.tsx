@@ -37,7 +37,7 @@ const LayoutRedesign: FC<Props> = ({ children }) => {
       <Layout className={styles.contentContainer}>
         <div className={styles.contentCenter}>
           {/* Provide a <Content> and <Sider> in child component */}
-          <img src={imageUrl} />
+          {/* <img src={imageUrl} /> */}
           {children}
         </div>
       </Layout>
