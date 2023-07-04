@@ -6,6 +6,7 @@ import Layout, {
 } from 'antd/lib/layout/layout';
 import Header from '../../components/Header/Header';
 import * as styles from './LayoutRedesign.css';
+import { defaultNFTImageUrl } from 'hooks/useFetchCollateralNFTPositions';
 
 interface Props {
   children: ReactNode;
@@ -16,14 +17,14 @@ const LayoutRedesign: FC<Props> = ({ children }) => {
   const urlParams = new URLSearchParams(window.location.search);
   const id = urlParams.get('id');
   // const imageUrl = `${window.location.origin}/api/og?id=${id}`;
-  const imageUrl = `${window.location.origin}/api/og?id=A7QtyzBeCjZHAD9X4Yfkqh2terwZaQj5erPZWEJKWwzo`;
+  // const imageUrl = `${window.location.origin}/api/og?id=A7QtyzBeCjZHAD9X4Yfkqh2terwZaQj5erPZWEJKWwzo`;
   return (
     <Layout className={styles.layout}>
       <Head>
         <title>Honey Finance</title>
         {/* <meta name="description" content="Liquidity solution for NFTs" /> */}
         <link rel="icon" href="/favicon.ico" />
-        <meta property="og:image" content={imageUrl} />
+        <meta property="og:image" content={defaultNFTImageUrl} />
       </Head>
       <LayoutHeader className={styles.layoutHeader}>
         <Header />
@@ -38,7 +39,7 @@ const LayoutRedesign: FC<Props> = ({ children }) => {
       <Layout className={styles.contentContainer}>
         <div className={styles.contentCenter}>
           {/* Provide a <Content> and <Sider> in child component */}
-          <img src={imageUrl} />
+          {/* <img src={imageUrl} /> */}
           {children}
         </div>
       </Layout>
