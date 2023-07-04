@@ -90,11 +90,7 @@ export const setObligations = async (
  * @params array of obligations | nft price | boolean: false will calculate the risk - true will calculate the total debt | market id | name of collection
  * @returns total debt of market if type is true, risk of market if type is false
  */
-export const calculateRisk = async (
-  obligations: any,
-  nftPrice: number,
-  type: boolean
-) => {
+export const calculateRisk = async (obligations: any) => {
   if (!obligations) return 0;
   let filtered = await obligations.filter(
     (obl: any) => obl.debt.toString() != 0
@@ -104,6 +100,6 @@ export const calculateRisk = async (
     return (acc += obligation.debt);
   }, 0);
 
-  const sum = (sumOfDebt / filtered.length / nftPrice) * 100;
-  return sum;
+  // const sum = (sumOfDebt / filtered.length / nftPrice) * 100;
+  return sumOfDebt;
 };

@@ -545,7 +545,10 @@ const Liquidate: NextPage = () => {
                   collection.totalDebt = data.totalMarketDebt;
 
                   collection.risk = data.positions
-                    ? await calculateRisk(data.positions, data.nftPrice, false)
+                    ? ((await calculateRisk(data.positions)) /
+                        collection.tvl /
+                        0.65) *
+                      100
                     : 0;
 
                   collection.openPositions = data.positions.length
