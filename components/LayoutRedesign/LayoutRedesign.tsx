@@ -1,4 +1,5 @@
 import React, { FC, ReactNode } from 'react';
+import { useRouter } from 'next/router';
 import Head from 'next/head';
 import Layout, {
   Content,
@@ -12,10 +13,13 @@ interface Props {
 }
 const alertMsg = 'This product is in beta ! Please use at your own risk';
 const LayoutRedesign: FC<Props> = ({ children }) => {
-  // const [isMobileSidebarVisible, setShowMobileSidebar] = useState(false);
-  const urlParams = new URLSearchParams(window.location.search);
-  const id = urlParams.get('id');
+  const router = useRouter();
+  const id = router.query.id as string;
   const imageUrl = `${window.location.origin}/api/og?id=${id}`;
+  // const [isMobileSidebarVisible, setShowMobileSidebar] = useState(false);
+  // const urlParams = new URLSearchParams(window.location.search);
+  // const id = urlParams.get('id');
+  // const imageUrl = `${window.location.origin}/api/og?id=${id}`;
   return (
     <Layout className={styles.layout}>
       <Head>
@@ -23,6 +27,7 @@ const LayoutRedesign: FC<Props> = ({ children }) => {
         {/* <meta name="description" content="Liquidity solution for NFTs" /> */}
         <link rel="icon" href="/favicon.ico" />
         <meta property="og:image" content={imageUrl} />
+        {imageUrl && <meta property="og:image" content={imageUrl} />}
       </Head>
       <LayoutHeader className={styles.layoutHeader}>
         <Header />
