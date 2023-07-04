@@ -24,7 +24,11 @@ const LayoutRedesign: FC<Props> = ({ children }) => {
         <title>Honey Finance</title>
         {/* <meta name="description" content="Liquidity solution for NFTs" /> */}
         <link rel="icon" href="/favicon.ico" />
-        <meta property="og:image" content={imageUrl} />
+        {/* <meta property="og:image" content={imageUrl} /> */}
+        <meta
+          content="https://assets.vercel.com/image/upload/front/vercel/twitter-card.png"
+          property="og:image"
+        ></meta>
       </Head>
       <LayoutHeader className={styles.layoutHeader}>
         <Header />
