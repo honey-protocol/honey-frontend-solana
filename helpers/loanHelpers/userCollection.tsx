@@ -12,7 +12,19 @@ import {
 // filters out zero debt obligations and multiplies outstanding obl. by nft price
 export async function fetchTVL(obligations: any) {
   if (!obligations.length) return 0;
-  return obligations.filter((obl: any) => obl.debt !== 0).length;
+  const filtered = obligations.filter((obl: any) => obl.debt !== 0);
+  let totalCount = 0;
+  if (filtered) {
+    filtered.forEach((obl: any) => {
+      if ('count' in obl) {
+        totalCount += obl.count;
+      }
+    });
+
+    return filtered.length * totalCount;
+  } else {
+    return 0;
+  }
 }
 
 /**

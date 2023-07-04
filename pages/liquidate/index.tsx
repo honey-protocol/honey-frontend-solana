@@ -533,7 +533,6 @@ const Liquidate: NextPage = () => {
 
                   collection.connection = sdkConfig.saberHqConnection;
                   collection.nftPrice = data.nftPrice;
-
                   collection.tvl =
                     data.positions && data.nftPrice
                       ? data.nftPrice * (await fetchTVL(data.positions))
@@ -856,8 +855,9 @@ const Liquidate: NextPage = () => {
               <Skeleton.Button size="small" active />
             </div>
           ) : (
-            <div className={style.valueCell}>
-              {fs(market.tvl + market.available)}
+            <div className={classNames(style.valueCell, style.bigTVL)}>
+              {/* {fs(market.tvl + market.available)} */}
+              {fs(market.tvl)}
             </div>
           )
       },
