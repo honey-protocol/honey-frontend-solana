@@ -15,7 +15,8 @@ const LayoutRedesign: FC<Props> = ({ children }) => {
   // const [isMobileSidebarVisible, setShowMobileSidebar] = useState(false);
   const urlParams = new URLSearchParams(window.location.search);
   const id = urlParams.get('id');
-  const imageUrl = `${window.location.origin}/api/og?id=${id}`;
+  // const imageUrl = `${window.location.origin}/api/og?id=${id}`;
+  const imageUrl = `${window.location.origin}/api/og?id=A7QtyzBeCjZHAD9X4Yfkqh2terwZaQj5erPZWEJKWwzo`;
   return (
     <Layout className={styles.layout}>
       <Head>
