@@ -15,7 +15,8 @@ const LayoutRedesign: FC<Props> = ({ children }) => {
   // const [isMobileSidebarVisible, setShowMobileSidebar] = useState(false);
   const urlParams = new URLSearchParams(window.location.search);
   const id = urlParams.get('id');
-  const imageUrl = `${window.location.origin}/api/og?id=${id}`;
+  const imageUrl = `honey-frontend-solana-git-market-og-image-honey-labs.vercel.app/api/og`;
+
   return (
     <Layout className={styles.layout}>
       <Head>
