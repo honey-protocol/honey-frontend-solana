@@ -20,7 +20,7 @@ const LayoutRedesign: FC<Props> = ({ children }) => {
     <Layout className={styles.layout}>
       <Head>
         <title>Honey Finance</title>
-        {/* <meta name="description" content="Liquidity solution for NFTs" /> */}
+        <meta property="description" content="Liquidity solution for NFTs" />
         <link rel="icon" href="/favicon.ico" />
         <meta property="og:image" content={imageUrl} />
       </Head>
