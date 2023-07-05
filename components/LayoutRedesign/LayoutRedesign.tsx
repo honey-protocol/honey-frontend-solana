@@ -22,7 +22,10 @@ const LayoutRedesign: FC<Props> = ({ children }) => {
         <title>Honey Finance</title>
         <meta property="description" content="Liquidity solution for NFTs" />
         <link rel="icon" href="/favicon.ico" />
-        <meta property="og:image" content={imageUrl} />
+        <meta
+          property="og:image"
+          content="https://img-cdn.magiceden.dev/rs:fill:400:400:0:0/plain/https://madlads.s3.us-west-2.amazonaws.com/images/9009.png"
+        />
       </Head>
       <LayoutHeader className={styles.layoutHeader}>
         <Header />
