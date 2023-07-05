@@ -6,7 +6,7 @@ export default function Document() {
       <Head>
         <meta
           property="og:image"
-          content="https://img-cdn.magiceden.dev/rs:fill:400:400:0:0/plain/https://madlads.s3.us-west-2.amazonaws.com/images/9009.png"
+          content="honey-frontend-solana-git-market-og-image-honey-labs.vercel.app/api/og"
         />
       </Head>
       <body>
