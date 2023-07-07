@@ -3,6 +3,7 @@ import * as styles from './CurrentBidCard.css';
 import c from 'classnames';
 import { CurrentBidCardProps } from './types';
 import { dateFromTimestamp, formatNumber } from '../../helpers/format';
+import { useSolPrice } from 'hooks/useSolPrice';
 
 const {
   format: f,
@@ -18,8 +19,12 @@ const CurrentBidCard = (props: CurrentBidCardProps) => {
     usdcValue,
     solAmount,
     walletAddress,
-    hasBorder = true
+    hasBorder = true,
+    loanCurrency
   } = props;
+
+  const solPrice = useSolPrice();
+
   // TODO: add SOL/USDC conversion?
   return (
     <div className={c(styles.bidCard, { [styles.hasBorder]: hasBorder })}>
@@ -35,9 +40,14 @@ const CurrentBidCard = (props: CurrentBidCardProps) => {
         />
       </div>
       <div className={styles.bidCardRight}>
-        <p className={styles.bidCardPrice}>{fs(solAmount)}</p>
+        <p className={styles.bidCardPrice}>
+          {loanCurrency === 'USDC' ? fs(usdcValue / solPrice) : fs(solAmount)}
+        </p>
         <p className={styles.bidCardUsdcCounts}>
-          {f(usdcValue * fetchedReservePrice)} USDC
+          {loanCurrency === 'USDC'
+            ? f(usdcValue)
+            : f((usdcValue * fetchedReservePrice) / 10 ** 3)}{' '}
+          USDC
         </p>
       </div>
     </div>

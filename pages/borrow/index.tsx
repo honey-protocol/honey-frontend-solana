@@ -55,7 +55,6 @@ import {
   HoneyUser,
   useAnchor
 } from '@honey-finance/sdk';
-import { populateMarketData } from 'helpers/loanHelpers/userCollection';
 import { Metadata } from '@metaplex-foundation/mpl-token-metadata';
 import { ToastProps } from 'hooks/useToast';
 import { RoundHalfDown } from 'helpers/utils';
@@ -76,7 +75,8 @@ import {
   ROOT_CLIENT,
   renderMarketCurrencyImageByID,
   marketsTokens,
-  HONEY_PROGRAM_ID
+  HONEY_PROGRAM_ID,
+  marketIDs
 } from '../../helpers/marketHelpers';
 import {
   renderMarketImageByName,
@@ -120,6 +120,7 @@ const Markets: NextPage = () => {
 
   // Sets market ID which is used for fetching market specific data
   // each market currently is a different call and re-renders the page
+
   const [currentMarketId, setCurrentMarketId] = useState('');
   const [currentVerifiedCreator, setCurrentVerifiedCreator] = useState('');
   const [fetchedDataObject, setFetchedDataObject] = useState<MarketBundle>();
@@ -132,13 +133,14 @@ const Markets: NextPage = () => {
    * [1] loading state
    * [2] reFetch function which can be called after deposit or withdraw and updates nft list
    */
-  const [NFTs, isLoadingNfts, refetchNfts] = useFetchNFTByUser(
-    wallet,
-    currentVerifiedCreator
-  );
 
   const selectedMarket = marketCollections.find(
     collection => collection.id === currentMarketId
+  );
+
+  const [NFTs, isLoadingNfts, refetchNfts] = useFetchNFTByUser(
+    wallet,
+    selectedMarket?.verifiedCreator
   );
 
   /**
@@ -218,13 +220,17 @@ const Markets: NextPage = () => {
     if (sdkConfig.sdkWallet === null) {
       setCurrentMarketId(record.id);
       setCurrentVerifiedCreator(record.verifiedCreator);
+      window.history.pushState({}, '', `/borrow?id=${record.id}`);
     } else {
       setCurrentMarketId(record.id);
       setCurrentVerifiedCreator(record.verifiedCreator);
+      window.history.pushState({}, '', `/borrow?id=${record.id}`);
       setIsFetchingClientData(true);
     }
     // refetchUserLevelData();
   }
+
+  console.log({ currentMarketId });
 
   // market specific constants - calculations / ratios / debt / allowance etc.
   const [nftPrice, setNftPrice] = useState(0);
@@ -263,10 +269,34 @@ const Markets: NextPage = () => {
   const [isCreateMarketAreaOnHover, setIsCreateMarketAreaOnHover] =
     useState<boolean>(false);
 
+  const onUrlChange = useCallback(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const id = urlParams.get('id');
+    const market = marketCollections.find(collection => collection.id === id);
+    if (id && market) {
+      setCurrentMarketId(id);
+      setCurrentVerifiedCreator(market.verifiedCreator);
+      if (!isFetchingData) {
+        setExpandedRowKeys([market.key]);
+        setIsFetchingClientData(true);
+      }
+    }
+  }, [isFetchingData]);
+
+  useEffect(() => {
+    //call on url change on mount so that the initial id can be gotten the the url if any
+    onUrlChange();
+  }, [onUrlChange]);
+
+  useEffect(() => {
+    window.addEventListener('popstate', onUrlChange);
+    () => window.removeEventListener('popstate', onUrlChange);
+  }, [onUrlChange]);
+
   // fetches market level data from API
   const fetchMarketLevelDataFromAPI = useCallback(async () => {
     try {
-      setIsFetchingData(false);
+      setIsFetchingData(true);
       const response = await fetch(FETCH_USER_MARKET_DATA);
       const result: MarketBundle[] = await response.json();
 
@@ -699,7 +729,8 @@ const Markets: NextPage = () => {
       tableData,
       showWeeklyRates,
       searchQuery,
-      windowWidth
+      windowWidth,
+      isFetchingData
     ]
   );
   // Render func. for mobile
@@ -797,7 +828,7 @@ const Markets: NextPage = () => {
         }
       }
     ],
-    [isMyCollectionsFilterEnabled, tableData, searchQuery, showWeeklyRates]
+    [searchQuery, showWeeklyRates, isFetchingData]
   );
 
   // position in each market

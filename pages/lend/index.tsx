@@ -39,7 +39,6 @@ import {
 import { BnToDecimal, ConfigureSDK } from '../../helpers/loanHelpers/index';
 import { Connection, PublicKey } from '@solana/web3.js';
 import BN from 'bn.js';
-import { populateMarketData } from 'helpers/loanHelpers/userCollection';
 import { ToastProps } from 'hooks/useToast';
 import { Skeleton, Typography, Space } from 'antd';
 import { pageDescription, pageTitle, center } from 'styles/common.css';
@@ -150,6 +149,7 @@ const Lend: NextPage = () => {
     setCurrentMarketId(marketData[0].id);
     setCurrentMarketName(marketData[0].name);
     setIsFetchingClientData(true);
+    window.history.pushState({}, '', `/lend?id=${record.id}`);
   }
 
   /**
@@ -190,6 +190,29 @@ const Lend: NextPage = () => {
   //  ************* START FETCH MARKET DATA *************
 
   console.log({ isFetchingData }, '@dataload');
+
+  const onUrlChange = useCallback(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const id = urlParams.get('id');
+    const market = marketCollections.find(collection => collection.id === id);
+    if (id && market) {
+      setCurrentMarketId(id);
+      if (!isFetchingData) {
+        setExpandedRowKeys([market.key]);
+        setIsFetchingClientData(true);
+      }
+    }
+  }, [isFetchingData]);
+
+  useEffect(() => {
+    //call on url change on mount so that the initial id can be gotten the the url if any
+    onUrlChange();
+  }, [onUrlChange]);
+
+  useEffect(() => {
+    window.addEventListener('popstate', onUrlChange);
+    () => window.removeEventListener('popstate', onUrlChange);
+  }, [onUrlChange]);
 
   // fetches market level data from API
   const fetchMarketLevelDataFromAPI = useCallback(async () => {
@@ -853,7 +876,8 @@ const Lend: NextPage = () => {
       tableData,
       searchQuery,
       currentMarketId,
-      showWeeklyRates
+      showWeeklyRates,
+      isFetchingData
     ]
   );
 

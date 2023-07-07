@@ -22,6 +22,7 @@ type FilterType = 'most_critical' | 'max_debt' | 'most_valuable';
 
 export const LiquidateExpandTable = (props: LiquidateExpandTableProps) => {
   const { data, currentMarketId } = props;
+
   const [filter, setFilter] = useState<FilterType>('most_critical');
 
   const expandColumns: ColumnType<LiquidateTablePosition>[] = useMemo(

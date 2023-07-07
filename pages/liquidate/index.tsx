@@ -22,7 +22,6 @@ import HoneyButton from '../../components/HoneyButton/HoneyButton';
 import { formatNFTName, formatNumber } from '../../helpers/format';
 import { LiquidateTableRow } from '../../types/liquidate';
 import { LiquidateExpandTable } from '../../components/LiquidateExpandTable/LiquidateExpandTable';
-import { RoundHalfDown } from 'helpers/utils';
 import {
   useAnchor,
   LiquidatorClient,
@@ -76,7 +75,10 @@ import { network } from 'pages/_app';
 import SorterIcon from 'icons/Sorter';
 import { fetchTVL } from 'helpers/loanHelpers/userCollection';
 import HoneyTooltip from 'components/HoneyTooltip/HoneyTooltip';
-import { FETCH_USER_MARKET_DATA } from 'constants/apiEndpoints';
+import {
+  FETCH_MARKET_BIDDING_DATA,
+  FETCH_USER_MARKET_DATA
+} from 'constants/apiEndpoints';
 import { useSolBalance, useTokenBalance } from 'hooks/useSolBalance';
 import { mergeDuplicates } from 'helpers/liquidationHelpers';
 
@@ -92,15 +94,21 @@ interface MarketBundle {
   marketId?: string;
 }
 
+interface BiddingObject {
+  marketId: string;
+  bids: [];
+}
+
 const Liquidate: NextPage = () => {
   // base state
   const [hasPosition, setHasPosition] = useState(false);
   const [highestBiddingAddress, setHighestBiddingAddress] = useState('');
-  const [highestBiddingValue, setHighestBiddingValue] = useState(0);
+  const [highestBiddingValue, setHighestBiddingValue] = useState<number>(0);
   const [currentUserBid, setCurrentUserBid] = useState<number>();
   const [nftPrice, setNftPrice] = useState<number>(0);
   const [fetchedReservePrice, setFetchedReservePrice] = useState(0);
   const [isMobileSidebarVisible, setShowMobileSidebar] = useState(false);
+  const [isFetchingBids, setIsFetchingBids] = useState(false);
   const [biddingArray, setBiddingArray] = useState({});
   const [marketData, setMarketData] = useState<MarketBundle[]>([]);
   const [tableData, setTableData] =
@@ -113,6 +121,7 @@ const Liquidate: NextPage = () => {
   const [currentMarketId, setCurrentMarketId] = useState(
     HONEY_GENESIS_MARKET_ID
   );
+  const [currentCurrency, setCurrentCurrency] = useState('SOL');
   const [isFetchingData, setIsFetchingData] = useState(false);
   const [isFetchingClientData, setIsFetchingClientData] = useState(false);
   const [serverRenderedMarketData, setServerRenderedMarketData] = useState<
@@ -130,6 +139,7 @@ const Liquidate: NextPage = () => {
   const selectedMarket = marketCollections.find(
     collection => collection.id === currentMarketId
   );
+
   //Wallet balance
   const {
     balance: walletSolBalance,
@@ -162,7 +172,17 @@ const Liquidate: NextPage = () => {
   useEffect(() => {
     if (stringyfiedWalletPK)
       localStorage.setItem('walletPK', stringyfiedWalletPK);
+
+    selectedMarket?.loanCurrency === 'SOL'
+      ? refetchSolBalance()
+      : refetchWalletLoanTokenBalance();
+    refetchWalletBalance();
   }, [stringyfiedWalletPK]);
+
+  // useEffect(() => {
+  //   console.log('@@-- wallet', sdkConfig);
+  // }, [sdkConfig.sdkWallet]);
+
   // state for parsed reserves
   const [parsedReserves, setParsedReserves] = useState<TReserve>();
   /**
@@ -186,11 +206,23 @@ const Liquidate: NextPage = () => {
       setParsedReserves(honeyReserves[0].data);
   }, [honeyReserves]);
 
+  const [fetchedBiddingArray, setFetchedBiddingArray] = useState<
+    BiddingObject[]
+  >([]);
   // fetches market level data from API
   async function fetchServerSideMarketData() {
-    fetch(FETCH_USER_MARKET_DATA)
+    setIsFetchingBids(true);
+
+    fetch(`${FETCH_USER_MARKET_DATA}`)
       .then(res => res.json())
       .then(async data => {
+        const mappedBiddingArray = data.map((market: any) => {
+          return {
+            marketId: market.marketId,
+            bids: market.data.bids
+          };
+        });
+        setFetchedBiddingArray(mappedBiddingArray);
         await data.map(async (marketObject: any) => {
           marketObject.data.positions = mergeDuplicates(
             marketObject.data.positions
@@ -198,7 +230,8 @@ const Liquidate: NextPage = () => {
         });
         setMarketData(data as unknown as MarketBundle[]);
         setServerRenderedMarketData(data);
-        handleBids(currentMarketId);
+        // handleBids(currentMarketId);
+        // console.log('@@-- one hello?', currentMarketId);
       })
       .catch(err => console.log(`Error fetching SSR: ${err}`));
   }
@@ -208,31 +241,30 @@ const Liquidate: NextPage = () => {
   }, []);
 
   //  ************* START HANDLE BIDS *************
-  async function handleBids(currentMarketId: string) {
-    if (currentMarketId === undefined || !serverRenderedMarketData) return;
+  const handleBids = async (currentMarketId: string) => {
+    if (!currentMarketId) return;
 
-    // gets the current active market
-    const filteredMarketData = serverRenderedMarketData.filter(
-      marketObject => marketObject.marketId === currentMarketId
-    );
-    if (filteredMarketData.length) {
-      const data = (filteredMarketData[0] as any).data;
-      if (data.bids) {
-        setBiddingArray(data.bids);
-        handleBiddingState(data.bids);
-      } else {
-        setBiddingArray([]);
-        handleBiddingState([]);
-      }
-    } else {
+    try {
+      if (!fetchedBiddingArray.length) return;
+      setIsFetchingBids(true);
+
+      const data = fetchedBiddingArray.filter(
+        market => market.marketId === currentMarketId
+      );
+
+      setBiddingArray(data[0].bids);
+      handleBiddingState(data[0].bids);
+    } catch (error) {
+      console.log(`Error fetching bids: ${error}`);
       setBiddingArray([]);
       handleBiddingState([]);
+    } finally {
     }
-  }
+  };
 
   useEffect(() => {
     handleBids(currentMarketId);
-  }, [currentMarketId, serverRenderedMarketData, stringyfiedWalletPK]);
+  }, [currentMarketId, stringyfiedWalletPK, fetchedBiddingArray]);
   //  ************* END HANDLE BIDS *************
 
   function fetchUserWalletFromLS() {
@@ -250,55 +282,64 @@ const Liquidate: NextPage = () => {
    * @returns state change
    */
   async function handleBiddingState(biddingArray: any) {
-    if (!biddingArray.length) {
-      setHasPosition(false);
-      setCurrentUserBid(0);
-      setHighestBiddingValue(0);
-      setHighestBiddingAddress('');
-      return;
-    }
-    if (!selectedMarket) return;
+    try {
+      if (!biddingArray.length) {
+        setHasPosition(false);
+        setCurrentUserBid(0);
+        setHighestBiddingValue(0);
+        setHighestBiddingAddress('');
+        setIsFetchingClientData(false);
+        return;
+      }
+      if (!selectedMarket) return;
 
-    let userWallet = stringyfiedWalletPK
-      ? stringyfiedWalletPK
-      : fetchUserWalletFromLS();
+      let userWallet = stringyfiedWalletPK
+        ? stringyfiedWalletPK
+        : fetchUserWalletFromLS();
 
-    if (userWallet === false) return;
+      if (userWallet === false) return;
 
-    const arrayOfBiddingAddress = await biddingArray.map(
-      (obligation: any) => obligation.bidder
-    );
+      setIsFetchingClientData(true);
 
-    if (arrayOfBiddingAddress.includes(userWallet)) {
-      setHasPosition(true);
-
-      biddingArray.map((obligation: any) => {
-        if (userWallet && obligation.bidder === userWallet) {
-          setCurrentUserBid(
-            Number(
-              obligation.bidLimit /
-                marketsTokens[selectedMarket.loanCurrency].decimals
-            )
-          );
-        }
-      });
-    } else {
-      setHasPosition(false);
-      setCurrentUserBid(0);
-    }
-
-    let highestBid = await biddingArray
-      .sort((first: any, second: any) => first.bidLimit - second.bidLimit)
-      .reverse();
-
-    if (highestBid[0]) {
-      setHighestBiddingAddress(highestBid[0].bidder);
-      setHighestBiddingValue(
-        highestBid[0].bidLimit /
-          marketsTokens[selectedMarket.loanCurrency].decimals
+      const arrayOfBiddingAddress = await biddingArray.map(
+        (obligation: any) => obligation.bidder
       );
+
+      if (arrayOfBiddingAddress.includes(userWallet)) {
+        setHasPosition(true);
+
+        biddingArray.map((obligation: any) => {
+          if (userWallet && obligation.bidder === userWallet) {
+            setCurrentUserBid(
+              Number(
+                obligation.bidLimit /
+                  marketsTokens[selectedMarket.loanCurrency].decimals
+              )
+            );
+          }
+        });
+      } else {
+        setHasPosition(false);
+        setCurrentUserBid(0);
+      }
+
+      let highestBid = await biddingArray
+        .sort((first: any, second: any) => first.bidLimit - second.bidLimit)
+        .reverse();
+
+      if (highestBid[0]) {
+        setHighestBiddingAddress(highestBid[0].bidder);
+        setHighestBiddingValue(
+          highestBid[0].bidLimit /
+            marketsTokens[selectedMarket.loanCurrency].decimals
+        );
+      }
+      setIsFetchingClientData(false);
+    } catch (error) {
+      console.log(`Error inside handle bidding state: ${error}`);
+    } finally {
+      setIsFetchingBids(false);
     }
-    setIsFetchingClientData(false);
   }
   //  ************* END HANDLE BIDDING STATE *************
 
@@ -317,14 +358,6 @@ const Liquidate: NextPage = () => {
     setFetchedReservePrice(reservePrice);
   }
 
-  // refetches markets after bid is placed | revoked | increased
-  // TODO: Validate if we can use the API for this call as well
-  async function fetchBidData() {
-    setTimeout(async () => {
-      fetchServerSideMarketData();
-    }, 30000);
-  }
-
   // fetches reserve value based on correct parsed reserves - coming from honeyReserves
   useEffect(() => {
     if (parsedReserves) {
@@ -340,10 +373,10 @@ const Liquidate: NextPage = () => {
   async function fetchLiquidatorClient(
     type: string,
     userBid: number | undefined,
-    toast: ToastProps['toast'],
-    mrktID: string
+    toast: ToastProps['toast']
   ) {
     if (!selectedMarket) return;
+    const exponent = selectedMarket.decimals;
     try {
       const liquidatorClient = await LiquidatorClient.connect(
         program.provider,
@@ -356,7 +389,7 @@ const Liquidate: NextPage = () => {
           toast.processing();
 
           let transactionOutcome: any = await liquidatorClient.revokeBid({
-            market: new PublicKey(mrktID),
+            market: new PublicKey(selectedMarket.id),
             bidder: wallet.publicKey,
             bid_mint: new PublicKey(
               selectedMarket?.constants.marketLoanCurrencyTokenMintAddress
@@ -367,7 +400,7 @@ const Liquidate: NextPage = () => {
           if (transactionOutcome[0] == 'SUCCESS') {
             setCurrentUserBid(0);
             if (walletPK) refetchWalletBalance();
-            fetchBidData();
+            // fetchBidData();
             return toast.success('Bid revoked, fetching chain data');
           } else {
             return toast.error('Revoke bid failed');
@@ -381,16 +414,17 @@ const Liquidate: NextPage = () => {
 
           let transactionOutcome: any = await liquidatorClient.placeBid({
             bid_limit: userBid,
-            market: new PublicKey(mrktID),
+            market: new PublicKey(selectedMarket.id),
             bidder: wallet.publicKey,
             bid_mint: new PublicKey(
-              selectedMarket?.constants.marketLoanCurrencyTokenMintAddress
-            )
+              selectedMarket.constants.marketLoanCurrencyTokenMintAddress
+            ),
+            exponent
           });
 
           if (transactionOutcome[0] == 'SUCCESS') {
             if (walletPK) await refetchWalletBalance();
-            fetchBidData();
+            // fetchBidData();
             return toast.success('Bid placed, fetching chain data');
           } else {
             return toast.error('Bid failed');
@@ -402,16 +436,17 @@ const Liquidate: NextPage = () => {
           toast.processing();
           let transactionOutcome: any = await liquidatorClient.increaseBid({
             bid_increase: userBid,
-            market: new PublicKey(mrktID),
+            market: new PublicKey(selectedMarket.id),
             bidder: wallet.publicKey,
             bid_mint: new PublicKey(
-              selectedMarket?.constants.marketLoanCurrencyTokenMintAddress
-            )
+              selectedMarket.constants.marketLoanCurrencyTokenMintAddress
+            ),
+            exponent
           });
 
           if (transactionOutcome[0] == 'SUCCESS') {
             if (walletPK) await refetchWalletBalance();
-            fetchBidData();
+            // fetchBidData();
             return toast.success('Bid increased, fetching chain data');
           } else {
             return toast.error('Bid increase failed');
@@ -435,7 +470,7 @@ const Liquidate: NextPage = () => {
     toast: ToastProps['toast'],
     mID: string
   ) {
-    fetchLiquidatorClient(type, undefined, toast, mID);
+    fetchLiquidatorClient(type, undefined, toast);
   }
   /**
    * @description
@@ -448,7 +483,7 @@ const Liquidate: NextPage = () => {
     toast: ToastProps['toast'],
     mID: string
   ) {
-    fetchLiquidatorClient(type, userBid!, toast, mID);
+    fetchLiquidatorClient(type, userBid!, toast);
   }
   /**
    * @description
@@ -461,7 +496,7 @@ const Liquidate: NextPage = () => {
     toast: ToastProps['toast'],
     mID: string
   ) {
-    fetchLiquidatorClient(type, userBid!, toast, mID);
+    fetchLiquidatorClient(type, userBid!, toast);
   }
 
   /**
@@ -474,7 +509,7 @@ const Liquidate: NextPage = () => {
       function getData() {
         return Promise.all(
           marketCollections
-            .filter(collection => collection.loanCurrency === LOAN_CURRENCY_SOL)
+            // .filter(collection => collection.loanCurrency === LOAN_CURRENCY_SOL)
             .map(async collection => {
               if (collection.id == '') return collection;
               if (marketData.length) {
@@ -498,7 +533,6 @@ const Liquidate: NextPage = () => {
 
                   collection.connection = sdkConfig.saberHqConnection;
                   collection.nftPrice = data.nftPrice;
-
                   collection.tvl =
                     data.positions && data.nftPrice
                       ? data.nftPrice * (await fetchTVL(data.positions))
@@ -511,20 +545,17 @@ const Liquidate: NextPage = () => {
                   collection.totalDebt = data.totalMarketDebt;
 
                   collection.risk = data.positions
-                    ? await calculateRisk(
-                        data.positions,
-
-                        data.nftPrice,
-                        false
-                      )
+                    ? ((await calculateRisk(data.positions)) /
+                        collection.tvl /
+                        0.65) *
+                      100
                     : 0;
 
                   collection.openPositions = data.positions.length
                     ? await setObligations(
                         data.positions,
-                        currentMarketId,
-
-                        data.nftPrice
+                        data.nftPrice,
+                        selectedMarket
                       )
                     : [];
 
@@ -598,8 +629,35 @@ const Liquidate: NextPage = () => {
 
     if (marketData[0].id) {
       setCurrentMarketId(marketData[0].id);
+      setCurrentCurrency(marketData[0].loanCurrency);
+      setIsFetchingClientData(true);
+      window.history.pushState({}, '', `/liquidate?id=${record.id}`);
     }
   }
+
+  const onUrlChange = useCallback(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const id = urlParams.get('id');
+    const market = marketCollections.find(collection => collection.id === id);
+    if (id && market) {
+      setCurrentMarketId(id);
+      if (!isFetchingData) {
+        setExpandedRowKeys([market.key]);
+        setIsFetchingClientData(true);
+      }
+    }
+  }, [isFetchingData]);
+
+  useEffect(() => {
+    //call on url change on mount so that the initial id can be gotten the the url if any
+    onUrlChange();
+  }, [onUrlChange]);
+
+  useEffect(() => {
+    window.addEventListener('popstate', onUrlChange);
+    () => window.removeEventListener('popstate', onUrlChange);
+  }, [onUrlChange]);
+
   /**
    * @description
    * @params
@@ -800,7 +858,10 @@ const Liquidate: NextPage = () => {
               <Skeleton.Button size="small" active />
             </div>
           ) : (
-            <div className={style.valueCell}>{fs(market.tvl)}</div>
+            <div className={classNames(style.valueCell, style.bigTVL)}>
+              {/* {fs(market.tvl + market.available)} */}
+              {fs(market.tvl)}
+            </div>
           )
       },
       {
@@ -892,6 +953,7 @@ const Liquidate: NextPage = () => {
     <HoneySider isMobileSidebarVisible={isMobileSidebarVisible}>
       <LiquidateSidebar
         collectionId="0"
+        isFetchingBids={isFetchingBids}
         biddingArray={biddingArray}
         userBalance={userWalletBalance}
         stringyfiedWalletPK={stringyfiedWalletPK}
@@ -905,6 +967,8 @@ const Liquidate: NextPage = () => {
         onCancel={hideMobileSidebar}
         currentMarketId={currentMarketId}
         isFetchingData={isFetchingClientData}
+        isLoadingWalletBalance={isLoadingWalletBalance}
+        loanCurrency={currentCurrency}
       />
     </HoneySider>
   );

@@ -541,6 +541,10 @@ export const mobileSearchContainer = style({
 
 export const mobileToggleContainer = style({});
 
+export const bigTVL = style({
+  marginRight: '.5em'
+})
+
 export const createMarketTitle = style([
   typography.body,
   {

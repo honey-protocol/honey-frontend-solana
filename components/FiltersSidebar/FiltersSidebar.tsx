@@ -1,26 +1,34 @@
 import * as styles from './FiltersSidebar.css';
-import { useConnectedWallet } from "@saberhq/use-solana";
-import { useWalletKit } from "@gokiprotocol/walletkit";
-import React, { useState } from "react";
-import HoneyTabs, {HoneyTabItem} from "../HoneyTabs/HoneyTabs";
-import { Tab } from "../BorrowP2PSidebar/types";
-import EmptyStateDetails from "../EmptyStateDetails/EmptyStateDetails";
-import { mobileReturnButton } from "../../styles/common.css";
-import { LendP2PFiltersTab } from "./LendP2PFiltersTab/LendP2PFiltersTab";
-import { FiltersSidebarProps } from "./types";
+import { useConnectedWallet } from '@saberhq/use-solana';
+import { useWalletKit } from '@gokiprotocol/walletkit';
+import React, { useState } from 'react';
+import HoneyTabs, { HoneyTabItem } from '../HoneyTabs/HoneyTabs';
+import { Tab } from '../BorrowP2PSidebar/types';
+import EmptyStateDetails from '../EmptyStateDetails/EmptyStateDetails';
+import { mobileReturnButton } from '../../styles/common.css';
+import { LendP2PFiltersTab } from './LendP2PFiltersTab/LendP2PFiltersTab';
+import { FiltersSidebarProps } from './types';
+import { useMediaQuery } from 'react-responsive';
+import { MQ_DESKTOP_BP } from 'constants/breakpoints';
 
-
-
-export const FiltersSidebar = ({ tags, rules, initParams }: FiltersSidebarProps) => {
+export const FiltersSidebar = ({
+  tags,
+  rules,
+  initParams
+}: FiltersSidebarProps) => {
+  const isMobile = useMediaQuery({ maxWidth: MQ_DESKTOP_BP });
   const wallet = useConnectedWallet();
   const { connect } = useWalletKit();
   const [activeTab, setActiveTab] = useState<string>('filters');
-  const [interestRangeValues, setInterestRangeValues] = useState<[number, number]>(
-    [initParams.minInterest, initParams.maxInterest]);
-  const [totalRequestedRangeValues, setTotalRequestedRangeValues] = useState<[number, number]>([
-    initParams.minTotalRequest, initParams.maxTotalRequest]);
-  const [totalSuppliedRangeValues, setTotalSuppliedRangeValues] = useState<[number, number]>([
-    initParams.minTotalSupplied, initParams.maxTotalSupplied]);
+  const [interestRangeValues, setInterestRangeValues] = useState<
+    [number, number]
+  >([initParams.minInterest, initParams.maxInterest]);
+  const [totalRequestedRangeValues, setTotalRequestedRangeValues] = useState<
+    [number, number]
+  >([initParams.minTotalRequest, initParams.maxTotalRequest]);
+  const [totalSuppliedRangeValues, setTotalSuppliedRangeValues] = useState<
+    [number, number]
+  >([initParams.minTotalSupplied, initParams.maxTotalSupplied]);
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
 
   const tabs: [HoneyTabItem, HoneyTabItem?] = [
@@ -43,41 +51,51 @@ export const FiltersSidebar = ({ tags, rules, initParams }: FiltersSidebarProps)
             icon={<div className={styles.lightLogoWrapper} />}
             title="You didn’t connect any wallet yet"
             description="First, choose a NFT collection"
-            buttons={[
-              {
-                title: 'CONNECT',
-                onClick: connect,
-                variant: 'primary'
-              },
-              {
-                title: 'RETURN',
-                onClick: () => console.log('press'),
-                variant: 'secondary',
-                className: mobileReturnButton
-              }
-            ]}
+            buttons={
+              isMobile
+                ? [
+                    {
+                      title: 'CONNECT',
+                      onClick: connect,
+                      variant: 'primary'
+                    },
+                    {
+                      title: 'RETURN',
+                      onClick: () => console.log('press'),
+                      variant: 'secondary',
+                      className: mobileReturnButton
+                    }
+                  ]
+                : [
+                    {
+                      title: 'CONNECT',
+                      onClick: connect,
+                      variant: 'primary'
+                    }
+                  ]
+            }
           />
         ) : (
-            <LendP2PFiltersTab
-              tags={tags}
-              rules={rules}
-              totalRequestedRange={totalRequestedRangeValues}
-              onChangeTotalRequestedRange={setTotalRequestedRangeValues}
-              maxTotalRequest={initParams.maxTotalRequest}
-              minTotalRequest={initParams.minTotalRequest}
-              maxInterest={initParams.maxInterest}
-              minInterest={initParams.minInterest}
-              maxTotalSupplied={initParams.maxTotalSupplied}
-              minTotalSupplied={initParams.minTotalSupplied}
-              selectedTags={selectedTags}
-              onChangeSelectedTags={setSelectedTags}
-              interestRange={interestRangeValues}
-              onChangeInterestRange={setInterestRangeValues}
-              totalSuppliedRange={totalSuppliedRangeValues}
-              onChangeTotalSuppliedRange={setTotalSuppliedRangeValues}
-            />
+          <LendP2PFiltersTab
+            tags={tags}
+            rules={rules}
+            totalRequestedRange={totalRequestedRangeValues}
+            onChangeTotalRequestedRange={setTotalRequestedRangeValues}
+            maxTotalRequest={initParams.maxTotalRequest}
+            minTotalRequest={initParams.minTotalRequest}
+            maxInterest={initParams.maxInterest}
+            minInterest={initParams.minInterest}
+            maxTotalSupplied={initParams.maxTotalSupplied}
+            minTotalSupplied={initParams.minTotalSupplied}
+            selectedTags={selectedTags}
+            onChangeSelectedTags={setSelectedTags}
+            interestRange={interestRangeValues}
+            onChangeInterestRange={setInterestRangeValues}
+            totalSuppliedRange={totalSuppliedRangeValues}
+            onChangeTotalSuppliedRange={setTotalSuppliedRangeValues}
+          />
         )}
       </HoneyTabs>
     </div>
-  )
-}
+  );
+};
