@@ -823,7 +823,7 @@ interface NFT {
  */
 function filterNfts(nftArray: any, verifiedCreator: string) {
   return nftArray.filter((nft: NFT) => {
-    return nft.creators[0].address === verifiedCreator;
+    return nft.creators[0]?.address === verifiedCreator;
   });
 }
 
