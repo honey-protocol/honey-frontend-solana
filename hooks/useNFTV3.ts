@@ -139,10 +139,7 @@ export default function useFetchCreatorNFTByUser(
     if (creatorNFTs.length && creatorNFTs[0].image === defaultNFTImageUrl) {
       //fetch image uri and tokenId for creatorNFts
       const promises = creatorNFTs.map(async nft => {
-        const imageURI = await getNFTImgURI(nft.tokenUri ?? '');
-        const tokenMetaPublicKey = await programs.metadata.Metadata.getPDA(
-          new PublicKey(nft.mint)
-        );
+        const imageURI = await getNFTImgURI(nft.tokenUri ?? '');        
         const result: NFT = {
           name: nft.name,
           symbol: nft.name,
@@ -150,7 +147,7 @@ export default function useFetchCreatorNFTByUser(
           image: imageURI,
           creators: nft.creators,
           mint: nft.mint,
-          tokenId: tokenMetaPublicKey.toString()
+          tokenId: nft.tokenId
         };
         return result;
       });
