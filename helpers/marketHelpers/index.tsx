@@ -225,35 +225,35 @@ export const marketCollections: MarketTableRow[] = [
       discountedMarket: false
     }
   },
-  {
-    id: '5rXuse6cWigMMNw9fRZMZXGmD2rV7RLpiettBwGKcXm7',
-    key: 'Ubik',
-    name: 'Ubik',
-    verifiedCreator: 'WAku72SeQKPDwh9fJbKEohYSnHyMkcXzDU5aaUwaax2',
-    rate: 0,
-    loanCurrency: 'SOL',
-    decimals: LAMPORTS_PER_SOL,
-    available: 0,
-    value: 0,
-    allowance: 0,
-    connection: undefined,
-    user: undefined,
-    debt: 0,
-    utilizationRate: 0,
-    openPositions: [],
-    constants: {
-      marketId: '5rXuse6cWigMMNw9fRZMZXGmD2rV7RLpiettBwGKcXm7',
-      verifiedCreator: 'WAku72SeQKPDwh9fJbKEohYSnHyMkcXzDU5aaUwaax2',
-      marketName: 'Ubik',
-      marketImage:
-        'https://img-cdn.magiceden.dev/rs:fill:400:400:0:0/plain/https://dl.airtable.com/.attachmentThumbnails/e1ad2e4ef21f39c2cd30bec595dc5137/34c2c6e3',
-      marketLoanCurrency: 'SOL',
-      marketLoanCurrencyImage: '/images/tokens/sol.svg',
-      marketLoanCurrencyTokenMintAddress:
-        'So11111111111111111111111111111111111111112',
-      discountedMarket: false
-    }
-  },
+  // {
+  //   id: '5rXuse6cWigMMNw9fRZMZXGmD2rV7RLpiettBwGKcXm7',
+  //   key: 'Ubik',
+  //   name: 'Ubik',
+  //   verifiedCreator: 'WAku72SeQKPDwh9fJbKEohYSnHyMkcXzDU5aaUwaax2',
+  //   rate: 0,
+  //   loanCurrency: 'SOL',
+  //   decimals: LAMPORTS_PER_SOL,
+  //   available: 0,
+  //   value: 0,
+  //   allowance: 0,
+  //   connection: undefined,
+  //   user: undefined,
+  //   debt: 0,
+  //   utilizationRate: 0,
+  //   openPositions: [],
+  //   constants: {
+  //     marketId: '5rXuse6cWigMMNw9fRZMZXGmD2rV7RLpiettBwGKcXm7',
+  //     verifiedCreator: 'WAku72SeQKPDwh9fJbKEohYSnHyMkcXzDU5aaUwaax2',
+  //     marketName: 'Ubik',
+  //     marketImage:
+  //       'https://img-cdn.magiceden.dev/rs:fill:400:400:0:0/plain/https://dl.airtable.com/.attachmentThumbnails/e1ad2e4ef21f39c2cd30bec595dc5137/34c2c6e3',
+  //     marketLoanCurrency: 'SOL',
+  //     marketLoanCurrencyImage: '/images/tokens/sol.svg',
+  //     marketLoanCurrencyTokenMintAddress:
+  //       'So11111111111111111111111111111111111111112',
+  //     discountedMarket: false
+  //   }
+  // },
   {
     id: 'H2H2pJuccdvpET9A75ajB3GgdYdCUL4T3kiwUMA6DJ7q',
     key: 'LIFINITY',
@@ -310,6 +310,64 @@ export const marketCollections: MarketTableRow[] = [
       marketLoanCurrencyTokenMintAddress:
         'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v',
       discountedMarket: true
+    }
+  },
+  {
+    id: 'JD2mMtsdT7fTkWojVLh2rjMZBLnKUev7JSn6iLg7chM7',
+    key: 'CLU',
+    name: 'Claynosaurz',
+    verifiedCreator: '7nt1rnsomCqyPzMVUcqGswXeSJGwD2tAHYmTjGJHmhTX',
+    loanCurrency: 'USDC',
+    decimals: 10 ** 6,
+    rate: 0,
+    available: 0,
+    value: 0,
+    allowance: 0,
+    connection: undefined,
+    user: undefined,
+    debt: 0,
+    utilizationRate: 0,
+    openPositions: [],
+    constants: {
+      marketId: 'JD2mMtsdT7fTkWojVLh2rjMZBLnKUev7JSn6iLg7chM7',
+      verifiedCreator: '7nt1rnsomCqyPzMVUcqGswXeSJGwD2tAHYmTjGJHmhTX',
+      marketName: 'Clay',
+      marketImage:
+        'https://prod-image-cdn.tensor.trade/images/400x400/freeze=false/https://creator-hub-prod.s3.us-east-2.amazonaws.com/claynosaurz_pfp_1679930706147.jpeg',
+      marketLoanCurrency: 'USDC',
+      marketLoanCurrencyImage: '/images/USDC.svg',
+      marketLoanCurrencyTokenMintAddress:
+        'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v',
+      discountedMarket: false
+    }
+  },
+  {
+    id: '4RNS5Z4oMbn6eDAjqLmaKbrpuwExg3sHkRg7FYCZ5HQS',
+    key: 'CLS',
+    name: 'Claynosaurz',
+    verifiedCreator: '7nt1rnsomCqyPzMVUcqGswXeSJGwD2tAHYmTjGJHmhTX',
+    rate: 0,
+    loanCurrency: 'SOL',
+    decimals: LAMPORTS_PER_SOL,
+    available: 0,
+    value: 0,
+    allowance: 0,
+    connection: undefined,
+    user: undefined,
+    debt: 0,
+    utilizationRate: 0,
+    openPositions: [],
+    constants: {
+      marketId: '4RNS5Z4oMbn6eDAjqLmaKbrpuwExg3sHkRg7FYCZ5HQS',
+      verifiedCreator: '7nt1rnsomCqyPzMVUcqGswXeSJGwD2tAHYmTjGJHmhTX',
+      marketName: 'Claynosaurz',
+      marketImage:
+        'https://prod-image-cdn.tensor.trade/images/400x400/freeze=false/https://creator-hub-prod.s3.us-east-2.amazonaws.com/claynosaurz_pfp_1679930706147.jpeg',
+      marketLoanCurrency: 'SOL',
+      marketLoanCurrencyImage: '/images/tokens/sol.svg',
+      marketLoanCurrencyTokenMintAddress:
+        'So11111111111111111111111111111111111111112',
+      discountedMarket: false
     }
   },
   {
@@ -573,64 +631,7 @@ export const marketCollections: MarketTableRow[] = [
       discountedMarket: false
     }
   },
-  {
-    id: 'JD2mMtsdT7fTkWojVLh2rjMZBLnKUev7JSn6iLg7chM7',
-    key: 'CLU',
-    name: 'Claynosaurz',
-    verifiedCreator: '7nt1rnsomCqyPzMVUcqGswXeSJGwD2tAHYmTjGJHmhTX',
-    loanCurrency: 'USDC',
-    decimals: 10 ** 6,
-    rate: 0,
-    available: 0,
-    value: 0,
-    allowance: 0,
-    connection: undefined,
-    user: undefined,
-    debt: 0,
-    utilizationRate: 0,
-    openPositions: [],
-    constants: {
-      marketId: 'JD2mMtsdT7fTkWojVLh2rjMZBLnKUev7JSn6iLg7chM7',
-      verifiedCreator: '7nt1rnsomCqyPzMVUcqGswXeSJGwD2tAHYmTjGJHmhTX',
-      marketName: 'Clay',
-      marketImage:
-        'https://prod-image-cdn.tensor.trade/images/400x400/freeze=false/https://creator-hub-prod.s3.us-east-2.amazonaws.com/claynosaurz_pfp_1679930706147.jpeg',
-      marketLoanCurrency: 'USDC',
-      marketLoanCurrencyImage: '/images/USDC.svg',
-      marketLoanCurrencyTokenMintAddress:
-        'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v',
-      discountedMarket: false
-    }
-  },
-  {
-    id: '4RNS5Z4oMbn6eDAjqLmaKbrpuwExg3sHkRg7FYCZ5HQS',
-    key: 'CLS',
-    name: 'Claynosaurz',
-    verifiedCreator: '7nt1rnsomCqyPzMVUcqGswXeSJGwD2tAHYmTjGJHmhTX',
-    rate: 0,
-    loanCurrency: 'SOL',
-    decimals: LAMPORTS_PER_SOL,
-    available: 0,
-    value: 0,
-    allowance: 0,
-    connection: undefined,
-    user: undefined,
-    debt: 0,
-    utilizationRate: 0,
-    openPositions: [],
-    constants: {
-      marketId: '4RNS5Z4oMbn6eDAjqLmaKbrpuwExg3sHkRg7FYCZ5HQS',
-      verifiedCreator: '7nt1rnsomCqyPzMVUcqGswXeSJGwD2tAHYmTjGJHmhTX',
-      marketName: 'Claynosaurz',
-      marketImage:
-        'https://prod-image-cdn.tensor.trade/images/400x400/freeze=false/https://creator-hub-prod.s3.us-east-2.amazonaws.com/claynosaurz_pfp_1679930706147.jpeg',
-      marketLoanCurrency: 'SOL',
-      marketLoanCurrencyImage: '/images/tokens/sol.svg',
-      marketLoanCurrencyTokenMintAddress:
-        'So11111111111111111111111111111111111111112',
-      discountedMarket: false
-    }
-  }
+
 
   // {
   //   id: 'F8rZviSSuqgkTsjMeoyrTUSNSqh7yNDCAozJkxm7eujY',
@@ -822,7 +823,7 @@ interface NFT {
  */
 function filterNfts(nftArray: any, verifiedCreator: string) {
   return nftArray.filter((nft: NFT) => {
-    return nft.creators[0].address === verifiedCreator;
+    return nft.creators[0]?.address === verifiedCreator;
   });
 }
 

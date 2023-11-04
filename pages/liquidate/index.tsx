@@ -231,7 +231,6 @@ const Liquidate: NextPage = () => {
         setMarketData(data as unknown as MarketBundle[]);
         setServerRenderedMarketData(data);
         // handleBids(currentMarketId);
-        // console.log('@@-- one hello?', currentMarketId);
       })
       .catch(err => console.log(`Error fetching SSR: ${err}`));
   }
@@ -252,8 +251,14 @@ const Liquidate: NextPage = () => {
         market => market.marketId === currentMarketId
       );
 
-      setBiddingArray(data[0].bids);
-      handleBiddingState(data[0].bids);
+      const response = await fetch(`https://honeyfinance.xyz/bids/${currentMarketId}`)
+      if(!response.ok) {
+        return console.error('Error fetching bids')
+      }
+      const dataBiddingArray = await response.json()
+
+      setBiddingArray(dataBiddingArray);
+      handleBiddingState(dataBiddingArray);
     } catch (error) {
       console.log(`Error fetching bids: ${error}`);
       setBiddingArray([]);
@@ -324,8 +329,7 @@ const Liquidate: NextPage = () => {
       }
 
       let highestBid = await biddingArray
-        .sort((first: any, second: any) => first.bidLimit - second.bidLimit)
-        .reverse();
+        .sort((first: any, second: any) => second.bidLimit - first.bidLimit)
 
       if (highestBid[0]) {
         setHighestBiddingAddress(highestBid[0].bidder);
@@ -403,6 +407,7 @@ const Liquidate: NextPage = () => {
             // fetchBidData();
             return toast.success('Bid revoked, fetching chain data');
           } else {
+            console.log('@@-- transaction:', transactionOutcome)
             return toast.error('Revoke bid failed');
           }
         } else if (type == 'place_bid') {
